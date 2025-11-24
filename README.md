@@ -126,3 +126,11 @@ Grommet: https://v2.grommet.io
 React JS: https://reactjs.org/docs
 
 Meteor: http://docs.meteor.com/#/full/
+
+### Running in production
+
+For future notes
+
+- this uses Meteor version 2 and Node v14.21.3, try to use at all times
+- build for production with `meteor build`
+- run npm install and npm-rebuild inside the server directory
