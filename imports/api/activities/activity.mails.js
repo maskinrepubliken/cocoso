@@ -1,4 +1,5 @@
 import mailtranslations from './mailtranslations';
+import escapeHtml from '../_utils/escapeHtml';
 
 const getRegistrationEmailBody = (
   activity,
@@ -9,11 +10,11 @@ const getRegistrationEmailBody = (
   isUpdate = false
 ) => {
   const activityId = activity._id,
-    activityTitle = activity.title,
+    activityTitle = escapeHtml(activity.title),
     activityBody = activity.longDescription,
     imageUrl = activity.images[0],
-    firstName = values.firstName || currentUser?.username,
-    lastName = values.lastName,
+    firstName = escapeHtml(values.firstName || currentUser?.username),
+    lastName = escapeHtml(values.lastName),
     numberOfPeople = values.numberOfPeople,
     hostName = currentHost.settings.name,
     host = currentHost.host,
@@ -39,7 +40,9 @@ const getRegistrationEmailBody = (
     attending += ` + ${numberOfPeople - 1}`;
   }
 
-  const confirmedApprovalBrief = isUpdate ? confirmedApprovalTextUpdate : confirmedApprovalText;
+  const confirmedApprovalBrief = isUpdate
+    ? confirmedApprovalTextUpdate
+    : confirmedApprovalText;
 
   return `<!doctype html>
   <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -642,9 +645,14 @@ const getRegistrationEmailBody = (
     `;
 };
 
-const getUnregistrationEmailBody = (activity, values, currentHost, currentUser) => {
+const getUnregistrationEmailBody = (
+  activity,
+  values,
+  currentHost,
+  currentUser
+) => {
   const activityId = activity._id,
-    firstName = values?.firstName || currentUser?.username || '',
+    firstName = escapeHtml(values?.firstName || currentUser?.username || ''),
     hostName = currentHost.settings.name,
     host = currentHost.host,
     hostLogo = currentHost.logo,
@@ -654,7 +662,8 @@ const getUnregistrationEmailBody = (activity, values, currentHost, currentUser) 
   const tr = mailtranslations[lang];
 
   const { dear } = tr.general;
-  const { confirmedApprovalText, confirmedApprovalTextLong, visitPage } = tr.activityUnregister;
+  const { confirmedApprovalText, confirmedApprovalTextLong, visitPage } =
+    tr.activityUnregister;
 
   return `<!doctype html>
   <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">

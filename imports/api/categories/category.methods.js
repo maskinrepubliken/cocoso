@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 
 import { getHost } from '../_utils/shared';
 import Categories from './category';
-import { catColors } from './category.helpers';
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 
 Meteor.methods({
@@ -59,15 +59,16 @@ Meteor.methods({
   },
 
   async removeCategory(categoryId) {
+    check(categoryId, String);
     const user = await Meteor.userAsync();
     const host = getHost(this);
 
-    if (!user.isSuperAdmin && !(await isAdmin(user._id, host))) {
+    if (!user || (!user.isSuperAdmin && !(await isAdmin(user._id, host)))) {
       throw new Meteor.Error('You are not allowed');
     }
 
     try {
-      await Categories.removeAsync(categoryId);
+      await Categories.removeAsync({ _id: categoryId, host });
     } catch (error) {
       throw new Meteor.Error(error);
     }

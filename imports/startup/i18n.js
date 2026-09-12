@@ -1,12 +1,11 @@
 import { Meteor } from 'meteor/meteor';
-import { Tracker } from 'meteor/tracker';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import I18NextHttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import yaml from 'js-yaml';
 
-const { cdnserver } = Meteor.settings;
+const { cdnServer } = Meteor.settings;
 
 const allLangs = [
   {
@@ -25,18 +24,6 @@ const allLangs = [
 
 const defaultLang = 'en';
 
-// const namespaces = [
-//   'common',
-//   'accounts',
-//   'members',
-//   'hosts',
-//   'admin',
-//   'activities',
-//   'groups',
-//   'calendar',
-//   'resources',
-// ];
-
 const isServer = Meteor.isServer;
 
 const path = '/i18n/{{lng}}/{{ns}}.yml';
@@ -48,7 +35,7 @@ const path = '/i18n/{{lng}}/{{ns}}.yml';
 // to the relative path (still broken server-side — see serverI18n plan
 // notes — but not hanging) until that's replaced with a filesystem-based
 // backend for the server instance instead.
-const loadPath = Meteor.isProduction && cdnserver ? cdnserver + path : path;
+const loadPath = Meteor.isProduction && cdnServer ? cdnServer + path : path;
 
 const options = {
   backend: {
@@ -110,16 +97,25 @@ if (isServer) {
   Meteor.startup(async () => {
     await initPromise;
 
-    for (let attempt = 1; attempt <= MAX_ATTEMPTS && !isFullyLoaded(); attempt += 1) {
+    for (
+      let attempt = 1;
+      attempt <= MAX_ATTEMPTS && !isFullyLoaded();
+      attempt += 1
+    ) {
       if (attempt > 1) {
-        console.warn(`[i18n] retrying server-side namespace load (attempt ${attempt})`);
+        console.warn(
+          `[i18n] retrying server-side namespace load (attempt ${attempt})`
+        );
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       }
       try {
         await i18n.loadLanguages(ALL_LANGS);
         await i18n.loadNamespaces(REQUIRED_NS);
       } catch (error) {
-        console.error('[i18n] server-side namespace load attempt failed', error);
+        console.error(
+          '[i18n] server-side namespace load attempt failed',
+          error
+        );
       }
     }
 

@@ -1,12 +1,18 @@
 import mailtranslations from './mailtranslations';
+import escapeHtml from '../_utils/escapeHtml';
 
-const getGroupRegistrationEmailBody = (Group, currentHost, currentUser, isLeave = false) => {
+const getGroupRegistrationEmailBody = (
+  Group,
+  currentHost,
+  currentUser,
+  isLeave = false
+) => {
   const GroupId = Group._id,
-    GroupTitle = Group.title,
+    GroupTitle = escapeHtml(Group.title),
     GroupBody = Group.description,
     GroupReadingMaterial = Group.readingMaterial,
     imageUrl = Group.imageUrl,
-    firstName = currentUser.firstName || currentUser.username,
+    firstName = escapeHtml(currentUser.firstName || currentUser.username),
     hostName = currentHost.settings.name,
     host = currentHost.host,
     hostLogo = currentHost.logo,
@@ -22,7 +28,9 @@ const getGroupRegistrationEmailBody = (Group, currentHost, currentUser, isLeave 
     confirmedApprovalTextLongLeave,
   } = tr.joinGroup;
 
-  const confirmedApprovalBrief = isLeave ? confirmedApprovalTextLeave : confirmedApprovalText;
+  const confirmedApprovalBrief = isLeave
+    ? confirmedApprovalTextLeave
+    : confirmedApprovalText;
   const confirmedApprovalLong = isLeave
     ? confirmedApprovalTextLongLeave
     : confirmedApprovalTextLong;
@@ -607,13 +615,18 @@ const getGroupRegistrationEmailBody = (Group, currentHost, currentUser, isLeave 
     `;
 };
 
-const getInviteToPrivateGroupEmailBody = (Group, currentHost, currentUser, person) => {
+const getInviteToPrivateGroupEmailBody = (
+  Group,
+  currentHost,
+  currentUser,
+  person
+) => {
   const GroupId = Group._id,
-    GroupTitle = Group.title,
+    GroupTitle = escapeHtml(Group.title),
     GroupBody = Group.description,
     GroupReadingMaterial = Group.readingMaterial,
     imageUrl = Group.imageUrl,
-    firstName = person?.firstName,
+    firstName = escapeHtml(person?.firstName),
     hostName = currentHost.settings.name,
     host = currentHost.host,
     hostLogo = currentHost.logo,
@@ -623,7 +636,8 @@ const getInviteToPrivateGroupEmailBody = (Group, currentHost, currentUser, perso
   const tr = mailtranslations[lang];
 
   const { dear, visitPage } = tr.general;
-  const { confirmedApprovalText, confirmedApprovalTextLong } = tr.invitePrivateGroup;
+  const { confirmedApprovalText, confirmedApprovalTextLong } =
+    tr.invitePrivateGroup;
 
   const confirmedApprovalBrief = confirmedApprovalText;
   const confirmedApprovalLong = confirmedApprovalTextLong;

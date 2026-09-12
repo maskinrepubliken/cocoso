@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 
 import ComposablePages from './composablepage';
 import { getHost } from '../_utils/shared';
@@ -75,9 +75,10 @@ Meteor.methods({
     }
   },
 
-  async createComposablePage(formValues, hostPredefined) {
+  async createComposablePage(formValues) {
+    check(formValues, Match.ObjectIncluding({ title: String }));
     const user = await Meteor.userAsync();
-    const host = hostPredefined || getHost(this);
+    const host = getHost(this);
 
     if (!user || !(await isAdmin(user._id, host))) {
       throw new Meteor.Error('Not allowed!');
@@ -104,25 +105,37 @@ Meteor.methods({
     }
   },
 
-  async updateComposablePage(formValues, hostPredefined) {
+  async updateComposablePage(formValues) {
+    check(formValues, Match.ObjectIncluding({ _id: String }));
     const user = await Meteor.userAsync();
-    const host = hostPredefined || getHost(this);
+    const host = getHost(this);
 
     if (!user || !(await isAdmin(user._id, host))) {
       throw new Meteor.Error('Not allowed!');
     }
 
     const composablePageId = formValues._id;
-    const thePage = await ComposablePages.findOneAsync(composablePageId);
+    const thePage = await ComposablePages.findOneAsync({
+      _id: composablePageId,
+      host,
+    });
 
     if (!thePage) {
       throw new Meteor.Error('Page not found');
     }
 
+    const {
+      _id,
+      host: _host,
+      authorId,
+      authorUsername,
+      ...safeValues
+    } = formValues;
+
     try {
       await ComposablePages.updateAsync(composablePageId, {
         $set: {
-          ...formValues,
+          ...safeValues,
           latestUpdate: new Date(),
           latestUpdateAuthorId: user._id,
           latestUpdateAuthorUsername: user.username,
@@ -130,7 +143,6 @@ Meteor.methods({
       });
       return formValues.title;
     } catch (error) {
-      console.log(error);
       throw new Meteor.Error(error);
     }
   },
@@ -144,13 +156,11 @@ Meteor.methods({
     }
 
     try {
-      await ComposablePages.updateAsync(composablePageId, {
-        $set: {
-          isPublished: true,
-        },
-      });
+      await ComposablePages.updateAsync(
+        { _id: composablePageId, host },
+        { $set: { isPublished: true } }
+      );
     } catch (error) {
-      console.log(error);
       throw new Meteor.Error(error);
     }
   },
@@ -164,11 +174,10 @@ Meteor.methods({
     }
 
     try {
-      await ComposablePages.updateAsync(composablePageId, {
-        $set: {
-          isPublished: false,
-        },
-      });
+      await ComposablePages.updateAsync(
+        { _id: composablePageId, host },
+        { $set: { isPublished: false } }
+      );
     } catch (error) {
       throw new Meteor.Error(error);
     }
@@ -182,7 +191,10 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
-    const thePage = await ComposablePages.findOneAsync(composablePageId);
+    const thePage = await ComposablePages.findOneAsync({
+      _id: composablePageId,
+      host,
+    });
 
     if (!thePage) {
       throw new Meteor.Error('Page not found');

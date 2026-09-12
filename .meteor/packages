@@ -32,3 +32,4 @@ webapp@2.3.0
 react-meteor-data
 dynamic-import@0.7.4
 aldeed:simple-schema
+ddp-rate-limiter

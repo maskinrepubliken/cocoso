@@ -74,8 +74,8 @@ Meteor.methods({
     });
     if (!memberMembership || memberMembership.role !== 'participant') {
       throw new Meteor.Error(
-        error,
-        'Some error occured... Sorry, your inquiry could not be done'
+        'not-a-participant',
+        'Only participants can be verified as contributors'
       );
     }
 

@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
 
 import mailtranslations from '/imports/api/activities/mailtranslations';
 
@@ -6,6 +7,82 @@ import { getHost } from '../_utils/shared';
 import { isContributorOrAdmin } from '../users/user.roles';
 import Groups from '../groups/group';
 import Chats from './chat';
+
+/**
+ * Bump the unread-notification counters of every member of the group a chat
+ * message was posted in. Internal only: it used to be a Meteor method that
+ * any logged-in user could call with an arbitrary host and group.
+ */
+async function createGroupNotification(user, host, values, unSeenIndex) {
+  const contextId = values.contextId;
+  try {
+    const theGroup = await Groups.findOneAsync(contextId);
+    const members = await Meteor.users
+      .find({ 'groups.groupId': theGroup._id })
+      .fetchAsync();
+
+    if (!members || members.length < 1) {
+      return;
+    }
+    await Promise.all(
+      members.map(async (member) => {
+        if (!member || member._id === user._id) {
+          return;
+        }
+        let contextIdIndex = -1;
+        for (let i = 0; i < member.notifications?.length; i += 1) {
+          if (member.notifications[i].contextId === contextId) {
+            contextIdIndex = i;
+            break;
+          }
+        }
+
+        if (contextIdIndex !== -1) {
+          const notifications = [...member.notifications];
+          notifications[contextIdIndex].count += 1;
+          if (!notifications[contextIdIndex].unSeenIndexes) {
+            notifications[contextIdIndex].unSeenIndexes = [];
+          }
+
+          notifications[contextIdIndex].unSeenIndexes?.push(unSeenIndex);
+          await Meteor.users.updateAsync(member._id, {
+            $set: {
+              notifications,
+            },
+          });
+        } else {
+          await Meteor.users.updateAsync(member._id, {
+            $push: {
+              notifications: {
+                title: theGroup.title,
+                count: 1,
+                context: 'groups',
+                contextId: theGroup._id,
+                host,
+                unSeenIndexes: [unSeenIndex],
+              },
+            },
+          });
+        }
+        const memberEmail = member.emails[0]?.address;
+        if (!memberEmail) {
+          return;
+        }
+        const lang = member.lang || 'en';
+        const tr = mailtranslations[lang];
+        await Meteor.callAsync(
+          'sendEmail',
+          memberEmail,
+          tr.newGroupMessage.subject(theGroup.title),
+          tr.newGroupMessage.text(theGroup.title, host, theGroup._id)
+        );
+      })
+    );
+  } catch (error) {
+    console.log('error', error);
+    throw new Meteor.Error(error);
+  }
+}
 
 Meteor.methods({
   async getChatByContextId(contextId) {
@@ -37,15 +114,27 @@ Meteor.methods({
   },
 
   async addChatMessage(values) {
+    check(
+      values,
+      Match.ObjectIncluding({ contextId: String, message: String })
+    );
     const user = await Meteor.userAsync();
     if (!user) {
-      throw new Meteor.Error('Not allowed!');
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
     }
     const host = getHost(this);
 
+    const chat = await Chats.findOneAsync({
+      contextId: values.contextId,
+      host,
+    });
+    if (!chat) {
+      throw new Meteor.Error('not-found', 'Chat not found');
+    }
+
     try {
       await Chats.updateAsync(
-        { contextId: values.contextId },
+        { _id: chat._id },
         {
           $push: {
             messages: {
@@ -71,91 +160,9 @@ Meteor.methods({
           return;
         }
         const unSeenIndex = theGroup?.messages?.length - 1;
-        await Meteor.callAsync(
-          'createGroupNotification',
-          host,
-          values,
-          unSeenIndex
-        );
+        await createGroupNotification(user, host, values, unSeenIndex);
       }
     } catch (error) {
-      throw new Meteor.Error(error);
-    }
-  },
-
-  async createGroupNotification(host, values, unSeenIndex) {
-    const user = await Meteor.userAsync();
-    if (!user) {
-      throw new Meteor.Error('Not allowed!');
-    }
-
-    const contextId = values.contextId;
-
-    try {
-      const theGroup = await Groups.findOneAsync(contextId);
-      const members = await Meteor.users
-        .find({ 'groups.groupId': theGroup._id })
-        .fetchAsync();
-
-      if (!members || members.length < 1) {
-        return;
-      }
-      await Promise.all(
-        members.map(async (member) => {
-          if (!member || member._id === user._id) {
-            return;
-          }
-          let contextIdIndex = -1;
-          for (let i = 0; i < member.notifications?.length; i += 1) {
-            if (member.notifications[i].contextId === contextId) {
-              contextIdIndex = i;
-              break;
-            }
-          }
-
-          if (contextIdIndex !== -1) {
-            const notifications = [...member.notifications];
-            notifications[contextIdIndex].count += 1;
-            if (!notifications[contextIdIndex].unSeenIndexes) {
-              notifications[contextIdIndex].unSeenIndexes = [];
-            }
-
-            notifications[contextIdIndex].unSeenIndexes?.push(unSeenIndex);
-            await Meteor.users.updateAsync(member._id, {
-              $set: {
-                notifications,
-              },
-            });
-          } else {
-            await Meteor.users.updateAsync(member._id, {
-              $push: {
-                notifications: {
-                  title: theGroup.title,
-                  count: 1,
-                  context: 'groups',
-                  contextId: theGroup._id,
-                  host,
-                  unSeenIndexes: [unSeenIndex],
-                },
-              },
-            });
-          }
-          const memberEmail = member.emails[0]?.address;
-          if (!memberEmail) {
-            return;
-          }
-          const lang = member.lang || 'en';
-          const tr = mailtranslations[lang];
-          await Meteor.callAsync(
-            'sendEmail',
-            memberEmail,
-            tr.newGroupMessage.subject(theGroup.title),
-            tr.newGroupMessage.text(theGroup.title, host, theGroup._id)
-          );
-        })
-      );
-    } catch (error) {
-      console.log('error', error);
       throw new Meteor.Error(error);
     }
   },

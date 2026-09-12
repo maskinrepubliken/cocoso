@@ -1,18 +1,21 @@
 import mailtranslations from '../groups/mailtranslations';
+import escapeHtml from '../_utils/escapeHtml';
 
-const escapeHtml = (str) =>
-  String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-
-export const getDirectMessageEmailBody = (senderUsername, currentHost, recipient, linkHost, isFederation) => {
+export const getDirectMessageEmailBody = (
+  senderUsername,
+  currentHost,
+  recipient,
+  linkHost,
+  isFederation
+) => {
   const resolvedLinkHost = linkHost ?? currentHost;
   const linkHostDomain = resolvedLinkHost?.host ?? currentHost?.host;
-  const linkHostName = escapeHtml(resolvedLinkHost?.settings?.name ?? linkHostDomain);
-  const firstName = escapeHtml(recipient?.firstName || recipient?.username || '');
+  const linkHostName = escapeHtml(
+    resolvedLinkHost?.settings?.name ?? linkHostDomain
+  );
+  const firstName = escapeHtml(
+    recipient?.firstName || recipient?.username || ''
+  );
   const safeSenderUsername = escapeHtml(senderUsername);
 
   const lang = recipient?.lang || currentHost?.settings?.lang || 'en';
@@ -23,9 +26,10 @@ export const getDirectMessageEmailBody = (senderUsername, currentHost, recipient
 
   const { body, bodyLong, bodyLongFederation, visitPage } = dm;
 
-  const bodyLongHtml = isFederation && bodyLongFederation
-    ? `${bodyLongFederation} <strong>${linkHostName}</strong>`
-    : bodyLong;
+  const bodyLongHtml =
+    isFederation && bodyLongFederation
+      ? `${bodyLongFederation} <strong>${linkHostName}</strong>`
+      : bodyLong;
 
   return `<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml">

@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
 import dayjs from 'dayjs';
 
-import { getHost } from '../_utils/shared';
+import { getHost, emailIsValid } from '../_utils/shared';
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Hosts from '../hosts/host';
 import Activities from './activity';
@@ -101,7 +102,6 @@ Meteor.methods({
       );
       return await filterPrivateGroups(futureActsSorted, user);
     } catch (error) {
-      console.log(error);
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
   },
@@ -321,7 +321,6 @@ Meteor.methods({
       }
       return activityId;
     } catch (error) {
-      console.log(error);
       throw new Meteor.Error(error, "Couldn't add to Collection");
     }
   },
@@ -334,28 +333,30 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
-    const theActivity = await Activities.findOneAsync(activityId);
+    const theActivity = await Activities.findOneAsync({
+      _id: activityId,
+      host,
+    });
 
     if (!theActivity) {
-      throw new Meteor.Error('Activity not found!');
+      throw new Meteor.Error('not-found', 'Activity not found');
     }
 
-    if (
-      user._id !== theActivity.authorId &&
-      !(await isAdmin(user._id, host))
-    ) {
-      throw new Meteor.Error('You are not allowed!');
+    if (user._id !== theActivity.authorId && !(await isAdmin(user._id, host))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
+
+    // Ownership and tenancy fields are never client-writable.
+    const { _id, host: _host, authorId, authorName, ...safeValues } = values;
 
     try {
       return await Activities.updateAsync(activityId, {
         $set: {
-          ...values,
+          ...safeValues,
         },
       });
     } catch (error) {
-      console.log(error);
-      throw new Meteor.Error(error, "Couldn't add to Collection");
+      throw new Meteor.Error(error, "Couldn't update activity");
     }
   },
 
@@ -367,13 +368,17 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
-    const theActivity = await Activities.findOneAsync(activityId);
+    const theActivity = await Activities.findOneAsync({
+      _id: activityId,
+      host,
+    });
 
-    if (
-      user._id !== theActivity.authorId &&
-      !(await isAdmin(user._id, host))
-    ) {
-      throw new Meteor.Error('Not allowed!');
+    if (!theActivity) {
+      throw new Meteor.Error('not-found', 'Activity not found');
+    }
+
+    if (user._id !== theActivity.authorId && !(await isAdmin(user._id, host))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
     try {
@@ -385,13 +390,26 @@ Meteor.methods({
   },
 
   async registerAttendance(activityId, values, occurenceIndex = 0) {
-    const theActivity = await Activities.findOneAsync(activityId);
+    check(activityId, String);
+    check(occurenceIndex, Match.Integer);
+    check(values, Match.ObjectIncluding({ email: String }));
+    if (!emailIsValid(values.email)) {
+      throw new Meteor.Error('invalid-email', 'Please enter a valid email');
+    }
+
+    const host = getHost(this);
+    const theActivity = await Activities.findOneAsync({
+      _id: activityId,
+      host,
+    });
+    if (!theActivity || !theActivity.datesAndTimes?.[occurenceIndex]) {
+      throw new Meteor.Error('not-found', 'Activity or occurrence not found');
+    }
     const rsvpValues = {
       ...values,
       registerDate: new Date(),
     };
 
-    const host = getHost(this);
     const currentHost = await Hosts.findOneAsync({ host });
     const hostName = currentHost?.settings?.name;
 
@@ -419,13 +437,29 @@ Meteor.methods({
         emailBody
       );
     } catch (error) {
-      console.log(error);
       throw new Meteor.Error(error, "Couldn't register attendance");
     }
   },
 
   async updateAttendance(activityId, values, occurenceIndex, attendeeIndex) {
-    const theActivity = await Activities.findOneAsync(activityId);
+    check(activityId, String);
+    check(occurenceIndex, Match.Integer);
+    check(attendeeIndex, Match.Integer);
+    check(values, Match.ObjectIncluding({ email: String }));
+    if (!emailIsValid(values.email)) {
+      throw new Meteor.Error('invalid-email', 'Please enter a valid email');
+    }
+
+    const host = getHost(this);
+    const theActivity = await Activities.findOneAsync({
+      _id: activityId,
+      host,
+    });
+    if (
+      !theActivity?.datesAndTimes?.[occurenceIndex]?.attendees?.[attendeeIndex]
+    ) {
+      throw new Meteor.Error('not-found', 'Registration not found');
+    }
     const rsvpValues = {
       ...values,
       registerDate: new Date(),
@@ -433,7 +467,6 @@ Meteor.methods({
     const newDatesAndTimes = [...theActivity.datesAndTimes];
     const theOccurence = newDatesAndTimes[occurenceIndex];
 
-    const host = getHost(this);
     const currentHost = await Hosts.findOneAsync({ host });
     const currentUser = await Meteor.userAsync();
     const emailBody = getRegistrationEmailBody(
@@ -460,19 +493,33 @@ Meteor.methods({
         emailBody
       );
     } catch (error) {
-      console.log(error);
       throw new Meteor.Error(error, "Couldn't update attendance");
     }
   },
 
   async removeAttendance(activityId, occurenceIndex, email, lastName) {
+    check(activityId, String);
+    check(occurenceIndex, Match.Integer);
+    check(email, String);
+    check(lastName, Match.Maybe(String));
+
+    const host = getHost(this);
     const currentUser = await Meteor.userAsync();
-    const theActivity = await Activities.findOneAsync(activityId);
+    const theActivity = await Activities.findOneAsync({
+      _id: activityId,
+      host,
+    });
+    if (!theActivity?.datesAndTimes?.[occurenceIndex]) {
+      throw new Meteor.Error('not-found', 'Activity or occurrence not found');
+    }
     const newOccurences = [...theActivity.datesAndTimes];
     const theOccurence = newOccurences[occurenceIndex];
-    const theNonAttendee = theOccurence.attendees.find(
+    const theNonAttendee = theOccurence.attendees?.find(
       (a) => a.email === email
     );
+    if (!theNonAttendee) {
+      throw new Meteor.Error('not-found', 'Registration not found');
+    }
 
     newOccurences[occurenceIndex].attendees = theOccurence.attendees.filter(
       (a) => {
@@ -483,7 +530,6 @@ Meteor.methods({
       }
     );
 
-    const host = getHost(this);
     const currentHost = await Hosts.findOneAsync({ host });
     const hostName = currentHost.settings.name;
 
@@ -505,7 +551,6 @@ Meteor.methods({
         )
       );
     } catch (error) {
-      console.log(error);
       throw new Meteor.Error(error, "Couldn't update document");
     }
   },

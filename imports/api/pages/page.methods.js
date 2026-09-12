@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 
 import { getHost } from '../_utils/shared';
 import Hosts from '../hosts/host';
@@ -52,9 +52,13 @@ Meteor.methods({
     ).fetchAsync();
   },
 
-  async createPage(formValues, hostPredefined) {
+  async createPage(formValues) {
+    check(
+      formValues,
+      Match.ObjectIncluding({ title: String, longDescription: String })
+    );
     const user = await Meteor.userAsync();
-    const host = hostPredefined || getHost(this);
+    const host = getHost(this);
 
     if (!user || !(await isAdmin(user._id, host))) {
       throw new Meteor.Error('Not allowed!');
@@ -78,26 +82,39 @@ Meteor.methods({
     }
   },
 
-  async updatePage(pageId, formValues, hostPredefined) {
+  async updatePage(pageId, formValues) {
+    check(pageId, String);
+    check(
+      formValues,
+      Match.ObjectIncluding({ title: String, longDescription: String })
+    );
     const user = await Meteor.userAsync();
-    const host = hostPredefined || getHost(this);
+    const host = getHost(this);
 
     if (!user || !(await isAdmin(user._id, host))) {
       throw new Meteor.Error('Not allowed!');
     }
 
-    check(formValues.title, String);
-    check(formValues.longDescription, String);
-
-    const thePage = await Pages.findOneAsync(pageId);
+    const thePage = await Pages.findOneAsync({ _id: pageId, host });
+    if (!thePage) {
+      throw new Meteor.Error('not-found', 'Page not found');
+    }
     if (thePage.isTermsPage) {
       throw new Meteor.Error('You cannot update terms page.');
     }
 
+    const {
+      _id,
+      host: _host,
+      authorId,
+      authorName,
+      ...safeValues
+    } = formValues;
+
     try {
       await Pages.updateAsync(pageId, {
         $set: {
-          ...formValues,
+          ...safeValues,
           latestUpdate: new Date(),
         },
       });
@@ -123,7 +140,7 @@ Meteor.methods({
       await Promise.all(
         pages.map(async (page) => {
           await Pages.updateAsync(
-            { _id: page._id },
+            { _id: page._id, host },
             {
               $set: {
                 order: page.order,
@@ -145,21 +162,24 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
-    const thePage = await Pages.findOneAsync(pageId);
+    const thePage = await Pages.findOneAsync({ _id: pageId, host });
+    if (!thePage) {
+      throw new Meteor.Error('not-found', 'Page not found');
+    }
     if (thePage.isTermsPage) {
       throw new Meteor.Error('You cannot delete terms page');
     }
 
     try {
       await Pages.removeAsync(pageId);
-      let order = 1;
+      const remaining = await Pages.find(
+        { host },
+        { sort: { order: 1 } }
+      ).fetchAsync();
       await Promise.all(
-        Pages.find({ host }, { sort: { order: 1 } })
-          .fetchAsync()
-          .map(async (page) => {
-            await Pages.updateAsync({ _id: page._id }, { $set: { order } });
-            order += 1;
-          })
+        remaining.map((page, index) =>
+          Pages.updateAsync({ _id: page._id }, { $set: { order: index + 1 } })
+        )
       );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't remove from collection");

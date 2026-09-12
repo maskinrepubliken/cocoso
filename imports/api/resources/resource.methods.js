@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
 import { getHost } from '../_utils/shared';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
@@ -14,7 +15,7 @@ async function validateLabel(label, host, resourceId) {
     throw new Meteor.Error(
       'Resource name is too short. Minimum 3 letters required'
     );
-  } else if ((await Resources.find(resourceQuery).fetchAsync().length) > 0) {
+  } else if ((await Resources.find(resourceQuery).countAsync()) > 0) {
     throw new Meteor.Error('There already is a resource with this name');
   }
   return true;
@@ -105,14 +106,13 @@ Meteor.methods({
   },
 
   async createResource(values) {
+    check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
     const host = getHost(this);
-    if (
-      !(await isAdmin(user._id, host)) ||
-      (await !validateLabel(values.label, host))
-    ) {
-      return 'Not valid user or label!';
+    if (!user || !(await isAdmin(user._id, host))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
+    await validateLabel(values.label, host);
     try {
       const newResourceId = await Resources.insertAsync({
         ...values,
@@ -134,21 +134,26 @@ Meteor.methods({
   },
 
   async updateResource(resourceId, values) {
+    check(resourceId, String);
+    check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
     const host = getHost(this);
-    if (
-      !(await isAdmin(user._id, host)) ||
-      !validateLabel(values.label, host, resourceId)
-    ) {
-      throw new Meteor.Error('Not allowed');
+    if (!user || !(await isAdmin(user._id, host))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    await validateLabel(values.label, host, resourceId);
+
+    const resource = await Resources.findOneAsync({ _id: resourceId, host });
+    if (!resource) {
+      throw new Meteor.Error('not-found', 'Resource not found');
     }
 
-    const resource = await Resources.findOneAsync(resourceId);
+    const { _id, host: _host, userId, createdBy, ...safeValues } = values;
 
     try {
       await Resources.updateAsync(resourceId, {
         $set: {
-          ...values,
+          ...safeValues,
           updatedBy: user.username,
           updatedAt: new Date(),
         },
@@ -178,15 +183,16 @@ Meteor.methods({
   },
 
   async deleteResource(resourceId) {
+    check(resourceId, String);
     const user = await Meteor.userAsync();
     const host = getHost(this);
 
-    if (!(await isAdmin(user._id, host))) {
-      throw new Meteor.Error('Not allowed');
+    if (!user || !(await isAdmin(user._id, host))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
     try {
-      await Resources.removeAsync(resourceId);
+      await Resources.removeAsync({ _id: resourceId, host });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't remove from collection");
     }

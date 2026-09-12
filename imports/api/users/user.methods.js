@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 
 import { getHost } from '../_utils/shared';
 import Hosts from '../hosts/host';
@@ -25,10 +25,6 @@ const userModel = async (user) => ({
 });
 
 Meteor.methods({
-  async getCurrentUser() {
-    return await Meteor.userAsync();
-  },
-
   async getCurrentUserLang() {
     const user = await Meteor.userAsync();
     if (!user) {
@@ -81,8 +77,7 @@ Meteor.methods({
     const userExists = await Accounts.findUserByUsername(values.username);
 
     if (userExists) {
-      throw new Meteor.Error({ reason: 'Username is taken' });
-      return;
+      throw new Meteor.Error('username-taken', 'Username is taken');
     }
 
     try {
@@ -162,9 +157,18 @@ Meteor.methods({
   },
 
   async saveUserInfo(values) {
+    // Only these profile fields may be written by the user themself. Never
+    // spread client input straight into $set on the users collection: the
+    // schema also contains isSuperAdmin, encryption keys and block lists.
+    check(values, {
+      firstName: Match.Maybe(String),
+      lastName: Match.Maybe(String),
+      bio: Match.Maybe(String),
+      contactInfo: Match.Maybe(String),
+    });
     const user = await Meteor.userAsync();
     if (!user) {
-      throw new Meteor.Error('Not allowed!');
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
     }
 
     try {
@@ -266,22 +270,22 @@ Meteor.methods({
         }
       );
 
-      await DirectMessages.updateAsync(
-        {
-          participantIds: {
-            $elemMatch: {
-              $eq: userId,
-            },
-          },
-        },
-        {
-          $set: {
-            'participantAvatars.$': avatar.replace('full', 'thumb'),
-          },
-        },
-        {
-          multi: true,
-        }
+      // participantAvatars is a parallel array to participantIds, so the
+      // positional operator cannot be used (it would resolve against the
+      // filtered array, participantIds). Update each thread by index.
+      const threads = await DirectMessages.find(
+        { participantIds: userId },
+        { fields: { participantIds: 1 } }
+      ).fetchAsync();
+      const thumbAvatar = avatar.replace('full', 'thumb');
+      await Promise.all(
+        threads.map((thread) => {
+          const index = thread.participantIds.indexOf(userId);
+          if (index === -1) return null;
+          return DirectMessages.updateAsync(thread._id, {
+            $set: { [`participantAvatars.${index}`]: thumbAvatar },
+          });
+        })
       );
     } catch (error) {
       throw new Meteor.Error(error);
@@ -316,7 +320,7 @@ Meteor.methods({
           },
         }
       );
-      await Meteor.call('setProfilePublic', isPublic);
+      await Meteor.callAsync('setProfilePublic', isPublic);
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update");
     }
@@ -332,10 +336,7 @@ Meteor.methods({
     const host = getHost(this);
 
     try {
-      await Memberships.updateAsync(
-        { userId, host },
-        { $set: { isPublic } }
-      );
+      await Memberships.updateAsync({ userId, host }, { $set: { isPublic } });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update");
     }

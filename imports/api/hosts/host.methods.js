@@ -276,7 +276,7 @@ Meteor.methods({
   async setHostHue(hue) {
     check(hue, String);
     const host = getHost(this);
-    const currentHost = Hosts.findOneAsync({ host });
+    const currentHost = await Hosts.findOneAsync({ host });
     const currentUser = await Meteor.userAsync();
 
     if (!currentUser || !(await isAdmin(currentUser._id, host))) {

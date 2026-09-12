@@ -6,7 +6,12 @@ import Reports from './report';
 import { isAdmin } from '../users/user.roles';
 
 Meteor.methods({
-  async reports_create({ reportedUserId, contentType, contentId, description }) {
+  async reports_create({
+    reportedUserId,
+    contentType,
+    contentId,
+    description,
+  }) {
     check(reportedUserId, Match.Maybe(String));
     check(contentType, String);
     check(contentId, Match.Maybe(String));
@@ -14,9 +19,14 @@ Meteor.methods({
 
     const user = await Meteor.userAsync();
     if (!user) throw new Meteor.Error('not-authorized');
-    if (!description.trim()) throw new Meteor.Error('description-required', 'Please describe the issue.');
+    if (!description.trim())
+      throw new Meteor.Error(
+        'description-required',
+        'Please describe the issue.'
+      );
 
     return Reports.insertAsync({
+      host: getHost(this),
       reporterId: user._id,
       reportedUserId: reportedUserId ?? undefined,
       contentType,
@@ -33,18 +43,33 @@ Meteor.methods({
 
     const host = getHost(this);
     const isAdminUser = await isAdmin(user._id, host);
-    if (!user.isSuperAdmin && !isAdminUser) throw new Meteor.Error('not-authorized');
+    if (!user.isSuperAdmin && !isAdminUser)
+      throw new Meteor.Error('not-authorized');
 
-    const reports = await Reports.find({}, { sort: { createdAt: -1 } }).fetchAsync();
+    // Host admins only see reports filed on their own host.
+    const selector = user.isSuperAdmin ? {} : { host };
+    const reports = await Reports.find(selector, {
+      sort: { createdAt: -1 },
+    }).fetchAsync();
 
-    const userIds = [...new Set(reports.flatMap((r) => [r.reporterId, r.reportedUserId].filter(Boolean)))];
-    const users = await Meteor.users.find({ _id: { $in: userIds } }, { fields: { username: 1 } }).fetchAsync();
-    const usernameById = Object.fromEntries(users.map((u) => [u._id, u.username]));
+    const userIds = [
+      ...new Set(
+        reports.flatMap((r) => [r.reporterId, r.reportedUserId].filter(Boolean))
+      ),
+    ];
+    const users = await Meteor.users
+      .find({ _id: { $in: userIds } }, { fields: { username: 1 } })
+      .fetchAsync();
+    const usernameById = Object.fromEntries(
+      users.map((u) => [u._id, u.username])
+    );
 
     return reports.map((r) => ({
       ...r,
       reporterUsername: usernameById[r.reporterId] ?? r.reporterId,
-      reportedUsername: r.reportedUserId ? (usernameById[r.reportedUserId] ?? r.reportedUserId) : undefined,
+      reportedUsername: r.reportedUserId
+        ? usernameById[r.reportedUserId] ?? r.reportedUserId
+        : undefined,
     }));
   },
 
@@ -58,9 +83,13 @@ Meteor.methods({
 
     const host = getHost(this);
     const isAdminUser = await isAdmin(user._id, host);
-    if (!user.isSuperAdmin && !isAdminUser) throw new Meteor.Error('not-authorized');
+    if (!user.isSuperAdmin && !isAdminUser)
+      throw new Meteor.Error('not-authorized');
 
-    return Reports.updateAsync(reportId, {
+    const selector = user.isSuperAdmin
+      ? { _id: reportId }
+      : { _id: reportId, host };
+    return Reports.updateAsync(selector, {
       $set: {
         status,
         reviewNote: reviewNote ?? '',

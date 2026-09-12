@@ -94,7 +94,10 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
-    const document = await Documents.findOneAsync(documentId);
+    const document = await Documents.findOneAsync({ _id: documentId, host });
+    if (!document) {
+      throw new Meteor.Error('not-found', 'Document not found');
+    }
 
     try {
       await Documents.removeAsync(documentId);
