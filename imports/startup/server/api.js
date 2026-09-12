@@ -6,6 +6,7 @@ import '../../api/_utils/services/sso/sso.methods';
 
 import '../../api/images/image.collection';
 import '../../api/images/image.methods';
+import '../../api/media/media.methods';
 import '../../api/hosts/host';
 import '../../api/hosts/host.methods';
 import '../../api/hosts/host.publications';
