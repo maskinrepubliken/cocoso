@@ -11,6 +11,7 @@ import serverRenderer from './serverRenderer';
 import './api';
 import './migrations';
 import './oauth';
+import './media';
 
 const { cdn_server } = Meteor.settings;
 
