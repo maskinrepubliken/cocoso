@@ -33,10 +33,10 @@ form:
   date:
     start: Başlangıç günü
     finish: Bitiş günü
+    startFinish: Başlangıç ve bitiş saati
   time:
     start: Başlangıç saati
     finish: Bitiş saati
-    startFinish: Başlangıç ve bitiş saati
   capacity:
     label: Kapasite
     helper: Etkinliğe kaç kişi katılabilir?

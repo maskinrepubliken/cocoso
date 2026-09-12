@@ -33,10 +33,10 @@ form:
   date:
     start: Startdag
     finish: Slutdag
+    startFinish: Start och sluttid
   time:
     start: Starttid
     finish: Sluttid
-    startFinish: Start och sluttid
   capacity:
     label: Kapacitet
     helper: Hur många personer kan delta i ditt evenemang?

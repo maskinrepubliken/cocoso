@@ -37,6 +37,7 @@ signup:
       errorNotUnique: Girdiğiniz kullanıcı adı alınmış. Lütfen başka bir kullanıcı adı deneyin
     email:
       label: Eposta adresi
+      errorNotUnique: Bu e-posta adresiyle bir hesap zaten mevcut
     password:
       label: Şifre
       helper: Minimum 8 karakter, en az bir tanesi küçük harf, bir tanesi büyük harf, bir tanesi de rakam

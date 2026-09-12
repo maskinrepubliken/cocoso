@@ -203,6 +203,7 @@ menu:
     users: Användare
     resources: Resurser
     emails: E-postmeddelanden
+    email-newsletter: E-postnyhetsbrev
     categories: Kategorier
   notifications:
     label: Aviseringar
@@ -237,7 +238,6 @@ domains:
   host: Community
   page: sida
   pageOrder: Sidordning
-  profil: profil
   community: Community
   platform: Plattform
   settings: Inställningar
@@ -296,6 +296,7 @@ auth:
     email: Ange en giltig e-postadress
     passwordMin: Lösenordet måste vara minst 8 tecken långt
     passwordRegex: Se till att ange minst en liten bokstav, en versal, en siffra och totalt minst 8 tecken
+    passwordRequired: Ange ditt lösenord
     usernameOrEmail: Ange ditt användarnamn eller e-postadress
 
 public:

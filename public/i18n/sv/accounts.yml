@@ -37,6 +37,7 @@ signup:
       errorNotUnique: Det angivna användarnamnet är redan upptaget. Försök med ett annat
     email:
       label: E-postadress
+      errorNotUnique: Ett konto med den här e-postadressen finns redan
     password:
       label: Lösenord
       helper: Minst 8 tecken, inklusive minst en liten bokstav, en stor bokstav och en siffra

@@ -347,8 +347,10 @@ design:
       select: 'Font seç'
 
 messages:
-  upload: Lütfen görünmesini istediğin boyutta bir imaj seç ve boyutunun 400kb'tan küçük olduğundan emin ol
-  imageTooLarge: 'İmaj çok büyük. Lütfen 400 KB tan küçük bir imaj seçin'
+  empty: Henüz rapor yok.
+  upload:
+    helper: Lütfen görünmesini istediğin boyutta bir imaj seç ve boyutunun 400kb'tan küçük olduğundan emin ol
+    imageTooLarge: 'İmaj çok büyük. Lütfen 400 KB tan küçük bir imaj seçin'
 
 platform:
   main:
