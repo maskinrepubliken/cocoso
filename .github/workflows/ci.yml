@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, typecheck, translations
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # The checks only need the npm toolchain, not a Meteor build.
+      # patch-package runs in postinstall and needs the patched dependency.
+      - run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript (against baseline)
+        run: npm run typecheck
+
+      - name: Translation key parity
+        run: npm run check:i18n
+
+      - name: Unused code and dependencies (informational)
+        run: npm run check:deps || true
