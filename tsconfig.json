@@ -10,6 +10,7 @@
     "jsx": "react",
     "incremental": true,
     "noEmit": true,
+    "skipLibCheck": true,
 
     /* Strict Type-Checking Options */
     "strict": true,
@@ -28,9 +29,18 @@
       "/*": ["./*"]
     },
     "resolveJsonModule": true,
-    "types": [],
+    "types": ["meteor", "node"],
     "esModuleInterop": true,
     "preserveSymlinks": true
   },
-  "exclude": ["./.meteor/**", "./packages/**"]
+  "include": [
+    "client",
+    "server",
+    "imports",
+    "types",
+    "declarations.d.ts",
+    "lucide-react.d.ts",
+    "stitches.config.ts"
+  ],
+  "exclude": ["node_modules", ".meteor", "packages", "media"]
 }

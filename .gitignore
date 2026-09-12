@@ -1,6 +1,26 @@
+# Dependencies
 /node_modules
 
-**/.DS_Store
+# Meteor build output
+/.meteor/local
 
-**/settings.json
+# TypeScript incremental cache
+tsconfig.tsbuildinfo
+
+# Local configuration and secrets
+/private/settings.json
+.env
+.env.*
+
+# Uploaded media (see docs/CONFIGURATION.md, media.storagePath)
 /media
+
+# Editor and OS files
+**/.DS_Store
+.idea/
+.zed/
+.claude/settings.local.json
+
+# Logs
+*.log
+npm-debug.log*

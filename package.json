@@ -26,9 +26,16 @@
   "homepage": "https://github.com/eminx/cocoso#readme",
   "scripts": {
     "start": "meteor run --settings private/settings.json",
-    "e2e": "METEOR_LOCAL_DIR=.meteor/test BABEL_ENV=test DISABLE_REACT_FAST_REFRESH=1 meteor run --port 4000",
     "analyze": "meteor run --settings private/settings.json --extra-packages bundle-visualizer --production",
-    "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"{imports,client,server,scripts,types}/**/*.{js,jsx,ts,tsx,css}\" \"*.{json,md,ts,mts}\"",
+    "format:check": "prettier --check \"{imports,client,server,scripts,types}/**/*.{js,jsx,ts,tsx,css}\"",
+    "typecheck": "node scripts/typecheck-baseline.mjs",
+    "typecheck:update": "node scripts/typecheck-baseline.mjs --update",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "check:deps": "knip",
+    "check": "npm run typecheck && npm run check:i18n",
     "postinstall": "patch-package",
     "release": "standard-version",
     "release:patch": "standard-version --release-as patch",
@@ -128,11 +135,17 @@
     "modern": true
   },
   "devDependencies": {
+    "@types/loadable__component": "^5.13.10",
+    "@types/meteor": "^2.9.11",
+    "@types/node": "^22.20.2",
+    "@types/react": "^18.3.31",
     "@types/react-big-calendar": "^1.16.3",
     "@types/react-color": "^3.0.13",
     "@types/react-csv": "^1.1.10",
-    "@types/react-dom": "^19.1.6",
+    "@types/react-dom": "^18.3.7",
     "@types/react-helmet": "^6.1.11",
+    "@types/react-infinite-scroller": "^1.2.5",
+    "@types/react-lazy-load-image-component": "^1.6.5",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-table": "^7.7.20",
     "autoprefixer": "^10.4.21",
@@ -140,7 +153,7 @@
     "postcss-load-config": "^6.0.1",
     "prettier": "^2.6.2",
     "standard-version": "^9.5.0",
-    "typescript": "^4.6.3"
+    "typescript": "^5.9.3"
   },
   "browserslist": [
     "last 2 versions"
