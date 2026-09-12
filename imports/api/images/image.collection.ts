@@ -12,7 +12,7 @@ Images.schema = new SimpleSchema({
   uploadedBy: { type: String }, // userId
   uploadedByUsername: { type: String },
 
-  // The processed variants — all WebP URLs on S3
+  // The processed variants — all WebP URLs served from local media storage
   variants: { type: Object },
   'variants.thumb': { type: String }, // 150px
   'variants.small': { type: String }, // 400px

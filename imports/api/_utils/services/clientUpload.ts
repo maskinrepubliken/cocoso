@@ -88,7 +88,7 @@ export async function resizeBeforeUpload(
  * Upload an image through the new pipeline:
  * 1. Client-side resize (opt-in, call resizeBeforeUpload first if desired)
  * 2. Send to server method
- * 3. Server runs Sharp, generates WebP variants, uploads to S3
+ * 3. Server runs Sharp, generates WebP variants, stores them on the server
  * 4. Returns the Images collection _id and all variant URLs
  */
 export async function uploadImage(

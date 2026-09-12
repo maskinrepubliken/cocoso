@@ -40,7 +40,6 @@
     "primary-color": "orange"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1063.0",
     "@babel/runtime": "^7.16.7",
     "@hookform/resolvers": "^2.8.5",
     "@loadable/component": "^5.16.4",

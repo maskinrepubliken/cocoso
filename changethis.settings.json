@@ -5,12 +5,9 @@
     "name": "Cocoso",
     "iconsBaseUrl": "url-where-you-have-uploaded-your-favicon-and-other-icons"
   },
-  "AWSs3": {
-    "AWSAccessKeyId": "your-aws-access-key-id",
-    "AWSSecretAccessKey": "your-aws-secret-access-key",
-    "AWSRegion": "your-aws-region",
-    "AWSBucketName": "your-aws-bucket-name",
-    "AWSBucketReadingMaterials": "your-aws-bucket-reading-material"
+  "media": {
+    "storagePath": "/absolute/path/where/uploaded/files/are/stored",
+    "publicUrl": "https://your-domain.example/media"
   },
   "mailCredentials": {
     "smtp": {

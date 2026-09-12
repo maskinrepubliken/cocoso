@@ -1,17 +1,17 @@
 import { createLogoPngBuffer } from './imageProcessor';
-import { uploadToS3 } from './aws.upload';
+import { saveMedia } from './mediaStorage';
 
 /**
  * Generates the PNG logo variant from a freshly-uploaded file buffer and
- * uploads it to S3 alongside the WebP variants (same folder, so it shares
- * their lifecycle/cleanup).
+ * stores it alongside the WebP variants (same folder, so it shares their
+ * lifecycle/cleanup).
  */
 export async function uploadLogoPng(
   fileBuffer: Buffer,
   folderKey: string
 ): Promise<string> {
   const pngBuffer = await createLogoPngBuffer(fileBuffer);
-  return uploadToS3(pngBuffer, `${folderKey}/full.png`, 'image/png');
+  return saveMedia(pngBuffer, `${folderKey}/full.png`);
 }
 
 /**

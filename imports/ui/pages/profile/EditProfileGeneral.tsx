@@ -71,10 +71,10 @@ export default function EditProfileGeneral() {
     try {
       // Client-side resize first pass
       const resizedAvatar = await resizeBeforeUpload(uploadableAvatar, 1200);
-      // Upload through server: Sharp → WebP variants → S3
+      // Upload through server: Sharp → WebP variants → local storage
       const result = await uploadImage(resizedAvatar!, 'avatar');
       // Store the full variant URL (best quality) for now — schema expects a string
-      // Variants are still generated in S3 for future use
+      // Variants are still generated and stored for future use
       await call('setAvatar', result.variants.full);
       message.success(
         tc('message.success.save', {

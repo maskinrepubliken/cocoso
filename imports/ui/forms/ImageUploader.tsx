@@ -54,7 +54,7 @@ export default function ImageUploader({
             uploadableImage.resizableData,
             1600
           );
-          // Upload through server: Sharp → WebP variants → S3
+          // Upload through server: Sharp → WebP variants → local storage
           const result = await uploadImage(resizedImage!, uploadParam);
           // Return the actual stored image URL instead of the Images collection _id.
           return result.variants.full;

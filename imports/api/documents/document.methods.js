@@ -6,7 +6,11 @@ import Groups from '../groups/group';
 import Works from '../works/work';
 
 import { isAdmin } from '../users/user.roles';
-import { uploadDocumentToS3 } from '../_utils/services/aws.upload';
+import {
+  saveMedia,
+  deleteMedia,
+  sanitizeSegment,
+} from '../_utils/services/mediaStorage';
 
 Meteor.methods({
   async getDocumentsByAttachments(attachedTo) {
@@ -58,15 +62,10 @@ Meteor.methods({
     }
 
     const buffer = Buffer.from(uploadableFile.fileData, 'base64');
-    const key = `documents/${user.username}/${Random.id()}/${
-      uploadableFile.fileName
-    }`;
-    const documentUrl = await uploadDocumentToS3(
-      buffer,
-      key,
-      uploadableFile.contentType
-    );
-    console.log('Document uploaded to S3:', documentUrl);
+    const key = `documents/${sanitizeSegment(
+      user.username || user._id
+    )}/${Random.id()}/${sanitizeSegment(uploadableFile.fileName)}`;
+    const documentUrl = await saveMedia(buffer, key);
 
     try {
       return await Documents.insertAsync({
@@ -95,10 +94,20 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
+    const document = await Documents.findOneAsync(documentId);
+
     try {
       await Documents.removeAsync(documentId);
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't delete the document");
+    }
+
+    if (document?.documentUrl) {
+      try {
+        await deleteMedia(document.documentUrl);
+      } catch (error) {
+        console.error('[media] Could not delete document file:', error);
+      }
     }
   },
 });

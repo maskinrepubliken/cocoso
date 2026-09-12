@@ -56,7 +56,7 @@ export function getImageUrl(
 ): string | null {
   if (!image) return null;
 
-  // Case 1: It's a plain string — legacy format or S3 URL. Try to derive a variant,
+  // Case 1: It's a plain string — legacy format or a stored variant URL. Try to derive a variant,
   // otherwise return the string unchanged.
   if (typeof image === 'string') {
     return getImageUrlFromString(image, size);
@@ -90,9 +90,10 @@ function getImageUrlFromString(
   imageUrl: string,
   size: ImageSize
 ): string | null {
-  // 1. Already an S3 variant URL? Derive the requested size.
+  // 1. Already a variant URL (local /media/images/... or legacy S3)?
+  //    Derive the requested size.
   const variantPattern =
-    /^(https?:\/\/[^/]+\/images\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+\/)(thumb|small|medium|full)(\.[a-zA-Z0-9]+)$/;
+    /^((?:https?:\/\/|\/)[^?#]*\/images\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_-]+\/)(thumb|small|medium|full)(\.[a-zA-Z0-9]+)$/;
   const match = imageUrl.match(variantPattern);
   if (match) {
     const [, prefix, , extension] = match;

@@ -8,7 +8,11 @@ import {
   ImageVariantUrls,
   ImageContext,
 } from '../_utils/services/imageProcessor';
-import { uploadToS3 } from '../_utils/services/aws.upload';
+import {
+  saveMedia,
+  deleteMultipleMedia,
+  sanitizeSegment,
+} from '../_utils/services/mediaStorage';
 import { uploadLogoPng } from '../_utils/services/logoPng';
 import { getHost } from '../_utils/shared';
 import Hosts from '../hosts/host';
@@ -16,7 +20,7 @@ import { isAdmin } from '../users/user.roles';
 
 /**
  * Upload an image: receive a buffer from the client,
- * process it with Sharp, upload all variants to S3,
+ * process it with Sharp, store all variants on local disk,
  * save the record in the Images collection.
  */
 async function uploadImageMethod(
@@ -49,15 +53,17 @@ async function uploadImageMethod(
   // Process with Sharp
   const { variants, metadata } = await processImage(fileBuffer, context);
 
-  // Generate a unique folder key for S3
+  // Generate a unique folder key for local storage
   const uniqueId = Random.id();
-  const folderKey = `images/${user.username}/${uniqueId}`;
+  const folderKey = `images/${sanitizeSegment(
+    user.username || user._id
+  )}/${uniqueId}`;
 
-  // Upload all variants to S3 in parallel (pass the variant buffer first)
+  // Write all variants to local storage in parallel
   const uploadResults = await Promise.all(
     variants.map(async (variant) => {
       const key = `${folderKey}/${variant.suffix}.webp`;
-      const url = await uploadToS3(variant.buffer, key, 'image/webp');
+      const url = await saveMedia(variant.buffer, key);
       return { suffix: variant.suffix, url };
     })
   );
@@ -97,7 +103,7 @@ async function uploadImageMethod(
 }
 
 /**
- * Delete an image and its S3 objects.
+ * Delete an image and its stored files.
  */
 async function deleteImageMethod(imageId: string) {
   check(imageId, String);
@@ -120,15 +126,12 @@ async function deleteImageMethod(imageId: string) {
     }
   }
 
-  // Delete all variants (plus the PNG logo variant, if any) from S3
+  // Delete all variants (plus the PNG logo variant, if any) from disk
   const variantUrls = Object.values(image.variants) as string[];
   if (image.pngUrl) {
     variantUrls.push(image.pngUrl);
   }
-  const { deleteMultipleFromS3 } = await import(
-    '../_utils/services/aws.upload'
-  );
-  await deleteMultipleFromS3(variantUrls);
+  await deleteMultipleMedia(variantUrls);
 
   // Remove from DB
   await Images.removeAsync(imageId);
