@@ -53,13 +53,6 @@ export default function ActivitiesHybrid({
         <Tabs tabs={tabs} index={showPast ? 0 : 1} />
       </Center>
 
-      {/* <Center>
-        <VirtualGridLister
-          cellProps={{ currentHost, showPast, getTags, setModalItem }}
-          items={activities}
-        />
-      </Center> */}
-
       <InfiniteScroller items={activities} filtrerMarginTop={-72}>
         {(item, index) => (
           <Center

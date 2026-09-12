@@ -9,7 +9,6 @@ import '../../api/images/image.methods';
 import '../../api/media/media.methods';
 import '../../api/hosts/host';
 import '../../api/hosts/host.methods';
-import '../../api/hosts/host.publications';
 import '../../api/memberships/membership';
 import '../../api/memberships/membershipConflictReport';
 import '../../api/memberships/membershipMigration.methods';
@@ -20,16 +19,13 @@ import '../../api/users/user.methods';
 import '../../api/users/user.publications';
 import '../../api/pages/page';
 import '../../api/pages/page.methods';
-import '../../api/pages/page.publications';
 
 import '../../api/categories/category';
 import '../../api/categories/category.methods';
 import '../../api/works/work';
 import '../../api/works/work.methods';
-import '../../api/works/work.publications';
 import '../../api/groups/group';
 import '../../api/groups/group.methods';
-import '../../api/groups/group.publications';
 
 import '../../api/chats/chat';
 import '../../api/chats/chat.methods';
@@ -41,19 +37,15 @@ import '../../api/directMessages/directMessages.publications';
 
 import '../../api/reports/report';
 import '../../api/reports/report.methods';
-import '../../api/reports/report.publications';
 
 import '../../api/documents/document';
 import '../../api/documents/document.methods';
-import '../../api/documents/document.publications';
 
 import '../../api/resources/resource';
 import '../../api/resources/resource.methods';
-import '../../api/resources/resource.publications';
 
 import '../../api/activities/activity';
 import '../../api/activities/activity.methods';
-import '../../api/activities/activity.publications';
 
 import '../../api/platform/platform';
 import '../../api/platform/platform.methods';
