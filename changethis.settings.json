@@ -1,21 +1,26 @@
-// Please move this file into a new folder called "private" and rename it to "settings.json" (like: /private/settings.json) with your relevant, secret credentials.
-
 {
+  "_readme": "Copy this file to private/settings.json and fill in the values. Every key is documented in docs/CONFIGURATION.md. private/settings.json is gitignored.",
+
   "public": {
     "name": "Cocoso",
-    "iconsBaseUrl": "url-where-you-have-uploaded-your-favicon-and-other-icons"
+    "iconsBaseUrl": "https://your-domain.example/icons",
+    "authDomain": "auth.your-domain.example"
   },
+
   "media": {
-    "storagePath": "/absolute/path/where/uploaded/files/are/stored",
+    "storagePath": "/var/lib/cocoso/media",
     "publicUrl": "https://your-domain.example/media"
   },
+
   "mailCredentials": {
     "smtp": {
-      "fromEmail": "<noreplyblabla@someemailsite.com>",
-      "userName": "email-username",
-      "password": "a-secret-password",
-      "host": "smtp-email-host",
-      "port": "smtp-email-port"
+      "fromEmail": "Your Platform <noreply@your-domain.example>",
+      "userName": "smtp-username",
+      "password": "smtp-password",
+      "host": "smtp.your-provider.example",
+      "port": "587"
     }
-  }
+  },
+
+  "cdnServer": ""
 }

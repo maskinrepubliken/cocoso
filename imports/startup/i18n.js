@@ -23,19 +23,20 @@ const allLangs = [
 ];
 
 const defaultLang = 'en';
-
 const isServer = Meteor.isServer;
 
 const path = '/i18n/{{lng}}/{{ns}}.yml';
-// NOTE: an absolute, ROOT_URL-based loadPath was tried here for the server
-// so Node's fetch() (which needs a full URL, unlike the browser) could
-// actually load these files — but that makes the server fetch its own
-// translation files from itself over HTTP, which deadlocks: the request
-// handling the fetch is the same single process needed to answer it. Back
-// to the relative path (still broken server-side — see serverI18n plan
-// notes — but not hanging) until that's replaced with a filesystem-based
-// backend for the server instance instead.
 const loadPath = Meteor.isProduction && cdnServer ? cdnServer + path : path;
+
+// The browser fetches translations over HTTP. The server reads the same
+// files from disk (imports/startup/server/i18nServerBackend.js): fetching
+// them from itself over HTTP was unreliable during startup and left SSR
+// rendering English for non-English visitors, which then failed hydration.
+let Backend = I18NextHttpBackend;
+if (isServer) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  Backend = require('./server/i18nServerBackend').default;
+}
 
 const options = {
   backend: {
@@ -72,7 +73,7 @@ const options = {
 
 const initPromise = i18n
   .use(initReactI18next)
-  .use(I18NextHttpBackend)
+  .use(Backend)
   .use(LanguageDetector)
   .init(options);
 
