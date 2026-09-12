@@ -19,7 +19,7 @@ import type { CategoryItem } from '/imports/ui/types';
 
 import Boxling from './Boxling';
 
-const specialCh = /[!@#$%^&*()/\s/_+\=\[\]{};':"\\|,.<>\/?]+/;
+const specialCh = /[!@#$%^&*()/\s_+=[\]{};':"\\|,.<>/?]+/;
 
 export default function CategoriesAdmin() {
   const currentUser = useAtomValue(currentUserAtom);

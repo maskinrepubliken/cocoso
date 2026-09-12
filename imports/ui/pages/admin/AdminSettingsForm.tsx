@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSubmit } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
@@ -9,9 +8,18 @@ import FormField from '/imports/ui/forms/FormField';
 import ChangeLanguage from '/imports/ui/layout/ChangeLanguageMenu';
 import { currentHostAtom } from '/imports/state';
 import { updateHostSettings } from '/imports/actions';
-import { message } from '/imports/ui/generic/message';
 
 import Boxling from './Boxling';
+
+interface HostSettingsFormValues {
+  name?: string;
+  email?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  lang?: string;
+  menu?: unknown[];
+}
 
 export default function AdminSettingsForm() {
   const currentHost = useAtomValue(currentHostAtom);
@@ -19,9 +27,11 @@ export default function AdminSettingsForm() {
   const [t] = useTranslation('hosts');
   const [ta] = useTranslation('admin');
   const [tc] = useTranslation('common');
-  const { handleSubmit, register, formState } = useForm({
-    defaultValues: localSettings,
-  });
+  const { handleSubmit, register, formState } = useForm<HostSettingsFormValues>(
+    {
+      defaultValues: localSettings,
+    }
+  );
   const { isDirty, isSubmitting } = formState;
 
   useEffect(() => {

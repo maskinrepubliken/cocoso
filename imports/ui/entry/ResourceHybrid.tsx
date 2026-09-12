@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router';
+import React from 'react';
 import { Trans } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
@@ -29,7 +29,11 @@ export interface ResourceHybridProps {
   Host: Host;
 }
 
-export default function ResourceHybrid({ documents, resource, Host }: ResourceHybridProps) {
+export default function ResourceHybrid({
+  documents,
+  resource,
+  Host,
+}: ResourceHybridProps) {
   if (!resource) {
     return null;
   }

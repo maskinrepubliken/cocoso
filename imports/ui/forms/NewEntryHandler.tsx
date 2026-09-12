@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
@@ -17,7 +17,10 @@ export interface NewEntryHandlerProps {
   children?: React.ReactNode;
 }
 
-export default function NewEntryHandler({ context, children }: NewEntryHandlerProps) {
+export default function NewEntryHandler({
+  context,
+  children,
+}: NewEntryHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loaders, setLoaders] = useAtom(loaderAtom);

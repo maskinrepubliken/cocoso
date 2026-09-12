@@ -196,6 +196,7 @@ function TermsForHost({ currentHost }: TermsForHostProps) {
         <a
           href="https://www.privacypolicies.com/privacy-policy-generator/"
           target="_blank"
+          rel="noopener noreferrer"
         >
           Privacy Policy Generator
         </a>
@@ -288,7 +289,7 @@ function TermsForHost({ currentHost }: TermsForHostProps) {
             accessible from{' '}
             <a
               href={currentHost?.host}
-              rel="external nofollow noopener"
+              rel="external nofollow noopener noreferrer"
               target="_blank"
             >
               {currentHost?.host}
@@ -385,6 +386,7 @@ function TermsForHost({ currentHost }: TermsForHostProps) {
         <a
           href="https://www.privacypolicies.com/blog/privacy-policy-template/#Use_Of_Cookies_Log_Files_And_Tracking"
           target="_blank"
+          rel="noopener noreferrer"
         >
           Privacy Policies website
         </a>

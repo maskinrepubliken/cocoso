@@ -1,5 +1,5 @@
-import React from 'react';
 import { Body } from '@react-email/body';
+import React from 'react';
 import { Button } from '@react-email/button';
 import { Column } from '@react-email/column';
 import { Container } from '@react-email/container';
@@ -208,8 +208,8 @@ export default function EmailPreview({ allHosts, currentHost, email }) {
 
     return body.map((content) =>
       content?.type === 'image' && content?.value?.src ? (
-        <Container>
-          <Section key={content.id} style={{ marginBottom: 24 }}>
+        <Container key={content.id}>
+          <Section style={{ marginBottom: 24 }}>
             <Img
               alt={subject}
               height="auto"
@@ -219,8 +219,8 @@ export default function EmailPreview({ allHosts, currentHost, email }) {
           </Section>
         </Container>
       ) : content?.type === 'text' && content?.value?.html ? (
-        <Container>
-          <Section key={content.id} style={{ fontSize: 16, marginBottom: 24 }}>
+        <Container key={content.id}>
+          <Section style={{ fontSize: 16, marginBottom: 24 }}>
             {HTMLReactParser(DOMPurify.sanitize(content.value.html))}
           </Section>
         </Container>
@@ -294,8 +294,8 @@ export default function EmailPreview({ allHosts, currentHost, email }) {
           <Hr style={hrStyle} />
 
           {activities?.map((activity) => (
-            <Container>
-              <Section key={activity._id} style={{ marginBottom: 24 }}>
+            <Container key={activity._id}>
+              <Section style={{ marginBottom: 24 }}>
                 <Link
                   href={`https://${activity.host}/activities/${activity._id}`}
                   style={{ color: '#0f64c0' }}
@@ -355,8 +355,8 @@ export default function EmailPreview({ allHosts, currentHost, email }) {
           ))}
 
           {works?.map((work) => (
-            <Container>
-              <Section key={work._id} style={{ marginBottom: 24 }}>
+            <Container key={work._id}>
+              <Section style={{ marginBottom: 24 }}>
                 <Link
                   href={`https://${work.host}/@${work.authorUsername}/works/${work._id}`}
                   style={{ color: '#0f64c0' }}

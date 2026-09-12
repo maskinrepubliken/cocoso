@@ -1,5 +1,5 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import React from 'react';
 
 import { Box, Button, Flex, Text } from '/imports/ui/core';
 import FileDropper from '/imports/ui/forms/FileDropper';

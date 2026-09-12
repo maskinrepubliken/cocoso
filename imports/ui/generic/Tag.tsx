@@ -1,5 +1,5 @@
-import React from 'react';
 import SmallCloseIcon from 'lucide-react/dist/esm/icons/x-circle';
+import React from 'react';
 
 import { Box, Flex, IconButton } from '/imports/ui/core';
 

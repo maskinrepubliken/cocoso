@@ -1,5 +1,5 @@
-import React from 'react';
 import FeatureAdminWrapper from './_FeatureAdminWrapper';
+import React from 'react';
 
 const listing = 'activities';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { createStitches } from '@stitches/react';
 
 // --- scales copied from old file

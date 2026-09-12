@@ -1,19 +1,12 @@
-import React from 'react';
 import { Link } from 'react-router';
+import React from 'react';
 import { Trans } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { useAtomValue } from 'jotai';
 
 import { platformAtom } from '/imports/state';
-import {
-  Box,
-  Center,
-  Flex,
-  Heading,
-  Link as CLink,
-  Text,
-} from '/imports/ui/core';
+import { Box, Center, Flex, Heading, Text } from '/imports/ui/core';
 
 import FeedbackForm from './FeedbackForm';
 import ChangeLanguageMenu from './ChangeLanguageMenu';

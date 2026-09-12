@@ -1,5 +1,5 @@
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
@@ -50,7 +50,8 @@ async function preparePendingAuth(returnTo?: string): Promise<URLSearchParams> {
     JSON.stringify({
       codeVerifier,
       state,
-      returnTo: returnTo || `${window.location.pathname}${window.location.search}`,
+      returnTo:
+        returnTo || `${window.location.pathname}${window.location.search}`,
     })
   );
 

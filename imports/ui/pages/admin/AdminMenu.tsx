@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left';
 import { useAtomValue } from 'jotai';
@@ -111,12 +111,13 @@ export function AdminUserThumb() {
 }
 
 function AdminMenuItem({ item, isSub = false, parentValue, onClick }) {
+  const location = useLocation();
+  const pathname = location?.pathname;
+
   if (!item) {
     return null;
   }
 
-  const location = useLocation();
-  const pathname = location?.pathname;
   const isCurrentRoute = pathname.includes(item.value);
 
   if (isSub && !pathname.includes(parentValue)) {

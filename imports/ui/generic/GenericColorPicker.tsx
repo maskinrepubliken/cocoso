@@ -1,5 +1,5 @@
-import React from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
+import React from 'react';
 import { Trans } from 'react-i18next';
 
 import Menu from '/imports/ui/generic/Menu';
@@ -10,7 +10,10 @@ export interface GenericColorPickerProps {
   onChange?: (color: ColorResult) => void;
 }
 
-export default function GenericColorPicker({ color, onChange }: GenericColorPickerProps) {
+export default function GenericColorPicker({
+  color,
+  onChange,
+}: GenericColorPickerProps) {
   return (
     <Menu
       button={

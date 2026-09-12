@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Outlet, useLoaderData } from 'react-router';
+import React, { useEffect } from 'react';
+import { useLoaderData } from 'react-router';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 
 import { currentHostAtom } from '/imports/state';

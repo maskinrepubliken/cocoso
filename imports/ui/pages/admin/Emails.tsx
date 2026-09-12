@@ -83,22 +83,9 @@ export default function Emails() {
     }
   }, [currentUser, role, emails, state]);
 
-  if (!currentUser || role !== 'admin' || !emails) {
-    return null;
-  }
-
-  const handleSubmit = async (values: any, emailIndex: number) => {
-    try {
-      await call('updateEmail', values, emailIndex);
-      message.success(tc('message.success.update'));
-    } catch (error: any) {
-      message.error(error.reason || error.error);
-    }
-  };
-
   const parsedEmails = useMemo(
     () =>
-      emails.map((email: any, index: number) => {
+      (emails || []).map((email: any, index: number) => {
         let key = 'new';
         if (index === 1) {
           key = 'verified';
@@ -115,6 +102,19 @@ export default function Emails() {
       }),
     [emails]
   );
+
+  if (!currentUser || role !== 'admin' || !emails) {
+    return null;
+  }
+
+  const handleSubmit = async (values: any, emailIndex: number) => {
+    try {
+      await call('updateEmail', values, emailIndex);
+      message.success(tc('message.success.update'));
+    } catch (error: any) {
+      message.error(error.reason || error.error);
+    }
+  };
 
   const show = searchParams.get('show');
   const key = ['new', 'verified', 'admin'].includes(show) ? show : 'new';

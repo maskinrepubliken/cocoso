@@ -1,5 +1,5 @@
-import React from 'react';
 import { Outlet } from 'react-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box } from '/imports/ui/core';

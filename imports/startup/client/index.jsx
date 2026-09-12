@@ -1,14 +1,10 @@
 import { Meteor } from 'meteor/meteor';
+import React from 'react';
 import { onPageLoad } from 'meteor/server-render';
 import { Autoupdate } from 'meteor/autoupdate';
 import { Tracker } from 'meteor/tracker';
-import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider,
-} from 'react-router';
+import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import appRoutes from '/imports/appRoutes';
 import SetupHome from '/imports/ui/pages/setup';

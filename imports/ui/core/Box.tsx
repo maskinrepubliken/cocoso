@@ -1,5 +1,5 @@
-import React from 'react';
 import { styled, xToRem } from '/stitches.config';
+import React from 'react';
 import { getPropStyles, getSpacing } from '/imports/ui/core/functions';
 
 // Base primitives

@@ -13,10 +13,6 @@ const getFileName = (occurrence, title) => {
 };
 
 export default function RsvpList({ occurrence, title }) {
-  if (!occurrence) {
-    return null;
-  }
-
   const [t] = useTranslation('activities');
   const [tc] = useTranslation('common');
 
@@ -42,8 +38,12 @@ export default function RsvpList({ occurrence, title }) {
     []
   );
 
-  const attendees = occurrence?.attendees;
+  const attendees = useMemo(() => occurrence?.attendees || [], [occurrence]);
   const table = useTable({ columns, data: attendees });
+
+  if (!occurrence) {
+    return null;
+  }
 
   return (
     <Box>

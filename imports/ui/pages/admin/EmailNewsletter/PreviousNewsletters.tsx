@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link, Outlet, useLoaderData } from 'react-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {

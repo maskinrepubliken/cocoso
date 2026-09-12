@@ -1,5 +1,5 @@
-import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 import RightIcon from 'lucide-react/dist/esm/icons/arrow-right';
 

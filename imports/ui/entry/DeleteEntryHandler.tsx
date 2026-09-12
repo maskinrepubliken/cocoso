@@ -1,5 +1,5 @@
-import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
@@ -44,7 +44,10 @@ export interface DeleteEntryHandlerProps {
   context: Context;
 }
 
-export default function DeleteEntryHandler({ item, context }: DeleteEntryHandlerProps) {
+export default function DeleteEntryHandler({
+  item,
+  context,
+}: DeleteEntryHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const currentUser = useAtomValue(currentUserAtom) as User | null;
   const role = useAtomValue(roleAtom);

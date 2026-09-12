@@ -1,8 +1,6 @@
-import { useTracker } from 'meteor/react-meteor-data';
 import React, { useEffect, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
 
-import { Box, Fade, Flex, Loader, Slide } from '/imports/ui/core';
+import { Box, Fade, Flex, Slide } from '/imports/ui/core';
 
 import UserPopup from './UserPopup';
 import FederationIconMenu from './FederationIconMenu';
@@ -12,7 +10,9 @@ export interface TopBarHandlerProps {
   slideStart?: boolean;
 }
 
-export default function TopBarHandler({ slideStart = true }: TopBarHandlerProps) {
+export default function TopBarHandler({
+  slideStart = true,
+}: TopBarHandlerProps) {
   const [scrollTop, setScrollTop] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 

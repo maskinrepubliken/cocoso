@@ -1,5 +1,5 @@
-import React from 'react';
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link';
+import React from 'react';
 
 import { Box, Code, Flex, Link } from '/imports/ui/core';
 import NiceList from '/imports/ui/generic/NiceList';

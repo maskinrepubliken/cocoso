@@ -1,5 +1,5 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box, Button, Flex, Input, Textarea } from '/imports/ui/core';

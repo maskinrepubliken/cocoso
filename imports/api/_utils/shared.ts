@@ -168,7 +168,7 @@ function emailIsValid(email: string): boolean {
 }
 
 function includesSpecialCharacters(string: string): boolean {
-  const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+  const format = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
 
   if (format.test(string)) {
     return true;

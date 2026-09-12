@@ -1,5 +1,5 @@
-import React from 'react';
 import { useLoaderData } from 'react-router';
+import React from 'react';
 
 import CommunitiesHybrid from '/imports/ui/pages/hosts/CommunitiesHybrid';
 

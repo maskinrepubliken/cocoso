@@ -1,5 +1,5 @@
-import React from 'react';
 import { Trans } from 'react-i18next';
+import React from 'react';
 
 import { Box, Center, Text } from '/imports/ui/core';
 import Menu from '/imports/ui/generic/Menu';

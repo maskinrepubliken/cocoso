@@ -1,5 +1,5 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import React from 'react';
 
 import { Box, Code, Flex, Text } from '/imports/ui/core';
 
@@ -13,7 +13,9 @@ export interface DocumentUploadHelperProps {
   isImage?: boolean;
 }
 
-export default function DocumentUploadHelper({ isImage = true }: DocumentUploadHelperProps) {
+export default function DocumentUploadHelper({
+  isImage = true,
+}: DocumentUploadHelperProps) {
   const [tc] = useTranslation('common');
 
   const uploadables = isImage

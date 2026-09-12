@@ -9,7 +9,9 @@ const MAX_USERNAME_LENGTH = 20;
 const MAX_COLLISION_ATTEMPTS = 5;
 
 function sanitize(raw) {
-  return String(raw || '').toLowerCase().replace(USERNAME_CHARS, '');
+  return String(raw || '')
+    .toLowerCase()
+    .replace(USERNAME_CHARS, '');
 }
 
 function randomDigits(count) {
@@ -32,13 +34,15 @@ async function generateUniqueUsername(candidateBase) {
 
   let candidate = base;
   for (let attempt = 0; attempt < MAX_COLLISION_ATTEMPTS; attempt += 1) {
-    // eslint-disable-next-line no-await-in-loop
     const taken = await Accounts.findUserByUsername(candidate);
     if (!taken) {
       return candidate;
     }
     const suffix = randomDigits(3);
-    candidate = `${base.slice(0, MAX_USERNAME_LENGTH - suffix.length)}${suffix}`;
+    candidate = `${base.slice(
+      0,
+      MAX_USERNAME_LENGTH - suffix.length
+    )}${suffix}`;
   }
 
   // Extremely unlikely to be reached — falls back to a value guaranteed

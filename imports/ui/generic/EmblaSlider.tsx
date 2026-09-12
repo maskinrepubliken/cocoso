@@ -1,5 +1,11 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Fade from 'embla-carousel-fade';
 import FsLightbox from 'fslightbox-react';
@@ -135,12 +141,11 @@ export default function EmblaSlider({
     emblaPluginOptions
   );
 
-  if (!images || images.length === 0) {
-    return null;
-  }
-
   // Resolve image references to URLs (handles both legacy strings and image _ids)
-  const resolvedImages = images.map((img) => getImageUrl(img, 'medium') || img);
+  const resolvedImages = useMemo(
+    () => (images || []).map((img) => getImageUrl(img, 'medium') || img),
+    [images]
+  );
 
   const scrollPrev = useCallback(() => {
     if (!emblaApi) {
@@ -197,6 +202,10 @@ export default function EmblaSlider({
 
   const toggleLightbox = () =>
     setState((prev) => ({ ...prev, lightboxToggle: !prev.lightboxToggle }));
+
+  if (resolvedImages.length === 0) {
+    return null;
+  }
 
   const lightBoxProps = {
     toggler: state.lightboxToggle,

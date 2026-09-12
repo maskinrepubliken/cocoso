@@ -3,7 +3,6 @@ import SimpleSchema from 'simpl-schema';
 
 import { Schemas } from '../_utils/schemas';
 import { contentTypes } from '/imports/ui/pages/composablepages/constants';
-import { optional } from 'zod';
 
 const ComposablePages = new Mongo.Collection('composablepages');
 

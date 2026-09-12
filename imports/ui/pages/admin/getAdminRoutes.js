@@ -1,7 +1,7 @@
-import React from 'react';
 import { Trans } from 'react-i18next';
+import React from 'react';
 
-import { Code, Text } from '/imports/ui/core';
+import { Code } from '/imports/ui/core';
 
 const getMenuLabel = (menuItems, key) => (
   <>

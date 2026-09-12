@@ -1,5 +1,5 @@
-import React from 'react';
 import SettingsIcon from 'lucide-react/dist/esm/icons/settings';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box, Flex, IconButton, Text } from '/imports/ui/core';
@@ -15,7 +15,10 @@ export interface AdminFunctionsProps {
   onSelect: (value: string) => void;
 }
 
-export default function AdminFunctions({ menuItems, onSelect }: AdminFunctionsProps) {
+export default function AdminFunctions({
+  menuItems,
+  onSelect,
+}: AdminFunctionsProps) {
   const [t] = useTranslation('admin');
 
   return (

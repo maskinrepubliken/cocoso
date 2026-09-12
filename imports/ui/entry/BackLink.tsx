@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router';
+import React from 'react';
 import ChevronLeftIcon from 'lucide-react/dist/esm/icons/chevron-left';
 
 import { Button } from '/imports/ui/core';

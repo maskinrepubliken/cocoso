@@ -1,5 +1,5 @@
-import React from 'react';
 import { Outlet, useLocation, useParams } from 'react-router';
+import React from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { Helmet } from 'react-helmet';
@@ -84,7 +84,7 @@ export default function UserHybrid({ user, Host }: UserHybridProps) {
     );
   }
 
-  const { menu } = Host?.settings;
+  const menu = Host?.settings?.menu;
 
   const tabs = [];
   menu
@@ -101,7 +101,7 @@ export default function UserHybrid({ user, Host }: UserHybridProps) {
 
   const pathname = location?.pathname;
   let tabIndex = tabs?.findIndex((tab) => pathname.includes(tab.path));
-  tabIndex === -1 ? (tabIndex = 0) : null;
+  if (tabIndex === -1) tabIndex = 0;
 
   const members = menu?.find((item) => item.name === 'people');
   const title = `${getFullName(user)} | ${user.username} | ${

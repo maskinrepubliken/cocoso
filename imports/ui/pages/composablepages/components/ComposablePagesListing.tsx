@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router';
-import PlusIcon from 'lucide-react/dist/esm/icons/plus';
+import React from 'react';
 import { Trans } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';

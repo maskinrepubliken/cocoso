@@ -1,5 +1,5 @@
-import React from 'react';
 import dayjs from 'dayjs';
+import React from 'react';
 
 import { Box, Flex } from '../core';
 import { DateJust } from './FancyDate';

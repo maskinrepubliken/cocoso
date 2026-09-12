@@ -5,7 +5,7 @@ import { Trans } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import { useAtomValue } from 'jotai';
 
-import { currentHostAtom, isDesktopAtom } from '/imports/state';
+import { isDesktopAtom } from '/imports/state';
 import { Box, Center, Flex, Heading, Image, Text } from '/imports/ui/core';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { parseTitle } from '/imports/api/_utils/shared';

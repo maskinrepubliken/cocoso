@@ -1,6 +1,6 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAtom, useAtomValue } from 'jotai';
+import React from 'react';
+import { useAtom } from 'jotai';
 
 import { Avatar, Flex, Link as CLink, Text } from '/imports/ui/core';
 import Modal from '/imports/ui/core/Modal';

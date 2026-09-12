@@ -1,5 +1,5 @@
-import React from 'react';
 import { Trans } from 'react-i18next';
+import React from 'react';
 import { getDefaultStore } from 'jotai';
 
 import { call } from './api/_utils/shared';

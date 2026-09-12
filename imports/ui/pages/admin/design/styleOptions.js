@@ -1,5 +1,5 @@
-import React from 'react';
 import { Trans } from 'react-i18next';
+import React from 'react';
 
 export const borderRadiusOptions = [
   { label: 'none', value: '0' },

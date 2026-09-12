@@ -1,9 +1,8 @@
-import React from 'react';
 import { useSearchParams } from 'react-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box, Tabs } from '/imports/ui/core';
-import AdminTabs from '/imports/ui/pages/admin/AdminTabs';
 
 import MainFeatureSettings from './MainFeatureSettings';
 
@@ -22,7 +21,7 @@ export default function FeatureAdminWrapper({ listing, furtherTabs = [] }) {
 
   const selectedTabValue = searchParams.get('tab');
   let tabIndex = tabs?.findIndex((tab) => tab.path === selectedTabValue);
-  tabIndex === -1 ? (tabIndex = 0) : null;
+  if (tabIndex === -1) tabIndex = 0;
   const selectedTab = tabs?.find((tab, index) => index === tabIndex);
 
   return (

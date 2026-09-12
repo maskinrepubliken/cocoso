@@ -1,5 +1,5 @@
-import React from 'react';
 import { useAtomValue } from 'jotai';
+import React from 'react';
 
 import { Box } from '/imports/ui/core';
 import { currentUserAtom } from '/imports/state';

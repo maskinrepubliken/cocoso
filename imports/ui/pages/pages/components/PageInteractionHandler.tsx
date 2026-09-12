@@ -1,5 +1,5 @@
-import React from 'react';
 import { useAtomValue } from 'jotai';
+import React from 'react';
 
 import SlideWidget from '/imports/ui/entry/SlideWidget';
 import { Box } from '/imports/ui/core';

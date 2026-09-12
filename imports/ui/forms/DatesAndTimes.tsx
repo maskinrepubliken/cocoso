@@ -8,11 +8,8 @@ import {
   Center,
   Checkbox,
   Flex,
-  FormControl,
-  FormLabel,
   IconButton,
   Text,
-  Wrap,
 } from '/imports/ui/core';
 import type { DateAndTime } from '/imports/ui/types';
 

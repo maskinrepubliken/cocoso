@@ -194,7 +194,7 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
 
   const selectedTabValue = searchParams.get('tab');
   let tabIndex = tabs?.findIndex((tab) => tab.path === selectedTabValue);
-  tabIndex === -1 ? (tabIndex = 0) : null;
+  if (tabIndex === -1) tabIndex = 0;
   const selectedTab = tabs?.find((tab, index) => index === tabIndex);
 
   const description = subTitle || content?.toString() || author?.username;

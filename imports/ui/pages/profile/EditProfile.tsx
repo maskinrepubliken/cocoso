@@ -84,6 +84,21 @@ export default function EditProfile() {
 
   const isMember = ['admin', 'contributor', 'participant'].includes(role);
 
+  const pathname = location?.pathname;
+  const pathnameLastPart = pathname.split('/').pop();
+  const tabIndex =
+    tabs && tabs.findIndex((tab) => tab.path === pathnameLastPart);
+
+  useEffect(() => {
+    if (
+      isMember &&
+      tabs &&
+      !tabs.find((tab) => tab.path === pathnameLastPart)
+    ) {
+      navigate(tabs[0].path);
+    }
+  }, [isMember, tabs, pathnameLastPart]);
+
   if (!isMember) {
     return (
       <Center p="8">
@@ -91,17 +106,6 @@ export default function EditProfile() {
       </Center>
     );
   }
-
-  const pathname = location?.pathname;
-  const pathnameLastPart = pathname.split('/').pop();
-  const tabIndex =
-    tabs && tabs.findIndex((tab) => tab.path === pathnameLastPart);
-
-  useEffect(() => {
-    if (tabs && !tabs.find((tab) => tab.path === pathnameLastPart)) {
-      navigate(tabs[0].path);
-    }
-  }, [tabs, pathnameLastPart]);
 
   return (
     <>

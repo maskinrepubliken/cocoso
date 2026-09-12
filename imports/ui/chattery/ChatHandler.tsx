@@ -51,15 +51,16 @@ export function ChatUI({
 }: ChatUIProps) {
   const [tc] = useTranslation('common');
 
+  // Hooks must run unconditionally; bail out after them.
+  const contextId = item?._id;
+  const isChatLoading = useSubscribe('chat', contextId);
+  const chat = useTracker(() => {
+    return contextId ? Chats.findOne({ contextId }) : undefined;
+  }, [contextId]);
+
   if (!currentUser || !item) {
     return null;
   }
-
-  const contextId = item._id;
-  const isChatLoading = useSubscribe('chat', contextId);
-  const chat = useTracker(() => {
-    return Chats.findOne({ contextId });
-  }, []);
   const discussion = chat?.messages?.map((message: any) => ({
     ...message,
     isFromMe: currentUser && message && message.senderId === currentUser._id,

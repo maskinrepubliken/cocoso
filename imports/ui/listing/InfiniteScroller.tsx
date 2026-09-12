@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import Masonry from 'react-masonry-css';
 
-import { Box, Center, Flex, Loader } from '/imports/ui/core';
+import { Box, Flex, Loader } from '/imports/ui/core';
 
 import NewEntryHelper from '../generic/NewEntryHelper';
 import FiltrerSorter from './FiltrerSorter';

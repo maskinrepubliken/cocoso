@@ -62,10 +62,11 @@ function NewGridThumb({
   title,
   tag,
 }: NewGridThumbProps) {
+  const allHosts = useAtomValue(allHostsAtom);
+
   if (!title && !imageUrl) {
     return null;
   }
-  const allHosts = isClient && useAtomValue(allHostsAtom);
 
   const hostValue =
     host && allHosts && isClient

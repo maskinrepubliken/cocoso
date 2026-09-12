@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link, useLoaderData } from 'react-router';
+import React from 'react';
 
 import { Box } from '/imports/ui/core';
 import Paginate from '/imports/ui/listing/Paginate';

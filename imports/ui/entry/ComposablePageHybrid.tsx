@@ -1,5 +1,5 @@
-import React from 'react';
 import loadable from '@loadable/component';
+import React from 'react';
 import { Link } from 'react-router';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
@@ -71,7 +71,7 @@ function ContentViewModule({ module, Host }: ContentViewModuleProps) {
   }
 
   switch (type) {
-    case 'button':
+    case 'button': {
       const buttonProps = {
         size: value.size,
         variant: value.variant,
@@ -90,12 +90,13 @@ function ContentViewModule({ module, Host }: ContentViewModuleProps) {
           )}
         </Center>
       );
+    }
     case 'divider':
       if (value.kind === 'space') {
         return <Box w="100%" h={`${value.height}px`} />;
       }
       return <Divider />;
-    case 'image':
+    case 'image': {
       const imageProps = {
         alt: 'image',
         loading: 'lazy' as const,
@@ -117,6 +118,7 @@ function ContentViewModule({ module, Host }: ContentViewModuleProps) {
           )}
         </Center>
       );
+    }
     case 'image-slider':
       return (
         <Center py="4">

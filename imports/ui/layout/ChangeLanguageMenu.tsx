@@ -3,7 +3,6 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { Box, Select, Text } from '/imports/ui/core';
 import { allLangs } from '/imports/startup/i18n';
-import Menu from '/imports/ui/generic/Menu';
 
 export interface ChangeLanguageProps {
   hideHelper?: boolean;

@@ -36,10 +36,6 @@ export default function ContactInfo({
   const [contactInfo, setContactInfo] = useState(null);
   const [startingConvo, setStartingConvo] = useState(false);
 
-  if (!username) {
-    return null;
-  }
-
   const getContactInfo = async () => {
     try {
       const response = await call('getUserContactInfo', username);
@@ -50,12 +46,19 @@ export default function ContactInfo({
   };
 
   useEffect(() => {
+    if (!username) {
+      return;
+    }
     if (!value) {
       getContactInfo();
     } else {
       setContactInfo(value);
     }
   }, []);
+
+  if (!username) {
+    return null;
+  }
 
   const handleSendMessage = async () => {
     if (startingConvo || !userId) return;

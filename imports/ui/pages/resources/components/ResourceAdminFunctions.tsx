@@ -1,5 +1,5 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import React from 'react';
 import { useLoaderData, useSearchParams } from 'react-router';
 
 import AdminFunctions from '/imports/ui/entry/AdminFunctions';

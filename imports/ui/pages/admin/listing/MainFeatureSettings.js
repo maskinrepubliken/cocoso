@@ -13,7 +13,6 @@ import {
   Textarea,
 } from '/imports/ui/core';
 import { currentHostAtom } from '/imports/state';
-import { updateHostSettings } from '/imports/actions';
 import { call } from '../../../../api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 

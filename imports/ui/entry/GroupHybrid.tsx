@@ -1,5 +1,5 @@
-import React from 'react';
 import { Trans } from 'react-i18next';
+import React from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { Box } from '/imports/ui/core';

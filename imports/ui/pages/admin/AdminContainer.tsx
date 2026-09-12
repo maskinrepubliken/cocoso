@@ -52,7 +52,8 @@ function AdminHeader({ currentRoute }) {
 
 export default function AdminContainer({ Host }) {
   const currentUser = useAtomValue(currentUserAtom);
-  const currentHost = Host || useAtomValue(currentHostAtom);
+  const currentHostFromAtom = useAtomValue(currentHostAtom);
+  const currentHost = Host || currentHostFromAtom;
   const isDesktop = useAtomValue(isDesktopAtom);
   const role = useAtomValue(roleAtom);
 

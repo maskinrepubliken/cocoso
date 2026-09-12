@@ -1,5 +1,5 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import React from 'react';
 
 import FeatureAdminWrapper from './_FeatureAdminWrapper';
 import PagesAdminOrder from './PagesAdminOrder';
