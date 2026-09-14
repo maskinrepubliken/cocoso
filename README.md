@@ -1,12 +1,17 @@
 # Cocoso — Community Cooperation Software
 
+This is **pioneer-cocoso**, a maintained fork of
+[eminx/cocoso](https://github.com/eminx/cocoso) that tracks upstream and
+adds local media storage, a security hardening pass and tooling.
+
 ![Cocoso logo](https://www.cocoso.info/cocoso-logo.png)
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Meteor](https://img.shields.io/badge/Meteor-3.5-DE4F4F?logo=meteor&logoColor=white)](https://www.meteor.com/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![GitHub issues](https://img.shields.io/github/issues/eminx/cocoso)](https://github.com/eminx/cocoso/issues)
+[![GitHub issues](https://img.shields.io/github/issues/lyret/pioneer-cocoso)](https://github.com/lyret/pioneer-cocoso/issues)
+[![CI](https://github.com/lyret/pioneer-cocoso/actions/workflows/ci.yml/badge.svg)](https://github.com/lyret/pioneer-cocoso/actions/workflows/ci.yml)
 
 [cocoso.info](https://www.cocoso.info/)
 
@@ -56,8 +61,8 @@ Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the pieces fit.
 ## Getting started
 
 ```bash
-git clone https://github.com/eminx/cocoso.git
-cd cocoso
+git clone https://github.com/lyret/pioneer-cocoso.git
+cd pioneer-cocoso
 meteor npm install
 cp changethis.settings.json private/settings.json   # edit; see docs/CONFIGURATION.md
 npm start                                           # http://localhost:3000
@@ -88,7 +93,9 @@ contributions there are very welcome.
 
 ## Contributing
 
-Issues and pull requests are welcome at
+Issues and pull requests for this fork go to
+[github.com/lyret/pioneer-cocoso](https://github.com/lyret/pioneer-cocoso);
+changes that belong to everyone should also be offered upstream at
 [github.com/eminx/cocoso](https://github.com/eminx/cocoso). Keep pull
 requests focused, run the checks above, and follow the conventions in
 [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). Commit messages in
