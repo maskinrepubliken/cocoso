@@ -1,3 +1,7 @@
+import { Random } from 'meteor/random';
+
+export const generateId = () => Random.id();
+
 export const contentTypes = [
   {
     type: 'button',

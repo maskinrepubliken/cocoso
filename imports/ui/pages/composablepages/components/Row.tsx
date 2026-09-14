@@ -12,7 +12,7 @@ import Menu from '/imports/ui/generic/Menu';
 import { Box, Center, Flex } from '/imports/ui/core';
 import Boxling from '/imports/ui/pages/admin/Boxling';
 
-import { contentTypes, getGridTemplateColumns } from '../constants';
+import { contentTypes, generateId, getGridTemplateColumns } from '../constants';
 import { ComposablePageContext } from '../ComposablePageForm';
 import ContentEditModule from './ContentEditModule';
 import DropTarget from './DropTarget';
@@ -23,7 +23,7 @@ export function Column({ column, columnIndex, rowIndex }) {
   const handleSelectContent = (content) => {
     const newContent = {
       ...content,
-      id: Date.now().toString(),
+      id: generateId(),
     };
 
     setCurrentPage((prevPage) => {
@@ -102,7 +102,7 @@ export function Column({ column, columnIndex, rowIndex }) {
           {column.map((content, contentIndex) => {
             return (
               <SortableItem
-                key={content.id || content.type + contentIndex}
+                key={`${content.id || content.type}-${contentIndex}`}
                 style={{ width: '100%' }}
               >
                 <div>

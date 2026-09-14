@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import SettingsIcon from 'lucide-react/dist/esm/icons/settings';
 import { Trans } from 'react-i18next';
 import { useSetAtom } from 'jotai';
 
-import { Box, Button, Checkbox, Input } from '/imports/ui/core';
+import { Box, Button, Checkbox, Input, Textarea } from '/imports/ui/core';
 import Modal from '/imports/ui/core/Modal';
 import FormField from '/imports/ui/forms/FormField';
 import { call } from '../../../../api/_utils/shared';
@@ -14,11 +14,10 @@ import { composablePageTitlesAtom } from '../index';
 
 export default function ComposablePageSettings() {
   const setComposablePageTitles = useSetAtom(composablePageTitlesAtom);
-  const { currentPage, getComposablePageById } = useContext(
-    ComposablePageContext
-  );
+  const { currentPage, setCurrentPage } = useContext(ComposablePageContext);
 
   const initialState = {
+    description: currentPage?.description || '',
     hideTitle: currentPage?.settings?.hideTitle,
     hideMenu: currentPage?.settings?.hideMenu,
     modalOpen: false,
@@ -27,10 +26,29 @@ export default function ComposablePageSettings() {
 
   const [state, setState] = useState(initialState);
   const [updating, setUpdating] = useState(false);
+  // Tracks whether the save we just kicked off (via the shared
+  // pingSave-driven save path, see ComposablePageForm) is still pending,
+  // so we know when it's safe to run our own post-save side effects
+  // below, rather than calling updateComposablePage directly and racing
+  // it against whatever the main editor's autosave effect is doing.
+  const awaitingSaveRef = useRef(false);
 
   useEffect(() => {
     setState(initialState);
   }, [currentPage]);
+
+  useEffect(() => {
+    if (!awaitingSaveRef.current || currentPage?.pingSave) {
+      return;
+    }
+    awaitingSaveRef.current = false;
+    (async () => {
+      setComposablePageTitles(await call('getComposablePageTitles'));
+      message.success(<Trans i18nKey="common:message.success.save" />);
+      setState((prevState) => ({ ...prevState, modalOpen: false }));
+      setUpdating(false);
+    })();
+  }, [currentPage?.pingSave]);
 
   const updateSettings = (field) => {
     setState((prevState) => ({
@@ -39,7 +57,7 @@ export default function ComposablePageSettings() {
     }));
   };
 
-  const confirmChange = async () => {
+  const confirmChange = () => {
     if (state.title === '') {
       message.error(<Trans i18nKey="admin:composable.messages.titleEmpty" />);
       return;
@@ -50,31 +68,19 @@ export default function ComposablePageSettings() {
     }
 
     setUpdating(true);
+    awaitingSaveRef.current = true;
 
-    const newPage = {
-      ...currentPage,
+    setCurrentPage((prevPage) => ({
+      ...prevPage,
       title: state.title,
+      description: state.description,
       settings: {
-        ...currentPage.settings,
+        ...prevPage.settings,
         hideTitle: state.hideTitle,
         hideMenu: state.hideMenu,
       },
-    };
-
-    try {
-      await call('updateComposablePage', newPage);
-      await getComposablePageById();
-      setComposablePageTitles(await call('getComposablePageTitles'));
-      message.success(<Trans i18nKey="common:message.success.save" />);
-      setState((prevState) => ({
-        ...prevState,
-        modalOpen: false,
-      }));
-    } catch (error) {
-      message.error(error.reason || error.error);
-    } finally {
-      setUpdating(false);
-    }
+      pingSave: true,
+    }));
   };
 
   const handleCloseModal = () => {
@@ -107,7 +113,7 @@ export default function ComposablePageSettings() {
         onClose={handleCloseModal}
       >
         <Box borderRadius="md">
-          <Box pb="2">
+          <Box>
             <FormField
               label={<Trans i18nKey="admin:composable.form.title" />}
               required
@@ -116,6 +122,22 @@ export default function ComposablePageSettings() {
                 type="text"
                 value={state.title}
                 onChange={(e) => updateSettings({ title: e.target.value })}
+              />
+            </FormField>
+          </Box>
+
+          <Box pb="2">
+            <FormField
+              helper={
+                <Trans i18nKey="admin:composable.form.descriptionHelper" />
+              }
+              label={<Trans i18nKey="admin:composable.form.description" />}
+            >
+              <Textarea
+                value={state.description}
+                onChange={(e) =>
+                  updateSettings({ description: e.target.value })
+                }
               />
             </FormField>
           </Box>

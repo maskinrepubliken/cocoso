@@ -2,7 +2,7 @@ import mailtranslations from '../groups/mailtranslations';
 import escapeHtml from '../_utils/escapeHtml';
 
 export const getDirectMessageEmailBody = (
-  senderUsername,
+  senderDisplayName,
   currentHost,
   recipient,
   linkHost,
@@ -16,7 +16,7 @@ export const getDirectMessageEmailBody = (
   const firstName = escapeHtml(
     recipient?.firstName || recipient?.username || ''
   );
-  const safeSenderUsername = escapeHtml(senderUsername);
+  const safeSenderDisplayName = escapeHtml(senderDisplayName);
 
   const lang = recipient?.lang || currentHost?.settings?.lang || 'en';
   const tr = mailtranslations[lang] ?? mailtranslations.en;
@@ -45,7 +45,7 @@ export const getDirectMessageEmailBody = (
 
       <div style="font-size:16px; color:#323232; margin-bottom:8px;">${dear} ${firstName},</div>
 
-      <div style="font-size:16px; color:#323232; margin-bottom:8px;">${body} <strong>${safeSenderUsername}</strong>.</div>
+      <div style="font-size:16px; color:#323232; margin-bottom:8px;">${body} <strong>${safeSenderDisplayName}</strong>.</div>
 
       <div style="font-size:15px; color:#555555; margin-bottom:28px;">${bodyLongHtml}</div>
 
