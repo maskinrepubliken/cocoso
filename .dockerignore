@@ -1,0 +1,22 @@
+# Build context for the Cocoso image: source only, no local state.
+.git
+.github
+.vscode
+.claude
+node_modules
+.meteor/local
+media
+build
+docs
+private/settings.json
+.env
+.env.*
+*.log
+**/.DS_Store
+tsconfig.tsbuildinfo
+
+# Build definitions themselves: read by the builder, never needed inside the
+# image, and copying them would bust the cache on every edit.
+Dockerfile
+docker-compose.yml
+.dockerignore

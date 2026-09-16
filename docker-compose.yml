@@ -1,0 +1,90 @@
+# Local Cocoso stack: the app, MongoDB, and volumes for the database and
+# uploads. Start it with `docker compose up -d --build`, then open
+# http://localhost:3000 and complete the setup wizard.
+
+# The stack name, shown as the group row in Docker Desktop. Pinned rather than
+# derived from the directory, so moving or renaming this checkout cannot
+# quietly start a second, empty copy of the stack.
+name: cocoso-web-server
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    # Meteor wants a replica set for oplog tailing; a single member is enough.
+    command: ['--replSet', 'rs0', '--bind_ip_all']
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      # Initiates the replica set on the first run and reports healthy once it
+      # has a primary.
+      test:
+        [
+          'CMD-SHELL',
+          'mongosh --quiet --eval "try { rs.status().ok } catch (e) { rs.initiate({_id:\"rs0\",members:[{_id:0,host:\"mongo:27017\"}]}).ok }" | grep -q 1',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  app:
+    # Published by .github/workflows/docker.yml on every push to main.
+    # `docker compose up -d` pulls it; `docker compose up -d --build` builds
+    # the same thing locally instead.
+    image: ghcr.io/lyret/pioneer-cocoso:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # The build pulls from nodejs.org, github.com and packages.meteor.com.
+      # BuildKit's sandbox network drops a large share of those connections on
+      # some Docker Desktop setups; the host network does not.
+      network: host
+    restart: unless-stopped
+    init: true
+    container_name: cocoso-web-server
+    labels:
+      # Scopes the optional watchtower below to this container only.
+      com.centurylinklabs.watchtower.scope: cocoso
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      # Public URL of the site. Meteor loads code-split modules and builds
+      # media and email links from it, so it must match what browsers use;
+      # set it in a `.env` next to this file for a public deployment.
+      ROOT_URL: ${ROOT_URL:-http://localhost:3000}
+      PORT: 3000
+      MONGO_URL: mongodb://mongo:27017/cocoso?replicaSet=rs0
+      MONGO_OPLOG_URL: mongodb://mongo:27017/local?replicaSet=rs0
+      MEDIA_STORAGE_PATH: /var/lib/cocoso/media
+      METEOR_SETTINGS_FILE: /run/cocoso/settings.json
+    volumes:
+      - ./docker/settings.json:/run/cocoso/settings.json:ro
+      - media-data:/var/lib/cocoso/media
+    ports:
+      - '3000:3000'
+
+  # Opt-in auto-update: watches ghcr.io for a newer image of the app container
+  # and restarts it. Start it with `docker compose --profile autoupdate up -d`.
+  # It needs the Docker socket, which is full control of the daemon, so it is
+  # off by default.
+  watchtower:
+    image: ghcr.io/containrrr/watchtower:latest
+    profiles: [autoupdate]
+    restart: unless-stopped
+    command: --interval 300 --cleanup --scope cocoso
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      com.centurylinklabs.watchtower.scope: cocoso
+
+volumes:
+  # Pinned to the names these volumes already carry on disk. Compose normally
+  # prefixes volume names with the project name, so the rename above would
+  # point the stack at empty cocoso-web-server_* volumes and the database
+  # would look wiped. The prefix here is historical, not a typo.
+  mongo-data:
+    name: cocoso-dev_mongo-data
+  media-data:
+    name: cocoso-dev_media-data
