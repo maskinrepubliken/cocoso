@@ -12,11 +12,12 @@ Copy it to `private/settings.json` (gitignored) and edit it.
 
 ### `public.*` — shipped to the browser
 
-| Key                   | Required | Used by                                  | Meaning                                                                                                                                                                                                    |
-| --------------------- | -------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `public.name`         | yes      | client shell, group emails               | Fallback platform name shown before a Platform record exists.                                                                                                                                              |
-| `public.iconsBaseUrl` | no       | `HelmetHybrid.tsx`                       | Base URL for favicons and touch icons (`<base>/favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-*.png`).                                                                                        |
-| `public.authDomain`   | no       | auth pages, SSO methods, `oauth.js`, SSR | Hostname of the single-sign-on broker. When unset, the OAuth broker and magic-link flow are disabled and each tenant handles login locally. See [ARCHITECTURE.md](ARCHITECTURE.md#authentication-and-sso). |
+| Key                                                | Required | Used by                                  | Meaning                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `public.name`                                      | yes      | client shell, group emails               | Fallback platform name shown before a Platform record exists.                                                                                                                                                                                                                                                            |
+| `public.iconsBaseUrl`                              | no       | `HelmetHybrid.tsx`                       | Base URL for favicons and touch icons (`<base>/favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-*.png`).                                                                                                                                                                                                      |
+| `public.authDomain`                                | no       | auth pages, SSO methods, `oauth.js`, SSR | Hostname of the single-sign-on broker. When unset, the OAuth broker and magic-link flow are disabled and each tenant handles login locally. See [ARCHITECTURE.md](ARCHITECTURE.md#authentication-and-sso).                                                                                                               |
+| `public.packages.dynamic-import.useLocationOrigin` | yes      | Meteor `dynamic-import`                  | Keep `true`. Makes the browser fetch code-split modules (every `loadable()` route) from the origin the page was opened on. Without it Meteor fetches them from `ROOT_URL`, so every tenant hostname other than `ROOT_URL` fails to load those routes and shows the "Something went wrong while loading this page" error. |
 
 Everything under `public` is visible to any visitor. Never put secrets there.
 
@@ -53,14 +54,14 @@ from the app.
 
 ## Environment variables
 
-| Variable             | Meaning                                                                                                                               |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `ROOT_URL`           | Canonical URL of the platform host. Used for absolute links in email, the default media URL, and the HTTPS redirect. Standard Meteor. |
-| `MONGO_URL`          | MongoDB connection string. Standard Meteor.                                                                                           |
-| `PORT`               | HTTP port. Standard Meteor.                                                                                                           |
-| `METEOR_SETTINGS`    | The settings JSON as a string, for production.                                                                                        |
-| `MEDIA_STORAGE_PATH` | Fallback for `media.storagePath`.                                                                                                     |
-| `MAIL_URL`           | Written by the app from `mailCredentials.smtp`; do not set it yourself.                                                               |
+| Variable             | Meaning                                                                                                                                                                                                                                            |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ROOT_URL`           | Canonical URL of the platform host. Used for absolute links in email, the default media URL, and the HTTPS redirect. Standard Meteor. Must be the public URL browsers use; with the compose stack set it in a `.env` next to `docker-compose.yml`. |
+| `MONGO_URL`          | MongoDB connection string. Standard Meteor.                                                                                                                                                                                                        |
+| `PORT`               | HTTP port. Standard Meteor.                                                                                                                                                                                                                        |
+| `METEOR_SETTINGS`    | The settings JSON as a string, for production.                                                                                                                                                                                                     |
+| `MEDIA_STORAGE_PATH` | Fallback for `media.storagePath`.                                                                                                                                                                                                                  |
+| `MAIL_URL`           | Written by the app from `mailCredentials.smtp`; do not set it yourself.                                                                                                                                                                            |
 
 ## Multi-tenancy and hostnames
 

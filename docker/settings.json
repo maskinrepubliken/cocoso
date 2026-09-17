@@ -1,13 +1,15 @@
 {
   "_readme": "Meteor settings used by docker-compose. Full reference: docs/CONFIGURATION.md. Add a mailCredentials.smtp block to send real mail; without one the server logs outgoing messages to the container output instead.",
-
   "public": {
+    "packages": {
+      "dynamic-import": {
+        "useLocationOrigin": true
+      }
+    },
     "name": "Cocoso"
   },
-
   "media": {
     "storagePath": "/var/lib/cocoso/media"
   },
-
   "cdnServer": ""
 }

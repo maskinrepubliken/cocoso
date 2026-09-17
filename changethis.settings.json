@@ -1,17 +1,19 @@
 {
   "_readme": "Copy this file to private/settings.json and fill in the values. Every key is documented in docs/CONFIGURATION.md. private/settings.json is gitignored.",
-
   "public": {
+    "packages": {
+      "dynamic-import": {
+        "useLocationOrigin": true
+      }
+    },
     "name": "Cocoso",
     "iconsBaseUrl": "https://your-domain.example/icons",
     "authDomain": "auth.your-domain.example"
   },
-
   "media": {
     "storagePath": "/var/lib/cocoso/media",
     "publicUrl": "https://your-domain.example/media"
   },
-
   "mailCredentials": {
     "smtp": {
       "fromEmail": "Your Platform <noreply@your-domain.example>",
@@ -21,6 +23,5 @@
       "port": "587"
     }
   },
-
   "cdnServer": ""
 }
