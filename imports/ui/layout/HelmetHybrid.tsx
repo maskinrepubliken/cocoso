@@ -4,6 +4,17 @@ import { Helmet } from 'react-helmet';
 
 const publicSettings = Meteor?.settings?.public;
 
+// CSS generic families (the default theme uses 'sans-serif') are not Google
+// Fonts, so requesting them only produces a failing stylesheet request.
+const GENERIC_FONT_FAMILIES = [
+  'serif',
+  'sans-serif',
+  'monospace',
+  'cursive',
+  'fantasy',
+  'system-ui',
+];
+
 export interface HelmetHybridProps {
   Host: any;
 }
@@ -14,9 +25,10 @@ export default function HelmetHybrid({ Host }: HelmetHybridProps) {
   }
   const lang = Host.settings?.lang;
   const fontFamily = Host?.theme?.body?.fontFamily;
-  const fontHref = fontFamily
-    ? `https://fonts.googleapis.com/css2?family=${fontFamily}:ital,wght@0,300;0,400;0,700;1,400&display=swap`
-    : null;
+  const fontHref =
+    fontFamily && !GENERIC_FONT_FAMILIES.includes(fontFamily)
+      ? `https://fonts.googleapis.com/css2?family=${fontFamily}:ital,wght@0,300;0,400;0,700;1,400&display=swap`
+      : null;
 
   return (
     <Helmet htmlAttributes={{ lang }}>
