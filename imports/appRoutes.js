@@ -211,12 +211,12 @@ import {
 class RouteErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, message: null };
   }
 
   static getDerivedStateFromError(error) {
     if (error) {
-      return { hasError: true };
+      return { hasError: true, message: error?.message || String(error) };
     }
   }
 
@@ -229,8 +229,19 @@ class RouteErrorBoundary extends React.Component {
       return (
         <div style={{ padding: '2rem', textAlign: 'center' }}>
           <h2>Something went wrong while loading this page.</h2>
+          {this.state.message && (
+            <p
+              style={{
+                color: '#666',
+                fontFamily: 'monospace',
+                fontSize: '0.85rem',
+              }}
+            >
+              {this.state.message}
+            </p>
+          )}
           <button
-            onClick={() => this.setState({ hasError: false })}
+            onClick={() => this.setState({ hasError: false, message: null })}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
           >
             Try Again
