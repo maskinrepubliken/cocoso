@@ -16,9 +16,9 @@ cp changethis.settings.json private/settings.json   # then edit it, see docs/CON
 meteor run --settings private/settings.json --port 3000
 ```
 
-On first visit with an empty database the setup wizard creates the Platform
-record, the first Host (bound to the hostname you are browsing on, so use a
-real hostname or `localhost`) and the first super-admin account.
+On first visit with an empty database the setup wizard creates the first
+admin account and the site (name and contact details). Add the
+municipality's locations afterwards under Admin → Places.
 
 ## Scripts
 
@@ -50,11 +50,12 @@ Meteor compiles JSX with the classic runtime, so every file with JSX needs
 `import React from 'react'`; ESLint enforces it.
 
 **Methods.** Every method must, in this order: `check()` its arguments,
-resolve the user with `Meteor.userAsync()`, resolve the tenant with
-`getHost(this)`, check the role with `user.roles.js`, and query with
-`{ _id, host }`. Throw `new Meteor.Error(code, reason)` with a kebab-case
-code; never pass an Error object as the code. Strip `_id`, `host` and author
-fields from client-supplied objects before `$set`.
+resolve the user with `Meteor.userAsync()`, check the role with
+`user.roles.js` (it takes the user id only), and query by `_id`. Throw
+`new Meteor.Error(code, reason)` with a kebab-case code; never pass an Error
+object as the code. Strip `_id` and author fields from client-supplied
+objects before `$set`. Listing methods that can be scoped to a place take an
+optional `locationId` and use `locationSelector()` from `_utils/shared`.
 
 **Data fetching.** Route loaders in `imports/loaders.js` for page data,
 `call()` from `imports/api/_utils/shared.ts` for mutations, jotai atoms for

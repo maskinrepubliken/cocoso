@@ -207,12 +207,6 @@ menu:
     categories: Kategoriler
   notifications:
     label: Bildirimler
-  superadmin:
-    platform: Platform
-    settings: Platform Ayarları
-    intro: Kayıt İntrosu
-    registrationIntro: Intro
-
 plugins:
   fileDropper:
     replace: Bir başka imajla değiştirmek istersen, dosya seçiciyi yeniden açmak için resmin üzerine tıkla.
@@ -296,22 +290,6 @@ terms:
 images:
   countLabel: Imajlar ({{ count }})
 
-communities:
-  member: Üyesin
-  join: Katıl
-  success: '{{ community }} topluluğuna katıldın'
-  info: '{{ community }}a katılarak e-posta bültenlerine kaydolacak ve iç dinamikler hakkında bilgi alacak, etkinliklere ve buluşmalara kolayca katılabilecek ve topluluğun bir parçası olacaksın. Dilediğin zaman ayrılabilirsin.'
-
-platform:
-  title: Toplulukları gör
-  communities: Topluluklar
-  communitiesIn: '{{ platform }} Topluluklar'
-  membersCount: '{{ membersCount }} üye'
-  registrationIntro:
-    notice1: Aşağıda oluşturulacak olan bu bilgi blokları, {{ platform }} platformundaki topluluklardan herhangi birinin parçası olmak üzere kaydolan kullanıcılara ilk katılım yönlendirmesi olarak gösterilecektir..
-    notice2: Bu link üzerinden görünümünü inceleyebilirsiniz
-    linkLabel: İncele
-
 auth:
   errors:
     username: Kullanıcı adı yalnızca küçük harflerden ve sayılardan oluşabilir
@@ -323,5 +301,3 @@ auth:
 
 public:
   labels:
-    more: Daha fazla?
-    portal: 'Portaldaki {{listing}}'

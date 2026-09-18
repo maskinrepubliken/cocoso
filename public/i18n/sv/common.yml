@@ -207,12 +207,6 @@ menu:
     categories: Kategorier
   notifications:
     label: Aviseringar
-  superadmin:
-    platform: Plattformen
-    settings: Plattformsinställningar
-    intro: Registrationsintro
-    registrationIntro: Intro
-
 plugins:
   fileDropper:
     replace: Om du vill ersätta bilden med en annan så klickar du på bilden för att öppna filväljaren
@@ -296,22 +290,6 @@ terms:
 images:
   countLabel: Bilder ({{ count }})
 
-communities:
-  member: Du är medlem
-  join: Join
-  success: Nu har du joinat {{ community }}
-  info: Genom att gå med i {{ community }} kommer du att registrera dig för deras e-postnyhetsbrev och bli informerad om interna angelägenheter, enkelt delta i evenemang och möten och vara en del av deras community. Du kan lämna när du vill.
-
-platform:
-  title: Se alla communities
-  communities: Communities
-  communitiesIn: Communities i plattform {{ platform }}
-  membersCount: '{{ membersCount }} medlemmar'
-  registrationIntro:
-    notice1: Dessa informationsblock som sammanställs nedan kommer att visas som en introduktionsorientering för de användare som registrerar sig för att vara en del av någon av gemenskaperna inom {{ platform }}-plattformen.
-    notice2: Du kan förhandsgranska här
-    linkLabel: Preview
-
 auth:
   errors:
     username: Användarnamn kan endast bestå av små bokstäver och siffror
@@ -323,5 +301,3 @@ auth:
 
 public:
   labels:
-    more: Vill du se mer?
-    portal: '{{listing}} i portalen'

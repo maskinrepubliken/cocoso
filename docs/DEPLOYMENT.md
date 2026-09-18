@@ -20,7 +20,7 @@ cd bundle/programs/server && npm install --omit=dev && cd ../..
 ## Run
 
 ```bash
-export ROOT_URL=https://platform.example.org
+export ROOT_URL=https://tranemo.example.org
 export MONGO_URL=mongodb://localhost:27017/cocoso
 export PORT=3000
 export MEDIA_STORAGE_PATH=/var/lib/cocoso/media
@@ -28,27 +28,27 @@ export METEOR_SETTINGS="$(cat /etc/cocoso/settings.json)"
 node main.js
 ```
 
-Use a process manager (systemd, pm2) to keep it running. `ROOT_URL` should
-be the platform's canonical host; tenant hostnames are resolved per request
-from the `Host` header, not from `ROOT_URL`.
+Use a process manager (systemd, pm2) to keep it running. `ROOT_URL` must be
+the public URL of the site; every absolute link the app produces is built
+from it.
 
 ## Reverse proxy
 
-All tenant domains and the optional SSO broker domain point at the same
-process. The proxy must:
+The site's domain points at the process. The proxy must:
 
-- forward the original `Host` header unchanged;
-- set `X-Forwarded-Proto: https` so the app's HTTPS redirect does not loop;
+- terminate TLS and redirect `http://` to `https://` itself (the app no
+  longer does);
+- set `X-Forwarded-Proto: https`;
 - proxy WebSocket upgrades (DDP);
 - allow request bodies large enough for uploads (images are sent as base64
   in method calls; 20 MB is comfortable).
 
-nginx example for one tenant:
+nginx example:
 
 ```nginx
 server {
   listen 443 ssl http2;
-  server_name community.example.org;
+  server_name tranemo.example.org;
 
   location / {
     proxy_pass http://127.0.0.1:3000;
@@ -69,10 +69,6 @@ proxy serves them, keep the app's headers: long cache lifetime,
 `X-Content-Type-Options: nosniff`, and `Content-Disposition: attachment` for
 anything that is not an image or PDF.
 
-The local `force-ssl-custom` package redirects `http://` requests to
-`https://` on the same hostname. If the proxy already does this, the package
-can be removed from `.meteor/packages`.
-
 ## Persistent state
 
 | What     | Where                                                     | Backup                                                        |
@@ -84,17 +80,18 @@ can be removed from `.meteor/packages`.
 Both the database and the media directory must survive redeploys. Never put
 the media directory inside the bundle folder.
 
-## Adding a tenant
+## Adding a place
 
-1. Point the new domain at the proxy and add it to the proxy config.
-2. Log in as super admin on the platform host and create the host under
-   Superadmin → New host, or let the setup page on the new domain create it.
-3. Configure name, logo, theme and menu in that host's admin area.
+Log in as admin and open Admin → Places. Create the place with a name and
+an address slug, add a picture and a description, and publish it when it
+should appear on the home page and get its own pages under `/<slug>`.
+Assign resources to the place in their forms; activities held at those
+resources follow automatically.
 
 ## Migrating uploads from S3
 
 Deployments older than September 2026 stored files in S3. After deploying
-the local-storage version and setting `media.storagePath`, log in as a super
+the local-storage version and setting `media.storagePath`, log in as an
 admin and run in the browser console:
 
 ```js

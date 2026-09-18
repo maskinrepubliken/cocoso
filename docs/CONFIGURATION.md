@@ -14,10 +14,9 @@ Copy it to `private/settings.json` (gitignored) and edit it.
 
 | Key                                                | Required | Used by                                  | Meaning                                                                                                                                                                                                                                                                                                                  |
 | -------------------------------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `public.name`                                      | yes      | client shell, group emails               | Fallback platform name shown before a Platform record exists.                                                                                                                                                                                                                                                            |
+| `public.name`                                      | yes      | client shell, group emails               | Fallback site name used before the site document exists and as the sender name when the site has none.                                                                                                                                                                                                                  |
 | `public.iconsBaseUrl`                              | no       | `HelmetHybrid.tsx`                       | Base URL for favicons and touch icons (`<base>/favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-*.png`).                                                                                                                                                                                                      |
-| `public.authDomain`                                | no       | auth pages, SSO methods, `oauth.js`, SSR | Hostname of the single-sign-on broker. When unset, the OAuth broker and magic-link flow are disabled and each tenant handles login locally. See [ARCHITECTURE.md](ARCHITECTURE.md#authentication-and-sso).                                                                                                               |
-| `public.packages.dynamic-import.useLocationOrigin` | yes      | Meteor `dynamic-import`                  | Keep `true`. Makes the browser fetch code-split modules (every `loadable()` route) from the origin the page was opened on. Without it Meteor fetches them from `ROOT_URL`, so every tenant hostname other than `ROOT_URL` fails to load those routes and shows the "Something went wrong while loading this page" error. |
+| `public.packages.dynamic-import.useLocationOrigin` | yes      | Meteor `dynamic-import`                  | Keep `true`. Makes the browser fetch code-split modules (every `loadable()` route) from the origin the page was opened on. Without it Meteor fetches them from `ROOT_URL`, so opening the site on any other hostname (for example `localhost` in development) fails to load those routes and shows the "Something went wrong while loading this page" error.        |
 
 Everything under `public` is visible to any visitor. Never put secrets there.
 
@@ -56,24 +55,23 @@ from the app.
 
 | Variable             | Meaning                                                                                                                                                                                                                                            |
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ROOT_URL`           | Canonical URL of the platform host. Used for absolute links in email, the default media URL, and the HTTPS redirect. Standard Meteor. Must be the public URL browsers use; with the compose stack set it in a `.env` next to `docker-compose.yml`. |
+| `ROOT_URL`           | The site's public URL. `publicUrl()` builds every absolute link from it: emails, canonical tags, password reset links, the default media URL. Standard Meteor. Must be the URL browsers use; with the compose stack set it in a `.env` next to `docker-compose.yml`.   |
 | `MONGO_URL`          | MongoDB connection string. Standard Meteor.                                                                                                                                                                                                        |
 | `PORT`               | HTTP port. Standard Meteor.                                                                                                                                                                                                                        |
 | `METEOR_SETTINGS`    | The settings JSON as a string, for production.                                                                                                                                                                                                     |
 | `MEDIA_STORAGE_PATH` | Fallback for `media.storagePath`.                                                                                                                                                                                                                  |
 | `MAIL_URL`           | Written by the app from `mailCredentials.smtp`; do not set it yourself.                                                                                                                                                                            |
 
-## Multi-tenancy and hostnames
+## One site, many places
 
-One running instance serves many tenants. The tenant is chosen per request
-from the `Host` header and looked up in the `hosts` collection. There is no
-per-tenant configuration in the settings file; everything tenant-specific
-(name, logo, theme, menu, language, email footer) lives in the Host document
-and is edited in the admin UI.
+One running instance serves one site. Everything site-specific (name, logo,
+theme, menu, language, email footer) lives in the single `site` document and
+is edited in the admin UI, not in the settings file. The municipality's
+locations are data too, managed under Admin → Places; each published
+location gets its pages under `/<slug>`.
 
-The reverse proxy in front of the app must forward the original `Host` header
-and set `X-Forwarded-Proto`, otherwise tenant resolution and the HTTPS
-redirect break. See [DEPLOYMENT.md](DEPLOYMENT.md).
+The reverse proxy in front of the app must set `X-Forwarded-Proto` and proxy
+WebSocket upgrades. See [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Development settings
 

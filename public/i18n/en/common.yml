@@ -207,11 +207,6 @@ menu:
     emails: Emails
     email-newsletter: Email Newsletter
     categories: Categories
-  superadmin:
-    platform: The Platform
-    settings: Platform Settings
-    intro: Registration Intro
-    registrationIntro: Intro
   notifications:
     label: Notifications
 
@@ -298,22 +293,6 @@ terms:
 images:
   countLabel: Images ({{ count }})
 
-communities:
-  member: You are a member
-  join: Join
-  success: Now you joined {{ community }}
-  info: By joining {{ community }}, you will sign up to their email newsletter and get informed about internal affairs, easily attend events and meetups, and be a part of their community. You can leave whenever you like.
-
-platform:
-  title: See Communities
-  communities: Communities
-  communitiesIn: Communities in {{ platform }}
-  membersCount: '{{ membersCount }} members'
-  registrationIntro:
-    notice1: These blocks of information composed below will be shown as an onboarding orientation to the users who register themselves to be part of any of the communities within the {{ platform }} platform.
-    notice2: You may preview via here
-    linkLabel: Preview
-
 auth:
   errors:
     username: Username can only be composed of lowercase letters and numbers
@@ -325,5 +304,3 @@ auth:
 
 public:
   labels:
-    more: Wanna see more?
-    portal: '{{listing}} in the Portal'
