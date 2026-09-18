@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAtomValue } from 'jotai';
 
-import { currentHostAtom, locationsAtom } from '/imports/state';
+import { siteAtom, locationsAtom } from '/imports/state';
 import { Box } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
@@ -11,15 +11,15 @@ import InfiniteScroller from './InfiniteScroller';
 import NewGridThumb from './NewGridThumb';
 
 export interface ResourcesHybridProps {
-  Host: object;
+  siteDoc: object;
   resources: object[];
 }
 
 export default function ResourcesHybrid({
-  Host,
+  siteDoc,
   resources,
 }: ResourcesHybridProps) {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const locations = useAtomValue(locationsAtom);
   const [modalItem, setModalItem] = useState(null);
 
@@ -28,7 +28,7 @@ export default function ResourcesHybrid({
 
   return (
     <>
-      <PageHeading currentHost={currentHost || Host} listing="resources" />
+      <PageHeading site={site || siteDoc} listing="resources" />
 
       <Box px="2" pb="8">
         <InfiniteScroller isMasonry items={resources} filtrerMarginTop={-82}>

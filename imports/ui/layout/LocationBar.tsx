@@ -4,14 +4,14 @@ import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 import { useAtomValue } from 'jotai';
 
 import { Center, Flex, Text } from '/imports/ui/core';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 
 // Shown under the header while browsing a location. It says where the
 // visitor is and links back to the whole municipality; the URL, not a
 // cookie, carries the choice.
-export default function LocationBar({ Host }: { Host: any }) {
-  const currentHost = useAtomValue(currentHostAtom) || Host;
+export default function LocationBar({ siteDoc }: { siteDoc: any }) {
+  const site = useAtomValue(siteAtom) || siteDoc;
   const location = useCurrentLocation();
 
   if (!location) {
@@ -33,7 +33,7 @@ export default function LocationBar({ Host }: { Host: any }) {
       >
         <Link to="/">
           <Text color="theme.700" fontSize="sm">
-            {currentHost?.settings?.name}
+            {site?.settings?.name}
           </Text>
         </Link>
         <ChevronRightIcon fontSize={16} />

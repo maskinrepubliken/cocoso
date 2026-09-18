@@ -13,17 +13,17 @@ import SexyThumb from './SexyThumb';
 import Tabs from '../core/Tabs';
 
 export interface ActivitiesHybridProps {
-  Host: any;
+  siteDoc: any;
   activities: any[];
   showPast?: boolean;
 }
 
 export default function ActivitiesHybrid({
-  Host,
+  siteDoc,
   activities,
   showPast,
 }: ActivitiesHybridProps) {
-  const currentHost = { ...Host };
+  const site = { ...siteDoc };
   const locations = useAtomValue(locationsAtom);
   const [modalItem, setModalItem] = useState(null);
 
@@ -44,7 +44,7 @@ export default function ActivitiesHybrid({
     },
   ];
 
-  const groupsInMenu = currentHost?.settings?.menu?.find(
+  const groupsInMenu = site?.settings?.menu?.find(
     (item) => item.name === 'groups'
   );
 
@@ -52,7 +52,7 @@ export default function ActivitiesHybrid({
 
   return (
     <>
-      <PageHeading currentHost={currentHost || Host} listing="activities" />
+      <PageHeading site={site || siteDoc} listing="activities" />
 
       <Center>
         <Tabs tabs={tabs} index={showPast ? 0 : 1} />

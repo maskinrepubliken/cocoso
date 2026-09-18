@@ -12,7 +12,7 @@ import {
   Text,
   Textarea,
 } from '/imports/ui/core';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { call } from '../../../../api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 
@@ -33,19 +33,19 @@ function Tablish({ rowItem }) {
 }
 
 export default function MainFeatureSettings({ listing }) {
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
+  const [site, setCurrentHost] = useAtom(siteAtom);
   const [localItem, setLocalItem] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [t] = useTranslation('admin');
   const [tc] = useTranslation('common');
 
-  const selectedMenuItem = currentHost?.settings?.menu?.find(
+  const selectedMenuItem = site?.settings?.menu?.find(
     (menuItem) => menuItem.name === listing
   );
 
   useEffect(() => {
     setLocalItem(selectedMenuItem);
-  }, [currentHost?.settings]);
+  }, [site?.settings]);
 
   const handleMenuItemCheck = (value) => {
     setLocalItem((prevItem) => ({
@@ -71,8 +71,8 @@ export default function MainFeatureSettings({ listing }) {
   const handleSubmit = async () => {
     setSubmitting(true);
     const localSettings = {
-      ...currentHost.settings,
-      menu: currentHost.settings?.menu?.map((menuItem) => {
+      ...site.settings,
+      menu: site.settings?.menu?.map((menuItem) => {
         if (menuItem.name === listing) {
           return localItem;
         }

@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import {
-  currentHostAtom,
+  siteAtom,
   currentUserAtom,
   roleAtom,
 } from '/imports/state';
@@ -27,7 +27,7 @@ import { useNavigate } from 'react-router';
 
 export default function EditProfilePrivacy() {
   const currentUser = useAtomValue(currentUserAtom);
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const role = useAtomValue(roleAtom);
   const [isLeaveModalOn, setIsLeaveModalOn] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
@@ -67,7 +67,7 @@ export default function EditProfilePrivacy() {
       await call('leaveHost');
       message.success(
         tc('message.success.leave', {
-          host: currentHost?.settings?.name,
+          host: site?.settings?.name,
         })
       );
       clearEncryptionKey();
@@ -85,7 +85,7 @@ export default function EditProfilePrivacy() {
 
   const isUserPublic = Boolean(currentMembership?.isPublic);
   const isUserPublicGlobally = currentUser?.isPublic;
-  const communityName = currentHost?.settings?.name;
+  const communityName = site?.settings?.name;
 
   const { username } = currentUser;
 

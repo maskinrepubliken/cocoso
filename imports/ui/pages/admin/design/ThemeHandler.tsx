@@ -12,7 +12,7 @@ import {
   Text,
 } from '/imports/ui/core';
 import Menu from '/imports/ui/generic/Menu';
-import { currentHostAtom } from '../../../../state';
+import { siteAtom } from '../../../../state';
 import { call } from '../../../../api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import Boxling, { BoxlingColumn } from '/imports/ui/pages/admin/Boxling';
@@ -28,7 +28,7 @@ import BackgroundHandler from './BackgroundHandler';
 import FontSelector from './FontSelector';
 
 export default function ThemeHandler() {
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
+  const [site, setCurrentHost] = useAtom(siteAtom);
 
   const [state, setState] = useState({
     updating: false,
@@ -36,7 +36,7 @@ export default function ThemeHandler() {
     hasChanges: false,
   });
 
-  const currentTheme = currentHost?.theme;
+  const currentTheme = site?.theme;
 
   const currentBorderRadius = borderRadiusOptions?.find(
     (option) => option?.value === currentTheme?.body?.borderRadius
@@ -79,14 +79,14 @@ export default function ThemeHandler() {
   };
 
   const updateSiteTheme = async (uploadedImage = null) => {
-    if (!currentHost?.theme) {
+    if (!site?.theme) {
       return;
     }
 
     const newTheme = {
-      ...currentHost.theme,
+      ...site.theme,
       body: {
-        ...currentHost.theme.body,
+        ...site.theme.body,
         backgroundImage: uploadedImage,
       },
     };
@@ -120,7 +120,7 @@ export default function ThemeHandler() {
     }));
   };
 
-  if (!currentHost) {
+  if (!site) {
     return <Loader />;
   }
 

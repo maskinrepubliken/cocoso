@@ -11,8 +11,8 @@ function localFirst(items, locationId) {
   ];
 }
 
-export async function getHomeLoader({ Host, params, request }) {
-  const menu = Host?.settings?.menu;
+export async function getHomeLoader({ siteDoc, params, request }) {
+  const menu = siteDoc?.settings?.menu;
   const homeRouteName = menu && menu[0]?.name;
 
   switch (homeRouteName) {
@@ -31,7 +31,7 @@ export async function getHomeLoader({ Host, params, request }) {
     case 'users':
       return await getPeople();
     default:
-      return await getComposablePage({ params, Host });
+      return await getComposablePage({ params, siteDoc });
   }
 }
 
@@ -203,11 +203,11 @@ export async function getWork({ params }) {
   };
 }
 
-export async function getComposablePage({ params, Host }) {
+export async function getComposablePage({ params, siteDoc }) {
   let composablePageId = params?.composablePageId;
 
   if (!composablePageId) {
-    composablePageId = Host?.settings?.menu[0]?.name;
+    composablePageId = siteDoc?.settings?.menu[0]?.name;
   }
 
   const composablePage = await call('getComposablePageById', composablePageId);

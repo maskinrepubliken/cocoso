@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router';
 import { Trans } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { Box, Center, Flex } from '/imports/ui/core';
 import InfiniteScroller from '/imports/ui/listing/InfiniteScroller';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
@@ -15,12 +15,12 @@ import { getCategoriesAssignedToWorks } from '../../api/_utils/shared';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 
 export interface WorksHybridProps {
-  Host: any;
+  siteDoc: any;
   works: any[];
 }
 
-export default function WorksHybrid({ Host, works }: WorksHybridProps) {
-  const currentHost = useAtomValue(currentHostAtom);
+export default function WorksHybrid({ siteDoc, works }: WorksHybridProps) {
+  const site = useAtomValue(siteAtom);
   const [modalItem, setModalItem] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category');
@@ -56,7 +56,7 @@ export default function WorksHybrid({ Host, works }: WorksHybridProps) {
 
   return (
     <>
-      <PageHeading currentHost={currentHost || Host} listing="works" />
+      <PageHeading site={site || siteDoc} listing="works" />
 
       <Center px="4">
         <Flex justify="center" wrap="wrap">

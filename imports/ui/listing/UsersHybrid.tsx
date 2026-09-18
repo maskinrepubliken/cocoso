@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 import Select from 'react-select';
 
 import { Box, Center, Modal, Text } from '/imports/ui/core';
-import { currentHostAtom, isDesktopAtom } from '/imports/state';
+import { siteAtom, isDesktopAtom } from '/imports/state';
 
 import PageHeading from './PageHeading';
 import InfiniteScroller from './InfiniteScroller';
@@ -13,17 +13,17 @@ import { Bio } from '../entry/UserHybrid';
 import MemberAvatarEtc from '../generic/MemberAvatarEtc';
 
 export interface UsersHybridProps {
-  Host: any;
+  siteDoc: any;
   users: any[];
   keywords?: any[];
 }
 
 export default function UsersHybrid({
-  Host,
+  siteDoc,
   users,
   keywords,
 }: UsersHybridProps) {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const isDesktop = useAtomValue(isDesktopAtom);
   const [modalItem, setModalItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -67,7 +67,7 @@ export default function UsersHybrid({
 
   return (
     <>
-      <PageHeading currentHost={currentHost || Host} listing="people" />
+      <PageHeading site={site || siteDoc} listing="people" />
 
       <Center mb="4">
         <Box w="100%" maxW="600px" p="4">

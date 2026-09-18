@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { Button, Center, Flex, Checkbox, Text } from '/imports/ui/core';
 import Boxling from '/imports/ui/pages/admin/Boxling';
 import FileDropper from '/imports/ui/forms/FileDropper';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import {
   resizeBeforeUpload,
   uploadImage,
@@ -19,19 +19,19 @@ export default function BackgroundHandler({
   onUploadFinish,
   onUploadError,
 }) {
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
+  const [site, setCurrentHost] = useAtom(siteAtom);
   const [state, setState] = useState({
     uploadingBgImage: false,
     uploadableBgImage: null,
     uploadableBgImageLocal: null,
   });
 
-  const backgroundColor = currentHost?.theme?.body?.backgroundColor;
-  const backgroundImage = currentHost?.theme?.body?.backgroundImage;
+  const backgroundColor = site?.theme?.body?.backgroundColor;
+  const backgroundImage = site?.theme?.body?.backgroundImage;
   const existingBackgroundImage =
     (backgroundImage !== 'none' && backgroundImage) || null;
   const backgroundRepeat =
-    currentHost?.theme?.body?.backgroundRepeat === 'repeat';
+    site?.theme?.body?.backgroundRepeat === 'repeat';
 
   useEffect(() => {
     if (!uploadPing) {

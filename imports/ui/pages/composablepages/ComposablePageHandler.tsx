@@ -5,9 +5,9 @@ import { useAtomValue } from 'jotai';
 import ComposablePageHybrid from '/imports/ui/entry/ComposablePageHybrid';
 import BottomToolbar from './components/BottomToolbar';
 import { roleAtom } from '/imports/state';
-import type { Host } from '/imports/ui/types';
+import type { Site } from '/imports/ui/types';
 
-export default function ComposablePageHandler({ Host }: { Host: Host }) {
+export default function ComposablePageHandler({ siteDoc }: { siteDoc: Site }) {
   const { composablePage } = useLoaderData();
   const role = useAtomValue(roleAtom);
   const { revalidate } = useRevalidator();
@@ -18,7 +18,7 @@ export default function ComposablePageHandler({ Host }: { Host: Host }) {
 
   return (
     <>
-      <ComposablePageHybrid Host={Host} composablePage={composablePage} />
+      <ComposablePageHybrid siteDoc={siteDoc} composablePage={composablePage} />
       {role === 'admin' && (
         <BottomToolbar
           currentPage={composablePage}

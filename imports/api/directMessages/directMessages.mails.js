@@ -4,19 +4,19 @@ import { publicUrl } from '../_utils/shared';
 
 export const getDirectMessageEmailBody = (
   senderDisplayName,
-  currentHost,
+  site,
   recipient,
   linkHost,
   isFederation
 ) => {
-  const resolvedLinkHost = linkHost ?? currentHost;
+  const resolvedLinkHost = linkHost ?? site;
   const linkHostName = escapeHtml(resolvedLinkHost?.settings?.name ?? '');
   const firstName = escapeHtml(
     recipient?.firstName || recipient?.username || ''
   );
   const safeSenderDisplayName = escapeHtml(senderDisplayName);
 
-  const lang = recipient?.lang || currentHost?.settings?.lang || 'en';
+  const lang = recipient?.lang || site?.settings?.lang || 'en';
   const tr = mailtranslations[lang] ?? mailtranslations.en;
   const { visitPage: generalVisitPage } = tr.general;
   const dm = tr.directMessage ?? mailtranslations.en.directMessage;

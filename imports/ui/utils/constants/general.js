@@ -52,7 +52,7 @@ const adminMenu = [
   },
 ];
 
-const hostFields = [
+const siteFields = [
   {
     // label: 'name',
     // placeholder: 'Pineapples',
@@ -116,7 +116,7 @@ export {
   acceptedImageFormatsForUploads,
   acceptedDocumentFormatsForUploads,
   adminMenu,
-  hostFields,
+  siteFields,
   maximumDocumentSizeForUploads,
   userMenu,
 };

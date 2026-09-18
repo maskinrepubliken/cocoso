@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
 import FileDropper from '/imports/ui/forms/FileDropper';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { Box, Button, Center, Heading } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
@@ -15,7 +15,7 @@ import {
 import Boxling from './Boxling';
 
 export default function AdminSettingsLogo() {
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
+  const [site, setCurrentHost] = useAtom(siteAtom);
   const [uploading, setUploading] = useState(false);
   const [localImage, setLocalImage] = useState(null);
   const [t] = useTranslation('admin');
@@ -61,7 +61,7 @@ export default function AdminSettingsLogo() {
 
   const isImage =
     (localImage && localImage.uploadableImageLocal) ||
-    (currentHost && currentHost.logo);
+    (site && site.logo);
 
   return (
     <Box py="6">
@@ -72,7 +72,7 @@ export default function AdminSettingsLogo() {
       <Boxling>
         <Center>
           <FileDropper
-            imageUrl={currentHost && currentHost.logo}
+            imageUrl={site && site.logo}
             height={isImage && '120px'}
             width={isImage && '280px'}
             round={false}

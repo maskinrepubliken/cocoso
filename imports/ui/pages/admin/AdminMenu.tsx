@@ -16,14 +16,14 @@ import {
 } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import {
-  currentHostAtom,
+  siteAtom,
   currentUserAtom,
   isDesktopAtom,
   roleAtom,
 } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
 
-export function AdminMenuHeader({ currentHost }) {
+export function AdminMenuHeader({ site }) {
   return (
     <Link to="/" style={{ width: '100%' }}>
       <Box
@@ -46,7 +46,7 @@ export function AdminMenuHeader({ currentHost }) {
         >
           <ArrowLeft />
           <Text color="bluegray.900" fontWeight="bold" fontSize="lg">
-            {currentHost.settings?.name}
+            {site.settings?.name}
           </Text>
         </Flex>
       </Box>
@@ -159,7 +159,7 @@ function AdminMenuItem({ item, isSub = false, parentValue, onClick }) {
 
 export default function AdminMenu({ routes, onItemClick }) {
   const currentUser = useAtomValue(currentUserAtom);
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const isDesktop = useAtomValue(isDesktopAtom);
   const role = useAtomValue(roleAtom);
   const [t] = useTranslation('admin');
@@ -167,7 +167,7 @@ export default function AdminMenu({ routes, onItemClick }) {
 
   const isAdmin = role === 'admin';
 
-  if (!currentHost || !currentUser) {
+  if (!site || !currentUser) {
     return null;
   }
 
@@ -190,7 +190,7 @@ export default function AdminMenu({ routes, onItemClick }) {
         position: 'fixed',
       }}
     >
-      {isDesktop && <AdminMenuHeader currentHost={currentHost} />}
+      {isDesktop && <AdminMenuHeader site={site} />}
 
       <Flex
         direction="column"

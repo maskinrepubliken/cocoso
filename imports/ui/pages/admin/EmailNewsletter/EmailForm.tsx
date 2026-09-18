@@ -26,12 +26,12 @@ import ContentInserter from './ContentInserter';
 import { newsletterAtom } from './index';
 import { contentTypes } from './constants';
 
-const getDefaultFooter = (currentHost: any) => {
-  if (!currentHost) {
+const getDefaultFooter = (site: any) => {
+  if (!site) {
     return null;
   }
 
-  const { settings } = currentHost;
+  const { settings } = site;
   const siteUrl = publicUrl();
   const address = `${settings.address}, ${settings.city}, ${settings.country}`;
 
@@ -172,7 +172,7 @@ function BodyContentHandler({ content }) {
   );
 }
 
-export default function EmailForm({ currentHost, onSubmit }) {
+export default function EmailForm({ site, onSubmit }) {
   const [state, setState] = useAtom(newsletterAtom);
   const { email } = state;
   const { handleSubmit } = useForm({
@@ -184,7 +184,7 @@ export default function EmailForm({ currentHost, onSubmit }) {
   const { appeal, body, items, subject } = email;
 
   useEffect(() => {
-    if (!currentHost) {
+    if (!site) {
       return;
     }
 
@@ -192,10 +192,10 @@ export default function EmailForm({ currentHost, onSubmit }) {
       ...prevState,
       email: {
         ...prevState.email,
-        footer: getDefaultFooter(currentHost),
+        footer: getDefaultFooter(site),
       },
     }));
-  }, [currentHost]);
+  }, [site]);
 
   const handleChange = (field, value) => {
     const newEmail = {

@@ -10,7 +10,7 @@ import { stripHtml, getFullName, publicUrl } from '/imports/api/_utils/shared';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 import MemberAvatarEtc from '/imports/ui/generic/MemberAvatarEtc';
 import { getImageUrlBest } from '/imports/ui/utils/imageHelper';
-import type { Host } from '/imports/ui/types';
+import type { Site } from '/imports/ui/types';
 
 import BackLink from './BackLink';
 
@@ -55,10 +55,10 @@ interface User {
 
 export interface UserHybridProps {
   user: User | null;
-  Host: Host;
+  siteDoc: Site;
 }
 
-export default function UserHybrid({ user, Host }: UserHybridProps) {
+export default function UserHybrid({ user, siteDoc }: UserHybridProps) {
   const { usernameSlug, workId } = useParams<{
     usernameSlug: string;
     workId?: string;
@@ -84,7 +84,7 @@ export default function UserHybrid({ user, Host }: UserHybridProps) {
     );
   }
 
-  const menu = Host?.settings?.menu;
+  const menu = siteDoc?.settings?.menu;
 
   const tabs = [];
   menu
@@ -105,10 +105,10 @@ export default function UserHybrid({ user, Host }: UserHybridProps) {
 
   const members = menu?.find((item) => item.name === 'people');
   const title = `${getFullName(user)} | ${user.username} | ${
-    Host?.settings?.name
+    siteDoc?.settings?.name
   }`;
   const url = publicUrl(`/@${user.username}`);
-  const imageUrl = getImageUrlBest(user.avatar || Host.logo) || undefined;
+  const imageUrl = getImageUrlBest(user.avatar || siteDoc.logo) || undefined;
   const tags = user.keywords?.map((k) => k.keywordLabel);
   const description = user.bio && stripHtml(user.bio)?.substring(0, 150);
 

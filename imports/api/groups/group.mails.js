@@ -4,7 +4,7 @@ import { publicUrl } from '../_utils/shared';
 
 const getGroupRegistrationEmailBody = (
   Group,
-  currentHost,
+  site,
   currentUser,
   isLeave = false
 ) => {
@@ -14,11 +14,11 @@ const getGroupRegistrationEmailBody = (
     GroupReadingMaterial = Group.readingMaterial,
     imageUrl = Group.imageUrl,
     firstName = escapeHtml(currentUser.firstName || currentUser.username),
-    hostName = currentHost.settings.name,
-    hostLogo = currentHost.logo,
-    hostAddress = currentHost.settings.address;
+    hostName = site.settings.name,
+    hostLogo = site.logo,
+    hostAddress = site.settings.address;
 
-  const lang = currentUser?.lang || currentHost?.settings?.lang || 'en';
+  const lang = currentUser?.lang || site?.settings?.lang || 'en';
   const tr = mailtranslations[lang];
   const { dear, visitPage } = tr.general;
   const {
@@ -617,7 +617,7 @@ const getGroupRegistrationEmailBody = (
 
 const getInviteToPrivateGroupEmailBody = (
   Group,
-  currentHost,
+  site,
   currentUser,
   person
 ) => {
@@ -627,11 +627,11 @@ const getInviteToPrivateGroupEmailBody = (
     GroupReadingMaterial = Group.readingMaterial,
     imageUrl = Group.imageUrl,
     firstName = escapeHtml(person?.firstName),
-    hostName = currentHost.settings.name,
-    hostLogo = currentHost.logo,
-    hostAddress = currentHost.settings.address;
+    hostName = site.settings.name,
+    hostLogo = site.logo,
+    hostAddress = site.settings.address;
 
-  const lang = currentUser?.lang || currentHost?.settings?.lang || 'en';
+  const lang = currentUser?.lang || site?.settings?.lang || 'en';
   const tr = mailtranslations[lang];
 
   const { dear, visitPage } = tr.general;

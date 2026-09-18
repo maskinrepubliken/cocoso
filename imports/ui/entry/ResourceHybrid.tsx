@@ -6,7 +6,7 @@ import DOMPurify from 'isomorphic-dompurify';
 
 import { Box, Flex, Text } from '/imports/ui/core';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
-import type { Document, Host, ResourceForCombo } from '/imports/ui/types';
+import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
 import { publicUrl } from '/imports/api/_utils/shared';
@@ -27,13 +27,13 @@ interface Resource {
 export interface ResourceHybridProps {
   documents?: Document[];
   resource: Resource;
-  Host: Host;
+  siteDoc: Site;
 }
 
 export default function ResourceHybrid({
   documents,
   resource,
-  Host,
+  siteDoc,
 }: ResourceHybridProps) {
   const locationName = useLocationName((resource as any)?.locationId);
   if (!resource) {
@@ -111,7 +111,7 @@ export default function ResourceHybrid({
     tags.push(<Trans i18nKey="resources:cards.isBookable">Bookable</Trans>);
   }
 
-  const resourcesInMenu = Host?.settings?.menu?.find(
+  const resourcesInMenu = siteDoc?.settings?.menu?.find(
     (item) => item.name === 'resources'
   );
   const backLink = {

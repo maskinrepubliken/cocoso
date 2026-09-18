@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
 
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import {
   Box,
   Button,
@@ -95,7 +95,7 @@ function AddMeetingForm({
 }
 
 export default function AddMeeting({ onClose }) {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const [state, setState] = useState({
     activities: [],
     conflictingBooking: null,
@@ -259,7 +259,7 @@ export default function AddMeeting({ onClose }) {
       <AddMeetingForm
         buttonDisabled={!isFormValid}
         conflictingBooking={conflictingBooking}
-        hostname={currentHost?.settings?.name}
+        hostname={site?.settings?.name}
         newMeeting={newMeeting}
         resources={resources?.filter((r) => r.isBookable)}
         handleDateChange={handleDateAndTimeChange}

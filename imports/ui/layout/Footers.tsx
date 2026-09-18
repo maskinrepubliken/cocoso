@@ -36,17 +36,17 @@ export function OldFooter({ settings }: OldFooterProps) {
 }
 
 export interface FooterProps {
-  currentHost: any;
+  site: any;
 }
 
-export function Footer({ currentHost }: FooterProps) {
+export function Footer({ site }: FooterProps) {
   const prefix = useLocationPrefix();
-  if (!currentHost || !currentHost.settings) {
+  if (!site || !site.settings) {
     return null;
   }
 
-  const { settings } = currentHost;
-  const activeMenu = currentHost.settings?.menu?.filter(
+  const { settings } = site;
+  const activeMenu = site.settings?.menu?.filter(
     (item) => item.isVisible
   );
 

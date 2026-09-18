@@ -10,13 +10,13 @@ const UserInteractionHandler = loadable(
   () => import('./components/UserInteractionHandler')
 );
 
-export default function UserProfileHandler({ Host }) {
+export default function UserProfileHandler({ siteDoc }) {
   const { user } = useLoaderData();
   const rendered = useAtomValue(renderedAtom);
 
   return (
     <>
-      <UserHybrid Host={Host} user={user} />
+      <UserHybrid siteDoc={siteDoc} user={user} />
       {rendered && <UserInteractionHandler user={user} slideStart={rendered} />}
     </>
   );

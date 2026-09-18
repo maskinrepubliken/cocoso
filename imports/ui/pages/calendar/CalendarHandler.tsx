@@ -79,7 +79,7 @@ interface Activity {
 }
 
 interface CalendarHandlerProps {
-  Host: any;
+  siteDoc: any;
 }
 
 const parseNewEntryParams = (
@@ -103,9 +103,9 @@ const parseNewEntryParams = (
   return params;
 };
 
-export default function CalendarHandler({ Host }: CalendarHandlerProps) {
+export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  const currentHost = Host;
+  const site = siteDoc;
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const [locationFilter, setLocationFilter] = useState<string>('');
@@ -295,7 +295,7 @@ export default function CalendarHandler({ Host }: CalendarHandlerProps) {
     }
   }, [selectFilterView, SelectComponent]);
 
-  if (!currentHost) {
+  if (!site) {
     return <Loader />;
   }
 
@@ -306,7 +306,7 @@ export default function CalendarHandler({ Host }: CalendarHandlerProps) {
     <>
       {loading && <Loader />}
 
-      <PageHeading currentHost={currentHost || Host} listing="calendar" />
+      <PageHeading site={site || siteDoc} listing="calendar" />
 
       <Box>
         {publishedLocations.length > 0 && (

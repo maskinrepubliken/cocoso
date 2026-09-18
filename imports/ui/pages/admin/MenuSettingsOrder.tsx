@@ -7,7 +7,7 @@ import DragHandleIcon from 'lucide-react/dist/esm/icons/grip-horizontal';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtom } from 'jotai';
 
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { updateSiteSettings } from '/imports/actions';
 import { Box, Button, Flex, Heading, IconButton, Text } from '/imports/ui/core';
 import { call } from '/imports/api/_utils/shared';
@@ -21,8 +21,8 @@ const serializeMenu = (menu?: MenuItem[]) =>
   );
 
 export default function MenuSettingsOrder() {
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
-  const [localMenu, setLocalMenu] = useState(currentHost?.settings?.menu);
+  const [site, setCurrentHost] = useAtom(siteAtom);
+  const [localMenu, setLocalMenu] = useState(site?.settings?.menu);
   const [composablePageTitles, setComposablePageTitles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [justAddedName, setJustAddedName] = useState<string | null>(null);
@@ -41,7 +41,7 @@ export default function MenuSettingsOrder() {
   };
 
   useEffect(() => {
-    if (!currentHost) {
+    if (!site) {
       return;
     }
     getComposablePageTitles();
@@ -125,7 +125,7 @@ export default function MenuSettingsOrder() {
   );
 
   const isButtonDisabled =
-    serializeMenu(localMenu) === serializeMenu(currentHost?.settings?.menu);
+    serializeMenu(localMenu) === serializeMenu(site?.settings?.menu);
 
   return (
     <Box py="6">

@@ -24,7 +24,7 @@ import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import {
   canCreateContentAtom,
-  currentHostAtom,
+  siteAtom,
   currentUserAtom,
   isDesktopAtom,
   roleAtom,
@@ -137,12 +137,12 @@ export interface UserPopupProps {
 export default function UserPopup({ isOpen }: UserPopupProps) {
   const [t] = useTranslation('members');
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const navigate = useNavigate();
 
-  if (!currentHost) {
+  if (!site) {
     return null;
   }
 

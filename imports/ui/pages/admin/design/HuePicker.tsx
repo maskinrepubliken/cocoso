@@ -4,7 +4,7 @@ import { Trans } from 'react-i18next';
 import { useAtom } from 'jotai';
 
 import { Box, Button, Center, Code, Flex, Text } from '/imports/ui/core';
-import { currentHostAtom } from '../../../../state';
+import { siteAtom } from '../../../../state';
 
 const getColorForPicker = (hue) => ({ h: hue, s: 80, l: 0.1, a: 0 });
 
@@ -16,8 +16,8 @@ const parseHue = (hue, lightness) => {
 };
 
 export default function HuePicker({ onChange }) {
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
-  const [initialHue] = useState(currentHost?.theme?.hue);
+  const [site, setCurrentHost] = useAtom(siteAtom);
+  const [initialHue] = useState(site?.theme?.hue);
 
   const handleChange = (pickedColor) => {
     const pickedHue = parseInt(pickedColor?.hsl?.h, 10) + 1;
@@ -45,7 +45,7 @@ export default function HuePicker({ onChange }) {
     onChange();
   };
 
-  const hue = currentHost?.theme?.hue;
+  const hue = site?.theme?.hue;
   const color = getColorForPicker(hue);
 
   return (

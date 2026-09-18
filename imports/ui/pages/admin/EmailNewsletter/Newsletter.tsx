@@ -3,12 +3,12 @@ import React from 'react';
 import { useAtomValue } from 'jotai';
 
 import { Box, Center, Modal, Text } from '/imports/ui/core';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 
 import EmailPreview from './EmailPreview';
 
 export default function NewsletterEmail() {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const { newsletter } = useLoaderData();
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ export default function NewsletterEmail() {
             </Center>
 
             <EmailPreview
-              currentHost={currentHost}
+              site={site}
               email={email}
             />
           </Box>

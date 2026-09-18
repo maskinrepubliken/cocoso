@@ -12,14 +12,14 @@ import {
   Modal,
   Text,
 } from '/imports/ui/core';
-import { currentHostAtom, currentUserAtom } from '/imports/state';
+import { siteAtom, currentUserAtom } from '/imports/state';
 
 import { Signup } from './index';
 import { createAccount } from './functions';
 
 export default function SignupPage() {
   const currentUser = useAtomValue(currentUserAtom);
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const [t] = useTranslation('accounts');
   const navigate = useNavigate();
 
@@ -44,11 +44,11 @@ export default function SignupPage() {
           <Box w="sm">
             <Center>
               <Box>
-                {currentHost?.logo && (
+                {site?.logo && (
                   <Center p="4">
                     <Image
-                      alt={`${currentHost?.settings?.name} logo`}
-                      src={currentHost.logo}
+                      alt={`${site?.settings?.name} logo`}
+                      src={site.logo}
                       w="240px"
                     />
                   </Center>

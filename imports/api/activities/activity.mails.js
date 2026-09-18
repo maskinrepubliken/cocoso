@@ -6,7 +6,7 @@ const getRegistrationEmailBody = (
   activity,
   values,
   occurence,
-  currentHost,
+  site,
   currentUser,
   isUpdate = false
 ) => {
@@ -17,12 +17,12 @@ const getRegistrationEmailBody = (
     firstName = escapeHtml(values.firstName || currentUser?.username),
     lastName = escapeHtml(values.lastName),
     numberOfPeople = values.numberOfPeople,
-    hostName = currentHost.settings.name,
-    hostLogo = currentHost.logo,
-    hostAddress = currentHost.settings.address,
+    hostName = site.settings.name,
+    hostLogo = site.logo,
+    hostAddress = site.settings.address,
     resource = activity.resource;
 
-  const lang = currentUser?.lang || currentHost?.settings?.lang || 'en';
+  const lang = currentUser?.lang || site?.settings?.lang || 'en';
   const tr = mailtranslations[lang];
 
   const { address, attendee, attendees, dateAndTime, dear, title } = tr.general;
@@ -648,15 +648,15 @@ const getRegistrationEmailBody = (
 const getUnregistrationEmailBody = (
   activity,
   values,
-  currentHost,
+  site,
   currentUser
 ) => {
   const activityId = activity._id,
     firstName = escapeHtml(values?.firstName || currentUser?.username || ''),
-    hostName = currentHost.settings.name,
-    hostLogo = currentHost.logo,
-    hostAddress = currentHost.settings.address;
-  const lang = currentUser?.lang || currentHost?.settings?.lang || 'en';
+    hostName = site.settings.name,
+    hostLogo = site.logo,
+    hostAddress = site.settings.address;
+  const lang = currentUser?.lang || site?.settings?.lang || 'en';
 
   const tr = mailtranslations[lang];
 

@@ -124,17 +124,17 @@ export function InfoPagesMenu({
 }
 
 interface HeaderMenuProps {
-  Host: any;
+  siteDoc: any;
   pageTitles: any[];
 }
 
-function HeaderMenu({ Host, pageTitles }: HeaderMenuProps) {
+function HeaderMenu({ siteDoc, pageTitles }: HeaderMenuProps) {
   const location = useLocation();
   const isDesktop = useAtomValue(isDesktopAtom);
   const prefix = useLocationPrefix();
 
-  const settings = Host?.settings;
-  const menuStyles = Host?.theme?.menu;
+  const settings = siteDoc?.settings;
+  const menuStyles = siteDoc?.theme?.menu;
   const pathname = location?.pathname;
 
   const { isBurgerMenuOnDesktop, isBurgerMenuOnMobile } = settings || {};
@@ -212,17 +212,17 @@ function HeaderMenu({ Host, pageTitles }: HeaderMenuProps) {
 }
 
 export interface HeaderProps {
-  currentHost: any;
+  site: any;
   pageTitles: any[];
   isLogoSmall?: boolean;
 }
 
 export default function Header({
-  currentHost,
+  site,
   pageTitles,
   isLogoSmall = false,
 }: HeaderProps) {
-  if (!currentHost) {
+  if (!site) {
     return null;
   }
 
@@ -231,10 +231,10 @@ export default function Header({
       <Center p="6">
         <Link className="logo-container" to="/">
           <Box css={{ maxHeight: isLogoSmall ? '48px' : '96px' }}>
-            {currentHost.logo ? (
+            {site.logo ? (
               <Image
-                alt={`${currentHost?.settings?.name} logo`}
-                src={currentHost.logo}
+                alt={`${site?.settings?.name} logo`}
+                src={site.logo}
                 css={{
                   height: isLogoSmall ? '48px' : '96px',
                   maxWidth: '360px',
@@ -248,14 +248,14 @@ export default function Header({
                 fontWeight="400"
                 fontFamily="Raleway, sans-serif"
               >
-                {currentHost?.settings?.name}
+                {site?.settings?.name}
               </Heading>
             )}
           </Box>
         </Link>
       </Center>
 
-      <HeaderMenu Host={currentHost} pageTitles={pageTitles} />
+      <HeaderMenu siteDoc={site} pageTitles={pageTitles} />
     </Box>
   );
 }

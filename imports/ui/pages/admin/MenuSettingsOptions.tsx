@@ -4,16 +4,16 @@ import { useAtomValue } from 'jotai';
 
 import { Box, Button, Checkbox, Heading, Flex, Text } from '/imports/ui/core';
 import { updateSiteSettings } from '/imports/actions';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 
 import Boxling from './Boxling';
 
-export default function MenuSettingsOptions({ Host }) {
-  const currentHost = useAtomValue(currentHostAtom);
+export default function MenuSettingsOptions({ siteDoc }) {
+  const site = useAtomValue(siteAtom);
   const [localSettings, setLocalSettings] = useState({
-    isBurgerMenuOnMobile: Boolean(currentHost?.settings?.isBurgerMenuOnMobile),
+    isBurgerMenuOnMobile: Boolean(site?.settings?.isBurgerMenuOnMobile),
     isBurgerMenuOnDesktop: Boolean(
-      currentHost?.settings?.isBurgerMenuOnDesktop
+      site?.settings?.isBurgerMenuOnDesktop
     ),
   });
   const [submitting, setSubmitting] = useState(false);
@@ -40,7 +40,7 @@ export default function MenuSettingsOptions({ Host }) {
     setSubmitting(false);
   };
 
-  const settings = currentHost?.settings;
+  const settings = site?.settings;
   const isOptionsSubmitButtonDisabled =
     settings.isBurgerMenuOnDesktop === localSettings.isBurgerMenuOnDesktop &&
     settings.isBurgerMenuOnMobile === localSettings.isBurgerMenuOnMobile;

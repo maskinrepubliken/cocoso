@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { currentHostAtom, locationsAtom } from '/imports/state';
+import { siteAtom, locationsAtom } from '/imports/state';
 import { Center } from '/imports/ui/core';
 
 import InfiniteScroller from './InfiniteScroller';
@@ -11,12 +11,12 @@ import PopupHandler from './PopupHandler';
 import SexyThumb from './SexyThumb';
 
 export interface GroupsHybridProps {
-  Host: any;
+  siteDoc: any;
   groups: any[];
 }
 
-export default function GroupsHybrid({ Host, groups }: GroupsHybridProps) {
-  const currentHost = useAtomValue(currentHostAtom);
+export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
+  const site = useAtomValue(siteAtom);
   const locations = useAtomValue(locationsAtom);
   const [modalItem, setModalItem] = useState(null);
   const [tc] = useTranslation('common');
@@ -26,7 +26,7 @@ export default function GroupsHybrid({ Host, groups }: GroupsHybridProps) {
 
   return (
     <>
-      <PageHeading currentHost={currentHost || Host} listing="groups" />
+      <PageHeading site={site || siteDoc} listing="groups" />
 
       <InfiniteScroller items={groups} filtrerMarginTop={-76}>
         {(item, index) => (

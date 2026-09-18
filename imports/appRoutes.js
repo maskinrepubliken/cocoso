@@ -417,7 +417,7 @@ const getAdminRoutes = (props) => [
 const isUserSlug = (slug) => typeof slug === 'string' && slug.startsWith('@');
 
 export default function appRoutes(props) {
-  const Host = props?.Host;
+  const siteDoc = props?.siteDoc;
   const locations = props?.locations || [];
   const findLocation = (slug) =>
     locations.find((location) => location.slug === slug) || null;
@@ -569,7 +569,7 @@ export default function appRoutes(props) {
       {
         path: 'cp/:composablePageId',
         element: el(ComposablePageHandler),
-        loader: ld(({ params }) => getComposablePage({ params, Host })),
+        loader: ld(({ params }) => getComposablePage({ params, siteDoc })),
       },
     ];
   };
@@ -582,7 +582,7 @@ export default function appRoutes(props) {
           path: '',
           element: createRouteElement(HomeHandler, props),
           loader: async ({ params, request }) =>
-            await getHomeLoader({ Host, params, request }),
+            await getHomeLoader({ siteDoc, params, request }),
         },
         ...publicRoutes({ props, forSlug: false }),
         {

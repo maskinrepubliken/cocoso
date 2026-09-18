@@ -12,11 +12,11 @@ export interface SlugData {
 
 // The first URL segment is either a profile (/@name) or a location (/limmared).
 // The route loader decides which; this renders the matching shell.
-export default function SlugHandler({ Host }: { Host: any }) {
+export default function SlugHandler({ siteDoc }: { siteDoc: any }) {
   const data = useLoaderData() as SlugData;
 
   if (data?.kind === 'user') {
-    return <UserProfileHandler Host={Host} />;
+    return <UserProfileHandler siteDoc={siteDoc} />;
   }
   if (data?.kind === 'location') {
     return <Outlet />;
@@ -25,7 +25,7 @@ export default function SlugHandler({ Host }: { Host: any }) {
 }
 
 export interface SlugChildProps {
-  Host: any;
+  siteDoc: any;
   user?: React.ComponentType<any> | null;
   location?: React.ComponentType<any> | null;
   // The index route: a profile has nothing to show there, so render
@@ -36,7 +36,7 @@ export interface SlugChildProps {
 // A child route under /:slug renders one component for profiles and another
 // for locations. Missing side means the URL does not exist for that kind.
 export function SlugChild({
-  Host,
+  siteDoc,
   user: User,
   location: Loc,
   emptyForUser = false,
@@ -44,13 +44,13 @@ export function SlugChild({
   const data = useRouteLoaderData('slug') as SlugData | undefined;
 
   if (data?.kind === 'user' && User) {
-    return <User Host={Host} />;
+    return <User siteDoc={siteDoc} />;
   }
   if (data?.kind === 'user' && emptyForUser) {
     return null;
   }
   if (data?.kind === 'location' && Loc) {
-    return <Loc Host={Host} />;
+    return <Loc siteDoc={siteDoc} />;
   }
   return <NotFoundPage />;
 }

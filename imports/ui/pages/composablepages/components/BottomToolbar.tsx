@@ -6,7 +6,7 @@ import PencilIcon from 'lucide-react/dist/esm/icons/pencil';
 import CheckIcon from 'lucide-react/dist/esm/icons/check';
 import { useAtomValue } from 'jotai';
 
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { Button, Flex, Link, Modal, Tag, Text } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 
@@ -21,7 +21,7 @@ export default function BottomToolbar({
   getComposablePageById: () => void;
   isPublicView?: boolean;
 }) {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   useTranslation('admin');
 
   const [state, setState] = useState({
@@ -57,7 +57,7 @@ export default function BottomToolbar({
     try {
       if (currentPage.isPublished) {
         if (
-          currentHost?.settings?.menu.find(
+          site?.settings?.menu.find(
             (item) => item.name === currentPage._id
           )
         ) {

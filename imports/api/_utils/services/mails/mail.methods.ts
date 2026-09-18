@@ -51,8 +51,8 @@ Meteor.methods({
 
     let displayName = fromName;
     if (!displayName) {
-      const currentHost = await getSite();
-      displayName = currentHost?.settings?.name;
+      const site = await getSite();
+      displayName = site?.settings?.name;
     }
 
     let fromEmailWithHostName = fromEmail;
@@ -78,12 +78,12 @@ Meteor.methods({
 
   async sendWelcomeEmail(userId: string): Promise<void> {
     const user = await Meteor.users.findOneAsync(userId) as MeteorUser | undefined;
-    const currentHost = await getSite();
-    const welcomeText = currentHost && currentHost.emails?.[0];
+    const site = await getSite();
+    const welcomeText = site && site.emails?.[0];
 
     const emailBody = getWelcomeEmailBody(
       welcomeText?.appeal,
-      currentHost as any,
+      site as any,
       user?.username,
       welcomeText?.body
     );
@@ -103,12 +103,12 @@ Meteor.methods({
 
   async sendNewContributorEmail(userId: string): Promise<void> {
     const user = await Meteor.users.findOneAsync(userId) as MeteorUser | undefined;
-    const currentHost = await getSite();
-    const welcomeText = currentHost && currentHost.emails?.[1];
+    const site = await getSite();
+    const welcomeText = site && site.emails?.[1];
 
     const emailBody = getWelcomeEmailBody(
       welcomeText?.appeal,
-      currentHost as any,
+      site as any,
       user?.username,
       welcomeText?.body
     );
@@ -127,8 +127,8 @@ Meteor.methods({
 
   async sendNewAdminEmail(userId: string): Promise<void> {
     const user = await Meteor.users.findOneAsync(userId) as MeteorUser | undefined;
-    const currentHost = await getSite();
-    const email = currentHost && currentHost.emails?.[2];
+    const site = await getSite();
+    const email = site && site.emails?.[2];
 
     try {
       await Meteor.callAsync(

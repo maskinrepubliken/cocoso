@@ -7,14 +7,14 @@ import { Helmet } from 'react-helmet';
 import { useAtomValue } from 'jotai';
 
 import { Box, Center, Divider, Heading, Text } from '/imports/ui/core';
-import type { Host } from '/imports/ui/types';
-import { canCreateContentAtom, currentHostAtom } from '/imports/state';
+import type { Site } from '/imports/ui/types';
+import { canCreateContentAtom, siteAtom } from '/imports/state';
 
 import NewButton, { type NewButtonAnimState } from './NewButton';
 import { publicUrl } from '/imports/api/_utils/shared';
 
 export interface PageHeadingProps {
-  currentHost: Host;
+  site: Site;
   listing: string;
 }
 
@@ -28,7 +28,7 @@ const BUTTON_INTRO_DURATION_MS = 2500 + BUTTON_INTRO_DELAY_MS; // 2800 total
 const SUBTLE_DURATION_MS = 900;
 
 export default function PageHeading({
-  currentHost,
+  site,
   listing,
 }: PageHeadingProps) {
   const headingWrapRef = useRef<HTMLDivElement>(null);
@@ -39,9 +39,9 @@ export default function PageHeading({
   const needsRetryRef = useRef(false);
 
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  // NewButton reads currentHostAtom internally — we watch it here so the retry
-  // fires when the atom arrives, not just when the currentHost prop changes.
-  const currentHostFromAtom = useAtomValue(currentHostAtom);
+  // NewButton reads siteAtom internally — we watch it here so the retry
+  // fires when the atom arrives, not just when the site prop changes.
+  const siteFromAtom = useAtomValue(siteAtom);
 
   const [buttonVisible, setButtonVisible] = useState(introShown);
   // 'pending' = in DOM for layout measurement but visually hidden (pre-intro).
@@ -52,13 +52,13 @@ export default function PageHeading({
 
   const location = useLocation();
 
-  const listingInMenu = currentHost?.settings?.menu?.find(
+  const listingInMenu = site?.settings?.menu?.find(
     (item) => item.name === listing
   );
   const description = listingInMenu?.description;
   const heading = listingInMenu?.label;
   const url = publicUrl(`/${listingInMenu?.name}`);
-  const imageUrl = currentHost?.logo;
+  const imageUrl = site?.logo;
 
   // ── Record heading position before the button appears ─────────────────────
   // useEffect (not layout) is fine here — we just store a number, no DOM change.
@@ -165,12 +165,12 @@ export default function PageHeading({
       !introShown &&
       needsRetryRef.current &&
       canCreateContent &&
-      currentHostFromAtom
+      siteFromAtom
     ) {
       needsRetryRef.current = false;
       setButtonVisible(true);
     }
-  }, [canCreateContent, currentHostFromAtom]);
+  }, [canCreateContent, siteFromAtom]);
 
   return (
     <>

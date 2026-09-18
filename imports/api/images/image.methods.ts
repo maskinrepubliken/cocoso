@@ -39,9 +39,9 @@ async function uploadImageMethod(
     );
   }
 
-  const currentHost = await getSite();
+  const site = await getSite();
 
-  if (!currentHost) {
+  if (!site) {
     throw new Meteor.Error('no-site', 'The site is not set up yet');
   }
 

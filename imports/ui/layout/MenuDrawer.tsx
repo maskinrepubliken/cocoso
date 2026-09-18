@@ -8,7 +8,7 @@ import { Box, Drawer, Flex, IconButton, Text } from '/imports/ui/core';
 
 import ChangeLanguageMenu from './ChangeLanguageMenu';
 import {
-  currentHostAtom,
+  siteAtom,
   isDesktopAtom,
   pageTitlesAtom,
 } from '../../state';
@@ -107,7 +107,7 @@ const getRoute = (item: any, prefix = '') => {
 };
 
 export default function MenuDrawer() {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const pageTitles = useAtomValue(pageTitlesAtom);
   const isDesktop = useAtomValue(isDesktopAtom);
   const prefix = useLocationPrefix();
@@ -115,7 +115,7 @@ export default function MenuDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [tc] = useTranslation('common');
 
-  const settings = currentHost?.settings;
+  const settings = site?.settings;
   const { isBurgerMenuOnDesktop, isBurgerMenuOnMobile } = settings || {};
 
   if (isDesktop && !isBurgerMenuOnDesktop) {
@@ -126,7 +126,7 @@ export default function MenuDrawer() {
     return null;
   }
 
-  const menu = currentHost?.settings?.menu;
+  const menu = site?.settings?.menu;
 
   const menuItems = menu
     ?.filter((item) => item.isVisible)
@@ -135,7 +135,7 @@ export default function MenuDrawer() {
       route: getRoute(item, prefix),
     }));
 
-  const menuStyles = currentHost?.theme?.menu;
+  const menuStyles = site?.theme?.menu;
 
   const onToggle = () => setIsOpen(!isOpen);
 

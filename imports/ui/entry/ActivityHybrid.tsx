@@ -4,7 +4,7 @@ import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 
 import { Box, Center, Tag, Text } from '/imports/ui/core';
-import type { Host } from '/imports/ui/types';
+import type { Site } from '/imports/ui/types';
 
 import ActionDates from './ActionDates';
 import FancyDate from './FancyDate';
@@ -37,7 +37,7 @@ interface Activity {
 
 export interface ActivityHybridProps {
   activity: Activity;
-  Host: Host;
+  siteDoc: Site;
 }
 
 const buttonStyle: React.CSSProperties = {
@@ -49,7 +49,7 @@ const buttonStyle: React.CSSProperties = {
   width: '100%',
 };
 
-export default function ActivityHybrid({ activity, Host }: ActivityHybridProps) {
+export default function ActivityHybrid({ activity, siteDoc }: ActivityHybridProps) {
   const locationName = useLocationName((activity as any)?.locationId);
   if (!activity) {
     return null;
@@ -135,10 +135,10 @@ export default function ActivityHybrid({ activity, Host }: ActivityHybridProps) 
     });
   }
 
-  const activitiesInMenu = Host?.settings?.menu.find(
+  const activitiesInMenu = siteDoc?.settings?.menu.find(
     (item) => item.name === 'activities'
   );
-  const calendarInMenu = Host?.settings?.menu.find(
+  const calendarInMenu = siteDoc?.settings?.menu.find(
     (item) => item.name === 'calendar'
   );
   const { isPublicActivity } = activity;

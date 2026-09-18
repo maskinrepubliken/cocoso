@@ -116,7 +116,7 @@ Meteor.methods({
     if (prevUnread === 0) {
       Meteor.defer(async () => {
         try {
-          const currentHost = await getSite();
+          const site = await getSite();
           const recipient = await Meteor.users.findOneAsync(otherUserId, {
             fields: { emails: 1, firstName: 1, username: 1, lang: 1 },
           });
@@ -125,12 +125,12 @@ Meteor.methods({
           // Show the site name, rather than the sender's raw account
           // username, as the "sender" in the email.
           const senderDisplayName =
-            currentHost?.settings?.name || Meteor.settings.public?.name;
+            site?.settings?.name || Meteor.settings.public?.name;
 
-          const lang = recipient.lang || currentHost?.settings?.lang || 'en';
+          const lang = recipient.lang || site?.settings?.lang || 'en';
           const dmTr = (mailtranslations[lang] ?? mailtranslations.en).directMessage ?? mailtranslations.en.directMessage;
           const subject = `${senderDisplayName} ${dmTr.subjectVerb ?? dmTr.subject}`;
-          const emailBody = getDirectMessageEmailBody(senderDisplayName, currentHost, recipient, currentHost, false);
+          const emailBody = getDirectMessageEmailBody(senderDisplayName, site, recipient, site, false);
           await Meteor.callAsync('sendEmail', otherUserId, subject, emailBody);
         } catch (e) {
           console.error('[DM email]', e);

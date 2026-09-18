@@ -37,7 +37,7 @@ Meteor.methods({
       throw new Meteor.Error('Email subject is required');
     }
 
-    const currentHost = await getSite();
+    const site = await getSite();
     const currentUser = await Meteor.userAsync();
 
     if (!currentUser || !(await isAdmin(currentUser._id))) {

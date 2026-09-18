@@ -21,7 +21,7 @@ import FormField from '/imports/ui/forms/FormField';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
 import { ActivityDates } from './EmailPreview';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 
 const compareByDate = (a, b) => {
   const dateA = new Date(a.creationDate);
@@ -94,7 +94,7 @@ function ListItemCheckbox({ item, children, onSelect }) {
 }
 
 export default function ContentInserter({ onSelect }) {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const [activities, setActivities] = useState([]);
   const [works, setWorks] = useState([]);
   const [activitiesLoading, setActivitiesLoading] = useState(false);
@@ -104,7 +104,7 @@ export default function ContentInserter({ onSelect }) {
   const [t] = useTranslation('admin');
   const [tc] = useTranslation('common');
 
-  const menu = currentHost?.settings?.menu;
+  const menu = site?.settings?.menu;
   const activitiesInMenu = menu?.find((item) => item.name === 'activities');
   const worksInMenu = menu?.find((item) => item.name === 'works');
 

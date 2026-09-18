@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { Box, Button, Center, Flex, Text } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 import { call } from '../../../../api/_utils/shared';
-import { currentHostAtom } from '../../../../state';
+import { siteAtom } from '../../../../state';
 import Boxling from '/imports/ui/pages/admin/Boxling';
 import GenericColorPicker from '/imports/ui/generic/GenericColorPicker';
 import Menu from '/imports/ui/generic/Menu';
@@ -39,9 +39,9 @@ const defaultMenuStyle = {
 };
 
 export default function MenuDesign() {
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
+  const [site, setCurrentHost] = useAtom(siteAtom);
   const [state, setState] = useState({
-    theme: currentHost?.theme || {
+    theme: site?.theme || {
       menu: defaultMenuStyle,
     },
     updating: false,

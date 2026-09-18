@@ -5,7 +5,8 @@ The short version:
 
 - Meteor 3 + React 18 + MongoDB, one process serving one site (Tranemo
   kommun). The site's settings are the single document in `site`
-  (`getSite()`); the UI still calls it `Host`/`currentHost`. There is no
+  (`getSite()` on the server, `siteAtom` / the `siteDoc` route prop in the
+  UI). There is no
   tenant or `host` field. The municipality is split into **locations**
   (`imports/api/locations`); content carries an optional `locationId`, and
   every location has pages under `/<slug>`. Build absolute links with

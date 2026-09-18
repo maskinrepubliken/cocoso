@@ -4,30 +4,30 @@ import { useTranslation } from 'react-i18next';
 
 import { Box, Button, Flex, Input, Textarea } from '/imports/ui/core';
 
-import { hostFields } from '../utils/constants/general';
+import { siteFields } from '../utils/constants/general';
 import FormField from './FormField';
 
-export interface NewHostFormProps {
+export interface SiteFormProps {
   defaultValues?: Record<string, any>;
   onSubmit: (data: any) => void;
 }
 
-export default function NewHostForm({
+export default function SiteForm({
   defaultValues,
   onSubmit,
-}: NewHostFormProps) {
+}: SiteFormProps) {
   const { formState, handleSubmit, register } = useForm({
     defaultValues,
   });
   const { isDirty, isSubmitting } = formState;
-  const [t] = useTranslation('hosts');
+  const [t] = useTranslation('site');
   const [tc] = useTranslation('common');
 
   return (
     <Box>
       <form onSubmit={handleSubmit((data) => onSubmit(data))}>
         <Flex direction="column" spacing="6">
-          {hostFields.map((props) => (
+          {siteFields.map((props) => (
             <FormField
               key={props.name}
               label={t(`new.${props.name}.label`)}

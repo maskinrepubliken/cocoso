@@ -324,7 +324,7 @@ Meteor.methods({
 
   async joinGroup(groupId) {
     const user = await Meteor.userAsync();
-    const currentHost = await getSite();
+    const site = await getSite();
 
     if (!user || !(await isMember(user._id))) {
       throw new Meteor.Error('Please join the community first!');
@@ -336,11 +336,11 @@ Meteor.methods({
       throw new Meteor.Error('You are already a member');
     }
 
-    const currentHostName = currentHost?.settings?.name;
+    const siteName = site?.settings?.name;
     const userAvatar = user.avatar ? user.avatar.src : null;
     const emailBody = getGroupRegistrationEmailBody(
       theGroup,
-      currentHost,
+      site,
       user
     );
 
@@ -369,7 +369,7 @@ Meteor.methods({
       await Meteor.callAsync(
         'sendEmail',
         user._id,
-        `"${theGroup.title}", ${currentHostName}`,
+        `"${theGroup.title}", ${siteName}`,
         emailBody
       );
     } catch (error) {
@@ -382,14 +382,14 @@ Meteor.methods({
     if (!user) {
       throw new Meteor.Error('You are not allowed!');
     }
-    const currentHost = await getSite();
+    const site = await getSite();
 
     const theGroup = await Groups.findOneAsync(groupId);
-    const currentHostName = currentHost?.settings?.name;
+    const siteName = site?.settings?.name;
 
     const emailBody = getGroupRegistrationEmailBody(
       theGroup,
-      currentHost,
+      site,
       user,
       true
     );
@@ -411,7 +411,7 @@ Meteor.methods({
       await Meteor.callAsync(
         'sendEmail',
         user._id,
-        `"${theGroup.title}", ${currentHostName || publicSettings.name}`,
+        `"${theGroup.title}", ${siteName || publicSettings.name}`,
         emailBody
       );
     } catch (error) {
@@ -565,7 +565,7 @@ Meteor.methods({
 
   async invitePersonToPrivateGroup(groupId, person) {
     const user = await Meteor.userAsync();
-    const currentHost = await getSite();
+    const site = await getSite();
 
     if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
@@ -586,10 +586,10 @@ Meteor.methods({
       throw new Meteor.Error('This email address is already added to the list');
     }
 
-    const currentHostName = currentHost.settings?.name;
+    const siteName = site.settings?.name;
     const emailBody = getInviteToPrivateGroupEmailBody(
       theGroup,
-      currentHost,
+      site,
       user,
       person
     );
@@ -607,7 +607,7 @@ Meteor.methods({
       await Meteor.callAsync(
         'sendEmail',
         person.email,
-        `"${theGroup.title}", ${currentHostName}`,
+        `"${theGroup.title}", ${siteName}`,
         emailBody
       );
     } catch (error) {

@@ -95,8 +95,8 @@ Meteor.methods({
     if (!user) {
       return;
     }
-    const currentHost = await getSite();
-    if (!currentHost) {
+    const site = await getSite();
+    if (!site) {
       throw new Meteor.Error('Site not found');
     }
 
@@ -346,8 +346,8 @@ Meteor.methods({
       return publicUrl(`/reset-password/${token}`);
     };
 
-    const currentHost = await getSite();
-    const siteName = currentHost?.settings?.name;
+    const site = await getSite();
+    const siteName = site?.settings?.name;
     const smtp = Meteor.settings?.mailCredentials?.smtp;
     if (siteName && smtp?.fromEmail) {
       const fromEmail = extractEmailAddress(smtp.fromEmail);

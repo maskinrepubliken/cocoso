@@ -3,8 +3,8 @@ import React from 'react';
 
 import UsersHybrid from '/imports/ui/listing/UsersHybrid';
 
-export default function UserListHandler({ Host, pageTitles }) {
+export default function UserListHandler({ siteDoc, pageTitles }) {
   const { keywords, users } = useLoaderData();
 
-  return <UsersHybrid Host={Host} keywords={keywords} users={users} />;
+  return <UsersHybrid siteDoc={siteDoc} keywords={keywords} users={users} />;
 }

@@ -8,14 +8,14 @@ import GroupsHybrid from '/imports/ui/listing/GroupsHybrid';
 import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 const NewGroup = loadable(() => import('./NewGroup'));
 
-export default function GroupListHandler({ Host }) {
+export default function GroupListHandler({ siteDoc }) {
   const { groups } = useLoaderData();
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
 
   return (
     <>
-      <GroupsHybrid groups={groups} Host={Host} />
+      <GroupsHybrid groups={groups} siteDoc={siteDoc} />
 
       {rendered && canCreateContent ? (
         <NewEntryHandler context="groups">

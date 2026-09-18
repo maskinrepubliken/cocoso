@@ -71,11 +71,11 @@ export interface MenuItem {
 }
 
 /**
- * Host is the site document: the one organisation this deployment serves,
+ * Site is the site document: the one organisation this deployment serves,
  * with its settings, logo and theme
  * Used across entry pages and listing components
  */
-export interface Host {
+export interface Site {
   _id?: string;
   name?: string;
   logo?: string;

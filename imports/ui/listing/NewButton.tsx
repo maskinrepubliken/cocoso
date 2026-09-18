@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 
 import { IconButton } from '/imports/ui/core';
 
-import { canCreateContentAtom, currentHostAtom, roleAtom } from '../../state';
+import { canCreateContentAtom, siteAtom, roleAtom } from '../../state';
 
 interface MenuItem {
   name: string;
@@ -27,14 +27,14 @@ interface NewButtonProps {
 
 export default function NewButton({ animState = 'idle' }: NewButtonProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const role = useAtomValue(roleAtom);
 
   const location = useLocation();
   const [, setSearchParams] = useSearchParams();
 
   const { pathname } = location;
-  const menu = currentHost?.settings?.menu;
+  const menu = site?.settings?.menu;
   const isAdmin = role === 'admin';
 
   const menuItems = (menu ?? [])
@@ -57,7 +57,7 @@ export default function NewButton({ animState = 'idle' }: NewButtonProps) {
   });
 
   const isVisible =
-    Boolean(currentHost) &&
+    Boolean(site) &&
     Boolean(canCreateContent) &&
     Boolean(menu) &&
     Boolean(activeMenuItem) &&

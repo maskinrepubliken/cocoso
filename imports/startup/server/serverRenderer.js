@@ -19,14 +19,14 @@ let stitchesConfig = null;
 export default async function serverRenderer(sink) {
   const host = sink?.request?.headers?.['host'];
 
-  const Host = await getSite(sitePublicFields);
+  const siteDoc = await getSite(sitePublicFields);
   const pages = await Meteor.callAsync('getPageTitles');
   const locations = await Meteor.callAsync('getLocations');
 
   if (!stitchesConfig) {
     stitchesConfig = await import('/stitches.config');
   }
-  const globalCssString = Host ? getGlobalStyles(Host.theme) : '';
+  const globalCssString = siteDoc ? getGlobalStyles(siteDoc.theme) : '';
   const { getCssText } = stitchesConfig;
 
   const pageTitles = pages.map((p) => p.title);
@@ -55,7 +55,7 @@ export default async function serverRenderer(sink) {
   const requestI18n = i18n.cloneInstance({ lng: resolvedLang });
 
   const props = {
-    Host,
+    siteDoc,
     pageTitles,
     locations,
     i18nInstance: requestI18n,

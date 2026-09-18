@@ -4,38 +4,38 @@ const publicSettings = Meteor.settings.public;
 import { useAtomValue } from 'jotai';
 
 import { Box, Divider, Heading } from '/imports/ui/core';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 
 import Template from '../layout/Template';
 import { publicUrl } from '/imports/api/_utils/shared';
 
 export default function Terms() {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
 
-  if (!currentHost) {
+  if (!site) {
     return null;
   }
 
   return (
     <Template>
-      <TermsForHost currentHost={currentHost} />
+      <TermsForHost site={site} />
     </Template>
   );
 }
 
-interface CurrentHost {
+interface SiteDocument {
   settings?: {
     name?: string;
   };
 }
 
 interface TermsForHostProps {
-  currentHost: CurrentHost;
+  site: SiteDocument;
 }
 
-function TermsForHost({ currentHost }: TermsForHostProps) {
+function TermsForHost({ site }: TermsForHostProps) {
   const entities =
-    currentHost && publicSettings.name + ' & ' + currentHost?.settings.name;
+    site && publicSettings.name + ' & ' + site?.settings.name;
 
   return (
     <Box className="text-content" mb="24">
@@ -247,7 +247,7 @@ function TermsForHost({ currentHost }: TermsForHostProps) {
         </li>
         <li>
           <p>
-            <strong>Country</strong> refers to: {currentHost?.settings.country}
+            <strong>Country</strong> refers to: {site?.settings.country}
           </p>
         </li>
         <li>
@@ -714,9 +714,9 @@ function TermsForHost({ currentHost }: TermsForHostProps) {
       <ul>
         <li>
           By emailing us:
-          <a href={`mailto:${currentHost?.settings.email}`}>
+          <a href={`mailto:${site?.settings.email}`}>
             {' '}
-            {currentHost?.settings.email}
+            {site?.settings.email}
           </a>
         </li>
       </ul>

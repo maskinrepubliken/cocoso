@@ -14,7 +14,7 @@ const EditGroup = loadable(() => import('./EditGroup'));
 
 export const groupAtom = atom(null);
 
-export default function GroupItemHandler({ Host }) {
+export default function GroupItemHandler({ siteDoc }) {
   const { group, documents } = useLoaderData();
   const [groupItem, setGroup] = useAtom(groupAtom);
   const rendered = useAtomValue(renderedAtom);
@@ -29,7 +29,7 @@ export default function GroupItemHandler({ Host }) {
       <GroupHybrid
         group={groupItem || group}
         documents={documents}
-        Host={Host}
+        siteDoc={siteDoc}
       />
 
       {rendered && (

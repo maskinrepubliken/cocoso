@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai';
 import { Box, Button } from '/imports/ui/core';
 import {
   canCreateContentAtom,
-  currentHostAtom,
+  siteAtom,
   currentUserAtom,
   isDesktopAtom,
   roleAtom,
@@ -18,7 +18,7 @@ import ResourceAdminFunctions from './ResourceAdminFunctions';
 import { resourceAtom } from '../ResourceItemHandler';
 
 function ReserveButton({ resource }) {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const isDesktop = useAtomValue(isDesktopAtom);
 
   const link = `/calendar?resourceId=${resource._id}&new=true`;

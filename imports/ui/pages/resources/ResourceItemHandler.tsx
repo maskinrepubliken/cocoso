@@ -14,7 +14,7 @@ const EditResource = loadable(() => import('./EditResource'));
 
 export const resourceAtom = atom(null);
 
-export default function ResourceItemHandler({ Host }) {
+export default function ResourceItemHandler({ siteDoc }) {
   const { documents, resource } = useLoaderData();
   const setResource = useSetAtom(resourceAtom);
   const rendered = useAtomValue(renderedAtom);
@@ -26,7 +26,7 @@ export default function ResourceItemHandler({ Host }) {
 
   return (
     <>
-      <ResourceHybrid documents={documents} resource={resource} Host={Host} />
+      <ResourceHybrid documents={documents} resource={resource} siteDoc={siteDoc} />
 
       {rendered && (
         <>

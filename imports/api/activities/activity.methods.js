@@ -366,8 +366,8 @@ Meteor.methods({
       registerDate: new Date(),
     };
 
-    const currentHost = await getSite();
-    const hostName = currentHost?.settings?.name;
+    const site = await getSite();
+    const hostName = site?.settings?.name;
 
     const field = `datesAndTimes.${occurenceIndex}.attendees`;
     const occurence = theActivity.datesAndTimes[occurenceIndex];
@@ -376,7 +376,7 @@ Meteor.methods({
       theActivity,
       values,
       occurence,
-      currentHost,
+      site,
       currentUser
     );
 
@@ -421,13 +421,13 @@ Meteor.methods({
     const newDatesAndTimes = [...theActivity.datesAndTimes];
     const theOccurence = newDatesAndTimes[occurenceIndex];
 
-    const currentHost = await getSite();
+    const site = await getSite();
     const currentUser = await Meteor.userAsync();
     const emailBody = getRegistrationEmailBody(
       theActivity,
       rsvpValues,
       theOccurence,
-      currentHost,
+      site,
       currentUser,
       true
     );
@@ -443,7 +443,7 @@ Meteor.methods({
       await Meteor.callAsync(
         'sendEmail',
         values.email,
-        `Update to your registration for "${theActivity.title}" at ${currentHost.settings.name}`,
+        `Update to your registration for "${theActivity.title}" at ${site.settings.name}`,
         emailBody
       );
     } catch (error) {
@@ -482,8 +482,8 @@ Meteor.methods({
       }
     );
 
-    const currentHost = await getSite();
-    const hostName = currentHost.settings.name;
+    const site = await getSite();
+    const hostName = site.settings.name;
 
     try {
       await Activities.updateAsync(activityId, {
@@ -498,7 +498,7 @@ Meteor.methods({
         getUnregistrationEmailBody(
           theActivity,
           theNonAttendee,
-          currentHost,
+          site,
           currentUser
         )
       );

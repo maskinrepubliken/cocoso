@@ -17,7 +17,7 @@ import {
   Text,
 } from '/imports/ui/core';
 import {
-  currentHostAtom,
+  siteAtom,
   isDesktopAtom,
   roleAtom,
 } from '/imports/state';
@@ -49,9 +49,9 @@ function AdminHeader({ currentRoute }) {
   );
 }
 
-export default function AdminContainer({ Host }) {
-  const currentHostFromAtom = useAtomValue(currentHostAtom);
-  const currentHost = Host || currentHostFromAtom;
+export default function AdminContainer({ siteDoc }) {
+  const siteFromAtom = useAtomValue(siteAtom);
+  const site = siteDoc || siteFromAtom;
   const isDesktop = useAtomValue(isDesktopAtom);
   const role = useAtomValue(roleAtom);
 
@@ -62,7 +62,7 @@ export default function AdminContainer({ Host }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const menuItems = currentHost?.settings?.menu;
+  const menuItems = site?.settings?.menu;
   const isAdmin = role === 'admin';
   const pathname = location?.pathname;
   const routes: any[] = isAdmin ? getAdminRoutes(menuItems) : [];

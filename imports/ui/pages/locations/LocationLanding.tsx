@@ -40,7 +40,7 @@ function Section({
   );
 }
 
-export default function LocationLanding({ Host }: { Host: any }) {
+export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
   const slugData = useRouteLoaderData('slug') as SlugData | undefined;
   const { activities, composablePage, groups, resources } =
     (useLoaderData() as any) || {};
@@ -51,12 +51,12 @@ export default function LocationLanding({ Host }: { Host: any }) {
     return null;
   }
 
-  const menu = Host?.settings?.menu || [];
+  const menu = siteDoc?.settings?.menu || [];
   const isVisible = (name: string) =>
     menu.find((item: any) => item.name === name)?.isVisible;
   const prefix = `/${location.slug}`;
   const heroImage = getImageUrl(location.images?.[0], 'full');
-  const title = `${location.name} | ${Host?.settings?.name}`;
+  const title = `${location.name} | ${siteDoc?.settings?.name}`;
   const description = location.description
     ? DOMPurify.sanitize(location.description, { ALLOWED_TAGS: [] })
         .replace(/\s+/g, ' ')
@@ -108,7 +108,7 @@ export default function LocationLanding({ Host }: { Host: any }) {
       {composablePage?.isPublished && (
         <Box mb="8">
           <ComposablePageHybrid
-            Host={Host}
+            siteDoc={siteDoc}
             composablePage={{
               ...composablePage,
               settings: { ...composablePage.settings, hideTitle: true },

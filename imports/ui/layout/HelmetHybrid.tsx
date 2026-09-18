@@ -17,15 +17,15 @@ const GENERIC_FONT_FAMILIES = [
 ];
 
 export interface HelmetHybridProps {
-  Host: any;
+  siteDoc: any;
 }
 
-export default function HelmetHybrid({ Host }: HelmetHybridProps) {
-  if (!Host) {
+export default function HelmetHybrid({ siteDoc }: HelmetHybridProps) {
+  if (!siteDoc) {
     return null;
   }
-  const lang = Host.settings?.lang;
-  const fontFamily = Host?.theme?.body?.fontFamily;
+  const lang = siteDoc.settings?.lang;
+  const fontFamily = siteDoc?.theme?.body?.fontFamily;
   const fontHref =
     fontFamily && !GENERIC_FONT_FAMILIES.includes(fontFamily)
       ? `https://fonts.googleapis.com/css2?family=${fontFamily}:ital,wght@0,300;0,400;0,700;1,400&display=swap`
@@ -33,7 +33,7 @@ export default function HelmetHybrid({ Host }: HelmetHybridProps) {
 
   return (
     <Helmet htmlAttributes={{ lang }}>
-      <title>{Host.settings?.name}</title>
+      <title>{siteDoc.settings?.name}</title>
       <link rel="canonical" href={publicUrl()} />
 
       <link rel="preconnect" href="https://fonts.googleapis.com" />

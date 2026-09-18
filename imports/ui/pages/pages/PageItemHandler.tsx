@@ -18,7 +18,7 @@ const EditPage = loadable(() => import('./EditPage'));
 export const pagesAtom = atom(null);
 export const currentPageAtom = atom(null);
 
-export default function PageItemHandler({ Host, pageTitles }) {
+export default function PageItemHandler({ siteDoc, pageTitles }) {
   const { pages } = useLoaderData();
   const setPages = useSetAtom(pagesAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);

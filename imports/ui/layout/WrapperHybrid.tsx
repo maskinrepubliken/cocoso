@@ -16,7 +16,7 @@ import useMediaQuery from '/imports/api/_utils/useMediaQuery';
 import Memberships from '/imports/api/memberships/membership';
 import i18n from '/imports/startup/i18n';
 import {
-  currentHostAtom,
+  siteAtom,
   currentUserAtom,
   pageTitlesAtom,
   roleAtom,
@@ -40,7 +40,7 @@ import { Footer } from './Footers';
 dayjs.extend(updateLocale);
 
 export interface WrapperHybridProps {
-  Host: any;
+  siteDoc: any;
   pageTitles: any[];
   locations?: any[];
   // Set only by serverRenderer.js — a per-request i18next clone
@@ -51,13 +51,13 @@ export interface WrapperHybridProps {
 }
 
 export default function WrapperHybrid({
-  Host,
+  siteDoc,
   pageTitles,
   locations,
   i18nInstance,
 }: WrapperHybridProps) {
   useHydrateAtoms([[locationsAtom, locations || []]]);
-  const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
+  const [site, setCurrentHost] = useAtom(siteAtom);
   const [pTitles, setPageTitles] = useAtom(pageTitlesAtom);
   const setCurrentUser = useSetAtom(currentUserAtom);
   const setRole = useSetAtom(roleAtom);
@@ -93,7 +93,7 @@ export default function WrapperHybrid({
   const changeLang = () => {
     if (!i18n) return;
     const userLang = currentUser?.lang;
-    const hostLang = currentHost?.settings?.lang;
+    const hostLang = site?.settings?.lang;
     const lang = userLang || hostLang || i18n.language;
 
     if (lang !== i18n.language) {
@@ -115,17 +115,17 @@ export default function WrapperHybrid({
   }, [isDesktopValue, isMobileValue]);
 
   useEffect(() => {
-    if (!currentHost) return;
-    applyGlobalStyles(currentHost.theme);
+    if (!site) return;
+    applyGlobalStyles(site.theme);
     // Only apply host language if no user preference has been detected/stored yet.
     // User language is applied in the currentUser effect with higher priority.
     if (!currentUser) {
-      const hostLang = currentHost?.settings?.lang;
+      const hostLang = site?.settings?.lang;
       if (hostLang && hostLang !== i18n.language) {
         i18n.changeLanguage(hostLang);
       }
     }
-  }, [currentHost]);
+  }, [site]);
 
   useEffect(() => {
     if (!i18n || !i18n.language) {
@@ -160,22 +160,22 @@ export default function WrapperHybrid({
 
   return (
     <>
-      <HelmetHybrid Host={currentHost || Host} />
+      <HelmetHybrid siteDoc={site || siteDoc} />
 
       <I18nextProvider i18n={i18nInstance || i18n}>
         <Suspense fallback={<Loader />}>
           <DummyWrapper
             animate={rendered && !isDesktopValue}
-            theme={currentHost?.theme || Host?.theme}
+            theme={site?.theme || siteDoc?.theme}
           >
             {rendered && !adminPage && <TopBarHandler slideStart={rendered} />}
             {!adminPage && (
               <>
                 <Header
-                  currentHost={currentHost || Host}
+                  site={site || siteDoc}
                   pageTitles={pTitles || pageTitles}
                 />
-                <LocationBar Host={Host} />
+                <LocationBar siteDoc={siteDoc} />
               </>
             )}
 
@@ -183,7 +183,7 @@ export default function WrapperHybrid({
               <Outlet />
             </Box>
 
-            {!adminPage && <Footer currentHost={currentHost || Host} />}
+            {!adminPage && <Footer site={site || siteDoc} />}
           </DummyWrapper>
         </Suspense>
 

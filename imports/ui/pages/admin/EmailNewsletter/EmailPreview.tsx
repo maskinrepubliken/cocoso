@@ -150,11 +150,11 @@ const hrStyle = {
 
 const maxChCount = 360;
 
-export default function EmailPreview({ currentHost, email }) {
+export default function EmailPreview({ site, email }) {
   const [tc] = useTranslation('common');
   const [t] = useTranslation('admin');
 
-  if (!currentHost || !email) {
+  if (!site || !email) {
     return null;
   }
 
@@ -162,7 +162,7 @@ export default function EmailPreview({ currentHost, email }) {
   const activities = items?.activities;
   const works = items?.works;
 
-  const { logo, logoLegacy, logoPng, settings, theme } = currentHost;
+  const { logo, logoLegacy, logoPng, settings, theme } = site;
   // Gmail (and some other clients) don't render a transparent WebP
   // background well — prefer an actual PNG rendition for the logo:
   // logoPng for hosts uploaded/backfilled since this existed, logoLegacy

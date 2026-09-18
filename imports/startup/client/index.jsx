@@ -52,11 +52,11 @@ onPageLoad(async () => {
     await new Promise((resolve) => i18n.on('initialized', resolve));
   }
 
-  const currentHost = await Meteor.callAsync('getSite');
+  const site = await Meteor.callAsync('getSite');
   const pageTitles = await Meteor.callAsync('getPageTitles');
   const locations = await Meteor.callAsync('getLocations');
 
-  if (!currentHost) {
+  if (!site) {
     console.info('No site configured yet. Rendering the setup wizard.');
     const root = createRoot(container);
     root.render(<SetupHome />);
@@ -64,7 +64,7 @@ onPageLoad(async () => {
   }
 
   const props = {
-    Host: currentHost,
+    siteDoc: site,
     pageTitles,
     locations,
   };

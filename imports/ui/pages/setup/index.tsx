@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useState } from 'react';
 
 import { Alert, Box, Button, Center } from '/imports/ui/core';
-import NewHostForm from '/imports/ui/forms/NewHostForm';
+import SiteForm from '/imports/ui/forms/SiteForm';
 
 import { Signup } from '../auth';
 import Stepper from '../../generic/Stepper';
@@ -10,7 +10,7 @@ import { call } from '../../../api/_utils/shared';
 import { message } from '../../generic/message';
 import { loginWithPasswordAsync } from '../auth/functions';
 
-export interface HostFormValues {
+export interface SiteFormValues {
   name: string;
   email: string;
   address: string;
@@ -32,12 +32,12 @@ const steps = [
     description: 'Admin account',
   },
   {
-    title: 'Site',
+    title: 'siteDoc',
     description: 'Name and contact details',
   },
 ];
 
-const hostModel = {
+const siteModel = {
   name: '',
   email: '',
   address: '',
@@ -115,7 +115,7 @@ export default function SetupHome() {
     }
   };
 
-  const onCreateHost = async (data: HostFormValues) => {
+  const onCreateHost = async (data: SiteFormValues) => {
     const parsedValues = {
       ...data,
       aboutTitle: `About ${data.name}`,
@@ -155,7 +155,7 @@ export default function SetupHome() {
     }
 
     if (state.currentStep === '1') {
-      return <NewHostForm defaultValues={hostModel} onSubmit={onCreateHost} />;
+      return <SiteForm defaultValues={siteModel} onSubmit={onCreateHost} />;
     }
     if (state.currentStep === '0') {
       return <Signup hideTermsCheck onSubmit={onCreateUser} />;

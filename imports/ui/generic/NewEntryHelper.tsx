@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai';
 
 import { Box } from '/imports/ui/core';
 
-import { currentHostAtom } from '../../state';
+import { siteAtom } from '../../state';
 
 export interface NewEntryHelperProps {
   buttonLabel?: string;
@@ -25,11 +25,11 @@ function NewEntryHelper({
   small = false,
   title,
 }: NewEntryHelperProps) {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const location = useLocation();
   const [tc] = useTranslation('common');
 
-  const activeMenuItem = currentHost?.settings?.menu?.find((item: any) =>
+  const activeMenuItem = site?.settings?.menu?.find((item: any) =>
     location?.pathname?.split('/').includes(item.name)
   );
 

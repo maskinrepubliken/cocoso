@@ -5,7 +5,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Box } from '/imports/ui/core';
 import GroupDocuments from '../generic/Documents';
 import GroupMembers from '/imports/ui/pages/groups/components/GroupMembers';
-import type { Document, Host } from '/imports/ui/types';
+import type { Document, Site } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
 import ActionDates from './ActionDates';
@@ -26,13 +26,13 @@ interface Group {
 export interface GroupHybridProps {
   group: Group;
   documents?: Document[];
-  Host: Host;
+  siteDoc: Site;
 }
 
 export default function GroupHybrid({
   group,
   documents,
-  Host,
+  siteDoc,
 }: GroupHybridProps) {
   const locationName = useLocationName((group as any)?.locationId);
   if (!group) {
@@ -60,7 +60,7 @@ export default function GroupHybrid({
     });
   }
 
-  const groupsInMenu = Host.settings?.menu.find(
+  const groupsInMenu = siteDoc.settings?.menu.find(
     (item: any) => item.name === 'groups'
   );
   const tags: any[] = [];

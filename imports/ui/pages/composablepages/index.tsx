@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLoaderData } from 'react-router';
-import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { atom, useSetAtom } from 'jotai';
 
-import { currentHostAtom } from '/imports/state';
 
 import ComposablePagesListing from './components/ComposablePagesListing';
 import ComposablePageCreator from './components/ComposablePageCreator';
@@ -10,7 +9,6 @@ import ComposablePageCreator from './components/ComposablePageCreator';
 export const composablePageTitlesAtom = atom([]);
 
 export default function ComposablePages() {
-  const currentHost = useAtomValue(currentHostAtom);
   const { composablePageTitles } = useLoaderData();
   const setComposablePageTitles = useSetAtom(composablePageTitlesAtom);
 

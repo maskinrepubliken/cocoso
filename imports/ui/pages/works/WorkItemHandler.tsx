@@ -14,7 +14,7 @@ const EditWork = loadable(() => import('./EditWork'));
 
 export const workAtom = atom(null);
 
-export default function WorkItemHandler({ Host }) {
+export default function WorkItemHandler({ siteDoc }) {
   const { documents, work } = useLoaderData();
   const setWork = useSetAtom(workAtom);
   const rendered = useAtomValue(renderedAtom);
@@ -26,7 +26,7 @@ export default function WorkItemHandler({ Host }) {
 
   return (
     <>
-      <WorkHybrid Host={Host} documents={documents} work={work} />
+      <WorkHybrid siteDoc={siteDoc} documents={documents} work={work} />
 
       {rendered && (
         <>

@@ -5,7 +5,7 @@ import DOMPurify from 'isomorphic-dompurify';
 
 import { Box, Text } from '/imports/ui/core';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
-import type { Document, Host } from '/imports/ui/types';
+import type { Document, Site } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
 import { publicUrl } from '/imports/api/_utils/shared';
@@ -31,10 +31,10 @@ interface Work {
 export interface WorkHybridProps {
   documents?: Document[];
   work: Work;
-  Host: Host;
+  siteDoc: Site;
 }
 
-export default function WorkHybrid({ documents, work, Host }: WorkHybridProps) {
+export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps) {
   const locationName = useLocationName((work as any)?.locationId);
   if (!work) {
     return null;
@@ -79,7 +79,7 @@ export default function WorkHybrid({ documents, work, Host }: WorkHybridProps) {
 
   const tags =
     work && ([work.category?.label, locationName].filter(Boolean) as string[]);
-  const worksInMenu = Host?.settings?.menu.find(
+  const worksInMenu = siteDoc?.settings?.menu.find(
     (item) => item.name === 'works'
   );
 

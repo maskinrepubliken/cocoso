@@ -36,7 +36,7 @@ Meteor.methods({
       throw new Meteor.Error('Keyword already exists');
     }
 
-    const currentHost = await getSite();
+    const site = await getSite();
 
     try {
       const keywordId = await Keywords.insertAsync({

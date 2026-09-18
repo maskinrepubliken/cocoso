@@ -15,14 +15,14 @@ import {
 } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 import { call } from '../../../api/_utils/shared';
-import { currentHostAtom, currentUserAtom, roleAtom } from '/imports/state';
+import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 
 import { loginWithPassword } from './functions';
 import { Login } from './index';
 import { clearEncryptionKey } from '/imports/utils/setupEncryption';
 
 export default function LoginPage() {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const currentUser = useAtomValue(currentUserAtom);
   const [role, setRole] = useAtom(roleAtom);
   const [t] = useTranslation('accounts');
@@ -87,11 +87,11 @@ export default function LoginPage() {
       >
         <Center mb="8">
           <Box w="xs">
-            {currentHost?.logo && (
+            {site?.logo && (
               <Center p="4">
                 <Image
-                  alt={`${currentHost?.settings?.name} logo`}
-                  src={currentHost.logo}
+                  alt={`${site?.settings?.name} logo`}
+                  src={site.logo}
                   w="240px"
                 />
               </Center>
@@ -146,7 +146,7 @@ export default function LoginPage() {
         open={joinModal}
         id="login-page-join"
         title={t('profile.joinHost', {
-          host: currentHost?.settings?.name,
+          host: site?.settings?.name,
         })}
         onConfirm={() => confirmJoin()}
         onClose={() => cancelJoin()}
@@ -154,8 +154,8 @@ export default function LoginPage() {
       >
         <Center>
           <Image
-            alt={`${currentHost?.settings?.name} logo`}
-            src={currentHost?.logo}
+            alt={`${site?.settings?.name} logo`}
+            src={site?.logo}
             m="4"
             width="4xs"
           />

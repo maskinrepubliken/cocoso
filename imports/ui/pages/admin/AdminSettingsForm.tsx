@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { Box, Button, Flex, Heading, Input } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
 import ChangeLanguage from '/imports/ui/layout/ChangeLanguageMenu';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { updateSiteSettings } from '/imports/actions';
 
 import Boxling from './Boxling';
 
-interface HostSettingsFormValues {
+interface SiteSettingsFormValues {
   name?: string;
   email?: string;
   address?: string;
@@ -22,12 +22,12 @@ interface HostSettingsFormValues {
 }
 
 export default function AdminSettingsForm() {
-  const currentHost = useAtomValue(currentHostAtom);
-  const [localSettings, setLocalSettings] = useState(currentHost?.settings);
-  const [t] = useTranslation('hosts');
+  const site = useAtomValue(siteAtom);
+  const [localSettings, setLocalSettings] = useState(site?.settings);
+  const [t] = useTranslation('site');
   const [ta] = useTranslation('admin');
   const [tc] = useTranslation('common');
-  const { handleSubmit, register, formState } = useForm<HostSettingsFormValues>(
+  const { handleSubmit, register, formState } = useForm<SiteSettingsFormValues>(
     {
       defaultValues: localSettings,
     }
@@ -35,11 +35,11 @@ export default function AdminSettingsForm() {
   const { isDirty, isSubmitting } = formState;
 
   useEffect(() => {
-    if (!currentHost) {
+    if (!site) {
       return;
     }
-    setLocalSettings(currentHost.settings);
-  }, [currentHost]);
+    setLocalSettings(site.settings);
+  }, [site]);
 
   return (
     <Box py="6">

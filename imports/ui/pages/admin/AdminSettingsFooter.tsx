@@ -5,26 +5,26 @@ import { useForm } from 'react-hook-form';
 
 import Quill from '/imports/ui/forms/Quill';
 import { Box, Button, Flex, Heading, Text } from '/imports/ui/core';
-import { currentHostAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { updateSiteSettings } from '/imports/actions';
 
 import Boxling from './Boxling';
 
 export default function AdminSettingsFooter() {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const [currentFooter, setCurrentFooter] = useState(null);
   const { handleSubmit, register, formState } = useForm({
-    defaultValues: currentHost?.settings?.footer || '',
+    defaultValues: site?.settings?.footer || '',
   });
   const { isDirty, isSubmitting } = formState;
 
   useEffect(() => {
-    if (!currentHost) {
+    if (!site) {
       return;
     }
-    const defaultFooter = currentHost.settings.footer || '<p>-</p>';
+    const defaultFooter = site.settings.footer || '<p>-</p>';
     setCurrentFooter(defaultFooter);
-  }, [currentHost]);
+  }, [site]);
 
   return (
     <Box py="6">

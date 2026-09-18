@@ -9,7 +9,7 @@ import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 
 const NewResource = loadable(() => import('./NewResource'));
 
-export default function ResourceListHandler({ Host }) {
+export default function ResourceListHandler({ siteDoc }) {
   const { documents, resources } = useLoaderData();
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
@@ -19,7 +19,7 @@ export default function ResourceListHandler({ Host }) {
       <ResourcesHybrid
         documents={documents}
         resources={resources}
-        Host={Host}
+        siteDoc={siteDoc}
       />
 
       {rendered && canCreateContent ? (

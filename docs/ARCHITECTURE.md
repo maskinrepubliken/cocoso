@@ -41,8 +41,8 @@ browser ──HTTP/DDP──▶ Meteor (Node 22)
 There is exactly one document in the `site` collection
 (`imports/api/site`). It holds the site's name, contact details, logo, menu,
 theme and email templates and is edited in the admin area. `getSite()`
-reads it on the server; the UI still calls it `Host` / `currentHostAtom`
-for historical reasons. There is no per-request tenant resolution and no
+reads it on the server; the UI reads it from `siteAtom` and receives the
+server-rendered copy as the `siteDoc` route prop. There is no per-request tenant resolution and no
 `host` field on documents any more; `ROOT_URL` is the one public address,
 and `publicUrl(path)` builds absolute links from it for emails and
 canonical tags.

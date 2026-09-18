@@ -9,7 +9,7 @@ import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 
 const NewPublicActivity = loadable(() => import('./NewPublicActivity'));
 
-export default function ActivityListHandler({ Host }) {
+export default function ActivityListHandler({ siteDoc }) {
   const { activities } = useLoaderData();
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
@@ -20,7 +20,7 @@ export default function ActivityListHandler({ Host }) {
     <>
       <ActivitiesHybrid
         activities={activities}
-        Host={Host}
+        siteDoc={siteDoc}
         showPast={showPast}
       />
 

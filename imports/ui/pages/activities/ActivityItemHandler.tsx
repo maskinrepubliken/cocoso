@@ -17,7 +17,7 @@ const EditPublicActivity = loadable(() => import('./EditPublicActivity'));
 
 export const activityAtom = atom(null);
 
-export default function ActivityItemHandler({ Host }) {
+export default function ActivityItemHandler({ siteDoc }) {
   const { activity } = useLoaderData();
   const navigate = useNavigate();
   const setActivity = useSetAtom(activityAtom);
@@ -34,7 +34,7 @@ export default function ActivityItemHandler({ Host }) {
 
   return (
     <>
-      <ActivityHybrid activity={activity} Host={Host} />
+      <ActivityHybrid activity={activity} siteDoc={siteDoc} />
 
       {rendered && (
         <>

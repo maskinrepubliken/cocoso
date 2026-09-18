@@ -8,7 +8,7 @@ const ReactPlayer = loadable(() => import('react-player'));
 import { Box, Button, Center, Flex, Grid } from '/imports/ui/core';
 import { Divider, Heading } from '/imports/ui/core';
 import EmblaSlider from '/imports/ui/generic/EmblaSlider';
-import type { Host } from '/imports/ui/types';
+import type { Site } from '/imports/ui/types';
 import { Helmet } from 'react-helmet';
 import { publicUrl } from '/imports/api/_utils/shared';
 
@@ -37,7 +37,7 @@ export interface Module {
 
 export interface ContentViewModuleProps {
   module: Module;
-  Host: Host;
+  siteDoc: Site;
 }
 
 const imageStyle = {
@@ -170,12 +170,12 @@ interface ComposablePage {
 }
 
 export interface ComposablePageHybridProps {
-  Host: Host;
+  siteDoc: Site;
   composablePage: ComposablePage;
 }
 
 export default function ComposablePageHybrid({
-  Host,
+  siteDoc,
   composablePage,
 }: ComposablePageHybridProps) {
   if (!composablePage) {
@@ -184,7 +184,7 @@ export default function ComposablePageHybrid({
 
   const hideMenu = composablePage.settings?.hideMenu;
   const hideTitle = composablePage.settings?.hideTitle;
-  const titleWithHost = `${Host.settings?.name} | ${composablePage.title}`;
+  const titleWithHost = `${siteDoc.settings?.name} | ${composablePage.title}`;
 
   return (
     <>
@@ -199,7 +199,7 @@ export default function ComposablePageHybrid({
           content={String(titleWithHost)?.substring(0, 40)}
         />
         <meta property="og:url" content={publicUrl(`/cp/${composablePage._id}`)} />
-        <meta property="og:image" content={Host.logo} />
+        <meta property="og:image" content={siteDoc.logo} />
         <meta
           property="og:description"
           content={String(composablePage.description || '')?.substring(0, 150)}
@@ -236,7 +236,7 @@ export default function ComposablePageHybrid({
                 <Box key={columnIndex}>
                   {column.map((module, moduleIndex) => (
                     <Box key={`${module.id || module.type}-${moduleIndex}`}>
-                      <ContentViewModule module={module} Host={Host} />
+                      <ContentViewModule module={module} siteDoc={siteDoc} />
                     </Box>
                   ))}
                 </Box>

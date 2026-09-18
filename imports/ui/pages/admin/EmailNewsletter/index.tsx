@@ -18,7 +18,7 @@ import {
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import {
-  currentHostAtom,
+  siteAtom,
   currentUserAtom,
   roleAtom,
 } from '/imports/state';
@@ -51,7 +51,7 @@ export const newsletterAtom = atom(initialNewsletterAtom);
 const toastLoaderOptions = { id: 'loader-toast' };
 
 export default function EmailNewsletter() {
-  const currentHost = useAtomValue(currentHostAtom);
+  const site = useAtomValue(siteAtom);
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const [state, setState] = useAtom(newsletterAtom);
@@ -113,7 +113,7 @@ export default function EmailNewsletter() {
 
     const emailHtml = renderEmail(
       <EmailPreview
-        currentHost={currentHost}
+        site={site}
         email={email}
       />
     );
@@ -146,7 +146,7 @@ export default function EmailNewsletter() {
     return <Alert>{tc('message.access.deny')}</Alert>;
   }
 
-  if (!currentHost) {
+  if (!site) {
     return null;
   }
 
@@ -172,7 +172,7 @@ export default function EmailNewsletter() {
         <Text>{t('newsletter.subtitle')}</Text>
 
         <Boxling mt="4">
-          <EmailForm currentHost={currentHost} onSubmit={handleSubmit} />
+          <EmailForm site={site} onSubmit={handleSubmit} />
         </Boxling>
       </Box>
 
@@ -201,7 +201,7 @@ export default function EmailNewsletter() {
       >
         <Center>
           <EmailPreview
-                currentHost={currentHost}
+                site={site}
             email={state.email}
           />
         </Center>
