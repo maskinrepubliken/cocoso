@@ -12,14 +12,6 @@ FROM ${NODE_IMAGE} AS builder
 
 ARG METEOR_VERSION=3.5.2
 
-# force-ssl-custom redirects every request that is neither TLS nor from
-# localhost to https://. Requests reaching a container come from the Docker
-# bridge, so they count as remote and the redirect loops. The compose stack
-# serves plain HTTP, so the package is dropped here; build with
-# --build-arg DISABLE_FORCE_SSL=0 when a TLS-terminating proxy sits in front
-# and sets X-Forwarded-Proto.
-ARG DISABLE_FORCE_SSL=1
-
 ENV METEOR_ALLOW_SUPERUSER=true \
     TOOL_NODE_FLAGS=--max-old-space-size=4096
 
@@ -39,10 +31,6 @@ RUN curl -fsSL "https://install.meteor.com/?release=${METEOR_VERSION}" | sh
 
 WORKDIR /source
 COPY . .
-
-RUN if [ "$DISABLE_FORCE_SSL" = "1" ]; then \
-      sed -i '/^force-ssl-custom/d' .meteor/packages; \
-    fi
 
 # patch-package runs as a postinstall hook and needs patches/ in place.
 # Retried because node-pre-gyp and node-gyp fetch prebuilt binaries and headers
