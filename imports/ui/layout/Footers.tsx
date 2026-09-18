@@ -6,6 +6,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Box, Center, Flex, Heading, Text } from '/imports/ui/core';
 
 import FeedbackForm from './FeedbackForm';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import ChangeLanguageMenu from './ChangeLanguageMenu';
 
 export interface OldFooterProps {
@@ -39,6 +40,7 @@ export interface FooterProps {
 }
 
 export function Footer({ currentHost }: FooterProps) {
+  const prefix = useLocationPrefix();
   if (!currentHost || !currentHost.settings) {
     return null;
   }
@@ -57,10 +59,10 @@ export function Footer({ currentHost }: FooterProps) {
               <Link
                 to={
                   item.name === 'info'
-                    ? '/info/about'
+                    ? `${prefix}/info/about`
                     : item.isComposablePage
-                    ? `/cp/${item.name}`
-                    : `/${item.name}`
+                    ? `${prefix}/cp/${item.name}`
+                    : `${prefix}/${item.name}`
                 }
               >
                 <Text color="theme.50">{item.label}</Text>{' '}

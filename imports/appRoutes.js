@@ -20,7 +20,8 @@ import GroupItemHandler from '/imports/ui/pages/groups/GroupItemHandler';
 import ResourceItemHandler from '/imports/ui/pages/resources/ResourceItemHandler';
 import WorkItemHandler from '/imports/ui/pages/works/WorkItemHandler';
 import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
-import UserProfileHandler from '/imports/ui/pages/profile/UserProfileHandler';
+import SlugHandler, { SlugChild } from '/imports/ui/pages/locations/SlugHandler';
+import LocationLanding from '/imports/ui/pages/locations/LocationLanding';
 import ComposablePageHandler from '/imports/ui/pages/composablepages/ComposablePageHandler';
 import CalendarHandler from '/imports/ui/pages/calendar/CalendarHandler';
 
@@ -174,6 +175,7 @@ import {
   getUser,
   getWorks,
   getWork,
+  getLocationLanding,
   getHostMembersForAdmin,
   getLocationsForAdmin,
   getEmails,
@@ -412,8 +414,165 @@ const getAdminRoutes = (props) => [
   },
 ];
 
+const isUserSlug = (slug) => typeof slug === 'string' && slug.startsWith('@');
+
 export default function appRoutes(props) {
   const Host = props?.Host;
+  const locations = props?.locations || [];
+  const findLocation = (slug) =>
+    locations.find((location) => location.slug === slug) || null;
+
+  // /:slug is a profile (/@name) or a location (/limmared); the loader
+  // decides, and every child route below it branches on that decision.
+  const slugLoader = async ({ params }) => {
+    if (isUserSlug(params.slug)) {
+      const data = await getUser({ params });
+      return { kind: 'user', ...data };
+    }
+    const location = findLocation(params.slug);
+    if (!location) {
+      return { kind: 'notFound' };
+    }
+    return { kind: 'location', location };
+  };
+
+  // Under a location every loader receives the location id; under a profile
+  // the profile's own loaders run instead (or nothing, for URLs profiles do
+  // not have).
+  const forLocation = (loader, userLoader) => async (args) => {
+    if (isUserSlug(args.params?.slug)) {
+      return userLoader ? await userLoader(args) : {};
+    }
+    const location = findLocation(args.params?.slug);
+    if (args.params?.slug && !location) {
+      return {};
+    }
+    return await loader({ ...args, locationId: location?._id });
+  };
+
+  // The public listing and entry routes, mounted once at the root and once
+  // under /:slug. Under the slug each element switches between the profile
+  // component (if any) and the location component.
+  const publicRoutes = ({ forSlug }) => {
+    const el = (LocationComponent, UserComponent = null) =>
+      forSlug
+        ? createRouteElement(SlugChild, {
+            ...props,
+            location: LocationComponent,
+            user: UserComponent,
+          })
+        : createRouteElement(LocationComponent, props);
+    const ld = (loader, userLoader = null) =>
+      forSlug ? forLocation(loader, userLoader) : loader;
+
+    return [
+      {
+        path: 'activities',
+        children: [
+          {
+            index: true,
+            element: el(ActivityListHandler, MemberActivities),
+            loader: ld(
+              ({ request, locationId }) => getActivities({ request, locationId }),
+              ({ params }) => getActivitiesByUser({ params })
+            ),
+            shouldRevalidate: revalidateOn(['showPast']),
+          },
+          {
+            path: ':activityId',
+            element: el(ActivityItemHandler),
+            loader: ld(({ params }) => getActivity({ params })),
+            shouldRevalidate: revalidateOn(['edit']),
+          },
+        ],
+      },
+      {
+        path: 'groups',
+        children: [
+          {
+            index: true,
+            element: el(GroupListHandler, MemberGroups),
+            loader: ld(
+              ({ locationId }) => getGroups({ locationId }),
+              ({ params }) => getGroupsByUser({ params })
+            ),
+            shouldRevalidate: revalidateOn(),
+          },
+          {
+            path: ':groupId/*',
+            element: el(GroupItemHandler),
+            loader: ld(({ params }) => getGroup({ params })),
+            shouldRevalidate: revalidateOn(['edit']),
+          },
+        ],
+      },
+      {
+        path: 'calendar',
+        children: [
+          {
+            index: true,
+            element: el(CalendarHandler),
+            loader: ld(({ locationId }) => getCalendarEntries({ locationId })),
+            shouldRevalidate: revalidateOn(['edit']),
+          },
+          {
+            path: ':activityId/*',
+            element: el(ActivityItemHandler),
+            loader: ld(({ params }) => getActivity({ params })),
+            shouldRevalidate: revalidateOn(['edit']),
+          },
+        ],
+      },
+      {
+        path: 'info/:pageTitle',
+        element: el(PageItemHandler),
+        loader: ld(() => getPages()),
+        shouldRevalidate: revalidateOn(['edit']),
+      },
+      {
+        path: 'people',
+        element: el(UserListHandler),
+        loader: ld(() => getPeople()),
+        shouldRevalidate: revalidateOn(),
+      },
+      {
+        path: 'resources',
+        children: [
+          {
+            index: true,
+            element: el(ResourceListHandler),
+            loader: ld(({ locationId }) => getResources({ locationId })),
+            shouldRevalidate: revalidateOn(),
+          },
+          {
+            path: ':resourceId/*',
+            element: el(ResourceItemHandler),
+            loader: ld(({ params }) => getResource({ params })),
+            shouldRevalidate: revalidateOn(['edit']),
+          },
+        ],
+      },
+      {
+        path: 'works',
+        children: [
+          {
+            index: true,
+            element: el(WorkListHandler, MemberWorks),
+            loader: ld(
+              ({ locationId }) => getWorks({ locationId }),
+              ({ params }) => getWorksByUser({ params })
+            ),
+            shouldRevalidate: revalidateOn(),
+          },
+        ],
+      },
+      {
+        path: 'cp/:composablePageId',
+        element: el(ComposablePageHandler),
+        loader: ld(({ params }) => getComposablePage({ params, Host })),
+      },
+    ];
+  };
 
   return [
     {
@@ -425,142 +584,39 @@ export default function appRoutes(props) {
           loader: async ({ params, request }) =>
             await getHomeLoader({ Host, params, request }),
         },
+        ...publicRoutes({ props, forSlug: false }),
         {
-          path: 'activities',
-          children: [
-            {
-              index: true,
-              element: createRouteElement(ActivityListHandler, props),
-              loader: async ({ request }) =>
-                await getActivities({ request }),
-              shouldRevalidate: revalidateOn(['showPast']),
-            },
-            {
-              path: ':activityId',
-              element: createRouteElement(ActivityItemHandler, props),
-              loader: async ({ params }) => await getActivity({ params }),
-              shouldRevalidate: revalidateOn(['edit']),
-            },
-          ],
-        },
-        {
-          path: 'groups',
-          children: [
-            {
-              index: true,
-              element: createRouteElement(GroupListHandler, props),
-              loader: async () => await getGroups(),
-              shouldRevalidate: revalidateOn(),
-            },
-            {
-              path: ':groupId/*',
-              index: true,
-              element: createRouteElement(GroupItemHandler, props),
-              loader: async ({ params }) => await getGroup({ params }),
-              shouldRevalidate: revalidateOn(['edit']),
-            },
-          ],
-        },
-        {
-          path: 'calendar',
-          children: [
-            {
-              index: true,
-              element: createRouteElement(CalendarHandler, props),
-              loader: async ({ request }) =>
-                await getCalendarEntries(),
-              shouldRevalidate: revalidateOn(['edit']),
-            },
-            {
-              path: ':activityId/*',
-              element: createRouteElement(ActivityItemHandler, props),
-              loader: async ({ params }) => await getActivity({ params }),
-              shouldRevalidate: revalidateOn(['edit']),
-            },
-          ],
-        },
-        {
-          path: 'info',
-          children: [
-            {
-              path: ':pageTitle',
-              element: createRouteElement(PageItemHandler, props),
-              loader: async () => await getPages(),
-              shouldRevalidate: revalidateOn(['edit']),
-            },
-          ],
-        },
-        {
-          path: 'people',
-          element: createRouteElement(UserListHandler, props),
-          loader: async () => await getPeople(),
+          id: 'slug',
+          path: ':slug',
+          element: createRouteElement(SlugHandler, props),
+          loader: async ({ params }) => await slugLoader({ params }),
           shouldRevalidate: revalidateOn(),
-        },
-        {
-          path: 'resources',
           children: [
             {
               index: true,
-              element: createRouteElement(ResourceListHandler, props),
-              loader: async () => await getResources(),
+              element: createRouteElement(SlugChild, {
+                ...props,
+                location: LocationLanding,
+                emptyForUser: true,
+              }),
+              loader: async ({ params }) => {
+                const location = findLocation(params.slug);
+                return location ? await getLocationLanding({ location }) : {};
+              },
               shouldRevalidate: revalidateOn(),
             },
+            ...publicRoutes({ props, forSlug: true }),
             {
-              path: ':resourceId/*',
-              index: true,
-              element: createRouteElement(ResourceItemHandler, props),
-              loader: async ({ params }) => await getResource({ params }),
+              path: 'works/:workId/*',
+              element: createRouteElement(SlugChild, {
+                ...props,
+                user: WorkItemHandler,
+              }),
+              loader: async ({ params }) =>
+                params.slug.startsWith('@') ? await getWork({ params }) : {},
               shouldRevalidate: revalidateOn(['edit']),
             },
           ],
-        },
-        {
-          path: 'works',
-          children: [
-            {
-              index: true,
-              element: createRouteElement(WorkListHandler, props),
-              loader: async () => await getWorks(),
-              shouldRevalidate: revalidateOn(),
-            },
-          ],
-        },
-        {
-          path: ':usernameSlug',
-          element: createRouteElement(UserProfileHandler, props),
-          loader: async ({ params }) => await getUser({ params }),
-          children: [
-            {
-              path: 'activities',
-              element: createRouteElement(MemberActivities, props),
-              loader: async ({ params }) =>
-                await getActivitiesByUser({ params }),
-            },
-            {
-              path: 'groups',
-              element: createRouteElement(MemberGroups, props),
-              loader: async ({ params }) =>
-                await getGroupsByUser({ params }),
-            },
-            {
-              path: 'works',
-              element: createRouteElement(MemberWorks, props),
-              loader: async ({ params }) =>
-                await getWorksByUser({ params }),
-            },
-          ],
-        },
-        {
-          path: ':usernameSlug/works/:workId/*',
-          element: createRouteElement(WorkItemHandler, props),
-          loader: async ({ params }) => await getWork({ params }),
-          shouldRevalidate: revalidateOn(['edit']),
-        },
-        {
-          path: 'cp/:composablePageId',
-          element: createRouteElement(ComposablePageHandler, props),
-          loader: async ({ params }) =>
-            await getComposablePage({ params, Host }),
         },
         {
           path: 'login',

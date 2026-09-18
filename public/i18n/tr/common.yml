@@ -226,6 +226,14 @@ locations:
   unpublished: henüz yayınlanmadı
   everywhere: Tüm belediyede
   here: Burada, {{ name }}
+  landing:
+    activities: '{{ name }} bölgesinde neler var'
+    resources: '{{ name }} bölgesindeki yerler ve mekânlar'
+    groups: '{{ name }} bölgesindeki gruplar'
+    seeAll: Tümünü gör
+    nothingYet: Henüz bir şey yok
+  grid:
+    title: Yerinizi seçin
   form:
     label: Yer
     helperResource: Bu kaynağın bulunduğu köy veya yer. Burada yapılan etkinlikler otomatik olarak onu izler.

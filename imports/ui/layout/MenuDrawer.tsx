@@ -13,6 +13,7 @@ import {
   pageTitlesAtom,
 } from '../../state';
 import { InfoPagesMenu } from './Header';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 interface MenuContentProps {
   menuItems: any[];
@@ -95,20 +96,21 @@ function MenuFooter() {
   );
 }
 
-const getRoute = (item: any) => {
+const getRoute = (item: any, prefix = '') => {
   if (item.isComposablePage) {
-    return `/cp/${item.name}`;
+    return `${prefix}/cp/${item.name}`;
   }
   if (item.name === 'info') {
-    return '/info/about';
+    return `${prefix}/info/about`;
   }
-  return `/${item.name}`;
+  return `${prefix}/${item.name}`;
 };
 
 export default function MenuDrawer() {
   const currentHost = useAtomValue(currentHostAtom);
   const pageTitles = useAtomValue(pageTitlesAtom);
   const isDesktop = useAtomValue(isDesktopAtom);
+  const prefix = useLocationPrefix();
 
   const [isOpen, setIsOpen] = useState(false);
   const [tc] = useTranslation('common');
@@ -128,9 +130,9 @@ export default function MenuDrawer() {
 
   const menuItems = menu
     ?.filter((item) => item.isVisible)
-    .map((item, index) => ({
+    .map((item) => ({
       ...item,
-      route: getRoute(item, index),
+      route: getRoute(item, prefix),
     }));
 
   const menuStyles = currentHost?.theme?.menu;

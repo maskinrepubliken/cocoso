@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import parseHtml from 'html-react-parser';
 import { useTranslation } from 'react-i18next';
 
@@ -120,6 +121,7 @@ export default function PopupHandler({
 }: PopupHandlerProps) {
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
+  const prefix = useLocationPrefix();
   const [tc] = useTranslation('common');
 
   const [displayedItem, setDisplayedItem] = useState(item);
@@ -148,7 +150,7 @@ export default function PopupHandler({
 
   const handleActionButtonClick = () => {
     if (!displayedItem) return;
-    navigate(getLinkPath(displayedItem, kind));
+    navigate(`${prefix}${getLinkPath(displayedItem, kind)}`);
   };
 
   const tags = [];

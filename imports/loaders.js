@@ -1,5 +1,16 @@
 import { call } from './api/_utils/shared';
 
+// Items filed under the location first, municipality-wide ones after.
+function localFirst(items, locationId) {
+  if (!locationId || !Array.isArray(items)) {
+    return items;
+  }
+  return [
+    ...items.filter((item) => item.locationId === locationId),
+    ...items.filter((item) => item.locationId !== locationId),
+  ];
+}
+
 export async function getHomeLoader({ Host, params, request }) {
   const menu = Host?.settings?.menu;
   const homeRouteName = menu && menu[0]?.name;
@@ -24,14 +35,18 @@ export async function getHomeLoader({ Host, params, request }) {
   }
 }
 
-export async function getActivities({ request }) {
+export async function getActivities({ request, locationId }) {
   const url = new URL(request?.url);
   const showPast = url?.searchParams?.get('showPast') === 'true' || false;
 
-  const activities = await call('getAllPublicActivities', showPast);
+  const activities = await call(
+    'getAllPublicActivities',
+    showPast,
+    locationId || undefined
+  );
 
   return {
-    activities,
+    activities: localFirst(activities, locationId),
     showPast,
   };
 }
@@ -50,9 +65,9 @@ export async function getActivity({ params }) {
   };
 }
 
-export async function getCalendarEntries() {
-  const activities = await call('getAllActivities');
-  const resources = await call('getResources');
+export async function getCalendarEntries({ locationId } = {}) {
+  const activities = await call('getAllActivities', locationId || undefined);
+  const resources = await call('getResources', locationId || undefined);
 
   return {
     activities,
@@ -60,11 +75,11 @@ export async function getCalendarEntries() {
   };
 }
 
-export async function getGroups() {
-  const groups = await call('getGroupsWithMeetings');
+export async function getGroups({ locationId } = {}) {
+  const groups = await call('getGroupsWithMeetings', locationId || undefined);
 
   return {
-    groups,
+    groups: localFirst(groups, locationId),
   };
 }
 
@@ -100,11 +115,11 @@ export async function getPeople() {
   };
 }
 
-export async function getResources() {
-  const resources = await call('getResources');
+export async function getResources({ locationId } = {}) {
+  const resources = await call('getResources', locationId || undefined);
 
   return {
-    resources,
+    resources: localFirst(resources, locationId),
   };
 }
 
@@ -128,8 +143,8 @@ export async function getUser({ params }) {
     return null;
   }
 
-  const { usernameSlug } = params;
-  const username = usernameSlug?.replace('@', '');
+  const { usernameSlug, slug } = params;
+  const username = (usernameSlug || slug)?.replace('@', '');
   const user = await call('getUserInfo', username);
 
   return {
@@ -137,11 +152,37 @@ export async function getUser({ params }) {
   };
 }
 
-export async function getWorks() {
-  const works = await call('getAllWorks');
+export async function getWorks({ locationId } = {}) {
+  const works = await call('getAllWorks', locationId || undefined);
 
   return {
-    works,
+    works: localFirst(works, locationId),
+  };
+}
+
+// Data for a location's landing page: what happens there, its venues and
+// groups, plus the optional composable page an admin attached to it.
+export async function getLocationLanding({ location }) {
+  if (!location) {
+    return {};
+  }
+  const locationId = location._id;
+  const [activities, resources, groups, composablePage] = await Promise.all([
+    call('getAllPublicActivities', false, locationId),
+    call('getResources', locationId),
+    call('getGroupsWithMeetings', locationId),
+    location.landingPageId
+      ? call('getComposablePageById', location.landingPageId).catch(() => null)
+      : Promise.resolve(null),
+  ]);
+  const own = (items) =>
+    (items || []).filter((item) => item.locationId === locationId);
+
+  return {
+    activities: own(activities).slice(0, 6),
+    resources: own(resources).slice(0, 8),
+    groups: own(groups).slice(0, 6),
+    composablePage,
   };
 }
 
@@ -150,8 +191,8 @@ export async function getWork({ params }) {
     return null;
   }
 
-  const { usernameSlug, workId } = params;
-  const username = usernameSlug?.replace('@', '');
+  const { usernameSlug, slug, workId } = params;
+  const username = (usernameSlug || slug)?.replace('@', '');
   const work = await call('getWorkById', workId, username);
   const documents = await call('getDocumentsByAttachments', workId);
 
@@ -217,8 +258,8 @@ export async function getActivitiesByUser({ params }) {
     return null;
   }
 
-  const { usernameSlug } = params;
-  const username = usernameSlug?.replace('@', '');
+  const { usernameSlug, slug } = params;
+  const username = (usernameSlug || slug)?.replace('@', '');
   const activities = await call('getActivitiesByUser', username);
 
   return {
@@ -231,8 +272,8 @@ export async function getGroupsByUser({ params }) {
     return null;
   }
 
-  const { usernameSlug } = params;
-  const username = usernameSlug?.replace('@', '');
+  const { usernameSlug, slug } = params;
+  const username = (usernameSlug || slug)?.replace('@', '');
   const groups = await call('getGroupsByUser', username);
 
   return {
@@ -245,8 +286,8 @@ export async function getWorksByUser({ params }) {
     return null;
   }
 
-  const { usernameSlug } = params;
-  const username = usernameSlug?.replace('@', '');
+  const { usernameSlug, slug } = params;
+  const username = (usernameSlug || slug)?.replace('@', '');
   const works = await call('getWorksByUser', username);
 
   return {

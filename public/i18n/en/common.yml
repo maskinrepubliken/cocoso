@@ -228,6 +228,14 @@ locations:
   unpublished: not yet published
   everywhere: In the whole municipality
   here: Here in {{ name }}
+  landing:
+    activities: What's on in {{ name }}
+    resources: Places and venues in {{ name }}
+    groups: Groups in {{ name }}
+    seeAll: See all
+    nothingYet: Nothing here yet
+  grid:
+    title: Choose your place
   form:
     label: Place
     helperResource: The village or place where this resource is. Activities held here follow it automatically.

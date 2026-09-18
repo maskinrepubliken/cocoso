@@ -10,6 +10,7 @@ import type { Document, Host, ResourceForCombo } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { useLocationName } from '/imports/ui/utils/useLocation';
 
 interface Resource {
   _id: string;
@@ -34,6 +35,7 @@ export default function ResourceHybrid({
   resource,
   Host,
 }: ResourceHybridProps) {
+  const locationName = useLocationName((resource as any)?.locationId);
   if (!resource) {
     return null;
   }
@@ -97,7 +99,10 @@ export default function ResourceHybrid({
   //   });
   // }
 
-  const tags = [];
+  const tags: any[] = [];
+  if (locationName) {
+    tags.push(locationName);
+  }
   if (resource.isCombo) {
     tags.push(<Trans i18nKey="resources:cards.isCombo">Combo</Trans>);
   }

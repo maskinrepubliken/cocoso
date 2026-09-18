@@ -8,6 +8,7 @@ import { isDesktopAtom } from '/imports/state';
 import { Box, Center, Flex, Heading, Image, Text } from '/imports/ui/core';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { parseTitle } from '/imports/api/_utils/shared';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 const isClient = Meteor?.isClient;
 
@@ -30,6 +31,7 @@ export interface InfoPagesMenuProps {
   menuStyles: any;
   pageTitles: any[];
   pathname: string;
+  prefix?: string;
   onSelect?: () => void;
 }
 
@@ -38,6 +40,7 @@ export function InfoPagesMenu({
   menuStyles,
   pageTitles,
   pathname,
+  prefix = '',
   onSelect,
 }: InfoPagesMenuProps) {
   const isCurrentContext = pathname.split('/')?.[1] === 'info';
@@ -108,7 +111,7 @@ export function InfoPagesMenu({
           >
             <Link
               style={{ padding: '0.5rem 1rem', width: '100%' }}
-              to={`/info/${parseTitle(item.title)}`}
+              to={`${prefix}/info/${parseTitle(item.title)}`}
               onClick={onSelect}
             >
               <Text css={textStyles}>{item.title}</Text>
@@ -128,6 +131,7 @@ interface HeaderMenuProps {
 function HeaderMenu({ Host, pageTitles }: HeaderMenuProps) {
   const location = useLocation();
   const isDesktop = useAtomValue(isDesktopAtom);
+  const prefix = useLocationPrefix();
 
   const settings = Host?.settings;
   const menuStyles = Host?.theme?.menu;
@@ -170,12 +174,17 @@ function HeaderMenu({ Host, pageTitles }: HeaderMenuProps) {
               menuStyles={menuStyles}
               pageTitles={pageTitles}
               pathname={pathname}
+              prefix={prefix}
             />
           ) : (
             <Link
               key={item.name}
               className="main-menu-item"
-              to={item.isComposablePage ? `/cp/${item.name}` : `/${item.name}`}
+              to={
+                item.isComposablePage
+                  ? `${prefix}/cp/${item.name}`
+                  : `${prefix}/${item.name}`
+              }
             >
               <Box as="span" px="2">
                 <Text

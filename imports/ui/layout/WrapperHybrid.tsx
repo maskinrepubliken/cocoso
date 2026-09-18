@@ -34,6 +34,7 @@ import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
 import TopBarHandler from './TopBarHandler';
 import Header from './Header';
+import LocationBar from './LocationBar';
 import { Footer } from './Footers';
 
 dayjs.extend(updateLocale);
@@ -169,10 +170,13 @@ export default function WrapperHybrid({
           >
             {rendered && !adminPage && <TopBarHandler slideStart={rendered} />}
             {!adminPage && (
-              <Header
-                currentHost={currentHost || Host}
-                pageTitles={pTitles || pageTitles}
-              />
+              <>
+                <Header
+                  currentHost={currentHost || Host}
+                  pageTitles={pTitles || pageTitles}
+                />
+                <LocationBar Host={Host} />
+              </>
             )}
 
             <Box id="main-content-container">

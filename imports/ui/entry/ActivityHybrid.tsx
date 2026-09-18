@@ -11,6 +11,7 @@ import FancyDate from './FancyDate';
 import TablyCentered from './TablyCentered';
 import { DateOccurrence } from './ActionDates';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { useLocationName } from '/imports/ui/utils/useLocation';
 
 interface Activity {
   _id: string;
@@ -49,6 +50,7 @@ const buttonStyle: React.CSSProperties = {
 };
 
 export default function ActivityHybrid({ activity, Host }: ActivityHybridProps) {
+  const locationName = useLocationName((activity as any)?.locationId);
   if (!activity) {
     return null;
   }
@@ -166,6 +168,7 @@ export default function ActivityHybrid({ activity, Host }: ActivityHybridProps) 
       }
       subTitle={activity?.subTitle}
       tabs={tabs}
+      tags={locationName ? [locationName] : null}
       title={activity?.title}
       url={url}
     />

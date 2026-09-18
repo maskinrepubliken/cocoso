@@ -11,6 +11,7 @@ import TablyCentered from './TablyCentered';
 import ActionDates from './ActionDates';
 import { DateOccurrence } from './ActionDates';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { useLocationName } from '/imports/ui/utils/useLocation';
 
 interface Group {
   _id: string;
@@ -33,6 +34,7 @@ export default function GroupHybrid({
   documents,
   Host,
 }: GroupHybridProps) {
+  const locationName = useLocationName((group as any)?.locationId);
   if (!group) {
     return null;
   }
@@ -61,7 +63,10 @@ export default function GroupHybrid({
   const groupsInMenu = Host.settings?.menu.find(
     (item: any) => item.name === 'groups'
   );
-  const tags = [];
+  const tags: any[] = [];
+  if (locationName) {
+    tags.push(locationName);
+  }
   if (group.isPrivate) {
     tags.push(<Trans i18nKey="common:labels.private">Private</Trans>);
   }

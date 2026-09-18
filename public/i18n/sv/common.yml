@@ -226,6 +226,14 @@ locations:
   unpublished: ännu inte publicerad
   everywhere: I hela kommunen
   here: Här i {{ name }}
+  landing:
+    activities: På gång i {{ name }}
+    resources: Platser och lokaler i {{ name }}
+    groups: Grupper i {{ name }}
+    seeAll: Visa alla
+    nothingYet: Inget här ännu
+  grid:
+    title: Välj din ort
   form:
     label: Ort
     helperResource: Orten eller platsen där resursen finns. Aktiviteter som hålls här följer den automatiskt.

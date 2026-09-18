@@ -13,6 +13,7 @@ import WorkListHandler from '/imports/ui/pages/works/WorkListHandler';
 import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
 import UserListHandler from '/imports/ui/pages/profile/UserListHandler';
 import ComposablePageHandler from '/imports/ui/pages/composablepages/ComposablePageHandler';
+import LocationsGrid from '/imports/ui/pages/locations/LocationsGrid';
 
 // Lazy load only heavy/less-common handlers
 const CalendarHandler = loadable(
@@ -29,7 +30,17 @@ export default function HomeHandler(props) {
   const visibleMenu = menuItems?.filter((item) => item.isVisible);
   const firstRoute = visibleMenu?.[0]?.name;
 
-  // Lazy load only the handler needed based on first route
+  const home = renderHome(firstRoute, props);
+
+  return (
+    <>
+      <LocationsGrid />
+      {home}
+    </>
+  );
+}
+
+function renderHome(firstRoute, props) {
   switch (firstRoute) {
     case 'activities':
       return <ActivityListHandler {...props} />;

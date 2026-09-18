@@ -9,6 +9,7 @@ import type { Document, Host } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { useLocationName } from '/imports/ui/utils/useLocation';
 
 interface Work {
   _id: string;
@@ -34,6 +35,7 @@ export interface WorkHybridProps {
 }
 
 export default function WorkHybrid({ documents, work, Host }: WorkHybridProps) {
+  const locationName = useLocationName((work as any)?.locationId);
   if (!work) {
     return null;
   }
@@ -75,7 +77,8 @@ export default function WorkHybrid({ documents, work, Host }: WorkHybridProps) {
     });
   }
 
-  const tags = work && [work.category?.label];
+  const tags =
+    work && ([work.category?.label, locationName].filter(Boolean) as string[]);
   const worksInMenu = Host?.settings?.menu.find(
     (item) => item.name === 'works'
   );
