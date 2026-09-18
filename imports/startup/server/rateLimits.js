@@ -13,7 +13,6 @@ const RULES = [
       'sendEmail',
       'resetUserPassword',
       'forgotPassword',
-      'requestMagicLink',
       'registerAttendance',
       'updateAttendance',
       'removeAttendance',

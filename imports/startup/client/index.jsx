@@ -8,10 +8,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import appRoutes from '/imports/appRoutes';
 import SetupHome from '/imports/ui/pages/setup';
-import BrokerAuthPage from '/imports/ui/pages/auth/BrokerAuthPage';
 import i18n from '/imports/startup/i18n';
-
-const publicSettings = Meteor.settings.public;
 
 // Meteor's `autoupdate` package tracks whether the server has a newer client
 // bundle than the one this tab is running (e.g. after a deploy). Lazily
@@ -53,25 +50,6 @@ onPageLoad(async () => {
   // the flash-of-English-then-real-language this was meant to fix.
   if (!i18n.isInitialized) {
     await new Promise((resolve) => i18n.on('initialized', resolve));
-  }
-
-  // The SSO broker domain never has a Hosts doc (deliberately — it isn't a
-  // tenant site), so it's special-cased here rather than falling through to
-  // getCurrentHost/SetupHome below: it always renders the auth-only page,
-  // regardless of path, and never queries for a Host at all.
-  if (
-    publicSettings?.authDomain &&
-    window.location.host === publicSettings.authDomain
-  ) {
-    const platform = await Meteor.callAsync('getPlatform');
-    // 'accounts' is already in the default ns set (imports/startup/i18n.js)
-    // and covered by the isInitialized wait above in normal cases, but this
-    // is the one page that skips SSR/hydration entirely — a cheap, explicit
-    // no-op-if-already-loaded call rather than relying on that indirectly.
-    await i18n.loadNamespaces(['accounts']);
-    const root = createRoot(container);
-    root.render(<BrokerAuthPage platform={platform} />);
-    return;
   }
 
   const currentHost = await Meteor.callAsync('getCurrentHost');

@@ -7,8 +7,7 @@
       }
     },
     "name": "Cocoso",
-    "iconsBaseUrl": "https://your-domain.example/icons",
-    "authDomain": "auth.your-domain.example"
+    "iconsBaseUrl": "https://your-domain.example/icons"
   },
   "media": {
     "storagePath": "/var/lib/cocoso/media",

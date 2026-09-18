@@ -20,29 +20,6 @@ let stitchesConfig = null;
 export default async function serverRenderer(sink) {
   const host = sink?.request?.headers?.['host'];
 
-  // The SSO broker domain has no Hosts doc and isn't a tenant site — skip
-  // the normal Hosts-driven route render entirely and let the client
-  // bundle mount BrokerAuthPage (see imports/startup/client/index.jsx).
-  // Styling still needs injecting by hand here though. getGlobalStyles()
-  // works fine with no theme, but theme?.body?.borderRadius falls back to
-  // '0' (square) when there's no theme to read from — pass a small default
-  // explicitly so the broker's form elements aren't rigid-looking.
-  if (
-    Meteor.settings.public?.authDomain &&
-    host === Meteor.settings.public.authDomain
-  ) {
-    if (!stitchesConfig) {
-      stitchesConfig = await import('/stitches.config');
-    }
-    // 0.25rem matches defaultTheme.body.borderRadius (imports/startup/constants.js)
-    const globalCssString = getGlobalStyles({ body: { borderRadius: '0.25rem' } });
-    sink.appendToHead(`
-      <style id="global-theme">${globalCssString}</style>
-      <style id="stitches">${stitchesConfig.getCssText()}</style>
-    `);
-    return;
-  }
-
   const Host = await Hosts.findOneAsync({ host });
   const allHosts = await Meteor.callAsync('getAllHosts');
   const platform = await Platform.findOneAsync();

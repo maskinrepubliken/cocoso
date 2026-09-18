@@ -4,14 +4,13 @@ import { check } from 'meteor/check';
 
 import { getHost } from '../../shared';
 import Hosts from '../../../hosts/host';
-import Platform from '../../../platform/platform';
 import {
   isValidEmail,
   getEmailBody,
   extractEmailAddress,
   EmailTemplate,
 } from './mail.helpers';
-import { getWelcomeEmailBody, getMagicLinkEmailBody } from './templates.mails';
+import { getWelcomeEmailBody } from './templates.mails';
 import type { MeteorUser } from '/imports/ui/types';
 
 interface MailCredentials {
@@ -41,10 +40,6 @@ interface HostDocument {
 }
 
 Meteor.methods({
-  // fromName is an override for callers with no tenant host to derive one
-  // from (currently just sendMagicLinkEmail, sent from the platform-level
-  // broker). Everyone else leaves it out and gets the original behavior:
-  // host resolved here from the live connection, on every send.
   async sendEmail(
     id: string,
     subjectEmail: string,
@@ -164,30 +159,6 @@ Meteor.methods({
         getEmailBody(email as EmailTemplate, user?.username || '')
       );
     } catch (error) {
-      throw new Meteor.Error(error as string);
-    }
-  },
-
-  // Unlike the other email methods here, this isn't tied to a user or a
-  // host — it's sent from the SSO broker (imports/startup/server/oauth.js /
-  // imports/api/sso/magicLink.methods.js) to an email address that may not
-  // even have an account yet. There's no tenant Host to name it after, so
-  // it's signed with the platform's own name instead.
-  async sendMagicLinkEmail(email: string, link: string): Promise<void> {
-    check([email, link], [String]);
-
-    const platform = await Platform.findOneAsync();
-
-    try {
-      await Meteor.callAsync(
-        'sendEmail',
-        email,
-        'Sign in',
-        getMagicLinkEmailBody(link),
-        platform?.name
-      );
-    } catch (error) {
-      console.log('email error', error);
       throw new Meteor.Error(error as string);
     }
   },

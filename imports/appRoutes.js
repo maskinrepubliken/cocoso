@@ -23,7 +23,6 @@ import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
 import UserProfileHandler from '/imports/ui/pages/profile/UserProfileHandler';
 import ComposablePageHandler from '/imports/ui/pages/composablepages/ComposablePageHandler';
 import CommunityListHandler from '/imports/ui/pages/hosts/CommunityListHandler';
-import SsoCallbackPage from '/imports/ui/pages/auth/SsoCallbackPage';
 import CalendarHandler from '/imports/ui/pages/calendar/CalendarHandler';
 
 // Route loaders re-run on every URL change by default, including search-param-only
@@ -659,10 +658,6 @@ export default function appRoutes(props) {
           path: 'superadmin',
           element: createRouteElement(AdminContainer, props),
           children: Meteor.isServer ? null : [...getSuperAdminRoutes(props)],
-        },
-        {
-          path: 'sso-callback',
-          element: createRouteElement(SsoCallbackPage, props),
         },
         {
           path: 'not-found',
