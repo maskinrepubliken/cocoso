@@ -8,6 +8,7 @@ import { call } from '/imports/api/_utils/shared';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
+import LocationSelect from '/imports/ui/forms/LocationSelect';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
 import type { CategoryItem } from '/imports/ui/types';
@@ -28,6 +29,7 @@ interface WorkFormValues {
 interface WorkData extends WorkFormValues {
   category?: CategoryItem;
   images?: string[];
+  locationId?: string | null;
 }
 
 interface WorkFormProps {
@@ -48,10 +50,11 @@ export const emptyFormValues: WorkFormValues = {
 const animatedComponents = makeAnimated();
 
 export default function WorkForm({ work, onFinalize }: WorkFormProps) {
-  const [state, setState] = useState({
+  const [state, setState] = useState<any>({
     categories: [],
     creating: false,
     formValues: work || emptyFormValues,
+    locationId: work?.locationId || null,
     selectedCategory: work
       ? {
           label: work.category?.label,
@@ -115,6 +118,7 @@ export default function WorkForm({ work, onFinalize }: WorkFormProps) {
         _id: selectedCategory._id,
       },
       images,
+      locationId: state.locationId,
     };
     onFinalize(newWork);
   };
@@ -196,6 +200,19 @@ export default function WorkForm({ work, onFinalize }: WorkFormProps) {
           getOptionValue={(option) => option._id}
           onChange={handleAutoCompleteSelectChange}
           onCreateOption={(newCategory) => createCategory(newCategory)}
+        />
+      </FormField>
+
+      <FormField
+        helper={tc('locations.form.helperWork')}
+        label={tc('locations.form.label')}
+        mb="12"
+      >
+        <LocationSelect
+          value={state.locationId}
+          onChange={(locationId) =>
+            setState((prevState) => ({ ...prevState, locationId }))
+          }
         />
       </FormField>
     </GenericEntryForm>

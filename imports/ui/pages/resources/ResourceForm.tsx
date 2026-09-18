@@ -8,6 +8,7 @@ import { useAtom } from 'jotai';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
+import LocationSelect from '/imports/ui/forms/LocationSelect';
 import { call } from '/imports/api/_utils/shared';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
@@ -22,6 +23,7 @@ interface ResourceFormValues {
 
 interface ResourceData extends ResourceFormValues {
   images?: string[];
+  locationId?: string | null;
   isCombo?: boolean;
   resourcesForCombo?: ResourceOption[];
 }
@@ -46,10 +48,11 @@ export const emptyFormValues: ResourceFormValues = {
 const animatedComponents = makeAnimated();
 
 export default function ResourceForm({ resource, onFinalize }: ResourceFormProps) {
-  const [state, setState] = useState({
+  const [state, setState] = useState<any>({
     formValues: resource || emptyFormValues,
     isBookable: resource ? resource.isBookable : true,
     isCombo: resource ? resource.isCombo : false,
+    locationId: resource?.locationId || null,
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
     resources: [],
   });
@@ -100,6 +103,7 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
       images,
       isBookable: state.isBookable,
       isCombo: state.isCombo,
+      locationId: state.locationId,
       resourcesForCombo: state.resourcesForCombo,
     };
     onFinalize(newResource);
@@ -144,6 +148,20 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
           ping={loaders?.isUploadingImages}
           preExistingImages={resource ? resource.images : []}
           onUploadedImages={handleUploadedImages}
+        />
+      </FormField>
+
+      <FormField
+        helper={tc('locations.form.helperResource')}
+        label={tc('locations.form.label')}
+        mt="6"
+        mb="12"
+      >
+        <LocationSelect
+          value={state.locationId}
+          onChange={(locationId) =>
+            setState((prevState) => ({ ...prevState, locationId }))
+          }
         />
       </FormField>
 

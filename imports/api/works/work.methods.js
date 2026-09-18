@@ -1,17 +1,18 @@
 import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
+
+import { locationSelector } from '../_utils/shared';
 
 import Works from './work';
 import { isContributorOrAdmin } from '../users/user.roles';
 
 Meteor.methods({
-  async getAllWorks() {
-
+  async getAllWorks(locationId) {
+    check(locationId, Match.Maybe(String));
     try {
-      return await Works.find(
-        {
-        },
-        { sort: { creationDate: -1 } }
-      ).fetchAsync();
+      return await Works.find(locationSelector(locationId), {
+        sort: { creationDate: -1 },
+      }).fetchAsync();
     } catch (error) {
       throw new Meteor.Error(error, 'Could not retrieve data');
     }
@@ -71,6 +72,7 @@ Meteor.methods({
     try {
       const newWorkId = await Works.insertAsync({
         ...values,
+        locationId: values.locationId || undefined,
         authorId: user._id,
         authorAvatar: userAvatar,
         authorUsername: user.username,
@@ -94,12 +96,16 @@ Meteor.methods({
       throw new Meteor.Error('You are not allowed');
     }
 
+    const { locationId, ...safeValues } = values;
+
     try {
       await Works.updateAsync(workId, {
         $set: {
-          ...values,
+          ...safeValues,
+          ...(locationId ? { locationId } : {}),
           latestUpdate: new Date(),
         },
+        ...(locationId ? {} : { $unset: { locationId: 1 } }),
       });
       return values.title;
     } catch (error) {

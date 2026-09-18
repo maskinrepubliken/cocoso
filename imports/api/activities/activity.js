@@ -22,6 +22,9 @@ Activities.schema = new SimpleSchema({
   'imagesLegacy.$': { type: String, optional: true },
   resource: { type: String, optional: true },
   resourceId: { type: String, regEx: SimpleSchema.RegEx.Id, optional: true },
+  // Copied from the resource when one is set, otherwise chosen by the
+  // author. Empty means the whole municipality.
+  locationId: { type: String, optional: true },
 
   address: { type: String, optional: true },
   capacity: { type: SimpleSchema.Integer, defaultValue: 40 },

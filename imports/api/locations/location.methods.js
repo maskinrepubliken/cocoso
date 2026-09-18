@@ -66,6 +66,19 @@ Meteor.methods({
     ).fetchAsync();
   },
 
+  // Every location, published or not, so contributors can file content
+  // under a place before it goes public.
+  async getLocationsForContent() {
+    const user = await Meteor.userAsync();
+    if (!user) {
+      throw new Meteor.Error('not-allowed', 'You are not allowed');
+    }
+    return await Locations.find(
+      {},
+      { fields: { _id: 1, name: 1, slug: 1, isPublished: 1 }, sort }
+    ).fetchAsync();
+  },
+
   async getLocationsForAdmin() {
     await requireAdmin();
     return await Locations.find({}, { sort }).fetchAsync();

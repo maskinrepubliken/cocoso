@@ -8,6 +8,9 @@ Resources.schema = new SimpleSchema({
   _id: Schemas.Id,
   userId: Schemas.Id,
 
+  // The place this resource is in; see imports/api/locations.
+  locationId: { type: String, optional: true },
+
   label: { type: String },
   description: { type: String, optional: true },
   documents: { type: Array, optional: true, defaultValue: [] },
@@ -52,6 +55,7 @@ Resources.publicFields = {
   isBookable: 1,
   isCombo: 1,
   label: 1,
+  locationId: 1,
   resourcesForCombo: 1,
   createdAt: 1,
   userId: 1,

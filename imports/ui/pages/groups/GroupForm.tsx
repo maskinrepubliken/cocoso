@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
+import LocationSelect from '/imports/ui/forms/LocationSelect';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
@@ -20,6 +21,7 @@ interface GroupFormValues {
 
 interface GroupData extends GroupFormValues {
   imageUrl?: string;
+  locationId?: string | null;
 }
 
 interface GroupFormProps {
@@ -38,9 +40,11 @@ export const emptyFormValues: GroupFormValues = {
 export default function GroupForm({ group, onFinalize }: GroupFormProps) {
   const [state, setState] = useState({
     formValues: group || emptyFormValues,
+    locationId: group?.locationId || null,
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('groups');
+  const [tc] = useTranslation('common');
 
   useEffect(() => {
     if (!loaders || !loaders.isCreating) {
@@ -70,6 +74,7 @@ export default function GroupForm({ group, onFinalize }: GroupFormProps) {
     const newGroup: GroupData = {
       ...state.formValues,
       imageUrl,
+      locationId: state.locationId,
     };
 
     onFinalize(newGroup);
@@ -103,6 +108,19 @@ export default function GroupForm({ group, onFinalize }: GroupFormProps) {
           ping={loaders?.isUploadingImages}
           preExistingImages={group ? [group.imageUrl] : []}
           onUploadedImages={handleUploadedImages}
+        />
+      </FormField>
+
+      <FormField
+        helper={tc('locations.form.helperGroup')}
+        label={tc('locations.form.label')}
+        mb="12"
+      >
+        <LocationSelect
+          value={state.locationId}
+          onChange={(locationId) =>
+            setState((prevState) => ({ ...prevState, locationId }))
+          }
         />
       </FormField>
     </GenericEntryForm>

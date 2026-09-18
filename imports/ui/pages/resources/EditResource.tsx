@@ -37,6 +37,7 @@ export default function EditResource() {
     images,
     isCombo,
     isBookable,
+    locationId,
     resourcesForCombo,
     title,
   }) => ({
@@ -45,6 +46,7 @@ export default function EditResource() {
     images,
     isCombo,
     isBookable,
+    locationId,
     resourcesForCombo,
     title,
   }))(resource);

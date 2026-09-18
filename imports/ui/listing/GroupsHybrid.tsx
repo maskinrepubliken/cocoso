@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { currentHostAtom } from '/imports/state';
+import { currentHostAtom, locationsAtom } from '/imports/state';
 import { Center } from '/imports/ui/core';
 
 import InfiniteScroller from './InfiniteScroller';
@@ -17,8 +17,12 @@ export interface GroupsHybridProps {
 
 export default function GroupsHybrid({ Host, groups }: GroupsHybridProps) {
   const currentHost = useAtomValue(currentHostAtom);
+  const locations = useAtomValue(locationsAtom);
   const [modalItem, setModalItem] = useState(null);
   const [tc] = useTranslation('common');
+
+  const locationNameOf = (item: any) =>
+    locations.find((l) => l._id === item.locationId)?.name;
 
   return (
     <>
@@ -34,7 +38,12 @@ export default function GroupsHybrid({ Host, groups }: GroupsHybridProps) {
             <SexyThumb
               activity={item}
               index={index}
-              tags={item.isPrivate ? [tc('labels.private')] : null}
+              tags={
+                [
+                  item.isPrivate ? tc('labels.private') : null,
+                  locationNameOf(item),
+                ].filter(Boolean) as string[]
+              }
             />
           </Center>
         )}

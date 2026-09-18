@@ -220,6 +220,20 @@ plugins:
     helper: Släpp eller välj bild
     helperMultiple: Släpp eller välj bild(er)
 
+locations:
+  label: Ort
+  wholeMunicipality: Hela kommunen
+  unpublished: ännu inte publicerad
+  everywhere: I hela kommunen
+  here: Här i {{ name }}
+  form:
+    label: Ort
+    helperResource: Orten eller platsen där resursen finns. Aktiviteter som hålls här följer den automatiskt.
+    helperActivity: Välj en ort när aktiviteten inte hålls på någon av resurserna. Lämna tomt när den gäller hela kommunen.
+    helperFromResource: Orten följer den valda resursen.
+    helperGroup: Koppla gruppen till en ort om du vill. Lämna tomt när den är öppen för hela kommunen.
+    helperWork: Koppla inlägget till en ort om du vill.
+
 domains:
   a: en
   your: Din

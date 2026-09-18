@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import dayjs from 'dayjs';
 
-import { emailIsValid } from '../_utils/shared';
+import { emailIsValid, locationSelector } from '../_utils/shared';
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import { getSite } from '../site/site';
 import Activities from './activity';
@@ -44,15 +44,32 @@ const filterPrivateGroups = async (activities, user) => {
   return activities.filter((_, index) => filterResults[index]);
 };
 
+// The location of an activity follows its resource when it has one; only
+// activities without a resource carry a location of their own.
+async function resolveActivityLocation(values) {
+  if (values.resourceId) {
+    const resource = await Resources.findOneAsync(values.resourceId, {
+      fields: { locationId: 1 },
+    });
+    return resource?.locationId || undefined;
+  }
+  return values.locationId || undefined;
+}
+
 Meteor.methods({
-  async getAllPublicActivities(showPast = false) {
+  async getAllPublicActivities(showPast = false, locationId) {
+    check(locationId, Match.Maybe(String));
     const user = await Meteor.userAsync();
     const today = dayjs().format('YYYY-MM-DD');
+    const visibility = {
+      $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
+    };
+    const selector = { $and: [visibility, locationSelector(locationId)] };
 
     try {
       if (showPast) {
         const pastActs = await Activities.find({
-          $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
+          ...selector,
           'datesAndTimes.endDate': { $lte: today },
         }).fetchAsync();
         const pastActsSorted = parseGroupActivities(pastActs)?.sort(
@@ -61,7 +78,7 @@ Meteor.methods({
         return await filterPrivateGroups(pastActsSorted, user);
       }
       const futureActs = await Activities.find({
-        $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
+        ...selector,
         'datesAndTimes.endDate': { $gte: today },
       }).fetchAsync();
 
@@ -74,12 +91,13 @@ Meteor.methods({
     }
   },
 
-  async getAllActivities() {
-
+  async getAllActivities(locationId) {
+    check(locationId, Match.Maybe(String));
     const user = await Meteor.userAsync();
     try {
-      const allActs = await Activities.find({
-      }).fetchAsync();
+      const allActs = await Activities.find(
+        locationSelector(locationId)
+      ).fetchAsync();
       const allActsParsed = parseGroupActivities(allActs);
       return await filterPrivateGroups(allActsParsed, user);
     } catch (error) {
@@ -237,9 +255,12 @@ Meteor.methods({
       throw new Meteor.Error('Image is required for public activities');
     }
 
+    const locationId = await resolveActivityLocation(values);
+
     try {
       const activityId = await Activities.insertAsync({
         ...values,
+        locationId,
         authorId: user._id,
         authorName: user.username,
         isSentForReview: false,
@@ -279,14 +300,20 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
-    // Ownership and tenancy fields are never client-writable.
+    // Ownership fields are never client-writable.
     const { _id, authorId, authorName, ...safeValues } = values;
+    const locationId = await resolveActivityLocation({
+      ...theActivity,
+      ...safeValues,
+    });
 
     try {
       return await Activities.updateAsync(activityId, {
         $set: {
           ...safeValues,
+          ...(locationId ? { locationId } : {}),
         },
+        ...(locationId ? {} : { $unset: { locationId: 1 } }),
       });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update activity");

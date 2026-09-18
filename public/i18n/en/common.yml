@@ -222,6 +222,20 @@ plugins:
     helper: Drop or pick image
     helperMultiple: Drop or pick image(s)
 
+locations:
+  label: Place
+  wholeMunicipality: The whole municipality
+  unpublished: not yet published
+  everywhere: In the whole municipality
+  here: Here in {{ name }}
+  form:
+    label: Place
+    helperResource: The village or place where this resource is. Activities held here follow it automatically.
+    helperActivity: Pick a place when the activity is not held at one of the resources. Leave empty when it concerns the whole municipality.
+    helperFromResource: The place follows the chosen resource.
+    helperGroup: Optionally tie this group to a place. Leave empty when it is open to the whole municipality.
+    helperWork: Optionally tie this post to a place.
+
 domains:
   a: a
   your: Your

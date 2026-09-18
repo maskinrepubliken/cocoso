@@ -592,6 +592,15 @@ function debounce<T extends (...args: unknown[]) => void>(
 
 const siteUrl = Meteor.absoluteUrl();
 
+// Mongo selector for content in a location. Content without a location
+// belongs to the whole municipality and is included too, so a location's
+// listing shows what happens there plus what happens everywhere; the UI
+// separates the two by looking at locationId.
+const locationSelector = (locationId?: string | null) =>
+  locationId
+    ? { $or: [{ locationId }, { locationId: { $in: [null, ''] } }] }
+    : {};
+
 // Absolute URL of a path on this site, derived from ROOT_URL. Works on the
 // server and in the browser, so it is what links in emails and canonical
 // tags should use.
@@ -626,6 +635,7 @@ export {
   getCategoriesAssignedToWorks,
   stripHtml,
   debounce,
+  locationSelector,
   publicUrl,
   siteUrl,
 };

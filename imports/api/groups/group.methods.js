@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 
 import {
   compareDatesWithStartDateForSort,
+  locationSelector,
   parseGroupsWithMeetings,
 } from '/imports/api/_utils/shared';
 
@@ -102,10 +103,10 @@ Meteor.methods({
     };
   },
 
-  async getGroupsWithMeetings() {
-
+  async getGroupsWithMeetings(locationId) {
+    check(locationId, Match.Maybe(String));
     try {
-      const retrievedGroups = await Meteor.callAsync('getGroups');
+      const retrievedGroups = await Meteor.callAsync('getGroups', locationId);
       const allGroupActivities = await Meteor.callAsync(
         'getAllGroupMeetingsFuture'
       );
@@ -119,13 +120,13 @@ Meteor.methods({
     }
   },
 
-  async getGroups() {
+  async getGroups(locationId) {
+    check(locationId, Match.Maybe(String));
     const user = await Meteor.userAsync();
 
-    const allGroups = await Groups.find(
-      {},
-      { sort: { creationDate: -1 } }
-    ).fetchAsync();
+    const allGroups = await Groups.find(locationSelector(locationId), {
+      sort: { creationDate: -1 },
+    }).fetchAsync();
     const groupsFiltered = allGroups.filter((group) => {
       if (!group.isPrivate) {
         return true;
@@ -149,6 +150,7 @@ Meteor.methods({
       readingMaterial: group.readingMaterial,
       description: group.description,
       imageUrl: group.imageUrl,
+      locationId: group.locationId,
       meetings: group.meetings,
       adminUsername: group.adminUsername,
       isArchived: group.isArchived,
@@ -213,6 +215,7 @@ Meteor.methods({
     try {
       const newGroupId = await Groups.insertAsync({
         ...formValues,
+        locationId: formValues.locationId || undefined,
         authorId: user._id,
         authorUsername: user.username,
         authorAvatar: userAvatar,
@@ -265,11 +268,15 @@ Meteor.methods({
       throw new Meteor.Error('You are not allowed!');
     }
 
+    const { locationId, ...safeValues } = values;
+
     try {
       await Groups.updateAsync(groupId, {
         $set: {
-          ...values,
+          ...safeValues,
+          ...(locationId ? { locationId } : {}),
         },
+        ...(locationId ? {} : { $unset: { locationId: 1 } }),
       });
 
       await Activities.updateAsync(

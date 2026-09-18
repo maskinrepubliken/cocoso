@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { locationSelector } from '../_utils/shared';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
@@ -22,11 +23,11 @@ async function validateLabel(label, resourceId) {
 
 // RESOURCE METHODS
 Meteor.methods({
-  async getResources() {
-
+  async getResources(locationId) {
+    check(locationId, Match.Maybe(String));
     const fields = Resources.publicFields;
     return await Resources.find(
-      {},
+      locationSelector(locationId),
       {
         fields,
         sort: { createdAt: -1 },
@@ -44,6 +45,7 @@ Meteor.methods({
           label: 1,
           isBookable: 1,
           isCombo: 1,
+          locationId: 1,
           resourcesForCombo: 1,
         },
         sort: { createdAt: -1 },
@@ -104,6 +106,7 @@ Meteor.methods({
     try {
       const newResourceId = await Resources.insertAsync({
         ...values,
+        locationId: values.locationId || undefined,
         userId: user._id,
         createdBy: user.username,
         createdAt: new Date(),
@@ -134,16 +137,26 @@ Meteor.methods({
       throw new Meteor.Error('not-found', 'Resource not found');
     }
 
-    const { _id, userId, createdBy, ...safeValues } = values;
+    const { _id, userId, createdBy, locationId, ...safeValues } = values;
 
     try {
       await Resources.updateAsync(resourceId, {
         $set: {
           ...safeValues,
+          ...(locationId ? { locationId } : {}),
           updatedBy: user.username,
           updatedAt: new Date(),
         },
+        ...(locationId ? {} : { $unset: { locationId: 1 } }),
       });
+      // Activities held at this resource follow it.
+      await Activities.updateAsync(
+        { resourceId },
+        locationId
+          ? { $set: { locationId } }
+          : { $unset: { locationId: 1 } },
+        { multi: true }
+      );
       if (
         !resource.isCombo &&
         (await Resources.findOneAsync({

@@ -220,6 +220,20 @@ plugins:
     helper: İmaj bırak veya seç
     helperMultiple: İmajlar bırak veya seç
 
+locations:
+  label: Yer
+  wholeMunicipality: Tüm belediye
+  unpublished: henüz yayınlanmadı
+  everywhere: Tüm belediyede
+  here: Burada, {{ name }}
+  form:
+    label: Yer
+    helperResource: Bu kaynağın bulunduğu köy veya yer. Burada yapılan etkinlikler otomatik olarak onu izler.
+    helperActivity: Etkinlik kaynaklardan birinde yapılmıyorsa bir yer seçin. Tüm belediyeyi ilgilendiriyorsa boş bırakın.
+    helperFromResource: Yer, seçilen kaynağı izler.
+    helperGroup: İsterseniz bu grubu bir yere bağlayın. Tüm belediyeye açıksa boş bırakın.
+    helperWork: İsterseniz bu gönderiyi bir yere bağlayın.
+
 domains:
   a: bir
   your: Senin

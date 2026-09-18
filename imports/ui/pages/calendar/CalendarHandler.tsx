@@ -8,7 +8,7 @@ import {
 import dayjs from 'dayjs';
 import parseHtml from 'html-react-parser';
 import loadable from '@loadable/component';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import {
@@ -30,6 +30,7 @@ import {
 import {
   canCreateContentAtom,
   currentUserAtom,
+  locationsAtom,
   roleAtom,
 } from '/imports/state';
 import PageHeading from '/imports/ui/listing/PageHeading';
@@ -54,6 +55,7 @@ interface Resource {
   color?: string;
   isBookable: boolean;
   isCombo?: boolean;
+  locationId?: string;
 }
 
 interface Activity {
@@ -106,15 +108,41 @@ export default function CalendarHandler({ Host }: CalendarHandlerProps) {
   const currentHost = Host;
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
-  const { activities, resources } = useLoaderData() as {
-    activities: Activity[];
-    resources: Resource[];
-  };
+  const [locationFilter, setLocationFilter] = useState<string>('');
+  const publishedLocations = useAtomValue(locationsAtom);
+  const [tc] = useTranslation('common');
+  const { activities: allActivities, resources: allResources } =
+    useLoaderData() as {
+      activities: Activity[];
+      resources: Resource[];
+    };
+  const activities = useMemo(
+    () =>
+      locationFilter
+        ? allActivities.filter(
+            (a: any) => !a.locationId || a.locationId === locationFilter
+          )
+        : allActivities,
+    [allActivities, locationFilter]
+  );
 
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
   );
   const [calendarFilter, setCalendarFilter] = useState<Resource | null>(null);
+
+  // A place narrows the calendar to its resources and to activities filed
+  // under it. Content without a place belongs to the whole municipality and
+  // stays visible.
+  const resources = useMemo(
+    () =>
+      locationFilter
+        ? allResources.filter(
+            (r) => !r.locationId || r.locationId === locationFilter
+          )
+        : allResources,
+    [allResources, locationFilter]
+  );
   const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
 
@@ -281,6 +309,37 @@ export default function CalendarHandler({ Host }: CalendarHandlerProps) {
       <PageHeading currentHost={currentHost || Host} listing="calendar" />
 
       <Box>
+        {publishedLocations.length > 0 && (
+          <Center mb="2">
+            <Flex justify="center" px="1" wrap="wrap">
+              <Tag
+                key="all-locations"
+                checkable
+                label={tc('locations.wholeMunicipality')}
+                filterColor="#484848"
+                checked={!locationFilter}
+                onClick={() => {
+                  setLocationFilter('');
+                  setCalendarFilter(null);
+                }}
+              />
+              {publishedLocations.map((location) => (
+                <Tag
+                  key={location._id}
+                  checkable
+                  label={location.name}
+                  filterColor="#484848"
+                  checked={locationFilter === location._id}
+                  onClick={() => {
+                    setLocationFilter(location._id);
+                    setCalendarFilter(null);
+                  }}
+                />
+              ))}
+            </Flex>
+          </Center>
+        )}
+
         <Center mb="2">
           {!selectFilterView ? (
             <Box>

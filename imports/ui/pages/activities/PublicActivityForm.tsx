@@ -4,12 +4,14 @@ import AutoCompleteSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { useAtom } from 'jotai';
 
-import { Checkbox, NumberInput } from '/imports/ui/core';
+import { Checkbox, NumberInput, Text } from '/imports/ui/core';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
+import LocationSelect from '/imports/ui/forms/LocationSelect';
+import { useLocationName } from '/imports/ui/utils/useLocation';
 import DatesAndTimes, {
   emptyDateAndTime,
 } from '/imports/ui/forms/DatesAndTimes';
@@ -37,6 +39,7 @@ interface ActivityData extends ActivityFormValues {
   images?: string[];
   resource?: string;
   resourceId?: string;
+  locationId?: string | null;
   isExclusiveActivity?: boolean;
   isRegistrationEnabled?: boolean;
   isRegistrationDisabled?: boolean;
@@ -59,7 +62,7 @@ export default function PublicActivityForm({
   activity,
   onFinalize,
 }: PublicActivityFormProps) {
-  const [state, setState] = useState({
+  const [state, setState] = useState<any>({
     capacity: activity ? activity.capacity : defaultCapacity,
     datesAndTimes: activity ? activity.datesAndTimes : [emptyDateAndTime],
     formValues: activity || emptyFormValues,
@@ -68,11 +71,20 @@ export default function PublicActivityForm({
       : null,
     isExclusiveActivity: activity ? activity.isExclusiveActivity : true,
     isRegistrationEnabled: activity ? activity.isRegistrationEnabled : false,
+    locationId: activity?.locationId || null,
     resources: [],
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('activities');
+  const [tc] = useTranslation('common');
   const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
+
+  const selectedResourceFull: any = state.resources.find(
+    (r: any) => r._id === state.selectedResource?._id
+  );
+  const resourceLocationName = useLocationName(
+    selectedResourceFull?.locationId
+  );
 
   const getResources = async () => {
     try {
@@ -192,6 +204,7 @@ export default function PublicActivityForm({
       isPublicActivity: true,
       isRegistrationEnabled: state.isRegistrationEnabled,
       isExclusiveActivity: state.isExclusiveActivity,
+      locationId: state.selectedResource ? null : state.locationId,
     };
 
     const { selectedResource } = state;
@@ -280,6 +293,29 @@ export default function PublicActivityForm({
           getOptionValue={(option) => option._id}
           onChange={handleSelectResource}
         />
+      </FormField>
+
+      <FormField
+        helper={
+          state.selectedResource
+            ? tc('locations.form.helperFromResource')
+            : tc('locations.form.helperActivity')
+        }
+        label={tc('locations.form.label')}
+        my="8"
+      >
+        {state.selectedResource ? (
+          <Text>
+            {resourceLocationName || tc('locations.wholeMunicipality')}
+          </Text>
+        ) : (
+          <LocationSelect
+            value={state.locationId}
+            onChange={(locationId) =>
+              setState((prevState) => ({ ...prevState, locationId }))
+            }
+          />
+        )}
       </FormField>
 
       <FormField

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAtomValue } from 'jotai';
 
-import { currentHostAtom } from '/imports/state';
+import { currentHostAtom, locationsAtom } from '/imports/state';
 import { Box } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
@@ -20,7 +20,11 @@ export default function ResourcesHybrid({
   resources,
 }: ResourcesHybridProps) {
   const currentHost = useAtomValue(currentHostAtom);
+  const locations = useAtomValue(locationsAtom);
   const [modalItem, setModalItem] = useState(null);
+
+  const locationNameOf = (item: any) =>
+    locations.find((l) => l._id === item.locationId)?.name;
 
   return (
     <>
@@ -42,6 +46,7 @@ export default function ResourcesHybrid({
                 fixedImageHeight
                 imageUrl={getImageUrl(resource.images?.[0], 'small')}
                 index={index}
+                tag={locationNameOf(resource)}
                 title={resource.label}
               />
             </Box>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { Trans } from 'react-i18next';
+import { useAtomValue } from 'jotai';
 
 import { Center } from '/imports/ui/core';
+import { locationsAtom } from '/imports/state';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
@@ -22,7 +24,11 @@ export default function ActivitiesHybrid({
   showPast,
 }: ActivitiesHybridProps) {
   const currentHost = { ...Host };
+  const locations = useAtomValue(locationsAtom);
   const [modalItem, setModalItem] = useState(null);
+
+  const locationNameOf = (item: any) =>
+    locations.find((l) => l._id === item.locationId)?.name;
   const [, setSearchParams] = useSearchParams();
 
   const tabs = [
@@ -63,7 +69,12 @@ export default function ActivitiesHybrid({
               activity={item}
               index={index}
               showPast={showPast}
-              tags={item.isGroupMeeting ? [groupsLabel] : null}
+              tags={
+                [
+                  item.isGroupMeeting ? groupsLabel : null,
+                  locationNameOf(item),
+                ].filter(Boolean) as string[]
+              }
             />
           </Center>
         )}

@@ -6,6 +6,7 @@ const Works = new Mongo.Collection('works');
 
 Works.schema = new SimpleSchema({
   _id: Schemas.Id,
+  locationId: { type: String, optional: true },
   additionalInfo: { type: String, defaultValue: '', optional: true },
   authorAvatar: { type: String, optional: true },
   authorId: Schemas.Id,
