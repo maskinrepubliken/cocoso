@@ -8,7 +8,7 @@ import {
   StaticRouterProvider,
 } from 'react-router';
 
-import Hosts from '/imports/api/hosts/host';
+import { getSite, sitePublicFields } from '/imports/api/site/site';
 import appRoutes from '/imports/appRoutes';
 import { getGlobalStyles } from '/imports/ui/utils/globalStylesManager';
 import i18n from '/imports/startup/i18n';
@@ -19,7 +19,7 @@ let stitchesConfig = null;
 export default async function serverRenderer(sink) {
   const host = sink?.request?.headers?.['host'];
 
-  const Host = await Hosts.findOneAsync({ host });
+  const Host = await getSite(sitePublicFields);
   const pages = await Meteor.callAsync('getPageTitles');
 
   if (!stitchesConfig) {

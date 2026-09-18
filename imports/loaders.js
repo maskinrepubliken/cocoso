@@ -1,35 +1,34 @@
 import { call } from './api/_utils/shared';
 
 export async function getHomeLoader({ Host, params, request }) {
-  const host = Host?.host;
   const menu = Host?.settings?.menu;
   const homeRouteName = menu && menu[0]?.name;
 
   switch (homeRouteName) {
     case 'activities':
-      return await getActivities({ host, request });
+      return await getActivities({ request });
     case 'calendar':
-      return await getCalendarEntries({ host });
+      return await getCalendarEntries();
     case 'groups':
-      return await getGroups({ host });
+      return await getGroups();
     case 'info':
-      return await getPages({ host });
+      return await getPages();
     case 'resources':
-      return await getResources({ host });
+      return await getResources();
     case 'works':
-      return await getWorks({ host });
+      return await getWorks();
     case 'users':
-      return await getPeople({ host });
+      return await getPeople();
     default:
       return await getComposablePage({ params, Host });
   }
 }
 
-export async function getActivities({ request, host }) {
+export async function getActivities({ request }) {
   const url = new URL(request?.url);
   const showPast = url?.searchParams?.get('showPast') === 'true' || false;
 
-  const activities = await call('getAllPublicActivities', showPast, host);
+  const activities = await call('getAllPublicActivities', showPast);
 
   return {
     activities,
@@ -51,9 +50,9 @@ export async function getActivity({ params }) {
   };
 }
 
-export async function getCalendarEntries({ host }) {
-  const activities = await call('getAllActivities', host);
-  const resources = await call('getResources', host);
+export async function getCalendarEntries() {
+  const activities = await call('getAllActivities');
+  const resources = await call('getResources');
 
   return {
     activities,
@@ -61,8 +60,8 @@ export async function getCalendarEntries({ host }) {
   };
 }
 
-export async function getGroups({ host }) {
-  const groups = await call('getGroupsWithMeetings', host);
+export async function getGroups() {
+  const groups = await call('getGroupsWithMeetings');
 
   return {
     groups,
@@ -83,17 +82,17 @@ export async function getGroup({ params }) {
   };
 }
 
-export async function getPages({ host }) {
-  const pages = await call('getPages', host);
+export async function getPages() {
+  const pages = await call('getPages');
 
   return {
     pages,
   };
 }
 
-export async function getPeople({ host }) {
+export async function getPeople() {
   const keywords = await call('getKeywords');
-  const users = await call('getHostMembers', host);
+  const users = await call('getSiteMembers');
 
   return {
     keywords,
@@ -101,8 +100,8 @@ export async function getPeople({ host }) {
   };
 }
 
-export async function getResources({ host }) {
-  const resources = await call('getResources', host);
+export async function getResources() {
+  const resources = await call('getResources');
 
   return {
     resources,
@@ -124,22 +123,22 @@ export async function getResource({ params }) {
   };
 }
 
-export async function getUser({ host, params }) {
+export async function getUser({ params }) {
   if (!params) {
     return null;
   }
 
   const { usernameSlug } = params;
   const username = usernameSlug?.replace('@', '');
-  const user = await call('getUserInfo', username, host);
+  const user = await call('getUserInfo', username);
 
   return {
     user,
   };
 }
 
-export async function getWorks({ host }) {
-  const works = await call('getAllWorks', host);
+export async function getWorks() {
+  const works = await call('getAllWorks');
 
   return {
     works,
@@ -179,7 +178,7 @@ export async function getComposablePage({ params, Host }) {
 
 export async function getHostMembersForAdmin() {
   try {
-    const members = await call('getHostMembersForAdmin');
+    const members = await call('getSiteMembersForAdmin');
     return { members };
   } catch {
     return { members: null };
@@ -204,61 +203,61 @@ export async function getComposablePageTitles() {
   }
 }
 
-export async function getActivitiesByUser({ params, host }) {
+export async function getActivitiesByUser({ params }) {
   if (!params) {
     return null;
   }
 
   const { usernameSlug } = params;
   const username = usernameSlug?.replace('@', '');
-  const activities = await call('getActivitiesByUser', username, host);
+  const activities = await call('getActivitiesByUser', username);
 
   return {
     activities,
   };
 }
 
-export async function getGroupsByUser({ params, host }) {
+export async function getGroupsByUser({ params }) {
   if (!params) {
     return null;
   }
 
   const { usernameSlug } = params;
   const username = usernameSlug?.replace('@', '');
-  const groups = await call('getGroupsByUser', username, host);
+  const groups = await call('getGroupsByUser', username);
 
   return {
     groups,
   };
 }
 
-export async function getWorksByUser({ params, host }) {
+export async function getWorksByUser({ params }) {
   if (!params) {
     return null;
   }
 
   const { usernameSlug } = params;
   const username = usernameSlug?.replace('@', '');
-  const works = await call('getWorksByUser', username, host);
+  const works = await call('getWorksByUser', username);
 
   return {
     works,
   };
 }
 
-export async function getNewsletters({ host }) {
-  const newsletters = await call('getNewsletters', host);
+export async function getNewsletters() {
+  const newsletters = await call('getNewsletters');
   return {
     newsletters,
   };
 }
 
-export async function getNewsletterById({ params, host }) {
+export async function getNewsletterById({ params }) {
   if (!params) {
     return null;
   }
   const { newsletterId } = params;
-  const newsletter = await call('getNewsletterById', newsletterId, host);
+  const newsletter = await call('getNewsletterById', newsletterId);
 
   return {
     newsletter,

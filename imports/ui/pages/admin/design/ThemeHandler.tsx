@@ -78,7 +78,7 @@ export default function ThemeHandler() {
     });
   };
 
-  const updateHostTheme = async (uploadedImage = null) => {
+  const updateSiteTheme = async (uploadedImage = null) => {
     if (!currentHost?.theme) {
       return;
     }
@@ -91,8 +91,8 @@ export default function ThemeHandler() {
       },
     };
     try {
-      await call('updateHostTheme', newTheme);
-      setCurrentHost(await call('getCurrentHost'));
+      await call('updateSiteTheme', newTheme);
+      setCurrentHost(await call('getSite'));
       message.success(<Trans i18nKey="common:message.success.update" />);
     } catch (error) {
       message.error(error.error || error.reason);
@@ -214,7 +214,7 @@ export default function ThemeHandler() {
             uploadingBackgroundImage: false,
           }));
         }}
-        onUploadFinish={updateHostTheme}
+        onUploadFinish={updateSiteTheme}
       />
       {/* )} */}
 

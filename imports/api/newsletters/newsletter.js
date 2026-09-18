@@ -21,7 +21,6 @@ Newsletters.schema = new SimpleSchema({
   }),
   creationDate: { type: Date },
   footer: { type: String, optional: true },
-  host: Schemas.Hostname,
   hostId: { type: String },
   items: new SimpleSchema(
     {

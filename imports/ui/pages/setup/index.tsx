@@ -11,7 +11,6 @@ import { message } from '../../generic/message';
 import { loginWithPasswordAsync } from '../auth/functions';
 
 export interface HostFormValues {
-  host: string;
   name: string;
   email: string;
   address: string;
@@ -39,7 +38,6 @@ const steps = [
 ];
 
 const hostModel = {
-  host: window.location.host,
   name: '',
   email: '',
   address: '',
@@ -68,7 +66,7 @@ export default function SetupHome() {
       }));
     }
     if (!state.host) {
-      const host = await call('getCurrentHost');
+      const host = await call('getSite');
       setState((prevState) => ({
         ...prevState,
         host,
@@ -124,22 +122,19 @@ export default function SetupHome() {
     };
 
     try {
-      await call('createNewHost', parsedValues);
-      const host = await call('getCurrentHost');
+      await call('createSite', parsedValues);
+      const host = await call('getSite');
       setState((prevState) => ({
         ...prevState,
         host,
       }));
     } catch (error: any) {
-      message.error(error.reason || error.error || 'Error creating host');
+      message.error(error.reason || error.error || 'Error creating the site');
     }
   };
 
   const goHomeAndReload = () => {
-    window.location.href = window.location.host;
-    setTimeout(() => {
-      window.location.reload();
-    }, 200);
+    window.location.href = '/';
   };
 
   const renderBody = () => {

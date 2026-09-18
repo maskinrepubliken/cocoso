@@ -7,7 +7,6 @@ const Pages = new Mongo.Collection('pages');
 Pages.schema = new SimpleSchema({
   _id: Schemas.Id,
   title: { type: String },
-  host: Schemas.Hostname,
 
   authorId: Schemas.Id,
   authorName: { type: String },

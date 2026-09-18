@@ -34,13 +34,9 @@ export default function LoginPage() {
     if (!currentUser) {
       return;
     }
-    const hostWithinUser = currentUser?.memberships?.find(
-      (membership) => membership?.host === window.location.host
-    );
-    setRole(hostWithinUser?.role || null);
-    if (
-      ['participant', 'contributor', 'admin'].includes(hostWithinUser?.role)
-    ) {
+    const membership = currentUser?.memberships?.[0];
+    setRole(membership?.role || null);
+    if (['participant', 'contributor', 'admin'].includes(membership?.role)) {
       navigate('/admin/my-profile/general');
     } else {
       setJoinModal(true);

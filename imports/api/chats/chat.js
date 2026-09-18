@@ -6,7 +6,6 @@ const Chats = new Mongo.Collection('chats');
 
 Chats.schema = new SimpleSchema({
   _id: Schemas.Id,
-  host: Schemas.Hostname,
 
   contextId: { type: String },
   contextName: { type: String },

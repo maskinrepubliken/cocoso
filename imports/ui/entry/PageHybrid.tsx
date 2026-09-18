@@ -6,7 +6,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Box, Center, Heading } from '/imports/ui/core';
 
 import NiceSlider from '../generic/NiceSlider';
-import { parseTitle } from '/imports/api/_utils/shared';
+import { parseTitle, publicUrl } from '/imports/api/_utils/shared';
 import { getImageUrlBest } from '/imports/ui/utils/imageHelper';
 
 interface SimplePageProps {
@@ -84,7 +84,6 @@ interface Page {
   longDescription?: string;
   imageUrl?: string;
   images?: string[];
-  host?: string;
 }
 
 export interface PageHybridProps {
@@ -96,7 +95,7 @@ export default function PageHybrid({ currentPage }: PageHybridProps) {
     return null;
   }
 
-  const url = `${currentPage.host}/${parseTitle(currentPage.title)}`;
+  const url = publicUrl(`/info/${parseTitle(currentPage.title)}`);
 
   return (
     <SimplePage

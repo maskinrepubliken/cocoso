@@ -10,6 +10,7 @@ import { Divider, Heading } from '/imports/ui/core';
 import EmblaSlider from '/imports/ui/generic/EmblaSlider';
 import type { Host } from '/imports/ui/types';
 import { Helmet } from 'react-helmet';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 export interface ModuleValue {
   alt?: string;
@@ -43,14 +44,13 @@ const imageStyle = {
   borderRadius: 'var(--cocoso-border-radius)',
 };
 
-function ContentViewModule({ module, Host }: ContentViewModuleProps) {
-  const currentHost = Host;
+function ContentViewModule({ module }: ContentViewModuleProps) {
+  const origin = publicUrl();
   if (!module || !module.value || !module.type) {
     return null;
   }
 
   const { type, value } = module;
-  const host = currentHost?.host || '';
 
   if (!value) return null;
 
@@ -59,15 +59,15 @@ function ContentViewModule({ module, Host }: ContentViewModuleProps) {
   if (buttonLink?.substring(0, 4) !== 'http') {
     buttonLink = `https://${buttonLink}`;
   }
-  if (buttonLink && buttonLink.includes(host)) {
-    buttonLink = value?.linkValue?.split(host)[1] || buttonLink;
+  if (buttonLink && buttonLink.includes(origin)) {
+    buttonLink = value?.linkValue?.split(origin)[1] || buttonLink;
     isButtonLinkExternal = false;
   }
 
   let imageLink = type === 'image' ? value.linkValue : null,
     isImageLinkExternal = true;
-  if (imageLink && imageLink.includes(host)) {
-    imageLink = value?.linkValue?.split(host)[1];
+  if (imageLink && imageLink.includes(origin)) {
+    imageLink = value?.linkValue?.split(origin)[1];
     isImageLinkExternal = false;
   }
 
@@ -190,7 +190,7 @@ export default function ComposablePageHybrid({
     <>
       <Helmet>
         <title>{titleWithHost}</title>
-        <link rel="canonical" href={`https://${Host.host}`} />
+        <link rel="canonical" href={publicUrl(`/cp/${composablePage._id}`)} />
         <meta charSet="utf-8" />
         <meta name="title" content={titleWithHost} />
         <meta name="description" content={composablePage.description || ''} />
@@ -198,7 +198,7 @@ export default function ComposablePageHybrid({
           property="og:title"
           content={String(titleWithHost)?.substring(0, 40)}
         />
-        <meta property="og:url" content={`https://${Host.host}`} />
+        <meta property="og:url" content={publicUrl(`/cp/${composablePage._id}`)} />
         <meta property="og:image" content={Host.logo} />
         <meta
           property="og:description"

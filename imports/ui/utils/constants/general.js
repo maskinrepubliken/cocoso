@@ -54,12 +54,6 @@ const adminMenu = [
 
 const hostFields = [
   {
-    // label: 'desired url/address',
-    // placeholder: 'pineapples.fanus.co',
-    name: 'host',
-    required: true,
-  },
-  {
     // label: 'name',
     // placeholder: 'Pineapples',
     name: 'name',

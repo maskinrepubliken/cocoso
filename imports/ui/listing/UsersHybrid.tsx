@@ -31,16 +31,7 @@ export default function UsersHybrid({
   const navigate = useNavigate();
 
   const handleNavigateUserPage = () => {
-    if (
-      !Host.isPortalPage ||
-      modalItem?.memberships?.find((m) => m.host === Host.host)
-    ) {
-      navigate(`/@${modalItem.username}`);
-      return;
-    }
-    const membership = modalItem.memberships.find((m) => m.host === Host.host);
-    const userHost = membership?.host;
-    window.location.href = `https://${userHost}/@${modalItem.username}`;
+    navigate(`/@${modalItem.username}`);
   };
 
   const handleCloseModal = () => {

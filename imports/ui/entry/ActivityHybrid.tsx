@@ -10,12 +10,12 @@ import ActionDates from './ActionDates';
 import FancyDate from './FancyDate';
 import TablyCentered from './TablyCentered';
 import { DateOccurrence } from './ActionDates';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 interface Activity {
   _id: string;
   title?: string;
   subTitle?: string;
-  host?: string;
   authorUsername?: string;
   authorAvatar?: string;
   shortDescription?: string;
@@ -145,7 +145,7 @@ export default function ActivityHybrid({ activity, Host }: ActivityHybridProps) 
     label: isPublicActivity ? activitiesInMenu?.label : calendarInMenu?.label,
   };
 
-  const url = `https://${activity.host}/activities/${activity._id}`;
+  const url = publicUrl(`/activities/${activity._id}`);
 
   return (
     <TablyCentered

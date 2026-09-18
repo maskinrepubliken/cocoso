@@ -407,7 +407,6 @@ const getAdminRoutes = (props) => [
 
 export default function appRoutes(props) {
   const Host = props?.Host;
-  const host = Host?.host;
 
   return [
     {
@@ -426,7 +425,7 @@ export default function appRoutes(props) {
               index: true,
               element: createRouteElement(ActivityListHandler, props),
               loader: async ({ request }) =>
-                await getActivities({ request, host }),
+                await getActivities({ request }),
               shouldRevalidate: revalidateOn(['showPast']),
             },
             {
@@ -443,7 +442,7 @@ export default function appRoutes(props) {
             {
               index: true,
               element: createRouteElement(GroupListHandler, props),
-              loader: async () => await getGroups({ host }),
+              loader: async () => await getGroups(),
               shouldRevalidate: revalidateOn(),
             },
             {
@@ -462,7 +461,7 @@ export default function appRoutes(props) {
               index: true,
               element: createRouteElement(CalendarHandler, props),
               loader: async ({ request }) =>
-                await getCalendarEntries({ host }),
+                await getCalendarEntries(),
               shouldRevalidate: revalidateOn(['edit']),
             },
             {
@@ -479,7 +478,7 @@ export default function appRoutes(props) {
             {
               path: ':pageTitle',
               element: createRouteElement(PageItemHandler, props),
-              loader: async () => await getPages({ host }),
+              loader: async () => await getPages(),
               shouldRevalidate: revalidateOn(['edit']),
             },
           ],
@@ -487,7 +486,7 @@ export default function appRoutes(props) {
         {
           path: 'people',
           element: createRouteElement(UserListHandler, props),
-          loader: async () => await getPeople({ host }),
+          loader: async () => await getPeople(),
           shouldRevalidate: revalidateOn(),
         },
         {
@@ -496,7 +495,7 @@ export default function appRoutes(props) {
             {
               index: true,
               element: createRouteElement(ResourceListHandler, props),
-              loader: async () => await getResources({ host }),
+              loader: async () => await getResources(),
               shouldRevalidate: revalidateOn(),
             },
             {
@@ -514,7 +513,7 @@ export default function appRoutes(props) {
             {
               index: true,
               element: createRouteElement(WorkListHandler, props),
-              loader: async () => await getWorks({ host }),
+              loader: async () => await getWorks(),
               shouldRevalidate: revalidateOn(),
             },
           ],
@@ -522,25 +521,25 @@ export default function appRoutes(props) {
         {
           path: ':usernameSlug',
           element: createRouteElement(UserProfileHandler, props),
-          loader: async ({ params }) => await getUser({ params, host }),
+          loader: async ({ params }) => await getUser({ params }),
           children: [
             {
               path: 'activities',
               element: createRouteElement(MemberActivities, props),
               loader: async ({ params }) =>
-                await getActivitiesByUser({ params, host }),
+                await getActivitiesByUser({ params }),
             },
             {
               path: 'groups',
               element: createRouteElement(MemberGroups, props),
               loader: async ({ params }) =>
-                await getGroupsByUser({ params, host }),
+                await getGroupsByUser({ params }),
             },
             {
               path: 'works',
               element: createRouteElement(MemberWorks, props),
               loader: async ({ params }) =>
-                await getWorksByUser({ params, host }),
+                await getWorksByUser({ params }),
             },
           ],
         },
@@ -579,13 +578,13 @@ export default function appRoutes(props) {
         {
           path: 'newsletters',
           element: createRouteElement(PreviousNewsletters, props),
-          loader: async () => await getNewsletters({ host }),
+          loader: async () => await getNewsletters(),
           children: [
             {
               path: ':newsletterId',
               element: createRouteElement(Newsletter, props),
               loader: async ({ params }) =>
-                await getNewsletterById({ params, host }),
+                await getNewsletterById({ params }),
             },
           ],
         },

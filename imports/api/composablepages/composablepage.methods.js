@@ -2,18 +2,15 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 
 import ComposablePages from './composablepage';
-import { getHost } from '../_utils/shared';
 import { isAdmin } from '../users/user.roles';
 
 Meteor.methods({
-  async getComposablePageById(composablePageId, hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getComposablePageById(composablePageId) {
 
     try {
       return await ComposablePages.findOneAsync(
         {
           _id: composablePageId,
-          host,
         },
         {
           fields: {
@@ -22,7 +19,6 @@ Meteor.methods({
             authorName: 1,
             contentRows: 1,
             description: 1,
-            host: 1,
             isPublished: 1,
             settings: 1,
             title: 1,
@@ -34,25 +30,21 @@ Meteor.methods({
     }
   },
 
-  async getComposablePages(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getComposablePages() {
 
     try {
       return await ComposablePages.find({
-        host,
       }).fetchAsync();
     } catch (error) {
       throw new Meteor.Error(error);
     }
   },
 
-  async getComposablePageTitles(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getComposablePageTitles() {
 
     try {
       return await ComposablePages.find(
         {
-          host,
         },
         {
           sort: {
@@ -63,7 +55,6 @@ Meteor.methods({
             authorName: 1,
             authorUsername: 1,
             creationDate: 1,
-            host: 1,
             isPublished: 1,
             latestUpdate: 1,
             latestUpdateAuthorUsername: 1,
@@ -79,9 +70,8 @@ Meteor.methods({
   async createComposablePage(formValues) {
     check(formValues, Match.ObjectIncluding({ title: String }));
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
@@ -93,7 +83,6 @@ Meteor.methods({
           hideTitle: false,
           hideMenu: false,
         },
-        host,
         authorId: user._id,
         authorUsername: user.username,
         isPublished: false,
@@ -109,16 +98,14 @@ Meteor.methods({
   async updateComposablePage(formValues) {
     check(formValues, Match.ObjectIncluding({ _id: String }));
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
     const composablePageId = formValues._id;
     const thePage = await ComposablePages.findOneAsync({
       _id: composablePageId,
-      host,
     });
 
     if (!thePage) {
@@ -127,7 +114,6 @@ Meteor.methods({
 
     const {
       _id,
-      host: _host,
       authorId,
       authorUsername,
       ...safeValues
@@ -150,15 +136,14 @@ Meteor.methods({
 
   async publishComposablePage(composablePageId) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
     try {
       await ComposablePages.updateAsync(
-        { _id: composablePageId, host },
+        { _id: composablePageId },
         { $set: { isPublished: true } }
       );
     } catch (error) {
@@ -168,15 +153,14 @@ Meteor.methods({
 
   async unpublishComposablePage(composablePageId) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
     try {
       await ComposablePages.updateAsync(
-        { _id: composablePageId, host },
+        { _id: composablePageId },
         { $set: { isPublished: false } }
       );
     } catch (error) {
@@ -186,15 +170,13 @@ Meteor.methods({
 
   async deleteComposablePage(composablePageId) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
     const thePage = await ComposablePages.findOneAsync({
       _id: composablePageId,
-      host,
     });
 
     if (!thePage) {

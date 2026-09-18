@@ -41,7 +41,6 @@ interface Activity {
   groupId?: string;
   isGroupPrivate?: boolean;
   images?: string[];
-  host?: string;
 }
 
 interface ResourceForCombo {
@@ -76,7 +75,6 @@ interface Booking {
   groupId?: string;
   isGroupPrivate?: boolean;
   images?: string[];
-  host?: string;
   isNoResource?: boolean;
   isWithComboResource?: boolean;
   resource?: string;
@@ -113,16 +111,6 @@ interface Work {
 interface UserProfile {
   firstName?: string;
   lastName?: string;
-}
-
-interface MeteorConnection {
-  httpHeaders?: {
-    host?: string;
-  };
-}
-
-interface MeteorContext {
-  connection?: MeteorConnection;
 }
 
 function localeSort(a: LabeledItem, b: LabeledItem): number {
@@ -252,7 +240,6 @@ function helper_parseAllBookingsWithResources(
     groupId: activity.groupId,
     isGroupPrivate: activity.isGroupPrivate,
     images: activity.images,
-    host: activity.host,
   };
 }
 
@@ -603,10 +590,16 @@ function debounce<T extends (...args: unknown[]) => void>(
   };
 }
 
-const getHost = (self: MeteorContext | undefined): string | undefined =>
-  self?.connection?.httpHeaders?.host;
-
 const siteUrl = Meteor.absoluteUrl();
+
+// Absolute URL of a path on this site, derived from ROOT_URL. Works on the
+// server and in the browser, so it is what links in emails and canonical
+// tags should use.
+const publicUrl = (path = ''): string =>
+  `${siteUrl.replace(/\/$/, '')}/${String(path).replace(/^\//, '')}`.replace(
+    /\/$/,
+    ''
+  );
 
 export {
   localeSort,
@@ -633,7 +626,7 @@ export {
   getCategoriesAssignedToWorks,
   stripHtml,
   debounce,
-  getHost,
+  publicUrl,
   siteUrl,
 };
 

@@ -8,11 +8,11 @@ import DocumentsField from '/imports/ui/pages/resources/components/DocumentsFiel
 import type { Document, Host } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 interface Work {
   _id: string;
   title?: string;
-  host?: string;
   authorUsername?: string;
   authorAvatar?: string;
   shortDescription?: string;
@@ -80,7 +80,7 @@ export default function WorkHybrid({ documents, work, Host }: WorkHybridProps) {
     (item) => item.name === 'works'
   );
 
-  const url = `https://${work.host}/@${work.authorUsername}/works/${work._id}`;
+  const url = publicUrl(`/@${work.authorUsername}/works/${work._id}`);
 
   return (
     <TablyCentered

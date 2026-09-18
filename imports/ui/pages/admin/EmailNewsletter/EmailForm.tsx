@@ -16,6 +16,7 @@ import {
   Text,
 } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
+import { publicUrl } from '/imports/api/_utils/shared';
 import Quill from '/imports/ui/forms/Quill';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import Menu from '/imports/ui/generic/Menu';
@@ -30,7 +31,8 @@ const getDefaultFooter = (currentHost: any) => {
     return null;
   }
 
-  const { host, settings } = currentHost;
+  const { settings } = currentHost;
+  const siteUrl = publicUrl();
   const address = `${settings.address}, ${settings.city}, ${settings.country}`;
 
   return `
@@ -43,8 +45,8 @@ const getDefaultFooter = (currentHost: any) => {
       </a>
     </p>
     <p>
-      <a href="https://${host}">
-        ${host}
+      <a href="${siteUrl}">
+        ${siteUrl}
       </a>
     </p>
   `;

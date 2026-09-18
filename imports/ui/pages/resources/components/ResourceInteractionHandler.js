@@ -21,13 +21,7 @@ function ReserveButton({ resource }) {
   const currentHost = useAtomValue(currentHostAtom);
   const isDesktop = useAtomValue(isDesktopAtom);
 
-  const isSameHost = resource.host === currentHost.host;
-
-  let link = `/calendar?resourceId=${resource._id}&new=true`;
-
-  if (!isSameHost) {
-    link = `https://${resource.host}${link}`;
-  }
+  const link = `/calendar?resourceId=${resource._id}&new=true`;
 
   return (
     <Box>

@@ -11,6 +11,7 @@ import type { Host } from '/imports/ui/types';
 import { canCreateContentAtom, currentHostAtom } from '/imports/state';
 
 import NewButton, { type NewButtonAnimState } from './NewButton';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 export interface PageHeadingProps {
   currentHost: Host;
@@ -56,7 +57,7 @@ export default function PageHeading({
   );
   const description = listingInMenu?.description;
   const heading = listingInMenu?.label;
-  const url = `${currentHost?.host}/${listingInMenu?.name}`;
+  const url = publicUrl(`/${listingInMenu?.name}`);
   const imageUrl = currentHost?.logo;
 
   // ── Record heading position before the button appears ─────────────────────
@@ -175,7 +176,7 @@ export default function PageHeading({
     <>
       <Helmet>
         <title>{String(heading || 'Page')}</title>
-        <link rel="canonical" href={`https://${currentHost.host}`} />
+        <link rel="canonical" href={url} />
         <meta charSet="utf-8" />
         <meta name="title" content={String(heading || 'Page')} />
         <meta

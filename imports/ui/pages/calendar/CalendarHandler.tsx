@@ -67,7 +67,6 @@ interface Activity {
   comboResourceId?: string;
   resource?: string;
   authorName: string;
-  host: string;
   activityId: string;
   groupId?: string;
   isGroupMeeting?: boolean;
@@ -188,25 +187,15 @@ export default function CalendarHandler({ Host }: CalendarHandlerProps) {
   const handlePrimaryButtonClick = () => {
     if (!selectedActivity) return;
 
-    const isSameHost = selectedActivity.host === currentHost.host;
-
     if (selectedActivity.isGroupMeeting) {
-      if (isSameHost) {
-        navigate(`/groups/${selectedActivity.groupId}`);
-        return;
-      }
-      window.location.href = `https://${selectedActivity.host}/groups/${selectedActivity.groupId}`;
+      navigate(`/groups/${selectedActivity.groupId}`);
       return;
     }
 
     const listing = selectedActivity.isPublicActivity
       ? 'activities'
       : 'calendar';
-    if (isSameHost) {
-      navigate(`/${listing}/${selectedActivity.activityId}`);
-      return;
-    }
-    window.location.href = `https://${selectedActivity.host}/${listing}/${selectedActivity.activityId}`;
+    navigate(`/${listing}/${selectedActivity.activityId}`);
   };
 
   const handleSecondaryButtonClick = () => {

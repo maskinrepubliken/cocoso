@@ -1,3 +1,5 @@
+import { publicUrl } from '../_utils/shared';
+
 export default {
   en: {
     general: {
@@ -28,11 +30,11 @@ export default {
     },
     newGroupMessage: {
       subject: (groupTitle) => `New message in ${groupTitle}`,
-      text: (groupTitle, host, groupId) =>
+      text: (groupTitle, groupId) =>
         `You have a new message in the ${groupTitle} group discussion. <br />
-        Go to the group page <a href="https://${host}/groups/${groupId}">${groupTitle}</a> to see the message and join the conversation.
+        Go to the group page <a href="${publicUrl(`/groups/${groupId}`)}">${groupTitle}</a> to see the message and join the conversation.
         <br /><br />
-        <a href="https://${host}/groups/${groupId}">https://${host}/groups/${groupId}</a>`,
+        <a href="${publicUrl(`/groups/${groupId}`)}">${publicUrl(`/groups/${groupId}`)}</a>`,
     },
   },
   sv: {
@@ -64,11 +66,11 @@ export default {
     },
     newGroupMessage: {
       subject: (groupTitle) => `Ny meddelande i ${groupTitle}`,
-      text: (groupTitle, host, groupId) =>
+      text: (groupTitle, groupId) =>
         `Du har ett nytt meddelande i ${groupTitle} gruppdiskussionen. <br />
-        Gå till gruppsidan <a href="https://${host}/groups/${groupId}">${groupTitle}</a> för att se meddelandet och gå med i diskussionen.
+        Gå till gruppsidan <a href="${publicUrl(`/groups/${groupId}`)}">${groupTitle}</a> för att se meddelandet och gå med i diskussionen.
         <br /><br />
-        <a href="https://${host}/groups/${groupId}">https://${host}/groups/${groupId}</a>`,
+        <a href="${publicUrl(`/groups/${groupId}`)}">${publicUrl(`/groups/${groupId}`)}</a>`,
     },
   },
   tr: {
@@ -99,11 +101,11 @@ export default {
     },
     newGroupMessage: {
       subject: (groupTitle) => `${groupTitle} grubunda yeni mesaj`,
-      text: (groupTitle, host, groupId) =>
+      text: (groupTitle, groupId) =>
         `${groupTitle} grubunda yeni bir mesaj var. <br />
-        Mesajı görmek ve tartışmaya katılmak için <a href="https://${host}/groups/${groupId}">${groupTitle}</a> sayfasına git.
+        Mesajı görmek ve tartışmaya katılmak için <a href="${publicUrl(`/groups/${groupId}`)}">${groupTitle}</a> sayfasına git.
         <br /><br />
-        <a href="https://${host}/groups/${groupId}">https://${host}/groups/${groupId}</a>`,
+        <a href="${publicUrl(`/groups/${groupId}`)}">${publicUrl(`/groups/${groupId}`)}</a>`,
     },
   },
 };

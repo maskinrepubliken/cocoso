@@ -1,5 +1,6 @@
 import mailtranslations from '../groups/mailtranslations';
 import escapeHtml from '../_utils/escapeHtml';
+import { publicUrl } from '../_utils/shared';
 
 export const getDirectMessageEmailBody = (
   senderDisplayName,
@@ -9,10 +10,7 @@ export const getDirectMessageEmailBody = (
   isFederation
 ) => {
   const resolvedLinkHost = linkHost ?? currentHost;
-  const linkHostDomain = resolvedLinkHost?.host ?? currentHost?.host;
-  const linkHostName = escapeHtml(
-    resolvedLinkHost?.settings?.name ?? linkHostDomain
-  );
+  const linkHostName = escapeHtml(resolvedLinkHost?.settings?.name ?? '');
   const firstName = escapeHtml(
     recipient?.firstName || recipient?.username || ''
   );
@@ -49,7 +47,7 @@ export const getDirectMessageEmailBody = (
 
       <div style="font-size:15px; color:#555555; margin-bottom:28px;">${bodyLongHtml}</div>
 
-      <a href="https://${linkHostDomain}/admin/messages"
+      <a href="${publicUrl('/admin/messages')}"
          style="display:inline-block; background:#414141; color:#ffffff; font-family:Arial, sans-serif;
                 font-size:14px; line-height:120%; text-decoration:none;
                 padding:11px 24px; border-radius:4px;" target="_blank">

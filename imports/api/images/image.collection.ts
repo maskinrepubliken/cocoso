@@ -8,7 +8,6 @@ Images.schema = new SimpleSchema({
   _id: Schemas.Id,
 
   // Ownership
-  host: Schemas.Hostname,
   uploadedBy: { type: String }, // userId
   uploadedByUsername: { type: String },
 

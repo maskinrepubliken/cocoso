@@ -2,9 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import dayjs from 'dayjs';
 
-import { getHost, emailIsValid } from '../_utils/shared';
+import { emailIsValid } from '../_utils/shared';
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
-import Hosts from '../hosts/host';
+import { getSite } from '../site/site';
 import Activities from './activity';
 import Groups from '../groups/group';
 import Resources from '../resources/resource';
@@ -45,15 +45,13 @@ const filterPrivateGroups = async (activities, user) => {
 };
 
 Meteor.methods({
-  async getAllPublicActivities(showPast = false, hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getAllPublicActivities(showPast = false) {
     const user = await Meteor.userAsync();
     const today = dayjs().format('YYYY-MM-DD');
 
     try {
       if (showPast) {
         const pastActs = await Activities.find({
-          host,
           $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
           'datesAndTimes.endDate': { $lte: today },
         }).fetchAsync();
@@ -63,7 +61,6 @@ Meteor.methods({
         return await filterPrivateGroups(pastActsSorted, user);
       }
       const futureActs = await Activities.find({
-        host,
         $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
         'datesAndTimes.endDate': { $gte: today },
       }).fetchAsync();
@@ -77,13 +74,11 @@ Meteor.methods({
     }
   },
 
-  async getAllActivities(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getAllActivities() {
 
     const user = await Meteor.userAsync();
     try {
       const allActs = await Activities.find({
-        host,
       }).fetchAsync();
       const allActsParsed = parseGroupActivities(allActs);
       return await filterPrivateGroups(allActsParsed, user);
@@ -93,25 +88,22 @@ Meteor.methods({
   },
 
   async getActivityById(activityId) {
-    const host = getHost(this);
     try {
-      return await Activities.findOneAsync({ _id: activityId, host });
+      return await Activities.findOneAsync({ _id: activityId });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
   },
 
-  async getMyActivities(hostPredefined) {
+  async getMyActivities() {
     const user = await Meteor.userAsync();
     if (!user) {
       throw new Meteor.Error('Not allowed!');
     }
 
-    const host = hostPredefined || getHost(this);
 
     try {
       const activities = await Activities.find({
-        host,
         authorId: user._id,
       }).fetchAsync();
       return activities;
@@ -120,15 +112,13 @@ Meteor.methods({
     }
   },
 
-  async getActivitiesByUser(username, hostPredefined) {
+  async getActivitiesByUser(username) {
     if (!username) {
       throw new Meteor.Error('Not allowed!');
     }
-    const host = hostPredefined || getHost(this);
 
     try {
       return await Activities.find({
-        host,
         authorName: username,
       }).fetchAsync();
     } catch (error) {
@@ -140,14 +130,12 @@ Meteor.methods({
     { startDate, endDate, startTime, endTime, resourceId },
     currentActivityId = null
   ) {
-    const host = getHost(this);
     if (!resourceId) {
       return null;
     }
 
     const resourcesInQuestion = await Resources.find(
       {
-        host,
         $or: [
           {
             _id: resourceId,
@@ -169,7 +157,6 @@ Meteor.methods({
     const activityWithConflict = await Activities.findOneAsync(
       {
         _id: { $ne: currentActivityId },
-        host,
         $and: [
           {
             $or: [
@@ -239,9 +226,8 @@ Meteor.methods({
     }
 
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isContributorOrAdmin(user._id, host))) {
+    if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
@@ -254,7 +240,6 @@ Meteor.methods({
     try {
       const activityId = await Activities.insertAsync({
         ...values,
-        host,
         authorId: user._id,
         authorName: user.username,
         isSentForReview: false,
@@ -277,7 +262,6 @@ Meteor.methods({
 
   async updateActivity(activityId, values) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
     if (!user) {
       throw new Meteor.Error('Not allowed!');
@@ -285,19 +269,18 @@ Meteor.methods({
 
     const theActivity = await Activities.findOneAsync({
       _id: activityId,
-      host,
     });
 
     if (!theActivity) {
       throw new Meteor.Error('not-found', 'Activity not found');
     }
 
-    if (user._id !== theActivity.authorId && !(await isAdmin(user._id, host))) {
+    if (user._id !== theActivity.authorId && !(await isAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
     // Ownership and tenancy fields are never client-writable.
-    const { _id, host: _host, authorId, authorName, ...safeValues } = values;
+    const { _id, authorId, authorName, ...safeValues } = values;
 
     try {
       return await Activities.updateAsync(activityId, {
@@ -312,7 +295,6 @@ Meteor.methods({
 
   async deleteActivity(activityId) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
     if (!user) {
       throw new Meteor.Error('Not allowed!');
@@ -320,14 +302,13 @@ Meteor.methods({
 
     const theActivity = await Activities.findOneAsync({
       _id: activityId,
-      host,
     });
 
     if (!theActivity) {
       throw new Meteor.Error('not-found', 'Activity not found');
     }
 
-    if (user._id !== theActivity.authorId && !(await isAdmin(user._id, host))) {
+    if (user._id !== theActivity.authorId && !(await isAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
@@ -347,10 +328,8 @@ Meteor.methods({
       throw new Meteor.Error('invalid-email', 'Please enter a valid email');
     }
 
-    const host = getHost(this);
     const theActivity = await Activities.findOneAsync({
       _id: activityId,
-      host,
     });
     if (!theActivity || !theActivity.datesAndTimes?.[occurenceIndex]) {
       throw new Meteor.Error('not-found', 'Activity or occurrence not found');
@@ -360,7 +339,7 @@ Meteor.methods({
       registerDate: new Date(),
     };
 
-    const currentHost = await Hosts.findOneAsync({ host });
+    const currentHost = await getSite();
     const hostName = currentHost?.settings?.name;
 
     const field = `datesAndTimes.${occurenceIndex}.attendees`;
@@ -400,10 +379,8 @@ Meteor.methods({
       throw new Meteor.Error('invalid-email', 'Please enter a valid email');
     }
 
-    const host = getHost(this);
     const theActivity = await Activities.findOneAsync({
       _id: activityId,
-      host,
     });
     if (
       !theActivity?.datesAndTimes?.[occurenceIndex]?.attendees?.[attendeeIndex]
@@ -417,7 +394,7 @@ Meteor.methods({
     const newDatesAndTimes = [...theActivity.datesAndTimes];
     const theOccurence = newDatesAndTimes[occurenceIndex];
 
-    const currentHost = await Hosts.findOneAsync({ host });
+    const currentHost = await getSite();
     const currentUser = await Meteor.userAsync();
     const emailBody = getRegistrationEmailBody(
       theActivity,
@@ -453,11 +430,9 @@ Meteor.methods({
     check(email, String);
     check(lastName, Match.Maybe(String));
 
-    const host = getHost(this);
     const currentUser = await Meteor.userAsync();
     const theActivity = await Activities.findOneAsync({
       _id: activityId,
-      host,
     });
     if (!theActivity?.datesAndTimes?.[occurenceIndex]) {
       throw new Meteor.Error('not-found', 'Activity or occurrence not found');
@@ -480,7 +455,7 @@ Meteor.methods({
       }
     );
 
-    const currentHost = await Hosts.findOneAsync({ host });
+    const currentHost = await getSite();
     const hostName = currentHost.settings.name;
 
     try {

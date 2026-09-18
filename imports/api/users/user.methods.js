@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { check, Match } from 'meteor/check';
 
-import { getHost } from '../_utils/shared';
-import Hosts from '../hosts/host';
+import { getSite } from '../site/site';
+import { publicUrl } from '../_utils/shared';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import Works from '../works/work';
 import Groups from '../groups/group';
@@ -32,9 +32,8 @@ Meteor.methods({
     return user.lang;
   },
 
-  async getUserInfo(username, hostPredefined) {
+  async getUserInfo(username) {
     check(username, String);
-    const host = hostPredefined || getHost(this);
 
     const user = await Meteor.users.findOneAsync({ username });
 
@@ -50,7 +49,6 @@ Meteor.methods({
 
     const membership = await Memberships.findOneAsync({
       userId: user._id,
-      host,
     });
     if (!membership?.isPublic) {
       return null;
@@ -92,20 +90,18 @@ Meteor.methods({
     return Boolean(emailExists);
   },
 
-  async setSelfAsParticipant(hostToJoin) {
+  async setSelfAsParticipant() {
     const user = await Meteor.userAsync();
     if (!user) {
       return;
     }
-    const host = hostToJoin || getHost(this);
-    const currentHost = await Hosts.findOneAsync({ host });
+    const currentHost = await getSite();
     if (!currentHost) {
-      throw new Meteor.Error('Host not found');
+      throw new Meteor.Error('Site not found');
     }
 
     const existingMembership = await Memberships.findOneAsync({
       userId: user._id,
-      host,
     });
     if (existingMembership) {
       throw new Meteor.Error('You are already a participant');
@@ -114,25 +110,22 @@ Meteor.methods({
     try {
       await Memberships.insertAsync({
         userId: user._id,
-        host,
         role: 'participant',
         joinDate: new Date(),
         isPublic: true,
       });
 
-      await Meteor.callAsync('sendWelcomeEmail', user._id, host);
+      await Meteor.callAsync('sendWelcomeEmail', user._id);
     } catch (error) {
       throw new Meteor.Error(error);
     }
   },
 
   async removeAsParticipant() {
-    const host = getHost(this);
     const user = await Meteor.userAsync();
 
     const membership = await Memberships.findOneAsync({
       userId: user._id,
-      host,
     });
 
     if (!membership) {
@@ -140,7 +133,7 @@ Meteor.methods({
     }
 
     try {
-      await Memberships.removeAsync({ userId: user._id, host });
+      await Memberships.removeAsync({ userId: user._id });
     } catch (error) {
       throw new Meteor.Error(error);
     }
@@ -323,10 +316,9 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
     const userId = currentUser._id;
-    const host = getHost(this);
 
     try {
-      await Memberships.updateAsync({ userId, host }, { $set: { isPublic } });
+      await Memberships.updateAsync({ userId }, { $set: { isPublic } });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update");
     }
@@ -337,26 +329,24 @@ Meteor.methods({
   async leaveHost() {
     const user = await Meteor.userAsync();
     const userId = user?._id;
-    const host = getHost(this);
 
     if (!userId) {
       return;
     }
 
     try {
-      await Memberships.removeAsync({ userId, host });
+      await Memberships.removeAsync({ userId });
     } catch (error) {
       throw new Meteor.Error(error);
     }
   },
 
   async resetUserPassword(email) {
-    const host = getHost(this);
     Accounts.urls.resetPassword = function (token) {
-      return `https://${host}/reset-password/${token}`;
+      return publicUrl(`/reset-password/${token}`);
     };
 
-    const currentHost = await Hosts.findOneAsync({ host });
+    const currentHost = await getSite();
     const siteName = currentHost?.settings?.name;
     const smtp = Meteor.settings?.mailCredentials?.smtp;
     if (siteName && smtp?.fromEmail) {
@@ -364,7 +354,7 @@ Meteor.methods({
       Accounts.emailTemplates.resetPassword.from = () =>
         `${siteName} <${fromEmail}>`;
     }
-    Accounts.emailTemplates.siteName = siteName || host;
+    Accounts.emailTemplates.siteName = siteName || Meteor.settings.public?.name;
 
     try {
       await Meteor.callAsync('forgotPassword', email);
@@ -452,11 +442,10 @@ Meteor.methods({
     const caller = await Meteor.userAsync();
     if (!caller) throw new Meteor.Error('not-authorized');
 
-    const host = getHost(this);
     const q = query.trim().toLowerCase();
 
     const membershipsAtHost = await Memberships.find(
-      { host },
+      {},
       { fields: { userId: 1 } }
     ).fetchAsync();
     const candidateIds = membershipsAtHost

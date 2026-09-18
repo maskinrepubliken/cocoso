@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 
-import { getHost } from '../_utils/shared';
 import Reports from './report';
 import { isAdmin } from '../users/user.roles';
 
@@ -26,7 +25,6 @@ Meteor.methods({
       );
 
     return Reports.insertAsync({
-      host: getHost(this),
       reporterId: user._id,
       reportedUserId: reportedUserId ?? undefined,
       contentType,
@@ -41,11 +39,10 @@ Meteor.methods({
     const user = await Meteor.userAsync();
     if (!user) throw new Meteor.Error('not-authorized');
 
-    const host = getHost(this);
-    const isAdminUser = await isAdmin(user._id, host);
+    const isAdminUser = await isAdmin(user._id);
     if (!isAdminUser) throw new Meteor.Error('not-authorized');
 
-    const selector = { host };
+    const selector = {};
     const reports = await Reports.find(selector, {
       sort: { createdAt: -1 },
     }).fetchAsync();
@@ -79,11 +76,10 @@ Meteor.methods({
     const user = await Meteor.userAsync();
     if (!user) throw new Meteor.Error('not-authorized');
 
-    const host = getHost(this);
-    const isAdminUser = await isAdmin(user._id, host);
+    const isAdminUser = await isAdmin(user._id);
     if (!isAdminUser) throw new Meteor.Error('not-authorized');
 
-    const selector = { _id: reportId, host };
+    const selector = { _id: reportId };
     return Reports.updateAsync(selector, {
       $set: {
         status,

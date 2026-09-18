@@ -14,8 +14,7 @@ import {
   sanitizeSegment,
 } from '../_utils/services/mediaStorage';
 import { uploadLogoPng } from '../_utils/services/logoPng';
-import { getHost } from '../_utils/shared';
-import Hosts from '../hosts/host';
+import { getSite } from '../site/site';
 import { isAdmin } from '../users/user.roles';
 
 /**
@@ -40,11 +39,10 @@ async function uploadImageMethod(
     );
   }
 
-  const host = getHost(this);
-  const currentHost = await Hosts.findOneAsync({ host });
+  const currentHost = await getSite();
 
   if (!currentHost) {
-    throw new Meteor.Error('invalid-host', 'Host not found');
+    throw new Meteor.Error('no-site', 'The site is not set up yet');
   }
 
   // Decode base64 to buffer
@@ -81,7 +79,6 @@ async function uploadImageMethod(
 
   // Save to DB
   const imageId = await Images.insertAsync({
-    host,
     uploadedBy: user._id,
     uploadedByUsername: user.username || 'unknown',
     variants: variantUrls,
@@ -119,8 +116,7 @@ async function deleteImageMethod(imageId: string) {
 
   // Only the uploader or an admin can delete
   if (image.uploadedBy !== user._id) {
-    const host = getHost(this);
-    const isAdminUser = await isAdmin(user._id, host);
+    const isAdminUser = await isAdmin(user._id);
     if (!isAdminUser) {
       throw new Meteor.Error('not-authorized', 'You cannot delete this image');
     }

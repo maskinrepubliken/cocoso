@@ -1,5 +1,6 @@
 import mailtranslations from './mailtranslations';
 import escapeHtml from '../_utils/escapeHtml';
+import { publicUrl } from '../_utils/shared';
 
 const getRegistrationEmailBody = (
   activity,
@@ -17,7 +18,6 @@ const getRegistrationEmailBody = (
     lastName = escapeHtml(values.lastName),
     numberOfPeople = values.numberOfPeople,
     hostName = currentHost.settings.name,
-    host = currentHost.host,
     hostLogo = currentHost.logo,
     hostAddress = currentHost.settings.address,
     resource = activity.resource;
@@ -419,7 +419,7 @@ const getRegistrationEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="https://${host}/activities/${activityId}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl(`/activities/${activityId}`)}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${visitPage}
                 </a>
@@ -547,7 +547,7 @@ const getRegistrationEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="https://${host}/activities/${activityId}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl(`/activities/${activityId}`)}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${activityPage}
                 </a>
@@ -654,7 +654,6 @@ const getUnregistrationEmailBody = (
   const activityId = activity._id,
     firstName = escapeHtml(values?.firstName || currentUser?.username || ''),
     hostName = currentHost.settings.name,
-    host = currentHost.host,
     hostLogo = currentHost.logo,
     hostAddress = currentHost.settings.address;
   const lang = currentUser?.lang || currentHost?.settings?.lang || 'en';
@@ -967,7 +966,7 @@ const getUnregistrationEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="https://${host}/activities/${activityId}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl(`/activities/${activityId}`)}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${visitPage}
                 </a>

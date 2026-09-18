@@ -26,7 +26,6 @@ Works.schema = new SimpleSchema({
     }),
     optional: true,
   },
-  host: Schemas.Hostname,
   images: { type: Array, optional: true },
   'images.$': { type: String },
   imagesLegacy: { type: Array, optional: true },

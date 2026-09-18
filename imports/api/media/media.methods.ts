@@ -8,7 +8,6 @@ import {
   mediaExists,
   sanitizeSegment,
 } from '../_utils/services/mediaStorage';
-import { getHost } from '../_utils/shared';
 import { isAdmin } from '../users/user.roles';
 
 /**
@@ -262,7 +261,7 @@ Meteor.methods({
       collections: Match.Maybe([String]),
     });
     const user = await Meteor.userAsync();
-    if (!user || !(await isAdmin(user._id, getHost(this as any)))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'Admin only');
     }
     return migrateFromS3(options);

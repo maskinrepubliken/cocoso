@@ -7,6 +7,7 @@ import { Box, Divider, Heading } from '/imports/ui/core';
 import { currentHostAtom } from '/imports/state';
 
 import Template from '../layout/Template';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 export default function Terms() {
   const currentHost = useAtomValue(currentHostAtom);
@@ -288,11 +289,11 @@ function TermsForHost({ currentHost }: TermsForHostProps) {
             <strong>Website</strong> refers to this website by {entities},
             accessible from{' '}
             <a
-              href={currentHost?.host}
+              href={publicUrl()}
               rel="external nofollow noopener noreferrer"
               target="_blank"
             >
-              {currentHost?.host}
+              {publicUrl()}
             </a>
           </p>
         </li>

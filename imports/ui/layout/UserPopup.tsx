@@ -17,7 +17,6 @@ import {
   Center,
   Divider,
   Flex,
-  Link as CLink,
   NotificationBadge,
   Text,
 } from '/imports/ui/core';
@@ -34,27 +33,12 @@ import { getFullName } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 
 interface NotificationLinkItemProps {
-  host: string;
   item: any;
   children: React.ReactNode;
 }
 
-function NotificationLinkItem({
-  host,
-  item,
-  children,
-}: NotificationLinkItemProps) {
-  if (item.host && host === item.host) {
-    return <Link to={`/${item.context}/${item.contextId}`}>{children}</Link>;
-  }
-
-  return (
-    <CLink
-      href={`https://${item.host || host}/${item.context}/${item.contextId}`}
-    >
-      {children}
-    </CLink>
-  );
+function NotificationLinkItem({ item, children }: NotificationLinkItemProps) {
+  return <Link to={`/${item.context}/${item.contextId}`}>{children}</Link>;
 }
 
 const linkButtonProps = {
@@ -195,7 +179,6 @@ export default function UserPopup({ isOpen }: UserPopupProps) {
   );
   notificationsCounter += unreadMessageCount;
 
-  const host = currentHost?.host;
   const roleTranslated = <Trans i18nKey={`roles.${role}`} ns="members" />;
 
   const isAdmin = role === 'admin';
@@ -269,7 +252,6 @@ export default function UserPopup({ isOpen }: UserPopupProps) {
             {notifications.map((item) => (
               <NotificationLinkItem
                 key={item.contextId + item.count}
-                host={host}
                 item={item}
               >
                 <MenuItem>

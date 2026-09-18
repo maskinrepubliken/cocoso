@@ -1,17 +1,14 @@
 import { Meteor } from 'meteor/meteor';
 
-import { getHost } from '../_utils/shared';
 import Works from './work';
 import { isContributorOrAdmin } from '../users/user.roles';
 
 Meteor.methods({
-  async getAllWorks(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getAllWorks() {
 
     try {
       return await Works.find(
         {
-          host,
         },
         { sort: { creationDate: -1 } }
       ).fetchAsync();
@@ -20,15 +17,13 @@ Meteor.methods({
     }
   },
 
-  async getWorksByUser(username, hostPredefined) {
+  async getWorksByUser(username) {
     if (!username) {
       throw new Meteor.Error('Not allowed!');
     }
-    const host = hostPredefined || getHost(this);
 
     try {
       return await Works.find({
-        host,
         authorUsername: username,
       }).fetchAsync();
     } catch (error) {
@@ -36,16 +31,14 @@ Meteor.methods({
     }
   },
 
-  async getMyWorks(hostPredefined) {
+  async getMyWorks() {
     const user = await Meteor.userAsync();
     if (!user) {
       throw new Meteor.Error('Not allowed!');
     }
-    const host = hostPredefined || getHost(this);
 
     try {
       return await Works.find({
-        host,
         authorId: user._id,
       }).fetchAsync();
     } catch (error) {
@@ -54,10 +47,9 @@ Meteor.methods({
   },
 
   async getWorkById(workId, username) {
-    const host = getHost(this);
 
     try {
-      const work = await Works.findOneAsync({ _id: workId, host });
+      const work = await Works.findOneAsync({ _id: workId });
       if (work && work.authorUsername !== username) {
         throw new Meteor.Error('Not allowed!');
       }
@@ -69,9 +61,8 @@ Meteor.methods({
 
   async createWork(values) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isContributorOrAdmin(user._id, host))) {
+    if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
@@ -80,7 +71,6 @@ Meteor.methods({
     try {
       const newWorkId = await Works.insertAsync({
         ...values,
-        host,
         authorId: user._id,
         authorAvatar: userAvatar,
         authorUsername: user.username,

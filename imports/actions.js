@@ -8,10 +8,10 @@ import { currentHostAtom } from '/imports/state';
 
 const defaultStore = getDefaultStore();
 
-export async function updateHostSettings({ values }) {
+export async function updateSiteSettings({ values }) {
   try {
-    await call('updateHostSettings', values);
-    const newHost = await call('getCurrentHost');
+    await call('updateSiteSettings', values);
+    const newHost = await call('getSite');
     defaultStore.set(currentHostAtom, newHost);
     message.success(<Trans i18nKey="common:message.success.update" />);
   } catch (error) {

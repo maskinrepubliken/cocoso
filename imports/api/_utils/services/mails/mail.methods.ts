@@ -2,8 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Email } from 'meteor/email';
 import { check } from 'meteor/check';
 
-import { getHost } from '../../shared';
-import Hosts from '../../../hosts/host';
+import { getSite } from '../../../site/site';
 import {
   isValidEmail,
   getEmailBody,
@@ -21,22 +20,6 @@ interface MailCredentials {
 
 interface MeteorSettings {
   mailCredentials: MailCredentials;
-}
-
-interface HostEmail {
-  subject: string;
-  appeal: string;
-  body: string;
-}
-
-interface HostDocument {
-  _id: string;
-  host: string;
-  settings?: {
-    name?: string;
-  };
-  emails?: HostEmail[];
-  logo?: string;
 }
 
 Meteor.methods({
@@ -68,8 +51,7 @@ Meteor.methods({
 
     let displayName = fromName;
     if (!displayName) {
-      const host = getHost(this);
-      const currentHost = await Hosts.findOneAsync({ host }) as HostDocument | undefined;
+      const currentHost = await getSite();
       displayName = currentHost?.settings?.name;
     }
 
@@ -94,10 +76,9 @@ Meteor.methods({
     }
   },
 
-  async sendWelcomeEmail(userId: string, hostToJoin?: string): Promise<void> {
+  async sendWelcomeEmail(userId: string): Promise<void> {
     const user = await Meteor.users.findOneAsync(userId) as MeteorUser | undefined;
-    const host = hostToJoin || getHost(this);
-    const currentHost = await Hosts.findOneAsync({ host }) as HostDocument | undefined;
+    const currentHost = await getSite();
     const welcomeText = currentHost && currentHost.emails?.[0];
 
     const emailBody = getWelcomeEmailBody(
@@ -122,8 +103,7 @@ Meteor.methods({
 
   async sendNewContributorEmail(userId: string): Promise<void> {
     const user = await Meteor.users.findOneAsync(userId) as MeteorUser | undefined;
-    const host = getHost(this);
-    const currentHost = await Hosts.findOneAsync({ host }) as HostDocument | undefined;
+    const currentHost = await getSite();
     const welcomeText = currentHost && currentHost.emails?.[1];
 
     const emailBody = getWelcomeEmailBody(
@@ -147,8 +127,7 @@ Meteor.methods({
 
   async sendNewAdminEmail(userId: string): Promise<void> {
     const user = await Meteor.users.findOneAsync(userId) as MeteorUser | undefined;
-    const host = getHost(this);
-    const currentHost = await Hosts.findOneAsync({ host }) as HostDocument | undefined;
+    const currentHost = await getSite();
     const email = currentHost && currentHost.emails?.[2];
 
     try {

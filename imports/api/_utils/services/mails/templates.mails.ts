@@ -1,3 +1,5 @@
+import { publicUrl } from '../../shared';
+
 interface HostSettings {
   name: string;
   address: string;
@@ -5,7 +7,6 @@ interface HostSettings {
 
 interface CurrentHost {
   settings: HostSettings;
-  host: string;
   logo: string;
 }
 
@@ -16,7 +17,6 @@ const getWelcomeEmailBody = (
   welcomeText: string | undefined
 ): string => {
   const hostName = currentHost.settings.name,
-    host = currentHost.host,
     hostLogo = currentHost.logo,
     hostAddress = currentHost.settings.address;
 
@@ -272,7 +272,7 @@ const getWelcomeEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="https://${host}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl()}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${hostName}
                 </a>

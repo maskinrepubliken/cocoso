@@ -9,7 +9,6 @@ import {
   Flex,
   Heading,
   Image,
-  Tag as CTag,
   Text,
 } from '/imports/ui/core';
 
@@ -39,7 +38,6 @@ export interface NewGridThumbProps {
   coverText?: string;
   fixedImageHeight?: boolean;
   footer?: React.ReactNode;
-  host?: string;
   index?: number;
   imageUrl?: string;
   subTitle?: string;
@@ -53,7 +51,6 @@ function NewGridThumb({
   coverText,
   fixedImageHeight = false,
   footer = null,
-  host,
   index,
   imageUrl,
   subTitle,
@@ -64,7 +61,6 @@ function NewGridThumb({
     return null;
   }
 
-  const hostValue = host;
 
   return (
     <Box
@@ -121,27 +117,6 @@ function NewGridThumb({
                 {coverText}
               </Text>
             )
-          )}
-
-          {host && (
-            <Box
-              p="2"
-              css={{
-                position: 'absolute',
-                right: '0',
-                bottom: '8px',
-              }}
-            >
-              <CTag
-                size="sm"
-                css={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                  color: 'white',
-                }}
-              >
-                {hostValue}
-              </CTag>
-            </Box>
           )}
         </Center>
 

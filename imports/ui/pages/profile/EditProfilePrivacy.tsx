@@ -81,9 +81,7 @@ export default function EditProfilePrivacy() {
     }
   };
 
-  const currentMembership = currentUser?.memberships?.find(
-    (m) => m.host === currentHost.host
-  );
+  const currentMembership = currentUser?.memberships?.[0];
 
   const isUserPublic = Boolean(currentMembership?.isPublic);
   const isUserPublicGlobally = currentUser?.isPublic;

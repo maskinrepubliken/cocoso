@@ -6,7 +6,6 @@ const Resources = new Mongo.Collection('resources');
 
 Resources.schema = new SimpleSchema({
   _id: Schemas.Id,
-  host: Schemas.Hostname,
   userId: Schemas.Id,
 
   label: { type: String },
@@ -49,7 +48,6 @@ Resources.attachSchema(Resources.schema);
 Resources.publicFields = {
   _id: 1,
   description: 1,
-  host: 1,
   images: 1,
   isBookable: 1,
   isCombo: 1,

@@ -20,6 +20,7 @@ import truncate from 'html-truncate';
 
 import { DateTimeOccurrence } from '/imports/ui/types';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 const yesterday = dayjs(new Date()).add(-1, 'days');
 
@@ -161,7 +162,7 @@ export default function EmailPreview({ currentHost, email }) {
   const activities = items?.activities;
   const works = items?.works;
 
-  const { host, logo, logoLegacy, logoPng, settings, theme } = currentHost;
+  const { logo, logoLegacy, logoPng, settings, theme } = currentHost;
   // Gmail (and some other clients) don't render a transparent WebP
   // background well — prefer an actual PNG rendition for the logo:
   // logoPng for hosts uploaded/backfilled since this existed, logoLegacy
@@ -232,7 +233,7 @@ export default function EmailPreview({ currentHost, email }) {
         }}
       >
         <Container>
-          <Link href={`https://${host}/newsletters/[newsletter-id]`}>
+          <Link href={publicUrl('/newsletters/[newsletter-id]')}>
             <Text
               style={{
                 color: '#044386',
@@ -284,7 +285,7 @@ export default function EmailPreview({ currentHost, email }) {
             <Container key={activity._id}>
               <Section style={{ marginBottom: 24 }}>
                 <Link
-                  href={`https://${activity.host}/activities/${activity._id}`}
+                  href={publicUrl(`/activities/${activity._id}`)}
                   style={{ color: '#0f64c0' }}
                 >
                   <Heading as="h2" style={titleStyle}>
@@ -295,7 +296,7 @@ export default function EmailPreview({ currentHost, email }) {
 
                 {(activity.images || activity.imageUrl) && (
                   <Link
-                    href={`https://${activity.host}/activities/${activity._id}`}
+                    href={publicUrl(`/activities/${activity._id}`)}
                   >
                     <Img
                       alt={activity?.title}
@@ -324,7 +325,7 @@ export default function EmailPreview({ currentHost, email }) {
                 </Container>
                 <Text style={{ textAlign: 'center' }}>
                   <Button
-                    href={`https://${activity.host}/activities/${activity._id}`}
+                    href={publicUrl(`/activities/${activity._id}`)}
                     style={buttonStyle}
                   >
                     {tc('actions.entryPage')}
@@ -340,7 +341,7 @@ export default function EmailPreview({ currentHost, email }) {
             <Container key={work._id}>
               <Section style={{ marginBottom: 24 }}>
                 <Link
-                  href={`https://${work.host}/@${work.authorUsername}/works/${work._id}`}
+                  href={publicUrl(`/@${work.authorUsername}/works/${work._id}`)}
                   style={{ color: '#0f64c0' }}
                 >
                   <Heading as="h2" style={titleStyle}>
@@ -351,7 +352,7 @@ export default function EmailPreview({ currentHost, email }) {
 
                 {work.images && (
                   <Link
-                    href={`https://${work.host}/@${work.authorUsername}/works/${work._id}`}
+                    href={publicUrl(`/@${work.authorUsername}/works/${work._id}`)}
                   >
                     <Img
                       alt={work?.title}
@@ -373,7 +374,7 @@ export default function EmailPreview({ currentHost, email }) {
                 </Container>
                 <Text style={{ textAlign: 'center' }}>
                   <Button
-                    href={`https://${work.host}/@${work.authorUsername}/works/${work._id}`}
+                    href={publicUrl(`/@${work.authorUsername}/works/${work._id}`)}
                     style={buttonStyle}
                   >
                     {tc('actions.entryPage')}

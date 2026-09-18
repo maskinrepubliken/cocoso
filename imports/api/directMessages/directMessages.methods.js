@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
-import { getHost } from '../_utils/shared';
-import Hosts from '../hosts/host';
+import { getSite } from '../site/site';
 import DirectMessages from './directMessage';
 import { getDirectMessageEmailBody } from './directMessages.mails';
 import mailtranslations from '../groups/mailtranslations';
@@ -115,10 +114,9 @@ Meteor.methods({
     );
 
     if (prevUnread === 0) {
-      const host = getHost(this);
       Meteor.defer(async () => {
         try {
-          const currentHost = await Hosts.findOneAsync({ host });
+          const currentHost = await getSite();
           const recipient = await Meteor.users.findOneAsync(otherUserId, {
             fields: { emails: 1, firstName: 1, username: 1, lang: 1 },
           });
@@ -127,7 +125,7 @@ Meteor.methods({
           // Show the site name, rather than the sender's raw account
           // username, as the "sender" in the email.
           const senderDisplayName =
-            currentHost?.settings?.name || currentHost?.host;
+            currentHost?.settings?.name || Meteor.settings.public?.name;
 
           const lang = recipient.lang || currentHost?.settings?.lang || 'en';
           const dmTr = (mailtranslations[lang] ?? mailtranslations.en).directMessage ?? mailtranslations.en.directMessage;

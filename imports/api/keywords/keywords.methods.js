@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import Keywords from './keyword';
-import Hosts from '../hosts/host';
-import { getHost } from '../_utils/shared';
+import { getSite } from '../site/site';
 
 Meteor.methods({
   async getKeywords() {
@@ -37,16 +36,13 @@ Meteor.methods({
       throw new Meteor.Error('Keyword already exists');
     }
 
-    const host = getHost(this);
-    const currentHost = await Hosts.findOneAsync({ host });
+    const currentHost = await getSite();
 
     try {
       const keywordId = await Keywords.insertAsync({
         creatorId: user._id,
         creatorUsername: user.username,
         creationDate: new Date(),
-        host,
-        hostname: currentHost?.settings?.name,
         label: keyword.toLowerCase(),
       });
       return keywordId;

@@ -3,7 +3,6 @@ import { check, Match } from 'meteor/check';
 
 import mailtranslations from '/imports/api/activities/mailtranslations';
 
-import { getHost } from '../_utils/shared';
 import { isContributorOrAdmin } from '../users/user.roles';
 import Groups from '../groups/group';
 import Chats from './chat';
@@ -11,9 +10,9 @@ import Chats from './chat';
 /**
  * Bump the unread-notification counters of every member of the group a chat
  * message was posted in. Internal only: it used to be a Meteor method that
- * any logged-in user could call with an arbitrary host and group.
+ * any logged-in user could call with an arbitrary group.
  */
-async function createGroupNotification(user, host, values, unSeenIndex) {
+async function createGroupNotification(user, values, unSeenIndex) {
   const contextId = values.contextId;
   try {
     const theGroup = await Groups.findOneAsync(contextId);
@@ -58,7 +57,6 @@ async function createGroupNotification(user, host, values, unSeenIndex) {
                 count: 1,
                 context: 'groups',
                 contextId: theGroup._id,
-                host,
                 unSeenIndexes: [unSeenIndex],
               },
             },
@@ -74,7 +72,7 @@ async function createGroupNotification(user, host, values, unSeenIndex) {
           'sendEmail',
           memberEmail,
           tr.newGroupMessage.subject(theGroup.title),
-          tr.newGroupMessage.text(theGroup.title, host, theGroup._id)
+          tr.newGroupMessage.text(theGroup.title, theGroup._id)
         );
       })
     );
@@ -92,14 +90,12 @@ Meteor.methods({
 
   async createChat(contextName, contextId, contextType) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isContributorOrAdmin(user._id, host))) {
+    if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
     const theChat = await Chats.insertAsync({
-      host,
       contextId,
       contextName,
       contextType,
@@ -122,11 +118,9 @@ Meteor.methods({
     if (!user) {
       throw new Meteor.Error('not-authorized', 'You must be logged in');
     }
-    const host = getHost(this);
 
     const chat = await Chats.findOneAsync({
       contextId: values.contextId,
-      host,
     });
     if (!chat) {
       throw new Meteor.Error('not-found', 'Chat not found');
@@ -139,7 +133,6 @@ Meteor.methods({
           $push: {
             messages: {
               content: values.message,
-              host,
               senderUsername: user.username,
               senderAvatar: user.avatar?.src,
               senderId: user._id,
@@ -160,7 +153,7 @@ Meteor.methods({
           return;
         }
         const unSeenIndex = theGroup?.messages?.length - 1;
-        await createGroupNotification(user, host, values, unSeenIndex);
+        await createGroupNotification(user, values, unSeenIndex);
       }
     } catch (error) {
       throw new Meteor.Error(error);

@@ -1,21 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
-import { getHost } from '../_utils/shared';
 import Categories from './category';
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 
 Meteor.methods({
   async getCategories() {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
     if (!user) {
       throw new Meteor.Error('You are not allowed');
     }
 
     return Categories.find(
       {
-        host,
       },
       {
         fields: {
@@ -29,15 +26,13 @@ Meteor.methods({
 
   async addNewCategory(category, type) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isContributorOrAdmin(user._id, host))) {
+    if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
     const existingCat = await Categories.findOneAsync({
       label: category.toLowerCase(),
-      host,
     });
 
     if (existingCat) {
@@ -46,7 +41,6 @@ Meteor.methods({
 
     try {
       return await Categories.insertAsync({
-        host,
         type,
         label: category.toLowerCase(),
         addedBy: user._id,
@@ -61,14 +55,13 @@ Meteor.methods({
   async removeCategory(categoryId) {
     check(categoryId, String);
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('You are not allowed');
     }
 
     try {
-      await Categories.removeAsync({ _id: categoryId, host });
+      await Categories.removeAsync({ _id: categoryId });
     } catch (error) {
       throw new Meteor.Error(error);
     }

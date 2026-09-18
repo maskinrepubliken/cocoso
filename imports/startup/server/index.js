@@ -5,7 +5,6 @@ import { WebAppInternals } from 'meteor/webapp';
 
 import serverRenderer from './serverRenderer';
 import './api';
-import './migrations';
 import './media';
 import './rateLimits';
 

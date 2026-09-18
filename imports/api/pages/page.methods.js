@@ -1,18 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 
-import { getHost } from '../_utils/shared';
 import Pages from './page';
 import { isAdmin } from '../users/user.roles';
 
 Meteor.methods({
-  async getPages(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getPages() {
 
     try {
       return await Pages.find(
         {
-          host,
         },
         { sort: { order: 1 } }
       ).fetchAsync();
@@ -21,13 +18,11 @@ Meteor.methods({
     }
   },
 
-  async getPageTitles(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getPageTitles() {
 
     try {
       return await Pages.find(
         {
-          host,
         },
         {
           fields: {
@@ -49,18 +44,16 @@ Meteor.methods({
       Match.ObjectIncluding({ title: String, longDescription: String })
     );
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
-    const pageCount = await Pages.find({ host }).countAsync();
+    const pageCount = await Pages.find({}).countAsync();
 
     try {
       await Pages.insertAsync({
         ...formValues,
-        host,
         authorId: user._id,
         authorName: user.username,
         isPublished: true,
@@ -80,13 +73,12 @@ Meteor.methods({
       Match.ObjectIncluding({ title: String, longDescription: String })
     );
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
-    const thePage = await Pages.findOneAsync({ _id: pageId, host });
+    const thePage = await Pages.findOneAsync({ _id: pageId });
     if (!thePage) {
       throw new Meteor.Error('not-found', 'Page not found');
     }
@@ -96,7 +88,6 @@ Meteor.methods({
 
     const {
       _id,
-      host: _host,
       authorId,
       authorName,
       ...safeValues
@@ -117,9 +108,8 @@ Meteor.methods({
 
   async savePageOrder(pages) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
@@ -131,7 +121,7 @@ Meteor.methods({
       await Promise.all(
         pages.map(async (page) => {
           await Pages.updateAsync(
-            { _id: page._id, host },
+            { _id: page._id },
             {
               $set: {
                 order: page.order,
@@ -147,13 +137,12 @@ Meteor.methods({
 
   async deletePage(pageId) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
-    const thePage = await Pages.findOneAsync({ _id: pageId, host });
+    const thePage = await Pages.findOneAsync({ _id: pageId });
     if (!thePage) {
       throw new Meteor.Error('not-found', 'Page not found');
     }
@@ -164,7 +153,7 @@ Meteor.methods({
     try {
       await Pages.removeAsync(pageId);
       const remaining = await Pages.find(
-        { host },
+        {},
         { sort: { order: 1 } }
       ).fetchAsync();
       await Promise.all(

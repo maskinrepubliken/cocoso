@@ -81,8 +81,8 @@ export default function MainFeatureSettings({ listing }) {
     };
 
     try {
-      await call('updateHostSettings', localSettings);
-      setCurrentHost(await call('getCurrentHost'));
+      await call('updateSiteSettings', localSettings);
+      setCurrentHost(await call('getSite'));
       message.success(
         tc('message.success.save', { domain: tc('domains.settings') })
       );

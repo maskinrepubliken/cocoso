@@ -80,7 +80,7 @@ export default function WrapperHybrid({
   }, []);
 
   const setValues = async () => {
-    setCurrentHost(await call('getCurrentHost'));
+    setCurrentHost(await call('getSite'));
     setPageTitles(await call('getPageTitles'));
   };
 
@@ -137,10 +137,7 @@ export default function WrapperHybrid({
   useEffect(() => {
     if (!currentUser) return;
     setCurrentUser(currentUser);
-    const hostWithinUser = currentUser?.memberships?.find(
-      (membership: any) => membership?.host === window.location.host
-    );
-    setRole(hostWithinUser?.role || null);
+    setRole(currentUser?.memberships?.[0]?.role || null);
     changeLang();
   }, [currentUser]);
 

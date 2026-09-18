@@ -6,7 +6,6 @@ const Documents = new Mongo.Collection('documents');
 
 Documents.schema = new SimpleSchema({
   _id: Schemas.Id,
-  host: Schemas.Hostname,
 
   uploadedBy: Schemas.Id,
   uploadedUsername: { type: String },

@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
-import { getHost } from '../_utils/shared';
 import Documents from './document';
 import Groups from '../groups/group';
 import Works from '../works/work';
@@ -28,7 +27,6 @@ Meteor.methods({
       );
     }
 
-    const host = getHost(this);
 
     if (contextType === 'groups') {
       const group = await Groups.findOneAsync({ _id: itemId });
@@ -53,7 +51,7 @@ Meteor.methods({
         );
       }
     } else if (contextType === 'resources') {
-      if (!(await isAdmin(user._id, host))) {
+      if (!(await isAdmin(user._id))) {
         throw new Meteor.Error(
           'not-authorized',
           'You must be an admin to upload documents'
@@ -69,7 +67,6 @@ Meteor.methods({
 
     try {
       return await Documents.insertAsync({
-        host,
         documentLabel: uploadableFile.fileName,
         documentUrl,
         contextType,
@@ -88,13 +85,12 @@ Meteor.methods({
 
   async removeDocument(documentId) {
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
 
-    const document = await Documents.findOneAsync({ _id: documentId, host });
+    const document = await Documents.findOneAsync({ _id: documentId });
     if (!document) {
       throw new Meteor.Error('not-found', 'Document not found');
     }

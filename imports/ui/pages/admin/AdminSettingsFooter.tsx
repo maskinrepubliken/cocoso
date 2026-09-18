@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import Quill from '/imports/ui/forms/Quill';
 import { Box, Button, Flex, Heading, Text } from '/imports/ui/core';
 import { currentHostAtom } from '/imports/state';
-import { updateHostSettings } from '/imports/actions';
+import { updateSiteSettings } from '/imports/actions';
 
 import Boxling from './Boxling';
 
@@ -41,7 +41,7 @@ export default function AdminSettingsFooter() {
       <Boxling>
         <form
           onSubmit={handleSubmit((data) =>
-            updateHostSettings({ values: { footer: currentFooter } })
+            updateSiteSettings({ values: { footer: currentFooter } })
           )}
         >
           <Quill

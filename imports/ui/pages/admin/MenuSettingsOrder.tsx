@@ -8,7 +8,7 @@ import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtom } from 'jotai';
 
 import { currentHostAtom } from '/imports/state';
-import { updateHostSettings } from '/imports/actions';
+import { updateSiteSettings } from '/imports/actions';
 import { Box, Button, Flex, Heading, IconButton, Text } from '/imports/ui/core';
 import { call } from '/imports/api/_utils/shared';
 import { MenuItem } from '/imports/ui/types';
@@ -114,8 +114,8 @@ export default function MenuSettingsOrder() {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    await updateHostSettings({ values: { menu: localMenu } });
-    setCurrentHost(await call('getCurrentHost'));
+    await updateSiteSettings({ values: { menu: localMenu } });
+    setCurrentHost(await call('getSite'));
     setSubmitting(false);
     window.location.reload();
   };

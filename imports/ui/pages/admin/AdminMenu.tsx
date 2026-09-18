@@ -8,7 +8,6 @@ import {
   Avatar,
   Badge,
   Box,
-  Code,
   Flex,
   Heading,
   List,
@@ -50,9 +49,6 @@ export function AdminMenuHeader({ currentHost }) {
             {currentHost.settings?.name}
           </Text>
         </Flex>
-        <Code bg="bluegray.50" color="bluegray.900" fontSize="xs">
-          {currentHost.host}
-        </Code>
       </Box>
     </Link>
   );

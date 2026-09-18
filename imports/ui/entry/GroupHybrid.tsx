@@ -10,11 +10,11 @@ import type { Document, Host } from '/imports/ui/types';
 import TablyCentered from './TablyCentered';
 import ActionDates from './ActionDates';
 import { DateOccurrence } from './ActionDates';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 interface Group {
   _id: string;
   title?: string;
-  host?: string;
   description?: string;
   readingMaterial?: string;
   imageUrl?: string;
@@ -66,7 +66,7 @@ export default function GroupHybrid({
     tags.push(<Trans i18nKey="common:labels.private">Private</Trans>);
   }
 
-  const url = `https://${group.host}/groups/${group._id}`;
+  const url = publicUrl(`/groups/${group._id}`);
 
   const groupDatesParsed = {
     ...group,

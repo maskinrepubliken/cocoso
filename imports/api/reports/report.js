@@ -4,7 +4,6 @@ import SimpleSchema from 'simpl-schema';
 const Reports = new Mongo.Collection('reports');
 
 Reports.schema = new SimpleSchema({
-  host: { type: String, optional: true },
   reporterId: { type: String },
   reportedUserId: { type: String, optional: true },
   contentType: { type: String }, // 'directMessage' | 'activity' | 'group' | 'work' | 'page' | 'user'

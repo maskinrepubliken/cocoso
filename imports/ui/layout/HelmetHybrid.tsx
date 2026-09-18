@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 const publicSettings = Meteor?.settings?.public;
 
@@ -33,7 +34,7 @@ export default function HelmetHybrid({ Host }: HelmetHybridProps) {
   return (
     <Helmet htmlAttributes={{ lang }}>
       <title>{Host.settings?.name}</title>
-      <link rel="canonical" href={`https://${Host.host}`} />
+      <link rel="canonical" href={publicUrl()} />
 
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />

@@ -4,9 +4,12 @@ import SimpleSchema from 'simpl-schema';
 
 import { Schemas } from '../_utils/schemas';
 
-const Hosts = new Mongo.Collection('hosts');
+// The one site this deployment serves. There is exactly one document in
+// this collection; it holds the name, contact details, logo, menu, theme and
+// email templates. Read it with getSite().
+const Site = new Mongo.Collection('site');
 
-const SchemasHost = {
+const SchemasSite = {
   menu: {
     description: { type: String, optional: true },
     isHomePage: { type: Boolean, optional: true },
@@ -28,15 +31,14 @@ const SchemasHost = {
   },
 };
 
-Hosts.schema = new SimpleSchema({
+Site.schema = new SimpleSchema({
   _id: Schemas.Id,
-  host: Schemas.Hostname,
 
   logo: { type: String, optional: true },
   logoLegacy: { type: String, optional: true },
   // PNG rendition of `logo`, for email clients (Gmail) that don't render
-  // a transparent WebP background well. Set at upload time for new logos
-  // (see assignHostLogo); backfilled for older ones by migration 19.
+  // a transparent WebP background well. Set at upload time (see
+  // assignSiteLogo).
   logoPng: { type: String, optional: true },
 
   settings: { type: Object },
@@ -47,11 +49,12 @@ Hosts.schema = new SimpleSchema({
   'settings.country': { type: String },
   'settings.lang': { type: String, optional: true },
   'settings.menu': { type: Array },
-  'settings.menu.$': new SimpleSchema(SchemasHost.menu),
+  'settings.menu.$': new SimpleSchema(SchemasSite.menu),
   'settings.mainColor': { type: Object, optional: true },
   'settings.backgroundColor': { type: String, optional: true },
   'settings.backgroundImage': { type: String, optional: true },
   'settings.footer': { type: String, optional: true },
+  'settings.hue': { type: String, optional: true },
   'settings.isBurgerMenuOnDesktop': {
     type: Boolean,
     optional: true,
@@ -83,12 +86,24 @@ Hosts.schema = new SimpleSchema({
   'theme.variant': { type: String, optional: true },
 
   emails: { type: Array },
-  'emails.$': new SimpleSchema(SchemasHost.emailTemplate),
+  'emails.$': new SimpleSchema(SchemasSite.emailTemplate),
 
   createdAt: { type: Date },
-
 });
 
-Hosts.attachSchema(Hosts.schema);
+Site.attachSchema(Site.schema);
 
-export default Hosts;
+// Fields safe to send to any visitor.
+export const sitePublicFields = {
+  logo: 1,
+  logoLegacy: 1,
+  logoPng: 1,
+  settings: 1,
+  theme: 1,
+};
+
+export async function getSite(fields) {
+  return await Site.findOneAsync({}, fields ? { fields } : {});
+}
+
+export default Site;

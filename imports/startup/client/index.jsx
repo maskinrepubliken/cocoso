@@ -52,7 +52,7 @@ onPageLoad(async () => {
     await new Promise((resolve) => i18n.on('initialized', resolve));
   }
 
-  const currentHost = await Meteor.callAsync('getCurrentHost');
+  const currentHost = await Meteor.callAsync('getSite');
   const pageTitles = await Meteor.callAsync('getPageTitles');
 
   if (!currentHost) {

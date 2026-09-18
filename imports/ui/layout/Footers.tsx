@@ -9,11 +9,10 @@ import FeedbackForm from './FeedbackForm';
 import ChangeLanguageMenu from './ChangeLanguageMenu';
 
 export interface OldFooterProps {
-  host: string;
   settings: any;
 }
 
-export function OldFooter({ host, settings }: OldFooterProps) {
+export function OldFooter({ settings }: OldFooterProps) {
   return (
     <Box
       p="4"
@@ -30,10 +29,6 @@ export function OldFooter({ host, settings }: OldFooterProps) {
       <br />
       <Text color="gray.100" fontSize="sm">
         {settings?.email}
-      </Text>
-      <br />
-      <Text color="gray.100" fontSize="sm" fontWeight="bold">
-        {host}
       </Text>
     </Box>
   );
@@ -101,7 +96,7 @@ export function Footer({ currentHost }: FooterProps) {
                   {HTMLReactParser(DOMPurify.sanitize(settings.footer))}
                 </Box>
               ) : (
-                <OldFooter host={currentHost.host} settings={settings} />
+                <OldFooter settings={settings} />
               )}
             </Center>
             <Center>

@@ -7,7 +7,7 @@ import { Box, Button, Flex, Heading, Input } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
 import ChangeLanguage from '/imports/ui/layout/ChangeLanguageMenu';
 import { currentHostAtom } from '/imports/state';
-import { updateHostSettings } from '/imports/actions';
+import { updateSiteSettings } from '/imports/actions';
 
 import Boxling from './Boxling';
 
@@ -50,7 +50,7 @@ export default function AdminSettingsForm() {
       <Boxling>
         <form
           onSubmit={handleSubmit((data) =>
-            updateHostSettings({ values: data })
+            updateSiteSettings({ values: data })
           )}
         >
           <Flex direction="column">

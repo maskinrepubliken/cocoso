@@ -1,24 +1,21 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
-import Hosts from '/imports/api/hosts/host';
+import { getSite } from '/imports/api/site/site';
 
 import Newsletters from './newsletter';
-import { getHost } from '../_utils/shared';
 import { isAdmin } from '../users/user.roles';
 import Memberships from '../memberships/membership';
 
 Meteor.methods({
-  async getNewsletters(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getNewsletters() {
     return await Newsletters.find(
-      { host },
+      {},
       {
         fields: {
           _id: 1,
           authorUsername: 1,
           creationDate: 1,
-          host: 1,
           imageUrl: 1,
           subject: 1,
         },
@@ -26,11 +23,9 @@ Meteor.methods({
       }
     ).fetchAsync();
   },
-  async getNewsletterById(newsletterId, hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getNewsletterById(newsletterId) {
     return await Newsletters.findOneAsync({
       _id: newsletterId,
-      host,
     });
   },
 
@@ -42,11 +37,10 @@ Meteor.methods({
       throw new Meteor.Error('Email subject is required');
     }
 
-    const host = getHost(this);
-    const currentHost = await Hosts.findOneAsync({ host });
+    const currentHost = await getSite();
     const currentUser = await Meteor.userAsync();
 
-    if (!currentUser || !(await isAdmin(currentUser._id, host))) {
+    if (!currentUser || !(await isAdmin(currentUser._id))) {
       throw new Meteor.Error('You are not allowed!');
     }
 
@@ -56,8 +50,6 @@ Meteor.methods({
         authorId: currentUser._id,
         authorUsername: currentUser.username,
         creationDate: new Date(),
-        host,
-        hostId: currentHost._id.toString(),
       });
 
       const emailHtmlWithBrowserLink = emailHtml.replace(
@@ -67,7 +59,7 @@ Meteor.methods({
 
       // Safer member fetching with limits
       const memberships = await Memberships.find(
-        { host },
+        {},
         { fields: { userId: 1 }, limit: 10000 }
       ).fetchAsync();
       const userIds = memberships.map((m) => m.userId);

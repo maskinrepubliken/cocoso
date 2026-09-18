@@ -17,8 +17,6 @@ Keywords.schema = new SimpleSchema({
   creatorId: Schemas.Id,
   creatorUsername: { type: String },
   creationDate: { type: Date },
-  host: Schemas.Hostname,
-  hostname: { type: String },
   label: { type: String },
 });
 

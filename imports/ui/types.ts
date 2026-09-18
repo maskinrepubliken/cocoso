@@ -11,7 +11,6 @@ export interface User extends Meteor.User {
   publicKey?: string;
   memberships?: Array<{
     userId?: string;
-    host: string;
     role: string;
     date?: Date;
     isPublic?: boolean;
@@ -31,7 +30,6 @@ export interface BaseDocument {
   _id: string;
   creationDate: Date;
   latestUpdate?: Date;
-  host: string;
 }
 
 export interface Category {
@@ -73,11 +71,12 @@ export interface MenuItem {
 }
 
 /**
- * Host represents a platform/organization host with its settings
+ * Host is the site document: the one organisation this deployment serves,
+ * with its settings, logo and theme
  * Used across entry pages and listing components
  */
 export interface Host {
-  host?: string;
+  _id?: string;
   name?: string;
   logo?: string;
   color?: string;

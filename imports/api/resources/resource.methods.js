@@ -1,14 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import { getHost } from '../_utils/shared';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
 import Activities from '../activities/activity';
 
-async function validateLabel(label, host, resourceId) {
+async function validateLabel(label, resourceId) {
   // set resource query
-  const resourceQuery = { host, label };
+  const resourceQuery = { label };
   if (resourceId) resourceQuery._id = { $ne: resourceId };
   // validate label
   if (label.length < 3) {
@@ -23,12 +22,11 @@ async function validateLabel(label, host, resourceId) {
 
 // RESOURCE METHODS
 Meteor.methods({
-  async getResources(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getResources() {
 
     const fields = Resources.publicFields;
     return await Resources.find(
-      { host },
+      {},
       {
         fields,
         sort: { createdAt: -1 },
@@ -36,15 +34,13 @@ Meteor.methods({
     ).fetchAsync();
   },
 
-  async getResourcesDry(hostPredefined) {
-    const host = hostPredefined || getHost(this);
+  async getResourcesDry() {
 
     return await Resources.find(
-      { host },
+      {},
       {
         fields: {
           _id: 1,
-          host: 1,
           label: 1,
           isBookable: 1,
           isCombo: 1,
@@ -60,11 +56,10 @@ Meteor.methods({
     return await Resources.findOneAsync(resourceId, { fields });
   },
 
-  async getResourceBookingsForUser(resourceId, hostPredefined) {
+  async getResourceBookingsForUser(resourceId) {
     const user = await Meteor.userAsync();
-    const host = hostPredefined || getHost(this);
 
-    if (!(await isContributorOrAdmin(user._id, host))) {
+    if (!(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not valid user!');
     }
 
@@ -102,15 +97,13 @@ Meteor.methods({
   async createResource(values) {
     check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
-    const host = getHost(this);
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
-    await validateLabel(values.label, host);
+    await validateLabel(values.label);
     try {
       const newResourceId = await Resources.insertAsync({
         ...values,
-        host,
         userId: user._id,
         createdBy: user.username,
         createdAt: new Date(),
@@ -131,18 +124,17 @@ Meteor.methods({
     check(resourceId, String);
     check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
-    const host = getHost(this);
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
-    await validateLabel(values.label, host, resourceId);
+    await validateLabel(values.label, resourceId);
 
-    const resource = await Resources.findOneAsync({ _id: resourceId, host });
+    const resource = await Resources.findOneAsync({ _id: resourceId });
     if (!resource) {
       throw new Meteor.Error('not-found', 'Resource not found');
     }
 
-    const { _id, host: _host, userId, createdBy, ...safeValues } = values;
+    const { _id, userId, createdBy, ...safeValues } = values;
 
     try {
       await Resources.updateAsync(resourceId, {
@@ -155,12 +147,11 @@ Meteor.methods({
       if (
         !resource.isCombo &&
         (await Resources.findOneAsync({
-          host,
           'resourcesForCombo._id': resource._id,
         }))
       ) {
         await Resources.updateAsync(
-          { host, 'resourcesForCombo._id': resource._id },
+          { 'resourcesForCombo._id': resource._id },
           {
             $set: {
               'resourcesForCombo.$.label': values.label,
@@ -179,14 +170,13 @@ Meteor.methods({
   async deleteResource(resourceId) {
     check(resourceId, String);
     const user = await Meteor.userAsync();
-    const host = getHost(this);
 
-    if (!user || !(await isAdmin(user._id, host))) {
+    if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
     try {
-      await Resources.removeAsync({ _id: resourceId, host });
+      await Resources.removeAsync({ _id: resourceId });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't remove from collection");
     }

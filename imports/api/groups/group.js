@@ -6,7 +6,6 @@ const Groups = new Mongo.Collection('groups');
 
 Groups.schema = new SimpleSchema({
   _id: Schemas.Id,
-  host: Schemas.Hostname,
 
   authorId: Schemas.Id,
   authorUsername: { type: String },

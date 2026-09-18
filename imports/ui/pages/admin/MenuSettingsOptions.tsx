@@ -3,7 +3,7 @@ import { Trans } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { Box, Button, Checkbox, Heading, Flex, Text } from '/imports/ui/core';
-import { updateHostSettings } from '/imports/actions';
+import { updateSiteSettings } from '/imports/actions';
 import { currentHostAtom } from '/imports/state';
 
 import Boxling from './Boxling';
@@ -36,7 +36,7 @@ export default function MenuSettingsOptions({ Host }) {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    await updateHostSettings({ values: localSettings });
+    await updateSiteSettings({ values: localSettings });
     setSubmitting(false);
   };
 

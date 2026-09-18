@@ -47,7 +47,7 @@ export default function MenuDesign() {
     updating: false,
   });
 
-  const updateHostTheme = async () => {
+  const updateSiteTheme = async () => {
     const newTheme = {
       ...state.theme,
     };
@@ -58,8 +58,8 @@ export default function MenuDesign() {
     }));
 
     try {
-      await call('updateHostTheme', newTheme);
-      setCurrentHost(await call('getCurrentHost'));
+      await call('updateSiteTheme', newTheme);
+      setCurrentHost(await call('getSite'));
       message.success(<Trans i18nKey="admin:design.message.success" />);
     } catch (error) {
       message.error(
@@ -354,7 +354,7 @@ export default function MenuDesign() {
       </Boxling>
 
       <Flex justify="flex-end" mb="12">
-        <Button loading={state.updating} mt="2" onClick={updateHostTheme}>
+        <Button loading={state.updating} mt="2" onClick={updateSiteTheme}>
           <Trans i18nKey="common:actions.submit" />
         </Button>
       </Flex>

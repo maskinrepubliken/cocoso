@@ -9,11 +9,11 @@ import DocumentsField from '/imports/ui/pages/resources/components/DocumentsFiel
 import type { Document, Host, ResourceForCombo } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
+import { publicUrl } from '/imports/api/_utils/shared';
 
 interface Resource {
   _id: string;
   label?: string;
-  host?: string;
   description?: string;
   imageUrl?: string;
   images?: string[];
@@ -114,7 +114,7 @@ export default function ResourceHybrid({
     label: resourcesInMenu?.label,
   };
 
-  const url = `https://${resource.host}/resources/${resource._id}`;
+  const url = publicUrl(`/resources/${resource._id}`);
 
   return (
     <TablyCentered
