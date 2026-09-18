@@ -30,8 +30,6 @@ email@3.2.0
 es5-shim@4.8.1
 facts-base@1.0.2
 fetch@0.2.0
-force-ssl-common@1.1.1
-force-ssl-custom@0.0.1
 geojson-utils@1.0.12
 hot-code-push@1.0.5
 hot-module-replacement@0.6.0
