@@ -117,8 +117,8 @@ async function deleteImageMethod(imageId: string) {
     throw new Meteor.Error('not-found', 'Image not found');
   }
 
-  // Only the uploader or a super admin can delete
-  if (image.uploadedBy !== user._id && !user.isSuperAdmin) {
+  // Only the uploader or an admin can delete
+  if (image.uploadedBy !== user._id) {
     const host = getHost(this);
     const isAdminUser = await isAdmin(user._id, host);
     if (!isAdminUser) {

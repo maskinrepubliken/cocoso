@@ -18,10 +18,8 @@ import {
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import {
-  allHostsAtom,
   currentHostAtom,
   currentUserAtom,
-  platformAtom,
   roleAtom,
 } from '/imports/state';
 
@@ -53,10 +51,8 @@ export const newsletterAtom = atom(initialNewsletterAtom);
 const toastLoaderOptions = { id: 'loader-toast' };
 
 export default function EmailNewsletter() {
-  const allHosts = useAtomValue(allHostsAtom);
   const currentHost = useAtomValue(currentHostAtom);
   const currentUser = useAtomValue(currentUserAtom);
-  const platform = useAtomValue(platformAtom);
   const role = useAtomValue(roleAtom);
   const [state, setState] = useAtom(newsletterAtom);
   const [t] = useTranslation('admin');
@@ -117,7 +113,6 @@ export default function EmailNewsletter() {
 
     const emailHtml = renderEmail(
       <EmailPreview
-        allHosts={allHosts}
         currentHost={currentHost}
         email={email}
       />
@@ -151,7 +146,7 @@ export default function EmailNewsletter() {
     return <Alert>{tc('message.access.deny')}</Alert>;
   }
 
-  if (!currentHost || !platform) {
+  if (!currentHost) {
     return null;
   }
 
@@ -162,17 +157,6 @@ export default function EmailNewsletter() {
   return (
     <>
       <Box>
-        {currentHost?.isPortalHost && (
-          <Box mb="4">
-            <Alert
-              message={t('newsletter.portalHost.info', {
-                platform: platform.name,
-              })}
-              type="info"
-            />
-          </Box>
-        )}
-
         <Center p="4" mb="4">
           <Link target="_blank" to="/newsletters">
             <Button
@@ -217,8 +201,7 @@ export default function EmailNewsletter() {
       >
         <Center>
           <EmailPreview
-            allHosts={allHosts}
-            currentHost={currentHost}
+                currentHost={currentHost}
             email={state.email}
           />
         </Center>

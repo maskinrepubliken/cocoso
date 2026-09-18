@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Link, useLocation } from 'react-router';
-import { Trans } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import { useAtomValue } from 'jotai';
 
@@ -197,29 +196,6 @@ function HeaderMenu({ Host, pageTitles }: HeaderMenuProps) {
               </Box>
             </Link>
           )
-        )}
-
-        {Host?.isPortalHost && (
-          <Link key="communities" className="main-menu-item" to="/communities">
-            <Box as="span" px="2">
-              <Text
-                css={{
-                  ...baseTextStyles,
-                  borderBottomColor:
-                    pathname === '/communities'
-                      ? menuStyles.color
-                      : 'transparent',
-                  color: menuStyles?.color,
-                  '&:hover': {
-                    borderBottomColor: menuStyles?.color,
-                    borderBottomWidth: '1px',
-                  },
-                }}
-              >
-                <Trans i18nKey="common:platform.communities">Communities</Trans>
-              </Text>
-            </Box>
-          </Link>
         )}
       </Flex>
     </Center>

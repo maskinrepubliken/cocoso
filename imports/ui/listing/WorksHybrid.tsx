@@ -13,7 +13,6 @@ import PopupHandler from './PopupHandler';
 import Tag from '../generic/Tag';
 import { getCategoriesAssignedToWorks } from '../../api/_utils/shared';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
-import ShowContentFromOtherHosts from '/imports/ui/listing/ShowContentFromOtherHosts';
 
 export interface WorksHybridProps {
   Host: any;
@@ -105,7 +104,6 @@ export default function WorksHybrid({ Host, works }: WorksHybridProps) {
                   categories.find((cat) => cat?.label === work.category?.label)
                     ?.color
                 }
-                host={currentHost?.isPortalHost ? work.host : null}
                 imageUrl={getImageUrl(work?.images?.[0], 'medium')}
                 index={index}
                 tag={work.category?.label}
@@ -115,11 +113,6 @@ export default function WorksHybrid({ Host, works }: WorksHybridProps) {
           )}
         </InfiniteScroller>
       </Box>
-
-      <ShowContentFromOtherHosts
-        isPortalHost={currentHost?.isPortalHost}
-        listing="works"
-      />
 
       <PopupHandler
         item={modalItem}

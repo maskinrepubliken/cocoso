@@ -8,6 +8,8 @@ import {
   mediaExists,
   sanitizeSegment,
 } from '../_utils/services/mediaStorage';
+import { getHost } from '../_utils/shared';
+import { isAdmin } from '../users/user.roles';
 
 /**
  * One-off migration from AWS S3 to local media storage.
@@ -260,8 +262,8 @@ Meteor.methods({
       collections: Match.Maybe([String]),
     });
     const user = await Meteor.userAsync();
-    if (!user?.isSuperAdmin) {
-      throw new Meteor.Error('not-authorized', 'Super admin only');
+    if (!user || !(await isAdmin(user._id, getHost(this as any)))) {
+      throw new Meteor.Error('not-authorized', 'Admin only');
     }
     return migrateFromS3(options);
   },

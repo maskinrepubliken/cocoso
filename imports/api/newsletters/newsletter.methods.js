@@ -50,8 +50,6 @@ Meteor.methods({
       throw new Meteor.Error('You are not allowed!');
     }
 
-    const isPortalHost = currentHost.isPortalHost;
-
     try {
       const newEmailId = await Newsletters.insertAsync({
         ...email,
@@ -68,35 +66,22 @@ Meteor.methods({
       );
 
       // Safer member fetching with limits
-      let members;
-      if (isPortalHost) {
-        members = await Meteor.users
-          .find(
-            { 'emails.0': { $exists: true } },
-            {
-              fields: { username: 1, emails: 1 },
-              limit: 10000,
-            }
-          )
-          .fetchAsync();
-      } else {
-        const memberships = await Memberships.find(
-          { host },
-          { fields: { userId: 1 }, limit: 10000 }
-        ).fetchAsync();
-        const userIds = memberships.map((m) => m.userId);
-        const memberUsers = await Meteor.users
-          .find(
-            { _id: { $in: userIds } },
-            { fields: { username: 1, emails: 1 } }
-          )
-          .fetchAsync();
-        members = memberUsers.map((u) => ({
-          _id: u._id,
-          username: u.username,
-          email: u.emails?.[0]?.address,
-        }));
-      }
+      const memberships = await Memberships.find(
+        { host },
+        { fields: { userId: 1 }, limit: 10000 }
+      ).fetchAsync();
+      const userIds = memberships.map((m) => m.userId);
+      const memberUsers = await Meteor.users
+        .find(
+          { _id: { $in: userIds } },
+          { fields: { username: 1, emails: 1 } }
+        )
+        .fetchAsync();
+      const members = memberUsers.map((u) => ({
+        _id: u._id,
+        username: u.username,
+        email: u.emails?.[0]?.address,
+      }));
 
       if (members.length === 0) {
         throw new Meteor.Error('No members found to send newsletter to');
@@ -110,9 +95,7 @@ Meteor.methods({
         const batch = members.slice(i, i + BATCH_SIZE);
         const batchResults = await Promise.allSettled(
           batch.map(async (member) => {
-            const emailAddress = isPortalHost
-              ? member?.emails?.[0]?.address
-              : member?.email;
+            const emailAddress = member?.email;
             if (!emailAddress) {
               return {
                 status: 'skipped',

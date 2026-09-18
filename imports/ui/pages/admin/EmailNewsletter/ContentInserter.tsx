@@ -104,7 +104,6 @@ export default function ContentInserter({ onSelect }) {
   const [t] = useTranslation('admin');
   const [tc] = useTranslation('common');
 
-  const isPortalHost = currentHost?.isPortalHost;
   const menu = currentHost?.settings?.menu;
   const activitiesInMenu = menu?.find((item) => item.name === 'activities');
   const worksInMenu = menu?.find((item) => item.name === 'works');
@@ -112,9 +111,7 @@ export default function ContentInserter({ onSelect }) {
   const getActivities = async () => {
     setActivitiesLoading(true);
     try {
-      const allActivities = isPortalHost
-        ? await call('getAllPublicActivitiesFromAllHosts')
-        : await call('getAllPublicActivities');
+      const allActivities = await call('getAllPublicActivities');
       setActivities(allActivities);
     } catch (error) {
       message.error(error.error || error.reason);
@@ -126,9 +123,7 @@ export default function ContentInserter({ onSelect }) {
   const getWorks = async () => {
     setWorksLoading(true);
     try {
-      const respond = isPortalHost
-        ? await call('getAllWorksFromAllHosts')
-        : await call('getAllWorks');
+      const respond = await call('getAllWorks');
       setWorks(respond.sort(compareByDate));
     } catch (error) {
       message.error(error.error || error.reason);

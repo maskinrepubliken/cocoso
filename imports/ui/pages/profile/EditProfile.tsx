@@ -17,7 +17,7 @@ import {
 } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
-import { currentUserAtom, platformAtom, roleAtom } from '/imports/state';
+import { currentHostAtom, currentUserAtom, roleAtom } from '/imports/state';
 
 export const subSpanStyle: React.CSSProperties = {
   fontSize: '0.875rem',
@@ -27,7 +27,7 @@ export const subSpanStyle: React.CSSProperties = {
 
 export default function EditProfile() {
   const currentUser = useAtomValue(currentUserAtom);
-  const platform = useAtomValue(platformAtom);
+  const currentHost = useAtomValue(currentHostAtom);
   const role = useAtomValue(roleAtom);
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -111,20 +111,7 @@ export default function EditProfile() {
     <>
       <Box mb="8" css={{ minHeight: '100vh' }}>
         <Box w="100%">
-          <Heading size="md">
-            {platform?.name}{' '}
-            <span style={subSpanStyle}>{tc('domains.platform')}</span>
-          </Heading>
-
-          <Box my="4">
-            <Alert bg="bluegray.50" mb="8" type="info">
-              <Text fontSize="sm">
-                {t('profile.message.platform', {
-                  platform: platform?.name,
-                })}
-              </Text>
-            </Alert>
-          </Box>
+          <Heading size="md">{currentHost?.settings?.name}</Heading>
 
           <Tabs index={tabIndex} tabs={tabs} />
 

@@ -8,7 +8,6 @@ export interface User extends Meteor.User {
   };
   username?: string;
   emails?: Array<{ address: string; verified: boolean }>;
-  isSuperAdmin?: boolean;
   publicKey?: string;
   memberships?: Array<{
     userId?: string;
@@ -167,21 +166,6 @@ export interface CategoryItem {
   label: string;
   categoryId?: string;
   color?: string;
-}
-
-/**
- * Platform represents the global platform configuration
- * Used in state atoms and platform settings
- */
-export interface Platform {
-  _id?: string;
-  name?: string;
-  email?: string;
-  portalHost?: string;
-  logo?: string;
-  isFederationLayout?: boolean;
-  footer?: string;
-  registrationIntro?: string[];
 }
 
 /**

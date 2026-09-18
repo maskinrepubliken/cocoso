@@ -12,14 +12,14 @@ import {
   Modal,
   Text,
 } from '/imports/ui/core';
-import { currentUserAtom, platformAtom } from '/imports/state';
+import { currentHostAtom, currentUserAtom } from '/imports/state';
 
 import { Signup } from './index';
 import { createAccount } from './functions';
 
 export default function SignupPage() {
   const currentUser = useAtomValue(currentUserAtom);
-  const platform = useAtomValue(platformAtom);
+  const currentHost = useAtomValue(currentHostAtom);
   const [t] = useTranslation('accounts');
   const navigate = useNavigate();
 
@@ -27,11 +27,7 @@ export default function SignupPage() {
     if (!currentUser) {
       return;
     }
-    if (platform?.isFederationLayout) {
-      navigate('/intro');
-    } else {
-      navigate(`/@${currentUser.username}`);
-    }
+    navigate(`/@${currentUser.username}`);
   }, [currentUser]);
 
   return (
@@ -46,28 +42,25 @@ export default function SignupPage() {
       >
         <Center>
           <Box w="sm">
-            {platform && (
-              <Center>
-                <Box>
-                  {platform?.logo && (
-                    <Center p="4">
-                      <Image w="240px" src={platform?.logo} />
-                    </Center>
-                  )}
-                  <Heading
-                    size="md"
-                    css={{ marginBottom: '1em', textAlign: 'center' }}
-                  >
-                    {t('signup.labels.title')}
-                  </Heading>
-                  <Text textAlign="center">
-                    {t('signup.labels.platform', {
-                      platform: platform?.name,
-                    })}
-                  </Text>
-                </Box>
-              </Center>
-            )}
+            <Center>
+              <Box>
+                {currentHost?.logo && (
+                  <Center p="4">
+                    <Image
+                      alt={`${currentHost?.settings?.name} logo`}
+                      src={currentHost.logo}
+                      w="240px"
+                    />
+                  </Center>
+                )}
+                <Heading
+                  size="md"
+                  css={{ marginBottom: '1em', textAlign: 'center' }}
+                >
+                  {t('signup.labels.title')}
+                </Heading>
+              </Box>
+            </Center>
 
             <Center py="4">
               <Text>

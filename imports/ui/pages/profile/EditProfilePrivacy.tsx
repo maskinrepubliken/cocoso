@@ -6,7 +6,6 @@ import { useAtomValue } from 'jotai';
 import {
   currentHostAtom,
   currentUserAtom,
-  platformAtom,
   roleAtom,
 } from '/imports/state';
 import {
@@ -24,14 +23,12 @@ import Boxling from '/imports/ui/pages/admin/Boxling';
 import { call } from '/imports/api/_utils/shared';
 import { clearEncryptionKey } from '/imports/utils/setupEncryption';
 
-import { subSpanStyle } from './EditProfile';
 import { useNavigate } from 'react-router';
 
 export default function EditProfilePrivacy() {
   const currentUser = useAtomValue(currentUserAtom);
   const currentHost = useAtomValue(currentHostAtom);
   const role = useAtomValue(roleAtom);
-  const platform = useAtomValue(platformAtom);
   const [isLeaveModalOn, setIsLeaveModalOn] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const [t] = useTranslation('accounts');
@@ -99,8 +96,7 @@ export default function EditProfilePrivacy() {
       <Boxling>
         <Box mb="4">
           <Heading size="md" pb="2">
-            {platform?.name}{' '}
-            <span style={subSpanStyle}>{tc('domains.platform')}</span>
+            {communityName}
           </Heading>
           <Checkbox
             checked={isUserPublicGlobally}
@@ -121,10 +117,6 @@ export default function EditProfilePrivacy() {
         <Divider my="4" />
 
         <Box pt="2">
-          <Heading size="md" pb="2">
-            {communityName}{' '}
-            <span style={subSpanStyle}>{tc('domains.community')}</span>
-          </Heading>
 
           <Alert bg="white" type="info" css={{ marginBottom: '0.4rem' }}>
             <Text fontSize="sm">
@@ -144,7 +136,7 @@ export default function EditProfilePrivacy() {
           <Box py="4">
             <Checkbox
               checked={isUserPublic}
-              disabled={!isUserPublicGlobally || currentHost.isPortalHost}
+              disabled={!isUserPublicGlobally}
               id="is-user-public-locally"
               onChange={({ target: { checked } }) => setProfilePublic(checked)}
             >

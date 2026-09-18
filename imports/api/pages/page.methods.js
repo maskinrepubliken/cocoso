@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 
 import { getHost } from '../_utils/shared';
-import Hosts from '../hosts/host';
 import Pages from './page';
 import { isAdmin } from '../users/user.roles';
 
@@ -42,14 +41,6 @@ Meteor.methods({
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't get pages");
     }
-  },
-
-  async getPortalHostPages() {
-    const portalHost = await Hosts.findOneAsync({ isPortalHost: true });
-    return await Pages.find(
-      { host: portalHost.host },
-      { sort: { creationDate: -1 } }
-    ).fetchAsync();
   },
 
   async createPage(formValues) {

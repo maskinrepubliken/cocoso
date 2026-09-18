@@ -9,8 +9,6 @@ import '../../api/media/media.methods';
 import '../../api/hosts/host';
 import '../../api/hosts/host.methods';
 import '../../api/memberships/membership';
-import '../../api/memberships/membershipConflictReport';
-import '../../api/memberships/membershipMigration.methods';
 import '../../api/users/user';
 import '../../api/users/user.roles';
 import '../../api/users/user.admin';
@@ -45,9 +43,6 @@ import '../../api/resources/resource.methods';
 
 import '../../api/activities/activity';
 import '../../api/activities/activity.methods';
-
-import '../../api/platform/platform';
-import '../../api/platform/platform.methods';
 
 import '../../api/keywords/keyword';
 import '../../api/keywords/keywords.methods';

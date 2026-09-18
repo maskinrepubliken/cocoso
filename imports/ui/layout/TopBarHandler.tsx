@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Fade, Flex, Slide } from '/imports/ui/core';
+import { Fade, Flex, Slide } from '/imports/ui/core';
 
 import UserPopup from './UserPopup';
-import FederationIconMenu from './FederationIconMenu';
 import MenuDrawer from './MenuDrawer';
 
 export interface TopBarHandlerProps {
@@ -31,10 +30,7 @@ export default function TopBarHandler({
   return (
     <Slide direction="top" ping={slideStart}>
       <Fade ping={scrollTop < 120}>
-        <Flex justify="space-between" w="100%">
-          <Box p="1" pointerEvents="all">
-            <FederationIconMenu />
-          </Box>
+        <Flex justify="flex-end" w="100%">
           <Flex p="1" pointerEvents="all">
             <UserPopup isOpen={isOpen} setIsOpen={setIsOpen} />
             <MenuDrawer />

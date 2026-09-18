@@ -2,11 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import parseHtml from 'html-react-parser';
 import { useTranslation } from 'react-i18next';
-import { useAtomValue } from 'jotai';
 
 import { Box, Center, Flex, Heading, Modal, Tag } from '/imports/ui/core';
-import { allHostsAtom } from '../../state';
-import { currentHostAtom } from '/imports/state';
 
 import ActionDates from '../entry/ActionDates';
 import NiceSlider from '../generic/NiceSlider';
@@ -101,29 +98,11 @@ function PopupContent({
   );
 }
 
-const getLinkPath = (item: any, kind: string, isAnotherHost = false) => {
-  if (isAnotherHost) {
-    if (kind === 'works') {
-      return {
-        isHref: false,
-        path: `/@${item.authorUsername}/${kind}/${item._id}`,
-      };
-    }
-    return {
-      isHref: false,
-      path: `/${kind}/${item._id}`,
-    };
-  }
+const getLinkPath = (item: any, kind: string) => {
   if (kind === 'works') {
-    return {
-      isHref: true,
-      path: `https://${item.host}/@${item.authorUsername}/${kind}/${item._id}`,
-    };
+    return `/@${item.authorUsername}/${kind}/${item._id}`;
   }
-  return {
-    isHref: true,
-    path: `https://${item.host}/${kind}/${item._id}`,
-  };
+  return `/${kind}/${item._id}`;
 };
 
 export interface PopupHandlerProps {
@@ -139,8 +118,6 @@ export default function PopupHandler({
   showPast,
   onClose,
 }: PopupHandlerProps) {
-  const allHosts = useAtomValue(allHostsAtom);
-  const currentHost = useAtomValue(currentHostAtom);
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const [tc] = useTranslation('common');
@@ -160,46 +137,21 @@ export default function PopupHandler({
     };
   }, [item]);
 
-  const isPortalHost = currentHost?.isPortalHost;
-
-  const getButtonLabel = () => {
-    const hostName = allHosts?.find(
-      (h) => h?.host === displayedItem?.host
-    )?.name;
-    if (isPortalHost) {
-      return tc('actions.toThePage', {
-        hostName,
-      });
-    }
-    return tc('actions.entryPage');
-  };
+  const getButtonLabel = () => tc('actions.entryPage');
 
   const handleCopyLink = async () => {
     if (!displayedItem) return;
-    const link = getLinkPath(displayedItem, kind);
-    await navigator.clipboard.writeText(link.path);
+    const link = `${window.location.origin}${getLinkPath(displayedItem, kind)}`;
+    await navigator.clipboard.writeText(link);
     setCopied(true);
   };
 
   const handleActionButtonClick = () => {
     if (!displayedItem) return;
-    const link = getLinkPath(
-      displayedItem,
-      kind,
-      displayedItem.host === currentHost?.host
-    );
-    if (link.isHref) {
-      window.open(link.path, '_self');
-      return;
-    }
-    navigate(link.path);
+    navigate(getLinkPath(displayedItem, kind));
   };
 
   const tags = [];
-  if (isPortalHost && displayedItem) {
-    const hostName = allHosts?.find((h) => h.host === displayedItem.host)?.name;
-    tags.push(hostName);
-  }
   if (displayedItem?.isPrivate) {
     tags.push(tc('labels.private'));
   }

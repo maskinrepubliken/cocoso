@@ -8,7 +8,6 @@ import Groups from '../../api/groups/group';
 import Pages from '../../api/pages/page';
 import Works from '../../api/works/work';
 import Memberships from '../../api/memberships/membership';
-import MembershipConflictReports from '../../api/memberships/membershipConflictReport';
 
 // Drop && Set back - authorAvatar && authorFirstName && authorLastName
 Migrations.add({
@@ -621,23 +620,10 @@ Migrations.add({
 
 // Extract Meteor.users.memberships[] / Hosts.members[] into a standalone
 // Memberships collection (single source of truth for host membership/role).
-// up() refuses to run while there are unresolved conflicts flagged by the
-// membershipMigration_dryRun method (see membershipMigration.methods.js) —
-// resolve those by hand against the live arrays first, then re-run the
-// dry-run until conflictCount is 0 before uncommenting migrateTo(18) below.
 Migrations.add({
   version: 18,
   async up() {
     console.log('up to', this.version);
-    const unresolvedConflicts = await MembershipConflictReports.find(
-      {}
-    ).countAsync();
-    if (unresolvedConflicts > 0) {
-      throw new Meteor.Error(
-        'unresolved-membership-conflicts',
-        `Cannot migrate: ${unresolvedConflicts} unresolved membership conflict(s). Run membershipMigration_dryRun, resolve, and re-run until conflictCount is 0.`
-      );
-    }
 
     await Hosts.find({}).forEachAsync(async (host) => {
       const members = host.members || [];

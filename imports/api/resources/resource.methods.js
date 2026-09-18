@@ -23,12 +23,6 @@ async function validateLabel(label, host, resourceId) {
 
 // RESOURCE METHODS
 Meteor.methods({
-  async getResourcesFromAllHosts() {
-    const fields = Resources.publicFields;
-    const sort = { createdAt: -1 };
-    return await Resources.find({}, { fields, sort }).fetchAsync();
-  },
-
   async getResources(hostPredefined) {
     const host = hostPredefined || getHost(this);
 

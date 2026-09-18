@@ -11,7 +11,6 @@ import {
   currentHostAtom,
   isDesktopAtom,
   pageTitlesAtom,
-  platformAtom,
 } from '../../state';
 import { InfoPagesMenu } from './Header';
 
@@ -110,7 +109,6 @@ export default function MenuDrawer() {
   const currentHost = useAtomValue(currentHostAtom);
   const pageTitles = useAtomValue(pageTitlesAtom);
   const isDesktop = useAtomValue(isDesktopAtom);
-  const platform = useAtomValue(platformAtom);
 
   const [isOpen, setIsOpen] = useState(false);
   const [tc] = useTranslation('common');
@@ -134,14 +132,6 @@ export default function MenuDrawer() {
       ...item,
       route: getRoute(item, index),
     }));
-
-  if (platform?.isFederationLayout && currentHost?.isPortalHost) {
-    menuItems.push({
-      name: 'communities',
-      label: tc('platform.communities'),
-      route: '/communities',
-    });
-  }
 
   const menuStyles = currentHost?.theme?.menu;
 

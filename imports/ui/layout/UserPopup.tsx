@@ -3,7 +3,6 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
-import CogIcon from 'lucide-react/dist/esm/icons/cog';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
 import { useAtom, useAtomValue } from 'jotai';
 import MessagesSquare from 'lucide-react/dist/esm/icons/messages-square';
@@ -200,7 +199,6 @@ export default function UserPopup({ isOpen }: UserPopupProps) {
   const roleTranslated = <Trans i18nKey={`roles.${role}`} ns="members" />;
 
   const isAdmin = role === 'admin';
-  const isSuperAdmin = currentUser?.isSuperAdmin;
 
   return (
     <Box>
@@ -258,21 +256,6 @@ export default function UserPopup({ isOpen }: UserPopupProps) {
         )}
 
         {isAdmin && <Divider />}
-
-        {isSuperAdmin && (
-          <Link to="/superadmin">
-            <MenuItem>
-              <Text>
-                <Flex align="center" gap="2">
-                  <CogIcon fontSize="18" />
-                  <Trans i18nKey="members:super">Superadmin</Trans>
-                </Flex>
-              </Text>
-            </MenuItem>
-          </Link>
-        )}
-
-        {isSuperAdmin && <Divider />}
 
         {isNotification && (
           <>

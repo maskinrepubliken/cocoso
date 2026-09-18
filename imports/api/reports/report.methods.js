@@ -43,11 +43,9 @@ Meteor.methods({
 
     const host = getHost(this);
     const isAdminUser = await isAdmin(user._id, host);
-    if (!user.isSuperAdmin && !isAdminUser)
-      throw new Meteor.Error('not-authorized');
+    if (!isAdminUser) throw new Meteor.Error('not-authorized');
 
-    // Host admins only see reports filed on their own host.
-    const selector = user.isSuperAdmin ? {} : { host };
+    const selector = { host };
     const reports = await Reports.find(selector, {
       sort: { createdAt: -1 },
     }).fetchAsync();
@@ -83,12 +81,9 @@ Meteor.methods({
 
     const host = getHost(this);
     const isAdminUser = await isAdmin(user._id, host);
-    if (!user.isSuperAdmin && !isAdminUser)
-      throw new Meteor.Error('not-authorized');
+    if (!isAdminUser) throw new Meteor.Error('not-authorized');
 
-    const selector = user.isSuperAdmin
-      ? { _id: reportId }
-      : { _id: reportId, host };
+    const selector = { _id: reportId, host };
     return Reports.updateAsync(selector, {
       $set: {
         status,

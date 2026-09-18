@@ -53,14 +53,10 @@ onPageLoad(async () => {
   }
 
   const currentHost = await Meteor.callAsync('getCurrentHost');
-  const allHosts = await Meteor.callAsync('getAllHosts');
-  const platform = await Meteor.callAsync('getPlatform');
   const pageTitles = await Meteor.callAsync('getPageTitles');
 
-  if (!platform || !currentHost) {
-    console.log(
-      'Platform or current host not found. Rendering SetupHome component.'
-    );
+  if (!currentHost) {
+    console.info('No site configured yet. Rendering the setup wizard.');
     const root = createRoot(container);
     root.render(<SetupHome />);
     return;
@@ -68,9 +64,7 @@ onPageLoad(async () => {
 
   const props = {
     Host: currentHost,
-    allHosts,
     pageTitles,
-    platform,
   };
 
   const router = createBrowserRouter(appRoutes(props));

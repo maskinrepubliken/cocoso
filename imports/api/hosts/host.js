@@ -87,22 +87,6 @@ Hosts.schema = new SimpleSchema({
 
   createdAt: { type: Date },
 
-  isPortalHost: { type: Boolean, optional: true },
-
-  registeredBy: { type: Object, optional: true },
-  'registeredBy.username': { type: String },
-  'registeredBy.userId': { type: String },
-  'registeredBy.date': { type: Date },
-
-  verifiedBy: { type: Object, optional: true },
-  'verifiedBy.username': { type: String },
-  'verifiedBy.userId': { type: String },
-  'verifiedBy.date': { type: Date },
-
-  unVerifiedBy: { type: Object, optional: true },
-  'unVerifiedBy.username': { type: String },
-  'unVerifiedBy.userId': { type: String },
-  'unVerifiedBy.date': { type: Date },
 });
 
 Hosts.attachSchema(Hosts.schema);

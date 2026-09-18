@@ -3,11 +3,9 @@ import { check } from 'meteor/check';
 
 import { getHost } from '../_utils/shared';
 import Hosts from '../hosts/host';
-import Platform from '../platform/platform';
 import DirectMessages from './directMessage';
 import { getDirectMessageEmailBody } from './directMessages.mails';
 import mailtranslations from '../groups/mailtranslations';
-import Memberships from '../memberships/membership';
 
 Meteor.methods({
   async directMessages_findOrCreate(otherUserId) {
@@ -120,53 +118,21 @@ Meteor.methods({
       const host = getHost(this);
       Meteor.defer(async () => {
         try {
-          const [currentHost, platform] = await Promise.all([
-            Hosts.findOneAsync({ host }),
-            Platform.findOneAsync(),
-          ]);
+          const currentHost = await Hosts.findOneAsync({ host });
           const recipient = await Meteor.users.findOneAsync(otherUserId, {
             fields: { emails: 1, firstName: 1, username: 1, lang: 1 },
           });
           if (!recipient) return;
 
-          const isFederation = Boolean(platform?.isFederationLayout);
-
-          // Federation: link to a host the recipient is actually a member of
-          let linkHost = currentHost;
-          if (isFederation) {
-            const recipientMemberships = await Memberships.find(
-              { userId: otherUserId },
-              { sort: { joinDate: 1 } }
-            ).fetchAsync();
-            const isMemberOfSenderHost = recipientMemberships.some(
-              (m) => m.host === host
-            );
-            if (!isMemberOfSenderHost) {
-              const firstMembership = recipientMemberships[0];
-              if (firstMembership) {
-                const recipientHost = await Hosts.findOneAsync(
-                  { host: firstMembership.host },
-                  { fields: { host: 1, settings: 1 } }
-                );
-                if (recipientHost) linkHost = recipientHost;
-              }
-            }
-          }
-
-          // Show the community the message links to, rather than the
-          // sender's raw account username, as the "sender" in the email —
-          // falling back to the platform name if that community has none.
-          const resolvedLinkHost = linkHost ?? currentHost;
+          // Show the site name, rather than the sender's raw account
+          // username, as the "sender" in the email.
           const senderDisplayName =
-            resolvedLinkHost?.settings?.name ||
-            platform?.name ||
-            resolvedLinkHost?.host ||
-            currentHost?.host;
+            currentHost?.settings?.name || currentHost?.host;
 
           const lang = recipient.lang || currentHost?.settings?.lang || 'en';
           const dmTr = (mailtranslations[lang] ?? mailtranslations.en).directMessage ?? mailtranslations.en.directMessage;
           const subject = `${senderDisplayName} ${dmTr.subjectVerb ?? dmTr.subject}`;
-          const emailBody = getDirectMessageEmailBody(senderDisplayName, currentHost, recipient, linkHost, isFederation);
+          const emailBody = getDirectMessageEmailBody(senderDisplayName, currentHost, recipient, currentHost, false);
           await Meteor.callAsync('sendEmail', otherUserId, subject, emailBody);
         } catch (e) {
           console.error('[DM email]', e);

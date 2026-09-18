@@ -2,37 +2,34 @@ import { call } from './api/_utils/shared';
 
 export async function getHomeLoader({ Host, params, request }) {
   const host = Host?.host;
-  const isPortalHost = Boolean(Host?.isPortalHost);
   const menu = Host?.settings?.menu;
   const homeRouteName = menu && menu[0]?.name;
 
   switch (homeRouteName) {
     case 'activities':
-      return await getActivities({ host, isPortalHost, request });
+      return await getActivities({ host, request });
     case 'calendar':
-      return await getCalendarEntries({ host, isPortalHost });
+      return await getCalendarEntries({ host });
     case 'groups':
-      return await getGroups({ host, isPortalHost });
+      return await getGroups({ host });
     case 'info':
       return await getPages({ host });
     case 'resources':
-      return await getResources({ host, isPortalHost });
+      return await getResources({ host });
     case 'works':
-      return await getWorks({ host, isPortalHost });
+      return await getWorks({ host });
     case 'users':
-      return await getPeople({ host, isPortalHost });
+      return await getPeople({ host });
     default:
       return await getComposablePage({ params, Host });
   }
 }
 
-export async function getActivities({ request, host, isPortalHost }) {
+export async function getActivities({ request, host }) {
   const url = new URL(request?.url);
   const showPast = url?.searchParams?.get('showPast') === 'true' || false;
 
-  const activities = isPortalHost
-    ? await call('getAllPublicActivitiesFromAllHosts', showPast)
-    : await call('getAllPublicActivities', showPast, host);
+  const activities = await call('getAllPublicActivities', showPast, host);
 
   return {
     activities,
@@ -54,14 +51,9 @@ export async function getActivity({ params }) {
   };
 }
 
-export async function getCalendarEntries({ host, isPortalHost }) {
-  const activities = isPortalHost
-    ? await call('getAllActivitiesFromAllHosts')
-    : await call('getAllActivities', host);
-
-  const resources = isPortalHost
-    ? await call('getResourcesFromAllHosts')
-    : await call('getResources', host);
+export async function getCalendarEntries({ host }) {
+  const activities = await call('getAllActivities', host);
+  const resources = await call('getResources', host);
 
   return {
     activities,
@@ -69,8 +61,8 @@ export async function getCalendarEntries({ host, isPortalHost }) {
   };
 }
 
-export async function getGroups({ host, isPortalHost }) {
-  const groups = await call('getGroupsWithMeetings', isPortalHost, host);
+export async function getGroups({ host }) {
+  const groups = await call('getGroupsWithMeetings', host);
 
   return {
     groups,
@@ -99,11 +91,9 @@ export async function getPages({ host }) {
   };
 }
 
-export async function getPeople({ host, isPortalHost }) {
+export async function getPeople({ host }) {
   const keywords = await call('getKeywords');
-  const users = isPortalHost
-    ? await call('getAllMembersFromAllHosts')
-    : await call('getHostMembers', host);
+  const users = await call('getHostMembers', host);
 
   return {
     keywords,
@@ -111,10 +101,8 @@ export async function getPeople({ host, isPortalHost }) {
   };
 }
 
-export async function getResources({ host, isPortalHost }) {
-  const resources = isPortalHost
-    ? await call('getResourcesFromAllHosts')
-    : await call('getResources', host);
+export async function getResources({ host }) {
+  const resources = await call('getResources', host);
 
   return {
     resources,
@@ -150,10 +138,8 @@ export async function getUser({ host, params }) {
   };
 }
 
-export async function getWorks({ host, isPortalHost }) {
-  const works = isPortalHost
-    ? await call('getAllWorksFromAllHosts')
-    : await call('getAllWorks', host);
+export async function getWorks({ host }) {
+  const works = await call('getAllWorks', host);
 
   return {
     works,
@@ -188,14 +174,6 @@ export async function getComposablePage({ params, Host }) {
 
   return {
     composablePage,
-  };
-}
-
-export async function getCommunities() {
-  const hosts = await call('getAllHosts');
-
-  return {
-    hosts,
   };
 }
 

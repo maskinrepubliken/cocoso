@@ -394,16 +394,7 @@ export default function CalendarHandler({ Host }: CalendarHandlerProps) {
         id="calendar-item"
         open={Boolean(selectedActivity)}
         title={selectedActivity && selectedActivity.title}
-        confirmText={
-          currentHost?.isPortalHost ? (
-            <Trans
-              i18nKey="common:actions.toThePage"
-              values={{ hostName: currentHost?.settings?.name }}
-            />
-          ) : (
-            <Trans i18nKey="common:actions.entryPage" />
-          )
-        }
+        confirmText={<Trans i18nKey="common:actions.entryPage" />}
         cancelText={
           isCreatorOrAdmin() ? (
             <Trans i18nKey="common:actions.update">Edit</Trans>

@@ -5,12 +5,21 @@ import { Alert, Box, Button, Center } from '/imports/ui/core';
 import NewHostForm from '/imports/ui/forms/NewHostForm';
 
 import { Signup } from '../auth';
-import NewPlatform, { PlatformFormValues } from './NewPlatform';
 import Stepper from '../../generic/Stepper';
 import { call } from '../../../api/_utils/shared';
 import { message } from '../../generic/message';
 import { loginWithPasswordAsync } from '../auth/functions';
-import { HostFormValues } from './NewHost';
+
+export interface HostFormValues {
+  host: string;
+  name: string;
+  email: string;
+  address: string;
+  city: string;
+  country: string;
+  about: string;
+  aboutTitle?: string;
+}
 
 interface SignupFormValues {
   username: string;
@@ -21,15 +30,11 @@ interface SignupFormValues {
 const steps = [
   {
     title: 'User',
-    description: 'Super admin user',
+    description: 'Admin account',
   },
   {
-    title: 'Platform',
-    description: 'Main Platform',
-  },
-  {
-    title: 'Community',
-    description: 'First Web app',
+    title: 'Site',
+    description: 'Name and contact details',
   },
 ];
 
@@ -44,10 +49,13 @@ const hostModel = {
 };
 
 export default function SetupHome() {
-  const [state, setState] = useState({
+  const [state, setState] = useState<{
+    currentStep: string;
+    user: any;
+    host: any;
+  }>({
     currentStep: '0',
     user: null,
-    platform: null,
     host: null,
   });
 
@@ -57,13 +65,6 @@ export default function SetupHome() {
       setState((prevState) => ({
         ...prevState,
         user,
-      }));
-    }
-    if (!state.platform) {
-      const platform = await call('getPlatform');
-      setState((prevState) => ({
-        ...prevState,
-        platform,
       }));
     }
     if (!state.host) {
@@ -85,18 +86,16 @@ export default function SetupHome() {
     let currentStep = '0';
     if (!state.user) {
       return;
-    } else if (!state.platform) {
-      currentStep = '1';
     } else if (!state.host) {
-      currentStep = '2';
+      currentStep = '1';
     } else {
-      currentStep = '3';
+      currentStep = '2';
     }
     setState((prevState) => ({
       ...prevState,
       currentStep,
     }));
-  }, [state.user, state.platform, state.host]);
+  }, [state.user, state.host]);
 
   const onCreateUser = async (data: SignupFormValues) => {
     try {
@@ -106,7 +105,6 @@ export default function SetupHome() {
         return;
       }
       await loginWithPasswordAsync(data.username, data.password);
-      await call('setUserSuperAdmin', userId);
       const user = await Meteor.userAsync();
       setState((prevState) => ({
         ...prevState,
@@ -116,24 +114,6 @@ export default function SetupHome() {
       message.error(
         error.error?.reason || error.reason || 'Error creating user'
       );
-    }
-  };
-
-  const onCreatePlatform = async (data: PlatformFormValues) => {
-    if (!data.name || !data.email || !data.portalHost) {
-      message.error('All values required');
-      return;
-    }
-
-    try {
-      await call('createPlatform', data);
-      const platform = await call('getPlatform');
-      setState((prevState) => ({
-        ...prevState,
-        platform,
-      }));
-    } catch (error: any) {
-      message.error(error.reason || 'Error creating platform');
     }
   };
 
@@ -155,16 +135,6 @@ export default function SetupHome() {
     }
   };
 
-  // if (!state.user || !state.user.isSuperAdmin) {
-  //   return (
-  //     <Center>
-  //       <Alert type="error">
-  //         <Trans i18nKey="common:message.access.deny" />
-  //       </Alert>
-  //     </Center>
-  //   );
-  // }
-
   const goHomeAndReload = () => {
     window.location.href = window.location.host;
     setTimeout(() => {
@@ -173,7 +143,7 @@ export default function SetupHome() {
   };
 
   const renderBody = () => {
-    if (state.currentStep === '3') {
+    if (state.currentStep === '2') {
       // finished
       return (
         <>
@@ -189,11 +159,8 @@ export default function SetupHome() {
       );
     }
 
-    if (state.currentStep === '2') {
-      return <NewHostForm defaultValues={hostModel} onSubmit={onCreateHost} />;
-    }
     if (state.currentStep === '1') {
-      return <NewPlatform onSubmit={onCreatePlatform} />;
+      return <NewHostForm defaultValues={hostModel} onSubmit={onCreateHost} />;
     }
     if (state.currentStep === '0') {
       return <Signup hideTermsCheck onSubmit={onCreateUser} />;

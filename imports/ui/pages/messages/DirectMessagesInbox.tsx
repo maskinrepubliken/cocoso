@@ -21,7 +21,7 @@ import {
   Text,
 } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
-import { allHostsAtom, currentUserAtom } from '/imports/state';
+import { currentUserAtom } from '/imports/state';
 import { Bio } from '/imports/ui/entry/UserHybrid';
 import MemberAvatarEtc from '/imports/ui/generic/MemberAvatarEtc';
 import { message } from '/imports/ui/generic/message';
@@ -35,7 +35,6 @@ import DirectMessageConversations from './DirectMessageConversations';
 export default function DirectMessagesInbox() {
   const [t] = useTranslation('accounts');
   const currentUser = useAtomValue(currentUserAtom);
-  const allHosts = useAtomValue(allHostsAtom);
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [members, setMembers] = useState<any[]>([]);
@@ -103,16 +102,6 @@ export default function DirectMessagesInbox() {
     } else if (e.key === 'Escape') {
       setSearch('');
     }
-  };
-
-  const getCommunityLabel = (memberHosts: string[]) => {
-    if (!memberHosts?.length) return null;
-    const names = memberHosts
-      .map((h) => allHosts.find((ah: any) => ah.host === h)?.name)
-      .filter(Boolean);
-    if (!names.length) return null;
-    const [first, ...rest] = names;
-    return rest.length > 0 ? `${first} +${rest.length}` : first;
   };
 
   const handleStartConversation = async (userId: string) => {
@@ -340,11 +329,6 @@ export default function DirectMessagesInbox() {
                       </Text>
                     )}
                   </Box>
-                  {getCommunityLabel(u.memberHosts) && (
-                    <Text size="xs" color="gray.400" css={{ flexShrink: 0 }}>
-                      {getCommunityLabel(u.memberHosts)}
-                    </Text>
-                  )}
                 </Flex>
               );
             })}

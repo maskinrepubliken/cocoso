@@ -5,7 +5,7 @@ import { Box } from '/imports/ui/core';
 import Paginate from '/imports/ui/listing/Paginate';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 
-export default function MemberActivities({ Host, isPortalHost }) {
+export default function MemberActivities() {
   const { activities } = useLoaderData();
 
   if (!activities || activities.length === 0) {
@@ -17,36 +17,20 @@ export default function MemberActivities({ Host, isPortalHost }) {
   return (
     <Paginate items={publicActivities}>
       {(activity) => {
-        const isExternal = activity.host !== Host.host;
         return (
           <Box key={activity._id}>
-            {isExternal ? (
-              <a href={`https://${activity.host}/activities/${activity._id}`}>
-                <NewGridThumb
-                  host={isPortalHost && activity.host}
-                  imageUrl={activity.imageUrl}
-                  title={activity.title}
-                  subTitle={
-                    activity.isGroup
-                      ? activity.readingMaterial
-                      : activity.subTitle
-                  }
-                />
-              </a>
-            ) : (
-              <Link to={`/activities/${activity._id}`}>
-                <NewGridThumb
-                  host={isPortalHost && activity.host}
-                  imageUrl={activity.imageUrl}
-                  title={activity.title}
-                  subTitle={
-                    activity.isGroup
-                      ? activity.readingMaterial
-                      : activity.subTitle
-                  }
-                />
-              </Link>
-            )}
+            <Link to={`/activities/${activity._id}`}>
+              <NewGridThumb
+                imageUrl={activity.imageUrl}
+                title={activity.title}
+                subTitle={
+                  activity.isGroup
+                    ? activity.readingMaterial
+                    : activity.subTitle
+                }
+              />
+            </Link>
+
           </Box>
         );
       }}

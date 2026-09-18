@@ -4,7 +4,6 @@ import { check, Match } from 'meteor/check';
 
 import { getHost } from '../_utils/shared';
 import Hosts from '../hosts/host';
-import Platform from '../platform/platform';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import Works from '../works/work';
 import Groups from '../groups/group';
@@ -37,19 +36,10 @@ Meteor.methods({
     check(username, String);
     const host = hostPredefined || getHost(this);
 
-    const currentHost = await Hosts.findOneAsync({ host });
     const user = await Meteor.users.findOneAsync({ username });
 
     if (!user) {
       return null;
-    }
-
-    if (currentHost.isPortalHost) {
-      if (user.isPublic) {
-        return await userModel(user);
-      } else {
-        return null;
-      }
     }
 
     const currentUser = await Meteor.userAsync();
@@ -366,17 +356,15 @@ Meteor.methods({
       return `https://${host}/reset-password/${token}`;
     };
 
-    // Reached from the broker (imports/ui/pages/auth/BrokerAuthPage.tsx),
-    // not any one tenant — the platform's own name/email is the right
-    // "from" identity here, not a per-host one.
-    const platform = await Platform.findOneAsync();
+    const currentHost = await Hosts.findOneAsync({ host });
+    const siteName = currentHost?.settings?.name;
     const smtp = Meteor.settings?.mailCredentials?.smtp;
-    if (platform?.name && smtp?.fromEmail) {
+    if (siteName && smtp?.fromEmail) {
       const fromEmail = extractEmailAddress(smtp.fromEmail);
       Accounts.emailTemplates.resetPassword.from = () =>
-        `${platform.name} <${fromEmail}>`;
+        `${siteName} <${fromEmail}>`;
     }
-    Accounts.emailTemplates.siteName = platform?.name || host;
+    Accounts.emailTemplates.siteName = siteName || host;
 
     try {
       await Meteor.callAsync('forgotPassword', email);
@@ -465,24 +453,17 @@ Meteor.methods({
     if (!caller) throw new Meteor.Error('not-authorized');
 
     const host = getHost(this);
-    const platform = await Platform.findOneAsync();
-    const isFederation = Boolean(platform?.isFederationLayout);
     const q = query.trim().toLowerCase();
 
-    let candidateIds;
-    if (!isFederation) {
-      const membershipsAtHost = await Memberships.find(
-        { host },
-        { fields: { userId: 1 } }
-      ).fetchAsync();
-      candidateIds = membershipsAtHost
-        .map((m) => m.userId)
-        .filter((id) => id !== caller._id);
-    }
+    const membershipsAtHost = await Memberships.find(
+      { host },
+      { fields: { userId: 1 } }
+    ).fetchAsync();
+    const candidateIds = membershipsAtHost
+      .map((m) => m.userId)
+      .filter((id) => id !== caller._id);
 
-    const filter = isFederation
-      ? { _id: { $ne: caller._id } }
-      : { _id: { $in: candidateIds } };
+    const filter = { _id: { $in: candidateIds } };
 
     const users = await Meteor.users
       .find(filter, {
@@ -503,35 +484,14 @@ Meteor.methods({
       return full.includes(q);
     });
 
-    const filteredIds = filtered.map((u) => u._id);
-    const filteredMemberships = await Memberships.find(
-      { userId: { $in: filteredIds } },
-      { fields: { userId: 1, host: 1 } }
-    ).fetchAsync();
-    const hostsByUserId = {};
-    filteredMemberships.forEach((m) => {
-      if (!hostsByUserId[m.userId]) {
-        hostsByUserId[m.userId] = [];
-      }
-      hostsByUserId[m.userId].push(m.host);
-    });
-
-    const matched = filtered.map((u) => ({
-      _id: u._id,
-      username: u.username,
-      avatar: u.avatar,
-      firstName: u.firstName,
-      lastName: u.lastName,
-      memberHosts: hostsByUserId[u._id] ?? [],
-    }));
-
-    if (!isFederation) {
-      return matched.slice(0, 8);
-    }
-
-    // Federation: same-host members first, then other communities
-    const sameHost = matched.filter((u) => u.memberHosts.includes(host));
-    const otherHosts = matched.filter((u) => !u.memberHosts.includes(host));
-    return [...sameHost, ...otherHosts].slice(0, 12);
+    return filtered
+      .map((u) => ({
+        _id: u._id,
+        username: u.username,
+        avatar: u.avatar,
+        firstName: u.firstName,
+        lastName: u.lastName,
+      }))
+      .slice(0, 8);
   },
 });

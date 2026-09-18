@@ -9,7 +9,6 @@ import PageHeading from './PageHeading';
 import PopupHandler from './PopupHandler';
 import SexyThumb from './SexyThumb';
 import Tabs from '../core/Tabs';
-import ShowContentFromOtherHosts from '/imports/ui/listing/ShowContentFromOtherHosts';
 
 export interface ActivitiesHybridProps {
   Host: any;
@@ -62,7 +61,6 @@ export default function ActivitiesHybrid({
           >
             <SexyThumb
               activity={item}
-              host={currentHost?.isPortalHost ? item.host : null}
               index={index}
               showPast={showPast}
               tags={item.isGroupMeeting ? [groupsLabel] : null}
@@ -70,11 +68,6 @@ export default function ActivitiesHybrid({
           </Center>
         )}
       </InfiniteScroller>
-
-      <ShowContentFromOtherHosts
-        isPortalHost={currentHost?.isPortalHost}
-        listing="activities"
-      />
 
       <PopupHandler
         item={modalItem}

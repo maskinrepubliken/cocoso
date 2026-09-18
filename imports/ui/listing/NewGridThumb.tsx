@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { memo } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { useAtomValue } from 'jotai';
 
 import {
   Avatar,
@@ -13,7 +12,6 @@ import {
   Tag as CTag,
   Text,
 } from '/imports/ui/core';
-import { allHostsAtom } from '/imports/state';
 
 import Tag from '../generic/Tag';
 import { getImageUrl } from '../utils/imageHelper';
@@ -62,16 +60,11 @@ function NewGridThumb({
   title,
   tag,
 }: NewGridThumbProps) {
-  const allHosts = useAtomValue(allHostsAtom);
-
   if (!title && !imageUrl) {
     return null;
   }
 
-  const hostValue =
-    host && allHosts && isClient
-      ? allHosts?.find((h) => h.host === host)?.name
-      : host;
+  const hostValue = host;
 
   return (
     <Box

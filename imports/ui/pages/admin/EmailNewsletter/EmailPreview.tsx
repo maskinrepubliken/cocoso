@@ -124,14 +124,6 @@ const getSubTitleStyle = (theme) => ({
   textShadow: 'rgb(255, 255, 255) 1px 1px 1px',
 });
 
-const hostNameStyle = {
-  color: '#1a52e6',
-  fontSize: 16,
-  fontStyle: 'italic',
-  textAlign: 'center',
-  textDecoration: 'underline',
-};
-
 const getButtonStyle = (theme) => ({
   backgroundColor: `hsl(${theme?.hue || 288}deg, 80%, 40%)`,
   border: `1px solid`,
@@ -157,7 +149,7 @@ const hrStyle = {
 
 const maxChCount = 360;
 
-export default function EmailPreview({ allHosts, currentHost, email }) {
+export default function EmailPreview({ currentHost, email }) {
   const [tc] = useTranslation('common');
   const [t] = useTranslation('admin');
 
@@ -230,11 +222,6 @@ export default function EmailPreview({ allHosts, currentHost, email }) {
     );
   };
 
-  const getHostName = (entity) => {
-    const entityHost = allHosts.find((h) => h.host === entity.host);
-    return entityHost ? entityHost.name : entity.host;
-  };
-
   return (
     <Html>
       <Head />
@@ -305,11 +292,6 @@ export default function EmailPreview({ allHosts, currentHost, email }) {
                   </Heading>
                 </Link>
                 <Text style={subTitleStyle}>{activity?.subTitle}</Text>
-                {currentHost.isPortalHost && (
-                  <Link href={`https://${activity.host}`}>
-                    <Text style={hostNameStyle}>{getHostName(activity)}</Text>
-                  </Link>
-                )}
 
                 {(activity.images || activity.imageUrl) && (
                   <Link
@@ -366,11 +348,6 @@ export default function EmailPreview({ allHosts, currentHost, email }) {
                   </Heading>
                 </Link>
                 <Text style={subTitleStyle}>{work?.shortDescription}</Text>
-                {currentHost.isPortalHost && (
-                  <Link href={`https://${work.host}`}>
-                    <Text style={hostNameStyle}>{getHostName(work)}</Text>
-                  </Link>
-                )}
 
                 {work.images && (
                   <Link

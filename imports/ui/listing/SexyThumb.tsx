@@ -2,12 +2,10 @@ import { Meteor } from 'meteor/meteor';
 import React, { memo } from 'react';
 import dayjs from 'dayjs';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { useAtomValue } from 'jotai';
 
 import { Box, Flex, Tag } from '/imports/ui/core';
 
 import { DateJust } from '../entry/FancyDate';
-import { allHostsAtom } from '../../state';
 import { getImageUrl } from '../utils/imageHelper';
 
 const isClient = Meteor?.isClient;
@@ -82,7 +80,6 @@ interface Activity {
 
 export interface SexyThumbProps {
   activity: Activity;
-  host?: string;
   index?: number;
   showPast?: boolean;
   tags?: string[];
@@ -90,13 +87,10 @@ export interface SexyThumbProps {
 
 function SexyThumb({
   activity,
-  host,
   index,
   showPast = false,
   tags,
 }: SexyThumbProps) {
-  const allHosts = useAtomValue(allHostsAtom);
-
   if (!activity) {
     return null;
   }
@@ -116,7 +110,6 @@ function SexyThumb({
   const remainingFuture = futureDates && futureDates.length - 3;
   const remainingPast = futureDates && pastDates.length - 1;
 
-  const hostName = host && allHosts?.find((h) => h?.host === host)?.name;
 
   return (
     <Box
@@ -200,20 +193,6 @@ function SexyThumb({
           )}
         </Flex>
 
-        {hostName && (
-          <div
-            style={{
-              alignItems: 'center',
-              bottom: 12,
-              display: 'flex',
-              flexDirection: 'column',
-              position: 'absolute',
-              right: 24,
-            }}
-          >
-            <em style={{ color: '#fff' }}>{hostName}</em>
-          </div>
-        )}
       </div>
     </Box>
   );

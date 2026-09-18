@@ -52,19 +52,6 @@ const adminMenu = [
   },
 ];
 
-const superadminMenu = [
-  {
-    menu: 'superadmin',
-    key: 'platform',
-    value: '/superadmin/platform/settings',
-  },
-  {
-    menu: 'superadmin',
-    key: 'registrationIntro',
-    value: '/superadmin/platform/registration-intro',
-  },
-];
-
 const hostFields = [
   {
     // label: 'desired url/address',
@@ -111,24 +98,6 @@ const hostFields = [
   },
 ];
 
-const platformFields = [
-  {
-    label: 'Email',
-    name: 'email',
-    required: true,
-  },
-  {
-    label: 'Name',
-    name: 'name',
-    required: true,
-  },
-  {
-    label: 'Portal Host (Main Website)',
-    name: 'portalHost',
-    required: true,
-  },
-];
-
 const acceptedImageFormatsForUploads = [
   '.jpeg',
   '.jpg',
@@ -154,8 +123,6 @@ export {
   acceptedDocumentFormatsForUploads,
   adminMenu,
   hostFields,
-  platformFields,
   maximumDocumentSizeForUploads,
-  superadminMenu,
   userMenu,
 };

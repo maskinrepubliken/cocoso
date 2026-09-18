@@ -6,7 +6,7 @@ import Paginate from '/imports/ui/listing/Paginate';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
-export default function MemberWorks({ Host, isPortalHost }) {
+export default function MemberWorks() {
   const { works } = useLoaderData();
 
   if (!works || works.length === 0) {
@@ -16,38 +16,20 @@ export default function MemberWorks({ Host, isPortalHost }) {
   return (
     <Paginate items={works}>
       {(work) => {
-        const isExternal = work.host !== Host.host;
         return (
           <Box key={work._id}>
-            {isExternal ? (
-              <a
-                href={`https://${work.host}/@${work.authorUsername}/works/${work._id}`}
-              >
-                <NewGridThumb
-                  avatar={{
-                    name: work.authorUsername,
-                    url: work.authorAvatar,
-                  }}
-                  host={isPortalHost && work.host}
-                  imageUrl={getImageUrl(work.images?.[0], 'small')}
-                  tag={work.category?.label}
-                  title={work.title}
-                />
-              </a>
-            ) : (
-              <Link to={`/@${work.authorUsername}/works/${work._id}`}>
-                <NewGridThumb
-                  avatar={{
-                    name: work.authorUsername,
-                    url: work.authorAvatar,
-                  }}
-                  host={isPortalHost && work.host}
-                  imageUrl={getImageUrl(work.images?.[0], 'small')}
-                  tag={work.category?.label}
-                  title={work.title}
-                />
-              </Link>
-            )}
+            <Link to={`/@${work.authorUsername}/works/${work._id}`}>
+              <NewGridThumb
+                avatar={{
+                  name: work.authorUsername,
+                  url: work.authorAvatar,
+                }}
+                imageUrl={getImageUrl(work.images?.[0], 'small')}
+                tag={work.category?.label}
+                title={work.title}
+              />
+            </Link>
+
           </Box>
         );
       }}

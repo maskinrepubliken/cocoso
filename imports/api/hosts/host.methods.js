@@ -39,14 +39,16 @@ const publicUserFields = {
 };
 
 Meteor.methods({
+  // Bootstraps the one site this deployment serves. Only callable from the
+  // setup wizard, i.e. while no site exists yet; the caller becomes admin.
   async createNewHost(values) {
     const currentUser = await Meteor.userAsync();
-    if (!currentUser || !currentUser.isSuperAdmin) {
+    if (!currentUser) {
       throw new Meteor.Error('You are not allowed!');
     }
 
-    if (await Hosts.findOneAsync({ host: values.host })) {
-      throw new Meteor.Error('A hub with this url already exists');
+    if (await Hosts.findOneAsync()) {
+      throw new Meteor.Error('The site is already set up');
     }
 
     try {
@@ -90,15 +92,6 @@ Meteor.methods({
     }
   },
 
-  async getPortalHost() {
-    try {
-      const portalHost = await Hosts.findOneAsync({ isPortalHost: true });
-      return portalHost;
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
-  },
-
   async getCurrentHost() {
     const host = getHost(this);
     try {
@@ -107,7 +100,6 @@ Meteor.methods({
         {
           fields: {
             host: 1,
-            isPortalHost: 1,
             logo: 1,
             logoLegacy: 1,
             logoPng: 1,
@@ -117,53 +109,6 @@ Meteor.methods({
         }
       );
       return currentHost;
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
-  },
-
-  async getHost(host) {
-    return await Hosts.findOneAsync(
-      { host },
-      {
-        fields: {
-          host: 1,
-          isPortalHost: 1,
-          logo: 1,
-          logoLegacy: 1,
-          logoPng: 1,
-          settings: 1,
-          theme: 1,
-        },
-      }
-    );
-  },
-
-  async getAllHosts() {
-    try {
-      const hosts = await Hosts.find().fetchAsync();
-
-      const counts = await Memberships.rawCollection()
-        .aggregate([{ $group: { _id: '$host', count: { $sum: 1 } } }])
-        .toArray();
-      const membersCountByHost = {};
-      counts.forEach((c) => {
-        membersCountByHost[c._id] = c.count;
-      });
-
-      return (
-        hosts
-          // .filter((h) => !h.isPortalHost)
-          .map((host) => ({
-            name: host.settings.name,
-            logo: host.logo,
-            host: host.host,
-            city: host.settings.city,
-            country: host.settings.country,
-            createdAt: host.createdAt,
-            membersCount: membersCountByHost[host.host] || 0,
-          }))
-      );
     } catch (error) {
       throw new Meteor.Error(error);
     }
@@ -224,21 +169,6 @@ Meteor.methods({
     return getUsersRandomlyWithAvatarsFirst(usersWithMemberships);
   },
 
-  async getAllMembersFromAllHosts() {
-    const users = await Meteor.users
-      .find(
-        {},
-        {
-          fields: publicUserFields,
-        }
-      )
-      .fetchAsync();
-
-    const usersWithMemberships = await attachMembershipsToUsers(users);
-
-    return getUsersRandomlyWithAvatarsFirst(usersWithMemberships);
-  },
-
   async getHostInfoPage(host) {
     const infoPages = await Pages.find(
       {
@@ -253,24 +183,6 @@ Meteor.methods({
     ).fetchAsync();
 
     return infoPages && infoPages[0] && infoPages[0].longDescription;
-  },
-
-  async getPortalHostInfoPage() {
-    const portalHost = await Hosts.findOneAsync({ isPortalHost: true });
-    if (!portalHost) {
-      throw new Meteor.Error('no portalhost defined');
-    }
-
-    return await Pages.findOneAsync(
-      {
-        host: portalHost.host,
-      },
-      {
-        images: 1,
-        longDescription: 1,
-        title: 1,
-      }
-    );
   },
 
   async setHostHue(hue) {

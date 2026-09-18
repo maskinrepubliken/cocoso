@@ -3,9 +3,6 @@ import React from 'react';
 import { Trans } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
-import { useAtomValue } from 'jotai';
-
-import { platformAtom } from '/imports/state';
 import { Box, Center, Flex, Heading, Text } from '/imports/ui/core';
 
 import FeedbackForm from './FeedbackForm';
@@ -47,14 +44,11 @@ export interface FooterProps {
 }
 
 export function Footer({ currentHost }: FooterProps) {
-  const platform = useAtomValue(platformAtom);
-
-  if (!platform || !currentHost || !currentHost.settings) {
+  if (!currentHost || !currentHost.settings) {
     return null;
   }
 
   const { settings } = currentHost;
-  const isFederationFooter = platform?.isFederationLayout && platform.footer;
   const activeMenu = currentHost.settings?.menu?.filter(
     (item) => item.isVisible
   );
@@ -81,8 +75,7 @@ export function Footer({ currentHost }: FooterProps) {
         </Flex>
       </Center>
 
-      {!currentHost.isPortalHost && (
-        <Center pt="2">
+      <Center pt="2">
           <Flex
             direction="column"
             justify="center"
@@ -111,80 +104,21 @@ export function Footer({ currentHost }: FooterProps) {
                 <OldFooter host={currentHost.host} settings={settings} />
               )}
             </Center>
-            {!isFederationFooter && (
-              <>
-                <Center>
-                  <Link to="/terms-&-privacy-policy">
-                    <Text color="blue.100" fontSize="xs">
-                      <Trans i18nKey="common:terms.title">
-                        Terms of Service & Privacy Policy
-                      </Trans>
-                    </Text>
-                  </Link>
-                </Center>
-                <FeedbackForm />
-              </>
-            )}
+            <Center>
+              <Link to="/terms-&-privacy-policy">
+                <Text color="blue.100" fontSize="xs">
+                  <Trans i18nKey="common:terms.title">
+                    Terms of Service & Privacy Policy
+                  </Trans>
+                </Text>
+              </Link>
+            </Center>
+            <FeedbackForm />
           </Flex>
         </Center>
-      )}
       <Center p="4">
         <ChangeLanguageMenu centered />
       </Center>
     </Box>
-  );
-}
-
-export function PlatformFooter() {
-  const platform = useAtomValue(platformAtom);
-
-  if (!platform || !platform.isFederationLayout || !platform.footer) {
-    return null;
-  }
-
-  return (
-    <Center bg="gray.900" className="platform-footer">
-      <Box
-        color="white"
-        py="4"
-        css={{
-          fontSize: '85%',
-          maxWidth: '480px',
-          textAlign: 'center',
-        }}
-      >
-        <Box p="4">
-          <a href={`https://${platform?.portalHost}`}>
-            <Heading color="white" size="md" textAlign="center">
-              {platform.name}
-            </Heading>
-          </a>
-        </Box>
-
-        <Box p="2" className="text-content">
-          {HTMLReactParser(DOMPurify.sanitize(platform.footer))}
-        </Box>
-
-        <Center>
-          <Link to="/terms-&-privacy-policy">
-            <Text
-              color="theme.50"
-              fontSize="xs"
-              css={{
-                textAlign: 'center',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              <Trans i18nKey="common:terms.title">
-                Terms of Service & Privacy Policy
-              </Trans>
-            </Text>
-          </Link>
-        </Center>
-        <FeedbackForm isDarkText={false} />
-      </Box>
-    </Center>
   );
 }

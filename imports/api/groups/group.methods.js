@@ -11,7 +11,6 @@ import { isAdmin, isContributorOrAdmin, isMember } from '../users/user.roles';
 import Hosts from '../hosts/host';
 import Groups from './group';
 import Activities from '../activities/activity';
-import Platform from '../platform/platform';
 import {
   getGroupRegistrationEmailBody,
   getInviteToPrivateGroupEmailBody,
@@ -104,18 +103,13 @@ Meteor.methods({
     };
   },
 
-  async getGroupsWithMeetings(isPortalHost = false, hostPredefined) {
+  async getGroupsWithMeetings(hostPredefined) {
     const host = hostPredefined || getHost(this);
 
     try {
-      const retrievedGroups = await Meteor.callAsync(
-        'getGroups',
-        isPortalHost,
-        host
-      );
+      const retrievedGroups = await Meteor.callAsync('getGroups', host);
       const allGroupActivities = await Meteor.callAsync(
         'getAllGroupMeetingsFuture',
-        isPortalHost,
         host
       );
       const parsedGroups = parseGroupsWithMeetings(
@@ -128,13 +122,14 @@ Meteor.methods({
     }
   },
 
-  async getGroups(isPortalHost = false, hostPredefined) {
+  async getGroups(hostPredefined) {
     const user = await Meteor.userAsync();
     const host = hostPredefined || getHost(this);
 
-    const allGroups = isPortalHost
-      ? await Groups.find({}, { sort: { creationDate: -1 } }).fetchAsync()
-      : await Groups.find({ host }).fetchAsync();
+    const allGroups = await Groups.find(
+      { host },
+      { sort: { creationDate: -1 } }
+    ).fetchAsync();
     const groupsFiltered = allGroups.filter((group) => {
       if (!group.isPrivate) {
         return true;
@@ -169,18 +164,12 @@ Meteor.methods({
     }));
   },
 
-  async getAllGroupMeetingsFuture(isPortalHost = false, hostPredefined) {
+  async getAllGroupMeetingsFuture(hostPredefined) {
     const host = hostPredefined || getHost(this);
 
     const dateNow = new Date().toISOString().substring(0, 10);
 
     try {
-      if (isPortalHost) {
-        return await Activities.find({
-          isGroupMeeting: true,
-          'datesAndTimes.startDate': { $gte: dateNow },
-        }).fetchAsync();
-      }
       return await Activities.find({
         host,
         isGroupMeeting: true,
@@ -208,16 +197,8 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
     const host = hostPredefined || getHost(this);
-    const platform = await Platform.findOneAsync();
 
     try {
-      if (platform?.isFederationLayout) {
-        return await Groups.find({
-          isPrivate: { $ne: true },
-          isArchived: { $ne: true },
-          $or: [{ authorUsername: username }, { 'members.username': username }],
-        }).fetchAsync();
-      }
       return await Groups.find({
         isPrivate: { $ne: true },
         isArchived: { $ne: true },

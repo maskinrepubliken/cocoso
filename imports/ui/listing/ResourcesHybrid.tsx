@@ -9,7 +9,6 @@ import PageHeading from './PageHeading';
 import PopupHandler from './PopupHandler';
 import InfiniteScroller from './InfiniteScroller';
 import NewGridThumb from './NewGridThumb';
-import ShowContentFromOtherHosts from '/imports/ui/listing/ShowContentFromOtherHosts';
 
 export interface ResourcesHybridProps {
   Host: object;
@@ -41,7 +40,6 @@ export default function ResourcesHybrid({
             >
               <NewGridThumb
                 fixedImageHeight
-                host={currentHost?.isPortalHost ? resource.host : null}
                 imageUrl={getImageUrl(resource.images?.[0], 'small')}
                 index={index}
                 title={resource.label}
@@ -49,11 +47,6 @@ export default function ResourcesHybrid({
             </Box>
           )}
         </InfiniteScroller>
-
-        <ShowContentFromOtherHosts
-          isPortalHost={currentHost?.isPortalHost}
-          listing="resources"
-        />
 
         <PopupHandler
           item={modalItem}

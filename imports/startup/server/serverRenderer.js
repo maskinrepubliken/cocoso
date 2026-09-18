@@ -9,7 +9,6 @@ import {
 } from 'react-router';
 
 import Hosts from '/imports/api/hosts/host';
-import Platform from '/imports/api/platform/platform';
 import appRoutes from '/imports/appRoutes';
 import { getGlobalStyles } from '/imports/ui/utils/globalStylesManager';
 import i18n from '/imports/startup/i18n';
@@ -21,8 +20,6 @@ export default async function serverRenderer(sink) {
   const host = sink?.request?.headers?.['host'];
 
   const Host = await Hosts.findOneAsync({ host });
-  const allHosts = await Meteor.callAsync('getAllHosts');
-  const platform = await Platform.findOneAsync();
   const pages = await Meteor.callAsync('getPageTitles');
 
   if (!stitchesConfig) {
@@ -58,9 +55,7 @@ export default async function serverRenderer(sink) {
 
   const props = {
     Host,
-    allHosts,
     pageTitles,
-    platform,
     i18nInstance: requestI18n,
   };
 

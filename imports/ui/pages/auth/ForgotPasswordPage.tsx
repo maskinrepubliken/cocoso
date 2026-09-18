@@ -37,8 +37,7 @@ export default function ForgotPasswordPage() {
       await call('resetUserPassword', email);
       message.success(t('password.message.checkMail'));
       setEmailSent(true);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
       message.error(error?.error?.reason || error?.reason);
     }
   };

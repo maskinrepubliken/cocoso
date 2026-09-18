@@ -12,7 +12,7 @@ Meteor.methods({
     const host = getHost(this);
     const isAdminUser = await isAdmin(user._id, host);
 
-    if (!user.isSuperAdmin && !isAdminUser) {
+    if (!isAdminUser) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -42,18 +42,6 @@ Meteor.methods({
           },
         },
       });
-      await Hosts.updateAsync(
-        { host },
-        {
-          $set: {
-            verifiedBy: {
-              username: user.username,
-              userId: user._id,
-              date: new Date(),
-            },
-          },
-        }
-      );
       await Meteor.callAsync('sendNewAdminEmail', memberId);
     } catch (error) {
       throw new Meteor.Error(error, 'Did not work! :/');
@@ -64,7 +52,7 @@ Meteor.methods({
     const user = await Meteor.userAsync();
     const host = getHost(this);
 
-    if (!user.isSuperAdmin && !(await isContributorOrAdmin(user._id, host))) {
+    if (!(await isContributorOrAdmin(user._id, host))) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -93,18 +81,6 @@ Meteor.methods({
           },
         },
       });
-      await Hosts.updateAsync(
-        { host },
-        {
-          $set: {
-            verifiedBy: {
-              username: user.username,
-              userId: user._id,
-              date: new Date(),
-            },
-          },
-        }
-      );
       await Meteor.callAsync('sendNewContributorEmail', memberId);
     } catch (error) {
       throw new Meteor.Error(error, 'Did not work! :/');
@@ -117,7 +93,7 @@ Meteor.methods({
 
     const isAdminUser = await isAdmin(user._id, host);
 
-    if (!user.isSuperAdmin && !isAdminUser) {
+    if (!isAdminUser) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -139,18 +115,6 @@ Meteor.methods({
           },
         },
       });
-      await Hosts.updateAsync(
-        { host },
-        {
-          $set: {
-            unVerifiedBy: {
-              username: user.username,
-              userId: user._id,
-              date: new Date(),
-            },
-          },
-        }
-      );
 
       // const currentHost = await Hosts.findOneAsync({ host });
       // const hostName = currentHost.settings.name;
@@ -171,7 +135,7 @@ Meteor.methods({
     const currentHost = await Hosts.findOneAsync({ host });
     const isAdminUser = await isAdmin(user._id, host);
 
-    if (!user.isSuperAdmin && !isAdminUser) {
+    if (!isAdminUser) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -194,7 +158,7 @@ Meteor.methods({
     const user = await Meteor.userAsync();
     const isAdminUser = await isAdmin(user._id, host);
 
-    if (!user.isSuperAdmin && !isAdminUser) {
+    if (!isAdminUser) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -219,7 +183,7 @@ Meteor.methods({
     const currentHost = await Hosts.findOneAsync({ host });
     const isAdminUser = await isAdmin(user._id, host);
 
-    if (!user.isSuperAdmin && !isAdminUser) {
+    if (!isAdminUser) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -249,7 +213,7 @@ Meteor.methods({
     const currentHost = await Hosts.findOneAsync({ host });
     const isAdminUser = await isAdmin(user._id, host);
 
-    if (!user.isSuperAdmin && !isAdminUser) {
+    if (!isAdminUser) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -266,7 +230,7 @@ Meteor.methods({
     const currentHost = await Hosts.findOneAsync({ host });
     const isAdminUser = await isAdmin(user._id, host);
 
-    if (!user.isSuperAdmin && !isAdminUser) {
+    if (!isAdminUser) {
       throw new Meteor.Error('You are not allowed');
     }
 

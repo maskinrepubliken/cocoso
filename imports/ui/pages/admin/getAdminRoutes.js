@@ -62,10 +62,6 @@ const getAdminRoutes = (menuItems) => [
         value: '/admin/listing/calendar',
         description: <Trans i18nKey="admin:menu.info.calendar" />,
       },
-      // {
-      // label: getMenuLabel(menuItems, 'communities'),
-      // value: '/admin/listing//communities',
-      // },
       {
         label: getMenuLabel(menuItems, 'groups'),
         value: '/admin/listing/groups',
@@ -112,46 +108,6 @@ const getAdminRoutes = (menuItems) => [
     label: <Trans i18nKey="admin:reports.title" />,
     value: '/admin/reports',
     description: <Trans i18nKey="admin:reports.description" />,
-  },
-];
-
-export const getSuperAdminRoutes = () => [
-  {
-    label: <Trans i18nKey="admin:platform.main.title" />,
-    value: '/superadmin/platform',
-    isMulti: true,
-    content: [
-      {
-        label: <Trans i18nKey="admin:platform.logo.title" />,
-        description: <Trans i18nKey="admin:platform.logo.description" />,
-        value: '/superadmin/platform/logo',
-      },
-      {
-        label: <Trans i18nKey="admin:platform.info.title" />,
-        description: <Trans i18nKey="admin:platform.info.description" />,
-        value: '/superadmin/platform/info',
-      },
-      {
-        label: <Trans i18nKey="admin:platform.options.title" />,
-        description: <Trans i18nKey="admin:platform.options.description" />,
-        value: '/superadmin/platform/options',
-      },
-      {
-        label: <Trans i18nKey="admin:platform.footer.title" />,
-        description: <Trans i18nKey="admin:platform.footer.description" />,
-        value: '/superadmin/platform/footer',
-      },
-    ],
-  },
-  {
-    label: <Trans i18nKey="admin:platform.intro.title" />,
-    description: <Trans i18nKey="admin:platform.intro.description" />,
-    value: '/superadmin/intro',
-  },
-  {
-    label: <Trans i18nKey="admin:platform.newhost.title" />,
-    description: <Trans i18nKey="admin:platform.newhost.description" />,
-    value: '/superadmin/new-host',
   },
 ];
 

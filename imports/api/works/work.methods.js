@@ -2,18 +2,9 @@ import { Meteor } from 'meteor/meteor';
 
 import { getHost } from '../_utils/shared';
 import Works from './work';
-import Platform from '../platform/platform';
 import { isContributorOrAdmin } from '../users/user.roles';
 
 Meteor.methods({
-  async getAllWorksFromAllHosts() {
-    try {
-      return await Works.find({}, { sort: { creationDate: -1 } }).fetchAsync();
-    } catch (error) {
-      throw new Meteor.Error(error, 'Could not retrieve data');
-    }
-  },
-
   async getAllWorks(hostPredefined) {
     const host = hostPredefined || getHost(this);
 
@@ -34,14 +25,8 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
     const host = hostPredefined || getHost(this);
-    const platform = await Platform.findOneAsync();
 
     try {
-      if (platform.isFederationLayout) {
-        return await Works.find({
-          authorUsername: username,
-        }).fetchAsync();
-      }
       return await Works.find({
         host,
         authorUsername: username,

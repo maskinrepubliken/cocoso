@@ -9,7 +9,6 @@ import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
 import PopupHandler from './PopupHandler';
 import SexyThumb from './SexyThumb';
-import ShowContentFromOtherHosts from '/imports/ui/listing/ShowContentFromOtherHosts';
 
 export interface GroupsHybridProps {
   Host: any;
@@ -34,18 +33,12 @@ export default function GroupsHybrid({ Host, groups }: GroupsHybridProps) {
           >
             <SexyThumb
               activity={item}
-              host={currentHost?.isPortalHost ? item.host : null}
               index={index}
               tags={item.isPrivate ? [tc('labels.private')] : null}
             />
           </Center>
         )}
       </InfiniteScroller>
-
-      <ShowContentFromOtherHosts
-        isPortalHost={currentHost?.isPortalHost}
-        listing="groups"
-      />
 
       <PopupHandler
         item={modalItem}

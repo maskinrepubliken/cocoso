@@ -18,14 +18,13 @@ import {
 } from '/imports/ui/core';
 import {
   currentHostAtom,
-  currentUserAtom,
   isDesktopAtom,
   roleAtom,
 } from '/imports/state';
 import FeedbackForm from '/imports/ui/layout/FeedbackForm';
 
 import AdminMenu from './AdminMenu';
-import getAdminRoutes, { getSuperAdminRoutes } from './getAdminRoutes';
+import getAdminRoutes from './getAdminRoutes';
 
 const iconContainerProps = {
   align: 'center',
@@ -51,7 +50,6 @@ function AdminHeader({ currentRoute }) {
 }
 
 export default function AdminContainer({ Host }) {
-  const currentUser = useAtomValue(currentUserAtom);
   const currentHostFromAtom = useAtomValue(currentHostAtom);
   const currentHost = Host || currentHostFromAtom;
   const isDesktop = useAtomValue(isDesktopAtom);
@@ -67,12 +65,7 @@ export default function AdminContainer({ Host }) {
   const menuItems = currentHost?.settings?.menu;
   const isAdmin = role === 'admin';
   const pathname = location?.pathname;
-  const routes = [];
-  if (currentUser?.isSuperAdmin && pathname.split('/')[1] === 'superadmin') {
-    routes.push(...getSuperAdminRoutes());
-  } else if (isAdmin) {
-    routes.push(...getAdminRoutes(menuItems));
-  }
+  const routes: any[] = isAdmin ? getAdminRoutes(menuItems) : [];
 
   const getCurrentRoute = () => {
     if (!routes) {
@@ -142,7 +135,6 @@ export default function AdminContainer({ Host }) {
 
   if (
     !isAdmin &&
-    !currentUser?.isSuperAdmin &&
     pathname.split('/')[2] !== 'my-profile' &&
     pathname.split('/')[2] !== 'messages'
   ) {
@@ -215,11 +207,7 @@ export default function AdminContainer({ Host }) {
     <Box bg="bluegray.100" css={{ minHeight: '100vh' }}>
       <Grid h="100%" templateColumns="320px 50% 1fr">
         <Box>
-          <AdminMenu
-            currentHost={currentHost}
-            routes={routes}
-            onItemClick={handleItemClick}
-          />
+          <AdminMenu routes={routes} onItemClick={handleItemClick} />
         </Box>
 
         <Box p="6">

@@ -3,7 +3,6 @@ import { useSubscribe, useTracker } from 'meteor/react-meteor-data';
 import React, { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
-import { useHydrateAtoms } from 'jotai/utils';
 import { useAtom, useSetAtom } from 'jotai';
 import { Toaster } from 'react-hot-toast';
 import dayjs from 'dayjs';
@@ -16,11 +15,9 @@ import useMediaQuery from '/imports/api/_utils/useMediaQuery';
 import Memberships from '/imports/api/memberships/membership';
 import i18n from '/imports/startup/i18n';
 import {
-  allHostsAtom,
   currentHostAtom,
   currentUserAtom,
   pageTitlesAtom,
-  platformAtom,
   roleAtom,
   isDesktopAtom,
   isMobileAtom,
@@ -35,15 +32,13 @@ import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
 import TopBarHandler from './TopBarHandler';
 import Header from './Header';
-import { Footer, PlatformFooter } from './Footers';
+import { Footer } from './Footers';
 
 dayjs.extend(updateLocale);
 
 export interface WrapperHybridProps {
   Host: any;
-  allHosts: any[];
   pageTitles: any[];
-  platform: any;
   // Set only by serverRenderer.js — a per-request i18next clone
   // (i18n.cloneInstance) already resolved to the visitor's actual
   // language, so SSR output matches what the client will hydrate with.
@@ -53,13 +48,9 @@ export interface WrapperHybridProps {
 
 export default function WrapperHybrid({
   Host,
-  allHosts,
   pageTitles,
-  platform,
   i18nInstance,
 }: WrapperHybridProps) {
-  useHydrateAtoms([[platformAtom, platform]]);
-  useHydrateAtoms([[allHostsAtom, allHosts]]);
   const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
   const [pTitles, setPageTitles] = useAtom(pageTitlesAtom);
   const setCurrentUser = useSetAtom(currentUserAtom);
@@ -155,7 +146,7 @@ export default function WrapperHybrid({
 
   const pathname = location?.pathname;
   const pathnameSplitted = pathname.split('/');
-  const adminPage = ['admin', 'superadmin'].includes(pathnameSplitted[1]);
+  const adminPage = pathnameSplitted[1] === 'admin';
 
   useEffect(() => {
     if (pathnameSplitted[1][0] === '@' && !pathnameSplitted[3]) {
@@ -186,12 +177,7 @@ export default function WrapperHybrid({
               <Outlet />
             </Box>
 
-            {!adminPage && (
-              <>
-                <Footer currentHost={currentHost || Host} />
-                <PlatformFooter />
-              </>
-            )}
+            {!adminPage && <Footer currentHost={currentHost || Host} />}
           </DummyWrapper>
         </Suspense>
 

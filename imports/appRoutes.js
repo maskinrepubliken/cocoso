@@ -22,7 +22,6 @@ import WorkItemHandler from '/imports/ui/pages/works/WorkItemHandler';
 import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
 import UserProfileHandler from '/imports/ui/pages/profile/UserProfileHandler';
 import ComposablePageHandler from '/imports/ui/pages/composablepages/ComposablePageHandler';
-import CommunityListHandler from '/imports/ui/pages/hosts/CommunityListHandler';
 import CalendarHandler from '/imports/ui/pages/calendar/CalendarHandler';
 
 // Route loaders re-run on every URL change by default, including search-param-only
@@ -152,32 +151,11 @@ const MemberGroups = loadable(() =>
 const MemberWorks = loadable(() =>
   import('/imports/ui/pages/works/MemberWorks')
 );
-const RegistrationIntro = loadable(() =>
-  import('/imports/ui/pages/auth/RegistrationIntro')
-);
 const PreviousNewsletters = loadable(() =>
   import('/imports/ui/pages/admin/EmailNewsletter/PreviousNewsletters')
 );
 const Newsletter = loadable(() =>
   import('/imports/ui/pages/admin/EmailNewsletter/Newsletter')
-);
-const PlatformSettingsLogo = loadable(() =>
-  import('./ui/pages/superadmin/PlatformSettingsLogo')
-);
-const PlatformSettingsForm = loadable(() =>
-  import('./ui/pages/superadmin/PlatformSettingsForm')
-);
-const PlatformSettingsOptions = loadable(() =>
-  import('./ui/pages/superadmin/PlatformSettingsOptions')
-);
-const PlatformSettingsFooter = loadable(() =>
-  import('./ui/pages/superadmin/PlatformSettingsFooter')
-);
-const PlatformRegistrationIntro = loadable(() =>
-  import('./ui/pages/superadmin/PlatformRegistrationIntro')
-);
-const NewHostAdmin = loadable(() =>
-  import('./ui/pages/superadmin/NewHostAdmin')
 );
 
 import {
@@ -186,7 +164,6 @@ import {
   getActivity,
   getCalendarEntries,
   getComposablePage,
-  getCommunities,
   getGroup,
   getGroups,
   getPages,
@@ -428,37 +405,9 @@ const getAdminRoutes = (props) => [
   },
 ];
 
-const getSuperAdminRoutes = (props) => [
-  {
-    path: 'platform/logo',
-    element: createRouteElement(PlatformSettingsLogo, props),
-  },
-  {
-    path: 'platform/info',
-    element: createRouteElement(PlatformSettingsForm, props),
-  },
-  {
-    path: 'platform/options',
-    element: createRouteElement(PlatformSettingsOptions, props),
-  },
-  {
-    path: 'platform/footer',
-    element: createRouteElement(PlatformSettingsFooter, props),
-  },
-  {
-    path: 'new-host',
-    element: createRouteElement(NewHostAdmin, props),
-  },
-  {
-    path: 'intro',
-    element: createRouteElement(PlatformRegistrationIntro, props),
-  },
-];
-
 export default function appRoutes(props) {
   const Host = props?.Host;
   const host = Host?.host;
-  const isPortalHost = Boolean(Host?.isPortalHost);
 
   return [
     {
@@ -477,7 +426,7 @@ export default function appRoutes(props) {
               index: true,
               element: createRouteElement(ActivityListHandler, props),
               loader: async ({ request }) =>
-                await getActivities({ request, host, isPortalHost }),
+                await getActivities({ request, host }),
               shouldRevalidate: revalidateOn(['showPast']),
             },
             {
@@ -494,7 +443,7 @@ export default function appRoutes(props) {
             {
               index: true,
               element: createRouteElement(GroupListHandler, props),
-              loader: async () => await getGroups({ host, isPortalHost }),
+              loader: async () => await getGroups({ host }),
               shouldRevalidate: revalidateOn(),
             },
             {
@@ -513,7 +462,7 @@ export default function appRoutes(props) {
               index: true,
               element: createRouteElement(CalendarHandler, props),
               loader: async ({ request }) =>
-                await getCalendarEntries({ host, isPortalHost }),
+                await getCalendarEntries({ host }),
               shouldRevalidate: revalidateOn(['edit']),
             },
             {
@@ -538,7 +487,7 @@ export default function appRoutes(props) {
         {
           path: 'people',
           element: createRouteElement(UserListHandler, props),
-          loader: async () => await getPeople({ host, isPortalHost }),
+          loader: async () => await getPeople({ host }),
           shouldRevalidate: revalidateOn(),
         },
         {
@@ -547,7 +496,7 @@ export default function appRoutes(props) {
             {
               index: true,
               element: createRouteElement(ResourceListHandler, props),
-              loader: async () => await getResources({ host, isPortalHost }),
+              loader: async () => await getResources({ host }),
               shouldRevalidate: revalidateOn(),
             },
             {
@@ -565,7 +514,7 @@ export default function appRoutes(props) {
             {
               index: true,
               element: createRouteElement(WorkListHandler, props),
-              loader: async () => await getWorks({ host, isPortalHost }),
+              loader: async () => await getWorks({ host }),
               shouldRevalidate: revalidateOn(),
             },
           ],
@@ -608,15 +557,6 @@ export default function appRoutes(props) {
             await getComposablePage({ params, Host }),
         },
         {
-          path: 'communities',
-          element: createRouteElement(CommunityListHandler, props),
-          loader: async () => getCommunities(),
-        },
-        {
-          path: 'intro',
-          element: createRouteElement(RegistrationIntro, props),
-        },
-        {
           path: 'login',
           element: createRouteElement(LoginPage, props),
         },
@@ -653,11 +593,6 @@ export default function appRoutes(props) {
           path: 'admin',
           element: createRouteElement(AdminContainer, props),
           children: Meteor.isServer ? null : [...getAdminRoutes(props)],
-        },
-        {
-          path: 'superadmin',
-          element: createRouteElement(AdminContainer, props),
-          children: Meteor.isServer ? null : [...getSuperAdminRoutes(props)],
         },
         {
           path: 'not-found',

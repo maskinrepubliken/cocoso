@@ -63,7 +63,7 @@ Meteor.methods({
     const user = await Meteor.userAsync();
     const host = getHost(this);
 
-    if (!user || (!user.isSuperAdmin && !(await isAdmin(user._id, host)))) {
+    if (!user || !(await isAdmin(user._id, host))) {
       throw new Meteor.Error('You are not allowed');
     }
 

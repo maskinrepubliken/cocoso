@@ -8,7 +8,6 @@ import Hosts from '../hosts/host';
 import Activities from './activity';
 import Groups from '../groups/group';
 import Resources from '../resources/resource';
-import Platform from '../platform/platform';
 import {
   getRegistrationEmailBody,
   getUnregistrationEmailBody,
@@ -46,34 +45,6 @@ const filterPrivateGroups = async (activities, user) => {
 };
 
 Meteor.methods({
-  async getAllPublicActivitiesFromAllHosts(showPast = false) {
-    const user = await Meteor.userAsync();
-    const today = dayjs().format('YYYY-MM-DD');
-
-    try {
-      if (showPast) {
-        const pastActs = await Activities.find({
-          $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
-          'datesAndTimes.endDate': { $lte: today },
-        }).fetchAsync();
-        const pastActsSorted = parseGroupActivities(pastActs)?.sort(
-          compareDatesForSortActivitiesReverse
-        );
-        return await filterPrivateGroups(pastActsSorted, user);
-      }
-      const futureActs = await Activities.find({
-        $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
-        'datesAndTimes.endDate': { $gte: today },
-      }).fetchAsync();
-      const futureActsSorted = parseGroupActivities(futureActs)?.sort(
-        compareDatesForSortActivities
-      );
-      return await filterPrivateGroups(futureActsSorted, user);
-    } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch data");
-    }
-  },
-
   async getAllPublicActivities(showPast = false, hostPredefined) {
     const host = hostPredefined || getHost(this);
     const user = await Meteor.userAsync();
@@ -106,17 +77,6 @@ Meteor.methods({
     }
   },
 
-  async getAllActivitiesFromAllHosts() {
-    const user = await Meteor.userAsync();
-    try {
-      const allActs = await Activities.find().fetchAsync();
-      const allActsParsed = parseGroupActivities(allActs);
-      return await filterPrivateGroups(allActsParsed, user);
-    } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch data");
-    }
-  },
-
   async getAllActivities(hostPredefined) {
     const host = hostPredefined || getHost(this);
 
@@ -134,11 +94,7 @@ Meteor.methods({
 
   async getActivityById(activityId) {
     const host = getHost(this);
-    const currentHost = await Hosts.findOneAsync({ host });
     try {
-      if (!host || currentHost.isPortal) {
-        return await Activities.findOneAsync(activityId);
-      }
       return await Activities.findOneAsync({ _id: activityId, host });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
@@ -169,14 +125,8 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
     const host = hostPredefined || getHost(this);
-    const platform = await Platform.findOneAsync();
 
     try {
-      if (platform?.isFederationLayout) {
-        return await Activities.find({
-          authorName: username,
-        }).fetchAsync();
-      }
       return await Activities.find({
         host,
         authorName: username,
