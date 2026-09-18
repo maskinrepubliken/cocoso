@@ -185,6 +185,15 @@ export async function getHostMembersForAdmin() {
   }
 }
 
+export async function getLocationsForAdmin() {
+  try {
+    const locations = await call('getLocationsForAdmin');
+    return { locations };
+  } catch {
+    return { locations: null };
+  }
+}
+
 export async function getEmails() {
   try {
     const emails = await call('getEmails');

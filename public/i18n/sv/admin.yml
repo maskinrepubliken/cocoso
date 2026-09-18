@@ -198,6 +198,43 @@ pages:
     label: Ändra sidordning
     info: Du kan ändra ordningen på sidorna genom att dra dem uppåt och nedåt. Det påverkar deras visningsordning i navigeringsmenyn
 
+# ADMIN PLATSER
+locations:
+  title: Orter
+  description: Kommunens orter och platser, var och en med sin egen startsida
+  info: Innehåll kan tillhöra en ort. Publicerade orter får en egen sida och visas i ortväljaren. Dra för att ändra ordningen.
+  new: Ny ort
+  edit: Redigera ort
+  none: Inga orter ännu
+  published: Publicerad
+  draft: Utkast
+  publish: Publicera
+  unpublish: Avpublicera
+  removeTitle: Ta bort ort
+  removeBody: Ta bort {{ name }}? Det går bara när inget innehåll tillhör orten.
+  message:
+    saved: Orten har sparats
+    removed: Orten har tagits bort
+  form:
+    name:
+      label: Namn
+    slug:
+      label: Adress
+      helper: Sista delen av webbadressen till orten. Endast bokstäver, siffror och bindestreck.
+    description:
+      label: Beskrivning
+      helper: En kort introduktion som visas högst upp på ortens sida
+    image:
+      label: Bild
+      helper: En bild av orten, som visas på dess sida och i ortväljaren
+    landingPage:
+      label: Innehåll på startsidan
+      helper: Visa valfritt en komponerbar sida ovanför de automatiska avsnitten
+      none: Ingen
+    published:
+      label: Publicerad
+      helper: Opublicerade orter är dolda för besökare men kan fortfarande kopplas till innehåll
+
 composable:
   title: Komponerbara sidor
   existing: Befintliga

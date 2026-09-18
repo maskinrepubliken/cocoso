@@ -21,6 +21,7 @@ export default async function serverRenderer(sink) {
 
   const Host = await getSite(sitePublicFields);
   const pages = await Meteor.callAsync('getPageTitles');
+  const locations = await Meteor.callAsync('getLocations');
 
   if (!stitchesConfig) {
     stitchesConfig = await import('/stitches.config');
@@ -56,6 +57,7 @@ export default async function serverRenderer(sink) {
   const props = {
     Host,
     pageTitles,
+    locations,
     i18nInstance: requestI18n,
   };
 

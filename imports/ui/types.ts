@@ -168,6 +168,21 @@ export interface CategoryItem {
 }
 
 /**
+ * Location is a place within the municipality with its own landing page
+ */
+export interface Location {
+  _id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  images?: string[];
+  isPublished?: boolean;
+  order?: number;
+  landingPageId?: string;
+  coordinates?: { lat: number; lng: number };
+}
+
+/**
  * PageTitle for page navigation in menus
  * Used in pageTitlesAtom and Header/MenuDrawer components
  */

@@ -91,6 +91,7 @@ const MenuDesign = loadable(() =>
   import('/imports/ui/pages/admin/design/MenuDesign')
 );
 const Members = loadable(() => import('/imports/ui/pages/admin/Members'));
+const Locations = loadable(() => import('/imports/ui/pages/admin/Locations'));
 const Emails = loadable(() => import('/imports/ui/pages/admin/Emails'));
 const EmailNewsletter = loadable(() =>
   import('/imports/ui/pages/admin/EmailNewsletter')
@@ -174,6 +175,7 @@ import {
   getWorks,
   getWork,
   getHostMembersForAdmin,
+  getLocationsForAdmin,
   getEmails,
   getComposablePageTitles,
   getActivitiesByUser,
@@ -383,6 +385,11 @@ const getAdminRoutes = (props) => [
         element: createRouteElement(WorksAdmin, props),
       },
     ],
+  },
+  {
+    path: 'locations',
+    element: createRouteElement(Locations, props),
+    loader: async () => await getLocationsForAdmin(),
   },
   {
     path: 'users',

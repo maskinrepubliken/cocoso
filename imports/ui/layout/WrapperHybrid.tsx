@@ -4,6 +4,7 @@ import React, { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import { useAtom, useSetAtom } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import { Toaster } from 'react-hot-toast';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
@@ -21,6 +22,7 @@ import {
   roleAtom,
   isDesktopAtom,
   isMobileAtom,
+  locationsAtom,
   renderedAtom,
 } from '/imports/state';
 import { applyGlobalStyles } from '/imports/ui/utils/globalStylesManager';
@@ -39,6 +41,7 @@ dayjs.extend(updateLocale);
 export interface WrapperHybridProps {
   Host: any;
   pageTitles: any[];
+  locations?: any[];
   // Set only by serverRenderer.js — a per-request i18next clone
   // (i18n.cloneInstance) already resolved to the visitor's actual
   // language, so SSR output matches what the client will hydrate with.
@@ -49,8 +52,10 @@ export interface WrapperHybridProps {
 export default function WrapperHybrid({
   Host,
   pageTitles,
+  locations,
   i18nInstance,
 }: WrapperHybridProps) {
+  useHydrateAtoms([[locationsAtom, locations || []]]);
   const [currentHost, setCurrentHost] = useAtom(currentHostAtom);
   const [pTitles, setPageTitles] = useAtom(pageTitlesAtom);
   const setCurrentUser = useSetAtom(currentUserAtom);

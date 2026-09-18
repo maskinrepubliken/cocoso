@@ -54,6 +54,7 @@ onPageLoad(async () => {
 
   const currentHost = await Meteor.callAsync('getSite');
   const pageTitles = await Meteor.callAsync('getPageTitles');
+  const locations = await Meteor.callAsync('getLocations');
 
   if (!currentHost) {
     console.info('No site configured yet. Rendering the setup wizard.');
@@ -65,6 +66,7 @@ onPageLoad(async () => {
   const props = {
     Host: currentHost,
     pageTitles,
+    locations,
   };
 
   const router = createBrowserRouter(appRoutes(props));

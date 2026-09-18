@@ -42,6 +42,12 @@ const getAdminRoutes = (menuItems) => [
   },
 
   {
+    label: <Trans i18nKey="admin:locations.title" />,
+    value: '/admin/locations',
+    isMulti: false,
+    description: <Trans i18nKey="admin:locations.description" />,
+  },
+  {
     label: <Trans i18nKey="admin:composable.title" />,
     value: '/admin/composable-pages',
     isMulti: false,

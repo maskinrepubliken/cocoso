@@ -198,6 +198,43 @@ pages:
     label: Sayfaların sırasını düzenle
     info: Sayfaları yukarı ve aşağı sürükleyerek yeniden sıralayabilirsin. Navigasyon menüsündeki görüntülenme sırasını etkiler
 
+# YÖNETİM YERLER
+locations:
+  title: Yerler
+  description: Belediyenin köyleri ve yerleri, her birinin kendi açılış sayfası var
+  info: İçerik bir yere ait olabilir. Yayınlanan yerler kendi sayfalarını alır ve yer seçicide görünür. Sırayı değiştirmek için sürükleyin.
+  new: Yeni yer
+  edit: Yeri düzenle
+  none: Henüz yer yok
+  published: Yayında
+  draft: Taslak
+  publish: Yayınla
+  unpublish: Yayından kaldır
+  removeTitle: Yeri kaldır
+  removeBody: '{{ name }} kaldırılsın mı? Bu yalnızca yere ait içerik yokken çalışır.'
+  message:
+    saved: Yer kaydedildi
+    removed: Yer kaldırıldı
+  form:
+    name:
+      label: Ad
+    slug:
+      label: Adres
+      helper: Bu yerin web adresinin son kısmı. Yalnızca harf, rakam ve tire.
+    description:
+      label: Açıklama
+      helper: Yerin sayfasının üstünde gösterilen kısa bir tanıtım
+    image:
+      label: Görsel
+      helper: Yerin bir fotoğrafı; sayfasında ve yer seçicide gösterilir
+    landingPage:
+      label: Açılış sayfası içeriği
+      helper: İsteğe bağlı olarak otomatik bölümlerin üstünde özelleştirilebilir bir sayfa gösterin
+      none: Yok
+    published:
+      label: Yayında
+      helper: Yayınlanmamış yerler ziyaretçilerden gizlenir ancak yine de içeriğe atanabilir
+
 composable:
   title: 'Özelleştirilebilir sayfalar'
   existing: Mevcut olanlar

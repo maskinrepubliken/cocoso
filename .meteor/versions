@@ -54,7 +54,6 @@ mongo-dev-server@1.1.1
 mongo-id@1.0.9
 npm-mongo@6.16.3
 ordered-dict@1.2.0
-percolate:migrations@2.0.1
 promise@1.0.0
 raix:eventemitter@2.0.0
 random@1.2.2

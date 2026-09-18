@@ -198,6 +198,43 @@ pages:
     label: Reorder pages
     info: You may reorder the pages by dragging them up and down. It affects their display order in the navigation menu
 
+# ADMIN LOCATIONS PAGE
+locations:
+  title: Places
+  description: The villages and places of the municipality, each with its own landing page
+  info: Content can belong to one place. Places that are published get their own page and appear in the place picker. Drag to change the order.
+  new: New place
+  edit: Edit place
+  none: No places yet
+  published: Published
+  draft: Draft
+  publish: Publish
+  unpublish: Unpublish
+  removeTitle: Remove place
+  removeBody: Remove {{ name }}? This only works while no content belongs to it.
+  message:
+    saved: The place is saved
+    removed: The place is removed
+  form:
+    name:
+      label: Name
+    slug:
+      label: Address
+      helper: The last part of the web address of this place. Letters, digits and dashes only.
+    description:
+      label: Description
+      helper: A short introduction shown at the top of the place's page
+    image:
+      label: Image
+      helper: A picture of the place, shown on its page and in the place picker
+    landingPage:
+      label: Landing page content
+      helper: Optionally show a composable page above the automatic sections
+      none: None
+    published:
+      label: Published
+      helper: Unpublished places are hidden from visitors but can still be assigned to content
+
 composable:
   title: Composable Pages
   existing: Existing ones
