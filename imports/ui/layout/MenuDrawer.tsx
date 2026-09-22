@@ -143,6 +143,7 @@ export default function MenuDrawer() {
     <Box>
       <Flex align="center" direction="column" gap="1" px="2">
         <IconButton
+          aria-label="Menu"
           icon={<HamburgerIcon fontSize="24px" />}
           size={isDesktop ? 'md' : 'sm'}
           variant="outline"

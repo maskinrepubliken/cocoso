@@ -223,6 +223,8 @@ locations:
   unpublished: not yet published
   everywhere: In the whole municipality
   here: Here in {{ name }}
+  switcher:
+    choose: Choose a place
   landing:
     activities: What's on in {{ name }}
     resources: Places and venues in {{ name }}

@@ -5,10 +5,11 @@ import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import { useAtomValue } from 'jotai';
 
 import { isDesktopAtom } from '/imports/state';
-import { Box, Center, Flex, Heading, Image, Text } from '/imports/ui/core';
+import { Box, Center, Flex, Image, Text } from '/imports/ui/core';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { parseTitle } from '/imports/api/_utils/shared';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import LocationSwitcher from './LocationSwitcher';
 
 const isClient = Meteor?.isClient;
 
@@ -229,30 +230,28 @@ export default function Header({
   return (
     <Box id="header" w="100%">
       <Center p="6">
-        <Link className="logo-container" to="/">
-          <Box css={{ maxHeight: isLogoSmall ? '48px' : '96px' }}>
-            {site.logo ? (
-              <Image
-                alt={`${site?.settings?.name} logo`}
-                src={site.logo}
-                css={{
-                  height: isLogoSmall ? '48px' : '96px',
-                  maxWidth: '360px',
-                  objectFit: 'contain',
-                  width: '100%',
-                }}
-              />
-            ) : (
-              <Heading
-                color="theme.800"
-                fontWeight="400"
-                fontFamily="Raleway, sans-serif"
-              >
-                {site?.settings?.name}
-              </Heading>
-            )}
-          </Box>
-        </Link>
+        <Flex align="center" direction="column" gap="0">
+          {site.logo && (
+            <Link className="logo-container" to="/">
+              <Box css={{ maxHeight: isLogoSmall ? '48px' : '96px' }}>
+                <Image
+                  alt={`${site?.settings?.name} logo`}
+                  src={site.logo}
+                  css={{
+                    height: isLogoSmall ? '48px' : '96px',
+                    maxWidth: '360px',
+                    objectFit: 'contain',
+                    width: '100%',
+                  }}
+                />
+              </Box>
+            </Link>
+          )}
+          <LocationSwitcher
+            hasLogo={Boolean(site.logo)}
+            siteName={site?.settings?.name}
+          />
+        </Flex>
       </Center>
 
       <HeaderMenu siteDoc={site} pageTitles={pageTitles} />
