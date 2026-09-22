@@ -8,6 +8,7 @@ import { Box, Center, Flex, Heading, Modal, Tag } from '/imports/ui/core';
 
 import ActionDates from '../entry/ActionDates';
 import NiceSlider from '../generic/NiceSlider';
+import PlaceholderImage from '../generic/PlaceholderImage';
 
 interface PopupHeaderProps {
   subTitle?: string;
@@ -69,6 +70,7 @@ interface PopupContentProps {
   action?: React.ReactNode;
   content?: React.ReactNode;
   images?: string[];
+  placeholderSeed?: string;
   subTitle?: string;
   title: string;
   tags?: string[];
@@ -78,10 +80,14 @@ function PopupContent({
   action = null,
   content,
   images,
+  placeholderSeed,
   subTitle,
   title,
   tags,
 }: PopupContentProps) {
+  const presentImages = images?.filter((img): img is string => Boolean(img));
+  const hasImages = Boolean(presentImages && presentImages.length > 0);
+
   return (
     <Box css={{ overflowX: 'hidden' }}>
       <PopupHeader subTitle={subTitle} tags={tags} title={title} />
@@ -89,7 +95,17 @@ function PopupContent({
         {action}
       </Center>
       <Center mb="4">
-        <NiceSlider alt={title} images={images} isPopup />
+        {hasImages ? (
+          <NiceSlider alt={title} images={presentImages} isPopup />
+        ) : (
+          <PlaceholderImage
+            seed={placeholderSeed || title}
+            style={{
+              borderRadius: 'var(--cocoso-border-radius)',
+              height: '240px',
+            }}
+          />
+        )}
       </Center>
 
       <Box bg="white" className="text-content" p="4">
@@ -185,6 +201,7 @@ export default function PopupHandler({
             (displayedItem.description && parseHtml(displayedItem.description))
           }
           images={displayedItem.images || [displayedItem.imageUrl]}
+          placeholderSeed={displayedItem._id}
           subTitle={
             displayedItem.subTitle ||
             displayedItem.readingMaterial ||

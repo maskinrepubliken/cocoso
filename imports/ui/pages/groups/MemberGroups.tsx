@@ -20,6 +20,7 @@ function MemberGroups() {
             <Link to={`/groups/${group._id}`}>
               <NewGridThumb
                 imageUrl={group.imageUrl}
+                placeholderSeed={group._id}
                 subTitle={group.readingMaterial}
                 title={group.title}
               />

@@ -106,6 +106,7 @@ export default function WorksHybrid({ siteDoc, works }: WorksHybridProps) {
                 }
                 imageUrl={getImageUrl(work?.images?.[0], 'medium')}
                 index={index}
+                placeholderSeed={work._id}
                 tag={work.category?.label}
                 title={work.title}
               />

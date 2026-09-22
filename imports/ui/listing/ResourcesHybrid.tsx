@@ -46,6 +46,7 @@ export default function ResourcesHybrid({
                 fixedImageHeight
                 imageUrl={getImageUrl(resource.images?.[0], 'small')}
                 index={index}
+                placeholderSeed={resource._id}
                 tag={locationNameOf(resource)}
                 title={resource.label}
               />

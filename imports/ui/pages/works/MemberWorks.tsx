@@ -25,6 +25,7 @@ export default function MemberWorks() {
                   url: work.authorAvatar,
                 }}
                 imageUrl={getImageUrl(work.images?.[0], 'small')}
+                placeholderSeed={work._id}
                 tag={work.category?.label}
                 title={work.title}
               />

@@ -84,6 +84,7 @@ export default function GroupHybrid({
       action={<GroupMembers group={group} />}
       backLink={{ value: '/groups', label: groupsInMenu?.label }}
       images={[group.imageUrl]}
+      placeholderSeed={group._id}
       subTitle={group.readingMaterial}
       tabs={tabs}
       tags={tags}

@@ -5,6 +5,7 @@ import { useAtomValue } from 'jotai';
 
 import { Box, Center, Flex, Heading, Text } from '/imports/ui/core';
 import { locationsAtom } from '/imports/state';
+import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
 // The municipality's places, shown on the home page as the way into each
@@ -43,6 +44,12 @@ export default function LocationsGrid() {
                   '&:hover': { opacity: 0.9 },
                 }}
               >
+                {!imageUrl && (
+                  <PlaceholderImage
+                    seed={location._id}
+                    style={{ left: 0, position: 'absolute', top: 0 }}
+                  />
+                )}
                 <Box
                   css={{
                     background:

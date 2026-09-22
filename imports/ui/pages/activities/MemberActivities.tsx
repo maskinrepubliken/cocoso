@@ -22,6 +22,7 @@ export default function MemberActivities() {
             <Link to={`/activities/${activity._id}`}>
               <NewGridThumb
                 imageUrl={activity.imageUrl}
+                placeholderSeed={activity._id}
                 title={activity.title}
                 subTitle={
                   activity.isGroup

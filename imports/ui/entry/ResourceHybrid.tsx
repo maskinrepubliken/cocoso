@@ -125,6 +125,7 @@ export default function ResourceHybrid({
     <TablyCentered
       backLink={backLink}
       images={resource?.images}
+      placeholderSeed={resource?._id}
       tabs={tabs}
       tags={tags}
       title={resource.label}

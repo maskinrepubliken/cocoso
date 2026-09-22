@@ -6,6 +6,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { Box, Flex, Tag } from '/imports/ui/core';
 
 import { DateJust } from '../entry/FancyDate';
+import PlaceholderImage from '../generic/PlaceholderImage';
 import { getImageUrl } from '../utils/imageHelper';
 
 const isClient = Meteor?.isClient;
@@ -69,6 +70,7 @@ export function ThumbDate({ occurrence }: ThumbDateProps) {
 }
 
 interface Activity {
+  _id?: string;
   datesAndTimes?: Occurrence[];
   readingMaterial?: string;
   subTitle?: string;
@@ -124,13 +126,20 @@ function SexyThumb({
       }}
     >
       <div className="thumb-cover">
-        <LazyLoadImage
-          alt={title}
-          effect="black-and-white"
-          src={imageUrl}
-          style={imageStyle}
-          visibleByDefault={index < 6}
-        />
+        {imageUrl ? (
+          <LazyLoadImage
+            alt={title}
+            effect="black-and-white"
+            src={imageUrl}
+            style={imageStyle}
+            visibleByDefault={index < 6}
+          />
+        ) : (
+          <PlaceholderImage
+            seed={activity._id || title}
+            style={imageStyle as React.CSSProperties}
+          />
+        )}
       </div>
 
       <div className="thumb-text-container">

@@ -18,6 +18,7 @@ import {
 } from '/imports/ui/core';
 
 import NiceSlider from '../generic/NiceSlider';
+import PlaceholderImage from '../generic/PlaceholderImage';
 import Tabs from '../core/Tabs';
 import BackLink, { BackLinkData } from './BackLink';
 import { getImageUrl, getImageUrlBest } from '../utils/imageHelper';
@@ -49,10 +50,22 @@ interface Tab {
 interface TablyCenteredProps extends HeaderProps {
   action?: React.ReactNode;
   content?: React.ReactNode;
-  images?: string[];
+  /**
+   * Images to show under the header. An empty or undefined list draws a
+   * placeholder; pass `null` to leave the image area out altogether.
+   */
+  images?: Array<string | undefined> | null;
+  /** Stable id for the placeholder drawn when there are no images. */
+  placeholderSeed?: string;
   tabs?: Tab[];
   url?: string;
 }
+
+const placeholderStyle: React.CSSProperties = {
+  borderRadius: 'var(--cocoso-border-radius)',
+  height: '280px',
+  maxWidth: '780px',
+};
 
 const AvatarHolder: React.FC<AvatarHolderProps> = ({ author }) => {
   if (!author) {
@@ -183,6 +196,7 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
   dates,
   content,
   images,
+  placeholderSeed,
   subTitle,
   tabs,
   tags,
@@ -198,7 +212,10 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
   const selectedTab = tabs?.find((tab, index) => index === tabIndex);
 
   const description = subTitle || content?.toString() || author?.username;
-  const imageUrl = getImageUrlBest(images && images[0]);
+  const showImageArea = images !== null;
+  const presentImages = images?.filter((img): img is string => Boolean(img));
+  const hasImages = Boolean(presentImages && presentImages.length > 0);
+  const imageUrl = getImageUrlBest(presentImages && presentImages[0]);
 
   return (
     <>
@@ -210,7 +227,7 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
         <meta name="tags" content={tags?.join(',')} />
         <meta property="og:title" content={title?.substring(0, 40)} />
         <meta property="og:url" content={url} />
-        <meta property="og:image" content={imageUrl} />
+        {imageUrl && <meta property="og:image" content={imageUrl} />}
         <meta
           property="og:description"
           content={description?.substring(0, 150)}
@@ -230,11 +247,19 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
               title={title}
             />
 
-            {images && (
-              <Center>
-                <NiceSlider alt={title} images={images} />
-              </Center>
-            )}
+            {showImageArea &&
+              (hasImages ? (
+                <Center>
+                  <NiceSlider alt={title} images={presentImages} />
+                </Center>
+              ) : (
+                <Center px="4">
+                  <PlaceholderImage
+                    seed={placeholderSeed || url || title}
+                    style={placeholderStyle}
+                  />
+                </Center>
+              ))}
 
             {action && <Center>{action}</Center>}
           </Box>

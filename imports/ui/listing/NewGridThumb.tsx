@@ -12,6 +12,7 @@ import {
   Text,
 } from '/imports/ui/core';
 
+import PlaceholderImage from '../generic/PlaceholderImage';
 import Tag from '../generic/Tag';
 import { getImageUrl } from '../utils/imageHelper';
 
@@ -39,7 +40,9 @@ export interface NewGridThumbProps {
   fixedImageHeight?: boolean;
   footer?: React.ReactNode;
   index?: number;
-  imageUrl?: string;
+  imageUrl?: string | null;
+  /** Stable id used to draw the placeholder when there is no image. */
+  placeholderSeed?: string;
   subTitle?: string;
   title?: string;
   tag?: string;
@@ -53,6 +56,7 @@ function NewGridThumb({
   footer = null,
   index,
   imageUrl,
+  placeholderSeed,
   subTitle,
   title,
   tag,
@@ -105,18 +109,31 @@ function NewGridThumb({
               />
             )
           ) : (
-            coverText && (
-              <Text
-                css={{
-                  color: 'var(--cocoso-colors-theme-600)',
-                  fontSize: '2rem',
-                  fontWeight: 'light',
-                  margin: '1rem',
+            <>
+              <PlaceholderImage
+                seed={placeholderSeed || title}
+                style={{
+                  height: fixedImageHeight ? '100%' : '180px',
+                  left: 0,
+                  position: fixedImageHeight ? 'absolute' : 'relative',
+                  top: 0,
                 }}
-              >
-                {coverText}
-              </Text>
-            )
+              />
+              {coverText && (
+                <Text
+                  css={{
+                    color: 'var(--cocoso-colors-theme-800)',
+                    fontSize: '2rem',
+                    fontWeight: 'light',
+                    margin: '1rem',
+                    position: 'absolute',
+                    textShadow: '0 1px 2px rgba(255,255,255,0.6)',
+                  }}
+                >
+                  {coverText}
+                </Text>
+              )}
+            </>
           )}
         </Center>
 

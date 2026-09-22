@@ -95,6 +95,7 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
       }
       backLink={{ value: '/works', label: worksInMenu.label }}
       images={work?.images || [work.imageUrl]}
+      placeholderSeed={work?._id}
       subTitle={work.shortDescription}
       tabs={tabs}
       tags={tags}

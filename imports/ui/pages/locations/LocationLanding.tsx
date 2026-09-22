@@ -9,6 +9,7 @@ import { Box, Button, Center, Flex, Heading, Text } from '/imports/ui/core';
 import ComposablePageHybrid from '/imports/ui/entry/ComposablePageHybrid';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
+import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { publicUrl } from '/imports/api/_utils/shared';
 
@@ -72,25 +73,33 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           backgroundImage: heroImage ? `url('${heroImage}')` : undefined,
           backgroundPosition: 'center',
           backgroundSize: 'cover',
-          minHeight: heroImage ? '320px' : undefined,
+          minHeight: heroImage ? '320px' : '240px',
+          overflow: 'hidden',
           position: 'relative',
         }}
         mb="6"
       >
+        {!heroImage && (
+          <PlaceholderImage
+            seed={location._id}
+            style={{ left: 0, position: 'absolute', top: 0 }}
+          />
+        )}
         <Center
           css={{
             background: heroImage
               ? 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.05))'
-              : undefined,
-            minHeight: heroImage ? '320px' : undefined,
+              : 'linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0))',
+            minHeight: heroImage ? '320px' : '240px',
             padding: '2rem 1rem',
+            position: 'relative',
           }}
         >
           <Heading
-            color={heroImage ? 'white' : undefined}
+            color="white"
             size="xl"
             textAlign="center"
-            css={{ textShadow: heroImage ? '0 1px 3px rgba(0,0,0,0.7)' : 'none' }}
+            css={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
           >
             {location.name}
           </Heading>
@@ -154,6 +163,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
                         getImageUrl(resource.images?.[0], 'small') || undefined
                       }
                       index={index}
+                      placeholderSeed={resource._id}
                       title={resource.label}
                     />
                   </Link>

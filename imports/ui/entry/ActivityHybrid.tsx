@@ -161,6 +161,7 @@ export default function ActivityHybrid({ activity, siteDoc }: ActivityHybridProp
       }
       dates={<ActionDates activity={activity} />}
       backLink={backLink}
+      placeholderSeed={activity?._id}
       images={
         activity?.isPublicActivity
           ? activity?.images || [activity?.imageUrl]
