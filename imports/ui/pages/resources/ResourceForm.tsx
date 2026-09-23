@@ -159,7 +159,7 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
       >
         <LocationSelect
           value={state.locationId}
-          onChange={(locationId) =>
+          onChange={({ locationId }) =>
             setState((prevState) => ({ ...prevState, locationId }))
           }
         />

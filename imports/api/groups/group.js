@@ -7,6 +7,8 @@ const Groups = new Mongo.Collection('groups');
 Groups.schema = new SimpleSchema({
   _id: Schemas.Id,
   locationId: { type: String, optional: true },
+  // Shown only when no place is selected (the municipality pages).
+  isMunicipalityOnly: { type: Boolean, optional: true },
 
   authorId: Schemas.Id,
   authorUsername: { type: String },

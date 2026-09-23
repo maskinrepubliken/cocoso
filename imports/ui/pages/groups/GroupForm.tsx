@@ -22,6 +22,7 @@ interface GroupFormValues {
 interface GroupData extends GroupFormValues {
   imageUrl?: string;
   locationId?: string | null;
+  isMunicipalityOnly?: boolean;
 }
 
 interface GroupFormProps {
@@ -41,6 +42,7 @@ export default function GroupForm({ group, onFinalize }: GroupFormProps) {
   const [state, setState] = useState({
     formValues: group || emptyFormValues,
     locationId: group?.locationId || null,
+    isMunicipalityOnly: Boolean(group?.isMunicipalityOnly),
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('groups');
@@ -75,6 +77,7 @@ export default function GroupForm({ group, onFinalize }: GroupFormProps) {
       ...state.formValues,
       imageUrl,
       locationId: state.locationId,
+      isMunicipalityOnly: state.isMunicipalityOnly,
     };
 
     onFinalize(newGroup);
@@ -117,9 +120,11 @@ export default function GroupForm({ group, onFinalize }: GroupFormProps) {
         mb="12"
       >
         <LocationSelect
+          allowMunicipalityOnly
+          isMunicipalityOnly={state.isMunicipalityOnly}
           value={state.locationId}
-          onChange={(locationId) =>
-            setState((prevState) => ({ ...prevState, locationId }))
+          onChange={(choice) =>
+            setState((prevState) => ({ ...prevState, ...choice }))
           }
         />
       </FormField>

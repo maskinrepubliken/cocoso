@@ -22,7 +22,8 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
   const [tc] = useTranslation('common');
 
   const locationNameOf = (item: any) =>
-    locations.find((l) => l._id === item.locationId)?.name;
+    locations.find((l) => l._id === item.locationId)?.name ||
+    (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
 
   return (
     <>

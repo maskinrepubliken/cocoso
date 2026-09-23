@@ -1,5 +1,6 @@
 import { useLocation as useRouterLocation } from 'react-router';
 import { useAtomValue } from 'jotai';
+import { useTranslation } from 'react-i18next';
 
 import { locationsAtom } from '/imports/state';
 import type { Location } from '/imports/ui/types';
@@ -36,4 +37,18 @@ export function useCurrentLocation(): Location | undefined {
 export function useLocationPrefix(): string {
   const location = useCurrentLocation();
   return location ? `/${location.slug}` : '';
+}
+
+// Tag text for an item's place: the place name, a "municipality only"
+// marker, or nothing for municipality-wide content.
+export function useLocationTag(item?: {
+  locationId?: string | null;
+  isMunicipalityOnly?: boolean;
+}): string | null {
+  const { t } = useTranslation('common');
+  const name = useLocationName(item?.locationId);
+  if (name) {
+    return name;
+  }
+  return item?.isMunicipalityOnly ? t('locations.municipalityOnlyShort') : null;
 }

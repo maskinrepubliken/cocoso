@@ -9,7 +9,7 @@ import type { Document, Site } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
 import { publicUrl } from '/imports/api/_utils/shared';
-import { useLocationName } from '/imports/ui/utils/useLocation';
+import { useLocationTag } from '/imports/ui/utils/useLocation';
 
 interface Work {
   _id: string;
@@ -35,7 +35,7 @@ export interface WorkHybridProps {
 }
 
 export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps) {
-  const locationName = useLocationName((work as any)?.locationId);
+  const locationName = useLocationTag(work as any);
   if (!work) {
     return null;
   }

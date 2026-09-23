@@ -30,6 +30,7 @@ interface WorkData extends WorkFormValues {
   category?: CategoryItem;
   images?: string[];
   locationId?: string | null;
+  isMunicipalityOnly?: boolean;
 }
 
 interface WorkFormProps {
@@ -55,6 +56,7 @@ export default function WorkForm({ work, onFinalize }: WorkFormProps) {
     creating: false,
     formValues: work || emptyFormValues,
     locationId: work?.locationId || null,
+    isMunicipalityOnly: Boolean(work?.isMunicipalityOnly),
     selectedCategory: work
       ? {
           label: work.category?.label,
@@ -119,6 +121,7 @@ export default function WorkForm({ work, onFinalize }: WorkFormProps) {
       },
       images,
       locationId: state.locationId,
+      isMunicipalityOnly: state.isMunicipalityOnly,
     };
     onFinalize(newWork);
   };
@@ -209,9 +212,11 @@ export default function WorkForm({ work, onFinalize }: WorkFormProps) {
         mb="12"
       >
         <LocationSelect
+          allowMunicipalityOnly
+          isMunicipalityOnly={state.isMunicipalityOnly}
           value={state.locationId}
-          onChange={(locationId) =>
-            setState((prevState) => ({ ...prevState, locationId }))
+          onChange={(choice) =>
+            setState((prevState) => ({ ...prevState, ...choice }))
           }
         />
       </FormField>

@@ -151,6 +151,7 @@ Meteor.methods({
       description: group.description,
       imageUrl: group.imageUrl,
       locationId: group.locationId,
+      isMunicipalityOnly: group.isMunicipalityOnly,
       meetings: group.meetings,
       adminUsername: group.adminUsername,
       isArchived: group.isArchived,
@@ -216,6 +217,8 @@ Meteor.methods({
       const newGroupId = await Groups.insertAsync({
         ...formValues,
         locationId: formValues.locationId || undefined,
+        isMunicipalityOnly:
+          !formValues.locationId && Boolean(formValues.isMunicipalityOnly),
         authorId: user._id,
         authorUsername: user.username,
         authorAvatar: userAvatar,
@@ -275,6 +278,8 @@ Meteor.methods({
         $set: {
           ...safeValues,
           ...(locationId ? { locationId } : {}),
+          isMunicipalityOnly:
+            !locationId && Boolean(safeValues.isMunicipalityOnly),
         },
         ...(locationId ? {} : { $unset: { locationId: 1 } }),
       });

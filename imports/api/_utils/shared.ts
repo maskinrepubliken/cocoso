@@ -596,9 +596,18 @@ const siteUrl = Meteor.absoluteUrl();
 // belongs to the whole municipality and is included too, so a location's
 // listing shows what happens there plus what happens everywhere; the UI
 // separates the two by looking at locationId.
+// Items flagged isMunicipalityOnly appear on the municipality pages only.
 const locationSelector = (locationId?: string | null) =>
   locationId
-    ? { $or: [{ locationId }, { locationId: { $in: [null, ''] } }] }
+    ? {
+        $or: [
+          { locationId },
+          {
+            locationId: { $in: [null, ''] },
+            isMunicipalityOnly: { $ne: true },
+          },
+        ],
+      }
     : {};
 
 // Absolute URL of a path on this site, derived from ROOT_URL. Works on the

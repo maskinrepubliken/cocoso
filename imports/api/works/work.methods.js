@@ -73,6 +73,8 @@ Meteor.methods({
       const newWorkId = await Works.insertAsync({
         ...values,
         locationId: values.locationId || undefined,
+        isMunicipalityOnly:
+          !values.locationId && Boolean(values.isMunicipalityOnly),
         authorId: user._id,
         authorAvatar: userAvatar,
         authorUsername: user.username,
@@ -103,6 +105,8 @@ Meteor.methods({
         $set: {
           ...safeValues,
           ...(locationId ? { locationId } : {}),
+          isMunicipalityOnly:
+            !locationId && Boolean(safeValues.isMunicipalityOnly),
           latestUpdate: new Date(),
         },
         ...(locationId ? {} : { $unset: { locationId: 1 } }),

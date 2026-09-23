@@ -25,6 +25,8 @@ Activities.schema = new SimpleSchema({
   // Copied from the resource when one is set, otherwise chosen by the
   // author. Empty means the whole municipality.
   locationId: { type: String, optional: true },
+  // Shown only when no place is selected (the municipality pages).
+  isMunicipalityOnly: { type: Boolean, optional: true },
 
   address: { type: String, optional: true },
   capacity: { type: SimpleSchema.Integer, defaultValue: 40 },

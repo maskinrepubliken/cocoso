@@ -261,6 +261,7 @@ Meteor.methods({
       const activityId = await Activities.insertAsync({
         ...values,
         locationId,
+        isMunicipalityOnly: !locationId && Boolean(values.isMunicipalityOnly),
         authorId: user._id,
         authorName: user.username,
         isSentForReview: false,
@@ -312,6 +313,8 @@ Meteor.methods({
         $set: {
           ...safeValues,
           ...(locationId ? { locationId } : {}),
+          isMunicipalityOnly:
+            !locationId && Boolean(safeValues.isMunicipalityOnly),
         },
         ...(locationId ? {} : { $unset: { locationId: 1 } }),
       });

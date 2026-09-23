@@ -220,6 +220,8 @@ plugins:
 locations:
   label: Place
   wholeMunicipality: The whole municipality
+  municipalityOnly: Only on the municipality page (hidden inside places)
+  municipalityOnlyShort: Whole municipality
   unpublished: not yet published
   everywhere: In the whole municipality
   here: Here in {{ name }}

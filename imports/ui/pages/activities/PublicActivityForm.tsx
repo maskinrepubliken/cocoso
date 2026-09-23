@@ -40,6 +40,7 @@ interface ActivityData extends ActivityFormValues {
   resource?: string;
   resourceId?: string;
   locationId?: string | null;
+  isMunicipalityOnly?: boolean;
   isExclusiveActivity?: boolean;
   isRegistrationEnabled?: boolean;
   isRegistrationDisabled?: boolean;
@@ -72,6 +73,7 @@ export default function PublicActivityForm({
     isExclusiveActivity: activity ? activity.isExclusiveActivity : true,
     isRegistrationEnabled: activity ? activity.isRegistrationEnabled : false,
     locationId: activity?.locationId || null,
+    isMunicipalityOnly: Boolean(activity?.isMunicipalityOnly),
     resources: [],
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
@@ -205,6 +207,9 @@ export default function PublicActivityForm({
       isRegistrationEnabled: state.isRegistrationEnabled,
       isExclusiveActivity: state.isExclusiveActivity,
       locationId: state.selectedResource ? null : state.locationId,
+      isMunicipalityOnly: state.selectedResource
+        ? false
+        : state.isMunicipalityOnly,
     };
 
     const { selectedResource } = state;
@@ -310,9 +315,11 @@ export default function PublicActivityForm({
           </Text>
         ) : (
           <LocationSelect
+            allowMunicipalityOnly
+            isMunicipalityOnly={state.isMunicipalityOnly}
             value={state.locationId}
-            onChange={(locationId) =>
-              setState((prevState) => ({ ...prevState, locationId }))
+            onChange={(choice) =>
+              setState((prevState) => ({ ...prevState, ...choice }))
             }
           />
         )}

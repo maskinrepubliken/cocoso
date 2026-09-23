@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { Center } from '/imports/ui/core';
@@ -25,10 +25,12 @@ export default function ActivitiesHybrid({
 }: ActivitiesHybridProps) {
   const site = { ...siteDoc };
   const locations = useAtomValue(locationsAtom);
+  const [tc] = useTranslation('common');
   const [modalItem, setModalItem] = useState(null);
 
   const locationNameOf = (item: any) =>
-    locations.find((l) => l._id === item.locationId)?.name;
+    locations.find((l) => l._id === item.locationId)?.name ||
+    (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
   const [, setSearchParams] = useSearchParams();
 
   const tabs = [

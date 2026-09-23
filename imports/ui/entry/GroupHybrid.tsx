@@ -11,7 +11,7 @@ import TablyCentered from './TablyCentered';
 import ActionDates from './ActionDates';
 import { DateOccurrence } from './ActionDates';
 import { publicUrl } from '/imports/api/_utils/shared';
-import { useLocationName } from '/imports/ui/utils/useLocation';
+import { useLocationTag } from '/imports/ui/utils/useLocation';
 
 interface Group {
   _id: string;
@@ -34,7 +34,7 @@ export default function GroupHybrid({
   documents,
   siteDoc,
 }: GroupHybridProps) {
-  const locationName = useLocationName((group as any)?.locationId);
+  const locationName = useLocationTag(group as any);
   if (!group) {
     return null;
   }

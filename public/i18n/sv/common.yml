@@ -217,6 +217,8 @@ plugins:
 locations:
   label: Ort
   wholeMunicipality: Hela kommunen
+  municipalityOnly: Bara på kommunsidan (visas inte under orterna)
+  municipalityOnlyShort: Hela kommunen
   unpublished: ännu inte publicerad
   everywhere: I hela kommunen
   here: Här i {{ name }}
