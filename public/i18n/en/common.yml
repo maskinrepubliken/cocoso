@@ -217,6 +217,11 @@ plugins:
     helper: Drop or pick image
     helperMultiple: Drop or pick image(s)
 
+people:
+  organizer: Organizer
+  noEvents: '{{ username }} has no events yet'
+  noOrganizers: There are no organizers yet
+
 locations:
   label: Place
   wholeMunicipality: The whole municipality

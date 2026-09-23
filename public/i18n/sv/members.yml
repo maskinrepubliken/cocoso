@@ -47,8 +47,6 @@ message:
   usage:
     noUsage: Inga bokningar har registrerats för denna användare
   sortedRandomly: Sorteras slumpmässigt
-  noEvents: '{{ username }} har inga evenemang ännu'
-  noOrganizers: Det finns inga arrangörer ännu
   categorymissing: Välj en kategori
 
 profile:

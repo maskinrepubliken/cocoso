@@ -49,6 +49,8 @@ interface Tab {
 
 interface TablyCenteredProps extends HeaderProps {
   action?: React.ReactNode;
+  /** Shown full width below the tabs. */
+  children?: React.ReactNode;
   content?: React.ReactNode;
   /**
    * Images to show under the header. An empty or undefined list draws a
@@ -192,6 +194,7 @@ const Header: React.FC<HeaderProps> = ({
 const TablyCentered: React.FC<TablyCenteredProps> = ({
   action = null,
   author = null,
+  children,
   backLink,
   dates,
   content,
@@ -282,6 +285,8 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
               </Box>
             </Box>
           </Center>
+
+          {children}
         </Box>
       </Center>
     </>

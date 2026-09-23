@@ -47,8 +47,6 @@ message:
   usage:
     noUsage: Bu kullanıcı henüz bir kaynak kullanmamış
   sortedRandomly: Rastgele sıralandı
-  noEvents: '{{ username }} henüz etkinlik düzenlemedi'
-  noOrganizers: Henüz organizatör yok
   categorymissing: Lütfen bir kategori seç
 
 profile:

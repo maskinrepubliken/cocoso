@@ -146,9 +146,13 @@ export async function getUser({ params }) {
   const { usernameSlug, slug } = params;
   const username = (usernameSlug || slug)?.replace('@', '');
   const user = await call('getUserInfo', username);
+  const events = user
+    ? await call('getPublicActivitiesByUser', username)
+    : { upcoming: [], past: [] };
 
   return {
     user,
+    events,
   };
 }
 

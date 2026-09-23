@@ -1,18 +1,20 @@
 import { Outlet, useLocation, useParams } from 'react-router';
-import React from 'react';
+import React, { useState } from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
-import { Helmet } from 'react-helmet';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useAtomValue } from 'jotai';
 
-import { Alert, Box, Center, Flex, Tabs } from '/imports/ui/core';
-import { stripHtml, getFullName, publicUrl } from '/imports/api/_utils/shared';
-import NotFoundPage from '/imports/ui/pages/NotFoundPage';
-import MemberAvatarEtc from '/imports/ui/generic/MemberAvatarEtc';
-import { getImageUrlBest } from '/imports/ui/utils/imageHelper';
+import { Alert, Box, Center, Flex, Text } from '/imports/ui/core';
+import { publicUrl } from '/imports/api/_utils/shared';
+import PopupHandler from '/imports/ui/listing/PopupHandler';
+import SexyThumb from '/imports/ui/listing/SexyThumb';
+import { displayName } from '/imports/ui/listing/UsersHybrid';
+import Tabs from '/imports/ui/core/Tabs';
+import { locationsAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
 
-import BackLink from './BackLink';
+import TablyCentered from './TablyCentered';
 
 interface UserBio {
   bio?: string;
@@ -46,28 +48,112 @@ export function Bio({ user }: BioProps) {
   );
 }
 
-interface User {
+interface Events {
+  upcoming: any[];
+  past: any[];
+}
+
+interface OrganizerEventsProps {
+  events?: Events;
   username?: string;
+}
+
+// Everything the person organizes, upcoming first, shown like the events
+// listing.
+function OrganizerEvents({ events, username }: OrganizerEventsProps) {
+  const [tc] = useTranslation('common');
+  const locations = useAtomValue(locationsAtom);
+  const upcoming = events?.upcoming || [];
+  const past = events?.past || [];
+  const [showPast, setShowPast] = useState(
+    upcoming.length === 0 && past.length > 0
+  );
+  const [modalItem, setModalItem] = useState(null);
+
+  if (upcoming.length === 0 && past.length === 0) {
+    return (
+      <Center p="4" mb="12">
+        <Text color="gray.600">{tc('people.noEvents', { username })}</Text>
+      </Center>
+    );
+  }
+
+  const locationNameOf = (item: any) =>
+    locations.find((l) => l._id === item.locationId)?.name ||
+    (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
+
+  const tabs = [
+    {
+      key: 'past',
+      title: tc('labels.past'),
+      onClick: () => setShowPast(true),
+    },
+    {
+      key: 'upcoming',
+      title: tc('labels.upcoming'),
+      onClick: () => setShowPast(false),
+    },
+  ];
+
+  const items = showPast ? past : upcoming;
+
+  return (
+    <Box mb="12">
+      <Center mb="4">
+        <Tabs tabs={tabs} index={showPast ? 0 : 1} />
+      </Center>
+
+      <Flex justify="center" wrap="wrap" gap="4" px="2">
+        {items.map((item, index) => (
+          <Center
+            key={item._id}
+            flex="0 1 355px"
+            css={{ cursor: 'pointer' }}
+            onClick={() => setModalItem(item)}
+          >
+            <SexyThumb
+              activity={item}
+              index={index}
+              showPast={showPast}
+              tags={[locationNameOf(item)].filter(Boolean) as string[]}
+            />
+          </Center>
+        ))}
+      </Flex>
+
+      <PopupHandler
+        item={modalItem}
+        kind="activities"
+        showPast={showPast}
+        onClose={() => setModalItem(null)}
+      />
+    </Box>
+  );
+}
+
+interface User {
+  _id?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
   bio?: string;
-  avatar?: { src?: string } | string;
+  avatar?: { src?: string };
   keywords?: Array<{ keywordLabel?: string }>;
+  memberships?: Array<{ isOrganizer?: boolean }>;
 }
 
 export interface UserHybridProps {
+  events?: Events;
   user: User | null;
   siteDoc: Site;
 }
 
-export default function UserHybrid({ user, siteDoc }: UserHybridProps) {
-  const { usernameSlug, workId } = useParams<{
-    usernameSlug: string;
-    workId?: string;
-  }>();
-  const location = useLocation();
-
-  if (usernameSlug && usernameSlug[0] !== '@') {
-    return <NotFoundPage />;
-  }
+// A person's page, laid out like a place or an event: header, picture and
+// bio, then the events they organize.
+export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
+  const { workId } = useParams<{ workId?: string }>();
+  const { pathname } = useLocation();
+  const [tc] = useTranslation('common');
 
   if (!user) {
     return (
@@ -84,84 +170,49 @@ export default function UserHybrid({ user, siteDoc }: UserHybridProps) {
     );
   }
 
+  if (workId) {
+    return <Outlet />;
+  }
+
   const menu = siteDoc?.settings?.menu;
+  const people = menu?.find((item) => item.name === 'people');
+  const isOrganizer = user.memberships?.some((m) => m.isOrganizer);
+  const name = displayName(user);
 
-  const tabs = [];
-  menu
-    ?.filter(
-      (item) =>
-        ['activities', 'groups', 'works'].includes(item.name) && item.isVisible
-    )
-    ?.forEach((item) => {
-      tabs.push({
-        path: `${item.name}`,
-        title: item.label,
-      });
-    });
+  const tags = [
+    isOrganizer ? tc('people.organizer') : null,
+    ...(user.keywords?.map((k) => k.keywordLabel) || []),
+  ].filter(Boolean) as string[];
 
-  const pathname = location?.pathname;
-  let tabIndex = tabs?.findIndex((tab) => pathname.includes(tab.path));
-  if (tabIndex === -1) tabIndex = 0;
-
-  const members = menu?.find((item) => item.name === 'people');
-  const title = `${getFullName(user)} | ${user.username} | ${
-    siteDoc?.settings?.name
-  }`;
-  const url = publicUrl(`/@${user.username}`);
-  const imageUrl = getImageUrlBest(user.avatar || siteDoc.logo) || undefined;
-  const tags = user.keywords?.map((k) => k.keywordLabel);
-  const description = user.bio && stripHtml(user.bio)?.substring(0, 150);
+  // Groups and works still have their own pages under the profile.
+  const showsSubPage = ['groups', 'works'].some((segment) =>
+    pathname.split('/').includes(segment)
+  );
 
   return (
-    <>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{title}</title>
-        <meta name="title" content={title} />
-        <meta name="description" content={description} />
-        <meta name="tags" content={tags?.join(',')} />
-        <meta property="og:title" content={title?.substring(0, 40)} />
-        <meta property="og:url" content={url} />
-        <meta property="og:image" content={imageUrl} />
-        <meta
-          property="og:description"
-          content={description?.substring(0, 150)}
-        />
-        <meta property="og:type" content="article" />
-      </Helmet>
-
-      {workId ? (
-        <Outlet />
-      ) : (
-        <>
-          <Box p="2">
-            <BackLink backLink={{ label: members?.label, value: '/people' }} />
+    <TablyCentered
+      backLink={
+        people?.isVisible
+          ? { label: people.label, value: '/people' }
+          : undefined
+      }
+      images={[user.avatar?.src]}
+      placeholderSeed={user._id || user.username}
+      subTitle={name !== user.username ? `@${user.username}` : undefined}
+      tags={tags}
+      title={name}
+      url={publicUrl(`/@${user.username}`)}
+    >
+      <Bio user={user} />
+      {showsSubPage ? (
+        <Center mb="12">
+          <Box css={{ maxWidth: '600px' }} w="100%">
+            <Outlet />
           </Box>
-
-          <Center>
-            <Box css={{ maxWidth: '600px' }}>
-              <Center>
-                <MemberAvatarEtc isThumb={false} user={user} />
-              </Center>
-              <Center>
-                <Bio user={user} />
-              </Center>
-            </Box>
-          </Center>
-
-          <Center>
-            <Box>
-              <Center>
-                <Tabs align="center" index={tabIndex} tabs={tabs} />
-              </Center>
-
-              <Box css={{ maxWidth: '600px' }} pt="4" mb="24">
-                <Outlet />
-              </Box>
-            </Box>
-          </Center>
-        </>
+        </Center>
+      ) : (
+        <OrganizerEvents events={events} username={user.username} />
       )}
-    </>
+    </TablyCentered>
   );
 }

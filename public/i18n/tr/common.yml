@@ -214,6 +214,11 @@ plugins:
     helper: İmaj bırak veya seç
     helperMultiple: İmajlar bırak veya seç
 
+people:
+  organizer: Organizatör
+  noEvents: '{{ username }} henüz etkinlik düzenlemedi'
+  noOrganizers: Henüz organizatör yok
+
 locations:
   label: Yer
   wholeMunicipality: Tüm belediye

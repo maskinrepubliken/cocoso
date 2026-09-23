@@ -1,16 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router';
-import { Trans } from 'react-i18next';
+import { Link } from 'react-router';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import Select from 'react-select';
 
-import { Box, Center, Modal, Text } from '/imports/ui/core';
-import { siteAtom, isDesktopAtom } from '/imports/state';
+import { Box, Center, Text } from '/imports/ui/core';
+import { siteAtom } from '/imports/state';
+import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
 import PageHeading from './PageHeading';
 import InfiniteScroller from './InfiniteScroller';
-import { Bio } from '../entry/UserHybrid';
-import MemberAvatarEtc from '../generic/MemberAvatarEtc';
+import NewGridThumb from './NewGridThumb';
 
 export interface UsersHybridProps {
   siteDoc: any;
@@ -18,28 +18,20 @@ export interface UsersHybridProps {
   keywords?: any[];
 }
 
+// A person's name, or their username when they have not given one.
+export const displayName = (user: any) =>
+  [user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.username;
+
+// The organizers, laid out like the places listing. A card goes straight to
+// the person's page, where their events are listed.
 export default function UsersHybrid({
   siteDoc,
   users,
   keywords,
 }: UsersHybridProps) {
   const site = useAtomValue(siteAtom);
-  const isDesktop = useAtomValue(isDesktopAtom);
-  const [modalItem, setModalItem] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedKeywords, setSelectedKeywords] = useState([]);
-  const navigate = useNavigate();
-
-  const handleNavigateUserPage = () => {
-    navigate(`/@${modalItem.username}`);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setTimeout(() => {
-      setModalItem(null);
-    }, 400);
-  };
+  const [selectedKeywords, setSelectedKeywords] = useState<any[]>([]);
+  const [tc] = useTranslation('common');
 
   const keywordsUsed = useMemo(
     () =>
@@ -69,90 +61,75 @@ export default function UsersHybrid({
     <>
       <PageHeading site={site || siteDoc} listing="people" />
 
-      <Center mb="4">
-        <Box w="100%" maxW="600px" p="4">
-          <Select
-            closeMenuOnSelect
-            isMulti
-            options={keywordsUsed}
-            placeholder={
-              <Trans i18nKey="common:labels.filterKeyword">
-                Filter by skills & interests
-              </Trans>
-            }
-            styles={{
-              control: (base) => ({
-                ...base,
-                borderRadius: 'var(--cocoso-border-radius)',
-              }),
-              multiValue: (base) => ({
-                ...base,
-                borderRadius: 'var(--cocoso-border-radius)',
-              }),
-            }}
-            value={selectedKeywords}
-            getOptionValue={(option: { _id: string }) => option._id}
-            onChange={(selectedOptions) => {
-              setSelectedKeywords(selectedOptions);
-            }}
-          />
-        </Box>
-      </Center>
-
-      <Box>
+      {keywordsUsed.length > 0 && (
         <Center mb="4">
-          <Text fontSize="sm">
-            <Trans i18nKey="members:message.sortedRandomly">
-              Sorted randomly
-            </Trans>
-          </Text>
+          <Box w="100%" maxW="600px" p="4">
+            <Select
+              closeMenuOnSelect
+              isMulti
+              options={keywordsUsed}
+              placeholder={
+                <Trans i18nKey="common:labels.filterKeyword">
+                  Filter by skills & interests
+                </Trans>
+              }
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  borderRadius: 'var(--cocoso-border-radius)',
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  borderRadius: 'var(--cocoso-border-radius)',
+                }),
+              }}
+              value={selectedKeywords}
+              getOptionValue={(option: { _id: string }) => option._id}
+              onChange={(selectedOptions) => {
+                setSelectedKeywords([...selectedOptions]);
+              }}
+            />
+          </Box>
         </Center>
+      )}
 
-        <Box style={{ marginTop: isDesktop ? '-4rem' : 0 }}>
-          <InfiniteScroller
-            // hideFiltrerSorter
-            items={filteredUsers}
-            itemsPerPage={20}
-          >
-            {(user) => (
-              <Box
-                key={user.username}
-                m="4"
-                css={{
-                  cursor: 'pointer',
-                  flexBasis: '240px',
-                }}
-                onClick={() => {
-                  setModalItem(user);
-                  setModalOpen(true);
-                }}
+      {users?.length === 0 && (
+        <Center p="8">
+          <Text>{tc('people.noOrganizers')}</Text>
+        </Center>
+      )}
+
+      <Box px="2" pb="8">
+        <InfiniteScroller
+          hideFiltrerSorter
+          isMasonry
+          items={filteredUsers}
+          newHelperLink={undefined}
+          smallThumb={false}
+        >
+          {(user: any, index: number) => (
+            <Box key={user.username} mb="2">
+              <Link
+                style={{ color: 'inherit', textDecoration: 'none' }}
+                to={`/@${user.username}`}
               >
-                <MemberAvatarEtc user={user} />
-              </Box>
-            )}
-          </InfiniteScroller>
-        </Box>
+                <NewGridThumb
+                  fixedImageHeight
+                  imageUrl={getImageUrl(user.avatar?.src, 'small')}
+                  index={index}
+                  placeholderSeed={user._id || user.username}
+                  subTitle={
+                    displayName(user) !== user.username
+                      ? `@${user.username}`
+                      : undefined
+                  }
+                  title={displayName(user)}
+                />
+              </Link>
+            </Box>
+          )}
+        </InfiniteScroller>
       </Box>
-
-      <Modal
-        cancelText={<Trans i18nKey="common:actions.close">Close</Trans>}
-        confirmText={
-          <Trans i18nKey="members:actions.visit">Visit Profile</Trans>
-        }
-        hideHeader
-        id="users-hybrid"
-        open={modalOpen}
-        size="xl"
-        onConfirm={handleNavigateUserPage}
-        onClose={handleCloseModal}
-      >
-        <Box pt="8">
-          <MemberAvatarEtc isThumb={false} user={modalItem} />
-        </Box>
-        <Center>
-          <Bio user={modalItem} />
-        </Center>
-      </Modal>
     </>
   );
 }

@@ -11,12 +11,12 @@ const UserInteractionHandler = loadable(
 );
 
 export default function UserProfileHandler({ siteDoc }) {
-  const { user } = useLoaderData();
+  const { user, events } = useLoaderData();
   const rendered = useAtomValue(renderedAtom);
 
   return (
     <>
-      <UserHybrid siteDoc={siteDoc} user={user} />
+      <UserHybrid events={events} siteDoc={siteDoc} user={user} />
       {rendered && <UserInteractionHandler user={user} slideStart={rendered} />}
     </>
   );

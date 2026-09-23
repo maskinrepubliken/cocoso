@@ -214,6 +214,11 @@ plugins:
     helper: Släpp eller välj bild
     helperMultiple: Släpp eller välj bild(er)
 
+people:
+  organizer: Arrangör
+  noEvents: '{{ username }} har inga evenemang ännu'
+  noOrganizers: Det finns inga arrangörer ännu
+
 locations:
   label: Ort
   wholeMunicipality: Hela kommunen

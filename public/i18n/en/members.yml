@@ -47,8 +47,6 @@ message:
   usage:
     noUsage: No usage is recorded for this user
   sortedRandomly: Sorted randomly
-  noEvents: '{{ username }} has no events yet'
-  noOrganizers: There are no organizers yet
   categorymissing: Please select a category
 
 profile:
