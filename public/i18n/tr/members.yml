@@ -3,6 +3,7 @@ label: Kullanıcılar
 dashboard: Admin Paneli
 super: Superadmin Paneli
 all: Tümü
+organizer: Organizatör
 
 joinedAt: '{{ date }} katıldı'
 
@@ -23,6 +24,8 @@ actions:
   admin: Admin yap
   participant: Onayı geri çek
   usageReport: Kullanım raporunu görüntüle
+  organizer: Organizatör yap
+  notOrganizer: Organizatörlükten çıkar
   visit: Profili ziyaret et
   visithost: '{{ host }} profilini ziyaret et'
 
@@ -31,6 +34,8 @@ message:
     contributor: '{{ username }} onaylandı'
     participant: '{{ username }} onayı geri alındı'
     admin: '{{ username }} admin yapıldı'
+    organizer: '{{ username }} artık organizatör'
+    notOrganizer: '{{ username }} artık organizatör değil'
   contact:
     empty: '{{ username }} iletişim bilgisini girmemiş'
   activity:
@@ -42,6 +47,8 @@ message:
   usage:
     noUsage: Bu kullanıcı henüz bir kaynak kullanmamış
   sortedRandomly: Rastgele sıralandı
+  noEvents: '{{ username }} henüz etkinlik düzenlemedi'
+  noOrganizers: Henüz organizatör yok
   categorymissing: Lütfen bir kategori seç
 
 profile:

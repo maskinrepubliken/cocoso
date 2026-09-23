@@ -44,6 +44,15 @@ function MemberItem({ member }) {
         <Badge size="sm" css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}>
           {t(`roles.${member.role}`).toLowerCase()}
         </Badge>
+        {member.isOrganizer && (
+          <Badge
+            colorScheme="green"
+            size="sm"
+            css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}
+          >
+            {t('organizer').toLowerCase()}
+          </Badge>
+        )}
       </Heading>
       <Code size="sm">{member && member.email}</Code>
       <br />
@@ -91,6 +100,7 @@ export default function Members() {
       { label: t('roles.participant'), value: 'participant' },
       { label: t('roles.contributor'), value: 'contributor' },
       { label: t('roles.admin'), value: 'admin' },
+      { label: t('organizer'), value: 'organizer' },
     ],
     [t]
   );
@@ -139,6 +149,20 @@ export default function Members() {
     }
   };
 
+  const setOrganizer = async (user: any, isOrganizer: boolean) => {
+    try {
+      await call('setOrganizer', user.id, isOrganizer);
+      revalidator.revalidate();
+      message.success(
+        t(`message.success.${isOrganizer ? 'organizer' : 'notOrganizer'}`, {
+          username: user.username,
+        })
+      );
+    } catch (error: any) {
+      message.error(error.reason || error.error);
+    }
+  };
+
   const safeMembers = members || [];
 
   const membersList = useMemo(
@@ -164,6 +188,13 @@ export default function Members() {
             isDisabled:
               !['contributor'].includes(member.role) ||
               !['admin'].includes(role),
+          },
+          {
+            content: t(
+              member.isOrganizer ? 'actions.notOrganizer' : 'actions.organizer'
+            ),
+            handleClick: () => setOrganizer(member, !member.isOrganizer),
+            isDisabled: role !== 'admin',
           },
           {
             content: t('actions.usageReport'),
@@ -204,7 +235,13 @@ export default function Members() {
 
   const membersRendered = useMemo(
     () =>
-      membersSorted.filter((m) => !show || show === 'all' || show === m.role),
+      membersSorted.filter(
+        (m) =>
+          !show ||
+          show === 'all' ||
+          show === m.role ||
+          (show === 'organizer' && m.isOrganizer)
+      ),
     [membersSorted, show]
   );
 

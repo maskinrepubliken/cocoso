@@ -3,6 +3,7 @@ label: Användare
 dashboard: Adminpanel
 super: Superadminpanel
 all: Alla
+organizer: Arrangör
 
 joinedAt: Gick med {{ date }}
 
@@ -23,6 +24,8 @@ actions:
   admin: Ställ in som admin
   participant: Avverifiera
   usageReport: Se bokningsrapport
+  organizer: Gör till arrangör
+  notOrganizer: Ta bort som arrangör
   visit: Besök profilen
   visithost: Besök profilen i {{ host }}
 
@@ -31,6 +34,8 @@ message:
     contributor: '{{ username }} är nu verifierad'
     participant: '{{ username }} är nu avverifierad'
     admin: '{{ username }} är nu admin'
+    organizer: '{{ username }} är nu arrangör'
+    notOrganizer: '{{ username }} är inte längre arrangör'
   contact:
     empty: Ingen kontaktinformation registrerad för {{ username }}
   activity:
@@ -42,6 +47,8 @@ message:
   usage:
     noUsage: Inga bokningar har registrerats för denna användare
   sortedRandomly: Sorteras slumpmässigt
+  noEvents: '{{ username }} har inga evenemang ännu'
+  noOrganizers: Det finns inga arrangörer ännu
   categorymissing: Välj en kategori
 
 profile:

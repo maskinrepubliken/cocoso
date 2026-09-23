@@ -3,6 +3,7 @@ label: Users
 dashboard: Admin Panel
 super: Superadmin Panel
 all: All
+organizer: Organizer
 
 joinedAt: joined {{ date }}
 
@@ -23,6 +24,8 @@ actions:
   admin: Set as admin
   participant: Unverify
   usageReport: See usage report
+  organizer: Make organizer
+  notOrganizer: Remove as organizer
   visit: Visit Profile
   visithost: Visit profile in {{ host }}
 
@@ -31,6 +34,8 @@ message:
     contributor: '{{ username }} is now verified'
     participant: '{{ username }} is now unverified'
     admin: '{{ username }} is now set as admin'
+    organizer: '{{ username }} is now an organizer'
+    notOrganizer: '{{ username }} is no longer an organizer'
   contact:
     empty: No contact info registered for {{ username }}
   activity:
@@ -42,6 +47,8 @@ message:
   usage:
     noUsage: No usage is recorded for this user
   sortedRandomly: Sorted randomly
+  noEvents: '{{ username }} has no events yet'
+  noOrganizers: There are no organizers yet
   categorymissing: Please select a category
 
 profile:
