@@ -11,6 +11,8 @@ Memberships.schema = new SimpleSchema({
     allowedValues: ['participant', 'contributor', 'admin'],
   },
   isPublic: { type: Boolean, defaultValue: true },
+  // Organizers are the people listed on /people, each with their events.
+  isOrganizer: { type: Boolean, defaultValue: false },
   joinDate: { type: Date },
 });
 

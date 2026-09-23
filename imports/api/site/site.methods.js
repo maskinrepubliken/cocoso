@@ -123,13 +123,15 @@ Meteor.methods({
         role: m.role,
         joinDate: m.joinDate,
         isPublic: m.isPublic,
+        isOrganizer: Boolean(m.isOrganizer),
       };
     });
   },
 
+  // The public people listing shows only organizers.
   async getSiteMembers() {
     const memberships = await Memberships.find(
-      { isPublic: true },
+      { isPublic: true, isOrganizer: true },
       { fields: { userId: 1 } }
     ).fetchAsync();
     const userIds = memberships.map((m) => m.userId);

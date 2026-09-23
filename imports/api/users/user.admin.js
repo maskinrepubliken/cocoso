@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 
 import { isAdmin, isContributorOrAdmin, isContributor } from './user.roles';
 import Activities from '../activities/activity';
@@ -119,6 +120,25 @@ Meteor.methods({
       // );
     } catch (error) {
       throw new Meteor.Error(error, 'Did not work! :/');
+    }
+  },
+
+  // Organizers are listed on /people; the flag is independent of the role.
+  async setOrganizer(memberId, isOrganizer) {
+    check(memberId, String);
+    check(isOrganizer, Boolean);
+    const user = await Meteor.userAsync();
+
+    if (!(await isAdmin(user?._id))) {
+      throw new Meteor.Error('not-allowed', 'You are not allowed');
+    }
+
+    const updated = await Memberships.updateAsync(
+      { userId: memberId },
+      { $set: { isOrganizer } }
+    );
+    if (!updated) {
+      throw new Meteor.Error('not-a-member', 'User is not a member');
     }
   },
 

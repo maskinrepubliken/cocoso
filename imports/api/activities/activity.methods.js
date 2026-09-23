@@ -144,6 +144,32 @@ Meteor.methods({
     }
   },
 
+  // The public events a person organizes, for their profile page.
+  async getPublicActivitiesByUser(username) {
+    check(username, String);
+    const user = await Meteor.userAsync();
+    const today = dayjs().format('YYYY-MM-DD');
+
+    try {
+      const activities = await Activities.find({
+        authorName: username,
+        isPublicActivity: true,
+      }).fetchAsync();
+      const visible = await filterPrivateGroups(activities, user);
+
+      return {
+        upcoming: visible
+          .filter((a) => a.datesAndTimes?.some((d) => d.endDate >= today))
+          .sort(compareDatesForSortActivities),
+        past: visible
+          .filter((a) => !a.datesAndTimes?.some((d) => d.endDate >= today))
+          .sort(compareDatesForSortActivitiesReverse),
+      };
+    } catch (error) {
+      throw new Meteor.Error(error, "Couldn't fetch activities");
+    }
+  },
+
   async checkDatesForConflict(
     { startDate, endDate, startTime, endTime, resourceId },
     currentActivityId = null
