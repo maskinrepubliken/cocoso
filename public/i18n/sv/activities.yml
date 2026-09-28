@@ -80,6 +80,8 @@ public:
     info: Info
     location: Plats
     resource: Resurs
+    organizer: "Arrangör"
+    readMore: "Läs mer"
   register:
     label: Boka
     form:
@@ -95,6 +97,8 @@ public:
         create: Boka
         update: Uppdatera
         remove: Ta bort din bokning
+      hideName: "Dölj mitt namn för andra besökare"
+      emailPrivate: "Bara arrangören ser din e-post."
     email: E-post redan bokad. Var vänlig att uppdatera din befintliga bokning istället.
     alreadyRegistered: Du är redan bokad för detta arrangemang. Var vänlig att uppdatera din befintliga bokning istället.
     notEnoughSeats: Tyvärr finns det inte tillräckligt med kapacitet kvar för att hålla hela festen. Endast {{ capacityLeft }} plats kvar. Vänligen gör din bokning i enlighet med detta.
@@ -109,6 +113,8 @@ public:
     update: Du har nu uppdaterat din bokning
     remove: Du har tagit bort din bokning
     show: Visa deltagare
+    none: "Ingen har anmält sig än."
+    hidden: "+ {{count}} som valt att inte visa sitt namn"
   capacity:
     full: Arrangemanget är fullbokat
     fullByYou: Grattis! Du bokade precis den sista platsen!

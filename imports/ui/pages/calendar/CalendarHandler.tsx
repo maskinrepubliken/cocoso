@@ -1,27 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Link,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from 'react-router';
+import { useLoaderData, useNavigate, useSearchParams } from 'react-router';
 import dayjs from 'dayjs';
-import parseHtml from 'html-react-parser';
 import loadable from '@loadable/component';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Link as CLink,
-  Loader,
-  Text,
-  Skeleton,
-} from '/imports/ui/core';
-import Modal from '/imports/ui/core/Modal';
+import { Box, Button, Center, Flex, Loader, Skeleton } from '/imports/ui/core';
 import {
   getNonComboResourcesWithColor,
   getComboResourcesWithColor,
@@ -36,6 +20,8 @@ import {
 import PageHeading from '/imports/ui/listing/PageHeading';
 import Tag from '/imports/ui/generic/Tag';
 import { cocosoReactSelectAdapter } from '/imports/ui/utils/globalStylesManager';
+
+import CalendarEntryModal from './CalendarEntryModal';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
@@ -192,46 +178,13 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     }));
   };
 
-  const getActivityTimes = (activity: Activity | null) => {
-    if (!activity) {
-      return '';
-    }
-    if (activity.startDate === activity.endDate) {
-      return `${activity.startTime}–${activity.endTime} ${dayjs(
-        activity.startDate
-      ).format('DD MMMM')}`;
-    }
-    return `${dayjs(activity.startDate).format('DD MMM')} ${
-      activity.startTime
-    } – ${dayjs(activity.endDate).format('DD MMM')} ${activity.endTime}`;
-  };
-
   const isCreatorOrAdmin = () =>
     (selectedActivity &&
       currentUser &&
       currentUser.username === selectedActivity.authorName) ||
     role === 'admin';
 
-  const handlePrimaryButtonClick = () => {
-    if (!selectedActivity) return;
-
-    if (selectedActivity.isGroupMeeting) {
-      navigate(`/groups/${selectedActivity.groupId}`);
-      return;
-    }
-
-    const listing = selectedActivity.isPublicActivity
-      ? 'activities'
-      : 'calendar';
-    navigate(`/${listing}/${selectedActivity.activityId}`);
-  };
-
-  const handleSecondaryButtonClick = () => {
-    if (!isCreatorOrAdmin()) {
-      setSelectedActivity(null);
-      return;
-    }
-
+  const handleEdit = () => {
     if (!selectedActivity) return;
 
     if (selectedActivity.isGroupMeeting) {
@@ -438,53 +391,12 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
         </Box>
       </Box>
 
-      <Modal
-        id="calendar-item"
-        open={Boolean(selectedActivity)}
-        title={selectedActivity && selectedActivity.title}
-        confirmText={<Trans i18nKey="common:actions.entryPage" />}
-        cancelText={
-          isCreatorOrAdmin() ? (
-            <Trans i18nKey="common:actions.update">Edit</Trans>
-          ) : (
-            <Trans i18nKey="common:actions.close">Close</Trans>
-          )
-        }
+      <CalendarEntryModal
+        canEdit={Boolean(isCreatorOrAdmin())}
+        entry={selectedActivity}
         onClose={() => setSelectedActivity(null)}
-        onConfirm={() => handlePrimaryButtonClick()}
-        onCancel={() => handleSecondaryButtonClick()}
-      >
-        <Box
-          bg="theme.50"
-          style={{ fontFamily: 'Courier, monospace' }}
-          p="2"
-          my="1"
-        >
-          <div>
-            <Link to={`/@${selectedActivity?.authorName}`}>
-              <CLink as="span" fontWeight="bold">
-                {selectedActivity && selectedActivity.authorName}
-              </CLink>{' '}
-            </Link>
-            <Text as="span">
-              {<Trans i18nKey="common:labels.booked">booked</Trans>}
-            </Text>{' '}
-            <Link to={`/resources/${selectedActivity?.resourceId}`}>
-              <CLink as="span" fontWeight="bold">
-                {selectedActivity && selectedActivity.resource}
-              </CLink>
-            </Link>
-          </div>
-          <Text>{getActivityTimes(selectedActivity)}</Text>
-        </Box>
-
-        <Text fontSize="sm" mt="2" p="1">
-          {selectedActivity?.longDescription &&
-            (selectedActivity?.isGroupPrivate
-              ? ''
-              : parseHtml(selectedActivity?.longDescription))}
-        </Text>
-      </Modal>
+        onEdit={handleEdit}
+      />
     </>
   );
 }
