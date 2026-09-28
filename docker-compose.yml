@@ -32,7 +32,7 @@ services:
     # Published by .github/workflows/docker.yml on every push to main.
     # `docker compose up -d` pulls it; `docker compose up -d --build` builds
     # the same thing locally instead.
-    image: ghcr.io/maskinrepubliken/pioneer-cocoso:latest
+    image: ghcr.io/maskinrepubliken/cocoso:latest
     build:
       context: .
       dockerfile: Dockerfile

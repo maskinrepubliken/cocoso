@@ -1,6 +1,6 @@
 # Cocoso — Community Cooperation Software
 
-This is **pioneer-cocoso**, a maintained fork of
+This is **cocoso**, a maintained fork of
 [eminx/cocoso](https://github.com/eminx/cocoso) that tracks upstream and
 adds local media storage, a security hardening pass and tooling.
 
@@ -10,8 +10,8 @@ adds local media storage, a security hardening pass and tooling.
 [![Meteor](https://img.shields.io/badge/Meteor-3.5-DE4F4F?logo=meteor&logoColor=white)](https://www.meteor.com/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![GitHub issues](https://img.shields.io/github/issues/lyret/pioneer-cocoso)](https://github.com/lyret/pioneer-cocoso/issues)
-[![CI](https://github.com/lyret/pioneer-cocoso/actions/workflows/ci.yml/badge.svg)](https://github.com/lyret/pioneer-cocoso/actions/workflows/ci.yml)
+[![GitHub issues](https://img.shields.io/github/issues/maskinrepubliken/cocoso)](https://github.com/maskinrepubliken/cocoso/issues)
+[![CI](https://github.com/maskinrepubliken/cocoso/actions/workflows/ci.yml/badge.svg)](https://github.com/maskinrepubliken/cocoso/actions/workflows/ci.yml)
 
 [cocoso.info](https://www.cocoso.info/)
 
@@ -61,8 +61,8 @@ Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the pieces fit.
 ## Getting started
 
 ```bash
-git clone https://github.com/lyret/pioneer-cocoso.git
-cd pioneer-cocoso
+git clone https://github.com/maskinrepubliken/cocoso.git
+cd cocoso
 meteor npm install
 cp changethis.settings.json private/settings.json   # edit; see docs/CONFIGURATION.md
 npm start                                           # http://localhost:3000
@@ -94,7 +94,7 @@ contributions there are very welcome.
 ## Contributing
 
 Issues and pull requests for this fork go to
-[github.com/lyret/pioneer-cocoso](https://github.com/lyret/pioneer-cocoso);
+[github.com/maskinrepubliken/cocoso](https://github.com/maskinrepubliken/cocoso);
 changes that belong to everyone should also be offered upstream at
 [github.com/eminx/cocoso](https://github.com/eminx/cocoso). Keep pull
 requests focused, run the checks above, and follow the conventions in

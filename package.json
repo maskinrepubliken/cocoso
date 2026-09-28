@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lyret/pioneer-cocoso.git"
+    "url": "git+https://github.com/maskinrepubliken/cocoso.git"
   },
   "keywords": [
     "cocoso",
@@ -21,9 +21,9 @@
   "author": "Emin Durak",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/lyret/pioneer-cocoso/issues"
+    "url": "https://github.com/maskinrepubliken/cocoso/issues"
   },
-  "homepage": "https://github.com/lyret/pioneer-cocoso#readme",
+  "homepage": "https://github.com/maskinrepubliken/cocoso#readme",
   "scripts": {
     "start": "meteor run --settings private/settings.json",
     "analyze": "meteor run --settings private/settings.json --extra-packages bundle-visualizer --production",

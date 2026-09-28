@@ -9,8 +9,8 @@
 ## First run
 
 ```bash
-git clone https://github.com/lyret/pioneer-cocoso.git
-cd pioneer-cocoso
+git clone https://github.com/maskinrepubliken/cocoso.git
+cd cocoso
 meteor npm install
 cp changethis.settings.json private/settings.json   # then edit it, see docs/CONFIGURATION.md
 meteor run --settings private/settings.json --port 3000
