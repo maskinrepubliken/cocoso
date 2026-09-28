@@ -14,12 +14,13 @@ import {
   Modal,
   Text,
 } from '/imports/ui/core';
-import { canCreateContentAtom, currentUserAtom } from '/imports/state';
+import { currentUserAtom, roleAtom } from '/imports/state';
 import FancyDate from '/imports/ui/entry/FancyDate';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import FormField from '/imports/ui/forms/FormField';
 
+import AttendeeNames from './AttendeeNames';
 import RsvpForm from './RsvpForm';
 import RsvpList from './CsvList';
 import { activityAtom } from '../ActivityItemHandler';
@@ -40,11 +41,15 @@ export default function RsvpContent({
   occurrenceIndex,
   onCloseModal,
 }) {
-  const canCreateContent = useAtomValue(canCreateContentAtom);
   const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
   const setActivity = useSetAtom(activityAtom);
   const { activityId } = useParams();
-  const [state, setState] = useState({
+  const [state, setState] = useState<{
+    isRsvpCancelModalOn: boolean;
+    rsvpCancelModalInfo: any;
+    selectedOccurrence: any;
+  }>({
     isRsvpCancelModalOn: false,
     rsvpCancelModalInfo: null,
     selectedOccurrence: null,
@@ -91,45 +96,27 @@ export default function RsvpContent({
     });
   };
 
-  const handleRsvpSubmit = async (values) => {
-    let isAlreadyRegistered = false;
-    occurrence.attendees?.forEach((attendee) => {
-      if (!attendee) {
-        return;
-      }
-      if (
-        attendee?.lastName?.trim().toLowerCase() ===
-          values?.lastName?.trim()?.toLowerCase() &&
-        attendee?.email?.trim().toLowerCase() ===
-          values?.email?.trim()?.toLowerCase()
-      ) {
-        isAlreadyRegistered = true;
-        return;
-      }
-    });
-    if (isAlreadyRegistered) {
+  // The server decides on duplicates and capacity; attendees' emails are
+  // not sent to the browser, so they cannot be checked here.
+  const showRsvpError = (error: any) => {
+    if (error?.error === 'already-registered') {
       message.error(t('public.register.alreadyRegistered'));
-      return;
+    } else if (error?.error === 'capacity-full') {
+      message.error(t('public.capacity.full'));
+    } else {
+      message.error(error?.reason);
     }
+  };
 
-    let totalNumberOfAttendees = 0;
-    occurrence.attendees.forEach((attendee) => {
-      totalNumberOfAttendees += attendee.numberOfPeople;
-    });
-
+  const handleRsvpSubmit = async (values) => {
     const numberOfPeople = Number(values.numberOfPeople);
-
-    if (capacity < totalNumberOfAttendees + numberOfPeople) {
-      const capacityLeft = capacity - totalNumberOfAttendees;
-      message.error(t('public.register.notEnoughSeats', { capacityLeft }));
-      return;
-    }
 
     const parsedValues = {
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim(),
       email: values.email.trim(),
       numberOfPeople,
+      isNameHidden: Boolean(values.isNameHidden),
     };
 
     try {
@@ -143,33 +130,19 @@ export default function RsvpContent({
       resetRsvpModal();
       message.success(t('public.attendance.create'));
     } catch (error) {
-      message.error(error.reason);
+      showRsvpError(error);
     }
   };
 
   const handleChangeRsvpSubmit = async (values) => {
-    let totalNumberOfAttendees = 0;
-    occurrence?.attendees?.forEach((attendee, index) => {
-      if (rsvpCancelModalInfo.attendeeIndex === index) {
-        console.log('attendeeIndex:', rsvpCancelModalInfo.attendeeIndex);
-        return;
-      }
-      totalNumberOfAttendees += attendee.numberOfPeople;
-    });
-
     const numberOfPeople = Number(values.numberOfPeople);
-
-    if (capacity < totalNumberOfAttendees + numberOfPeople) {
-      const capacityLeft = capacity - totalNumberOfAttendees;
-      message.error(t('public.register.notEnoughSeats', { capacityLeft }));
-      return;
-    }
 
     const parsedValues = {
       email: values.email,
       firstName: values.firstName,
       lastName: values.lastName,
       numberOfPeople,
+      isNameHidden: Boolean(values.isNameHidden),
     };
 
     try {
@@ -178,13 +151,14 @@ export default function RsvpContent({
         activity?._id,
         parsedValues,
         rsvpCancelModalInfo?.occurrenceIndex,
-        rsvpCancelModalInfo?.attendeeIndex
+        rsvpCancelModalInfo?.attendeeIndex,
+        rsvpCancelModalInfo?.current
       );
       setActivity(await call('getActivityById', activityId));
       resetRsvpModal();
       message.success(t('public.attendance.update'));
     } catch (error) {
-      message.error(error.reason);
+      showRsvpError(error);
     }
   };
 
@@ -192,21 +166,9 @@ export default function RsvpContent({
     if (!rsvpCancelModalInfo) {
       return;
     }
-    const { email, lastName } = rsvpCancelModalInfo;
+    const { email, lastName } = rsvpCancelModalInfo.current || {};
 
     if (!email || !lastName) {
-      return;
-    }
-
-    const theOccurrence = activity?.datesAndTimes[occurrenceIndex];
-    const theNonAttendee = theOccurrence.attendees.find(
-      (a) =>
-        a.email.trim().toLowerCase() === email.trim().toLowerCase() &&
-        a.lastName.trim().toLowerCase() === lastName.trim().toLowerCase()
-    );
-
-    if (!theNonAttendee) {
-      message.error(t('public.register.notFound'));
       return;
     }
 
@@ -231,35 +193,28 @@ export default function RsvpContent({
     }
   };
 
-  const findRsvpInfo = () => {
-    const theOccurrence =
-      activity?.datesAndTimes[rsvpCancelModalInfo.occurrenceIndex];
-
-    const attendeeFinder = (attendee) =>
-      attendee.lastName.trim().toLowerCase() ===
-        rsvpCancelModalInfo.lastName.trim().toLowerCase() &&
-      attendee.email.trim().toLowerCase() ===
-        rsvpCancelModalInfo.email.trim().toLowerCase();
-
-    const foundAttendee = theOccurrence.attendees.find(attendeeFinder);
-    const foundAttendeeIndex =
-      theOccurrence.attendees.findIndex(attendeeFinder);
-
-    if (!foundAttendee) {
+  const findRsvpInfo = async () => {
+    const { email, lastName } = rsvpCancelModalInfo;
+    try {
+      const found = await call<{ email: string; lastName: string }>(
+        'findAttendance',
+        activity?._id,
+        rsvpCancelModalInfo.occurrenceIndex,
+        email || '',
+        lastName || ''
+      );
+      setState({
+        ...state,
+        rsvpCancelModalInfo: {
+          ...rsvpCancelModalInfo,
+          ...found,
+          current: { email: found.email, lastName: found.lastName },
+          isInfoFound: true,
+        },
+      });
+    } catch (_error) {
       message.error(t('public.register.notFound'));
-      return;
     }
-
-    setState({
-      ...state,
-      rsvpCancelModalInfo: {
-        ...rsvpCancelModalInfo,
-        attendeeIndex: foundAttendeeIndex,
-        isInfoFound: true,
-        firstName: foundAttendee.firstName,
-        numberOfPeople: foundAttendee.numberOfPeople,
-      },
-    });
   };
 
   const defaultRsvpValues = {
@@ -267,7 +222,12 @@ export default function RsvpContent({
     lastName: currentUser ? currentUser.lastName : '',
     email: currentUser ? currentUser.emails[0].address : '',
     numberOfPeople: 1,
+    isNameHidden: false,
   };
+
+  const canSeeAttendeeDetails =
+    role === 'admin' ||
+    (currentUser && currentUser.username === activity.authorName);
 
   const eventPast = dayjs(occurrence.endDate).isBefore(yesterday);
 
@@ -304,7 +264,13 @@ export default function RsvpContent({
         )}
       </Box>
 
-      {canCreateContent && (
+      {activity.isPublicActivity && (
+        <Box mb="4">
+          <AttendeeNames attendees={occurrence.attendees} />
+        </Box>
+      )}
+
+      {canSeeAttendeeDetails && (
         <Center>
           <Button
             size="sm"

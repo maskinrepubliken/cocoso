@@ -4,20 +4,13 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import {
-  Box,
-  Button,
-  Checkbox,
-  Flex,
-  Input,
-  Link as CLink,
-  Text,
-} from '/imports/ui/core';
+import { Box, Button, Checkbox, Flex, Input, Text } from '/imports/ui/core';
 import Modal from '/imports/ui/core/Modal';
 import { call } from '/imports/api/_utils/shared';
 import { currentUserAtom } from '/imports/state';
 import { message } from '/imports/ui/generic/message';
 import AttendeeNames from '/imports/ui/pages/activities/components/AttendeeNames';
+import type { User } from '/imports/ui/types';
 
 // One occurrence as the calendar hands it over.
 export interface CalendarEntry {
@@ -89,7 +82,10 @@ export default function CalendarEntryModal({
 }: CalendarEntryModalProps) {
   const [t] = useTranslation('activities');
   const [tc] = useTranslation('common');
-  const currentUser = useAtomValue(currentUserAtom);
+  // Profile names live on the user document itself, not under `profile`.
+  const currentUser = useAtomValue(currentUserAtom) as
+    | (User & { firstName?: string; lastName?: string })
+    | null;
   const [activity, setActivity] = useState<any>(null);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
@@ -197,22 +193,24 @@ export default function CalendarEntryModal({
         {entry.resource && (
           <Text css={block}>
             <Link to={`/resources/${entry.resourceId}`}>
-              <CLink as="span">{entry.resource}</CLink>
+              <Text color="blue.500">{entry.resource}</Text>
             </Link>
           </Text>
         )}
         <Text css={block} fontSize="sm">
           {t('public.labels.organizer')}{' '}
           <Link to={`/@${entry.authorName}`}>
-            <CLink as="span">{entry.authorName}</CLink>
+            <Text color="blue.500">{entry.authorName}</Text>
           </Link>
         </Text>
       </Box>
 
       {!entry.isGroupPrivate && shortText(entry.longDescription) && (
-        <Text css={block} fontSize="sm" mb="3">
-          {shortText(entry.longDescription)}
-        </Text>
+        <Box mb="3">
+          <Text css={block} fontSize="sm">
+            {shortText(entry.longDescription)}
+          </Text>
+        </Box>
       )}
 
       {occurrence && entry.isPublicActivity && (
@@ -222,9 +220,11 @@ export default function CalendarEntryModal({
       )}
 
       {canRegister && isFull && (
-        <Text css={block} fontSize="sm" mb="3">
-          {t('public.capacity.full')}
-        </Text>
+        <Box mb="3">
+          <Text css={block} fontSize="sm">
+            {t('public.capacity.full')}
+          </Text>
+        </Box>
       )}
 
       {canRegister && !isFull && (
@@ -284,9 +284,9 @@ export default function CalendarEntryModal({
 
       <Flex justify="space-between" mt="4" wrap="wrap">
         <Link to={entryPath}>
-          <CLink as="span" fontSize="sm">
+          <Text color="blue.500" fontSize="sm">
             {t('public.labels.readMore')}
-          </CLink>
+          </Text>
         </Link>
         {canEdit && (
           <Button size="sm" variant="ghost" onClick={onEdit}>

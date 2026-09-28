@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Center,
+  Checkbox,
   Flex,
   Input,
   NumberInput,
@@ -16,12 +17,13 @@ export default function RsvpForm({
   isUpdateMode = false,
   defaultValues,
   onSubmit,
-  onDelete,
+  onDelete = () => {},
 }) {
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { handleSubmit, register, formState } = useForm({
+  const { handleSubmit, register, formState, setValue, watch } = useForm({
     defaultValues,
   });
+  const isNameHidden = watch('isNameHidden');
   const { isDirty, isSubmitting } = formState;
   const [t] = useTranslation('activities');
 
@@ -52,6 +54,16 @@ export default function RsvpForm({
           <FormField label={t('public.register.form.people.number')} required>
             <NumberInput {...register('numberOfPeople', { required: true })} />
           </FormField>
+          <Checkbox
+            checked={Boolean(isNameHidden)}
+            id={isUpdateMode ? 'rsvp-hide-name-update' : 'rsvp-hide-name'}
+            size="sm"
+            onChange={(e) =>
+              setValue('isNameHidden', e.target.checked, { shouldDirty: true })
+            }
+          >
+            {t('public.register.form.hideName')}
+          </Checkbox>
           <Flex justify="flex-end" pt="2" w="100%">
             <Button
               disabled={isUpdateMode && !isDirty}
