@@ -46,6 +46,8 @@ Activities.schema = new SimpleSchema({
         firstName: { type: String, optional: true },
         lastName: { type: String, optional: true },
         numberOfPeople: { type: SimpleSchema.Integer, optional: true },
+        // Hides the name from everyone but the organizer and admins.
+        isNameHidden: { type: Boolean, optional: true },
         registerDate: { type: Date },
       }),
       optional: true,

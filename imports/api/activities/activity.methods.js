@@ -44,6 +44,95 @@ const filterPrivateGroups = async (activities, user) => {
   return activities.filter((_, index) => filterResults[index]);
 };
 
+// Everyone may see who is coming, but only the organizer and admins see
+// email addresses and the names of those who chose to hide theirs.
+const redactAttendees = async (activities, user) => {
+  if (!activities) {
+    return activities;
+  }
+  const userIsAdmin = await isAdmin(user?._id);
+  const redactOne = (activity) => {
+    if (
+      !activity?.datesAndTimes ||
+      userIsAdmin ||
+      (user && activity.authorId === user._id)
+    ) {
+      return activity;
+    }
+    return {
+      ...activity,
+      datesAndTimes: activity.datesAndTimes.map((occurrence) => ({
+        ...occurrence,
+        attendees: (occurrence.attendees || []).map((attendee) =>
+          attendee.isNameHidden
+            ? {
+                numberOfPeople: attendee.numberOfPeople,
+                isNameHidden: true,
+              }
+            : {
+                firstName: attendee.firstName,
+                lastName: attendee.lastName,
+                numberOfPeople: attendee.numberOfPeople,
+              }
+        ),
+      })),
+    };
+  };
+  return Array.isArray(activities)
+    ? activities.map(redactOne)
+    : redactOne(activities);
+};
+
+const canManageAttendees = async (activity, user) =>
+  Boolean(user) &&
+  (activity.authorId === user._id || (await isAdmin(user._id)));
+
+const sameText = (a, b) =>
+  (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
+
+const findAttendeeIndex = (occurrence, email, lastName) =>
+  (occurrence?.attendees || []).findIndex(
+    (a) => sameText(a.email, email) && sameText(a.lastName, lastName)
+  );
+
+const attendeePattern = Match.ObjectIncluding({
+  email: String,
+  firstName: Match.Maybe(String),
+  lastName: Match.Maybe(String),
+  username: Match.Maybe(String),
+  numberOfPeople: Match.Maybe(Match.OneOf(Number, String)),
+  isNameHidden: Match.Maybe(Boolean),
+});
+
+const pickAttendeeValues = (values) => {
+  const picked = {
+    email: values.email.trim(),
+    firstName: (values.firstName || '').trim(),
+    lastName: (values.lastName || '').trim(),
+    isNameHidden: Boolean(values.isNameHidden),
+  };
+  if (values.username) {
+    picked.username = values.username;
+  }
+  return picked;
+};
+
+// A registration stands even when its confirmation email cannot be sent.
+const sendConfirmation = async (to, subject, body) => {
+  try {
+    await Meteor.callAsync('sendEmail', to, subject, body);
+  } catch (error) {
+    console.error('Could not send registration email', error);
+  }
+};
+
+const countPeople = (attendees, skipIndex = -1) =>
+  (attendees || []).reduce(
+    (sum, a, index) =>
+      index === skipIndex ? sum : sum + (Number(a.numberOfPeople) || 1),
+    0
+  );
+
 // The location of an activity follows its resource when it has one; only
 // activities without a resource carry a location of their own.
 async function resolveActivityLocation(values) {
@@ -75,7 +164,10 @@ Meteor.methods({
         const pastActsSorted = parseGroupActivities(pastActs)?.sort(
           compareDatesForSortActivitiesReverse
         );
-        return await filterPrivateGroups(pastActsSorted, user);
+        return await redactAttendees(
+          await filterPrivateGroups(pastActsSorted, user),
+          user
+        );
       }
       const futureActs = await Activities.find({
         ...selector,
@@ -85,7 +177,10 @@ Meteor.methods({
       const futureActsSorted = parseGroupActivities(futureActs)?.sort(
         compareDatesForSortActivities
       );
-      return await filterPrivateGroups(futureActsSorted, user);
+      return await redactAttendees(
+        await filterPrivateGroups(futureActsSorted, user),
+        user
+      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
@@ -99,15 +194,23 @@ Meteor.methods({
         locationSelector(locationId)
       ).fetchAsync();
       const allActsParsed = parseGroupActivities(allActs);
-      return await filterPrivateGroups(allActsParsed, user);
+      return await redactAttendees(
+        await filterPrivateGroups(allActsParsed, user),
+        user
+      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
   },
 
   async getActivityById(activityId) {
+    check(activityId, String);
+    const user = await Meteor.userAsync();
     try {
-      return await Activities.findOneAsync({ _id: activityId });
+      return await redactAttendees(
+        await Activities.findOneAsync({ _id: activityId }),
+        user
+      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
@@ -135,10 +238,14 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
+    const user = await Meteor.userAsync();
     try {
-      return await Activities.find({
-        authorName: username,
-      }).fetchAsync();
+      return await redactAttendees(
+        await Activities.find({
+          authorName: username,
+        }).fetchAsync(),
+        user
+      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch activities");
     }
@@ -155,7 +262,10 @@ Meteor.methods({
         authorName: username,
         isPublicActivity: true,
       }).fetchAsync();
-      const visible = await filterPrivateGroups(activities, user);
+      const visible = await redactAttendees(
+        await filterPrivateGroups(activities, user),
+        user
+      );
 
       return {
         upcoming: visible
@@ -379,7 +489,7 @@ Meteor.methods({
   async registerAttendance(activityId, values, occurenceIndex = 0) {
     check(activityId, String);
     check(occurenceIndex, Match.Integer);
-    check(values, Match.ObjectIncluding({ email: String }));
+    check(values, attendeePattern);
     if (!emailIsValid(values.email)) {
       throw new Meteor.Error('invalid-email', 'Please enter a valid email');
     }
@@ -390,8 +500,25 @@ Meteor.methods({
     if (!theActivity || !theActivity.datesAndTimes?.[occurenceIndex]) {
       throw new Meteor.Error('not-found', 'Activity or occurrence not found');
     }
+    if (theActivity.isRegistrationDisabled) {
+      throw new Meteor.Error('registration-closed', 'Registration is closed');
+    }
+    const theOccurrence = theActivity.datesAndTimes[occurenceIndex];
+    if (findAttendeeIndex(theOccurrence, values.email, values.lastName) > -1) {
+      throw new Meteor.Error('already-registered', 'Already registered');
+    }
+    const numberOfPeople = Number(values.numberOfPeople) || 1;
+    if (
+      !theActivity.isGroupMeeting &&
+      theActivity.capacity &&
+      countPeople(theOccurrence.attendees) + numberOfPeople >
+        theActivity.capacity
+    ) {
+      throw new Meteor.Error('capacity-full', 'Not enough places left');
+    }
     const rsvpValues = {
-      ...values,
+      ...pickAttendeeValues(values),
+      numberOfPeople,
       registerDate: new Date(),
     };
 
@@ -415,22 +542,34 @@ Meteor.methods({
           [field]: rsvpValues,
         },
       });
-      await Meteor.callAsync(
-        'sendEmail',
-        values.email,
-        `"${theActivity.title}", ${hostName}`,
-        emailBody
-      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't register attendance");
     }
+    await sendConfirmation(
+      rsvpValues.email,
+      `"${theActivity.title}", ${hostName}`,
+      emailBody
+    );
   },
 
-  async updateAttendance(activityId, values, occurenceIndex, attendeeIndex) {
+  // The registration is identified by the email and last name it was made
+  // with (`current`), which only its owner knows, unless the organizer or an
+  // admin makes the change.
+  async updateAttendance(
+    activityId,
+    values,
+    occurenceIndex,
+    attendeeIndex,
+    current
+  ) {
     check(activityId, String);
     check(occurenceIndex, Match.Integer);
     check(attendeeIndex, Match.Integer);
-    check(values, Match.ObjectIncluding({ email: String }));
+    check(values, attendeePattern);
+    check(
+      current,
+      Match.Maybe({ email: String, lastName: Match.Maybe(String) })
+    );
     if (!emailIsValid(values.email)) {
       throw new Meteor.Error('invalid-email', 'Please enter a valid email');
     }
@@ -443,15 +582,38 @@ Meteor.methods({
     ) {
       throw new Meteor.Error('not-found', 'Registration not found');
     }
+    const existing =
+      theActivity.datesAndTimes[occurenceIndex].attendees[attendeeIndex];
+    const currentUser = await Meteor.userAsync();
+    const isOwner =
+      current &&
+      sameText(existing.email, current.email) &&
+      sameText(existing.lastName, current.lastName);
+    if (!isOwner && !(await canManageAttendees(theActivity, currentUser))) {
+      throw new Meteor.Error('not-allowed', 'Registration not found');
+    }
+    const numberOfPeople = Number(values.numberOfPeople) || 1;
+    if (
+      !theActivity.isGroupMeeting &&
+      theActivity.capacity &&
+      countPeople(
+        theActivity.datesAndTimes[occurenceIndex].attendees,
+        attendeeIndex
+      ) +
+        numberOfPeople >
+        theActivity.capacity
+    ) {
+      throw new Meteor.Error('capacity-full', 'Not enough places left');
+    }
     const rsvpValues = {
-      ...values,
+      ...pickAttendeeValues(values),
+      numberOfPeople,
       registerDate: new Date(),
     };
     const newDatesAndTimes = [...theActivity.datesAndTimes];
     const theOccurence = newDatesAndTimes[occurenceIndex];
 
     const site = await getSite();
-    const currentUser = await Meteor.userAsync();
     const emailBody = getRegistrationEmailBody(
       theActivity,
       rsvpValues,
@@ -469,15 +631,38 @@ Meteor.methods({
           [field]: rsvpValues,
         },
       });
-      await Meteor.callAsync(
-        'sendEmail',
-        values.email,
-        `Update to your registration for "${theActivity.title}" at ${site.settings.name}`,
-        emailBody
-      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update attendance");
     }
+    await sendConfirmation(
+      rsvpValues.email,
+      `Update to your registration for "${theActivity.title}" at ${site.settings.name}`,
+      emailBody
+    );
+  },
+
+  // Looks up one's own registration for changing or cancelling it.
+  async findAttendance(activityId, occurenceIndex, email, lastName) {
+    check(activityId, String);
+    check(occurenceIndex, Match.Integer);
+    check(email, String);
+    check(lastName, String);
+
+    const theActivity = await Activities.findOneAsync({ _id: activityId });
+    const theOccurrence = theActivity?.datesAndTimes?.[occurenceIndex];
+    const attendeeIndex = findAttendeeIndex(theOccurrence, email, lastName);
+    if (attendeeIndex < 0) {
+      throw new Meteor.Error('not-found', 'Registration not found');
+    }
+    const attendee = theOccurrence.attendees[attendeeIndex];
+    return {
+      attendeeIndex,
+      email: attendee.email,
+      firstName: attendee.firstName,
+      lastName: attendee.lastName,
+      numberOfPeople: attendee.numberOfPeople,
+      isNameHidden: Boolean(attendee.isNameHidden),
+    };
   },
 
   async removeAttendance(activityId, occurenceIndex, email, lastName) {
@@ -496,7 +681,9 @@ Meteor.methods({
     const newOccurences = [...theActivity.datesAndTimes];
     const theOccurence = newOccurences[occurenceIndex];
     const theNonAttendee = theOccurence.attendees?.find(
-      (a) => a.email === email
+      (a) =>
+        sameText(a.email, email) &&
+        (theActivity.isGroupMeeting || sameText(a.lastName, lastName))
     );
     if (!theNonAttendee) {
       throw new Meteor.Error('not-found', 'Registration not found');
@@ -505,9 +692,9 @@ Meteor.methods({
     newOccurences[occurenceIndex].attendees = theOccurence.attendees.filter(
       (a) => {
         if (theActivity.isGroupMeeting) {
-          return email !== a.email;
+          return !sameText(email, a.email);
         }
-        return a.email !== email || a.lastName !== lastName;
+        return !sameText(a.email, email) || !sameText(a.lastName, lastName);
       }
     );
 
@@ -520,19 +707,13 @@ Meteor.methods({
           datesAndTimes: newOccurences,
         },
       });
-      await Meteor.callAsync(
-        'sendEmail',
-        email,
-        `Update to your registration for "${theActivity.title}" at ${hostName}`,
-        getUnregistrationEmailBody(
-          theActivity,
-          theNonAttendee,
-          site,
-          currentUser
-        )
-      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update document");
     }
+    await sendConfirmation(
+      email,
+      `Update to your registration for "${theActivity.title}" at ${hostName}`,
+      getUnregistrationEmailBody(theActivity, theNonAttendee, site, currentUser)
+    );
   },
 });
