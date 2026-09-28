@@ -11,7 +11,7 @@ import {
 import { getSite, sitePublicFields } from '/imports/api/site/site';
 import appRoutes from '/imports/appRoutes';
 import { getGlobalStyles } from '/imports/ui/utils/globalStylesManager';
-import i18n from '/imports/startup/i18n';
+import i18n, { setDayjsLocale } from '/imports/startup/i18n';
 import { resolveLangFromRequest } from '/imports/api/_utils/i18n/serverI18n';
 
 let stitchesConfig = null;
@@ -85,6 +85,9 @@ export default async function serverRenderer(sink) {
 
   const router = createStaticRouter(dataRoutes, context);
 
+  // dayjs has one global locale; renderToString is synchronous, so setting
+  // it right before rendering holds for this request.
+  setDayjsLocale(resolvedLang);
   const appHtml = renderToString(
     <StaticRouterProvider router={router} context={context} />
   );

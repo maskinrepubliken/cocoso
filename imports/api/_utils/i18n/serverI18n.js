@@ -38,9 +38,10 @@ function pickFromAcceptLanguage(header) {
 // localStorage isn't visible to the server, so it's skipped; navigator's
 // server-side equivalent is the Accept-Language header.
 //
-// A site language, when given, comes before Accept-Language: the client
-// switches visitors without a stored choice to the site's language
-// (WrapperHybrid), so rendering in it avoids a flash of another language.
+// A site language, when given, comes right after the querystring: the
+// client starts every page in it (imports/startup/client/index.jsx, and
+// WrapperHybrid for visitors who are not logged in), so rendering in it
+// keeps the first render and hydration in the same language.
 function resolveLang({
   lngParam,
   cookieHeader,
@@ -52,15 +53,15 @@ function resolveLang({
     return fromQuery;
   }
 
+  const fromSite = normalizeLang(siteLang);
+  if (fromSite) {
+    return fromSite;
+  }
+
   const cookies = cookie.parse(cookieHeader || '');
   const fromCookie = normalizeLang(cookies[COOKIE_NAME]);
   if (fromCookie) {
     return fromCookie;
-  }
-
-  const fromSite = normalizeLang(siteLang);
-  if (fromSite) {
-    return fromSite;
   }
 
   const fromHeader = pickFromAcceptLanguage(acceptLanguageHeader);

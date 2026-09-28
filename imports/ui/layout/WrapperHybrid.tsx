@@ -14,7 +14,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 
 import useMediaQuery from '/imports/api/_utils/useMediaQuery';
 import Memberships from '/imports/api/memberships/membership';
-import i18n from '/imports/startup/i18n';
+import i18n, { setDayjsLocale } from '/imports/startup/i18n';
 import {
   siteAtom,
   currentUserAtom,
@@ -137,8 +137,7 @@ export default function WrapperHybrid({
     dayjs.updateLocale(culture, {
       weekStart: 1,
     });
-    // Dates everywhere follow the interface language.
-    dayjs.locale(culture);
+    setDayjsLocale(i18n.language);
   }, [i18n?.language]);
 
   useEffect(() => {

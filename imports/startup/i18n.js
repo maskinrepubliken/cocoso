@@ -4,6 +4,10 @@ import { initReactI18next } from 'react-i18next';
 import I18NextHttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import yaml from 'js-yaml';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en-gb';
+import 'dayjs/locale/sv';
+import 'dayjs/locale/tr';
 
 const { cdnServer } = Meteor.settings;
 
@@ -130,5 +134,11 @@ if (isServer) {
   });
 }
 
+// Dates follow the interface language. Server and client both set it
+// before rendering, so month and weekday names match at hydration.
+const setDayjsLocale = (lang) => {
+  dayjs.locale(!lang || lang === 'en' ? 'en-gb' : lang);
+};
+
 export default i18n;
-export { allLangs, defaultLang };
+export { allLangs, defaultLang, setDayjsLocale };
