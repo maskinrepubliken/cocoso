@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import 'meteor/aldeed:collection2/static';
 
 const Memberships = new Mongo.Collection('memberships');
 
