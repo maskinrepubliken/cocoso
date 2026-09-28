@@ -37,7 +37,16 @@ function pickFromAcceptLanguage(header) {
 // localStorage, navigator) as closely as a server request allows —
 // localStorage isn't visible to the server, so it's skipped; navigator's
 // server-side equivalent is the Accept-Language header.
-function resolveLang({ lngParam, cookieHeader, acceptLanguageHeader }) {
+//
+// A site language, when given, comes before Accept-Language: the client
+// switches visitors without a stored choice to the site's language
+// (WrapperHybrid), so rendering in it avoids a flash of another language.
+function resolveLang({
+  lngParam,
+  cookieHeader,
+  acceptLanguageHeader,
+  siteLang,
+}) {
   const fromQuery = normalizeLang(lngParam);
   if (fromQuery) {
     return fromQuery;
@@ -47,6 +56,11 @@ function resolveLang({ lngParam, cookieHeader, acceptLanguageHeader }) {
   const fromCookie = normalizeLang(cookies[COOKIE_NAME]);
   if (fromCookie) {
     return fromCookie;
+  }
+
+  const fromSite = normalizeLang(siteLang);
+  if (fromSite) {
+    return fromSite;
   }
 
   const fromHeader = pickFromAcceptLanguage(acceptLanguageHeader);
@@ -61,9 +75,10 @@ function resolveLang({ lngParam, cookieHeader, acceptLanguageHeader }) {
 // serverRenderer.js). Only reads headers, so it doesn't care that req.url
 // is always a raw string (never a parsed URL object) — callers extract
 // their own lngParam from wherever their query string actually lives.
-function resolveLangFromRequest(req, lngParam) {
+function resolveLangFromRequest(req, lngParam, siteLang) {
   return resolveLang({
     lngParam,
+    siteLang,
     cookieHeader: req?.headers?.cookie,
     acceptLanguageHeader: req?.headers?.['accept-language'],
   });

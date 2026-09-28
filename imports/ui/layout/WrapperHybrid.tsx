@@ -137,6 +137,8 @@ export default function WrapperHybrid({
     dayjs.updateLocale(culture, {
       weekStart: 1,
     });
+    // Dates everywhere follow the interface language.
+    dayjs.locale(culture);
   }, [i18n?.language]);
 
   useEffect(() => {

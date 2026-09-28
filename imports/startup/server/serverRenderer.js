@@ -51,7 +51,11 @@ export default async function serverRenderer(sink) {
   // that preloads common+accounts for all languages), so this is cheap and
   // synchronous, not a fresh fetch.
   const lngParam = new URLSearchParams(search || '').get('lng');
-  const resolvedLang = resolveLangFromRequest(sink.request, lngParam);
+  const resolvedLang = resolveLangFromRequest(
+    sink.request,
+    lngParam,
+    siteDoc?.settings?.lang
+  );
   const requestI18n = i18n.cloneInstance({ lng: resolvedLang });
 
   const props = {
