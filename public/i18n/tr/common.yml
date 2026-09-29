@@ -310,3 +310,62 @@ auth:
 
 public:
   labels:
+
+# The event page (the strings are in common because SSR only loads common)
+event:
+  sections:
+    when: "Ne zaman"
+    where: "Yer"
+    organizer: "Düzenleyen"
+    about: "Etkinlik hakkında"
+    register: "Kayıt"
+    attendees: "Katılımcılar"
+    organizerTools: "Düzenleyen için"
+    discussion: "Tartışma"
+  dates:
+    choose: "Tarih seç"
+    more: "{{count}} tarihin hepsini göster"
+    fewer: "Daha az tarih göster"
+    past: "Geçmiş tarihler"
+    occurrences: "{{count}} tarih"
+  place:
+    address: "Adres"
+    map: "Haritada aç"
+  organizer:
+    profile: "{{name}} tarafından düzenlenen tüm etkinlikler"
+  attendees:
+    none: "Henüz kimse kayıt olmadı."
+    hidden: "+ adını göstermemeyi seçen {{count}} kişi"
+    count: "{{count}} kayıtlı"
+    left: "{{capacity}} yerden {{count}} yer kaldı"
+  register:
+    firstName: "Ad"
+    lastName: "Soyad"
+    email: "E-posta"
+    submit: "Kayıt ol"
+    hideName: "Adımı diğer ziyaretçilerden gizle"
+    emailPrivate: "E-posta adresini yalnızca düzenleyen görür."
+    done: "Teşekkürler, kaydın alındı. Hoş geldin!"
+    already: "Bu tarih için zaten kayıtlısın."
+    full: "Etkinlik dolu."
+    closed: "Kayıtlar kapalı."
+    past: "Bu tarih geçti."
+    forDate: "{{date}} için kayıt"
+  change:
+    toggle: "Kaydını değiştir veya iptal et"
+    intro: "Kayıt olurken kullandığın soyadı ve e-posta adresini gir."
+    find: "Kaydımı bul"
+    notFound: "Bu bilgilerle bir kayıt bulamadık. Tarihi ve yazımı kontrol edip tekrar dene."
+    save: "Değişiklikleri kaydet"
+    cancel: "Kaydımı iptal et"
+    updated: "Kaydın değiştirildi."
+    removed: "Kaydın iptal edildi."
+  tools:
+    intro: "E-posta adresleriyle bu listeyi yalnızca sen ve yöneticiler görür."
+    edit: "Etkinliği düzenle"
+    remove: "Etkinliği sil"
+    people: "Kişi"
+    noOne: "Bu tarih için kayıt yok."
+  discussion:
+    open: "Tartışmayı aç"
+    onlyVerified: "Doğrulanmış üyeler için"

@@ -313,3 +313,62 @@ auth:
 
 public:
   labels:
+
+# The event page (the strings are in common because SSR only loads common)
+event:
+  sections:
+    when: "When"
+    where: "Where"
+    organizer: "Organizer"
+    about: "About the event"
+    register: "Sign up"
+    attendees: "Attendees"
+    organizerTools: "For the organizer"
+    discussion: "Discussion"
+  dates:
+    choose: "Choose a date"
+    more: "Show all {{count}} dates"
+    fewer: "Show fewer dates"
+    past: "Past dates"
+    occurrences: "{{count}} dates"
+  place:
+    address: "Address"
+    map: "Open in map"
+  organizer:
+    profile: "See all events by {{name}}"
+  attendees:
+    none: "No one has signed up yet."
+    hidden: "+ {{count}} who chose not to show their name"
+    count: "{{count}} signed up"
+    left: "{{count}} of {{capacity}} places left"
+  register:
+    firstName: "First name"
+    lastName: "Last name"
+    email: "Email"
+    submit: "Sign up"
+    hideName: "Hide my name from other visitors"
+    emailPrivate: "Only the organizer sees your email."
+    done: "Thank you, you are signed up. Welcome!"
+    already: "You are already signed up for this date."
+    full: "The event is full."
+    closed: "Sign-up is closed."
+    past: "This date has already passed."
+    forDate: "Signing up for {{date}}"
+  change:
+    toggle: "Change or cancel your sign-up"
+    intro: "Enter the last name and email you signed up with."
+    find: "Find my sign-up"
+    notFound: "We found no sign-up with those details. Check the date and spelling and try again."
+    save: "Save changes"
+    cancel: "Cancel my sign-up"
+    updated: "Your sign-up is changed."
+    removed: "Your sign-up is cancelled."
+  tools:
+    intro: "Only you and the admins see this list with email addresses."
+    edit: "Edit event"
+    remove: "Delete event"
+    people: "People"
+    noOne: "No sign-ups for this date."
+  discussion:
+    open: "Open the discussion"
+    onlyVerified: "For verified members"

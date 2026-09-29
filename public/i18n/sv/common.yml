@@ -310,3 +310,62 @@ auth:
 
 public:
   labels:
+
+# The event page (the strings are in common because SSR only loads common)
+event:
+  sections:
+    when: "När"
+    where: "Plats"
+    organizer: "Arrangör"
+    about: "Om evenemanget"
+    register: "Anmälan"
+    attendees: "Deltagare"
+    organizerTools: "För arrangören"
+    discussion: "Diskussion"
+  dates:
+    choose: "Välj datum"
+    more: "Visa alla {{count}} datum"
+    fewer: "Visa färre datum"
+    past: "Tidigare datum"
+    occurrences: "{{count}} tillfällen"
+  place:
+    address: "Adress"
+    map: "Öppna i karta"
+  organizer:
+    profile: "Se alla evenemang av {{name}}"
+  attendees:
+    none: "Ingen har anmält sig än."
+    hidden: "+ {{count}} som valt att inte visa sitt namn"
+    count: "{{count}} anmälda"
+    left: "{{count}} av {{capacity}} platser kvar"
+  register:
+    firstName: "Förnamn"
+    lastName: "Efternamn"
+    email: "E-post"
+    submit: "Anmäl"
+    hideName: "Dölj mitt namn för andra besökare"
+    emailPrivate: "Bara arrangören ser din e-post."
+    done: "Tack, du är anmäld. Välkommen!"
+    already: "Du är redan anmäld till det här datumet."
+    full: "Evenemanget är fullt."
+    closed: "Anmälan är stängd."
+    past: "Det här datumet har redan varit."
+    forDate: "Anmälan till {{date}}"
+  change:
+    toggle: "Ändra eller avboka din anmälan"
+    intro: "Ange efternamnet och e-postadressen du anmälde dig med."
+    find: "Hitta min anmälan"
+    notFound: "Vi hittade ingen anmälan med de uppgifterna. Kontrollera datum och stavning och försök igen."
+    save: "Spara ändringar"
+    cancel: "Avboka min anmälan"
+    updated: "Din anmälan är ändrad."
+    removed: "Din anmälan är avbokad."
+  tools:
+    intro: "Bara du och administratörerna ser den här listan med e-postadresser."
+    edit: "Redigera evenemanget"
+    remove: "Ta bort evenemanget"
+    people: "Personer"
+    noOne: "Inga anmälningar till det här datumet."
+  discussion:
+    open: "Öppna diskussionen"
+    onlyVerified: "För verifierade medlemmar"

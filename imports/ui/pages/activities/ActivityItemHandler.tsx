@@ -7,9 +7,6 @@ import ActivityHybrid from '/imports/ui/entry/ActivityHybrid';
 import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 
-const ActivityInteractionHandler = loadable(
-  () => import('./components/ActivityInteractionHandler')
-);
 const EditCalendarActivity = loadable(
   () => import('../calendar/EditCalendarActivity')
 );
@@ -36,22 +33,16 @@ export default function ActivityItemHandler({ siteDoc }) {
     <>
       <ActivityHybrid activity={activity} siteDoc={siteDoc} />
 
-      {rendered && (
-        <>
-          <ActivityInteractionHandler />
-
-          {canCreateContent && (
-            <EditEntryHandler
-              context={activity.isPublicActivity ? 'activities' : 'calendar'}
-            >
-              {activity.isPublicActivity ? (
-                <EditPublicActivity />
-              ) : (
-                <EditCalendarActivity />
-              )}
-            </EditEntryHandler>
+      {rendered && canCreateContent && (
+        <EditEntryHandler
+          context={activity.isPublicActivity ? 'activities' : 'calendar'}
+        >
+          {activity.isPublicActivity ? (
+            <EditPublicActivity />
+          ) : (
+            <EditCalendarActivity />
           )}
-        </>
+        </EditEntryHandler>
       )}
     </>
   );

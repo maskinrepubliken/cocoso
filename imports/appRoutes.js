@@ -36,7 +36,11 @@ function revalidateOn(relevantParams = []) {
     nextUrl,
     defaultShouldRevalidate,
   }) {
-    if (currentUrl.pathname !== nextUrl.pathname) {
+    // Different page, or an explicit revalidate() (same URL): the default.
+    if (
+      currentUrl.pathname !== nextUrl.pathname ||
+      currentUrl.href === nextUrl.href
+    ) {
       return defaultShouldRevalidate;
     }
 
