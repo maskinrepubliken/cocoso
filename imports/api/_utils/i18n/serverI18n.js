@@ -5,6 +5,8 @@ import i18n, { allLangs, defaultLang } from '../../../startup/i18n';
 
 const SUPPORTED_LANGS = allLangs.map((l) => l.value);
 const COOKIE_NAME = 'i18next'; // i18next-browser-languagedetector's default
+// Set only when the visitor picks a language (imports/startup/i18n.js).
+const CHOICE_COOKIE_NAME = 'cocoso-lang';
 
 function normalizeLang(candidate) {
   if (!candidate) {
@@ -38,10 +40,10 @@ function pickFromAcceptLanguage(header) {
 // localStorage isn't visible to the server, so it's skipped; navigator's
 // server-side equivalent is the Accept-Language header.
 //
-// A site language, when given, comes right after the querystring: the
-// client starts every page in it (imports/startup/client/index.jsx, and
-// WrapperHybrid for visitors who are not logged in), so rendering in it
-// keeps the first render and hydration in the same language.
+// After the querystring come the visitor's own pick in the language menu
+// and then the site's language: the client starts every page the same way
+// (imports/startup/client/index.jsx and WrapperHybrid), so the first render
+// and hydration agree.
 function resolveLang({
   lngParam,
   cookieHeader,
@@ -53,12 +55,17 @@ function resolveLang({
     return fromQuery;
   }
 
+  const cookies = cookie.parse(cookieHeader || '');
+  const fromChoice = normalizeLang(cookies[CHOICE_COOKIE_NAME]);
+  if (fromChoice) {
+    return fromChoice;
+  }
+
   const fromSite = normalizeLang(siteLang);
   if (fromSite) {
     return fromSite;
   }
 
-  const cookies = cookie.parse(cookieHeader || '');
   const fromCookie = normalizeLang(cookies[COOKIE_NAME]);
   if (fromCookie) {
     return fromCookie;

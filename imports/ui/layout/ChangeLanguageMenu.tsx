@@ -2,7 +2,7 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Box, Select, Text } from '/imports/ui/core';
-import { allLangs } from '/imports/startup/i18n';
+import { allLangs, rememberLang } from '/imports/startup/i18n';
 
 export interface ChangeLanguageProps {
   hideHelper?: boolean;
@@ -27,6 +27,7 @@ export default function ChangeLanguage({
     if (onChange) {
       onChange(value);
     } else {
+      rememberLang(value);
       i18n.changeLanguage(value);
     }
   };

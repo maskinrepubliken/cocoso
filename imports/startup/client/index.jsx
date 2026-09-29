@@ -8,7 +8,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import appRoutes from '/imports/appRoutes';
 import SetupHome from '/imports/ui/pages/setup';
-import i18n, { setDayjsLocale } from '/imports/startup/i18n';
+import i18n, { getChosenLang, setDayjsLocale } from '/imports/startup/i18n';
 
 // Meteor's `autoupdate` package tracks whether the server has a newer client
 // bundle than the one this tab is running (e.g. after a deploy). Lazily
@@ -64,11 +64,12 @@ onPageLoad(async () => {
   }
 
   // Start in the language the server rendered in: the querystring, else
-  // the site's language (resolveLang in serverI18n.js).
-  const siteLang = site.settings?.lang;
+  // the visitor's pick, else the site's language (resolveLang in
+  // serverI18n.js).
   const hasLangParam = new URLSearchParams(window.location.search).has('lng');
-  if (siteLang && !hasLangParam && i18n.language !== siteLang) {
-    await i18n.changeLanguage(siteLang);
+  const startLang = getChosenLang() || site.settings?.lang;
+  if (startLang && !hasLangParam && i18n.language !== startLang) {
+    await i18n.changeLanguage(startLang);
   }
   setDayjsLocale(i18n.language);
 

@@ -134,6 +134,27 @@ if (isServer) {
   });
 }
 
+// A language the visitor picked in the language menu. Kept in its own
+// cookie (the detector's `i18next` cookie is also written on automatic
+// detection) so it can outrank the site's language on server and client.
+const LANG_CHOICE_COOKIE = 'cocoso-lang';
+
+const getChosenLang = () => {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie
+    .split('; ')
+    .find((c) => c.startsWith(`${LANG_CHOICE_COOKIE}=`));
+  const value = match && decodeURIComponent(match.split('=')[1]);
+  return allLangs.some((l) => l.value === value) ? value : null;
+};
+
+const rememberLang = (lang) => {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${LANG_CHOICE_COOKIE}=${encodeURIComponent(
+    lang
+  )}; path=/; max-age=31536000; SameSite=Lax`;
+};
+
 // Dates follow the interface language. Server and client both set it
 // before rendering, so month and weekday names match at hydration.
 const setDayjsLocale = (lang) => {
@@ -141,4 +162,11 @@ const setDayjsLocale = (lang) => {
 };
 
 export default i18n;
-export { allLangs, defaultLang, setDayjsLocale };
+export {
+  allLangs,
+  defaultLang,
+  setDayjsLocale,
+  LANG_CHOICE_COOKIE,
+  getChosenLang,
+  rememberLang,
+};

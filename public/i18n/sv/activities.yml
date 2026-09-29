@@ -83,7 +83,7 @@ public:
     organizer: "Arrangör"
     readMore: "Läs mer"
   register:
-    label: Boka
+    label: Anmälan
     form:
       name:
         first: Förnamn
@@ -94,35 +94,35 @@ public:
         number: Antal personer
       loading: Loading
       actions:
-        create: Boka
+        create: Anmäl
         update: Uppdatera
-        remove: Ta bort din bokning
+        remove: Avboka din anmälan
       hideName: "Dölj mitt namn för andra besökare"
       emailPrivate: "Bara arrangören ser din e-post."
-    email: E-post redan bokad. Var vänlig att uppdatera din befintliga bokning istället.
-    alreadyRegistered: Du är redan bokad för detta arrangemang. Var vänlig att uppdatera din befintliga bokning istället.
-    notEnoughSeats: Tyvärr finns det inte tillräckligt med kapacitet kvar för att hålla hela festen. Endast {{ capacityLeft }} plats kvar. Vänligen gör din bokning i enlighet med detta.
-    notFound: Tyvärr kunde vi inte hitta din bokning. Dubbelkolla datum och stavningar och försök igen
+    email: E-postadressen är redan anmäld. Ändra din befintliga anmälan i stället.
+    alreadyRegistered: Du är redan anmäld till det här tillfället. Ändra din befintliga anmälan i stället.
+    notEnoughSeats: Tyvärr finns det inte tillräckligt med platser kvar för hela sällskapet. Bara {{ capacityLeft }} plats kvar.
+    notFound: Vi hittade ingen anmälan med de uppgifterna. Kontrollera datum och stavning och försök igen.
     disabled:
       true: OSA inaktiverad. Se fliken "Info" för detaljer
       false: Klicka och öppna datumet för att OSA
-      info: Bokningar är inaktiverade.
+      info: Anmälan är stängd.
   attendance:
     label: Deltagare
-    create: Du har precis bokad din närvaro. Välkommen!
-    update: Du har nu uppdaterat din bokning
-    remove: Du har tagit bort din bokning
+    create: Tack, du är anmäld. Välkommen!
+    update: Din anmälan är ändrad
+    remove: Din anmälan är avbokad
     show: Visa deltagare
     none: "Ingen har anmält sig än."
     hidden: "+ {{count}} som valt att inte visa sitt namn"
   capacity:
-    full: Arrangemanget är fullbokat
-    fullByYou: Grattis! Du bokade precis den sista platsen!
+    full: Evenemanget är fullt
+    fullByYou: Grattis! Du fick den sista platsen!
   cancel:
-    label: Ändra/radera befintlig bokning
+    label: Ändra eller avboka din anmälan
     found: Fortsätt
-    notFound: Vänligen ange detaljerna för din OSA
-  past: Detta arrangemang har redan passerat
+    notFound: Ange efternamn och e-post som du anmälde dig med
+  past: Det här tillfället har redan varit
   acceess:
     deny: Endast synligt för admins och verifierade användare
   chat:

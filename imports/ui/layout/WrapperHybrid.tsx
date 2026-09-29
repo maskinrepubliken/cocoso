@@ -14,7 +14,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 
 import useMediaQuery from '/imports/api/_utils/useMediaQuery';
 import Memberships from '/imports/api/memberships/membership';
-import i18n, { setDayjsLocale } from '/imports/startup/i18n';
+import i18n, { getChosenLang, setDayjsLocale } from '/imports/startup/i18n';
 import {
   siteAtom,
   currentUserAtom,
@@ -93,7 +93,7 @@ export default function WrapperHybrid({
     if (!i18n) return;
     const userLang = currentUser?.lang;
     const hostLang = site?.settings?.lang;
-    const lang = userLang || hostLang || i18n.language;
+    const lang = userLang || getChosenLang() || hostLang || i18n.language;
 
     if (lang !== i18n.language) {
       i18n.changeLanguage(lang);
@@ -118,7 +118,7 @@ export default function WrapperHybrid({
     applyGlobalStyles(site.theme);
     // Only apply host language if no user preference has been detected/stored yet.
     // User language is applied in the currentUser effect with higher priority.
-    if (!currentUser) {
+    if (!currentUser && !getChosenLang()) {
       const hostLang = site?.settings?.lang;
       if (hostLang && hostLang !== i18n.language) {
         i18n.changeLanguage(hostLang);
