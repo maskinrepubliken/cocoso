@@ -12,6 +12,7 @@ import {
   parseAllBookingsWithResources,
 } from '/imports/api/_utils/shared';
 import { canCreateContentAtom, locationsAtom } from '/imports/state';
+import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
 import Tag from '/imports/ui/generic/Tag';
 import { cocosoReactSelectAdapter } from '/imports/ui/utils/globalStylesManager';
@@ -195,14 +196,29 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     nonComboResourcesWithColor
   );
 
+  // Weekly activities are drawn lighter so one-off events stand out.
+  const recurringIds = useMemo(
+    () =>
+      new Set(
+        activities
+          .filter((a: any) => getWeeklyPattern(a.datesAndTimes))
+          .map((a) => a._id)
+      ),
+    [activities]
+  );
+
   const allFilteredActsWithColors = filteredActivities.map((act: any) => {
     const resource = nonComboResourcesWithColor.find(
       (res: any) => res._id === act.resourceId
     );
     const resourceColor = (resource && resource.color) || '#484848';
 
+    const isRecurring = recurringIds.has(act.activityId);
+
     return {
       ...act,
+      title: isRecurring ? `↻ ${act.title}` : act.title,
+      isRecurring,
       resourceColor,
     };
   });

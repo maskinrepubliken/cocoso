@@ -26,6 +26,7 @@ interface CalendarActivity {
   end: Date;
   isMultipleDay?: boolean;
   resourceColor?: string;
+  isRecurring?: boolean;
 }
 
 interface Resource {
@@ -91,7 +92,14 @@ export default function CalendarView({
         step={60}
         views={['month', 'week', 'day', 'agenda']}
         eventPropGetter={(event) => ({
-          style: { backgroundColor: event.resourceColor },
+          className: event.isRecurring ? 'is-recurring' : undefined,
+          style: event.isRecurring
+            ? {
+                backgroundColor: 'white',
+                border: `1px solid ${event.resourceColor}`,
+                borderLeft: `5px solid ${event.resourceColor}`,
+              }
+            : { backgroundColor: event.resourceColor },
         })}
         onSelectEvent={onSelect}
         onSelectSlot={onSelectSlot}

@@ -1046,6 +1046,13 @@ body {
   border-radius: 0;
 }
 
+/* Weekly activities: outlined, so one-off events stand out */
+.rbc-calendar .rbc-event.is-recurring,
+.rbc-calendar .rbc-event.is-recurring .rbc-event-content,
+.rbc-calendar .rbc-event.is-recurring .rbc-event-label {
+  color: #1a1a1a;
+}
+
 .rbc-calendar .rbc-toolbar,
 .rbc-calendar .rbc-time-view,
 .rbc-calendar .rbc-month-view,
