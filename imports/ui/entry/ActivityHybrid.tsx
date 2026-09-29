@@ -293,7 +293,7 @@ export default function ActivityHybrid({
       <Layout>
         <Column>
           {activity.longDescription && (
-            <Section order={4} title={tc('event.sections.about')}>
+            <Section order={2} title={tc('event.sections.about')}>
               <Description className="text-content">
                 {HTMLReactParser(DOMPurify.sanitize(activity.longDescription))}
               </Description>

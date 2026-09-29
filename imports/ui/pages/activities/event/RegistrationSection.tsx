@@ -295,7 +295,7 @@ export default function RegistrationSection({
           : null
       }
       id="anmalan"
-      order={2}
+      order={3}
       title={tc('event.sections.register')}
     >
       {activity.isRegistrationDisabled ? (
