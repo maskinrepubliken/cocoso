@@ -311,6 +311,19 @@ auth:
 public:
   labels:
 
+# Recurring activities on the activities listing
+recurring:
+  every: "Her {{days}}"
+  everyOther: "İki haftada bir {{days}}"
+  everyOtherWeek: "iki haftada bir"
+  today: "Bugün"
+  tomorrow: "Yarın"
+  now: "Şu anda"
+  nothing: "Bu gün için planlanmış bir şey yok."
+  weekTitle: "Her hafta"
+  weekIntro: "Tekrarlanan etkinlikler, haftanın gününe göre bir kez gösterilir"
+  next: "Sonraki {{date}}"
+
 # The event page (the strings are in common because SSR only loads common)
 event:
   sections:

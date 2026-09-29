@@ -311,6 +311,19 @@ auth:
 public:
   labels:
 
+# Recurring activities on the activities listing
+recurring:
+  every: "Varje {{days}}"
+  everyOther: "Varannan {{days}}"
+  everyOtherWeek: "varannan vecka"
+  today: "Idag"
+  tomorrow: "Imorgon"
+  now: "Pågår nu"
+  nothing: "Inget planerat den här dagen."
+  weekTitle: "Varje vecka"
+  weekIntro: "Återkommande aktiviteter, visade en gång per veckodag"
+  next: "Nästa {{date}}"
+
 # The event page (the strings are in common because SSR only loads common)
 event:
   sections:

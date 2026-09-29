@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { Center } from '/imports/ui/core';
+import { Box, Center } from '/imports/ui/core';
 import { locationsAtom } from '/imports/state';
+import { isRecurringActivity } from '/imports/api/activities/recurrence';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
 import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
+import { DayAgenda, WeeklySchedule } from './RecurringOverview';
 import Tabs from '../core/Tabs';
 
 export interface ActivitiesHybridProps {
@@ -52,15 +54,32 @@ export default function ActivitiesHybrid({
 
   const groupsLabel = groupsInMenu?.label;
 
+  // Upcoming: what recurs weekly gets the day and week overviews, the cards
+  // are for one-off events. Past keeps every activity as a card.
+  const cardActivities = useMemo(
+    () =>
+      showPast
+        ? activities
+        : activities.filter((activity) => !isRecurringActivity(activity)),
+    [activities, showPast]
+  );
+
   return (
     <>
+      {!showPast && (
+        <Box px="4" pt="4">
+          <DayAgenda activities={activities} placeOf={locationNameOf} />
+          <WeeklySchedule activities={activities} placeOf={locationNameOf} />
+        </Box>
+      )}
+
       <PageHeading site={site || siteDoc} listing="activities" />
 
       <Center>
         <Tabs tabs={tabs} index={showPast ? 0 : 1} />
       </Center>
 
-      <InfiniteScroller items={activities} filtrerMarginTop={-72}>
+      <InfiniteScroller items={cardActivities} filtrerMarginTop={-72}>
         {(item, index) => (
           <Center
             key={item._id}

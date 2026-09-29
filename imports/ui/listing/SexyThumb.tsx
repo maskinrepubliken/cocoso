@@ -2,12 +2,18 @@ import { Meteor } from 'meteor/meteor';
 import React, { memo } from 'react';
 import dayjs from 'dayjs';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { useTranslation } from 'react-i18next';
 
 import { Box, Flex, Tag } from '/imports/ui/core';
+import {
+  getNextOccurrence,
+  getWeeklyPattern,
+} from '/imports/api/activities/recurrence';
 
 import { DateJust } from '../entry/FancyDate';
 import PlaceholderImage from '../generic/PlaceholderImage';
 import { getImageUrl } from '../utils/imageHelper';
+import { describePattern } from './recurringText';
 
 const isClient = Meteor?.isClient;
 
@@ -18,6 +24,42 @@ if (isClient) {
 const today = dayjs().format('YYYY-MM-DD');
 const yesterday = dayjs(new Date()).add(-1, 'days').format('YYYY-MM-DD');
 const tomorrow = dayjs(new Date()).add(1, 'days').format('YYYY-MM-DD');
+
+const ruleStyle: React.CSSProperties = {
+  background: 'rgba(255, 255, 255, 0.92)',
+  borderRadius: 8,
+  color: '#10261a',
+  display: 'inline-block',
+  fontSize: 15,
+  fontWeight: 700,
+  lineHeight: 1.3,
+  padding: '6px 10px',
+};
+
+const ruleNextStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 13,
+  fontWeight: 500,
+  opacity: 0.75,
+};
+
+// A weekly activity shows its rhythm and next date instead of a row of dates.
+function ThumbRule({ dates }: { dates: Occurrence[] }) {
+  const [t, i18n] = useTranslation('common');
+  const pattern = getWeeklyPattern(dates);
+  const next = getNextOccurrence(dates, today);
+  if (!pattern || !next) {
+    return null;
+  }
+  return (
+    <span style={ruleStyle}>
+      ↻ {describePattern(pattern, t, i18n.language)}
+      <span style={ruleNextStyle}>
+        {t('recurring.next', { date: dayjs(next.startDate).format('D MMM') })}
+      </span>
+    </span>
+  );
+}
 
 const remainingStyle = {
   fontSize: '27px',
@@ -111,6 +153,8 @@ function SexyThumb({
   );
   const remainingFuture = futureDates && futureDates.length - 3;
   const remainingPast = futureDates && pastDates.length - 1;
+  const isWeekly =
+    !showPast && futureDates.length > 0 && Boolean(getWeeklyPattern(dates));
 
   return (
     <Box
@@ -159,7 +203,12 @@ function SexyThumb({
 
           {dates && (
             <div>
-              {!showPast && futureDates && (
+              {isWeekly && (
+                <Box mb="4">
+                  <ThumbRule dates={dates} />
+                </Box>
+              )}
+              {!showPast && !isWeekly && futureDates && (
                 <Flex
                   align="center"
                   color="theme.50"

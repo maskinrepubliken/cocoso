@@ -314,6 +314,19 @@ auth:
 public:
   labels:
 
+# Recurring activities on the activities listing
+recurring:
+  every: "Every {{days}}"
+  everyOther: "Every other {{days}}"
+  everyOtherWeek: "every other week"
+  today: "Today"
+  tomorrow: "Tomorrow"
+  now: "On now"
+  nothing: "Nothing planned for this day."
+  weekTitle: "Every week"
+  weekIntro: "Recurring activities, shown once on their weekday"
+  next: "Next {{date}}"
+
 # The event page (the strings are in common because SSR only loads common)
 event:
   sections:
