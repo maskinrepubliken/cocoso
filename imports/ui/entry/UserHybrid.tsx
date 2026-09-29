@@ -7,7 +7,7 @@ import { useAtomValue } from 'jotai';
 
 import { Alert, Box, Center, Flex, Text } from '/imports/ui/core';
 import { publicUrl } from '/imports/api/_utils/shared';
-import PopupHandler from '/imports/ui/listing/PopupHandler';
+import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import { displayName } from '/imports/ui/listing/UsersHybrid';
 import Tabs from '/imports/ui/core/Tabs';
@@ -68,7 +68,7 @@ function OrganizerEvents({ events, username }: OrganizerEventsProps) {
   const [showPast, setShowPast] = useState(
     upcoming.length === 0 && past.length > 0
   );
-  const [modalItem, setModalItem] = useState(null);
+  const openEntry = useOpenEntry('activities');
 
   if (upcoming.length === 0 && past.length === 0) {
     return (
@@ -109,7 +109,7 @@ function OrganizerEvents({ events, username }: OrganizerEventsProps) {
             key={item._id}
             flex="0 1 355px"
             css={{ cursor: 'pointer' }}
-            onClick={() => setModalItem(item)}
+            onClick={() => openEntry(item)}
           >
             <SexyThumb
               activity={item}
@@ -120,13 +120,6 @@ function OrganizerEvents({ events, username }: OrganizerEventsProps) {
           </Center>
         ))}
       </Flex>
-
-      <PopupHandler
-        item={modalItem}
-        kind="activities"
-        showPast={showPast}
-        onClose={() => setModalItem(null)}
-      />
     </Box>
   );
 }

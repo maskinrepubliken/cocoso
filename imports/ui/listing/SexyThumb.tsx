@@ -112,7 +112,6 @@ function SexyThumb({
   const remainingFuture = futureDates && futureDates.length - 3;
   const remainingPast = futureDates && pastDates.length - 1;
 
-
   return (
     <Box
       bg="theme.500"
@@ -201,7 +200,6 @@ function SexyThumb({
             </div>
           )}
         </Flex>
-
       </div>
     </Box>
   );

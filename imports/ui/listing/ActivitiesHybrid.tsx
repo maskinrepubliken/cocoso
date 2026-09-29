@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { Center, Modal } from '/imports/ui/core';
+import { Center } from '/imports/ui/core';
 import { locationsAtom } from '/imports/state';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
-import PopupHandler from './PopupHandler';
+import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
 import Tabs from '../core/Tabs';
-import ActivityQuickView from '../pages/activities/components/ActivityQuickView';
 
 export interface ActivitiesHybridProps {
   siteDoc: any;
@@ -27,7 +26,7 @@ export default function ActivitiesHybrid({
   const site = { ...siteDoc };
   const locations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
-  const [modalItem, setModalItem] = useState<any>(null);
+  const openEntry = useOpenEntry('activities');
 
   const locationNameOf = (item: any) =>
     locations.find((l) => l._id === item.locationId)?.name ||
@@ -66,7 +65,8 @@ export default function ActivitiesHybrid({
           <Center
             key={item._id}
             flex="1 1 355px"
-            onClick={() => setModalItem(item)}
+            css={{ cursor: 'pointer' }}
+            onClick={() => openEntry(item)}
           >
             <SexyThumb
               activity={item}
@@ -82,28 +82,6 @@ export default function ActivitiesHybrid({
           </Center>
         )}
       </InfiniteScroller>
-
-      {/* Events open the short version with sign-up; group meetings keep
-          the general popup that leads to their group. */}
-      {modalItem && !modalItem.isGroupMeeting && (
-        <Modal
-          hideFooter
-          id="activity-quick-view"
-          open
-          size="lg"
-          title={modalItem.title}
-          onClose={() => setModalItem(null)}
-        >
-          <ActivityQuickView activityId={modalItem._id} />
-        </Modal>
-      )}
-
-      <PopupHandler
-        item={modalItem?.isGroupMeeting ? modalItem : null}
-        kind="activities"
-        showPast={showPast}
-        onClose={() => setModalItem(null)}
-      />
     </>
   );
 }

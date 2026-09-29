@@ -65,7 +65,6 @@ function NewGridThumb({
     return null;
   }
 
-
   return (
     <Box
       css={{

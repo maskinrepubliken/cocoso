@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
@@ -7,7 +7,7 @@ import { Center } from '/imports/ui/core';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
-import PopupHandler from './PopupHandler';
+import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
 
 export interface GroupsHybridProps {
@@ -18,7 +18,7 @@ export interface GroupsHybridProps {
 export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
   const site = useAtomValue(siteAtom);
   const locations = useAtomValue(locationsAtom);
-  const [modalItem, setModalItem] = useState(null);
+  const openEntry = useOpenEntry('groups');
   const [tc] = useTranslation('common');
 
   const locationNameOf = (item: any) =>
@@ -34,7 +34,8 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
           <Center
             key={item._id}
             flex="1 1 355px"
-            onClick={() => setModalItem(item)}
+            css={{ cursor: 'pointer' }}
+            onClick={() => openEntry(item)}
           >
             <SexyThumb
               activity={item}
@@ -49,12 +50,6 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
           </Center>
         )}
       </InfiniteScroller>
-
-      <PopupHandler
-        item={modalItem}
-        kind="groups"
-        onClose={() => setModalItem(null)}
-      />
     </>
   );
 }

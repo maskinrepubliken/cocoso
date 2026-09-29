@@ -11,17 +11,11 @@ import {
   getComboResourcesWithColor,
   parseAllBookingsWithResources,
 } from '/imports/api/_utils/shared';
-import {
-  canCreateContentAtom,
-  currentUserAtom,
-  locationsAtom,
-  roleAtom,
-} from '/imports/state';
+import { canCreateContentAtom, locationsAtom } from '/imports/state';
 import PageHeading from '/imports/ui/listing/PageHeading';
 import Tag from '/imports/ui/generic/Tag';
 import { cocosoReactSelectAdapter } from '/imports/ui/utils/globalStylesManager';
-
-import CalendarEntryModal from './CalendarEntryModal';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
@@ -92,8 +86,6 @@ const parseNewEntryParams = (
 export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const site = siteDoc;
-  const currentUser = useAtomValue(currentUserAtom);
-  const role = useAtomValue(roleAtom);
   const [locationFilter, setLocationFilter] = useState<string>('');
   const publishedLocations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
@@ -112,9 +104,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [allActivities, locationFilter]
   );
 
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
-    null
-  );
   const [calendarFilter, setCalendarFilter] = useState<Resource | null>(null);
 
   // A place narrows the calendar to its resources and to activities filed
@@ -130,6 +119,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [allResources, locationFilter]
   );
   const navigate = useNavigate();
+  const prefix = useLocationPrefix();
   const [, setSearchParams] = useSearchParams();
 
   const activitiesParsed = useMemo(
@@ -137,9 +127,19 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [activities, resources]
   );
 
+  // An event opens its page on the clicked date; a group meeting its group.
   const handleSelectActivity = (activity: Activity, e: React.MouseEvent) => {
     e.preventDefault();
-    setSelectedActivity(activity);
+    if (activity.isGroupMeeting) {
+      navigate(`${prefix}/groups/${activity.groupId}`);
+      return;
+    }
+    const listing = activity.isPublicActivity ? 'activities' : 'calendar';
+    const query = new URLSearchParams({
+      date: activity.startDate,
+      time: activity.startTime,
+    });
+    navigate(`${prefix}/${listing}/${activity.activityId}?${query}`);
   };
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
@@ -176,22 +176,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       ...dateParams,
       new: true,
     }));
-  };
-
-  const isCreatorOrAdmin = () =>
-    (selectedActivity &&
-      currentUser &&
-      currentUser.username === selectedActivity.authorName) ||
-    role === 'admin';
-
-  const handleEdit = () => {
-    if (!selectedActivity) return;
-
-    if (selectedActivity.isGroupMeeting) {
-      navigate(`/groups/${selectedActivity.groupId}`);
-    } else {
-      navigate(`/calendar/${selectedActivity.activityId}?edit=true`);
-    }
   };
 
   const filteredActivities = activitiesParsed.filter(
@@ -390,13 +374,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
           />
         </Box>
       </Box>
-
-      <CalendarEntryModal
-        canEdit={Boolean(isCreatorOrAdmin())}
-        entry={selectedActivity}
-        onClose={() => setSelectedActivity(null)}
-        onEdit={handleEdit}
-      />
     </>
   );
 }

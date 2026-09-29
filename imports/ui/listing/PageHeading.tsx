@@ -27,10 +27,7 @@ const BUTTON_INTRO_DELAY_MS = 300; // must match animation-delay in CSS
 const BUTTON_INTRO_DURATION_MS = 2500 + BUTTON_INTRO_DELAY_MS; // 2800 total
 const SUBTLE_DURATION_MS = 900;
 
-export default function PageHeading({
-  site,
-  listing,
-}: PageHeadingProps) {
+export default function PageHeading({ site, listing }: PageHeadingProps) {
   const headingWrapRef = useRef<HTMLDivElement>(null);
   const preBtnLeftRef = useRef<number | null>(null);
   // Set when FLIP finds NewButton still null (data not yet loaded) — allows

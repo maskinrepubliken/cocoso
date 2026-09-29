@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSearchParams } from 'react-router';
 import { Trans } from 'react-i18next';
 import { useAtomValue } from 'jotai';
@@ -9,7 +9,7 @@ import InfiniteScroller from '/imports/ui/listing/InfiniteScroller';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
 import PageHeading from './PageHeading';
-import PopupHandler from './PopupHandler';
+import useOpenEntry from './useOpenEntry';
 import Tag from '../generic/Tag';
 import { getCategoriesAssignedToWorks } from '../../api/_utils/shared';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
@@ -21,7 +21,7 @@ export interface WorksHybridProps {
 
 export default function WorksHybrid({ siteDoc, works }: WorksHybridProps) {
   const site = useAtomValue(siteAtom);
-  const [modalItem, setModalItem] = useState(null);
+  const openEntry = useOpenEntry('works');
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category');
 
@@ -91,7 +91,7 @@ export default function WorksHybrid({ siteDoc, works }: WorksHybridProps) {
                 borderRadius: 'var(--cocoso-border-radius)',
                 cursor: 'pointer',
               }}
-              onClick={() => setModalItem(work)}
+              onClick={() => openEntry(work)}
             >
               <NewGridThumb
                 avatar={
@@ -114,12 +114,6 @@ export default function WorksHybrid({ siteDoc, works }: WorksHybridProps) {
           )}
         </InfiniteScroller>
       </Box>
-
-      <PopupHandler
-        item={modalItem}
-        kind="works"
-        onClose={() => setModalItem(null)}
-      />
     </>
   );
 }

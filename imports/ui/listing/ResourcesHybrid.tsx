@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 
 import { siteAtom, locationsAtom } from '/imports/state';
@@ -6,7 +6,7 @@ import { Box } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
 import PageHeading from './PageHeading';
-import PopupHandler from './PopupHandler';
+import useOpenEntry from './useOpenEntry';
 import InfiniteScroller from './InfiniteScroller';
 import NewGridThumb from './NewGridThumb';
 
@@ -21,7 +21,7 @@ export default function ResourcesHybrid({
 }: ResourcesHybridProps) {
   const site = useAtomValue(siteAtom);
   const locations = useAtomValue(locationsAtom);
-  const [modalItem, setModalItem] = useState(null);
+  const openEntry = useOpenEntry('resources');
 
   const locationNameOf = (item: any) =>
     locations.find((l) => l._id === item.locationId)?.name;
@@ -40,7 +40,7 @@ export default function ResourcesHybrid({
                 borderRadius: 'var(--cocoso-border-radius)',
                 cursor: 'pointer',
               }}
-              onClick={() => setModalItem(resource)}
+              onClick={() => openEntry(resource)}
             >
               <NewGridThumb
                 fixedImageHeight
@@ -53,12 +53,6 @@ export default function ResourcesHybrid({
             </Box>
           )}
         </InfiniteScroller>
-
-        <PopupHandler
-          item={modalItem}
-          kind="resources"
-          onClose={() => setModalItem(null)}
-        />
       </Box>
     </>
   );
