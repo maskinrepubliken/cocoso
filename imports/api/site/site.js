@@ -68,6 +68,11 @@ Site.schema = new SimpleSchema({
 
   theme: { type: Object, optional: true },
   'theme.hue': { type: String, optional: true },
+  // Optional: the saturation of the palette, and a separate hue and
+  // saturation for the dark shades (500–900) used for text and details.
+  'theme.saturation': { type: String, optional: true },
+  'theme.accentHue': { type: String, optional: true },
+  'theme.accentSaturation': { type: String, optional: true },
   'theme.body': { type: Object, optional: true },
   'theme.body.backgroundColor': { type: String, optional: true },
   'theme.body.backgroundImage': { type: String, optional: true },

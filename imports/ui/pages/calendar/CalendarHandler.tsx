@@ -327,7 +327,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
           ) : (
             <Flex w="30rem">
               <Button
-                colorScheme="green"
                 mr="2"
                 size="sm"
                 variant={calendarFilter ? 'outline' : 'solid'}
