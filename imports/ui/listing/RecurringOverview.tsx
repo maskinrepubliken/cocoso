@@ -23,154 +23,12 @@ import {
 
 // Two compact views for the front of the activities listing: what happens
 // on one day (one line per activity), and the weekly rhythm of everything
-// that recurs, shown once per weekday instead of one card per date.
+// that recurs, shown once per weekday instead of one card per date. Both are
+// drawn as plates in a botanical atlas.
 
-const Panel = styled('section', {
-  background: 'white',
-  borderRadius: '14px',
-  boxShadow:
-    '0 1px 0 var(--cocoso-colors-theme-200), 0 10px 28px -18px rgba(0, 60, 10, 0.35)',
-  margin: '0 auto 2rem',
-  maxWidth: '1180px',
-  padding: '1.1rem 1.4rem 0.6rem',
-  '@media (max-width: 700px)': { padding: '0.9rem 1rem 0.4rem' },
-});
-
-const PanelHead = styled('div', {
-  alignItems: 'center',
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.75rem',
-  justifyContent: 'space-between',
-  marginBottom: '0.4rem',
-});
-
-const PanelTitle = styled('h2', {
-  fontSize: '1.3rem',
-  fontWeight: 700,
-  margin: 0,
-  '& small': {
-    color: 'var(--cocoso-colors-theme-700)',
-    fontSize: '1rem',
-    fontWeight: 400,
-    marginLeft: '0.6rem',
-    opacity: 0.8,
-  },
-});
-
-const Segmented = styled('div', {
-  background: 'var(--cocoso-colors-theme-50)',
-  borderRadius: '999px',
-  display: 'flex',
-  padding: '3px',
-});
-
-const SegButton = styled('button', {
-  background: 'transparent',
-  border: 0,
-  borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  fontSize: '0.875rem',
-  fontWeight: 600,
-  padding: '0.3rem 0.9rem',
-  variants: {
-    active: {
-      true: { background: 'var(--cocoso-colors-theme-600)', color: 'white' },
-    },
-  },
-});
-
-const Rows = styled('ul', {
-  columnGap: '2.5rem',
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-  listStyle: 'none',
-  margin: 0,
-  padding: 0,
-  '@media (max-width: 800px)': { gridTemplateColumns: 'minmax(0, 1fr)' },
-  variants: {
-    single: { true: { gridTemplateColumns: 'minmax(0, 1fr)' } },
-  },
-});
-
-const Row = styled(Link, {
-  alignItems: 'center',
-  borderTop: '1px solid var(--cocoso-colors-theme-100)',
-  color: 'inherit',
-  display: 'grid',
-  gap: '0.9rem',
-  gridTemplateColumns: '6.5rem minmax(0, 1fr) auto',
-  padding: '0.65rem 0',
-  textDecoration: 'none',
-  '&:hover strong': { textDecoration: 'underline' },
-  '@media (max-width: 700px)': { gridTemplateColumns: '5.6rem minmax(0, 1fr)' },
-});
-
-const Time = styled('span', {
-  fontVariantNumeric: 'tabular-nums',
-  fontWeight: 700,
-  whiteSpace: 'nowrap',
-  '@media (max-width: 700px)': { fontSize: '0.875rem' },
-});
-
-const What = styled('span', {
-  minWidth: 0,
-  '& strong': { display: 'block', fontWeight: 600 },
-  '& small': {
-    color: 'var(--cocoso-colors-theme-800)',
-    display: 'block',
-    fontSize: '0.8rem',
-    marginTop: '2px',
-    opacity: 0.75,
-  },
-});
-
-const Pill = styled('span', {
-  background: 'var(--cocoso-colors-theme-50)',
-  borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-700)',
-  fontSize: '0.75rem',
-  fontWeight: 700,
-  padding: '0.2rem 0.6rem',
-  whiteSpace: 'nowrap',
-  '@media (max-width: 700px)': { display: 'none' },
-  variants: {
-    kind: {
-      recurring: {
-        background: '#f7f2e4',
-        border: '1px solid #9a7b3c',
-        color: '#7a5f2a',
-        fontStyle: 'italic',
-      },
-      now: {
-        '&::before': {
-          background: '#22c55e',
-          borderRadius: '50%',
-          boxShadow: '0 0 0 3px rgba(34, 197, 94, 0.2)',
-          content: '""',
-          display: 'inline-block',
-          height: '7px',
-          marginRight: '6px',
-          verticalAlign: '1px',
-          width: '7px',
-        },
-      },
-    },
-  },
-});
-
-const Empty = styled('p', {
-  borderTop: '1px solid var(--cocoso-colors-theme-100)',
-  margin: 0,
-  opacity: 0.7,
-  padding: '0.9rem 0',
-});
-
-// The weekly schedule is drawn like a plate in a botanical atlas (after
-// Botanicum): aged paper inside a fine double rule, serif lettering, each
-// weekday a column and each activity a numbered specimen label.
+// The plates follow Botanicum: aged paper inside a fine double rule and
+// serif lettering. In the weekly one each weekday is a column and each
+// activity a numbered specimen label; the day one lists the day's entries.
 
 const ink = 'var(--cocoso-colors-theme-800)';
 const ochre = '#9a7b3c';
@@ -430,6 +288,153 @@ function Sprig({
   );
 }
 
+// The day plate: Today / Tomorrow as two italic tabs, and one ruled line
+// per entry.
+const Tabs = styled('div', {
+  display: 'flex',
+  gap: '1.5rem',
+  justifyContent: 'center',
+  marginTop: '0.7rem',
+});
+
+const Tab = styled('button', {
+  background: 'none',
+  border: 'none',
+  borderBottom: '1px solid transparent',
+  color: ink,
+  cursor: 'pointer',
+  fontFamily: serif,
+  fontSize: '1.05rem',
+  fontStyle: 'italic',
+  opacity: 0.7,
+  padding: '0 0 2px',
+  '&:hover': { opacity: 1 },
+  variants: {
+    active: {
+      true: { borderBottomColor: ochre, fontWeight: 600, opacity: 1 },
+    },
+  },
+});
+
+const Rows = styled('ul', {
+  borderTop: `1px solid ${ink}`,
+  columnGap: '2.5rem',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+  '@media (max-width: 800px)': { gridTemplateColumns: 'minmax(0, 1fr)' },
+  variants: {
+    single: {
+      true: {
+        gridTemplateColumns: 'minmax(0, 1fr)',
+        margin: '0 auto',
+        maxWidth: '760px',
+      },
+    },
+  },
+});
+
+const Row = styled(Link, {
+  alignItems: 'baseline',
+  borderBottom: '1px solid rgba(30, 60, 30, 0.2)',
+  color: 'inherit',
+  display: 'grid',
+  gap: '0.9rem',
+  gridTemplateColumns: '6.5rem minmax(0, 1fr) auto',
+  padding: '0.7rem 0',
+  textDecoration: 'none',
+  '&:hover strong': { textDecoration: 'underline' },
+  '@media (max-width: 700px)': { gridTemplateColumns: '5.4rem minmax(0, 1fr)' },
+});
+
+const Time = styled('span', {
+  fontFamily: serif,
+  fontSize: '1.05rem',
+  fontVariantNumeric: 'lining-nums tabular-nums',
+  fontWeight: 600,
+  whiteSpace: 'nowrap',
+});
+
+const What = styled('span', {
+  minWidth: 0,
+  '& strong': {
+    display: 'block',
+    fontFamily: serif,
+    fontSize: '1.2rem',
+    fontWeight: 600,
+    lineHeight: 1.15,
+  },
+  '& small': {
+    display: 'block',
+    fontFamily: serif,
+    fontSize: '0.92rem',
+    fontStyle: 'italic',
+    marginTop: '2px',
+    opacity: 0.8,
+  },
+});
+
+const Pill = styled('span', {
+  borderRadius: '999px',
+  fontFamily: serif,
+  fontSize: '0.88rem',
+  fontStyle: 'italic',
+  padding: '0.1rem 0.65rem',
+  whiteSpace: 'nowrap',
+  '@media (max-width: 700px)': { display: 'none' },
+  variants: {
+    kind: {
+      recurring: {
+        background: paper,
+        border: `1px solid ${ochre}`,
+        color: '#7a5f2a',
+      },
+      now: {
+        color: ink,
+        fontWeight: 600,
+        '&::before': {
+          background: 'var(--cocoso-colors-theme-500)',
+          borderRadius: '50%',
+          boxShadow: '0 0 0 3px var(--cocoso-colors-theme-100)',
+          content: '""',
+          display: 'inline-block',
+          height: '7px',
+          marginRight: '7px',
+          verticalAlign: '2px',
+          width: '7px',
+        },
+      },
+    },
+  },
+});
+
+const Empty = styled('div', {
+  alignItems: 'center',
+  borderTop: `1px solid ${ink}`,
+  display: 'flex',
+  flexDirection: 'column',
+  fontFamily: serif,
+  fontSize: '1.1rem',
+  fontStyle: 'italic',
+  gap: '0.4rem',
+  padding: '1.2rem 0 0.4rem',
+  '& svg': { opacity: 0.45 },
+});
+
+// The serif used on the plates.
+function PlateFonts() {
+  return (
+    <Helmet>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&display=swap"
+        rel="stylesheet"
+      />
+    </Helmet>
+  );
+}
+
 interface Occurrence {
   startDate: string;
   endDate?: string;
@@ -525,33 +530,48 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
     (o.startTime || '') <= now &&
     (!o.endTime || o.endTime > now);
 
+  const dayLabel = day.format('dddd D MMMM');
+
   return (
-    <Panel aria-labelledby="day-agenda-title">
-      <PanelHead>
-        <PanelTitle id="day-agenda-title">
-          {offset === 0 ? t('recurring.today') : t('recurring.tomorrow')}
-          <small>{day.format('dddd D MMMM')}</small>
-        </PanelTitle>
-        <Segmented role="group">
-          <SegButton
+    <Plate aria-labelledby="day-agenda-title">
+      <PlateFonts />
+      <PlateHead>
+        <PlateNumber>{t('recurring.dayPlate')}</PlateNumber>
+        <TitleRow>
+          <Sprig />
+          <SectionTitle id="day-agenda-title">
+            {offset === 0 ? t('recurring.today') : t('recurring.tomorrow')}
+          </SectionTitle>
+          <Sprig flip />
+        </TitleRow>
+        <SectionIntro>
+          {dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
+        </SectionIntro>
+        <Tabs role="group">
+          <Tab
             active={offset === 0}
             aria-pressed={offset === 0}
+            type="button"
             onClick={() => setOffset(0)}
           >
             {t('recurring.today')}
-          </SegButton>
-          <SegButton
+          </Tab>
+          <Tab
             active={offset === 1}
             aria-pressed={offset === 1}
+            type="button"
             onClick={() => setOffset(1)}
           >
             {t('recurring.tomorrow')}
-          </SegButton>
-        </Segmented>
-      </PanelHead>
+          </Tab>
+        </Tabs>
+      </PlateHead>
 
       {rows.length === 0 ? (
-        <Empty>{t('recurring.nothing')}</Empty>
+        <Empty>
+          <Sprig width={80} />
+          {t('recurring.nothing')}
+        </Empty>
       ) : (
         <Rows single={rows.length < 4}>
           {rows.map(({ activity, occurrence, pattern }) => {
@@ -587,7 +607,7 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
           })}
         </Rows>
       )}
-    </Panel>
+    </Plate>
   );
 }
 
@@ -635,12 +655,7 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
 
   return (
     <Plate aria-labelledby="weekly-title">
-      <Helmet>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&display=swap"
-          rel="stylesheet"
-        />
-      </Helmet>
+      <PlateFonts />
       <PlateHead>
         <PlateNumber>{t('recurring.plate')}</PlateNumber>
         <TitleRow>
