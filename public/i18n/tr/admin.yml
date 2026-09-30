@@ -422,10 +422,10 @@ overview:
     users: 'Kullanıcılar'
     locations: 'Yerler'
   stats:
-    upcoming: 'önümüzdeki iki haftadaki oturum'
-    registrations: 'son 7 gündeki kayıt'
-    activities: 'toplam etkinlik'
-    members: 'son 14 gündeki yeni üye'
+    upcoming: 'Yaklaşan'
+    registrations: 'Yeni kayıtlar'
+    activities: 'Etkinlikler'
+    members: 'Yeni üyeler'
   upcoming:
     title: 'Önümüzdeki iki hafta'
     empty: 'Önümüzdeki iki hafta için planlanmış bir şey yok.'

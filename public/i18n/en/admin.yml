@@ -422,10 +422,10 @@ overview:
     users: 'Users'
     locations: 'Locations'
   stats:
-    upcoming: 'occasions the next two weeks'
-    registrations: 'sign-ups the last 7 days'
-    activities: 'activities in total'
-    members: 'new members the last 14 days'
+    upcoming: 'Coming up'
+    registrations: 'New sign-ups'
+    activities: 'Activities'
+    members: 'New members'
   upcoming:
     title: 'Coming up the next two weeks'
     empty: 'Nothing planned the next two weeks.'

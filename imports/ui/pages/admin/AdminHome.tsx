@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import dayjs from 'dayjs';
@@ -129,14 +129,17 @@ const rowCss = {
 };
 
 function Section({
+  id,
   title,
   children,
 }: {
+  id: string;
   title: string;
   children: React.ReactNode;
 }) {
   return (
-    <Boxling mb="6">
+    // Leave room for the sticky status bar when jumped to.
+    <Boxling css={{ scrollMarginTop: '6rem' }} id={id} mb="6">
       <Heading color="bluegray.800" css={{ marginBottom: '0.75rem' }} size="sm">
         {title}
       </Heading>
@@ -145,24 +148,152 @@ function Section({
   );
 }
 
-function Stat({ value, label }: { value: number; label: string }) {
+interface StatItem {
+  id: string;
+  value: number;
+  label: string;
+}
+
+// The status bar at the top: one tile per section, showing its count and
+// jumping to it. It stays in view while scrolling and marks where you are.
+function StatusBar({ items }: { items: StatItem[] }) {
+  const [active, setActive] = useState(items[0]?.id);
+  const ticking = useRef(false);
+  // The tile last clicked stays marked while its section is on screen, since
+  // the last sections can be too short to ever reach the top of the page.
+  const jumpedTo = useRef<string | null>(null);
+  const reached = useRef(false);
+  const sectionIds = items.map((item) => item.id).join(',');
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (ticking.current) {
+        return;
+      }
+      ticking.current = true;
+      window.requestAnimationFrame(() => {
+        ticking.current = false;
+        if (jumpedTo.current) {
+          const rect = document
+            .getElementById(jumpedTo.current)
+            ?.getBoundingClientRect();
+          const onScreen =
+            rect && rect.top < window.innerHeight && rect.bottom > 100;
+          // Hold while the smooth scroll travels there, let go once it has
+          // been reached and scrolled away from again.
+          if (onScreen) {
+            reached.current = true;
+            return;
+          }
+          if (!reached.current) {
+            return;
+          }
+          jumpedTo.current = null;
+        }
+        const ids = sectionIds.split(',');
+        let current = ids[0];
+        // A short page can end before its last sections reach the top.
+        const atBottom =
+          window.innerHeight + window.scrollY >=
+          document.documentElement.scrollHeight - 4;
+        ids.forEach((id) => {
+          const top = document.getElementById(id)?.getBoundingClientRect().top;
+          if (
+            top !== undefined &&
+            (top < 160 || (atBottom && top < window.innerHeight))
+          ) {
+            current = id;
+          }
+        });
+        setActive(current);
+      });
+    };
+    // Scrolling by hand hands the marking back to the scroll position.
+    const release = () => {
+      jumpedTo.current = null;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', release, { passive: true });
+    window.addEventListener('touchmove', release, { passive: true });
+    window.addEventListener('keydown', release);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('wheel', release);
+      window.removeEventListener('touchmove', release);
+      window.removeEventListener('keydown', release);
+    };
+  }, [sectionIds]);
+
+  const jumpTo = (id: string) => {
+    jumpedTo.current = id;
+    reached.current = false;
+    setActive(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <Boxling css={{ flex: '1 1 140px' }} p="4">
-      <Text
-        css={{
-          color: 'var(--cocoso-colors-bluegray-900)',
-          display: 'block',
-          lineHeight: '1',
-        }}
-        fontSize="3xl"
-        fontWeight="bold"
-      >
-        {value}
-      </Text>
-      <Text css={{ display: 'block', marginTop: '0.25rem' }} fontSize="sm">
-        {label}
-      </Text>
-    </Boxling>
+    <Flex
+      align="stretch"
+      gap="2"
+      mb="6"
+      css={{
+        backgroundColor: 'var(--cocoso-colors-bluegray-100)',
+        padding: '0.5rem 0',
+        position: 'sticky',
+        top: '0',
+        zIndex: 5,
+      }}
+    >
+      {items.map((item) => {
+        const isActive = item.id === active;
+        return (
+          <button
+            key={item.id}
+            aria-current={isActive ? 'true' : undefined}
+            type="button"
+            style={{
+              background: isActive
+                ? 'white'
+                : 'var(--cocoso-colors-bluegray-50)',
+              border: 'none',
+              borderBottom: '3px solid',
+              borderBottomColor: isActive
+                ? 'var(--cocoso-colors-theme-500)'
+                : 'transparent',
+              borderRadius: 'var(--cocoso-border-radius)',
+              cursor: 'pointer',
+              flex: '1 1 0',
+              minWidth: 0,
+              padding: '0.625rem 0.5rem',
+              textAlign: 'left',
+            }}
+            onClick={() => jumpTo(item.id)}
+          >
+            <Text
+              css={{
+                color: 'var(--cocoso-colors-bluegray-900)',
+                display: 'block',
+                lineHeight: '1.1',
+              }}
+              fontSize="2xl"
+              fontWeight="bold"
+            >
+              {item.value}
+            </Text>
+            <Text
+              css={{
+                display: 'block',
+                lineHeight: '1.25',
+              }}
+              fontSize="sm"
+              fontWeight={isActive ? 'bold' : 'normal'}
+            >
+              {item.label}
+            </Text>
+          </button>
+        );
+      })}
+    </Flex>
   );
 }
 
@@ -466,38 +597,40 @@ export default function AdminHome() {
 
       {overview && (
         <>
-          <Flex gap="3" mb="6" wrap="wrap">
-            <Stat
-              label={t('overview.stats.upcoming')}
-              value={overview.upcomingCount}
-            />
-            <Stat
-              label={t('overview.stats.registrations')}
-              value={overview.recentRegistrationCount}
-            />
-            {isAdmin ? (
-              <Stat
-                label={t('overview.stats.members')}
-                value={overview.newMembers.length}
-              />
-            ) : (
-              <Stat
-                label={t('overview.stats.activities')}
-                value={overview.activityCount}
-              />
-            )}
-          </Flex>
+          <StatusBar
+            items={[
+              {
+                id: 'registrations',
+                value: overview.recentRegistrationCount,
+                label: t('overview.stats.registrations'),
+              },
+              {
+                id: 'upcoming',
+                value: overview.upcomingCount,
+                label: t('overview.stats.upcoming'),
+              },
+              ...(isAdmin
+                ? [
+                    {
+                      id: 'members',
+                      value: overview.newMembers.length,
+                      label: t('overview.stats.members'),
+                    },
+                  ]
+                : []),
+            ]}
+          />
 
-          <Section title={t('overview.upcoming.title')}>
-            <Upcoming dateLocale={dateLocale} overview={overview} />
-          </Section>
-
-          <Section title={t('overview.registrations.title')}>
+          <Section id="registrations" title={t('overview.registrations.title')}>
             <Registrations dateLocale={dateLocale} overview={overview} />
           </Section>
 
+          <Section id="upcoming" title={t('overview.upcoming.title')}>
+            <Upcoming dateLocale={dateLocale} overview={overview} />
+          </Section>
+
           {isAdmin && (
-            <Section title={t('overview.members.title')}>
+            <Section id="members" title={t('overview.members.title')}>
               <NewMembers dateLocale={dateLocale} overview={overview} />
             </Section>
           )}

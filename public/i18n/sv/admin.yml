@@ -422,10 +422,10 @@ overview:
     users: 'Användare'
     locations: 'Platser'
   stats:
-    upcoming: 'tillfällen de närmaste två veckorna'
-    registrations: 'anmälningar senaste 7 dagarna'
-    activities: 'aktiviteter totalt'
-    members: 'nya medlemmar senaste 14 dagarna'
+    upcoming: 'På gång'
+    registrations: 'Nya anmälningar'
+    activities: 'Aktiviteter'
+    members: 'Nya medlemmar'
   upcoming:
     title: 'På gång de närmaste två veckorna'
     empty: 'Inget inplanerat de närmaste två veckorna.'
