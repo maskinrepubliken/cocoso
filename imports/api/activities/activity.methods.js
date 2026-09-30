@@ -7,6 +7,7 @@ import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import { getSite } from '../site/site';
 import Activities from './activity';
 import Groups from '../groups/group';
+import Memberships from '../memberships/membership';
 import Resources from '../resources/resource';
 import {
   getRegistrationEmailBody,
@@ -222,7 +223,6 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
-
     try {
       const activities = await Activities.find({
         authorId: user._id,
@@ -231,6 +231,113 @@ Meteor.methods({
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
+  },
+
+  // The admin home: what is coming up and who signed up lately. Admins see
+  // every activity, contributors only their own. Attendee emails never leave
+  // the server here; the page links to the activity for the full list.
+  async getHomeOverview() {
+    const user = await Meteor.userAsync();
+    if (!user || !(await isContributorOrAdmin(user._id))) {
+      throw new Meteor.Error('not-allowed', 'Not allowed');
+    }
+    const userIsAdmin = await isAdmin(user._id);
+
+    const today = dayjs().format('YYYY-MM-DD');
+    const horizon = dayjs().add(14, 'day').format('YYYY-MM-DD');
+    const since = dayjs().subtract(7, 'day').toDate();
+
+    const activities = await Activities.find(
+      userIsAdmin ? {} : { authorId: user._id },
+      { fields: { longDescription: 0, images: 0, imagesLegacy: 0 } }
+    ).fetchAsync();
+
+    const peopleIn = (attendees) =>
+      (attendees || []).reduce(
+        (sum, a) => sum + (Number(a.numberOfPeople) || 1),
+        0
+      );
+    const nameOf = (a) =>
+      [a.firstName, a.lastName].filter(Boolean).join(' ') || a.username || '';
+
+    const upcoming = [];
+    const recentRegistrations = [];
+
+    activities.forEach((activity) => {
+      (activity.datesAndTimes || []).forEach((occurrence) => {
+        if (occurrence.startDate >= today && occurrence.startDate <= horizon) {
+          upcoming.push({
+            activityId: activity._id,
+            title: activity.title,
+            place: activity.resource || activity.place || activity.address,
+            startDate: occurrence.startDate,
+            startTime: occurrence.startTime,
+            endTime: occurrence.endTime,
+            capacity: activity.capacity,
+            isRegistrationOpen:
+              activity.isRegistrationEnabled !== false &&
+              !activity.isRegistrationDisabled,
+            people: peopleIn(occurrence.attendees),
+          });
+        }
+        (occurrence.attendees || []).forEach((attendee) => {
+          if (attendee.registerDate && attendee.registerDate >= since) {
+            recentRegistrations.push({
+              activityId: activity._id,
+              title: activity.title,
+              startDate: occurrence.startDate,
+              startTime: occurrence.startTime,
+              name: nameOf(attendee),
+              numberOfPeople: Number(attendee.numberOfPeople) || 1,
+              registerDate: attendee.registerDate,
+            });
+          }
+        });
+      });
+    });
+
+    upcoming.sort((a, b) =>
+      `${a.startDate}${a.startTime}`.localeCompare(
+        `${b.startDate}${b.startTime}`
+      )
+    );
+    recentRegistrations.sort((a, b) => b.registerDate - a.registerDate);
+
+    let newMembers = [];
+    if (userIsAdmin) {
+      const memberships = await Memberships.find(
+        { joinDate: { $gte: dayjs().subtract(14, 'day').toDate() } },
+        { sort: { joinDate: -1 }, limit: 10 }
+      ).fetchAsync();
+      const users = await Meteor.users
+        .find(
+          { _id: { $in: memberships.map((m) => m.userId) } },
+          { fields: { username: 1, firstName: 1, lastName: 1 } }
+        )
+        .fetchAsync();
+      newMembers = memberships
+        .map((m) => {
+          const u = users.find((each) => each._id === m.userId);
+          return (
+            u && {
+              username: u.username,
+              name: nameOf(u),
+              role: m.role,
+              joinDate: m.joinDate,
+            }
+          );
+        })
+        .filter(Boolean);
+    }
+
+    return {
+      activityCount: activities.length,
+      upcoming: upcoming.slice(0, 15),
+      upcomingCount: upcoming.length,
+      recentRegistrations: recentRegistrations.slice(0, 10),
+      recentRegistrationCount: recentRegistrations.length,
+      newMembers,
+    };
   },
 
   async getActivitiesByUser(username) {
