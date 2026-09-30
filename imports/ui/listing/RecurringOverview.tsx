@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
+import { Helmet } from 'react-helmet';
 
 import { styled } from '/stitches.config';
 import { renderedAtom } from '/imports/state';
@@ -13,7 +14,12 @@ import {
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import { getEntryPath } from './useOpenEntry';
-import { describeDays, timeSpan, weekdayName } from './recurringText';
+import {
+  describeDays,
+  describePattern,
+  timeSpan,
+  weekdayName,
+} from './recurringText';
 
 // Two compact views for the front of the activities listing: what happens
 // on one day (one line per activity), and the weekly rhythm of everything
@@ -132,7 +138,12 @@ const Pill = styled('span', {
   '@media (max-width: 700px)': { display: 'none' },
   variants: {
     kind: {
-      recurring: { background: '#eef2ff', color: '#3b4aa8' },
+      recurring: {
+        background: '#f7f2e4',
+        border: '1px solid #9a7b3c',
+        color: '#7a5f2a',
+        fontStyle: 'italic',
+      },
       now: {
         '&::before': {
           background: '#22c55e',
@@ -157,93 +168,267 @@ const Empty = styled('p', {
   padding: '0.9rem 0',
 });
 
-const SectionTitle = styled('h2', {
-  fontSize: '1.6rem',
-  fontWeight: 700,
-  margin: '0 0 0.2rem',
+// The weekly schedule is drawn like a plate in a botanical atlas (after
+// Botanicum): aged paper inside a fine double rule, serif lettering, each
+// weekday a column and each activity a numbered specimen label.
+
+const ink = 'var(--cocoso-colors-theme-800)';
+const ochre = '#9a7b3c';
+const paper = '#f7f2e4';
+const serif =
+  "'Cormorant Garamond', 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif";
+
+const Plate = styled('section', {
+  background: `radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.6), transparent 60%),
+    radial-gradient(ellipse at 90% 100%, rgba(154,123,60,0.08), transparent 55%), ${paper}`,
+  border: `1px solid ${ink}`,
+  boxShadow: `inset 0 0 0 5px ${paper}, inset 0 0 0 6px ${ink}, 0 12px 30px -22px rgba(40, 50, 20, 0.6)`,
+  color: ink,
+  margin: '0 auto 2.5rem',
+  maxWidth: '1180px',
+  padding: '1.75rem 1.75rem 1.5rem',
+  '@media (max-width: 900px)': { padding: '1.4rem 1rem 1.2rem' },
+});
+
+const PlateHead = styled('header', {
+  marginBottom: '1.25rem',
   textAlign: 'center',
+});
+
+const PlateNumber = styled('p', {
+  color: ochre,
+  fontFamily: serif,
+  fontSize: '0.85rem',
+  fontStyle: 'italic',
+  letterSpacing: '0.12em',
+  margin: '0 0 0.2rem',
+});
+
+const TitleRow = styled('div', {
+  alignItems: 'center',
+  display: 'flex',
+  gap: '1rem',
+  justifyContent: 'center',
+  '& svg': { flexShrink: 0 },
+  '@media (max-width: 600px)': { '& svg': { display: 'none' } },
+});
+
+const SectionTitle = styled('h2', {
+  fontFamily: serif,
+  fontSize: '2rem',
+  fontWeight: 600,
+  letterSpacing: '0.22em',
+  lineHeight: 1.1,
+  margin: 0,
+  textTransform: 'uppercase',
 });
 
 const SectionIntro = styled('p', {
-  margin: '0 0 1rem',
-  opacity: 0.75,
-  textAlign: 'center',
+  fontFamily: serif,
+  fontSize: '1.1rem',
+  fontStyle: 'italic',
+  margin: '0.35rem 0 0',
+  opacity: 0.8,
 });
 
 const Week = styled('div', {
+  borderTop: `1px solid ${ink}`,
   display: 'grid',
-  gap: '0.6rem',
   gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-  margin: '0 auto 2.5rem',
-  maxWidth: '1180px',
+  paddingTop: '0.9rem',
   '@media (max-width: 900px)': {
     display: 'flex',
-    margin: '0 -1rem 2.5rem',
     overflowX: 'auto',
-    padding: '0 1rem 0.5rem',
+    padding: '0.9rem 0.5rem 0.4rem 0',
     scrollSnapType: 'x mandatory',
   },
 });
 
 const Day = styled('div', {
-  background: 'rgba(255, 255, 255, 0.55)',
-  border: '1px solid var(--cocoso-colors-theme-200)',
-  borderRadius: '12px',
-  minHeight: '9rem',
-  padding: '0.6rem',
+  borderLeft: '1px solid rgba(30, 60, 30, 0.25)',
+  minHeight: '10rem',
+  padding: '0 0.55rem',
+  '&:first-child': { borderLeft: 'none' },
   '@media (max-width: 900px)': {
-    flex: '0 0 68%',
+    flex: '0 0 62%',
     scrollSnapAlign: 'start',
-  },
-  variants: {
-    today: {
-      true: {
-        background: 'white',
-        border: '2px solid var(--cocoso-colors-theme-600)',
-      },
-    },
   },
 });
 
 const DayName = styled('h3', {
-  color: 'var(--cocoso-colors-theme-800)',
+  alignItems: 'center',
   display: 'flex',
-  fontSize: '0.8rem',
-  justifyContent: 'space-between',
-  letterSpacing: '0.06em',
-  margin: '0 0 0.5rem',
-  textTransform: 'uppercase',
+  flexDirection: 'column',
+  fontFamily: serif,
+  fontSize: '1.15rem',
+  fontStyle: 'italic',
+  fontWeight: 500,
+  margin: '0 0 0.7rem',
+  textTransform: 'capitalize',
+  '& small': {
+    color: ochre,
+    fontSize: '0.7rem',
+    fontStyle: 'normal',
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+  },
   variants: {
-    today: { true: { color: 'var(--cocoso-colors-theme-600)' } },
+    today: { true: { fontWeight: 700 } },
   },
 });
 
 const Slot = styled(Link, {
-  background: 'white',
-  borderLeft: '4px solid var(--cocoso-colors-theme-500)',
-  borderRadius: '6px',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
+  background: 'rgba(255, 255, 255, 0.7)',
+  border: '1px solid rgba(30, 60, 30, 0.55)',
   color: 'inherit',
   display: 'block',
-  marginBottom: '0.45rem',
-  padding: '0.4rem 0.5rem',
+  marginBottom: '0.6rem',
+  padding: '0.55rem 0.55rem 0.5rem',
+  position: 'relative',
   textDecoration: 'none',
-  '&:hover': { boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' },
+  transition: 'transform 0.15s, box-shadow 0.15s',
+  '&:hover': {
+    boxShadow: '0 4px 12px -6px rgba(40, 50, 20, 0.5)',
+    transform: 'translateY(-1px)',
+  },
   '& b': {
     display: 'block',
-    fontSize: '0.8rem',
-    fontVariantNumeric: 'tabular-nums',
-    opacity: 0.75,
+    fontFamily: serif,
+    fontSize: '0.9rem',
+    fontVariantNumeric: 'lining-nums tabular-nums',
+    fontWeight: 600,
+    letterSpacing: '0.04em',
+    marginBottom: '0.1rem',
+    opacity: 0.85,
   },
-  '& strong': { display: 'block', fontSize: '0.9rem', lineHeight: 1.2 },
+  '& strong': {
+    display: 'block',
+    fontFamily: serif,
+    fontSize: '1.08rem',
+    fontWeight: 600,
+    lineHeight: 1.15,
+  },
   '& small': {
     display: 'block',
-    fontSize: '0.75rem',
+    fontFamily: serif,
+    fontSize: '0.85rem',
+    fontStyle: 'italic',
     lineHeight: 1.25,
-    marginTop: '2px',
-    opacity: 0.7,
+    marginTop: '0.2rem',
+    opacity: 0.8,
+  },
+  variants: {
+    today: { true: { borderColor: ink, boxShadow: `inset 0 0 0 1px ${ink}` } },
   },
 });
+
+// The specimen number, as on the key of a botanical plate.
+const Specimen = styled('span', {
+  alignItems: 'center',
+  background: paper,
+  border: `1px solid ${ochre}`,
+  borderRadius: '50%',
+  color: ochre,
+  display: 'flex',
+  fontFamily: serif,
+  fontSize: '0.8rem',
+  fontStyle: 'italic',
+  fontWeight: 600,
+  height: '1.35rem',
+  justifyContent: 'center',
+  position: 'absolute',
+  right: '-0.45rem',
+  top: '-0.45rem',
+  width: '1.35rem',
+});
+
+// The key below the plate: every specimen with its rhythm.
+const Key = styled('footer', {
+  borderTop: `1px solid ${ink}`,
+  fontFamily: serif,
+  marginTop: '0.9rem',
+  paddingTop: '0.7rem',
+  '& h4': {
+    color: ochre,
+    fontSize: '0.8rem',
+    fontStyle: 'italic',
+    fontWeight: 500,
+    letterSpacing: '0.12em',
+    margin: '0 0 0.35rem',
+  },
+  '& ol': {
+    columnGap: '2rem',
+    columns: '3 16rem',
+    fontSize: '0.98rem',
+    margin: 0,
+    padding: 0,
+  },
+  '& li': {
+    breakInside: 'avoid',
+    listStyle: 'none',
+    marginBottom: '0.15rem',
+  },
+  '& li span': { color: ochre, fontStyle: 'italic', marginRight: '0.4rem' },
+  '& li em': { opacity: 0.75 },
+});
+
+const Fallow = styled('div', {
+  display: 'flex',
+  justifyContent: 'center',
+  opacity: 0.35,
+  paddingTop: '1.5rem',
+});
+
+// A line-drawn sprig: a stem with alternating leaves.
+function Sprig({
+  flip = false,
+  width = 110,
+}: {
+  flip?: boolean;
+  width?: number;
+}) {
+  const leaves = [18, 34, 50, 66, 82];
+  return (
+    <svg
+      aria-hidden="true"
+      height={width * 0.32}
+      style={flip ? { transform: 'scaleX(-1)' } : undefined}
+      viewBox="0 0 110 36"
+      width={width}
+    >
+      <path
+        d="M2 20 C 30 17, 70 23, 104 18"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1"
+      />
+      {leaves.map((x, i) => {
+        const up = i % 2 === 0;
+        const y = 20 - (x / 104) * 1.5;
+        const d = up
+          ? `M${x} ${y} q 4 -11 15 -13 q -3 11 -15 13 z`
+          : `M${x} ${y} q 4 11 15 13 q -3 -11 -15 -13 z`;
+        return (
+          <g key={x}>
+            <path
+              d={d}
+              fill="var(--cocoso-colors-theme-200)"
+              stroke="currentColor"
+              strokeWidth="0.8"
+            />
+            <path
+              d={up ? `M${x} ${y} l 10 -9` : `M${x} ${y} l 10 9`}
+              stroke="currentColor"
+              strokeWidth="0.5"
+            />
+          </g>
+        );
+      })}
+      <circle cx="105" cy="18" fill={ochre} r="2.2" />
+    </svg>
+  );
+}
 
 interface Occurrence {
   startDate: string;
@@ -410,7 +595,7 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
 const weekOrder = [1, 2, 3, 4, 5, 6, 0];
 
 export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
-  const [t] = useTranslation('common');
+  const [t, i18n] = useTranslation('common');
   const entryLink = useEntryLink();
   const recurring = useMemo(() => withPatterns(activities), [activities]);
   const todayWeekday = dayjs().day();
@@ -429,10 +614,44 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
     return null;
   }
 
+  // Specimen numbers follow the order the activities first appear in the week.
+  const specimenOf = new Map<string, number>();
+  weekOrder.forEach((weekday) =>
+    recurring
+      .filter(({ pattern }) => pattern.slots.some((s) => s.weekday === weekday))
+      .sort((x, y) =>
+        (
+          x.pattern.slots.find((s) => s.weekday === weekday)?.startTime || ''
+        ).localeCompare(
+          y.pattern.slots.find((s) => s.weekday === weekday)?.startTime || ''
+        )
+      )
+      .forEach(({ activity }) => {
+        if (!specimenOf.has(activity._id)) {
+          specimenOf.set(activity._id, specimenOf.size + 1);
+        }
+      })
+  );
+
   return (
-    <section aria-labelledby="weekly-title">
-      <SectionTitle id="weekly-title">{t('recurring.weekTitle')}</SectionTitle>
-      <SectionIntro>{t('recurring.weekIntro')}</SectionIntro>
+    <Plate aria-labelledby="weekly-title">
+      <Helmet>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&display=swap"
+          rel="stylesheet"
+        />
+      </Helmet>
+      <PlateHead>
+        <PlateNumber>{t('recurring.plate')}</PlateNumber>
+        <TitleRow>
+          <Sprig />
+          <SectionTitle id="weekly-title">
+            {t('recurring.weekTitle')}
+          </SectionTitle>
+          <Sprig flip />
+        </TitleRow>
+        <SectionIntro>{t('recurring.weekIntro')}</SectionIntro>
+      </PlateHead>
       <Week ref={weekRef}>
         {weekOrder.map((weekday) => {
           const slots = recurring
@@ -444,17 +663,23 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
             .sort((a, b) => a.slot.startTime.localeCompare(b.slot.startTime));
           const isToday = weekday === todayWeekday;
           return (
-            <Day
-              key={weekday}
-              today={isToday}
-              data-today={isToday || undefined}
-            >
+            <Day key={weekday} data-today={isToday || undefined}>
               <DayName today={isToday}>
-                <span>{weekdayName(weekday, 'ddd')}</span>
-                {isToday && <span>{t('recurring.today')}</span>}
+                <span>{weekdayName(weekday, 'dddd')}</span>
+                {isToday && <small>{t('recurring.today')}</small>}
               </DayName>
+              {slots.length === 0 && (
+                <Fallow>
+                  <Sprig width={70} />
+                </Fallow>
+              )}
               {slots.map(({ activity, pattern, slot }) => (
-                <Slot key={activity._id} to={entryLink(activity)}>
+                <Slot
+                  key={activity._id}
+                  today={isToday}
+                  to={entryLink(activity)}
+                >
+                  <Specimen>{specimenOf.get(activity._id)}</Specimen>
                   <b>{timeSpan(slot.startTime, slot.endTime)}</b>
                   <strong>{activity.title}</strong>
                   <small>
@@ -473,6 +698,27 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
           );
         })}
       </Week>
-    </section>
+      <Key>
+        <h4>{t('recurring.key')}</h4>
+        <ol>
+          {[...specimenOf.entries()].map(([id, number]) => {
+            const item = recurring.find(({ activity }) => activity._id === id);
+            if (!item) return null;
+            return (
+              <li key={id}>
+                <span>{number}.</span>
+                <Link
+                  style={{ color: 'inherit' }}
+                  to={entryLink(item.activity)}
+                >
+                  {item.activity.title}
+                </Link>{' '}
+                <em>– {describePattern(item.pattern, t, i18n.language)}</em>
+              </li>
+            );
+          })}
+        </ol>
+      </Key>
+    </Plate>
   );
 }

@@ -313,6 +313,8 @@ public:
 
 # Recurring activities on the activities listing
 recurring:
+  key: "Levhanın anahtarı"
+  plate: "Levha I · Haftalık döngü"
   every: "Her {{days}}"
   everyOther: "İki haftada bir {{days}}"
   everyOtherWeek: "iki haftada bir"

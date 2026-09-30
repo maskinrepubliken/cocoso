@@ -313,6 +313,8 @@ public:
 
 # Recurring activities on the activities listing
 recurring:
+  key: "Nyckel till planschen"
+  plate: "Plansch I · Veckans kretslopp"
   every: "Varje {{days}}"
   everyOther: "Varannan {{days}}"
   everyOtherWeek: "varannan vecka"
