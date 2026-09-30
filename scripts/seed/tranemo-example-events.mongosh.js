@@ -4,7 +4,7 @@
 //   mongosh "mongodb://mongo:27017/cocoso" --file scripts/seed/tranemo-example-events.mongosh.js
 //
 // Creates four example organizers (members marked as organizers, no password,
-// so nobody can log in as them) and 20 events at the seeded places: 5 recur
+// so nobody can log in as them, each with an illustrated portrait) and 20 events at the seeded places: 5 recur
 // weekly (one occurrence per week), the rest are one-off. A few occurrences
 // get example registrations.
 //
@@ -36,24 +36,28 @@ const organizers = [
     firstName: 'Anna',
     lastName: 'Lindqvist',
     bio: '<p>Bibliotekarie i Tranemo som håller i stickcaféet och bokcirklarna.</p>',
+    avatar: '/images/examples/organizers/anna-lindqvist.svg',
   },
   {
     username: 'erik.johansson',
     firstName: 'Erik',
     lastName: 'Johansson',
     bio: '<p>Ledare i den lokala idrottsföreningen, med innebandy och friluftsliv.</p>',
+    avatar: '/images/examples/organizers/erik-johansson.svg',
   },
   {
     username: 'fatima.hassan',
     firstName: 'Fatima',
     lastName: 'Hassan',
     bio: '<p>Arrangerar läxhjälp, språkcafé och matlagningskvällar.</p>',
+    avatar: '/images/examples/organizers/fatima-hassan.svg',
   },
   {
     username: 'lars.svensson',
     firstName: 'Lars',
     lastName: 'Svensson',
     bio: '<p>Glasblåsare i Limmared och eldsjäl i Uddebos verkstäder.</p>',
+    avatar: '/images/examples/organizers/lars-svensson.svg',
   },
 ];
 
@@ -80,6 +84,12 @@ organizers.forEach((o) => {
     print(`organizer ${o.username}: created`);
   }
   userIdByUsername[o.username] = user._id;
+  // Illustrated portraits (public/images/examples/organizers): the
+  // organizers are made up, so they get drawings rather than photos.
+  db.users.updateOne(
+    { _id: user._id, 'avatar.src': { $ne: o.avatar } },
+    { $set: { avatar: { src: o.avatar, date: new Date() } } }
+  );
   db.memberships.updateOne(
     { userId: user._id },
     {
