@@ -4,7 +4,7 @@ panel: Adminpanel
 menulabel: Adminmenu
 site: Sidan
 home: Hem
-description: Konfigurera, designa och hantera din webbplats
+description: Din dag i överblick – vad som är på gång och vad som behöver göras
 
 settings:
   title: Inställningar
@@ -410,3 +410,41 @@ reports:
     save: Spara
   messages:
     success: Rapport uppdaterad.
+
+overview:
+  greeting: 'Hej {{name}}!'
+  intro: 'Så här ser det ut för dina aktiviteter.'
+  introAdmin: 'Så här ser det ut på sajten just nu.'
+  actions:
+    newActivity: 'Ny aktivitet'
+    calendar: 'Öppna kalendern'
+    messages: 'Meddelanden'
+    users: 'Användare'
+    locations: 'Platser'
+  stats:
+    upcoming: 'tillfällen de närmaste två veckorna'
+    registrations: 'anmälningar senaste 7 dagarna'
+    activities: 'aktiviteter totalt'
+    members: 'nya medlemmar senaste 14 dagarna'
+  upcoming:
+    title: 'På gång de närmaste två veckorna'
+    empty: 'Inget inplanerat de närmaste två veckorna.'
+    signedUp: '{{count}} anmälda'
+    signedUpOf: '{{count}} av {{capacity}} anmälda'
+    full: 'Fullt'
+    noRegistration: 'Ingen anmälan'
+    today: 'Idag'
+    more: 'och {{count}} till – se kalendern'
+  registrations:
+    title: 'Nya anmälningar'
+    empty: 'Inga nya anmälningar de senaste 7 dagarna.'
+    people: '{{count}} personer'
+    for: 'till'
+  members:
+    title: 'Nya medlemmar'
+    empty: 'Inga nya medlemmar de senaste 14 dagarna.'
+    all: 'Se alla användare'
+  settings:
+    title: 'Inställningar och utseende'
+    helper: 'Sådant du ställer in en gång och ändrar ibland.'
+  error: 'Kunde inte hämta översikten.'

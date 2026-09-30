@@ -4,7 +4,7 @@ panel: Admin Paneli
 menulabel: 'Admin Menü'
 site: Site
 home: Anasayfa
-description: Web sitesini yapılandır, tasarla ve yönet
+description: Gününüze genel bakış – yaklaşanlar ve yapılacaklar
 
 settings:
   title: Ayarlar
@@ -410,3 +410,41 @@ reports:
     save: Kaydet
   messages:
     success: Rapor güncellendi.
+
+overview:
+  greeting: 'Merhaba {{name}}!'
+  intro: 'Etkinliklerinizde durum bu.'
+  introAdmin: 'Sitede şu anki durum bu.'
+  actions:
+    newActivity: 'Yeni etkinlik'
+    calendar: 'Takvimi aç'
+    messages: 'Mesajlar'
+    users: 'Kullanıcılar'
+    locations: 'Yerler'
+  stats:
+    upcoming: 'önümüzdeki iki haftadaki oturum'
+    registrations: 'son 7 gündeki kayıt'
+    activities: 'toplam etkinlik'
+    members: 'son 14 gündeki yeni üye'
+  upcoming:
+    title: 'Önümüzdeki iki hafta'
+    empty: 'Önümüzdeki iki hafta için planlanmış bir şey yok.'
+    signedUp: '{{count}} kayıtlı'
+    signedUpOf: '{{capacity}} kişiden {{count}} kayıtlı'
+    full: 'Dolu'
+    noRegistration: 'Kayıt yok'
+    today: 'Bugün'
+    more: 've {{count}} tane daha – takvime bakın'
+  registrations:
+    title: 'Yeni kayıtlar'
+    empty: 'Son 7 günde yeni kayıt yok.'
+    people: '{{count}} kişi'
+    for: 'için'
+  members:
+    title: 'Yeni üyeler'
+    empty: 'Son 14 günde yeni üye yok.'
+    all: 'Tüm kullanıcıları gör'
+  settings:
+    title: 'Ayarlar ve görünüm'
+    helper: 'Bir kez ayarlayıp arada bir değiştirdiğiniz şeyler.'
+  error: 'Genel bakış yüklenemedi.'

@@ -289,7 +289,7 @@ export default function UserPopup({ isOpen }: UserPopupProps) {
           </MenuItem>
         </Link>
         {canCreateContent && (
-          <Link to="/my-activities">
+          <Link to="/admin/home">
             <MenuItem as="span">
               <Text>
                 <Trans i18nKey="common:menu.member.activities">

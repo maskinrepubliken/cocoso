@@ -4,7 +4,7 @@ panel: Admin Panel
 menulabel: Admin Menu
 site: Site
 home: Home
-description: Configure, design and manage your website
+description: Your day at a glance – what is coming up and what needs doing
 
 settings:
   title: Settings
@@ -410,3 +410,41 @@ reports:
     save: Save
   messages:
     success: Report updated.
+
+overview:
+  greeting: 'Hi {{name}}!'
+  intro: 'Here is what is happening with your activities.'
+  introAdmin: 'Here is what is happening on the site.'
+  actions:
+    newActivity: 'New activity'
+    calendar: 'Open the calendar'
+    messages: 'Messages'
+    users: 'Users'
+    locations: 'Locations'
+  stats:
+    upcoming: 'occasions the next two weeks'
+    registrations: 'sign-ups the last 7 days'
+    activities: 'activities in total'
+    members: 'new members the last 14 days'
+  upcoming:
+    title: 'Coming up the next two weeks'
+    empty: 'Nothing planned the next two weeks.'
+    signedUp: '{{count}} signed up'
+    signedUpOf: '{{count}} of {{capacity}} signed up'
+    full: 'Full'
+    noRegistration: 'No sign-up'
+    today: 'Today'
+    more: 'and {{count}} more – see the calendar'
+  registrations:
+    title: 'New sign-ups'
+    empty: 'No new sign-ups the last 7 days.'
+    people: '{{count}} people'
+    for: 'for'
+  members:
+    title: 'New members'
+    empty: 'No new members the last 14 days.'
+    all: 'See all users'
+  settings:
+    title: 'Settings and appearance'
+    helper: 'Things you set up once and change now and then.'
+  error: 'Could not load the overview.'

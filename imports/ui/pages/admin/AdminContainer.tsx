@@ -20,6 +20,7 @@ import {
   siteAtom,
   isDesktopAtom,
   roleAtom,
+  canCreateContentAtom,
 } from '/imports/state';
 import FeedbackForm from '/imports/ui/layout/FeedbackForm';
 
@@ -54,6 +55,7 @@ export default function AdminContainer({ siteDoc }) {
   const site = siteDoc || siteFromAtom;
   const isDesktop = useAtomValue(isDesktopAtom);
   const role = useAtomValue(roleAtom);
+  const canCreateContent = useAtomValue(canCreateContentAtom);
 
   const [drawerMenuOpen, setDrawerMenuOpen] = useState(false);
   const [t] = useTranslation('admin');
@@ -65,7 +67,14 @@ export default function AdminContainer({ siteDoc }) {
   const menuItems = site?.settings?.menu;
   const isAdmin = role === 'admin';
   const pathname = location?.pathname;
-  const routes: any[] = isAdmin ? getAdminRoutes(menuItems) : [];
+  // Contributors get the home overview of their own activities, nothing else.
+  const allAdminRoutes = getAdminRoutes(menuItems);
+  let routes: any[] = [];
+  if (isAdmin) {
+    routes = allAdminRoutes;
+  } else if (canCreateContent) {
+    routes = allAdminRoutes.filter((r) => r.value === '/admin/home');
+  }
 
   const getCurrentRoute = () => {
     if (!routes) {
@@ -135,6 +144,7 @@ export default function AdminContainer({ siteDoc }) {
 
   if (
     !isAdmin &&
+    !(canCreateContent && pathname.split('/')[2] === 'home') &&
     pathname.split('/')[2] !== 'my-profile' &&
     pathname.split('/')[2] !== 'messages'
   ) {
