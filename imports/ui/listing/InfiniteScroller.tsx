@@ -6,6 +6,7 @@ import { Box, Flex, Loader } from '/imports/ui/core';
 
 import NewEntryHelper from '../generic/NewEntryHelper';
 import FiltrerSorter from './FiltrerSorter';
+import Honeycomb from './Honeycomb';
 
 const breakpointColumnsObj = (isLarger: boolean) => ({
   default: 6,
@@ -104,6 +105,7 @@ export default function InfiniteScroller({
   hideFiltrerSorter = false,
   filtrerMarginTop = 0,
   isMasonry = false,
+  isHoneycomb = false,
   items,
   itemsPerPage = defaultItemsPerPage,
   newHelperLink,
@@ -152,7 +154,14 @@ export default function InfiniteScroller({
 
       <Box px="2" pb="8" w="100%">
         <InfiniteScroll pageStart={1} loadMore={handleLoad} hasMore={hasMore}>
-          {isMasonry ? (
+          {isHoneycomb ? (
+            <>
+              <Honeycomb>
+                {currentItems?.map((item, index) => children(item, index))}
+              </Honeycomb>
+              {hasMore && <Loader relative />}
+            </>
+          ) : isMasonry ? (
             <Masonry
               breakpointCols={breakpointColumnsObj(currentItems?.length > 3)}
               className="my-masonry-grid"

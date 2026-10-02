@@ -29,7 +29,7 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
     <>
       <PageHeading site={site || siteDoc} listing="groups" />
 
-      <InfiniteScroller items={groups} filtrerMarginTop={-76}>
+      <InfiniteScroller isHoneycomb items={groups} filtrerMarginTop={-76}>
         {(item) => (
           <Center
             key={item._id}

@@ -7,8 +7,7 @@ import { getImageUrl } from '../utils/imageHelper';
 
 // Föreningar are drawn as hexagons so they stand apart from the event and
 // place cards. A pointy-top hexagon is 2/√3 times as tall as it is wide.
-const hexagon =
-  'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
+const hexagon = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
 
 const Outer = styled('div', {
   aspectRatio: '1 / 1.1547',
@@ -16,11 +15,10 @@ const Outer = styled('div', {
   clipPath: hexagon,
   padding: '4px',
   transition: 'transform 0.2s ease',
-  width: '270px',
+  width: '100%',
   '&:hover': { transform: 'scale(1.03)' },
   '&:hover img': { transform: 'scale(1.06)' },
-  // Two side by side on phones.
-  '@media (max-width: 480px)': { padding: '3px', width: 'calc(50vw - 1.25rem)' },
+  '@media (max-width: 599px)': { padding: '3px' },
 });
 
 const Inner = styled('div', {
@@ -67,10 +65,13 @@ const Text = styled('div', {
     margin: '0.4rem 0 0',
     opacity: 0.95,
   },
-  '@media (max-width: 480px)': {
-    inset: '16% 10%',
-    '& h3': { fontSize: '0.92rem' },
+  '@media (max-width: 599px)': {
+    inset: '16% 9%',
+    '& h3': { fontSize: '0.82rem' },
     '& p': { display: 'none' },
+  },
+  '@media (min-width: 600px) and (max-width: 1119px)': {
+    '& h3': { fontSize: '1.05rem' },
   },
 });
 
