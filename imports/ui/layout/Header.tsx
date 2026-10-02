@@ -158,12 +158,11 @@ function HeaderMenu({ siteDoc, pageTitles }: HeaderMenuProps) {
   };
 
   return (
-    <Center id="main-menu" mb="4" px="4">
+    <Center id="main-menu" mb="3" px="4">
       <Flex
         align="center"
         justify="center"
-        mb="2"
-        p="2"
+        p="1"
         wrap="wrap"
         style={menuStyles}
       >
@@ -229,7 +228,7 @@ export default function Header({
 
   return (
     <Box id="header" w="100%">
-      <Center p="6">
+      <Center pt="4" pb="2" px="4">
         <Flex align="center" direction="column" gap="0">
           {site.logo && (
             <Link className="logo-container" to="/">

@@ -38,6 +38,7 @@ export default function LocationSwitcher({
       <Heading
         color="theme.800"
         css={{ fontFamily: 'Raleway, sans-serif', fontWeight: 400 }}
+        size="md"
       >
         {siteName}
       </Heading>
@@ -62,7 +63,7 @@ export default function LocationSwitcher({
         <Heading
           color="theme.800"
           css={{ fontFamily: 'Raleway, sans-serif', fontWeight: 500 }}
-          size={hasLogo ? 'md' : 'lg'}
+          size="md"
         >
           {current.name}
         </Heading>
@@ -105,6 +106,7 @@ export default function LocationSwitcher({
             <Heading
               color="theme.800"
               css={{ fontFamily: 'Raleway, sans-serif', fontWeight: 400 }}
+              size="md"
             >
               {siteName}
             </Heading>

@@ -19,9 +19,8 @@ import {
 } from '/imports/state';
 import { useLocationTag } from '/imports/ui/utils/useLocation';
 
-import NiceSlider from '../generic/NiceSlider';
 import PlaceholderImage from '../generic/PlaceholderImage';
-import { getImageUrlBest } from '../utils/imageHelper';
+import { getImageUrl, getImageUrlBest } from '../utils/imageHelper';
 import BackLink from './BackLink';
 
 import Section, { NARROW, WIDE } from '../pages/activities/event/Section';
@@ -54,39 +53,59 @@ const TopBar = styled('div', {
   alignItems: 'center',
   display: 'flex',
   justifyContent: 'space-between',
-  marginBottom: '0.5rem',
+  marginBottom: '0.25rem',
 });
 
+// The top of the page: a small picture on the left and the title and
+// description beside it, so sign-up is in view without scrolling.
 const Hero = styled('header', {
-  marginBottom: '1.5rem',
-  textAlign: 'center',
+  display: 'grid',
+  gap: '1rem',
+  marginBottom: '1.25rem',
+  [WIDE]: {
+    alignItems: 'start',
+    gap: '1.5rem',
+    gridTemplateColumns: '260px minmax(0, 1fr)',
+  },
+  variants: {
+    noImage: { true: { [WIDE]: { gridTemplateColumns: 'minmax(0, 1fr)' } } },
+  },
 });
+
+const ImageBox = styled('div', {
+  aspectRatio: '4 / 3',
+  borderRadius: 'var(--cocoso-border-radius)',
+  overflow: 'hidden',
+  width: '100%',
+  '& img': {
+    display: 'block',
+    height: '100%',
+    objectFit: 'cover',
+    width: '100%',
+  },
+  [NARROW]: { aspectRatio: '16 / 9', maxHeight: '220px' },
+});
+
+const HeroText = styled('div', { minWidth: 0 });
 
 const Title = styled('h1', {
-  fontSize: '2rem',
+  fontSize: '1.6rem',
   lineHeight: 1.15,
-  margin: '0.25rem 0 0.5rem',
-  [WIDE]: { fontSize: '2.5rem' },
+  margin: '0 0 0.35rem',
+  [WIDE]: { fontSize: '1.85rem' },
 });
 
 const SubTitle = styled('p', {
   color: 'var(--cocoso-colors-gray-700)',
-  fontSize: '1.15rem',
-  margin: '0 0 0.75rem',
+  fontSize: '1.05rem',
+  margin: '0 0 0.5rem',
 });
 
 const Tags = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.375rem',
-  justifyContent: 'center',
-});
-
-const ImageArea = styled('div', {
-  borderRadius: 'var(--cocoso-border-radius)',
-  margin: '0 auto 1.5rem',
-  maxWidth: '900px',
-  overflow: 'hidden',
+  marginBottom: '0.6rem',
 });
 
 // On wide screens: the text and sign-up on the left, the facts on the right.
@@ -116,7 +135,8 @@ const Column = styled('div', {
 });
 
 const Description = styled('div', {
-  lineHeight: 1.6,
+  lineHeight: 1.55,
+  maxWidth: '68ch',
   '& p:first-child': { marginTop: 0 },
   '& p:last-child': { marginBottom: 0 },
 });
@@ -267,39 +287,40 @@ export default function ActivityHybrid({
         <ShareButton />
       </TopBar>
 
-      <Hero>
-        <Title>{activity.title}</Title>
-        {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
-        {locationName && (
-          <Tags>
-            <Tag colorScheme="gray">{locationName}</Tag>
-          </Tags>
+      <Hero noImage={!isPublicActivity}>
+        {isPublicActivity && (
+          <ImageBox>
+            {images.length > 0 ? (
+              <img
+                alt={activity.title}
+                src={getImageUrl(images[0], 'medium') || images[0]}
+              />
+            ) : (
+              <PlaceholderImage
+                seed={activity._id}
+                style={{ height: '100%', width: '100%' }}
+              />
+            )}
+          </ImageBox>
         )}
-      </Hero>
-
-      {isPublicActivity && (
-        <ImageArea>
-          {images.length > 0 ? (
-            <NiceSlider alt={activity.title} images={images} />
-          ) : (
-            <PlaceholderImage
-              seed={activity._id}
-              style={{ height: '180px', width: '100%' }}
-            />
+        <HeroText>
+          <Title>{activity.title}</Title>
+          {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
+          {locationName && (
+            <Tags>
+              <Tag colorScheme="gray">{locationName}</Tag>
+            </Tags>
           )}
-        </ImageArea>
-      )}
+          {activity.longDescription && (
+            <Description className="text-content">
+              {HTMLReactParser(DOMPurify.sanitize(activity.longDescription))}
+            </Description>
+          )}
+        </HeroText>
+      </Hero>
 
       <Layout>
         <Column>
-          {activity.longDescription && (
-            <Section order={2} title={tc('event.sections.about')}>
-              <Description className="text-content">
-                {HTMLReactParser(DOMPurify.sanitize(activity.longDescription))}
-              </Description>
-            </Section>
-          )}
-
           {isPublicActivity && occurrence && (
             <RegistrationSection
               activity={activity}
