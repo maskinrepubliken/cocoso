@@ -5,14 +5,12 @@ import { styled } from '/stitches.config';
 import PlaceholderImage from '../generic/PlaceholderImage';
 import { getImageUrl } from '../utils/imageHelper';
 
-// Föreningar are drawn as hexagons so they stand apart from the event and
-// place cards. A pointy-top hexagon is 2/√3 times as tall as it is wide.
-const hexagon = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
-
+// Föreningar are drawn as circles so they stand apart from the event and
+// place cards.
 const Outer = styled('div', {
-  aspectRatio: '1 / 1.1547',
+  aspectRatio: '1 / 1',
   background: 'var(--cocoso-colors-theme-700)',
-  clipPath: hexagon,
+  borderRadius: '50%',
   padding: '4px',
   transition: 'transform 0.2s ease',
   width: '100%',
@@ -22,7 +20,7 @@ const Outer = styled('div', {
 });
 
 const Inner = styled('div', {
-  clipPath: hexagon,
+  borderRadius: '50%',
   height: '100%',
   overflow: 'hidden',
   position: 'relative',
@@ -47,7 +45,7 @@ const Text = styled('div', {
   color: 'white',
   display: 'flex',
   flexDirection: 'column',
-  inset: '18% 14%',
+  inset: '16% 13%',
   justifyContent: 'center',
   position: 'absolute',
   textAlign: 'center',
@@ -92,7 +90,7 @@ const Tags = styled('div', {
   },
 });
 
-interface HexThumbProps {
+interface RoundThumbProps {
   item: {
     _id: string;
     title: string;
@@ -102,7 +100,7 @@ interface HexThumbProps {
   tags?: string[];
 }
 
-export default function HexThumb({ item, tags }: HexThumbProps) {
+export default function RoundThumb({ item, tags }: RoundThumbProps) {
   const imageUrl = getImageUrl(item.imageUrl, 'medium');
 
   return (

@@ -4,13 +4,13 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import Select from 'react-select';
 
+import { styled } from '/stitches.config';
 import { Box, Center, Text } from '/imports/ui/core';
 import { siteAtom } from '/imports/state';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
 import PageHeading from './PageHeading';
-import InfiniteScroller from './InfiniteScroller';
-import NewGridThumb from './NewGridThumb';
+import PlaceholderImage from '../generic/PlaceholderImage';
 
 export interface UsersHybridProps {
   siteDoc: any;
@@ -22,8 +22,56 @@ export interface UsersHybridProps {
 export const displayName = (user: any) =>
   [user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.username;
 
-// The organizers, laid out like the places listing. A card goes straight to
-// the person's page, where their events are listed.
+// An organizer as a round portrait with the name below.
+const Person = styled(Link, {
+  alignItems: 'center',
+  color: 'inherit',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.6rem',
+  textAlign: 'center',
+  textDecoration: 'none',
+  width: '200px',
+  '&:hover .portrait': { transform: 'scale(1.04)' },
+  '&:hover strong': { textDecoration: 'underline' },
+  '& strong': { display: 'block', fontSize: '1.05rem' },
+  '& small': {
+    color: 'var(--cocoso-colors-theme-700)',
+    display: 'block',
+    fontSize: '0.85rem',
+  },
+  '@media (max-width: 480px)': { width: '150px' },
+});
+
+const Portrait = styled('div', {
+  aspectRatio: '1 / 1',
+  background: 'var(--cocoso-colors-theme-700)',
+  borderRadius: '50%',
+  overflow: 'hidden',
+  padding: '4px',
+  transition: 'transform 0.2s ease',
+  width: '100%',
+  '& > *': {
+    borderRadius: '50%',
+    display: 'block',
+    height: '100%',
+    objectFit: 'cover',
+    overflow: 'hidden',
+    width: '100%',
+  },
+});
+
+const People = styled('div', {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '2rem 2.5rem',
+  justifyContent: 'center',
+  padding: '1rem 0.5rem 3rem',
+  '@media (max-width: 480px)': { gap: '1.5rem 1rem' },
+});
+
+// The organizers as round portraits. A portrait goes straight to the
+// person's page, where their events are listed.
 export default function UsersHybrid({
   siteDoc,
   users,
@@ -99,37 +147,27 @@ export default function UsersHybrid({
         </Center>
       )}
 
-      <Box px="2" pb="8">
-        <InfiniteScroller
-          hideFiltrerSorter
-          isMasonry
-          items={filteredUsers}
-          newHelperLink={undefined}
-          smallThumb={false}
-        >
-          {(user: any, index: number) => (
-            <Box key={user.username} mb="2">
-              <Link
-                style={{ color: 'inherit', textDecoration: 'none' }}
-                to={`/@${user.username}`}
-              >
-                <NewGridThumb
-                  fixedImageHeight
-                  imageUrl={getImageUrl(user.avatar?.src, 'small')}
-                  index={index}
-                  placeholderSeed={user._id || user.username}
-                  subTitle={
-                    displayName(user) !== user.username
-                      ? `@${user.username}`
-                      : undefined
-                  }
-                  title={displayName(user)}
-                />
-              </Link>
-            </Box>
-          )}
-        </InfiniteScroller>
-      </Box>
+      <People>
+        {filteredUsers?.map((user: any) => {
+          const avatar = getImageUrl(user.avatar?.src, 'small');
+          const name = displayName(user);
+          return (
+            <Person key={user.username} to={`/@${user.username}`}>
+              <Portrait className="portrait">
+                {avatar ? (
+                  <img alt="" loading="lazy" src={avatar} />
+                ) : (
+                  <PlaceholderImage seed={user._id || user.username} />
+                )}
+              </Portrait>
+              <span>
+                <strong>{name}</strong>
+                {name !== user.username && <small>@{user.username}</small>}
+              </span>
+            </Person>
+          );
+        })}
+      </People>
     </>
   );
 }

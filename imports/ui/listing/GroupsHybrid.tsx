@@ -8,7 +8,7 @@ import { Center } from '/imports/ui/core';
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
 import useOpenEntry from './useOpenEntry';
-import HexThumb from './HexThumb';
+import RoundThumb from './RoundThumb';
 
 export interface GroupsHybridProps {
   siteDoc: any;
@@ -38,7 +38,7 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
             css={{ cursor: 'pointer' }}
             onClick={() => openEntry(item)}
           >
-            <HexThumb
+            <RoundThumb
               item={item}
               tags={
                 [

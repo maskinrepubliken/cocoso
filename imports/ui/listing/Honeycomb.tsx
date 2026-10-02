@@ -2,16 +2,16 @@ import React from 'react';
 
 import { styled } from '/stitches.config';
 
-// Lays hexagons out as a honeycomb: rows alternate between n and n - 1
-// hexagons, every other row starts half a hexagon in, and the rows overlap
-// by a quarter of a hexagon's height so the shapes fit into each other.
+// Packs round cards the way a honeycomb packs its cells: rows alternate
+// between n and n - 1 circles, every other row starts half a step in and
+// sits in the dips of the row above.
 //
-// A grid of half-hexagon columns does it in CSS alone: every hexagon spans
-// two columns, and the first hexagon of each shorter row is moved to the
-// second column, which pushes that row half a step to the right. Rows are
-// three quarters of a hexagon tall and the hexagons overflow into the next.
+// A grid of half-step columns does it in CSS alone: every circle spans two
+// columns, and the first circle of each shorter row is moved to the second
+// column, which pushes that row half a step to the right. Rows are √3/2 of
+// a step apart and the circles overflow into the next row.
 //
-//   --s  hexagon width   --g  gap   --h  hexagon height (2/√3 × width)
+//   --s  circle diameter   --g  gap   --h  card height
 
 const columns = (n: number) =>
   `repeat(${2 * n}, calc((var(--s) - var(--g)) / 2))`;
@@ -25,12 +25,12 @@ const Wrap = styled('div', {
 const Comb = styled('div', {
   '--s': '150px',
   '--g': '6px',
-  '--h': 'calc(var(--s) * 1.1547)',
+  '--h': 'var(--s)',
   columnGap: 'var(--g)',
   display: 'grid',
-  gridAutoRows: 'calc(var(--h) * 0.75 + var(--g) * 0.866)',
+  gridAutoRows: 'calc((var(--s) + var(--g)) * 0.866)',
   gridTemplateColumns: columns(2),
-  paddingBottom: 'calc(var(--h) * 0.25)',
+  paddingBottom: 'calc(var(--s) * 0.134)',
   '& > *': {
     display: 'block !important',
     gridColumnEnd: 'span 2',
