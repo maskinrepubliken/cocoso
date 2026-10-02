@@ -107,8 +107,8 @@ function OrganizerEvents({ events, username }: OrganizerEventsProps) {
         {items.map((item, index) => (
           <Center
             key={item._id}
-            flex="0 1 355px"
-            css={{ cursor: 'pointer' }}
+            flex="0 1 290px"
+            css={{ alignSelf: 'stretch', cursor: 'pointer' }}
             onClick={() => openEntry(item)}
           >
             <SexyThumb

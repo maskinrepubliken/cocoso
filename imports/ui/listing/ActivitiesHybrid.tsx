@@ -83,8 +83,8 @@ export default function ActivitiesHybrid({
         {(item, index) => (
           <Center
             key={item._id}
-            flex="1 1 355px"
-            css={{ cursor: 'pointer' }}
+            flex="0 1 290px"
+            css={{ alignSelf: 'stretch', cursor: 'pointer' }}
             onClick={() => openEntry(item)}
           >
             <SexyThumb
