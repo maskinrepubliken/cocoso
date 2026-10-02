@@ -22,7 +22,7 @@ import { describeDays, timeSpan, weekdayName } from './recurringText';
 // Each weekday has an earthy colour of its own and today is orange; the
 // text stays black and the details green.
 const ink = '#151515';
-const today = '#f4a35c';
+const today = '#d4955f'; // a muted, earthy orange
 const earth: Record<number, string> = {
   1: '#e9dcc4', // sand
   2: '#e2c6a8', // clay
