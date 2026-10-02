@@ -19,11 +19,27 @@ import { describeDays, timeSpan, weekdayName } from './recurringText';
 // on one day (one line per activity), and the weekly rhythm of everything
 // that recurs, shown once per weekday instead of one card per date.
 
+// Each weekday has an earthy colour of its own and today is orange; the
+// text stays black and the details green.
+const ink = '#151515';
+const today = '#f4a35c';
+const earth: Record<number, string> = {
+  1: '#e9dcc4', // sand
+  2: '#e2c6a8', // clay
+  3: '#d9c79a', // ochre
+  4: '#c9cfa4', // olive
+  5: '#c3d1b8', // sage
+  6: '#d8bfa9', // terracotta
+  0: '#cdc3b4', // stone
+};
+export const dayColor = (weekday: number, isToday = false) =>
+  isToday ? today : earth[weekday];
+
 const Panel = styled('section', {
-  background: 'white',
+  border: '1px solid rgba(40, 30, 15, 0.15)',
   borderRadius: '14px',
-  boxShadow:
-    '0 1px 0 var(--cocoso-colors-theme-200), 0 10px 28px -18px rgba(0, 60, 10, 0.35)',
+  boxShadow: '0 10px 28px -20px rgba(60, 35, 10, 0.45)',
+  color: ink,
   margin: '0 auto 1rem',
   maxWidth: '1180px',
   padding: '0.7rem 1.1rem 0.3rem',
@@ -44,7 +60,7 @@ const PanelTitle = styled('h2', {
   fontWeight: 700,
   margin: 0,
   '& small': {
-    color: 'var(--cocoso-colors-theme-700)',
+    color: ink,
     fontSize: '1rem',
     fontWeight: 400,
     marginLeft: '0.6rem',
@@ -53,7 +69,7 @@ const PanelTitle = styled('h2', {
 });
 
 const Segmented = styled('div', {
-  background: 'var(--cocoso-colors-theme-50)',
+  background: 'rgba(255, 255, 255, 0.55)',
   borderRadius: '999px',
   display: 'flex',
   padding: '3px',
@@ -63,7 +79,7 @@ const SegButton = styled('button', {
   background: 'transparent',
   border: 0,
   borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
+  color: ink,
   cursor: 'pointer',
   fontFamily: 'inherit',
   fontSize: '0.875rem',
@@ -71,7 +87,7 @@ const SegButton = styled('button', {
   padding: '0.3rem 0.9rem',
   variants: {
     active: {
-      true: { background: 'var(--cocoso-colors-theme-600)', color: 'white' },
+      true: { background: 'var(--cocoso-colors-theme-700)', color: 'white' },
     },
   },
 });
@@ -91,7 +107,7 @@ const Rows = styled('ul', {
 
 const Row = styled(Link, {
   alignItems: 'center',
-  borderTop: '1px solid var(--cocoso-colors-theme-100)',
+  borderTop: '1px solid rgba(40, 30, 15, 0.14)',
   color: 'inherit',
   display: 'grid',
   gap: '0.9rem',
@@ -113,7 +129,7 @@ const What = styled('span', {
   minWidth: 0,
   '& strong': { display: 'block', fontWeight: 600 },
   '& small': {
-    color: 'var(--cocoso-colors-theme-800)',
+    color: ink,
     display: 'block',
     fontSize: '0.8rem',
     marginTop: '2px',
@@ -122,9 +138,10 @@ const What = styled('span', {
 });
 
 const Pill = styled('span', {
-  background: 'var(--cocoso-colors-theme-50)',
+  background: 'rgba(255, 255, 255, 0.7)',
+  border: '1px solid var(--cocoso-colors-theme-600)',
   borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-700)',
+  color: 'var(--cocoso-colors-theme-800)',
   fontSize: '0.75rem',
   fontWeight: 700,
   padding: '0.2rem 0.6rem',
@@ -132,10 +149,10 @@ const Pill = styled('span', {
   '@media (max-width: 700px)': { display: 'none' },
   variants: {
     kind: {
-      recurring: { background: '#eef2ff', color: '#3b4aa8' },
+      recurring: {},
       now: {
         '&::before': {
-          background: '#22c55e',
+          background: 'var(--cocoso-colors-theme-600)',
           borderRadius: '50%',
           boxShadow: '0 0 0 3px rgba(34, 197, 94, 0.2)',
           content: '""',
@@ -151,7 +168,7 @@ const Pill = styled('span', {
 });
 
 const Empty = styled('p', {
-  borderTop: '1px solid var(--cocoso-colors-theme-100)',
+  borderTop: '1px solid rgba(40, 30, 15, 0.14)',
   margin: 0,
   opacity: 0.7,
   padding: '0.5rem 0',
@@ -195,9 +212,9 @@ const Week = styled('div', {
 });
 
 const Day = styled('div', {
-  background: 'rgba(255, 255, 255, 0.55)',
-  border: '1px solid var(--cocoso-colors-theme-200)',
+  border: '1px solid rgba(40, 30, 15, 0.14)',
   borderRadius: '10px',
+  color: ink,
   padding: '0.45rem',
   '@media (max-width: 900px)': {
     flex: '0 0 68%',
@@ -206,15 +223,15 @@ const Day = styled('div', {
   variants: {
     today: {
       true: {
-        background: 'white',
-        border: '2px solid var(--cocoso-colors-theme-600)',
+        border: '2px solid var(--cocoso-colors-theme-700)',
+        boxShadow: '0 8px 20px -14px rgba(120, 60, 0, 0.7)',
       },
     },
   },
 });
 
 const DayName = styled('h3', {
-  color: 'var(--cocoso-colors-theme-800)',
+  color: ink,
   display: 'flex',
   fontSize: '0.8rem',
   justifyContent: 'space-between',
@@ -222,13 +239,17 @@ const DayName = styled('h3', {
   margin: '0 0 0.35rem',
   textTransform: 'uppercase',
   variants: {
-    today: { true: { color: 'var(--cocoso-colors-theme-600)' } },
+    today: {
+      true: {
+        '& span:last-child': { color: 'var(--cocoso-colors-theme-800)' },
+      },
+    },
   },
 });
 
 const Slot = styled(Link, {
-  background: 'white',
-  borderLeft: '4px solid var(--cocoso-colors-theme-500)',
+  background: 'rgba(255, 255, 255, 0.82)',
+  borderLeft: '4px solid var(--cocoso-colors-theme-600)',
   borderRadius: '6px',
   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
   color: 'inherit',
@@ -349,7 +370,10 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
     (!o.endTime || o.endTime > now);
 
   return (
-    <Panel aria-labelledby="day-agenda-title">
+    <Panel
+      aria-labelledby="day-agenda-title"
+      css={{ background: dayColor(day.day(), offset === 0) }}
+    >
       <PanelHead>
         <PanelTitle id="day-agenda-title">
           {offset === 0 ? t('recurring.today') : t('recurring.tomorrow')}
@@ -429,7 +453,10 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
     const week = weekRef.current;
     const today = week?.querySelector<HTMLElement>('[data-today]');
     if (week && today && week.scrollWidth > week.clientWidth) {
-      week.scrollLeft = today.offsetLeft - week.offsetLeft - 16;
+      week.scrollLeft +=
+        today.getBoundingClientRect().left -
+        week.getBoundingClientRect().left -
+        16;
     }
   }, [recurring.length]);
 
@@ -458,6 +485,7 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
           return (
             <Day
               key={weekday}
+              css={{ background: dayColor(weekday, isToday) }}
               today={isToday}
               data-today={isToday || undefined}
             >
