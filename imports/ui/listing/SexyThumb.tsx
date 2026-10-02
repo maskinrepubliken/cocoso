@@ -5,7 +5,6 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useTranslation } from 'react-i18next';
 
 import { styled } from '/stitches.config';
-import { Flex, Tag } from '/imports/ui/core';
 import {
   getNextOccurrence,
   getWeeklyPattern,
@@ -25,60 +24,68 @@ const today = dayjs().format('YYYY-MM-DD');
 const yesterday = dayjs(new Date()).add(-1, 'days').format('YYYY-MM-DD');
 const tomorrow = dayjs(new Date()).add(1, 'days').format('YYYY-MM-DD');
 
-// An event card: a long, narrow picture on top and the facts below it,
-// small enough for several cards per row.
+// An event card: the picture fills the card and the facts lie on it, on a
+// darkening gradient at the bottom.
 const Card = styled('article', {
-  background: 'white',
+  aspectRatio: '4 / 3',
+  background: 'var(--cocoso-colors-theme-700)',
   borderRadius: 'var(--cocoso-border-radius)',
-  boxShadow:
-    '0 1px 2px rgba(0, 0, 0, 0.06), 0 6px 18px -12px rgba(20, 50, 25, 0.35)',
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100%',
+  boxShadow: '0 6px 18px -12px rgba(20, 50, 25, 0.5)',
+  color: 'white',
   overflow: 'hidden',
+  position: 'relative',
   transition: 'transform 0.15s ease, box-shadow 0.15s ease',
   width: '100%',
   '&:hover': {
-    boxShadow:
-      '0 2px 4px rgba(0, 0, 0, 0.08), 0 12px 24px -12px rgba(20, 50, 25, 0.45)',
+    boxShadow: '0 12px 24px -12px rgba(20, 50, 25, 0.6)',
     transform: 'translateY(-2px)',
   },
+  '&:hover img': { transform: 'scale(1.04)' },
 });
 
 const Picture = styled('div', {
-  aspectRatio: '5 / 2',
-  background: 'var(--cocoso-colors-theme-200)',
-  overflow: 'hidden',
-  width: '100%',
+  inset: 0,
+  position: 'absolute',
   '& img, & .lazy-load-image-background': {
     display: 'block !important',
     height: '100%',
     objectFit: 'cover',
+    transition: 'transform 0.4s ease',
     width: '100%',
+  },
+  '&::after': {
+    background:
+      'linear-gradient(180deg, rgba(8, 24, 12, 0.05) 30%, rgba(8, 24, 12, 0.82) 100%)',
+    content: '""',
+    inset: 0,
+    position: 'absolute',
   },
 });
 
 const Body = styled('div', {
+  bottom: 0,
   display: 'flex',
-  flex: 1,
   flexDirection: 'column',
-  gap: '0.3rem',
-  padding: '0.7rem 0.85rem 0.8rem',
+  gap: '0.25rem',
+  left: 0,
+  padding: '0.7rem 0.85rem 0.75rem',
+  position: 'absolute',
+  right: 0,
+  textShadow: '0 1px 3px rgba(0, 0, 0, 0.45)',
 });
 
 const Title = styled('h3', {
-  color: 'var(--cocoso-colors-theme-900)',
-  fontSize: '1.05rem',
+  fontSize: '1.08rem',
   fontWeight: 700,
   lineHeight: 1.2,
   margin: 0,
 });
 
 const SubTitle = styled('p', {
-  color: 'var(--cocoso-colors-gray-700)',
   fontSize: '0.85rem',
   lineHeight: 1.3,
   margin: 0,
+  opacity: 0.92,
 });
 
 const Meta = styled('div', {
@@ -86,33 +93,39 @@ const Meta = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.3rem',
-  marginTop: 'auto',
-  paddingTop: '0.35rem',
+  paddingTop: '0.2rem',
 });
 
-const DateChip = styled('span', {
-  background: 'var(--cocoso-colors-theme-50)',
-  border: '1px solid var(--cocoso-colors-theme-200)',
+const Chip = styled('span', {
+  background: 'rgba(255, 255, 255, 0.92)',
   borderRadius: '999px',
   color: 'var(--cocoso-colors-theme-800)',
-  fontSize: '0.78rem',
+  fontSize: '0.75rem',
   fontWeight: 600,
-  padding: '0.12rem 0.5rem',
+  padding: '0.1rem 0.5rem',
+  textShadow: 'none',
   whiteSpace: 'nowrap',
-  variants: { past: { true: { color: 'var(--cocoso-colors-gray-500)' } } },
+  variants: {
+    place: {
+      true: {
+        background: 'rgba(255, 255, 255, 0.18)',
+        border: '1px solid rgba(255, 255, 255, 0.6)',
+        color: 'white',
+      },
+    },
+    past: { true: { color: 'var(--cocoso-colors-gray-600)' } },
+  },
 });
 
 const More = styled('span', {
-  color: 'var(--cocoso-colors-theme-700)',
   fontSize: '0.8rem',
-  fontWeight: 600,
+  fontWeight: 700,
 });
 
 const Rule = styled('span', {
-  color: 'var(--cocoso-colors-theme-800)',
   fontSize: '0.82rem',
   fontWeight: 600,
-  '& small': { fontWeight: 500, marginLeft: '0.35rem', opacity: 0.75 },
+  '& small': { fontWeight: 500, marginLeft: '0.35rem', opacity: 0.85 },
 });
 
 interface Occurrence {
@@ -139,7 +152,7 @@ export function ThumbDate({ occurrence }: ThumbDateProps) {
       : `${start.format('D MMM')} – ${dayjs(occurrence.endDate).format(
           'D MMM'
         )}`;
-  return <DateChip past={isPast}>{label}</DateChip>;
+  return <Chip past={isPast}>{label}</Chip>;
 }
 
 // A weekly activity shows its rhythm and next date instead of a row of dates.
@@ -229,13 +242,13 @@ function SexyThumb({
           <SubTitle>{subTitle || readingMaterial}</SubTitle>
         )}
         {tags && tags.length > 0 && (
-          <Flex gap="1" wrap="wrap">
+          <Meta>
             {tags.map((t) => (
-              <Tag key={t} colorScheme="gray" size="sm">
+              <Chip key={t} place>
                 {t}
-              </Tag>
+              </Chip>
             ))}
-          </Flex>
+          </Meta>
         )}
 
         <Meta>
