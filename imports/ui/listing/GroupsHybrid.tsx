@@ -8,7 +8,7 @@ import { Center } from '/imports/ui/core';
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
 import useOpenEntry from './useOpenEntry';
-import SexyThumb from './SexyThumb';
+import HexThumb from './HexThumb';
 
 export interface GroupsHybridProps {
   siteDoc: any;
@@ -30,16 +30,16 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
       <PageHeading site={site || siteDoc} listing="groups" />
 
       <InfiniteScroller items={groups} filtrerMarginTop={-76}>
-        {(item, index) => (
+        {(item) => (
           <Center
             key={item._id}
-            flex="1 1 355px"
+            flex="0 0 auto"
+            w="auto"
             css={{ cursor: 'pointer' }}
             onClick={() => openEntry(item)}
           >
-            <SexyThumb
-              activity={item}
-              index={index}
+            <HexThumb
+              item={item}
               tags={
                 [
                   item.isPrivate ? tc('labels.private') : null,
