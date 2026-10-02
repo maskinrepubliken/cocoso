@@ -67,7 +67,7 @@ export default function ActivitiesHybrid({
   return (
     <>
       {!showPast && (
-        <Box px="4" pt="4">
+        <Box px="4" pt="1">
           <DayAgenda activities={activities} placeOf={locationNameOf} />
           <WeeklySchedule activities={activities} placeOf={locationNameOf} />
         </Box>

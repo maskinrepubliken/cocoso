@@ -316,9 +316,6 @@ public:
 
 # Recurring activities on the activities listing
 recurring:
-  key: "Key to the plate"
-  plate: "Plate II · The weekly round"
-  dayPlate: "Plate I · Day by day"
   every: "Every {{days}}"
   everyOther: "Every other {{days}}"
   everyOtherWeek: "every other week"
