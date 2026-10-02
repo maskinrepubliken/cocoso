@@ -110,6 +110,51 @@ const photos = [
     url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/Study_Break_-_Reading_at_Tulane_University%2C_2009.jpg/1280px-Study_Break_-_Reading_at_Tulane_University%2C_2009.jpg",
     credit: "Foto: Tulane Public Relations (CC BY 2.0, Wikimedia Commons).",
   },
+  {
+    title: "Brädspelskväll på Centralen",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Brettspiel_Mensch_%C3%A4rger_dich_nicht.jpg/1280px-Brettspiel_Mensch_%C3%A4rger_dich_nicht.jpg",
+    credit: "Foto: Tetzemann (CC0, Wikimedia Commons).",
+  },
+  {
+    title: "Fredagskväll i Trainspot",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Skateboard_ramp_%40_Flevopark_%40_Amsterdam_Oost_%2822413486709%29.jpg/1280px-Skateboard_ramp_%40_Flevopark_%40_Amsterdam_Oost_%2822413486709%29.jpg",
+    credit: "Foto: Guilhem Vellut from Annecy, France (CC BY 2.0, Wikimedia Commons).",
+  },
+  {
+    title: "Lördagsloppis på Forumtorget",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Rth_Schoeneberg_08_flea_market.jpg/1280px-Rth_Schoeneberg_08_flea_market.jpg",
+    credit: "Foto: A.Savin (CC BY-SA 3.0, Wikimedia Commons).",
+  },
+  {
+    title: "Söndagspromenad med stavgång",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Nordic_Walking_is_enjoyed_by_all.jpg/1280px-Nordic_Walking_is_enjoyed_by_all.jpg",
+    credit: "Foto: Vijay.shivu (CC BY-SA 4.0, Wikimedia Commons).",
+  },
+  {
+    title: "Familjebad på söndagar",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Children%27s_Pool_for_SaiGaau_Swimming_Pool.jpg/1280px-Children%27s_Pool_for_SaiGaau_Swimming_Pool.jpg",
+    credit: "Foto: PQ77wd (CC BY-SA 4.0, Wikimedia Commons).",
+  },
+  {
+    title: "Seniorgympa i Dalstorp",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Gym_Dumbbells_For_Working_Out_%28193383405%29.jpeg/1280px-Gym_Dumbbells_For_Working_Out_%28193383405%29.jpeg",
+    credit: "Foto: Sterling (CC BY 3.0, Wikimedia Commons).",
+  },
+  {
+    title: "Körövning med kammarkören",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Houston_Chamber_Choir_singing_at_the_Villa_de_Matel.jpg/1280px-Houston_Chamber_Choir_singing_at_the_Villa_de_Matel.jpg",
+    credit: "Foto: Rrwagner59 (CC BY-SA 4.0, Wikimedia Commons).",
+  },
+  {
+    title: "Curling för nybörjare",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/12-01-20-yog-814.jpg/1280px-12-01-20-yog-814.jpg",
+    credit: "Foto: Ralf Roletschek (CC BY-SA 3.0 AT, Wikimedia Commons).",
+  },
+  {
+    title: "Babysång på biblioteket",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/The_children%27s_library_at_the_Broomfield_Library.jpg/1280px-The_children%27s_library_at_the_Broomfield_Library.jpg",
+    credit: "Foto: HonjuTheCat (CC0, Wikimedia Commons).",
+  },
 ];
 
 let updated = 0;

@@ -4,8 +4,9 @@
 //   mongosh "mongodb://mongo:27017/cocoso" --file scripts/seed/tranemo-example-events.mongosh.js
 //
 // Creates four example organizers (members marked as organizers, no password,
-// so nobody can log in as them, each with an illustrated portrait) and 20 events at the seeded places: 5 recur
-// weekly (one occurrence per week), the rest are one-off. A few occurrences
+// so nobody can log in as them, each with an illustrated portrait) and 29 events at the seeded places: 14 recur
+// weekly (one occurrence per week, at least two each weekday), the rest are
+// one-off. A few occurrences
 // get example registrations.
 //
 // Idempotent: organizers are matched by username and events by title, so
@@ -171,6 +172,89 @@ const events = [
     capacity: 12,
     dates: weekly('2026-10-05', '18:00', '21:00'),
     description: '<p>Vävstolarna står uppsatta. Kom och väv på egen hand eller få hjälp att komma igång.</p>',
+  },
+
+  // More weekly ones, so every weekday has at least two
+  {
+    title: 'Brädspelskväll på Centralen',
+    subTitle: 'Varje fredag – spel, snacks och nya vänner',
+    organizer: 'fatima.hassan',
+    place: 'Centralen, Tranemo',
+    capacity: 30,
+    dates: weekly('2026-10-02', '17:30', '21:00'),
+    description: '<p>Vi har ett hundratal brädspel att välja bland, från snabba kortspel till långa strategispel. Ta med ett eget om du vill. Alla åldrar är välkomna.</p>',
+  },
+  {
+    title: 'Fredagskväll i Trainspot',
+    subTitle: 'Varje fredag – öppen skatepark för unga',
+    organizer: 'erik.johansson',
+    place: 'Trainspot skatepark, Limmared',
+    capacity: 40,
+    dates: weekly('2026-10-02', '18:00', '21:00'),
+    description: '<p>Skatepark och fritidsledare på plats. Hjälm och skydd finns att låna, och det bjuds på varm dryck.</p>',
+  },
+  {
+    title: 'Lördagsloppis på Forumtorget',
+    subTitle: 'Varje lördag förmiddag',
+    organizer: 'fatima.hassan',
+    place: 'Forumtorget, Tranemo',
+    capacity: 200,
+    dates: weekly('2026-10-03', '10:00', '13:00', ['2026-12-05']),
+    description: '<p>Sälj eller fynda kläder, böcker, leksaker och prylar. Bordsplats är gratis men anmäl dig om du vill sälja.</p>',
+  },
+  {
+    title: 'Söndagspromenad med stavgång',
+    subTitle: 'Varje söndag – runt Tranemosjön',
+    organizer: 'erik.johansson',
+    place: 'Tranemosjön runt',
+    capacity: 30,
+    dates: weekly('2026-10-04', '10:00', '11:30'),
+    description: '<p>En lugn promenad på ungefär sex kilometer i eget tempo. Stavar finns att låna. Vi avslutar med fika vid badplatsen.</p>',
+  },
+  {
+    title: 'Familjebad på söndagar',
+    subTitle: 'Varje söndag eftermiddag',
+    organizer: 'fatima.hassan',
+    place: 'Tranemo sim- och idrottshall',
+    capacity: 60,
+    dates: weekly('2026-10-04', '13:00', '15:00'),
+    description: '<p>Hela bassängen är öppen för familjer, med flytleksaker och plaskhörna för de minsta. Barn under tio år badar med en vuxen.</p>',
+  },
+  {
+    title: 'Seniorgympa i Dalstorp',
+    subTitle: 'Varje måndag förmiddag',
+    organizer: 'anna.lindqvist',
+    place: 'Dalshov, Dalstorp',
+    capacity: 25,
+    dates: weekly('2026-10-05', '10:00', '11:00'),
+    description: '<p>Rörlighet, balans och styrka till musik, anpassat efter dagsformen. Efteråt fikar vi tillsammans.</p>',
+  },
+  {
+    title: 'Körövning med kammarkören',
+    subTitle: 'Varje tisdag kväll',
+    organizer: 'anna.lindqvist',
+    place: 'Tranehov, Tranemo',
+    capacity: 40,
+    dates: weekly('2026-10-06', '19:00', '21:00'),
+    description: '<p>Tranemo kammarkör repeterar inför luciakonserten. Kom och lyssna eller provsjung, vi söker särskilt tenorer och basar.</p>',
+  },
+  {
+    title: 'Curling för nybörjare',
+    subTitle: 'Varje onsdag – ingen förkunskap behövs',
+    organizer: 'lars.svensson',
+    place: 'Rosenlunds curlinghall, Limmared',
+    capacity: 16,
+    dates: weekly('2026-10-07', '18:00', '19:30'),
+    description: '<p>Instruktörer lär ut grunderna, och sedan spelar vi en kort match. Ta med rena inomhusskor och varma kläder.</p>',
+  },
+  {
+    title: 'Babysång på biblioteket',
+    subTitle: 'Varje torsdag förmiddag',
+    organizer: 'anna.lindqvist',
+    place: 'Tranemo bibliotek',
+    capacity: 15,
+    dates: weekly('2026-10-08', '10:00', '10:45'),
+    description: '<p>Sånger, ramsor och rörelse för barn upp till ett och ett halvt år med sina vuxna. Vi sitter på filtar i barnavdelningen.</p>',
   },
 
   // One-off
