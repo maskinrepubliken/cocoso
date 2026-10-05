@@ -19,10 +19,10 @@ import { describeDays, timeSpan, weekdayName } from './recurringText';
 // on one day (one line per activity), and the weekly rhythm of everything
 // that recurs, shown once per weekday instead of one card per date.
 
-// Each weekday has an earthy colour of its own and today is orange; the
+// Each weekday has an earthy colour of its own and today is green; the
 // text stays black and the details green.
 const ink = '#151515';
-const today = '#efbf94'; // a light, earthy orange, as light as the other days
+const today = '#b9dba0'; // a light leaf green, as light as the other days
 const earth: Record<number, string> = {
   1: '#e9dcc4', // sand
   2: '#e2c6a8', // clay
