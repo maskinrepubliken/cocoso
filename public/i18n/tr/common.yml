@@ -229,6 +229,11 @@ locations:
   here: Burada, {{ name }}
   switcher:
     choose: Bir yer seçin
+    whole: Tüm belediye
+    wholeHelper: Tüm yerler
+    zoom: …ya da bir yere yakınlaş
+    open: Bir yer seçin
+    clear: Tüm belediyeyi göster
   landing:
     activities: '{{ name }} bölgesinde neler var'
     resources: '{{ name }} bölgesindeki yerler ve mekânlar'

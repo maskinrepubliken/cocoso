@@ -1,15 +1,13 @@
 import { Meteor } from 'meteor/meteor';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
-import { useAtomValue } from 'jotai';
 
-import { isDesktopAtom } from '/imports/state';
-import { Box, Center, Flex, Image, Text } from '/imports/ui/core';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { parseTitle } from '/imports/api/_utils/shared';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import LocationSwitcher from './LocationSwitcher';
+import UserPopup from './UserPopup';
 
 const isClient = Meteor?.isClient;
 
@@ -18,242 +16,208 @@ if (isClient) {
   import '@szhsin/react-menu/dist/transitions/zoom.css';
 }
 
-const baseTextStyles = {
-  borderBottomWidth: '2px',
-  borderBottomStyle: 'solid',
-  borderBottomColor: 'transparent',
-  fontFamily: 'Raleway, sans-serif',
-  fontSize: 16,
-  fontWeight: '500',
-};
+// Visible menu entries with their route resolved, so the desktop pill, the
+// mobile chip row and the location switcher all agree on what a section is.
+export interface HeaderMenuItem {
+  name: string;
+  label: string;
+  isComposablePage?: boolean;
+  route: string;
+}
+
+export function getMenuItems(site: any, prefix: string): HeaderMenuItem[] {
+  const menu = site?.settings?.menu || [];
+  return menu
+    .filter((item: any) => item.isVisible)
+    .map((item: any) => ({
+      name: item.name,
+      label: item.label,
+      isComposablePage: item.isComposablePage,
+      route: item.isComposablePage
+        ? `${prefix}/cp/${item.name}`
+        : `${prefix}/${item.name}`,
+    }));
+}
+
+// The first path segment after the location prefix: 'activities',
+// 'calendar', 'info', … or '' at a home page.
+export function getCurrentSection(pathname: string, prefix: string): string {
+  const rest = prefix ? pathname.slice(prefix.length) : pathname;
+  const first = rest.split('/')[1] || '';
+  return first === 'cp' ? rest.split('/')[2] || '' : first;
+}
 
 export interface InfoPagesMenuProps {
   label: string;
-  menuStyles: any;
   pageTitles: any[];
-  pathname: string;
+  isActive: boolean;
   prefix?: string;
+  className?: string;
   onSelect?: () => void;
 }
 
 export function InfoPagesMenu({
   label,
-  menuStyles,
   pageTitles,
-  pathname,
+  isActive,
   prefix = '',
+  className = '',
   onSelect,
 }: InfoPagesMenuProps) {
-  const isCurrentContext = pathname.split('/')?.[1] === 'info';
-
-  const flexStyles = {
-    align: 'center',
-    pointerEvents: 'none',
-    px: '2',
-  };
-
-  const textStyles = {
-    ...baseTextStyles,
-    color: menuStyles?.color || 'gray.600',
-    fontStyle: menuStyles?.fontStyle || 'normal',
-    marginTop: '0.25rem',
-    marginRight: '0.25rem',
-    textTransform: menuStyles?.textTransform || 'none',
-  };
-
-  const borderColor = menuStyles?.color;
-
   return (
     <Menu
       align="end"
-      id="info-pages-menu"
-      suppressHydrationWarning
       button={
-        <Flex
-          align="center"
-          gap="0"
-          css={{
-            ...flexStyles,
-            borderBottom: isCurrentContext
-              ? `2px solid ${borderColor}`
-              : '2px solid transparent',
-            color: menuStyles?.color,
-            wrap: 'wrap',
-            '&:hover': !isCurrentContext && {
-              borderBottomColor: borderColor,
-              textDecoration: 'underline',
-            },
-          }}
+        <span
+          className={`${className} ${isActive ? 'is-active' : ''}`}
+          suppressHydrationWarning
         >
-          <Text css={textStyles}>{label}</Text>
-          <ChevronDownIcon size="16px" />
-        </Flex>
+          {label}
+          <ChevronDownIcon className="site-nav-chevron" width={13} height={13} />
+        </span>
       }
     >
-      <Box
-        id="some-menu"
-        key="menu-content-x"
-        css={{
-          backgroundColor: menuStyles?.backgroundColor,
-          maxHeight: '480px',
-          maxWidth: '320px',
-          overflowY: 'scroll',
-          ':hover': {
-            backgroundColor: `${menuStyles?.backgroundColor}80`,
-          },
-        }}
-      >
-        {pageTitles.map((item) => (
-          <MenuItem
-            key={item._id}
-            as="span"
-            id={item._id}
-            style={{ padding: '0', width: '100%' }}
-          >
+      <div className="site-info-menu">
+        {pageTitles?.map((item) => (
+          <MenuItem key={item._id} style={{ padding: 0 }}>
             <Link
-              style={{ padding: '0.5rem 1rem', width: '100%' }}
+              className="site-info-menu-link"
               to={`${prefix}/info/${parseTitle(item.title)}`}
               onClick={onSelect}
             >
-              <Text css={textStyles}>{item.title}</Text>
+              {item.title}
             </Link>
           </MenuItem>
         ))}
-      </Box>
+      </div>
     </Menu>
   );
 }
 
-interface HeaderMenuProps {
-  siteDoc: any;
+interface NavProps {
+  items: HeaderMenuItem[];
+  section: string;
   pageTitles: any[];
+  prefix: string;
+  className: string;
+  itemClassName: string;
 }
 
-function HeaderMenu({ siteDoc, pageTitles }: HeaderMenuProps) {
-  const location = useLocation();
-  const isDesktop = useAtomValue(isDesktopAtom);
-  const prefix = useLocationPrefix();
+// One list of links, styled as a white pill on desktop and as a scrolling
+// chip row on narrower screens (see client/main.css).
+function Nav({
+  items,
+  section,
+  pageTitles,
+  prefix,
+  className,
+  itemClassName,
+}: NavProps) {
+  const activeRef = useRef<HTMLAnchorElement>(null);
 
-  const settings = siteDoc?.settings;
-  const menuStyles = siteDoc?.theme?.menu;
-  const pathname = location?.pathname;
+  // Keep the active chip visible when the section changes on mobile.
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({
+      block: 'nearest',
+      inline: 'center',
+      behavior: 'smooth',
+    });
+  }, [section]);
 
-  const { isBurgerMenuOnDesktop, isBurgerMenuOnMobile } = settings || {};
-
-  if (isDesktop && isBurgerMenuOnDesktop) {
-    return null;
-  }
-
-  if (!isDesktop && isBurgerMenuOnMobile) {
-    return null;
-  }
-
-  const menuItems = settings?.menu?.filter((item: any) => item.isVisible);
-
-  const isCurrentContext = (item: any, index: number) => {
-    if (pathname === '/') {
-      return index === 0;
-    }
-    return pathname.includes(item?.name);
-  };
+  const isActive = (item: HeaderMenuItem, index: number) =>
+    section === '' ? index === 0 : section === item.name;
 
   return (
-    <Center id="main-menu" mb="3" px="4">
-      <Flex
-        align="center"
-        justify="center"
-        p="1"
-        wrap="wrap"
-        style={menuStyles}
-      >
-        {menuItems?.map((item, index) =>
-          item.name === 'info' ? (
-            <InfoPagesMenu
-              key="info"
-              label={item.label}
-              menuStyles={menuStyles}
-              pageTitles={pageTitles}
-              pathname={pathname}
-              prefix={prefix}
-            />
-          ) : (
-            <Link
-              key={item.name}
-              className="main-menu-item"
-              to={
-                item.isComposablePage
-                  ? `${prefix}/cp/${item.name}`
-                  : `${prefix}/${item.name}`
-              }
-            >
-              <Box as="span" px="2">
-                <Text
-                  css={{
-                    ...baseTextStyles,
-                    borderBottomColor: isCurrentContext(item, index)
-                      ? menuStyles.color
-                      : 'transparent',
-                    color: menuStyles?.color,
-                    '&:hover': {
-                      borderBottomColor: menuStyles?.color,
-                      borderBottomWidth: '1px',
-                    },
-                  }}
-                >
-                  {item.label}
-                </Text>
-              </Box>
-            </Link>
-          )
-        )}
-      </Flex>
-    </Center>
+    <nav className={className}>
+      {items.map((item, index) =>
+        item.name === 'info' ? (
+          <InfoPagesMenu
+            key="info"
+            className={itemClassName}
+            isActive={isActive(item, index)}
+            label={item.label}
+            pageTitles={pageTitles}
+            prefix={prefix}
+          />
+        ) : (
+          <Link
+            key={item.name}
+            ref={isActive(item, index) ? activeRef : undefined}
+            className={`${itemClassName} ${
+              isActive(item, index) ? 'is-active' : ''
+            }`}
+            to={item.route}
+          >
+            {item.label}
+          </Link>
+        )
+      )}
+    </nav>
   );
 }
 
 export interface HeaderProps {
   site: any;
   pageTitles: any[];
-  isLogoSmall?: boolean;
 }
 
-export default function Header({
-  site,
-  pageTitles,
-  isLogoSmall = false,
-}: HeaderProps) {
+// The site header: one 56px row with the brand/location pill on the left,
+// the menu as a floating pill in the middle and the account on the right.
+// Below 960px the menu moves to a chip row under the bar. The bar is
+// transparent at the top of the page and gains a blurred backdrop once the
+// page scrolls.
+export default function Header({ site, pageTitles }: HeaderProps) {
+  const location = useLocation();
+  const prefix = useLocationPrefix();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!isClient) {
+      return undefined;
+    }
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   if (!site) {
     return null;
   }
 
-  return (
-    <Box id="header" w="100%">
-      <Center pt="4" pb="2" px="4">
-        <Flex align="center" direction="column" gap="0">
-          {site.logo && (
-            <Link className="logo-container" to="/">
-              <Box css={{ maxHeight: isLogoSmall ? '48px' : '96px' }}>
-                <Image
-                  alt={`${site?.settings?.name} logo`}
-                  src={site.logo}
-                  css={{
-                    height: isLogoSmall ? '48px' : '96px',
-                    maxWidth: '360px',
-                    objectFit: 'contain',
-                    width: '100%',
-                  }}
-                />
-              </Box>
-            </Link>
-          )}
-          <LocationSwitcher
-            hasLogo={Boolean(site.logo)}
-            siteName={site?.settings?.name}
-          />
-        </Flex>
-      </Center>
+  const items = getMenuItems(site, prefix);
+  const section = getCurrentSection(location.pathname, prefix);
 
-      <HeaderMenu siteDoc={site} pageTitles={pageTitles} />
-    </Box>
+  return (
+    <header
+      id="header"
+      className={`site-header ${scrolled ? 'is-scrolled' : ''}`}
+    >
+      <div className="site-header-bar">
+        <LocationSwitcher site={site} items={items} section={section} />
+
+        <Nav
+          className="site-nav"
+          itemClassName="site-nav-item"
+          items={items}
+          pageTitles={pageTitles}
+          prefix={prefix}
+          section={section}
+        />
+
+        <div className="site-header-right">
+          <UserPopup site={site} />
+        </div>
+      </div>
+
+      <Nav
+        className="site-chips"
+        itemClassName="site-chip"
+        items={items}
+        pageTitles={pageTitles}
+        prefix={prefix}
+        section={section}
+      />
+    </header>
   );
 }

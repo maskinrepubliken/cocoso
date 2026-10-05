@@ -82,6 +82,14 @@ export interface Site {
   color?: string;
   settings?: {
     name?: string;
+    shortName?: string;
+    email?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+    footer?: string;
+    isBurgerMenuOnMobile?: boolean;
+    isBurgerMenuOnDesktop?: boolean;
     menu?: MenuItem[];
     lang?: string;
   };

@@ -6,6 +6,9 @@ new:
   name:
     label: Topluluk İsmi
     holder: Ananaslar
+  shortName:
+    label: Kısa ad
+    helper: Başlıktaki kapsülde gösterilir, örneğin yalnızca şehir adı. Tam adı kullanmak için boş bırakın.
   email:
     label: İletişim Eposta adresi
     holder: email@ananaslar.co

@@ -229,6 +229,11 @@ locations:
   here: Här i {{ name }}
   switcher:
     choose: Välj ort
+    whole: Hela kommunen
+    wholeHelper: Alla orter
+    zoom: …eller zooma in på en ort
+    open: Välj ort
+    clear: Visa hela kommunen
   landing:
     activities: På gång i {{ name }}
     resources: Platser och lokaler i {{ name }}

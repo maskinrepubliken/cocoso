@@ -6,6 +6,9 @@ new:
   name:
     label: Namn på din community
     holder: The Pineapple Community
+  shortName:
+    label: Kort namn
+    helper: Visas i headerns piller, t.ex. bara ortens namn. Lämna tomt för att använda hela namnet.
   email:
     label: E-post
     holder: email@pineapple.co

@@ -13,6 +13,7 @@ import Boxling from './Boxling';
 
 interface SiteSettingsFormValues {
   name?: string;
+  shortName?: string;
   email?: string;
   address?: string;
   city?: string;
@@ -56,6 +57,12 @@ export default function AdminSettingsForm() {
           <Flex direction="column">
             <FormField label={t('new.name.label')}>
               <Input {...register('name')} />
+            </FormField>
+            <FormField
+              label={t('new.shortName.label')}
+              helper={t('new.shortName.helper')}
+            >
+              <Input {...register('shortName')} />
             </FormField>
             <FormField label={t('new.email.label')}>
               <Input type="email" {...register('email')} />

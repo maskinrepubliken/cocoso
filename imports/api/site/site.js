@@ -43,6 +43,8 @@ Site.schema = new SimpleSchema({
 
   settings: { type: Object },
   'settings.name': { type: String },
+  // Short form shown in the header pill ("Tranemo"); falls back to name.
+  'settings.shortName': { type: String, optional: true },
   'settings.email': Schemas.Email,
   'settings.address': { type: String },
   'settings.city': { type: String },

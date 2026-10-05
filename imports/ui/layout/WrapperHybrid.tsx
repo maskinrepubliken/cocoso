@@ -32,7 +32,6 @@ import { Box, Loader } from '/imports/ui/core';
 
 import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
-import TopBarHandler from './TopBarHandler';
 import Header from './Header';
 import { Footer } from './Footers';
 
@@ -168,7 +167,6 @@ export default function WrapperHybrid({
             animate={rendered && !isDesktopValue}
             theme={site?.theme || siteDoc?.theme}
           >
-            {rendered && !adminPage && <TopBarHandler slideStart={rendered} />}
             {!adminPage && (
               <Header
                 site={site || siteDoc}

@@ -232,6 +232,11 @@ locations:
   here: Here in {{ name }}
   switcher:
     choose: Choose a place
+    whole: The whole municipality
+    wholeHelper: All places
+    zoom: …or zoom in on a place
+    open: Choose a place
+    clear: Show the whole municipality
   landing:
     activities: What's on in {{ name }}
     resources: Places and venues in {{ name }}

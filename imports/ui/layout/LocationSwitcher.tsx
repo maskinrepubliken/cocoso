@@ -1,119 +1,137 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import CheckIcon from 'lucide-react/dist/esm/icons/check';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
+import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
+import LandmarkIcon from 'lucide-react/dist/esm/icons/landmark';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
-import { Box, Flex, Heading, Text } from '/imports/ui/core';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { locationsAtom } from '/imports/state';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
+import type { HeaderMenuItem } from './Header';
 
 interface LocationSwitcherProps {
-  siteName?: string;
-  // True when the site has a logo above; the site name is then a small
-  // caption rather than the heading.
-  hasLogo?: boolean;
+  site: any;
+  items: HeaderMenuItem[];
+  section: string;
 }
 
-// The title block of the header. At the root it is the site name with a
-// small "choose a place" button beneath; inside a place it becomes the
-// place's name, with the site name as a caption linking back to the whole
-// municipality. The place is always read from the URL, never stored.
+// The brand pill: logo mark + site name, and when zoomed in on a place,
+// "/ <place>" with a cross that zooms back out. The whole municipality is
+// the default state, so at the root the pill is just the site itself with a
+// small chevron; places are a filter you add, not a choice among equals.
 export default function LocationSwitcher({
-  siteName,
-  hasLogo = false,
+  site,
+  items,
+  section,
 }: LocationSwitcherProps) {
   const locations = useAtomValue(locationsAtom);
   const current = useCurrentLocation();
   const navigate = useNavigate();
   const [tc] = useTranslation('common');
 
-  if (!locations || locations.length === 0) {
-    if (hasLogo) {
-      return null;
-    }
-    return (
-      <Heading
-        color="theme.800"
-        css={{ fontFamily: 'Raleway, sans-serif', fontWeight: 400 }}
-        size="md"
-      >
-        {siteName}
-      </Heading>
-    );
-  }
+  const settings = site?.settings;
+  const name = settings?.shortName || settings?.name || '';
+  const hasLocations = locations && locations.length > 0;
 
-  const menuButton = (
-    <Flex
-      align="center"
-      gap="1"
-      px="3"
-      py="1"
-      css={{
-        borderRadius: 'var(--cocoso-border-radius)',
-        color: 'var(--cocoso-colors-theme-800)',
-        cursor: 'pointer',
-        '&:hover': { backgroundColor: 'var(--cocoso-colors-theme-50)' },
-      }}
-    >
-      <MapPinIcon fontSize={18} />
-      {current ? (
-        <Heading
-          color="theme.800"
-          css={{ fontFamily: 'Raleway, sans-serif', fontWeight: 500 }}
-          size="md"
-        >
-          {current.name}
-        </Heading>
-      ) : (
-        <Text fontWeight="500">{tc('locations.switcher.choose')}</Text>
-      )}
-      <ChevronDownIcon fontSize={18} />
-    </Flex>
+  // Keep the section we are in when switching place, when it exists.
+  const sectionItem = items.find((item) => item.name === section);
+  const routeFor = (prefix: string) => {
+    if (!sectionItem) {
+      return prefix || '/';
+    }
+    return sectionItem.isComposablePage
+      ? `${prefix}/cp/${sectionItem.name}`
+      : `${prefix}/${sectionItem.name}`;
+  };
+
+  const goTo = (prefix: string) => navigate(routeFor(prefix));
+
+  const mark = site?.logo ? (
+    <img alt="" className="site-brand-mark" src={site.logo} />
+  ) : (
+    <span className="site-brand-mark">{name.charAt(0)}</span>
   );
 
-  const menu = (
-    <Menu button={menuButton} align="center">
-      <MenuItem onClick={() => navigate('/')}>
-        <Text fontWeight={current ? 'normal' : 'bold'}>
-          {tc('locations.wholeMunicipality')}
-        </Text>
-      </MenuItem>
-      {locations.map((location) => (
-        <MenuItem
-          key={location._id}
-          onClick={() => navigate(`/${location.slug}`)}
-        >
-          <Text fontWeight={current?._id === location._id ? 'bold' : 'normal'}>
-            {location.name}
-          </Text>
-        </MenuItem>
-      ))}
-    </Menu>
+  const home = (
+    <Link className="site-brand-home" to="/" aria-label={settings?.name}>
+      {mark}
+      <span className="site-brand-name">{name}</span>
+    </Link>
+  );
+
+  if (!hasLocations) {
+    return <div className="site-brand">{home}</div>;
+  }
+
+  const trigger = current ? (
+    <span className="site-brand-loc">{current.name}</span>
+  ) : (
+    <span className="site-brand-loc is-root" aria-label={tc('locations.switcher.open')}>
+      <ChevronDownIcon width={15} height={15} />
+    </span>
   );
 
   return (
-    <Flex align="center" direction="column" gap="0">
-      {!hasLogo && (
-        <Link to="/">
-          {current ? (
-            <Text color="theme.700" fontSize="sm">
-              {siteName}
-            </Text>
-          ) : (
-            <Heading
-              color="theme.800"
-              css={{ fontFamily: 'Raleway, sans-serif', fontWeight: 400 }}
-              size="md"
+    <div className={`site-brand ${current ? 'has-location' : ''}`}>
+      {home}
+      {current && <span className="site-brand-sep">/</span>}
+
+      <Menu align="start" button={trigger}>
+        <div className="site-loc-menu">
+          <MenuItem
+            className={`site-loc-home ${current ? '' : 'is-current'}`}
+            onClick={() => goTo('')}
+          >
+            <span className="site-loc-home-icon">
+              <LandmarkIcon width={18} height={18} />
+            </span>
+            <span className="site-loc-home-text">
+              <b>{tc('locations.switcher.whole')}</b>
+              <small>{tc('locations.switcher.wholeHelper')}</small>
+            </span>
+            {current ? (
+              <ChevronRightIcon className="site-loc-home-end" width={16} height={16} />
+            ) : (
+              <CheckIcon className="site-loc-home-end" width={16} height={16} />
+            )}
+          </MenuItem>
+
+          <div className="site-loc-label">
+            {current
+              ? tc('locations.label')
+              : tc('locations.switcher.zoom')}
+          </div>
+
+          {locations.map((location) => (
+            <MenuItem
+              key={location._id}
+              className={`site-loc-item ${
+                current?._id === location._id ? 'is-current' : ''
+              }`}
+              onClick={() => goTo(`/${location.slug}`)}
             >
-              {siteName}
-            </Heading>
-          )}
+              <MapPinIcon width={15} height={15} />
+              {location.name}
+            </MenuItem>
+          ))}
+        </div>
+      </Menu>
+
+      {current && (
+        <Link
+          className="site-brand-clear"
+          to={routeFor('')}
+          aria-label={tc('locations.switcher.clear')}
+          title={tc('locations.switcher.clear')}
+        >
+          <XIcon width={11} height={11} strokeWidth={3} />
         </Link>
       )}
-      <Box mt={hasLogo ? '2' : '0'}>{menu}</Box>
-    </Flex>
+    </div>
   );
 }

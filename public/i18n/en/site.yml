@@ -6,6 +6,9 @@ new:
   name:
     label: Host Name
     holder: Pineapples
+  shortName:
+    label: Short name
+    helper: Shown in the header pill, e.g. just the town's name. Leave empty to use the full name.
   email:
     label: Contact Email
     holder: email@pineapple.co

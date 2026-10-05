@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
+import BellIcon from 'lucide-react/dist/esm/icons/bell';
 import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
 import { useAtom, useAtomValue } from 'jotai';
@@ -10,14 +11,12 @@ import MessagesSquare from 'lucide-react/dist/esm/icons/messages-square';
 import { clearEncryptionKey } from '/imports/utils/setupEncryption';
 
 import {
-  Avatar,
   Badge,
   Box,
   Button,
   Center,
   Divider,
   Flex,
-  NotificationBadge,
   Text,
 } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
@@ -26,7 +25,6 @@ import {
   canCreateContentAtom,
   siteAtom,
   currentUserAtom,
-  isDesktopAtom,
   roleAtom,
 } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
@@ -41,103 +39,61 @@ function NotificationLinkItem({ item, children }: NotificationLinkItemProps) {
   return <Link to={`/${item.context}/${item.contextId}`}>{children}</Link>;
 }
 
-const linkButtonProps = {
-  as: 'div',
-  bg: 'theme.50',
-  color: 'theme.500',
-  fontWeight: 'normal',
-  mt: '1',
-  variant: 'ghost',
-  size: 'sm',
-} as const;
-
 export interface UserThumbProps {
   notificationsCounter?: number;
 }
 
+// The account trigger: a round avatar with the role mark, and a bell with
+// the unread count when there is something new.
 export function UserThumb({ notificationsCounter = 0 }: UserThumbProps) {
   const currentUser = useAtomValue(currentUserAtom);
-  const isDesktop = useAtomValue(isDesktopAtom);
   const role = useAtomValue(roleAtom);
 
   if (!currentUser) {
     return null;
   }
 
-  const isNotification = notificationsCounter && notificationsCounter !== 0;
-  const currentUserAvatarUrl =
-    getImageUrl(currentUser.avatar?.src, 'thumb') || undefined;
+  const avatarUrl = getImageUrl(currentUser.avatar?.src, 'thumb');
 
   return (
-    <Flex
-      gap="0"
-      css={{
-        background: 'rgba(255, 252, 250, 0.9)',
-        border: '2px solid var(--cocoso-colors-theme-200)',
-        borderRadius: 'var(--cocoso-border-radius)',
-        marginTop: '-0.075rem',
-        marginRight: '-0.4rem',
-        '&:hover': {
-          background: 'rgba(255, 252, 250, 0.9)',
-        },
-      }}
-    >
-      <Avatar
-        name={currentUser.username}
-        size={isDesktop ? 'md' : 'sm'}
-        src={currentUserAvatarUrl}
-      >
-        {isNotification ? (
-          <NotificationBadge
-            colorScheme="red"
-            style={{
-              left: '-2px',
-              top: '-5px',
-              width: '1.5rem',
-              height: '1.5rem',
-            }}
-          >
-            {notificationsCounter?.toString()}
-          </NotificationBadge>
-        ) : role === 'admin' ? (
-          <BoltIcon color="#010101" size={16} />
+    <span className="site-user" title={getFullName(currentUser)}>
+      {notificationsCounter > 0 && (
+        <span className="site-user-bell">
+          <BellIcon width={18} height={18} />
+          <span className="site-user-count">{notificationsCounter}</span>
+        </span>
+      )}
+      <span className="site-avatar">
+        {avatarUrl ? (
+          <img alt={currentUser.username} src={avatarUrl} />
+        ) : (
+          currentUser.username?.charAt(0)
+        )}
+        {role === 'admin' ? (
+          <span className="site-avatar-role">
+            <BoltIcon width={10} height={10} />
+          </span>
         ) : role === 'contributor' ? (
-          <CheckCircleIcon color="#010101" size={16} />
+          <span className="site-avatar-role">
+            <CheckCircleIcon width={10} height={10} />
+          </span>
         ) : null}
-      </Avatar>
-
-      <Flex
-        align="flex-start"
-        direction="column"
-        gap="0"
-        pl="2"
-        pr="4"
-        pt="1"
-        css={{ lineHeight: isDesktop ? '1.2' : '0.8' }}
-      >
-        <Text
-          fontSize={isDesktop ? 'md' : 'sm'}
-          css={{ fontWeight: 'bold', margin: '0.125rem 0' }}
-        >
-          {currentUser.username}
-        </Text>
-        <Text fontSize={isDesktop ? 'sm' : 'xs'} fontWeight="light" truncated>
-          {getFullName(currentUser)}
-        </Text>
-      </Flex>
-    </Flex>
+      </span>
+    </span>
   );
 }
 
 export interface UserPopupProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  // The site document as the header has it (SSR-safe), so the login link
+  // renders the same on the server and at hydration.
+  site?: any;
 }
 
-export default function UserPopup({ isOpen }: UserPopupProps) {
+export default function UserPopup({ site: siteProp }: UserPopupProps) {
   const [t] = useTranslation('members');
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  const site = useAtomValue(siteAtom);
+  const siteFromAtom = useAtomValue(siteAtom);
+  const site = siteProp || siteFromAtom;
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const navigate = useNavigate();
@@ -148,10 +104,8 @@ export default function UserPopup({ isOpen }: UserPopupProps) {
 
   if (!currentUser) {
     return (
-      <Link to="/login" style={{ marginRight: '12px' }}>
-        <Button {...linkButtonProps}>
-          <Trans i18nKey="common:menu.guest.login">Login</Trans>
-        </Button>
+      <Link className="site-login" to="/login">
+        <Trans i18nKey="common:menu.guest.login">Login</Trans>
       </Link>
     );
   }
@@ -188,7 +142,6 @@ export default function UserPopup({ isOpen }: UserPopupProps) {
       <Menu
         align="end"
         button={<UserThumb notificationsCounter={notificationsCounter} />}
-        open={isOpen}
       >
         <Box p="2">
           <Text fontWeight="bold" fontSize="xl" css={{ marginLeft: '1rem' }}>
