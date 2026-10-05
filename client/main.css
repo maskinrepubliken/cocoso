@@ -1682,7 +1682,8 @@ body {
 }
 
 @media (max-width: 400px) {
-  .site-brand.has-location .site-brand-name {
+  .site-brand.has-location .site-brand-name,
+  .site-brand.has-location .site-brand-sep {
     display: none;
   }
 }
