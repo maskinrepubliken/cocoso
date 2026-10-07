@@ -69,27 +69,27 @@ profile:
   myCommunities: Mina Communities
 
 works:
-  label: Mina Verk
+  label: Mina förfrågningar
 
   title:
     label: Titel
-    holder: titeln på din bok, din föreställning, ditt konstverk eller din workshop…
+    holder: t.ex. Samåkning till Borås på vardagar…
     helper: Ange en titel
   shortDescription:
     label: Kort beskrivning
-    holder: upphovspersoner, undertitel eller en kort beskrivning…
+    holder: en mening om vad du erbjuder eller söker…
     helper: Valfritt, lägg till en kort beskrivning
   category:
-    label: Kategori
+    label: Typ av förfrågan
     holder: Välj alternativ eller skriv för att skapa en ny
-    helper: Välj en kategori från listan. Om du inte hittar något som passar, skriv och skapa en ny kategori.
+    helper: Välj Samåkning, Låna ut, Vill låna, Ge bort, Hjälp sökes, Sällskap eller Tips.
   longDescription:
     label: Beskrivning
     holder: Plats för en längre beskrivande text…
     helper: Lägg till en längre beskrivning
   extra:
     label: Ytterligare info
-    holder: Eventuella prisuppgifter, kontaktpersoner etc.
+    holder: t.ex. när, var och hur länge…
     helper: Lägg till eventuell extra information. Det kan exempelvis vara prisuppgifter eller liknande. Information hamnar under fliken ”extra”.
   contact:
     label: Kontaktinfo

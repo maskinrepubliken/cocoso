@@ -395,3 +395,34 @@ home:
   hero:
     welcome: Welcome to
     tagline: Events, associations and places across the whole municipality, in one place.
+
+# Requests (works shown as requests between neighbours)
+requests:
+  all: "All"
+  count_one: "{{count}} request"
+  count_other: "{{count}} requests"
+  empty: "No requests here yet."
+  emptyHint: "Log in and create the first one."
+  contact: "Contact"
+  kinds:
+    carpool:
+      name: "Carpooling"
+      description: "Share the car to work, school or an event."
+    lend:
+      name: "Lend out"
+      description: "Tools, trailer, tent – things others may borrow."
+    borrow:
+      name: "Want to borrow"
+      description: "Need something for a while? Ask your neighbours."
+    giveaway:
+      name: "Give away"
+      description: "Things you no longer need, free to collect."
+    help:
+      name: "Help wanted"
+      description: "Shopping, shovelling snow, carrying a sofa."
+    company:
+      name: "Company"
+      description: "Someone to walk, have coffee or exercise with."
+    tips:
+      name: "Tips"
+      description: "Good to know: places, ideas and offers."

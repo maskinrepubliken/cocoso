@@ -392,3 +392,34 @@ home:
   hero:
     welcome: Hoş geldiniz
     tagline: Tüm belediyedeki etkinlikler, dernekler ve yerler tek bir yerde.
+
+# Talepler (komşular arası talepler olarak gösterilen işler)
+requests:
+  all: "Tümü"
+  count_one: "{{count}} talep"
+  count_other: "{{count}} talep"
+  empty: "Burada henüz talep yok."
+  emptyHint: "Giriş yapın ve ilkini oluşturun."
+  contact: "İletişim"
+  kinds:
+    carpool:
+      name: "Araç paylaşımı"
+      description: "İşe, okula veya bir etkinliğe arabayı paylaşın."
+    lend:
+      name: "Ödünç ver"
+      description: "Alet, römork, çadır – başkalarının ödünç alabileceği şeyler."
+    borrow:
+      name: "Ödünç almak istiyorum"
+      description: "Kısa bir süre bir şeye mi ihtiyacınız var? Komşulara sorun."
+    giveaway:
+      name: "Hediye et"
+      description: "Artık ihtiyacınız olmayan, ücretsiz alınabilecek şeyler."
+    help:
+      name: "Yardım aranıyor"
+      description: "Alışveriş, kar küreme, kanepe taşıma."
+    company:
+      name: "Arkadaşlık"
+      description: "Yürüyüş, kahve ya da spor için birlikte biri."
+    tips:
+      name: "İpuçları"
+      description: "Bilmekte fayda var: yerler, fikirler ve teklifler."

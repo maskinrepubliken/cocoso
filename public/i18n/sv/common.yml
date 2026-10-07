@@ -195,7 +195,7 @@ menu:
     profile: Min profil
     settings: Profilinställningar
     activities: Mina aktiviteter
-    works: Mina Verk
+    works: Mina förfrågningar
   admin:
     label: Admin
     settings: Inställningar
@@ -392,3 +392,34 @@ home:
   hero:
     welcome: Välkommen till
     tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
+
+# Förfrågningar (works shown as requests between neighbours)
+requests:
+  all: "Alla"
+  count_one: "{{count}} förfrågan"
+  count_other: "{{count}} förfrågningar"
+  empty: "Inga förfrågningar här än."
+  emptyHint: "Logga in och skapa den första."
+  contact: "Kontakt"
+  kinds:
+    carpool:
+      name: "Samåkning"
+      description: "Dela bilen till jobbet, skolan eller ett evenemang."
+    lend:
+      name: "Låna ut"
+      description: "Verktyg, släpvagn, tält – saker andra får låna."
+    borrow:
+      name: "Vill låna"
+      description: "Behöver du något en kort stund? Fråga grannarna."
+    giveaway:
+      name: "Ge bort"
+      description: "Sådant du inte behöver längre, gratis att hämta."
+    help:
+      name: "Hjälp sökes"
+      description: "Handla, skotta snö, bära en soffa."
+    company:
+      name: "Sällskap"
+      description: "Någon att promenera, fika eller träna med."
+    tips:
+      name: "Tips"
+      description: "Bra att veta: ställen, idéer och erbjudanden."
