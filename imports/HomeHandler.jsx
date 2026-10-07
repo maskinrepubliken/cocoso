@@ -13,7 +13,7 @@ import WorkListHandler from '/imports/ui/pages/works/WorkListHandler';
 import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
 import UserListHandler from '/imports/ui/pages/profile/UserListHandler';
 import ComposablePageHandler from '/imports/ui/pages/composablepages/ComposablePageHandler';
-import LocationsGrid from '/imports/ui/pages/locations/LocationsGrid';
+import HomeHero from '/imports/ui/pages/locations/HomeHero';
 
 // Lazy load only heavy/less-common handlers
 const CalendarHandler = loadable(
@@ -34,7 +34,7 @@ export default function HomeHandler(props) {
 
   return (
     <>
-      <LocationsGrid />
+      <HomeHero siteDoc={siteDoc} />
       {home}
     </>
   );

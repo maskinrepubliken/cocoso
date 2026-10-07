@@ -387,3 +387,8 @@ event:
   discussion:
     open: "Tartışmayı aç"
     onlyVerified: "Doğrulanmış üyeler için"
+
+home:
+  hero:
+    welcome: Hoş geldiniz
+    tagline: Tüm belediyedeki etkinlikler, dernekler ve yerler tek bir yerde.

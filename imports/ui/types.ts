@@ -83,6 +83,7 @@ export interface Site {
   settings?: {
     name?: string;
     shortName?: string;
+    tagline?: string;
     email?: string;
     address?: string;
     city?: string;

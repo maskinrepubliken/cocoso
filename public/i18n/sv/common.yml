@@ -387,3 +387,8 @@ event:
   discussion:
     open: "Öppna diskussionen"
     onlyVerified: "För verifierade medlemmar"
+
+home:
+  hero:
+    welcome: Välkommen till
+    tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.

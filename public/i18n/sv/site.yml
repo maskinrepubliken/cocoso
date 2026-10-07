@@ -9,6 +9,9 @@ new:
   shortName:
     label: Kort namn
     helper: Visas i headerns piller, t.ex. bara ortens namn. Lämna tomt för att använda hela namnet.
+  tagline:
+    label: Slogan
+    helper: En rad under namnet på startsidan. Lämna tomt för standardtexten.
   email:
     label: E-post
     holder: email@pineapple.co

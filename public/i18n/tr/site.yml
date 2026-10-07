@@ -9,6 +9,9 @@ new:
   shortName:
     label: Kısa ad
     helper: Başlıktaki kapsülde gösterilir, örneğin yalnızca şehir adı. Tam adı kullanmak için boş bırakın.
+  tagline:
+    label: Slogan
+    helper: Başlangıç sayfasında adın altındaki tek satır. Varsayılan metin için boş bırakın.
   email:
     label: İletişim Eposta adresi
     holder: email@ananaslar.co

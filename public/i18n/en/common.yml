@@ -390,3 +390,8 @@ event:
   discussion:
     open: "Open the discussion"
     onlyVerified: "For verified members"
+
+home:
+  hero:
+    welcome: Welcome to
+    tagline: Events, associations and places across the whole municipality, in one place.

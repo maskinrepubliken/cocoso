@@ -9,6 +9,9 @@ new:
   shortName:
     label: Short name
     helper: Shown in the header pill, e.g. just the town's name. Leave empty to use the full name.
+  tagline:
+    label: Tagline
+    helper: One line under the name on the start page. Leave empty for the default text.
   email:
     label: Contact Email
     holder: email@pineapple.co
