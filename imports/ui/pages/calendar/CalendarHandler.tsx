@@ -24,6 +24,14 @@ const CalendarView = loadable(() => import('./CalendarView'), {
 
 const maxResourceLabelsToShow = 13;
 
+// The place and resource filters are pill-shaped, like the event cards'
+// chips; the tags and buttons take their corners from this variable.
+const pillShapes = {
+  '--cocoso-border-radius': '999px',
+  fontFamily: 'Raleway, var(--cocoso-body-font-family, sans-serif)',
+  '& *': { fontFamily: 'inherit' },
+};
+
 interface SlotInfo {
   start: Date;
   end: Date;
@@ -263,7 +271,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
 
       <Box>
         {publishedLocations.length > 0 && (
-          <Center mb="2">
+          <Center mb="2" css={pillShapes}>
             <Flex justify="center" px="1" wrap="wrap">
               <Tag
                 key="all-locations"
@@ -293,7 +301,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
           </Center>
         )}
 
-        <Center mb="2">
+        <Center mb="2" css={pillShapes}>
           {!selectFilterView ? (
             <Box>
               <Flex justify="center" px="1" pb="1" mb="3" wrap="wrap">

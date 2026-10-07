@@ -1018,8 +1018,19 @@ body {
 
 /* Big Calendar Styles */
 
+/* The calendar follows the rest of the site: Raleway, rounded corners like
+   the event cards, black text and green details. */
+
 .rbc-calendar {
+  font-family: Raleway, var(--cocoso-body-font-family, sans-serif);
   min-height: 800px;
+  padding: 0 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .rbc-calendar {
+    padding: 0 0.25rem;
+  }
 }
 
 .rbc-calendar .rbc-event-content,
@@ -1028,6 +1039,7 @@ body {
 .rbc-calendar .rbc-agenda-event-cell {
   color: #fff;
   font-size: 13px;
+  font-weight: 600;
 }
 
 .rbc-time-view,
@@ -1039,11 +1051,13 @@ body {
 @media (max-width: 600px) {
   .rbc-toolbar {
     flex-direction: column;
+    gap: 0.5rem;
   }
 }
 
 .rbc-calendar .rbc-event {
-  border-radius: 0;
+  border-radius: 8px;
+  padding: 2px 7px;
 }
 
 /* Weekly activities: outlined, so one-off events stand out */
@@ -1053,79 +1067,157 @@ body {
   color: #1a1a1a;
 }
 
-.rbc-calendar .rbc-toolbar,
-.rbc-calendar .rbc-time-view,
+/* The month and week grids as rounded panels */
 .rbc-calendar .rbc-month-view,
+.rbc-calendar .rbc-time-view,
+.rbc-calendar .rbc-agenda-view table.rbc-agenda-table {
+  background-color: #fff;
+  border: 1px solid rgba(20, 40, 25, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px -22px rgba(20, 50, 25, 0.45);
+  overflow: hidden;
+}
+
+.rbc-calendar .rbc-month-view .rbc-header,
+.rbc-calendar .rbc-time-header .rbc-header {
+  background-color: var(--cocoso-colors-theme-50);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.4rem 0;
+  text-transform: capitalize;
+}
+
 .rbc-calendar .rbc-month-view .rbc-header,
 .rbc-calendar .rbc-month-view > .rbc-month-row + .rbc-month-row,
 .rbc-calendar .rbc-row-bg > .rbc-day-bg + .rbc-day-bg,
 .rbc-calendar .rbc-month-view > .rbc-month-header .rbc-header + .rbc-header,
-.rbc-calendar .rbc-month-view .rbc-header,
 .rbc-calendar .rbc-time-header > .rbc-row > * + *,
-.rbc-calendar .rbc-time-header > .rbc-row:first-child {
-  /* border: none; */
-  border-color: #d7d7d7;
-  border-radius: 0;
+.rbc-calendar .rbc-time-header > .rbc-row:first-child,
+.rbc-calendar .rbc-time-header-content,
+.rbc-calendar .rbc-header + .rbc-header {
+  border-color: rgba(20, 40, 25, 0.1);
+}
+
+.rbc-calendar .rbc-date-cell {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 6px 2px;
 }
 
 .rbc-day-bg.rbc-off-range-bg {
-  background-color: transparent;
+  background-color: #f6f7f2;
 }
 
-.rbc-day-bg:not(rbc-off-range-bg) {
+.rbc-calendar .rbc-off-range {
+  color: #a3a8a0;
+}
+
+.rbc-day-bg:not(.rbc-off-range-bg) {
   background-color: #fff;
 }
 
-.rbc-day-bg.rbc-selected-cell:not(rbc-off-range-bg) {
-  background-color: #f0f0f0;
+.rbc-day-bg.rbc-selected-cell:not(.rbc-off-range-bg) {
+  background-color: var(--cocoso-colors-theme-50);
 }
 
+/* Today: a soft green day with its date in a green circle */
 .rbc-calendar .rbc-row-bg .rbc-day-bg.rbc-today,
 .rbc-calendar .rbc-today {
-  background-color: #f7f7f7;
-  border: 1px solid #2d2d2d;
+  background-color: var(--cocoso-colors-theme-50);
+  border: none;
 }
+
+.rbc-calendar .rbc-date-cell.rbc-now .rbc-button-link {
+  background-color: var(--cocoso-colors-theme-700);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-block;
+  min-width: 1.6rem;
+  padding: 1px 6px;
+  text-align: center;
+}
+
+.rbc-calendar .rbc-show-more {
+  background: transparent;
+  color: var(--cocoso-colors-theme-700);
+  font-weight: 700;
+  padding: 0 6px;
+}
+
 .rbc-calendar .rbc-time-content > * + * > * {
-  border-left: 1px dashed #2d2d2d;
+  border-left: 1px dashed rgba(20, 40, 25, 0.15);
 }
 .rbc-calendar .rbc-timeslot-group {
-  border-bottom: 1px solid #2d2d2d;
+  border-bottom: 1px solid rgba(20, 40, 25, 0.1);
 }
 .rbc-calendar .rbc-time-content {
   border-top: none;
 }
+.rbc-calendar .rbc-time-view .rbc-allday-cell {
+  background-color: var(--cocoso-colors-theme-50);
+}
 
-.rbc-toolbar .rbc-btn-group button.rbc-active {
-  outline: none;
-  background-color: #2d2d2d;
-  color: #f6f6f6;
-  /* color: #ea3924; */
+/* Toolbar: pill-shaped button groups, the chosen one dark green */
+.rbc-calendar .rbc-toolbar {
+  margin-bottom: 0.75rem;
+}
+
+.rbc-toolbar .rbc-btn-group {
+  background-color: #fff;
+  border: 1px solid rgba(20, 40, 25, 0.12);
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+}
+
+.rbc-toolbar .rbc-btn-group button,
+.rbc-toolbar .rbc-btn-group > button:first-child:not(:last-child),
+.rbc-toolbar .rbc-btn-group > button:last-child:not(:first-child),
+.rbc-toolbar .rbc-btn-group > button:not(:first-child):not(:last-child) {
+  background-color: transparent;
   border: none;
-  box-shadow: none;
-  border-radius: 0;
-  font-weight: bold;
+  border-radius: 999px;
+  color: #1a1a1a;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
 }
 
 .rbc-toolbar .rbc-btn-group button:hover {
-  background-color: #5d5d5d;
-  color: #f6f6f6;
+  background-color: var(--cocoso-colors-theme-50);
+  color: #1a1a1a;
 }
 
-.rbc-toolbar .rbc-btn-group button {
-  cursor: pointer;
-  background-color: #fff;
+/* !important: the corner rules above are more specific than .rbc-active */
+.rbc-toolbar .rbc-btn-group button.rbc-active,
+.rbc-toolbar .rbc-btn-group button.rbc-active:hover {
+  background-color: var(--cocoso-colors-theme-800) !important;
   border: none;
+  box-shadow: none;
+  color: #fff !important;
+  font-weight: 700;
+  outline: none;
 }
 
-.rbc-toolbar .rbc-btn-group + .rbc-toolbar-label {
-  text-transform: uppercase;
-  /* color: #ea3924; */
+.rbc-toolbar .rbc-toolbar-label {
+  font-size: 1.25rem;
   font-weight: 700;
-  font-size: 20px;
+  text-transform: capitalize;
 }
 
 .rbc-calendar .rbc-row-content {
   z-index: 0;
+}
+
+/* The "+2 more" popup */
+.rbc-overlay {
+  border: 1px solid rgba(20, 40, 25, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px -16px rgba(20, 50, 25, 0.45);
+  font-family: Raleway, var(--cocoso-body-font-family, sans-serif);
 }
 
 /* Quill Editor */
