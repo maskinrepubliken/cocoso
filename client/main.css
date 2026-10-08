@@ -1310,19 +1310,23 @@ body {
 }
 
 .site-header-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
   height: 56px;
   padding: 0 14px;
 }
 
+.site-header-bar > .site-brand {
+  justify-self: start;
+}
+
 .site-header-right {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 0 0 auto;
-  margin-left: auto;
+  justify-self: end;
 }
 
 /* --- brand pill --- */
@@ -1518,7 +1522,7 @@ body {
   display: flex;
   align-items: center;
   gap: 2px;
-  margin: 0 auto;
+  min-width: 0;
   padding: 3px;
   border-radius: 999px;
   background: var(--site-island);
