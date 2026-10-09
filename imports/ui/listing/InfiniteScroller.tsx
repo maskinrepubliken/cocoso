@@ -106,6 +106,8 @@ export default function InfiniteScroller({
   filtrerMarginTop = 0,
   isMasonry = false,
   isHoneycomb = false,
+  // Equal paper cards in a responsive grid (föreningar).
+  isGrid = false,
   items,
   itemsPerPage = defaultItemsPerPage,
   newHelperLink,
@@ -154,7 +156,17 @@ export default function InfiniteScroller({
 
       <Box px="2" pb="8" w="100%">
         <InfiniteScroll pageStart={1} loadMore={handleLoad} hasMore={hasMore}>
-          {isHoneycomb ? (
+          {isGrid ? (
+            <>
+              <div className="card-grid">
+                {currentItems?.map((item, index) => children(item, index))}
+                {!hasMore && canCreateContent && (
+                  <NewEntryHelper buttonLink={newHelperLink} small />
+                )}
+              </div>
+              {hasMore && <Loader relative />}
+            </>
+          ) : isHoneycomb ? (
             <>
               <Honeycomb>
                 {currentItems?.map((item, index) => children(item, index))}

@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import {
-  Box,
-  Center,
-  Flex,
-  Heading,
-  Link as CLink,
-  Text,
-} from '/imports/ui/core';
+import { Box, Text } from '/imports/ui/core';
 
 import { message } from '/imports/ui/generic/message';
 import { call } from '../../../api/_utils/shared';
 import { currentUserAtom } from '/imports/state';
 
 import { ForgotPassword } from './index';
+import AuthPanel from './AuthPanel';
 
 export default function ForgotPasswordPage() {
   const [t] = useTranslation('accounts');
@@ -44,46 +38,20 @@ export default function ForgotPasswordPage() {
 
   return (
     <Box pb="8">
-      <Center p="4">
-        <Box w="xs">
-          <Heading size="md" textAlign="center">
-            {t('password.labels.title')}
-          </Heading>
-          <Center pt="4" px="4">
-            <Text mb="4" textAlign="center">
-              {t('password.labels.subtitle.forgot')}
-            </Text>
-          </Center>
-
-          <Box
-            bg="theme.50"
-            p="6"
-            css={{
-              border: '1px solid',
-              borderColor: 'var(--cocoso-colors-theme-100)',
-            }}
-          >
-            {emailSent ? (
-              <Text>{t('password.message.linkSend')}</Text>
-            ) : (
-              <ForgotPassword onForgotPassword={handleForgotPassword} />
-            )}
-          </Box>
-
-          <Flex justify="space-around" mt="4">
-            <Link to="/login">
-              <CLink as="span" color="theme.500">
-                <b>{t('actions.login')}</b>
-              </CLink>
-            </Link>
-            <Link to="/register">
-              <CLink as="span" color="theme.500">
-                <b>{t('actions.signup')}</b>
-              </CLink>
-            </Link>
-          </Flex>
-        </Box>
-      </Center>
+      <AuthPanel
+        title={t('password.labels.title')}
+        lead={t('password.labels.subtitle.forgot')}
+        links={[
+          { to: '/login', label: t('actions.login') },
+          { to: '/register', label: t('actions.signup') },
+        ]}
+      >
+        {emailSent ? (
+          <Text textAlign="center">{t('password.message.linkSend')}</Text>
+        ) : (
+          <ForgotPassword onForgotPassword={handleForgotPassword} />
+        )}
+      </AuthPanel>
     </Box>
   );
 }

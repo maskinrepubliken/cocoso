@@ -452,3 +452,8 @@ calendarFilter:
   pickResource: Välj plats eller lokal…
   recurring: Återkommande
   legend: Färgen följer orten
+
+groupCard:
+  members_one: '{{count}} medlem'
+  members_other: '{{count}} medlemmar'
+  nextMeeting: Nästa träff {{date}}

@@ -10,6 +10,7 @@ import { Box, Button, Center, Flex, Heading, Text } from '/imports/ui/core';
 import ComposablePageHybrid from '/imports/ui/entry/ComposablePageHybrid';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
+import GroupCard from '/imports/ui/listing/GroupCard';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import Stamp from '/imports/ui/generic/Stamp';
 import { locationsAtom } from '/imports/state';
@@ -31,7 +32,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <Box mb="10" px="4">
+    <Box mb="10" px="4" css={{ margin: '0 auto 2.5rem', maxWidth: '1196px' }}>
       <Flex align="center" justify="space-between" mb="3" wrap="wrap">
         <Heading size="md">{title}</Heading>
         <Link to={seeAllTo}>
@@ -158,13 +159,13 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           {activities?.length ? (
-            <Flex gap="4" justify="center" wrap="wrap">
+            <div className="card-grid">
               {activities.map((activity: any, index: number) => (
                 <Link key={activity._id} to={`${prefix}/activities/${activity._id}`}>
                   <SexyThumb activity={activity} index={index} />
                 </Link>
               ))}
-            </Flex>
+            </div>
           ) : (
             <Text color="gray.600">{tc('locations.landing.nothingYet')}</Text>
           )}
@@ -178,23 +179,21 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           {resources?.length ? (
-            <Flex gap="4" justify="center" wrap="wrap">
+            <div className="card-grid">
               {resources.map((resource: any, index: number) => (
-                <Box key={resource._id} css={{ width: '260px' }}>
-                  <Link to={`${prefix}/resources/${resource._id}`}>
-                    <NewGridThumb
-                      fixedImageHeight
-                      imageUrl={
-                        getImageUrl(resource.images?.[0], 'small') || undefined
-                      }
-                      index={index}
-                      placeholderSeed={resource._id}
-                      title={resource.label}
-                    />
-                  </Link>
-                </Box>
+                <Link key={resource._id} to={`${prefix}/resources/${resource._id}`}>
+                  <NewGridThumb
+                    fixedImageHeight
+                    imageUrl={
+                      getImageUrl(resource.images?.[0], 'small') || undefined
+                    }
+                    index={index}
+                    placeholderSeed={resource._id}
+                    title={resource.label}
+                  />
+                </Link>
               ))}
-            </Flex>
+            </div>
           ) : (
             <Text color="gray.600">{tc('locations.landing.nothingYet')}</Text>
           )}
@@ -207,13 +206,13 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           seeAllTo={`${prefix}/groups`}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
-          <Flex gap="4" justify="center" wrap="wrap">
+          <div className="card-grid">
             {groups.map((group: any, index: number) => (
               <Link key={group._id} to={`${prefix}/groups/${group._id}`}>
-                <SexyThumb activity={group} index={index} />
+                <GroupCard group={group} index={index} />
               </Link>
             ))}
-          </Flex>
+          </div>
         </Section>
       )}
 

@@ -452,3 +452,8 @@ calendarFilter:
   pickResource: Bir yer veya mekân seçin…
   recurring: Tekrarlayan
   legend: Renkler yere göre
+
+groupCard:
+  members_one: '{{count}} üye'
+  members_other: '{{count}} üye'
+  nextMeeting: Sonraki buluşma {{date}}

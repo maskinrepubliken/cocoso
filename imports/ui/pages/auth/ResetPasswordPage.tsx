@@ -1,21 +1,15 @@
 import { Accounts } from 'meteor/accounts-base';
 import React, { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import {
-  Box,
-  Center,
-  Flex,
-  Heading,
-  Link as CLink,
-  Text,
-} from '/imports/ui/core';
+import { Box } from '/imports/ui/core';
 import { currentUserAtom } from '/imports/state';
 import { message } from '/imports/ui/generic/message';
 
 import { ResetPassword } from './index';
+import AuthPanel from './AuthPanel';
 
 export default function ResetPasswordPage() {
   const currentUser = useAtomValue(currentUserAtom);
@@ -45,31 +39,16 @@ export default function ResetPasswordPage() {
 
   return (
     <Box pb="8">
-      <Center p="4">
-        <Box w="xs">
-          <Heading size="md" textAlign="center" mb="4">
-            {t('password.labels.title')}
-          </Heading>
-          <Center>
-            <Text fontSize="lg">{t('password.labels.subtitle.reset')}</Text>
-          </Center>
-          <Box bg="theme.50" maxW="420px" my="4" p="6">
-            <ResetPassword onResetPassword={handleResetPassword} />
-          </Box>
-          <Flex justify="space-around" mt="4">
-            <Link to="/login">
-              <CLink as="span" fontWeight="bold">
-                <b>{t('actions.login')}</b>
-              </CLink>
-            </Link>
-            <Link to="/register">
-              <CLink as="span">
-                <b>{t('actions.signup')}</b>
-              </CLink>
-            </Link>
-          </Flex>
-        </Box>
-      </Center>
+      <AuthPanel
+        title={t('password.labels.title')}
+        lead={t('password.labels.subtitle.reset')}
+        links={[
+          { to: '/login', label: t('actions.login') },
+          { to: '/register', label: t('actions.signup') },
+        ]}
+      >
+        <ResetPassword onResetPassword={handleResetPassword} />
+      </AuthPanel>
     </Box>
   );
 }

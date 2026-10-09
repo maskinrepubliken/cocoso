@@ -455,3 +455,8 @@ calendarFilter:
   pickResource: Pick a place or venue…
   recurring: Recurring
   legend: Colours follow the place
+
+groupCard:
+  members_one: '{{count}} member'
+  members_other: '{{count}} members'
+  nextMeeting: Next meeting {{date}}

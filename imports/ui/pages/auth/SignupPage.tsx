@@ -3,23 +3,15 @@ import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import {
-  Box,
-  Center,
-  Heading,
-  Image,
-  Link as CLink,
-  Modal,
-  Text,
-} from '/imports/ui/core';
-import { siteAtom, currentUserAtom } from '/imports/state';
+import { Box } from '/imports/ui/core';
+import { currentUserAtom } from '/imports/state';
 
 import { Signup } from './index';
+import AuthPanel from './AuthPanel';
 import { createAccount } from './functions';
 
 export default function SignupPage() {
   const currentUser = useAtomValue(currentUserAtom);
-  const site = useAtomValue(siteAtom);
   const [t] = useTranslation('accounts');
   const navigate = useNavigate();
 
@@ -32,61 +24,20 @@ export default function SignupPage() {
 
   return (
     <Box pb="8">
-      <Modal
-        hideHeader
-        hideFooter
-        id="signup-page"
-        open
-        size="2xl"
-        onClose={() => navigate('/')}
+      <AuthPanel
+        title={t('signup.labels.title')}
+        lead={
+          <>
+            {t('signup.labels.subtitle')}{' '}
+            <Link className="auth-panel-link" to="/login">
+              {t('actions.login')}
+            </Link>
+          </>
+        }
+        links={[{ to: '/forgot-password', label: t('actions.reset') }]}
       >
-        <Center>
-          <Box w="sm">
-            <Center>
-              <Box>
-                {site?.logo && (
-                  <Center p="4">
-                    <Image
-                      alt={`${site?.settings?.name} logo`}
-                      src={site.logo}
-                      w="240px"
-                    />
-                  </Center>
-                )}
-                <Heading
-                  size="md"
-                  css={{ marginBottom: '1em', textAlign: 'center' }}
-                >
-                  {t('signup.labels.title')}
-                </Heading>
-              </Box>
-            </Center>
-
-            <Center py="4">
-              <Text>
-                {t('signup.labels.subtitle')}{' '}
-                <Link to="/login">
-                  <CLink as="span" color="theme.500">
-                    <b>{t('actions.login')}</b>
-                  </CLink>
-                </Link>
-              </Text>
-            </Center>
-
-            <Box
-              bg="gray.50"
-              mb="4"
-              p="6"
-              css={{
-                border: '1px solid',
-                borderColor: 'var(--cocoso-colors-gray-300)',
-              }}
-            >
-              <Signup onSubmit={(values) => createAccount(values)} />
-            </Box>
-          </Box>
-        </Center>
-      </Modal>
+        <Signup onSubmit={(values) => createAccount(values)} />
+      </AuthPanel>
     </Box>
   );
 }

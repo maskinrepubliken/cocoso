@@ -4,21 +4,14 @@ import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
 
-import {
-  Box,
-  Center,
-  Heading,
-  Image,
-  Link as CLink,
-  Modal,
-  Text,
-} from '/imports/ui/core';
+import { Box, Center, Image, Modal, Text } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 import { call } from '../../../api/_utils/shared';
 import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 
 import { loginWithPassword } from './functions';
 import { Login } from './index';
+import AuthPanel from './AuthPanel';
 import { clearEncryptionKey } from '/imports/utils/setupEncryption';
 
 export default function LoginPage() {
@@ -76,63 +69,23 @@ export default function LoginPage() {
 
   return (
     <Box pb="8">
-      <Modal
-        contentProps={{ h: 'auto' }}
-        hideHeader
-        hideFooter
-        id="login-page"
-        open
-        size="2xl"
-        onClose={() => navigate('/')}
+      <AuthPanel
+        title={t('login.labels.title')}
+        lead={
+          <>
+            {t('login.labels.subtitle')}{' '}
+            <Link className="auth-panel-link" to="/register">
+              {t('actions.signup')}
+            </Link>
+          </>
+        }
+        links={[
+          { to: '/forgot-password', label: t('actions.reset') },
+          { to: '/register', label: t('actions.signup') },
+        ]}
       >
-        <Center mb="8">
-          <Box w="xs">
-            {site?.logo && (
-              <Center p="4">
-                <Image
-                  alt={`${site?.settings?.name} logo`}
-                  src={site.logo}
-                  w="240px"
-                />
-              </Center>
-            )}
-
-            <Heading mb="4" size="md" textAlign="center">
-              {t('login.labels.title')}
-            </Heading>
-
-            <Center mb="6">
-              <Text>
-                {t('login.labels.subtitle')}{' '}
-                <Link to="/register">
-                  <CLink as="span" color="theme.500">
-                    <b>{t('actions.signup')}</b>
-                  </CLink>
-                </Link>
-              </Text>
-            </Center>
-
-            <Box mb="4" py="2">
-              <Login isSubmitted={submitted} onSubmit={handleSubmit} />
-            </Box>
-            <Center>
-              <Text textAlign="center">
-                {t('actions.forgot')}
-                <br />
-                <Link to="/forgot-password">
-                  <CLink
-                    as="span"
-                    color="theme.500"
-                    css={{ marginTop: '0.5rem' }}
-                  >
-                    <b>{t('actions.reset')}</b>
-                  </CLink>
-                </Link>
-              </Text>
-            </Center>
-          </Box>
-        </Center>
-      </Modal>
+        <Login isSubmitted={submitted} onSubmit={handleSubmit} />
+      </AuthPanel>
 
       <Modal
         open={joinModal}

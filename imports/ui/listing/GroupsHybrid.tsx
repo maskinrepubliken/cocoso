@@ -1,14 +1,12 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { siteAtom, locationsAtom } from '/imports/state';
-import { Center } from '/imports/ui/core';
+import { siteAtom } from '/imports/state';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
 import useOpenEntry from './useOpenEntry';
-import RoundThumb from './RoundThumb';
+import GroupCard from './GroupCard';
 
 export interface GroupsHybridProps {
   siteDoc: any;
@@ -17,37 +15,17 @@ export interface GroupsHybridProps {
 
 export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
   const site = useAtomValue(siteAtom);
-  const locations = useAtomValue(locationsAtom);
   const openEntry = useOpenEntry('groups');
-  const [tc] = useTranslation('common');
-
-  const locationNameOf = (item: any) =>
-    locations.find((l) => l._id === item.locationId)?.name ||
-    (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
 
   return (
     <>
       <PageHeading site={site || siteDoc} listing="groups" />
 
-      <InfiniteScroller isHoneycomb items={groups} filtrerMarginTop={-76}>
-        {(item) => (
-          <Center
-            key={item._id}
-            flex="0 0 auto"
-            w="auto"
-            css={{ cursor: 'pointer' }}
-            onClick={() => openEntry(item)}
-          >
-            <RoundThumb
-              item={item}
-              tags={
-                [
-                  item.isPrivate ? tc('labels.private') : null,
-                  locationNameOf(item),
-                ].filter(Boolean) as string[]
-              }
-            />
-          </Center>
+      <InfiniteScroller isGrid items={groups} filtrerMarginTop={-76}>
+        {(item, index) => (
+          <div key={item._id} onClick={() => openEntry(item)}>
+            <GroupCard group={item} index={index} />
+          </div>
         )}
       </InfiniteScroller>
     </>
