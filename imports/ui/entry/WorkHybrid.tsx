@@ -106,7 +106,10 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
         }
       }
       backLink={{ value: '/works', label: worksInMenu.label }}
-      images={work?.images || [work.imageUrl]}
+      images={
+        // A request without a picture is text; no placeholder plate for it.
+        work?.images?.length ? work.images : work.imageUrl ? [work.imageUrl] : null
+      }
       placeholderSeed={work?._id}
       subTitle={work.shortDescription}
       tabs={tabs}

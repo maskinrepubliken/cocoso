@@ -2547,6 +2547,15 @@ body {
   border-radius: 999px;
 }
 
+/* The author under a request's title: a link around avatar and name */
+.tably-author-name {
+  color: var(--cocoso-colors-theme-700);
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
 /* === Skip link === */
 
 .skip-link {

@@ -11,7 +11,6 @@ import {
   Center,
   Flex,
   Heading,
-  Link as CLink,
   Tag,
 } from '/imports/ui/core';
 
@@ -81,7 +80,7 @@ const AvatarHolder: React.FC<AvatarHolderProps> = ({ author }) => {
             size="lg"
             src={getImageUrl(author.src, 'thumb')}
           />
-          <CLink color="theme.500">{author.username}</CLink>
+          <span className="tably-author-name">{author.username}</span>
         </Flex>
       </Link>
     </Box>
