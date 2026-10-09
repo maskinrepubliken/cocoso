@@ -449,3 +449,9 @@ footer:
   and: and
   byline: A service from Tranemo municipality, filled by associations, organizers and neighbours in {{ places }}.
   bylineShort: A service from Tranemo municipality, filled by associations, organizers and neighbours.
+
+calendarFilter:
+  anyResource: All places and venues
+  pickResource: Pick a place or venue…
+  recurring: Recurring
+  legend: Colours follow the place

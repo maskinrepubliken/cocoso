@@ -446,3 +446,9 @@ footer:
   and: ve
   byline: Tranemo belediyesinden bir hizmet; {{ places }} bölgelerindeki dernekler, düzenleyiciler ve komşular tarafından doldurulur.
   bylineShort: Tranemo belediyesinden bir hizmet; dernekler, düzenleyiciler ve komşular tarafından doldurulur.
+
+calendarFilter:
+  anyResource: Tüm yerler ve mekânlar
+  pickResource: Bir yer veya mekân seçin…
+  recurring: Tekrarlayan
+  legend: Renkler yere göre

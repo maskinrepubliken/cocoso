@@ -5,7 +5,7 @@ import loadable from '@loadable/component';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { Box, Button, Center, Flex, Loader, Skeleton } from '/imports/ui/core';
+import { Box, Center, Flex, Loader, Skeleton } from '/imports/ui/core';
 import {
   getNonComboResourcesWithColor,
   getComboResourcesWithColor,
@@ -17,6 +17,7 @@ import PageHeading from '/imports/ui/listing/PageHeading';
 import Tag from '/imports/ui/generic/Tag';
 import { cocosoReactSelectAdapter } from '/imports/ui/utils/globalStylesManager';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
@@ -64,7 +65,6 @@ interface Activity {
   isPublicActivity?: boolean;
   isGroupPrivate?: boolean;
   longDescription?: string;
-  resourceColor?: string;
 }
 
 interface CalendarHandlerProps {
@@ -215,21 +215,24 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [activities]
   );
 
+  // Every event is drawn in its place's colour world; content for the
+  // whole municipality takes the site's green. Weekly activities are
+  // marked recurring and drawn lighter, so one-off events stand out.
   const allFilteredActsWithColors = filteredActivities.map((act: any) => {
-    const resource = nonComboResourcesWithColor.find(
-      (res: any) => res._id === act.resourceId
-    );
-    const resourceColor = (resource && resource.color) || '#484848';
-
-    const isRecurring = recurringIds.has(act.activityId);
-
+    const world = worldForLocation(publishedLocations, act.locationId);
     return {
       ...act,
-      title: isRecurring ? `↻ ${act.title}` : act.title,
-      isRecurring,
-      resourceColor,
+      isRecurring: recurringIds.has(act.activityId),
+      ink: world?.ink || 'var(--cocoso-colors-theme-700)',
+      tint: world?.tint || 'var(--cocoso-colors-theme-100)',
     };
   });
+
+  // The resource filter: a place's venues share its colour, so the chips
+  // and the select options read as belonging together.
+  const inkForResource = (resource: Resource) =>
+    worldForLocation(publishedLocations, resource.locationId)?.ink ||
+    'var(--cocoso-colors-theme-700)';
 
   const selectFilterView =
     nonComboResourcesWithColor.filter((r: any) => r.isBookable)?.length >=
@@ -324,7 +327,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
                       <Tag
                         checkable
                         label={resource.label}
-                        filterColor={resource.color}
+                        filterColor="#484848"
                         checked={calendarFilter?._id === resource._id}
                         onClick={() => setCalendarFilter(resource)}
                       />
@@ -339,8 +342,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
                       <Tag
                         checkable
                         label={resource.label}
-                        filterColor={'#2d2d2d'}
-                        gradientBackground={resource.color}
+                        filterColor="#484848"
                         checked={calendarFilter?._id === resource._id}
                         onClick={() => setCalendarFilter(resource)}
                       />
@@ -349,42 +351,32 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
               </Flex>
             </Box>
           ) : (
-            <Flex w="30rem">
-              <Button
-                mr="2"
-                size="sm"
-                variant={calendarFilter ? 'outline' : 'solid'}
-                onClick={() => setCalendarFilter(null)}
-              >
-                {<Trans i18nKey="common:labels.all">All</Trans>}
-              </Button>
-
-              <Box w="100%">
-                {SelectComponent ? (
-                  <SelectComponent
-                    components={AnimatedComponents || undefined}
-                    isClearable
-                    options={allResourcesForSelect}
-                    style={{ width: '100%', marginTop: '1rem' }}
-                    styles={{
-                      control: cocosoReactSelectAdapter,
-                      option: (styles, { data }) => ({
-                        ...styles,
-                        borderLeft: `8px solid ${data.color}`,
-                        // background: data.color.replace('40%', '90%'),
-                        paddingLeft: !data.isCombo && 6,
-                        fontWeight: data.isCombo ? 'bold' : 'normal',
-                      }),
-                    }}
-                    value={calendarFilter}
-                    getOptionValue={(option) => option._id}
-                    onChange={(value) => setCalendarFilter(value)}
-                  />
-                ) : (
-                  <Box h="2.5rem" w="100%" />
-                )}
-              </Box>
-            </Flex>
+            <Box className="cal-resource-select" w="100%" css={{ maxWidth: '30rem' }}>
+              {SelectComponent ? (
+                <SelectComponent
+                  aria-label={tc('calendarFilter.pickResource')}
+                  components={AnimatedComponents || undefined}
+                  isClearable
+                  options={allResourcesForSelect}
+                  placeholder={tc('calendarFilter.anyResource')}
+                  styles={{
+                    control: cocosoReactSelectAdapter,
+                    option: (styles, { data }) => ({
+                      ...styles,
+                      borderLeft: `4px solid ${inkForResource(data)}`,
+                      paddingLeft: 10,
+                      fontWeight: data.isCombo ? 'bold' : 'normal',
+                    }),
+                  }}
+                  value={calendarFilter}
+                  getOptionLabel={(option) => option.label}
+                  getOptionValue={(option) => option._id}
+                  onChange={(value) => setCalendarFilter(value)}
+                />
+              ) : (
+                <Box h="2.5rem" w="100%" />
+              )}
+            </Box>
           )}
         </Center>
 
