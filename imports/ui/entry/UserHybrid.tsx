@@ -1,9 +1,4 @@
-import {
-  Outlet,
-  useLocation,
-  useParams,
-  useRevalidator,
-} from 'react-router';
+import { Outlet, useLocation, useParams, useRevalidator } from 'react-router';
 import React, { useEffect, useState } from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
@@ -128,6 +123,12 @@ function OrganizerEvents({ events, username }: OrganizerEventsProps) {
         <Tabs tabs={tabs} index={tabIndex} />
       </Center>
 
+      {view === 'archived' && (
+        <Center mb="4" px="2">
+          <Alert message={tc('event.archived.onlyYou')} type="info" />
+        </Center>
+      )}
+
       <Flex justify="center" wrap="wrap" gap="4" px="2">
         {items.map((item, index) => (
           <Center
@@ -179,9 +180,7 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
   // The server renders the page for an anonymous visitor, without the
   // archived events; fetch again once we know this is the person or an admin.
   const seesArchived = Boolean(
-    user &&
-      currentUser &&
-      (role === 'admin' || currentUser._id === user._id)
+    user && currentUser && (role === 'admin' || currentUser._id === user._id)
   );
   useEffect(() => {
     if (seesArchived) {

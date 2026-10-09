@@ -375,6 +375,7 @@ event:
     intro: "Ange efternamnet och e-postadressen du anmälde dig med."
     find: "Hitta min anmälan"
     notFound: "Vi hittade ingen anmälan med de uppgifterna. Kontrollera datum och stavning och försök igen."
+    onlyYou: "Arkiverade evenemang visas bara för dig och administratörerna."
     save: "Spara ändringar"
     cancel: "Avboka min anmälan"
     updated: "Din anmälan är ändrad."

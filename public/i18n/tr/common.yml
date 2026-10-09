@@ -375,6 +375,7 @@ event:
     intro: "Kayıt olurken kullandığın soyadı ve e-posta adresini gir."
     find: "Kaydımı bul"
     notFound: "Bu bilgilerle bir kayıt bulamadık. Tarihi ve yazımı kontrol edip tekrar dene."
+    onlyYou: "Arşivlenmiş etkinlikler yalnızca sana ve yöneticilere gösterilir."
     save: "Değişiklikleri kaydet"
     cancel: "Kaydımı iptal et"
     updated: "Kaydın değiştirildi."
