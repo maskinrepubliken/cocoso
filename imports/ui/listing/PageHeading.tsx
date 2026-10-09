@@ -3,6 +3,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 import { useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { useAtomValue } from 'jotai';
 
@@ -53,10 +54,14 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
   const listingInMenu = site?.settings?.menu?.find(
     (item) => item.name === listing
   );
+  const [tc] = useTranslation('common');
   const description = listingInMenu?.description;
   const heading = listingInMenu?.label;
   const url = publicUrl(`/${listingInMenu?.name}`);
-  const imageUrl = site?.logo;
+  // What a link to this page shows elsewhere: the menu's description when
+  // the admin wrote one, else the site's own line; the site's social image.
+  const metaDescription = description || tc('home.hero.tagline');
+  const imageUrl = publicUrl('/images/og-default.jpg');
   const icon = sectionIcons[listing];
 
   // ── Record heading position before the button appears ─────────────────────
@@ -178,10 +183,7 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
         <link rel="canonical" href={url} />
         <meta charSet="utf-8" />
         <meta name="title" content={String(heading || 'Page')} />
-        <meta
-          name="description"
-          content={String(description || 'Description')}
-        />
+        <meta name="description" content={String(metaDescription)} />
         <meta
           property="og:title"
           content={String(heading || 'Page')?.substring(0, 40)}
@@ -190,7 +192,7 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
         <meta property="og:image" content={imageUrl} />
         <meta
           property="og:description"
-          content={String(description || '')?.substring(0, 150)}
+          content={String(metaDescription)?.substring(0, 150)}
         />
         <meta property="og:type" content="website" />
       </Helmet>
