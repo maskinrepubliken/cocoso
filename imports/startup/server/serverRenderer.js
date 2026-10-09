@@ -58,7 +58,13 @@ export default async function serverRenderer(sink) {
     lngParam,
     siteDoc?.settings?.lang
   );
-  const requestI18n = i18n.cloneInstance({ lng: resolvedLang });
+  // initImmediate: false makes the clone switch language synchronously.
+  // With the default it does so in a setTimeout, so a route without an
+  // async loader rendered in English and failed hydration.
+  const requestI18n = i18n.cloneInstance({
+    lng: resolvedLang,
+    initImmediate: false,
+  });
 
   const props = {
     siteDoc,

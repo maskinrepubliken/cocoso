@@ -17,7 +17,7 @@ export default function UserProfileHandler({ siteDoc }) {
   return (
     <>
       <UserHybrid events={events} siteDoc={siteDoc} user={user} />
-      {rendered && <UserInteractionHandler user={user} slideStart={rendered} />}
+      {rendered && <UserInteractionHandler user={user} />}
     </>
   );
 }

@@ -58,13 +58,14 @@ interface RadioCircleProps extends React.ComponentProps<typeof RadioCircleStyled
   children?: React.ReactNode;
 }
 
-const RadioCircle = ({ checked, ...rest }: RadioCircleProps) => (
+const RadioCircle = ({ checked, focused, ...rest }: RadioCircleProps) => (
   <RadioCircleStyled
     css={{
-      background: checked ? 'var(--cocoso-colors-theme-100)' : '#fff',
+      background: checked ? 'var(--cocoso-colors-theme-100)' : 'var(--cocoso-papper)',
       border: `2px solid ${
-        checked ? 'var(--cocoso-colors-theme-500)' : '#b3b3b3'
+        checked ? 'var(--cocoso-colors-theme-500)' : 'var(--cocoso-linje)'
       }`,
+      boxShadow: focused ? '0 0 0 3px var(--cocoso-colors-theme-200)' : 'none',
     }}
     {...rest}
   />
