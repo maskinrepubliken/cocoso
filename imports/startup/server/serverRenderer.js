@@ -11,6 +11,7 @@ import {
 import { getSite, sitePublicFields } from '/imports/api/site/site';
 import appRoutes from '/imports/appRoutes';
 import { getGlobalStyles } from '/imports/ui/utils/globalStylesManager';
+import { resolveSeason } from '/imports/api/_utils/season';
 import i18n, { setDayjsLocale } from '/imports/startup/i18n';
 import { resolveLangFromRequest } from '/imports/api/_utils/i18n/serverI18n';
 
@@ -26,7 +27,8 @@ export default async function serverRenderer(sink) {
   if (!stitchesConfig) {
     stitchesConfig = await import('/stitches.config');
   }
-  const globalCssString = siteDoc ? getGlobalStyles(siteDoc.theme) : '';
+  const season = resolveSeason(sink?.request?.url?.query?.season);
+  const globalCssString = siteDoc ? getGlobalStyles(siteDoc.theme, season) : '';
   const { getCssText } = stitchesConfig;
 
   const pageTitles = pages.map((p) => p.title);
@@ -62,6 +64,7 @@ export default async function serverRenderer(sink) {
     siteDoc,
     pageTitles,
     locations,
+    season,
     i18nInstance: requestI18n,
   };
 

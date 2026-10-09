@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import type { Season } from '/imports/api/_utils/season';
 
 import type { Site, Location, PageTitle, Role, User } from './ui/types';
 
@@ -10,6 +11,7 @@ export const isMobileAtom = atom<boolean>(false);
 export const locationsAtom = atom<Location[]>([]);
 export const pageTitlesAtom = atom<PageTitle[]>([]);
 export const renderedAtom = atom<boolean>(false);
+export const seasonAtom = atom<Season>('host');
 export const roleAtom = atom<Role>(null);
 // Holds the decrypted private key in memory — never written to DB or localStorage.
 // Null until the user logs in and the key is decrypted from their backup blob.

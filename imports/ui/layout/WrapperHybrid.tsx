@@ -24,8 +24,10 @@ import {
   isMobileAtom,
   locationsAtom,
   renderedAtom,
+  seasonAtom,
 } from '/imports/state';
 import { applyGlobalStyles } from '/imports/ui/utils/globalStylesManager';
+import { resolveSeason } from '/imports/api/_utils/season';
 import { restoreKeyFromSession } from '/imports/utils/setupEncryption';
 import { restoreViewAsState } from '/imports/utils/viewAs';
 import { call } from '/imports/api/_utils/shared';
@@ -43,6 +45,9 @@ export interface WrapperHybridProps {
   siteDoc: any;
   pageTitles: any[];
   locations?: any[];
+  // The seasonal variant the server rendered with; the client resolves the
+  // same from its own clock (or ?season=) once hydrated.
+  season?: any;
   // Set only by serverRenderer.js — a per-request i18next clone
   // (i18n.cloneInstance) already resolved to the visitor's actual
   // language, so SSR output matches what the client will hydrate with.
@@ -54,9 +59,14 @@ export default function WrapperHybrid({
   siteDoc,
   pageTitles,
   locations,
+  season: seasonProp,
   i18nInstance,
 }: WrapperHybridProps) {
-  useHydrateAtoms([[locationsAtom, locations || []]]);
+  useHydrateAtoms([
+    [locationsAtom, locations || []],
+    [seasonAtom, resolveSeason(seasonProp)],
+  ]);
+  const [season, setSeason] = useAtom(seasonAtom);
   const [site, setCurrentHost] = useAtom(siteAtom);
   const [pTitles, setPageTitles] = useAtom(pageTitlesAtom);
   const setCurrentUser = useSetAtom(currentUserAtom);
@@ -104,6 +114,10 @@ export default function WrapperHybrid({
   useEffect(() => {
     setValues();
     restoreKeyFromSession();
+    // The browser decides the season from its own clock, with ?season=
+    // as a preview override.
+    const override = new URLSearchParams(window.location.search).get('season');
+    setSeason(resolveSeason(override));
     restoreViewAsState();
     setTimeout(() => {
       setRendered(true);
@@ -117,7 +131,7 @@ export default function WrapperHybrid({
 
   useEffect(() => {
     if (!site) return;
-    applyGlobalStyles(site.theme);
+    applyGlobalStyles(site.theme, season);
     // Only apply host language if no user preference has been detected/stored yet.
     // User language is applied in the currentUser effect with higher priority.
     if (!currentUser && !getChosenLang()) {
@@ -126,7 +140,7 @@ export default function WrapperHybrid({
         i18n.changeLanguage(hostLang);
       }
     }
-  }, [site]);
+  }, [site, season]);
 
   useEffect(() => {
     if (!i18n || !i18n.language) {
@@ -168,6 +182,7 @@ export default function WrapperHybrid({
         <Suspense fallback={<Loader />}>
           <DummyWrapper
             animate={rendered && !isDesktopValue}
+            data-season={season}
             theme={site?.theme || siteDoc?.theme}
           >
             <ViewAsBanner />

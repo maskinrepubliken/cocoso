@@ -161,8 +161,11 @@ export const Heading = (props: HeadingProps) => {
           ? `var(--cocoso-colors-${color[0]}-${color[1]})`
           : 'inherit',
         fontSize: size ? headingSizes[size] : headingSizes.lg,
-        fontFamily: 'Raleway, sans-serif',
-        fontWeight: fontWeight || 'bold',
+        fontFamily: 'var(--cocoso-font-display)',
+        fontVariationSettings: '"SOFT" 60',
+        fontWeight: fontWeight || 600,
+        letterSpacing: '-0.01em',
+        textWrap: 'balance',
         overflow: truncated ? 'hidden' : 'visible',
         lineHeight: lineHeight || '1.2',
         textAlign: textAlign || 'left',
