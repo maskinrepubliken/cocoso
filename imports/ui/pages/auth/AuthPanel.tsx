@@ -34,7 +34,7 @@ export default function AuthPanel({
             '@media (max-width: 480px)': { padding: '1.5rem 1.15rem 1.25rem' },
           }}
         >
-          <Heading size="lg" textAlign="center" mb="2">
+          <Heading size="lg" textAlign="center" css={{ marginBottom: '0.5rem' }}>
             {title}
           </Heading>
           {lead && (

@@ -16,6 +16,10 @@ du rör utseendet; målsidan säger *vart*, det här säger *hur*.
 | Stämpel, orttag, 3D-ikon | `imports/ui/generic/Stamp.tsx`, `PlaceTag.tsx`, `ThreeDIcon.tsx` |
 | Evenemangskort, anslagstavla, veckan | `imports/ui/listing/SexyThumb.tsx`, `RecurringOverview.tsx` |
 | Startsidans välkomstband | `imports/ui/pages/locations/HomeHero.tsx` |
+| Föreningskort, kortrutnät | `imports/ui/listing/GroupCard.tsx`, `.card-grid` i `client/main.css` |
+| Kalendern (färger, listvy, toolbar) | `imports/ui/pages/calendar/CalendarView.tsx`, `CalendarHandler.tsx`, sektionen `=== Calendar ===` i `client/main.css` |
+| Kontosidornas ark | `imports/ui/pages/auth/AuthPanel.tsx` |
+| Adminpanelens sidomeny | `imports/ui/pages/admin/AdminMenu.tsx`, `AdminContainer.tsx` |
 
 ## Variabler
 
@@ -54,16 +58,33 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
   mer, men de långa texterna läser bättre i en neutral grotesk och
   tranemo.se gör likadant.
 - **Jordfärgerna i veckan är orörda.** De var redan rätt.
-- **Kalenderns händelsefärger** (rosa, grönt, orange per plats) är kvar
-  från react-big-calendar. Att ge dem orternas färgvärldar är nästa steg.
+- **Kalendern** tar händelsefärgerna från orternas färgvärldar
+  (`--ev-ink`/`--ev-tint` per händelse). Veckovisa aktiviteter ritas
+  konturerade med ett upprepningsmärke, engångshändelser fyllda. På
+  smal skärm öppnas kalendern som lista; månadsrutnätet visar varje
+  händelse som en färgad stapel. Dag- och veckovyn börjar klockan sju.
+- **Föreningar** ritas som papperskort i ett rutnät (`GroupCard`,
+  `.card-grid`), inte längre som cirklar: namnen var svårlästa ovanpå
+  bild och cirklarna överlappade på mobil. Ortsidan använder samma
+  rutnät för evenemang och platser.
+- **Platshållarbilder** (`PlaceholderImage`) kan ta en palett; platskort
+  utan foto använder ortens färgvärld (`worldShapeColors`).
+- **Kontosidorna** (logga in, registrera, glömt/återställ lösenord) är ett
+  pappersark mitt på sidan (`AuthPanel`) i stället för en modal över en
+  tom sida.
+- **SSR och språk.** i18next-klonen per request initieras med
+  `initImmediate: false`, annars byter den språk först i nästa tick och
+  sidor utan asynkron loader (login, 404) renderades på engelska och
+  föll i hydreringen.
 - **Orternas färgvärld bestäms av ordningen** admin gett orterna
   (`worldForIndex`), inte av ett fält. Vill ni välja färg per ort,
   lägg till `colorKey` på location och läs det i `locationPalette.ts`.
 - **Antalet arrangörer** i hero räknas med `getOrganizerCount` på
   klienten efter hydrering, så serverns HTML saknar meningen. Det är
   avsiktligt för att slippa en mismatch.
-- **Adminsidorna** är inte omgjorda. De använder kärnkomponenterna och
-  ärver därför piller, fält och färger, men layouten är den gamla.
+- **Adminsidorna** har sidomenyn och panelerna på papper med sajtens
+  tokens (grönt för vald sida, Raleway, Fraunces i rubriker), men
+  sidornas egna formulär är i stort sett orörda.
 - **Mörkt läge** finns inte i appen; målsidans mörka palett gäller bara
   dokumentet.
 
@@ -83,9 +104,13 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
 
 ## Att göra härnäst
 
-1. Kalenderns händelsefärger från orternas färgvärldar.
-2. Kategorichips för evenemang med 3D-ikoner (kräver kategorier på
+1. Kategorichips för evenemang med 3D-ikoner (kräver kategorier på
    evenemang).
-3. Adminpanelens layout i samma material.
-4. Ett `colorKey`-fält på orter.
-5. En adminknapp som låser årstid (idag bara `?season=`).
+2. Ett `colorKey`-fält på orter.
+3. En adminknapp som låser årstid (idag bara `?season=`).
+4. Adminpanelens formulär och listor (medlemmar, e-post, menyordning)
+   i samma material som sidomenyn.
+5. Veckovyn i kalendern: överlappande händelser blir smala; en egen
+   dagvy på papper vore bättre än react-big-calendars tidsrutnät.
+6. Dalstorp och Länghem har innehåll men ingen ort; antingen orter för
+   dem eller en tydligare "hela kommunen"-etikett.

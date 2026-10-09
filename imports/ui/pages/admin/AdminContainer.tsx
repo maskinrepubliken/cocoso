@@ -196,7 +196,9 @@ export default function AdminContainer({ siteDoc }) {
                 flexGrow: '1',
               }}
             >
-              {isAdmin ? t('panel') : ta('profile.settings')}
+              {isAdmin
+                ? t('panel')
+                : site?.settings?.shortName || site?.settings?.name}
             </Heading>
 
             <Link to="/">

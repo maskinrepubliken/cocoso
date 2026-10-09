@@ -457,3 +457,6 @@ groupCard:
   members_one: '{{count}} üye'
   members_other: '{{count}} üye'
   nextMeeting: Sonraki buluşma {{date}}
+
+a11y:
+  skipToContent: İçeriğe atla

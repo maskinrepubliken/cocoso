@@ -83,12 +83,7 @@ export function AdminUserThumb() {
       }}
     >
       <Flex align="center" gap="3">
-        <Avatar
-          name={currentUser.username}
-          size="md"
-          src={avatarSrc}
-          css={{ backgroundColor: 'var(--cocoso-colors-theme-100)' }}
-        />
+        <Avatar name={currentUser.username} size="md" src={avatarSrc} />
 
         <Flex direction="column" css={{ minWidth: 0 }}>
           <Text

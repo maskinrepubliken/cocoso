@@ -111,8 +111,20 @@ export default function InfiniteScroller({
   items,
   itemsPerPage = defaultItemsPerPage,
   newHelperLink,
-  smallThumb,
+  smallThumb = false,
   children,
+}: {
+  canCreateContent?: boolean;
+  hideFiltrerSorter?: boolean;
+  filtrerMarginTop?: number;
+  isMasonry?: boolean;
+  isHoneycomb?: boolean;
+  isGrid?: boolean;
+  items: any[];
+  itemsPerPage?: number;
+  newHelperLink?: string;
+  smallThumb?: boolean;
+  children: (item: any, index: number) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterValue, setFilterValue] = useState('');
@@ -161,7 +173,7 @@ export default function InfiniteScroller({
               <div className="card-grid">
                 {currentItems?.map((item, index) => children(item, index))}
                 {!hasMore && canCreateContent && (
-                  <NewEntryHelper buttonLink={newHelperLink} small />
+                  <NewEntryHelper buttonLink={newHelperLink || ''} small />
                 )}
               </div>
               {hasMore && <Loader relative />}
@@ -183,7 +195,7 @@ export default function InfiniteScroller({
               {hasMore && <Loader relative />}
               {!hasMore && canCreateContent && (
                 <NewEntryHelper
-                  buttonLink={newHelperLink}
+                  buttonLink={newHelperLink || ''}
                   small={isMasonry || smallThumb}
                 />
               )}
@@ -194,7 +206,7 @@ export default function InfiniteScroller({
               {hasMore && <Loader relative />}
               {!hasMore && canCreateContent && (
                 <NewEntryHelper
-                  buttonLink={newHelperLink}
+                  buttonLink={newHelperLink || ''}
                   small={smallThumb || isMasonry}
                 />
               )}

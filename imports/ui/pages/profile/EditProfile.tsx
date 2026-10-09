@@ -10,14 +10,13 @@ import {
   Button,
   Center,
   Divider,
-  Heading,
   Modal,
   Tabs,
   Text,
 } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
-import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
+import { currentUserAtom, roleAtom } from '/imports/state';
 
 export const subSpanStyle: React.CSSProperties = {
   fontSize: '0.875rem',
@@ -27,7 +26,6 @@ export const subSpanStyle: React.CSSProperties = {
 
 export default function EditProfile() {
   const currentUser = useAtomValue(currentUserAtom);
-  const site = useAtomValue(siteAtom);
   const role = useAtomValue(roleAtom);
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -111,8 +109,6 @@ export default function EditProfile() {
     <>
       <Box mb="8" css={{ minHeight: '100vh' }}>
         <Box w="100%">
-          <Heading size="md">{site?.settings?.name}</Heading>
-
           <Tabs index={tabIndex} tabs={tabs} />
 
           <Box mt="8">

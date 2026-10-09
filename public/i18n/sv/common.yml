@@ -457,3 +457,6 @@ groupCard:
   members_one: '{{count}} medlem'
   members_other: '{{count}} medlemmar'
   nextMeeting: Nästa träff {{date}}
+
+a11y:
+  skipToContent: Hoppa till innehållet

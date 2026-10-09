@@ -460,3 +460,6 @@ groupCard:
   members_one: '{{count}} member'
   members_other: '{{count}} members'
   nextMeeting: Next meeting {{date}}
+
+a11y:
+  skipToContent: Skip to content

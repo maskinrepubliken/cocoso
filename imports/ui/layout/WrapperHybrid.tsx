@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { useSubscribe, useTracker } from 'meteor/react-meteor-data';
 import React, { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import { I18nextProvider } from 'react-i18next';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useAtom, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Toaster } from 'react-hot-toast';
@@ -53,6 +53,17 @@ export interface WrapperHybridProps {
   // language, so SSR output matches what the client will hydrate with.
   // Never set client-side; falls back to the shared singleton below.
   i18nInstance?: any;
+}
+
+// For keyboard and screen-reader users: the first tab stop jumps past the
+// header to the page's content. Visible only while focused.
+function SkipLink() {
+  const [tc] = useTranslation('common');
+  return (
+    <a className="skip-link" href="#main-content-container">
+      {tc('a11y.skipToContent')}
+    </a>
+  );
 }
 
 export default function WrapperHybrid({
@@ -179,6 +190,7 @@ export default function WrapperHybrid({
       <HelmetHybrid siteDoc={site || siteDoc} />
 
       <I18nextProvider i18n={i18nInstance || i18n}>
+        <SkipLink />
         <Suspense fallback={<Loader />}>
           <DummyWrapper
             animate={rendered && !isDesktopValue}

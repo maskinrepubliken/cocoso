@@ -2537,6 +2537,29 @@ body {
   font-weight: 700;
 }
 
+/* === Skip link === */
+
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
+  font-family: var(--cocoso-font-ui);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.15s ease;
+}
+
+.skip-link:focus-visible {
+  outline: 3px solid var(--cocoso-colors-theme-200);
+  transform: translateY(0);
+}
+
 /* === Account pages === */
 
 .auth-panel-link {

@@ -369,8 +369,8 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
                     }),
                   }}
                   value={calendarFilter}
-                  getOptionLabel={(option) => option.label}
-                  getOptionValue={(option) => option._id}
+                  getOptionLabel={(option: any) => option.label}
+                  getOptionValue={(option: any) => option._id}
                   onChange={(value) => setCalendarFilter(value)}
                 />
               ) : (
