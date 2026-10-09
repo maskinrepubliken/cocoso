@@ -9,3 +9,5 @@
 - `mal-hemma-i-tranemo.html` – designmålet «Hemma i Tranemo»: proffsigt,
   hemtrevligt och lokalt. Jämför med utgångsläget och listar vägen dit.
   Publicerad även som https://claude.ai/artifact/FvnS9zLx1imzZ978EdMxkN
+- `genomforande.md` – hur målet togs in i koden: var variablerna bor,
+  årstiderna, avstegen från målsidan och vad som återstår.

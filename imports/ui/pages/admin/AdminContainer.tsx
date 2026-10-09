@@ -157,7 +157,7 @@ export default function AdminContainer({ siteDoc }) {
 
   if (!isDesktop) {
     return (
-      <Box bg="bluegray.100" css={{ minHeight: '100vh' }}>
+      <Box css={{ backgroundColor: 'var(--cocoso-season-golv)', minHeight: '100vh' }}>
         <Drawer
           id="admin-menu-drawer"
           open={drawerMenuOpen}
@@ -214,7 +214,7 @@ export default function AdminContainer({ siteDoc }) {
   }
 
   return (
-    <Box bg="bluegray.100" css={{ minHeight: '100vh' }}>
+    <Box css={{ backgroundColor: 'var(--cocoso-season-golv)', minHeight: '100vh' }}>
       <Grid h="100%" templateColumns="320px 50% 1fr">
         <Box>
           <AdminMenu routes={routes} onItemClick={handleItemClick} />
