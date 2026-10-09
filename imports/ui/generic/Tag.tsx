@@ -1,8 +1,9 @@
-import SmallCloseIcon from 'lucide-react/dist/esm/icons/x-circle';
+import SmallCloseIcon from 'lucide-react/dist/esm/icons/x';
 import React from 'react';
 
-import { Box, Flex, IconButton } from '/imports/ui/core';
-
+// A filter chip: a pill that is paper when idle and filled with the
+// municipality's green when chosen. `filterColor` is kept for category
+// chips that carry a colour of their own (the calendar's resources).
 export interface TagProps {
   label?: string;
   gradientBackground?: string | null;
@@ -24,59 +25,47 @@ function Tag({
   onClick,
   onRemove,
 }: TagProps) {
-  const getBackground = () => {
-    if (gradientBackground) {
-      return gradientBackground;
-    } else if (filterColor) {
-      return filterColor;
-    } else if (checkable) {
-      if (checked) {
-        return filterColor;
-      }
-      return 'white';
-    }
-    return 'var(--cocoso-colors-gray-50)';
-  };
+  const isNeutral = !filterColor || filterColor === '#484848';
+  const accent = isNeutral ? 'var(--cocoso-colors-theme-700)' : filterColor;
+  const background = checkable
+    ? checked
+      ? gradientBackground || accent
+      : 'var(--cocoso-papper)'
+    : gradientBackground || 'var(--cocoso-papper)';
+  const color = checkable && checked ? 'white' : isNeutral ? 'var(--cocoso-colors-theme-700)' : accent;
 
   return (
-    <Flex
-      align="center"
-      gap="0"
-      css={{
-        background: getBackground(),
-        borderRadius: 'var(--cocoso-border-radius)',
-        border:
-          gradientBackground && checkable
+    <span
+      className={`filter-chip ${checkable ? 'is-checkable' : ''} ${checked ? 'is-checked' : ''}`}
+      style={{
+        background,
+        color,
+        boxShadow:
+          checkable && checked
             ? 'none'
-            : `1px solid ${filterColor || '#484848'}`,
-        display: 'inline-flex',
-        padding: gradientBackground && checkable ? '2px' : '0',
+            : `inset 0 0 0 1.5px ${isNeutral ? 'var(--cocoso-linje)' : accent}`,
       }}
     >
-      <Box
-        css={{
-          backgroundColor: checkable && checked ? 'none' : 'white',
-          border: checkable && !checked ? 'white' : 'none',
-          borderRadius: 'var(--cocoso-border-radius)',
-          cursor: 'pointer',
-          padding: '0 0.5rem 1px',
-        }}
+      <button
+        type="button"
+        className="filter-chip-button"
         onClick={onClick}
+        aria-pressed={checkable ? checked : undefined}
+        style={{ color: 'inherit' }}
       >
-        <span
-          style={{
-            fontSize: '0.875rem',
-            color: checked ? 'white' : filterColor,
-            textTransform: 'capitalize',
-          }}
-        >
-          {label}
-        </span>
-      </Box>
+        {label}
+      </button>
       {removable && (
-        <IconButton icon={<SmallCloseIcon />} size="xs" onClick={onRemove} />
+        <button
+          type="button"
+          className="filter-chip-remove"
+          aria-label="Remove"
+          onClick={onRemove}
+        >
+          <SmallCloseIcon width={14} height={14} />
+        </button>
       )}
-    </Flex>
+    </span>
   );
 }
 

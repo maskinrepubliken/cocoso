@@ -1,6 +1,10 @@
 import React from 'react';
 
+import { useAtomValue } from 'jotai';
+
 import { styled } from '/stitches.config';
+import { locationsAtom } from '/imports/state';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
 import { getImageUrl } from '../utils/imageHelper';
@@ -11,10 +15,11 @@ const Outer = styled('div', {
   aspectRatio: '1 / 1',
   background: 'var(--cocoso-colors-theme-700)',
   borderRadius: '50%',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   padding: '4px',
-  transition: 'transform 0.2s ease',
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
   width: '100%',
-  '&:hover': { transform: 'scale(1.03)' },
+  '&:hover': { transform: 'scale(1.03)', boxShadow: '0 18px 30px -14px rgba(60, 40, 20, 0.5)' },
   '&:hover img': { transform: 'scale(1.06)' },
   '@media (max-width: 599px)': { padding: '3px' },
 });
@@ -33,7 +38,7 @@ const Inner = styled('div', {
   },
   '&::after': {
     background:
-      'linear-gradient(180deg, rgba(10, 30, 15, 0.15) 0%, rgba(10, 30, 15, 0.7) 100%)',
+      'linear-gradient(180deg, rgba(42, 37, 32, 0.12) 0%, rgba(42, 37, 32, 0.72) 100%)',
     content: '""',
     inset: 0,
     position: 'absolute',
@@ -52,9 +57,11 @@ const Text = styled('div', {
   textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
   zIndex: 1,
   '& h3': {
-    fontSize: '1.2rem',
-    fontWeight: 700,
-    lineHeight: 1.15,
+    fontFamily: 'var(--cocoso-font-display)',
+    fontVariationSettings: '"SOFT" 60',
+    fontSize: '1.35rem',
+    fontWeight: 600,
+    lineHeight: 1.12,
     margin: 0,
   },
   '& p': {
@@ -80,9 +87,10 @@ const Tags = styled('div', {
   justifyContent: 'center',
   marginTop: '0.6rem',
   '& span': {
-    background: 'rgba(255, 255, 255, 0.9)',
+    background: 'rgba(255, 253, 247, 0.92)',
     borderRadius: '999px',
     color: 'var(--cocoso-colors-theme-800)',
+    fontFamily: 'var(--cocoso-font-ui)',
     fontSize: '0.72rem',
     fontWeight: 600,
     padding: '0.1rem 0.55rem',
@@ -96,15 +104,18 @@ interface RoundThumbProps {
     title: string;
     readingMaterial?: string;
     imageUrl?: string;
+    locationId?: string | null;
   };
   tags?: string[];
 }
 
 export default function RoundThumb({ item, tags }: RoundThumbProps) {
   const imageUrl = getImageUrl(item.imageUrl, 'medium');
+  const locations = useAtomValue(locationsAtom);
+  const world = worldForLocation(locations, item.locationId);
 
   return (
-    <Outer>
+    <Outer css={world ? { background: world.ink } : undefined}>
       <Inner>
         {imageUrl ? (
           <img alt="" loading="lazy" src={imageUrl} />

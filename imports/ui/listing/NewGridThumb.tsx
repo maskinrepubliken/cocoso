@@ -68,12 +68,16 @@ function NewGridThumb({
   return (
     <Box
       css={{
-        backgroundColor: 'var(--cocoso-colors-theme-200)',
-        border: '1px solid white',
-        borderRadius: 'var(--cocoso-border-radius)',
+        backgroundColor: 'var(--cocoso-papper)',
+        borderRadius: 'var(--cocoso-radius-kort)',
+        boxShadow: 'var(--cocoso-skugga-kort)',
         cursor: 'pointer',
         overflow: 'hidden',
-        '&:hover': { bg: 'theme.50' },
+        transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+        '&:hover': {
+          boxShadow: '0 18px 30px -14px rgba(60, 40, 20, 0.5)',
+          transform: 'translateY(-3px)',
+        },
       }}
     >
       <Box
@@ -138,17 +142,10 @@ function NewGridThumb({
 
         <Flex
           align="flex-start"
-          bg="white"
           justify="space-between"
           py="2"
           px="4"
-          css={{
-            borderBottomLeftRadius: 'var(--cocoso-border-radius)',
-            borderBottomRightRadius: 'var(--cocoso-border-radius)',
-            border: '1px solid',
-            borderColor: 'var(--cocoso-colors-gray-100)',
-            borderTopWidth: '0',
-          }}
+          css={{ backgroundColor: 'var(--cocoso-papper)' }}
         >
           <Box pb="2" pr="3">
             <Heading
@@ -157,9 +154,7 @@ function NewGridThumb({
               mb="1"
               mt="2"
               css={{
-                fontFamily: "'Raleway', sans-serif",
-                fontSize: '1.2rem',
-                fontWeight: 'bold',
+                fontSize: '1.25rem',
                 overflowWrap: 'anywhere',
               }}
             >

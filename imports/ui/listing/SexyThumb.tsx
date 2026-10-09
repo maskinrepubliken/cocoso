@@ -3,14 +3,18 @@ import React, { memo } from 'react';
 import dayjs from 'dayjs';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useTranslation } from 'react-i18next';
+import { useAtomValue } from 'jotai';
 
 import { styled } from '/stitches.config';
 import {
   getNextOccurrence,
   getWeeklyPattern,
 } from '/imports/api/activities/recurrence';
+import { locationsAtom } from '/imports/state';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
+import PlaceTag from '../generic/PlaceTag';
 import { getImageUrl } from '../utils/imageHelper';
 import { describePattern } from './recurringText';
 
@@ -24,23 +28,34 @@ const today = dayjs().format('YYYY-MM-DD');
 const yesterday = dayjs(new Date()).add(-1, 'days').format('YYYY-MM-DD');
 const tomorrow = dayjs(new Date()).add(1, 'days').format('YYYY-MM-DD');
 
-// An event card: the picture fills the card and the facts lie on it, on a
-// darkening gradient at the bottom.
+// An event card: the picture fills the card, the date sits top-left as a
+// paper label like a page of an almanac, the place top-right as its tag,
+// and the title lies on a warm darkening fade at the bottom.
 const Card = styled('article', {
   aspectRatio: '4 / 3',
   background: 'var(--cocoso-colors-theme-700)',
-  borderRadius: 'var(--cocoso-border-radius)',
-  boxShadow: '0 6px 18px -12px rgba(20, 50, 25, 0.5)',
+  borderRadius: 'var(--cocoso-radius-kort)',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   color: 'white',
   overflow: 'hidden',
   position: 'relative',
-  transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+  transition: 'transform 0.18s ease, box-shadow 0.18s ease',
   width: '100%',
   '&:hover': {
-    boxShadow: '0 12px 24px -12px rgba(20, 50, 25, 0.6)',
-    transform: 'translateY(-2px)',
+    boxShadow: '0 18px 30px -14px rgba(60, 40, 20, 0.55)',
+    transform: 'translateY(-3px)',
   },
   '&:hover img': { transform: 'scale(1.04)' },
+  variants: {
+    world: {
+      skog: { background: 'linear-gradient(160deg, #cfe3b5, #4f8a5c)' },
+      lera: { background: 'linear-gradient(160deg, #e2c6a8, #8a5a3a)' },
+      glas: { background: 'linear-gradient(160deg, #cfe0ea, #3f6b7a)' },
+      ockra: { background: 'linear-gradient(160deg, #e9dcc4, #9a7a33)' },
+      salvia: { background: 'linear-gradient(160deg, #c3d1b8, #5a7a5a)' },
+      none: {},
+    },
+  },
 });
 
 const Picture = styled('div', {
@@ -50,39 +65,51 @@ const Picture = styled('div', {
     display: 'block !important',
     height: '100%',
     objectFit: 'cover',
-    transition: 'transform 0.4s ease',
+    transition: 'transform 0.5s ease',
     width: '100%',
   },
   '&::after': {
     background:
-      'linear-gradient(180deg, rgba(8, 24, 12, 0.05) 30%, rgba(8, 24, 12, 0.82) 100%)',
+      'linear-gradient(180deg, rgba(42, 37, 32, 0) 38%, rgba(42, 37, 32, 0.8) 100%)',
     content: '""',
     inset: 0,
     position: 'absolute',
   },
 });
 
+const Shapes = styled('div', {
+  inset: 0,
+  mixBlendMode: 'multiply',
+  opacity: 0.55,
+  position: 'absolute',
+});
+
 const Body = styled('div', {
   bottom: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.25rem',
+  gap: '0.3rem',
   left: 0,
-  padding: '0.7rem 0.85rem 0.75rem',
+  padding: '0.75rem 0.9rem 0.85rem',
   position: 'absolute',
   right: 0,
-  textShadow: '0 1px 3px rgba(0, 0, 0, 0.45)',
+  textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
 });
 
 const Title = styled('h3', {
-  fontSize: '1.08rem',
-  fontWeight: 700,
-  lineHeight: 1.2,
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.3rem',
+  fontWeight: 600,
+  letterSpacing: '-0.005em',
+  lineHeight: 1.15,
   margin: 0,
 });
 
 const SubTitle = styled('p', {
-  fontSize: '0.85rem',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.82rem',
+  fontWeight: 500,
   lineHeight: 1.3,
   margin: 0,
   opacity: 0.92,
@@ -93,16 +120,17 @@ const Meta = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.3rem',
-  paddingTop: '0.2rem',
+  paddingTop: '0.1rem',
 });
 
 const Chip = styled('span', {
-  background: 'rgba(255, 255, 255, 0.92)',
+  background: 'rgba(255, 253, 247, 0.92)',
   borderRadius: '999px',
   color: 'var(--cocoso-colors-theme-800)',
-  fontSize: '0.75rem',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.74rem',
   fontWeight: 600,
-  padding: '0.1rem 0.5rem',
+  padding: '0.15rem 0.55rem',
   textShadow: 'none',
   whiteSpace: 'nowrap',
   variants: {
@@ -113,19 +141,68 @@ const Chip = styled('span', {
         color: 'white',
       },
     },
-    past: { true: { color: 'var(--cocoso-colors-gray-600)' } },
+    past: { true: { color: 'var(--cocoso-mylla-soft)' } },
   },
 });
 
 const More = styled('span', {
+  fontFamily: 'var(--cocoso-font-ui)',
   fontSize: '0.8rem',
   fontWeight: 700,
 });
 
 const Rule = styled('span', {
+  fontFamily: 'var(--cocoso-font-ui)',
   fontSize: '0.82rem',
   fontWeight: 600,
   '& small': { fontWeight: 500, marginLeft: '0.35rem', opacity: 0.85 },
+});
+
+const TopLeft = styled('div', {
+  left: '0.7rem',
+  position: 'absolute',
+  top: '0.7rem',
+  zIndex: 1,
+});
+
+const TopRight = styled('div', {
+  position: 'absolute',
+  right: '0.7rem',
+  top: '0.7rem',
+  zIndex: 1,
+});
+
+// The almanac label: day in Fraunces, month in small caps in tegel.
+const DateLabel = styled('span', {
+  background: 'var(--cocoso-papper)',
+  borderRadius: '10px',
+  boxShadow: 'var(--cocoso-skugga)',
+  color: 'var(--cocoso-mylla)',
+  display: 'inline-flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  lineHeight: 1,
+  minWidth: '2.6rem',
+  padding: '0.4rem 0.5rem 0.35rem',
+  textShadow: 'none',
+  '& b': {
+    fontFamily: 'var(--cocoso-font-display)',
+    fontVariationSettings: '"SOFT" 60',
+    fontSize: '1.25rem',
+    fontWeight: 700,
+  },
+  '& small': {
+    color: 'var(--cocoso-tegel)',
+    fontFamily: 'var(--cocoso-font-ui)',
+    fontSize: '0.62rem',
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    marginTop: '3px',
+    textTransform: 'uppercase',
+  },
+  variants: {
+    past: { true: { color: 'var(--cocoso-mylla-soft)', '& small': { color: 'var(--cocoso-mylla-soft)' } } },
+  },
 });
 
 interface Occurrence {
@@ -155,6 +232,21 @@ export function ThumbDate({ occurrence }: ThumbDateProps) {
   return <Chip past={isPast}>{label}</Chip>;
 }
 
+function AlmanacDate({ occurrence }: ThumbDateProps) {
+  if (!occurrence) {
+    return null;
+  }
+  const isPast = dayjs(occurrence.endDate)?.isBefore(today);
+  const start = dayjs(occurrence.startDate);
+  const multi = occurrence.startDate !== occurrence.endDate;
+  return (
+    <DateLabel past={isPast}>
+      <b>{multi ? `${start.format('D')}–${dayjs(occurrence.endDate).format('D')}` : start.format('D')}</b>
+      <small>{start.format('MMM').replace('.', '')}</small>
+    </DateLabel>
+  );
+}
+
 // A weekly activity shows its rhythm and next date instead of a row of dates.
 function ThumbRule({ dates }: { dates: Occurrence[] }) {
   const [t, i18n] = useTranslation('common');
@@ -182,6 +274,8 @@ interface Activity {
   title?: string;
   images?: string[];
   imageUrl?: string;
+  locationId?: string | null;
+  isMunicipalityOnly?: boolean;
 }
 
 export interface SexyThumbProps {
@@ -197,6 +291,9 @@ function SexyThumb({
   showPast = false,
   tags,
 }: SexyThumbProps) {
+  const locations = useAtomValue(locationsAtom);
+  const [tc] = useTranslation('common');
+
   if (!activity) {
     return null;
   }
@@ -205,6 +302,12 @@ function SexyThumb({
   // Resolve image: handles both legacy URLs and new Images collection references
   const imageRef = (activity.images && activity.images[0]) || activity.imageUrl;
   const imageUrl = getImageUrl(imageRef, 'medium');
+
+  const place = locations.find((l) => l._id === activity.locationId);
+  const world = worldForLocation(locations, activity.locationId);
+  const placeName =
+    place?.name ||
+    (activity.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
 
   const dates = datesAndTimes || [];
   const futureDates = dates.filter((date) =>
@@ -217,9 +320,10 @@ function SexyThumb({
   const remainingPast = pastDates.length - 1;
   const isWeekly =
     !showPast && futureDates.length > 0 && Boolean(getWeeklyPattern(dates));
+  const headline = showPast ? pastDates[pastDates.length - 1] : futureDates[0];
 
   return (
-    <Card>
+    <Card world={world?.key || 'skog'}>
       <Picture>
         {imageUrl ? (
           <LazyLoadImage
@@ -229,12 +333,25 @@ function SexyThumb({
             visibleByDefault={index < 6}
           />
         ) : (
-          <PlaceholderImage
-            seed={activity._id || title}
-            style={{ height: '100%', width: '100%' }}
-          />
+          <Shapes>
+            <PlaceholderImage
+              seed={activity._id || title}
+              style={{ height: '100%', width: '100%' }}
+            />
+          </Shapes>
         )}
       </Picture>
+
+      {headline && !isWeekly && (
+        <TopLeft>
+          <AlmanacDate occurrence={headline} />
+        </TopLeft>
+      )}
+      {placeName && (
+        <TopRight>
+          <PlaceTag name={placeName} world={world} onImage />
+        </TopRight>
+      )}
 
       <Body>
         <Title>{title}</Title>
@@ -256,7 +373,7 @@ function SexyThumb({
           {!showPast &&
             !isWeekly &&
             futureDates
-              .slice(0, 3)
+              .slice(1, 3)
               .map((occurrence) => (
                 <ThumbDate
                   key={occurrence.startDate + occurrence.startTime}
@@ -266,15 +383,6 @@ function SexyThumb({
           {!showPast && !isWeekly && remainingFuture > 0 && (
             <More>+{remainingFuture}</More>
           )}
-          {showPast &&
-            pastDates
-              .slice(0, 1)
-              .map((occurrence) => (
-                <ThumbDate
-                  key={occurrence.startDate + occurrence.startTime}
-                  occurrence={occurrence}
-                />
-              ))}
           {showPast && remainingPast > 0 && <More>+{remainingPast}</More>}
         </Meta>
       </Body>

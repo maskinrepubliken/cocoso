@@ -92,10 +92,9 @@ export default function ActivitiesHybrid({
               index={index}
               showPast={showPast}
               tags={
-                [
-                  item.isGroupMeeting ? groupsLabel : null,
-                  locationNameOf(item),
-                ].filter(Boolean) as string[]
+                [item.isGroupMeeting ? groupsLabel : null].filter(
+                  Boolean
+                ) as string[]
               }
             />
           </Center>

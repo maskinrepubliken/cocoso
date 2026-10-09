@@ -211,7 +211,7 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
           <Box py="2">
             <Divider
               css={{
-                borderColor: 'var(--cocoso-colors-theme-500)',
+                borderColor: 'var(--cocoso-linje)',
                 minWidth: '280px',
               }}
             />
@@ -220,8 +220,9 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
                 <Text
                   size="lg"
                   css={{
-                    fontWeight: '300',
-                    lineHeight: '1.3',
+                    color: 'var(--cocoso-mylla-soft)',
+                    fontWeight: '400',
+                    lineHeight: '1.4',
                     maxWidth: '520px',
                     textAlign: 'center',
                   }}

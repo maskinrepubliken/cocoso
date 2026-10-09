@@ -35,15 +35,18 @@ const earth: Record<number, string> = {
 export const dayColor = (weekday: number, isToday = false) =>
   isToday ? today : earth[weekday];
 
+// The notice board: woven texture in the season's colour, every event a
+// paper note held by a tegel pin.
 const Panel = styled('section', {
-  border: '1px solid rgba(40, 30, 15, 0.15)',
-  borderRadius: '14px',
-  boxShadow: '0 10px 28px -20px rgba(60, 35, 10, 0.45)',
-  color: ink,
-  margin: '0 auto 1rem',
+  backgroundImage:
+    'repeating-linear-gradient(0deg, rgba(30, 79, 27, 0.07) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(30, 79, 27, 0.07) 0 1px, transparent 1px 7px)',
+  borderRadius: 'var(--cocoso-radius-meny)',
+  boxShadow: 'var(--cocoso-skugga)',
+  color: 'var(--cocoso-mylla)',
+  margin: '0 auto 1.25rem',
   maxWidth: '1180px',
-  padding: '0.7rem 1.1rem 0.3rem',
-  '@media (max-width: 700px)': { padding: '0.6rem 0.8rem 0.2rem' },
+  padding: '1rem 1.25rem 1.25rem',
+  '@media (max-width: 700px)': { padding: '0.8rem 0.9rem 1rem' },
 });
 
 const PanelHead = styled('div', {
@@ -56,20 +59,22 @@ const PanelHead = styled('div', {
 });
 
 const PanelTitle = styled('h2', {
-  fontSize: '1.1rem',
-  fontWeight: 700,
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.65rem',
+  fontWeight: 600,
   margin: 0,
   '& small': {
-    color: ink,
-    fontSize: '1rem',
+    color: 'var(--cocoso-mylla-soft)',
+    fontFamily: 'var(--cocoso-body-font-family)',
+    fontSize: '0.95rem',
     fontWeight: 400,
-    marginLeft: '0.6rem',
-    opacity: 0.8,
+    marginLeft: '0.7rem',
   },
 });
 
 const Segmented = styled('div', {
-  background: 'rgba(255, 255, 255, 0.55)',
+  background: 'rgba(255, 253, 247, 0.7)',
   borderRadius: '999px',
   display: 'flex',
   padding: '3px',
@@ -79,12 +84,13 @@ const SegButton = styled('button', {
   background: 'transparent',
   border: 0,
   borderRadius: '999px',
-  color: ink,
+  color: 'var(--cocoso-colors-theme-800)',
   cursor: 'pointer',
-  fontFamily: 'inherit',
+  fontFamily: 'var(--cocoso-font-ui)',
   fontSize: '0.875rem',
-  fontWeight: 600,
-  padding: '0.3rem 0.9rem',
+  fontWeight: 700,
+  padding: '0.35rem 0.95rem',
+  transition: 'background-color 0.15s ease',
   variants: {
     active: {
       true: { background: 'var(--cocoso-colors-theme-700)', color: 'white' },
@@ -93,60 +99,87 @@ const SegButton = styled('button', {
 });
 
 const Rows = styled('ul', {
-  columnGap: '2.5rem',
   display: 'grid',
-  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  gap: '0.9rem 0.75rem',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
   listStyle: 'none',
-  margin: 0,
-  padding: 0,
-  '@media (max-width: 800px)': { gridTemplateColumns: 'minmax(0, 1fr)' },
+  margin: '0.9rem 0 0',
+  padding: '0.3rem 0 0',
   variants: {
-    single: { true: { gridTemplateColumns: 'minmax(0, 1fr)' } },
+    single: { true: {} },
   },
 });
 
+// A note on the board: paper, a pin, the time in green, the title in
+// Fraunces, the place in small type.
 const Row = styled(Link, {
-  alignItems: 'center',
-  borderTop: '1px solid rgba(40, 30, 15, 0.14)',
+  background: 'var(--cocoso-papper)',
+  borderRadius: '8px',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   color: 'inherit',
   display: 'grid',
-  gap: '0.9rem',
-  gridTemplateColumns: '6.5rem minmax(0, 1fr) auto',
-  padding: '0.4rem 0',
+  gap: '0.15rem',
+  gridTemplateRows: 'auto auto auto',
+  height: '100%',
+  padding: '0.9rem 0.9rem 0.75rem',
+  position: 'relative',
   textDecoration: 'none',
-  '&:hover strong': { textDecoration: 'underline' },
-  '@media (max-width: 700px)': { gridTemplateColumns: '5.6rem minmax(0, 1fr)' },
+  transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+  '&::before': {
+    background: 'var(--cocoso-season-accent, var(--cocoso-tegel))',
+    borderRadius: '50%',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.3), inset 0 -2px 3px rgba(0, 0, 0, 0.2)',
+    content: '""',
+    height: '12px',
+    left: '50%',
+    marginLeft: '-6px',
+    position: 'absolute',
+    top: '-6px',
+    width: '12px',
+  },
+  '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 14px 26px -14px rgba(60, 40, 20, 0.5)' },
 });
 
 const Time = styled('span', {
+  color: 'var(--cocoso-colors-theme-700)',
+  fontSize: '0.95rem',
   fontVariantNumeric: 'tabular-nums',
   fontWeight: 700,
   whiteSpace: 'nowrap',
-  '@media (max-width: 700px)': { fontSize: '0.875rem' },
 });
 
 const What = styled('span', {
   minWidth: 0,
-  '& strong': { display: 'block', fontWeight: 600 },
-  '& small': {
-    color: ink,
+  '& strong': {
     display: 'block',
-    fontSize: '0.8rem',
-    marginTop: '2px',
-    opacity: 0.75,
+    fontFamily: 'var(--cocoso-font-display)',
+    fontVariationSettings: '"SOFT" 60',
+    fontSize: '1.1rem',
+    fontWeight: 600,
+    lineHeight: 1.2,
+    marginTop: '0.15rem',
+  },
+  '& small': {
+    color: 'var(--cocoso-mylla-soft)',
+    display: 'block',
+    fontSize: '0.82rem',
+    marginTop: '3px',
   },
 });
 
 const Pill = styled('span', {
-  background: 'rgba(255, 255, 255, 0.7)',
-  border: '1px solid var(--cocoso-colors-theme-600)',
+  alignSelf: 'start',
+  background: 'var(--cocoso-colors-theme-100)',
   borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
-  fontSize: '0.75rem',
+  color: 'var(--cocoso-colors-theme-700)',
+  display: 'inline-flex',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.72rem',
   fontWeight: 700,
-  padding: '0.2rem 0.6rem',
+  justifySelf: 'start',
+  marginTop: '0.5rem',
+  padding: '0.25rem 0.6rem',
   whiteSpace: 'nowrap',
-  '@media (max-width: 700px)': { display: 'none' },
   variants: {
     kind: {
       recurring: {},
@@ -168,10 +201,11 @@ const Pill = styled('span', {
 });
 
 const Empty = styled('p', {
-  borderTop: '1px solid rgba(40, 30, 15, 0.14)',
-  margin: 0,
-  opacity: 0.7,
-  padding: '0.5rem 0',
+  color: 'var(--cocoso-mylla-soft)',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontStyle: 'italic',
+  fontSize: '1.05rem',
+  margin: '0.75rem 0 0',
 });
 
 // The week heads with its title and intro on one line to save height.
@@ -185,15 +219,17 @@ const SectionHead = styled('div', {
 });
 
 const SectionTitle = styled('h2', {
-  fontSize: '1.1rem',
-  fontWeight: 700,
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.5rem',
+  fontWeight: 600,
   margin: 0,
 });
 
 const SectionIntro = styled('p', {
-  fontSize: '0.875rem',
+  color: 'var(--cocoso-mylla-soft)',
+  fontSize: '0.9rem',
   margin: 0,
-  opacity: 0.75,
 });
 
 const Week = styled('div', {
@@ -212,10 +248,10 @@ const Week = styled('div', {
 });
 
 const Day = styled('div', {
-  border: '1px solid rgba(40, 30, 15, 0.14)',
   borderRadius: '10px',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   color: ink,
-  padding: '0.45rem',
+  padding: '0.55rem',
   '@media (max-width: 900px)': {
     flex: '0 0 68%',
     scrollSnapAlign: 'start',
@@ -223,8 +259,8 @@ const Day = styled('div', {
   variants: {
     today: {
       true: {
-        border: '2px solid var(--cocoso-colors-theme-700)',
-        boxShadow: '0 8px 20px -14px rgba(120, 60, 0, 0.7)',
+        outline: '2px solid var(--cocoso-season-accent, var(--cocoso-tegel))',
+        outlineOffset: '-2px',
       },
     },
   },
@@ -238,33 +274,41 @@ const DayName = styled('h3', {
   letterSpacing: '0.06em',
   margin: '0 0 0.35rem',
   textTransform: 'uppercase',
+  fontFamily: 'var(--cocoso-font-ui)',
   variants: {
     today: {
       true: {
-        '& span:last-child': { color: 'var(--cocoso-colors-theme-800)' },
+        '& span:last-child': { color: 'var(--cocoso-season-accent, var(--cocoso-tegel))' },
       },
     },
   },
 });
 
 const Slot = styled(Link, {
-  background: 'rgba(255, 255, 255, 0.82)',
-  borderLeft: '4px solid var(--cocoso-colors-theme-600)',
-  borderRadius: '6px',
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
+  background: 'rgba(255, 253, 247, 0.85)',
+  borderRadius: '8px',
+  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)',
   color: 'inherit',
   display: 'block',
-  marginBottom: '0.3rem',
-  padding: '0.3rem 0.45rem',
+  marginBottom: '0.35rem',
+  padding: '0.4rem 0.55rem',
   textDecoration: 'none',
-  '&:hover': { boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' },
+  transition: 'box-shadow 0.15s ease, transform 0.15s ease',
+  '&:hover': { boxShadow: '0 6px 14px -8px rgba(60, 40, 20, 0.5)', transform: 'translateY(-1px)' },
   '& b': {
     display: 'block',
     fontSize: '0.8rem',
     fontVariantNumeric: 'tabular-nums',
     opacity: 0.75,
   },
-  '& strong': { display: 'block', fontSize: '0.9rem', lineHeight: 1.2 },
+  '& strong': {
+    display: 'block',
+    fontFamily: 'var(--cocoso-font-display)',
+    fontVariationSettings: '"SOFT" 60',
+    fontSize: '0.98rem',
+    fontWeight: 600,
+    lineHeight: 1.2,
+  },
   '& small': {
     display: 'block',
     fontSize: '0.75rem',
@@ -372,7 +416,7 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
   return (
     <Panel
       aria-labelledby="day-agenda-title"
-      css={{ background: dayColor(day.day(), offset === 0) }}
+      css={{ backgroundColor: 'var(--cocoso-season-tavla)' }}
     >
       <PanelHead>
         <PanelTitle id="day-agenda-title">
