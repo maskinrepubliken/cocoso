@@ -6,3 +6,6 @@
   Publicerad även som https://claude.ai/artifact/6XYXRtRNtTkMPyonytaZo4
 - `tranemo_logo.svg` – kommunens logotyp, hämtad från tranemo.se, använd som
   referens i dokumenten.
+- `mal-hemma-i-tranemo.html` – designmålet «Hemma i Tranemo»: proffsigt,
+  hemtrevligt och lokalt. Jämför med utgångsläget och listar vägen dit.
+  Publicerad även som https://claude.ai/artifact/FvnS9zLx1imzZ978EdMxkN

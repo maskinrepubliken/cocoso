@@ -1,0 +1,433 @@
+<title>Hemma i Tranemo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500;9..144,600;9..144,700,50&family=Raleway:wght@500;600;700;800&display=swap">
+<style>
+  :root {
+    /* === Målpaletten === */
+    --lin: #f6f2e8;        /* golvet: varmt linne */
+    --papper: #fffdf8;     /* öarna: krämvitt */
+    --mylla: #2a2520;      /* text: varmt nästan-svart */
+    --mylla-soft: #6b625a;
+    --skog-100: #e4ecd9;   /* ljusgrönt som ton, inte golv */
+    --skog-200: #c9d8b6;
+    --skog-500: #2f6b3a;   /* handling */
+    --skog-600: #26592f;
+    --skog-700: #1e4f1b;   /* kommungrönt, tyngd */
+    --skog-800: #10300f;
+    --tegel: #b9603f;      /* varm accent, Väveriets tegel */
+    --tegel-100: #f3e0d6;
+    --lingon: #a8323a;     /* varningar och räknare, skilt från tegel */
+    --sand: #e9dcc4; --clay: #e2c6a8; --ochre: #d9c79a; --olive: #c9cfa4; --sage: #c3d1b8; --terra: #d8bfa9; --stone: #cdc3b4; --leaf: #b9dba0;
+    --linje: #e3dcCc;
+    --skugga: 0 1px 2px rgba(60, 40, 20, .06), 0 6px 18px -14px rgba(60, 40, 20, .35);
+    --skugga-kort: 0 8px 22px -14px rgba(60, 40, 20, .45);
+
+    /* utgångsläget, för jämförelser */
+    --u-golv: hsl(78 55% 92%); --u-ink: hsl(145 50% 12%); --u-500: hsl(145 50% 40%);
+
+    --bg: var(--lin); --surface: var(--papper); --ink: var(--mylla); --ink-soft: var(--mylla-soft); --line: var(--linje);
+    --font-display: Fraunces, Georgia, "Times New Roman", serif;
+    --font-ui: Raleway, "Helvetica Neue", Arial, sans-serif;
+    --font-body: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #1b1915; --surface: #26231e; --ink: #efe9df; --ink-soft: #a89f92; --line: #3a362f;
+      --skog-100: #263122; --skog-200: #324530; --tegel-100: #4a2f25;
+      --skugga: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px -14px rgba(0,0,0,.6);
+      --skugga-kort: 0 8px 22px -14px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #1b1915; --surface: #26231e; --ink: #efe9df; --ink-soft: #a89f92; --line: #3a362f;
+    --skog-100: #263122; --skog-200: #324530; --tegel-100: #4a2f25;
+    --skugga: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px -14px rgba(0,0,0,.6);
+    --skugga-kort: 0 8px 22px -14px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 var(--font-body); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-block: 36px 90px; padding-inline: 20px; }
+  h1, h2, h3 { margin: 0; line-height: 1.1; text-wrap: balance; }
+  h1 { font: 700 clamp(36px, 5vw, 60px)/1.02 var(--font-display); font-variation-settings: "SOFT" 60; letter-spacing: -.01em; }
+  h2 { font: 600 30px var(--font-display); margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line); }
+  h3 { font: 700 15px var(--font-ui); margin-top: 28px; }
+  p { max-width: 66ch; margin: 10px 0 0; }
+  p.lead { font-size: 18px; color: var(--ink-soft); line-height: 1.5; }
+  .eyebrow { font: 600 11px/1 var(--font-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--skog-500); }
+  .note { color: var(--ink-soft); font-size: 13px; max-width: 72ch; line-height: 1.5; }
+  code { font: 12.5px/1.4 ui-monospace, Menlo, monospace; background: var(--skog-100); padding: 1px 5px; border-radius: 4px; }
+  a { color: var(--skog-500); }
+  .toc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; }
+  .toc a { display: inline-flex; height: 30px; align-items: center; padding: 0 12px; border-radius: 999px; background: var(--surface); box-shadow: var(--skugga); color: var(--skog-700); font: 600 13px var(--font-ui); text-decoration: none; }
+  :root[data-theme="dark"] .toc a, :root[data-theme="dark"] .brand, :root[data-theme="dark"] .nav a { color: var(--ink); }
+  .grid { display: grid; gap: 14px; margin-top: 16px; }
+  .g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .g3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .panel { background: var(--surface); border-radius: 12px; padding: 18px 20px; box-shadow: var(--skugga); }
+  .panel h3 { margin-top: 0; }
+  .demo { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+  @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+  ul.rules { margin: 10px 0 0; padding-left: 18px; max-width: 70ch; }
+  ul.rules li { margin: 5px 0; }
+
+  /* före / efter */
+  .fe { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 14px; border-radius: 12px; overflow: hidden; box-shadow: var(--skugga); }
+  @media (max-width: 720px) { .fe { grid-template-columns: 1fr; } }
+  .fe > div { padding: 18px 20px; }
+  .fe .fore { background: var(--u-golv); color: var(--u-ink); }
+  .fe .efter { background: var(--lin); color: var(--mylla); }
+  .fe .lbl { font: 600 11px/1 var(--font-ui); letter-spacing: .1em; text-transform: uppercase; opacity: .6; margin-bottom: 12px; }
+
+  /* färg */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; margin-top: 12px; }
+  .sw { border-radius: 10px; overflow: hidden; background: var(--surface); box-shadow: var(--skugga); }
+  .sw .c { height: 64px; }
+  .sw .m { padding: 8px 10px; font: 12px/1.35 ui-monospace, Menlo, monospace; }
+  .sw .m b { display: block; font: 600 12px var(--font-ui); }
+  .sw .m small { color: var(--ink-soft); }
+
+  /* typ */
+  .type-row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+  .type-row .l { font: 12px ui-monospace, Menlo, monospace; color: var(--ink-soft); }
+  @media (max-width: 560px) { .type-row { grid-template-columns: 1fr; gap: 2px; } }
+  .disp { font-family: var(--font-display); font-variation-settings: "SOFT" 60; }
+  .ui { font-family: var(--font-ui); }
+
+  /* väv: textur från Väveriet */
+  .vav {
+    background-color: var(--skog-100);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(30,79,27,.07) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(90deg, rgba(30,79,27,.07) 0 1px, transparent 1px 7px);
+  }
+  .vav.tegel { background-color: var(--tegel-100); background-image: repeating-linear-gradient(0deg, rgba(185,96,63,.1) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(185,96,63,.1) 0 1px, transparent 1px 7px); }
+
+  /* ortstämpel */
+  .stamp { position: relative; width: 76px; height: 76px; border-radius: 999px; display: grid; place-items: center; background: var(--surface); box-shadow: inset 0 0 0 2px var(--skog-700), inset 0 0 0 5px var(--surface), inset 0 0 0 6px var(--skog-700); color: var(--skog-700); font: 700 10px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; text-align: center; line-height: 1.1; flex: 0 0 auto; }
+  .stamp.tegel { box-shadow: inset 0 0 0 2px var(--tegel), inset 0 0 0 5px var(--surface), inset 0 0 0 6px var(--tegel); color: var(--tegel); }
+  .stamp.sm { width: 28px; height: 28px; font-size: 11px; box-shadow: inset 0 0 0 1.5px var(--skog-700); }
+  .stamp .yr { display: block; font: 500 9px var(--font-body); letter-spacing: 0; text-transform: none; opacity: .7; }
+
+  /* ortstag */
+  .orttag { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 4px; border-radius: 999px; background: var(--papper); color: var(--skog-700); font: 600 12px var(--font-ui); box-shadow: var(--skugga); }
+  .orttag i { width: 18px; height: 18px; border-radius: 999px; background: var(--skog-200); display: grid; place-items: center; font-style: normal; font-size: 10px; color: var(--skog-700); }
+  .orttag.u i { background: var(--clay); color: #5a3a22; } .orttag.l i { background: #cfe0ea; color: #26485c; }
+
+  /* header i målstil */
+  .hdr { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; height: 56px; padding: 0 14px; }
+  .brand { display: inline-flex; align-items: center; height: 40px; padding: 3px 4px 3px 3px; border-radius: 999px; background: var(--papper); box-shadow: var(--skugga); color: var(--skog-800); font-family: var(--font-ui); justify-self: start; }
+  .brand .mark { width: 32px; height: 32px; border-radius: 999px; background: var(--skog-700); color: #fff; display: grid; place-items: center; font: 700 17px var(--font-display); }
+  .brand .name { padding: 0 8px 0 9px; font-size: 15px; font-weight: 700; }
+  .brand .sep { margin: 0 2px 0 0; color: var(--skog-200); font-size: 20px; font-weight: 300; }
+  .brand .loc { display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 10px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--skog-700); }
+  .brand .x { display: grid; place-items: center; width: 22px; height: 22px; margin: 0 4px 0 -4px; border-radius: 999px; background: var(--skog-100); color: var(--skog-700); font-size: 11px; font-weight: 700; }
+  .nav { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--papper); box-shadow: var(--skugga); }
+  .nav a, .chip { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 13px; border-radius: 999px; color: var(--skog-700); font: 600 14px var(--font-ui); text-decoration: none; white-space: nowrap; }
+  .nav a.on, .chip.on { background: var(--skog-700); color: #fff; }
+  .chip { background: var(--papper); box-shadow: var(--skugga); font-size: 13px; }
+  .login { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 999px; background: var(--skog-500); color: #fff; font: 600 13px var(--font-ui); justify-self: end; }
+
+  /* hero i målstil */
+  .hero { position: relative; border-radius: 16px; overflow: hidden; padding: 40px 32px 32px; box-shadow: var(--skugga); color: var(--mylla); }
+  .hero .eyebrow { color: var(--tegel); }
+  .hero h1 { margin-top: 10px; color: var(--skog-800); }
+  .hero p { font-size: 17px; color: #4b4239; }
+  .hero .places { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  .place { position: relative; width: 190px; height: 118px; border-radius: 12px; overflow: hidden; box-shadow: var(--skugga-kort); background: linear-gradient(135deg, #cfe3b5, #4f8a5c); }
+  .place.warm { background: linear-gradient(135deg, #e2c6a8, #8a5a3a); }
+  .place.cool { background: linear-gradient(135deg, #cfe0ea, #3f6b7a); }
+  .place::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(42,37,32,0) 35%, rgba(42,37,32,.72)); }
+  .place b { position: absolute; left: 12px; bottom: 10px; z-index: 1; color: #fff; font: 600 19px var(--font-display); font-variation-settings: "SOFT" 60; text-shadow: 0 1px 3px rgba(0,0,0,.4); }
+  .place .stamp.sm { position: absolute; top: 10px; right: 10px; z-index: 1; background: rgba(255,253,248,.9); }
+  .season { position: absolute; top: 18px; right: 20px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: rgba(255,253,248,.85); font: 600 12px var(--font-ui); color: var(--mylla); }
+  .season i { width: 22px; height: 22px; border-radius: 999px; background: var(--ochre); display: block; }
+
+  /* knappar */
+  .btn { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; background: var(--skog-500); color: #fff; font: 700 15px var(--font-ui); padding: 10px 18px; cursor: pointer; }
+  .btn.outline { background: var(--papper); color: var(--skog-700); box-shadow: inset 0 0 0 1.5px var(--skog-200); }
+  .btn.ghost { background: transparent; color: var(--skog-700); }
+  .btn.tegel { background: var(--tegel); }
+  .btn.sm { font-size: 13px; padding: 7px 14px; }
+  .seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--skog-100); }
+  .seg span { height: 30px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 999px; font: 700 14px var(--font-ui); color: var(--skog-800); }
+  .seg span.on { background: var(--skog-700); color: #fff; }
+  .badge { display: inline-flex; align-items: center; border-radius: 999px; font: 600 12px var(--font-ui); padding: 3px 9px; line-height: 1.2; }
+  .badge.lingon { background: var(--lingon); color: #fff; }
+  .badge.tegel { background: var(--tegel-100); color: var(--tegel); }
+  .badge.skog { background: var(--skog-100); color: var(--skog-700); }
+  .badge.sand { background: var(--sand); color: #5a4a2a; }
+
+  /* kort */
+  .kort { position: relative; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, #cfe3b5, #4f8a5c); box-shadow: var(--skugga-kort); color: #fff; }
+  .kort.foto { background: linear-gradient(160deg, #a8b89a 0%, #5f6b4a 60%, #3b4530 100%); }
+  .kort::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(42,37,32,0) 40%, rgba(42,37,32,.78) 100%); }
+  .kort .t { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 1; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .kort .t b { font: 600 20px/1.15 var(--font-display); font-variation-settings: "SOFT" 60; text-shadow: 0 1px 3px rgba(0,0,0,.4); }
+  .kort .t small { font: 500 12px var(--font-ui); opacity: .9; }
+  .kort .datum { position: absolute; top: 12px; left: 12px; z-index: 1; background: var(--papper); color: var(--mylla); border-radius: 10px; padding: 6px 9px; text-align: center; line-height: 1; box-shadow: var(--skugga); }
+  .kort .datum b { display: block; font: 700 18px var(--font-display); }
+  .kort .datum small { display: block; font: 600 10px var(--font-ui); letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; color: var(--tegel); }
+  .kort .orttag { position: absolute; top: 12px; right: 12px; z-index: 1; }
+
+  /* anslagstavlan */
+  .tavla { border-radius: 14px; padding: 18px 20px 20px; box-shadow: var(--skugga); color: var(--mylla); }
+  .tavla .h { display: flex; align-items: baseline; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
+  .tavla .h b { font: 600 26px var(--font-display); font-variation-settings: "SOFT" 60; }
+  .tavla .h span { color: #6b625a; font-size: 14px; }
+  .lappar { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+  .lapp { position: relative; background: var(--papper); border-radius: 8px; padding: 14px 14px 12px; box-shadow: var(--skugga-kort); color: var(--mylla); }
+  .lapp::before { content: ""; position: absolute; top: -6px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 999px; background: var(--tegel); box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+  .lapp .tid { font: 700 15px var(--font-body); font-variant-numeric: tabular-nums; color: var(--skog-700); }
+  .lapp b { display: block; margin-top: 4px; font: 600 17px/1.2 var(--font-display); font-variation-settings: "SOFT" 60; }
+  .lapp small { display: block; margin-top: 4px; color: #6b625a; font-size: 13px; }
+  .lapp .r { display: inline-flex; margin-top: 8px; height: 24px; padding: 0 9px; border-radius: 999px; background: var(--skog-100); color: var(--skog-700); font: 600 11px var(--font-ui); align-items: center; }
+
+  /* vecka */
+  .week { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 12px; }
+  .day { border-radius: 10px; padding: 10px; box-shadow: var(--skugga-kort); color: #2a2520; min-height: 120px; }
+  .day h4 { display: flex; justify-content: space-between; font: 700 12px var(--font-ui); letter-spacing: .06em; margin: 0 0 8px; }
+  .day .ev { background: rgba(255,253,248,.8); border-radius: 8px; padding: 8px 9px; font-size: 12px; }
+  .day .ev b { display: block; font: 600 14px/1.2 var(--font-display); font-variation-settings: "SOFT" 60; }
+  .day.today { outline: 2px solid var(--tegel); outline-offset: -2px; }
+
+  /* infopanel */
+  .info { background: var(--surface); border-radius: 12px; padding: 18px 20px; box-shadow: var(--skugga); }
+  .info .k { font: 700 11px var(--font-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--tegel); }
+  .info b.v { display: block; margin-top: 8px; font: 600 20px/1.2 var(--font-display); font-variation-settings: "SOFT" 60; color: var(--ink); }
+  .info p { font-size: 14px; }
+  .person { display: flex; gap: 12px; align-items: center; margin-top: 10px; }
+  .avatar { width: 48px; height: 48px; border-radius: 999px; background: linear-gradient(135deg, var(--clay), var(--tegel)); border: 2px solid var(--papper); box-shadow: var(--skugga); display: grid; place-items: center; color: #fff; font: 700 18px var(--font-display); }
+
+  /* fält */
+  .field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
+  .field label { font: 700 13px var(--font-ui); color: var(--ink); }
+  .field input { height: 42px; padding: 0 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--papper); color: var(--mylla); font: 15px var(--font-body); }
+  .field input:focus { outline: 2px solid var(--skog-500); outline-offset: 1px; }
+
+  /* sidfot */
+  .footer { border-radius: 14px; padding: 28px 24px; color: var(--mylla); display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+  @media (max-width: 720px) { .footer { grid-template-columns: 1fr; } }
+  .footer b { font: 600 22px var(--font-display); font-variation-settings: "SOFT" 60; display: block; }
+  .footer small { display: block; margin-top: 6px; color: #6b625a; font-size: 13px; max-width: 48ch; }
+  .footer nav { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font: 600 13px var(--font-ui); color: var(--skog-700); }
+  .footer img { height: 48px; }
+
+  .steps { counter-reset: s; margin-top: 16px; display: grid; gap: 10px; }
+  .step { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; background: var(--surface); border-radius: 12px; padding: 14px 16px; box-shadow: var(--skugga); }
+  .step::before { counter-increment: s; content: counter(s); width: 32px; height: 32px; border-radius: 999px; background: var(--skog-700); color: #fff; display: grid; place-items: center; font: 700 14px var(--font-ui); }
+  .step b { font: 700 14px var(--font-ui); display: block; }
+  .step span { font-size: 14px; color: var(--ink-soft); }
+
+  :focus-visible { outline: 2px solid var(--skog-500); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Tranemo Evenemangskalender · designmål · oktober 2026</div>
+  <h1 style="margin-top:10px">Hemma i Tranemo</h1>
+  <p class="lead">Dit vi vill: en sajt som känns som kommunens egen, byggd med samma omsorg som en bra lokaltidning. Proffsig i strukturen, hemtrevlig i materialen, lokal i detaljerna. Det här dokumentet beskriver målet och jämför med <a href="https://claude.ai/artifact/6XYXRtRNtTkMPyonytaZo4">utgångsläget</a>, som också ligger i repot under <code>docs/design/utgangslage.html</code>.</p>
+  <nav class="toc">
+    <a href="#ide">Idén</a><a href="#farg">Färg</a><a href="#typografi">Typografi</a><a href="#lokalt">Lokala detaljer</a><a href="#komponenter">Komponenter</a><a href="#ton">Tonen</a><a href="#vagen">Vägen dit</a>
+  </nav>
+
+  <!-- ================= IDÉN ================= -->
+  <h2 id="ide">Idén: tre ord, tre beslut</h2>
+  <div class="grid g3">
+    <div class="panel"><div class="eyebrow">Proffsig</div><h3 style="margin-top:6px">Strukturen består</h3><p class="note">Headern, pillerna, gridet, 4 px-skalan och «hela kommunen som normalläge» är rätt och behålls. Proffsigheten sitter i att allt beter sig likadant överallt, inte i att det ser företagsgrått ut.</p></div>
+    <div class="panel"><div class="eyebrow" style="color:var(--tegel)">Hemtrevlig</div><h3 style="margin-top:6px">Materialen byts</h3><p class="note">Golvet går från ljusgrönt till varmt linne. Öarna blir krämvita, inte vita. Rubrikerna får en mjuk serif med rundade former. Skuggorna blir varma. Grönt blir en färg man använder, inte en färg man står på.</p></div>
+    <div class="panel"><div class="eyebrow">Lokal</div><h3 style="margin-top:6px">Detaljerna kommer härifrån</h3><p class="note">Ortstämplar i stället för generiska taggar. En vävtextur från Väveriet i Uddebo. Tegel från bruket som varm accent. Årstiden syns i hero. Arrangörer tackas med namn. Ingenting av det kräver nya bilder, bara att vi använder det vi har.</p></div>
+  </div>
+
+  <h3>Före och efter, i ett ögonkast</h3>
+  <div class="fe">
+    <div class="fore"><div class="lbl">Utgångsläge</div>
+      <div style="font:800 28px Raleway,sans-serif;color:var(--u-ink)">På gång i Uddebo</div>
+      <div style="margin-top:8px;font:15px Arial,sans-serif;color:#2f4a35">Vävstuga i Väveriet, varje måndag 18–21.</div>
+      <div style="display:flex;gap:8px;margin-top:14px"><span style="display:inline-flex;height:30px;align-items:center;padding:0 12px;border-radius:999px;background:#fff;font:600 13px Raleway,sans-serif;color:#1a4d2e">Uddebo</span><span style="display:inline-flex;height:30px;align-items:center;padding:0 12px;border-radius:999px;background:var(--u-500);color:#fff;font:600 13px Raleway,sans-serif">Anmäl</span></div>
+    </div>
+    <div class="efter"><div class="lbl">Mål</div>
+      <div class="disp" style="font-size:30px;font-weight:600;color:var(--skog-800)">På gång i Uddebo</div>
+      <div style="margin-top:8px;font:15px Arial,sans-serif;color:#4b4239">Vävstuga i Väveriet, varje måndag 18–21.</div>
+      <div style="display:flex;gap:8px;margin-top:14px;align-items:center"><span class="orttag u"><i>U</i>Uddebo</span><button class="btn sm">Anmäl</button></div>
+    </div>
+  </div>
+  <p class="note">Samma information, samma komponenter. Det som ändras är material och ton: linne i stället för mint, serif i stället för grotesk, en ortstämpel i stället för en vit tagg.</p>
+
+  <!-- ================= FÄRG ================= -->
+  <h2 id="farg">Färg</h2>
+  <p>Grönt blir kommunens gröna, inte ett eget blågrönt. Golvet blir varmt. En varm accent tillkommer för det som är nära och nu. Jordfärgerna för veckan behålls precis som de är, de var redan rätt.</p>
+
+  <h3>Material</h3>
+  <div class="swatches">
+    <div class="sw"><div class="c" style="background:var(--lin)"></div><div class="m"><b>Linne</b>#F6F2E8<br><small>golvet</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--papper);border-bottom:1px solid var(--line)"></div><div class="m"><b>Papper</b>#FFFDF8<br><small>öar, kort, piller</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--linje)"></div><div class="m"><b>Linje</b>#E3DCCC<br><small>kanter, avdelare</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--mylla)"></div><div class="m"><b>Mylla</b>#2A2520<br><small>text</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--mylla-soft)"></div><div class="m"><b>Mylla, dämpad</b>#6B625A<br><small>sekundär text</small></div></div>
+  </div>
+
+  <h3>Skog, från tranemo.se</h3>
+  <div class="swatches">
+    <div class="sw"><div class="c" style="background:var(--skog-100)"></div><div class="m"><b>skog-100</b>#E4ECD9<br><small>toning, hover, chips</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--skog-200)"></div><div class="m"><b>skog-200</b>#C9D8B6<br><small>kanter på gröna ytor</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--skog-500)"></div><div class="m"><b>skog-500</b>#2F6B3A<br><small>primär knapp, länk</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--skog-700)"></div><div class="m"><b>skog-700</b>#1E4F1B<br><small>kommungrönt: valt, tyngd</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--skog-800)"></div><div class="m"><b>skog-800</b>#10300F<br><small>rubriker på ljust</small></div></div>
+  </div>
+
+  <h3>Tegel och lingon</h3>
+  <div class="swatches">
+    <div class="sw"><div class="c" style="background:var(--tegel)"></div><div class="m"><b>Tegel</b>#B9603F<br><small>nära och nu: Idag, nålen, etiketter</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--tegel-100)"></div><div class="m"><b>Tegel, ljus</b>#F3E0D6<br><small>bakgrund till tegelmärken</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--lingon)"></div><div class="m"><b>Lingon</b>#A8323A<br><small>bara varningar och räknare</small></div></div>
+    <div class="sw"><div class="c" style="background:linear-gradient(90deg,var(--sand),var(--clay),var(--ochre),var(--olive),var(--sage),var(--terra),var(--stone))"></div><div class="m"><b>Veckan</b>oförändrad<br><small>sand … sten, idag i löv</small></div></div>
+  </div>
+  <p class="note">Tegel är Väveriets och glasbrukets färg och används för det som händer nära i tid: Idag-rubriken, nålen på lappen, datumetiketten på kortet, versala paneletiketter. Lingon är reserverat för fel och räknare, så att varmt aldrig betyder «något är fel». I koden: temats nyans går till 78/30 (linne) och accenten till 118/48 så att theme-700 blir kommungrönt. Tegel läggs till som en tredje variabel, <code>--cocoso-colors-accent-500</code>.</p>
+
+  <!-- ================= TYPOGRAFI ================= -->
+  <h2 id="typografi">Typografi</h2>
+  <p>En ny röst för rubrikerna: <b class="disp" style="font-size:19px">Fraunces</b>, en mjuk serif med optisk storlek, satt med SOFT 60 så att hörnen är rundade. Den låter som en bokhandel eller ett bibliotek, inte som en bank. Raleway stannar i allt som är knapp, meny och etikett, så headern behöver inte ritas om. Arial stannar i löptext som på tranemo.se.</p>
+  <div class="panel" style="margin-top:14px">
+    <div class="type-row"><span class="l">Display · 60/700 soft</span><span class="disp" style="font-size:clamp(36px,5vw,60px);font-weight:700;line-height:1;color:var(--skog-800)">Hej Tranemo!</span></div>
+    <div class="type-row"><span class="l">H1 · 36/600</span><span class="disp" style="font-size:36px;font-weight:600">Seniorgympa i Dalstorp</span></div>
+    <div class="type-row"><span class="l">H2 · 28/600</span><span class="disp" style="font-size:28px;font-weight:600">På gång i Uddebo</span></div>
+    <div class="type-row"><span class="l">Kortrubrik · 20/600</span><span class="disp" style="font-size:20px;font-weight:600">Skördemarknad i hembygdsparken</span></div>
+    <div class="type-row"><span class="l">Meny · 14/600 Raleway</span><span class="ui" style="font-size:14px;font-weight:600;color:var(--skog-700)">Evenemang &nbsp; Föreningar &nbsp; Kalender</span></div>
+    <div class="type-row"><span class="l">Etikett · 11/700</span><span class="ui" style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tegel)">När · Plats · Arrangör</span></div>
+    <div class="type-row"><span class="l">Brödtext · 15/400</span><span>Rörlighet, balans och styrka till musik, anpassat efter dagsformen. Efteråt fikar vi tillsammans.</span></div>
+    <div class="type-row"><span class="l">Tid · 16/700 tab.</span><span style="font-weight:700;font-variant-numeric:tabular-nums;color:var(--skog-700)">18:00–21:00</span></div>
+    <div class="type-row" style="border-bottom:0"><span class="l">Tack · 13/400 kursiv</span><span class="disp" style="font-size:14px;font-style:italic;color:var(--ink-soft)">Foto: Sterling, CC BY 3.0. Tack!</span></div>
+  </div>
+  <ul class="rules">
+    <li>Fraunces i 500, 600 och 700 med optisk storlek 9–144 och SOFT 60. Aldrig under 17 px.</li>
+    <li>Raleway för allt man trycker på och för versala etiketter. Arial för text man läser.</li>
+    <li>Skalan blir 60 · 36 · 28 · 20 · 17 · 15 · 14 · 13 · 11.</li>
+    <li>Kursiv Fraunces är reserverad för tack, citat och bildtexter. Det är sajtens «handskrivna» röst, utan att låtsas vara handskriven.</li>
+  </ul>
+
+  <!-- ================= LOKALT ================= -->
+  <h2 id="lokalt">Lokala detaljer</h2>
+  <p>Det som gör att sajten inte kunde vara vilken kommuns som helst. Fyra element, alla byggda på sådant som redan finns i data eller koden.</p>
+
+  <div class="two">
+    <div class="panel">
+      <h3>Ortstämplar</h3>
+      <p class="note">Varje ort får en stämpel: en dubbelring med namnet, i stil med poststämplar och hembygdsföreningars sigill. Stor på ortsidan, liten på kort och i taggar. Färgen följer orten: skog för Tranemo tätort, lera för Uddebo (Väveriet), glasblå för Limmared (bruket).</p>
+      <div class="demo"><span class="stamp">Tranemo<br>tätort<span class="yr">sedan 1857</span></span><span class="stamp tegel">Uddebo<span class="yr">Väveriet</span></span><span class="stamp" style="box-shadow:inset 0 0 0 2px #3f6b7a,inset 0 0 0 5px var(--surface),inset 0 0 0 6px #3f6b7a;color:#3f6b7a">Limmared<span class="yr">glasbruk 1740</span></span></div>
+      <div class="demo"><span class="orttag"><i>T</i>Tranemo tätort</span><span class="orttag u"><i>U</i>Uddebo</span><span class="orttag l"><i>L</i>Limmared</span></div>
+    </div>
+    <div class="panel">
+      <h3>Väv</h3>
+      <p class="note">En fin rutväv i 7 px, lagd som textur på gröna och tegelfärgade ytor: hero, anslagstavlan, sidfoten. Den syns knappt, men ytan känns som tyg i stället för plast. Den är två repeterande gradienter i CSS, ingen bild.</p>
+      <div class="demo" style="padding:0;overflow:hidden;gap:0"><div class="vav" style="flex:1;height:90px"></div><div class="vav tegel" style="flex:1;height:90px"></div></div>
+      <h3>Årstid</h3>
+      <p class="note">Hero tonas efter årstiden: löv på våren, äng på sommaren, ockra på hösten, sten på vintern. Ett litet märke säger vilken. Fyra färger i koden, datumet väljer.</p>
+      <div class="demo"><span class="season"><i></i>Höst i Tranemo</span><span class="season"><i style="background:var(--stone)"></i>Vinter</span><span class="season"><i style="background:var(--leaf)"></i>Vår</span><span class="season"><i style="background:var(--olive)"></i>Sommar</span></div>
+    </div>
+  </div>
+
+  <h3>Startsidans hero i målstil</h3>
+  <div class="hero vav" style="margin-top:12px">
+    <span class="season"><i></i>Höst i Tranemo</span>
+    <div class="eyebrow">Välkommen till</div>
+    <h1>Tranemo<br>Evenemangskalender</h1>
+    <p>Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe. Tack till de 48 arrangörer som fyller den.</p>
+    <div class="places">
+      <div class="place"><span class="stamp sm">T</span><b>Tranemo tätort</b></div>
+      <div class="place warm"><span class="stamp sm" style="box-shadow:inset 0 0 0 1.5px var(--tegel);color:var(--tegel)">U</span><b>Uddebo</b></div>
+      <div class="place cool"><span class="stamp sm" style="box-shadow:inset 0 0 0 1.5px #3f6b7a;color:#3f6b7a">L</span><b>Limmared</b></div>
+    </div>
+  </div>
+  <p class="note">Vävtexturen ersätter de generativa formerna som bakgrund. Formerna behålls på ort- och platskort, där de ger varje ort ett eget ansikte. Raden «Tack till de 48 arrangörer» räknas live. Ortkorten får varsin färgvärld: skog, lera, glas.</p>
+
+  <!-- ================= KOMPONENTER ================= -->
+  <h2 id="komponenter">Komponenter</h2>
+
+  <h3>Header</h3>
+  <p class="note">Oförändrad i struktur. Papper i stället för vitt, kommungrönt som vald, märket får initialen i Fraunces.</p>
+  <div class="demo" style="padding:0;display:block">
+    <div class="hdr">
+      <span class="brand"><span class="mark">T</span><span class="name">Tranemo</span><span class="sep">/</span><span class="loc">Uddebo</span><span class="x">×</span></span>
+      <nav class="nav"><a>Evenemang</a><a>Föreningar</a><a class="on">Kalender</a><a>Verk</a><a>Arrangörer</a><a>Platser</a><a>Info ⌄</a></nav>
+      <span class="login">Logga in</span>
+    </div>
+  </div>
+
+  <h3>Evenemangskort</h3>
+  <div class="grid g3">
+    <div><div class="kort foto"><span class="datum"><b>10</b><small>okt</small></span><span class="orttag"><i>T</i>Tranemo tätort</span><div class="t"><b>Skördemarknad i hembygdsparken</b><small>Lördag 10:00–14:00 · Hembygdsparken</small></div></div></div>
+    <div><div class="kort" style="background:linear-gradient(160deg,#e2c6a8,#8a5a3a)"><span class="datum"><b>21</b><small>nov</small></span><span class="orttag u"><i>U</i>Uddebo</span><div class="t"><b>Textilmarknad i Väveriet</b><small>Lördag 11:00–16:00 · Väveriet</small></div></div></div>
+    <div><div class="kort" style="background:linear-gradient(160deg,#cfe0ea,#3f6b7a)"><span class="datum"><b>7</b><small>nov</small></span><span class="orttag l"><i>L</i>Limmared</span><div class="t"><b>Glasets historia</b><small>Lördag 14:00 · Glasets Hus</small></div></div></div>
+  </div>
+  <p class="note">Tre ändringar mot utgångsläget: datumet blir en pappersetikett uppe till vänster som i en almanacka, orten blir en stämpeltagg uppe till höger, och titeln sätts i Fraunces. Gradienten är varm mylla i stället för grönsvart, så att foton inte grönfärgas. Kort utan bild får ortens färgvärld i stället för mörkgrönt.</p>
+
+  <h3>Anslagstavlan (Idag)</h3>
+  <div class="tavla vav" style="margin-top:12px">
+    <div class="h"><span><b>Idag</b> &nbsp;<span>fredag 9 oktober</span></span><span class="seg"><span class="on">Idag</span><span>Imorgon</span></span></div>
+    <div class="lappar">
+      <div class="lapp"><span class="tid">17:30–21:00</span><b>Brädspelskväll på Centralen</b><small>Centralen, Tranemo tätort</small><span class="r">Varje fredag</span></div>
+      <div class="lapp"><span class="tid">18:00–21:00</span><b>Fredagskväll i Trainspot</b><small>Trainspot skatepark, Limmared</small><span class="r">Varje fredag</span></div>
+      <div class="lapp"><span class="tid">19:00</span><b>Höstkonsert med kammarkören</b><small>Tranemo kyrka</small></div>
+    </div>
+  </div>
+  <p class="note">Idag-rutan blir en anslagstavla: vävtextur som bakgrund, varje händelse en papperslapp med en tegelfärgad nål. Det är den varmaste ytan på sajten och den enda med nålar. Lapparna är lika höga, tre i bredd på desktop, en i taget på mobil.</p>
+
+  <h3>Varje vecka</h3>
+  <div class="week">
+    <div class="day" style="background:var(--sand)"><h4>MÅN</h4><div class="ev"><b>Seniorgympa</b>10:00–11:00 · Dalshov</div></div>
+    <div class="day" style="background:var(--clay)"><h4>TIS</h4><div class="ev"><b>Stickcafé</b>14:00–16:00 · Biblioteket</div></div>
+    <div class="day" style="background:var(--ochre)"><h4>ONS</h4><div class="ev"><b>Läxhjälp</b>15:30–17:30 · Centralen</div></div>
+    <div class="day" style="background:var(--olive)"><h4>TOR</h4><div class="ev"><b>Babysång</b>10:00–10:45 · Biblioteket</div></div>
+    <div class="day today" style="background:var(--leaf)"><h4>FRE <span style="color:var(--tegel)">IDAG</span></h4><div class="ev"><b>Brädspelskväll</b>17:30–21:00 · Centralen</div></div>
+    <div class="day" style="background:var(--terra)"><h4>LÖR</h4><div class="ev"><b>Lördagsloppis</b>10:00–13:00 · Forumtorget</div></div>
+    <div class="day" style="background:var(--stone)"><h4>SÖN</h4><div class="ev"><b>Stavgång</b>10:00–11:30 · Tranemosjön</div></div>
+  </div>
+  <p class="note">Nästan oförändrad. Dagens kort markeras med tegel i stället för mörkgrönt, händelsernas rubriker sätts i Fraunces, och den gröna vänsterkanten tas bort: färgen på dagen räcker.</p>
+
+  <h3>Informationspaneler och formulär</h3>
+  <div class="grid g3">
+    <div class="info"><div class="k">När</div><b class="v">Måndag 12 oktober, 10:00–11:00</b><p class="note" style="margin-top:6px">11 tillfällen, varje måndag till 23 november</p></div>
+    <div class="info"><div class="k">Plats</div><b class="v">Dalshov, Dalstorp</b><p><a href="#">Öppna i karta</a></p></div>
+    <div class="info"><div class="k">Arrangör</div><div class="person"><span class="avatar">A</span><span><b class="v" style="margin:0;font-size:18px">Anna Lindqvist</b><span class="note">Bibliotekarie i Tranemo</span></span></div></div>
+  </div>
+  <div class="info" style="margin-top:14px">
+    <div class="k">Anmälan</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px"><div class="field"><label for="n1">Förnamn</label><input id="n1"></div><div class="field"><label for="n2">Efternamn</label><input id="n2"></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:10px"><span class="note">Bara arrangören ser din e-post.</span><button class="btn">Anmäl mig</button></div>
+  </div>
+  <p class="note">Etiketterna blir tegelfärgade, värdena Fraunces, fälten får 10 px hörn och 1,5 px kant i linjefärg. Knappen säger «Anmäl mig», inte «Anmäl».</p>
+
+  <h3>Knappar och märken</h3>
+  <div class="demo"><button class="btn">Anmäl mig</button><button class="btn outline">Visa alla</button><button class="btn ghost">Avbryt</button><button class="btn tegel">Ikväll</button><span class="seg"><span class="on">Idag</span><span>Imorgon</span></span></div>
+  <div class="demo"><span class="badge skog">Publicerad</span><span class="badge tegel">Nytt denna vecka</span><span class="badge sand">Återkommande</span><span class="badge lingon">3</span><span class="chip on">Hela kommunen</span><span class="chip">Uddebo</span><span class="chip">Limmared</span></div>
+  <p class="note">Alla knappar är piller, alltså försvinner den fyrkantiga Button-varianten. Tegelknappen används för exakt en sak per sida, när den används alls.</p>
+
+  <h3>Sidfot</h3>
+  <div class="footer vav" style="margin-top:12px">
+    <div><b>Tranemo Evenemangskalender</b><small>En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar i Tranemo tätort, Uddebo och Limmared.</small><nav><span>Om kalendern</span><span>Lägg till evenemang</span><span>Kontakt</span><span>Villkor</span><span>Svenska ⌄</span></nav></div>
+    <img src="tranemo_logo.svg" alt="Tranemo kommun">
+  </div>
+  <p class="note">Sidfoten går från mörkbrun till linne med väv, och kommunens logotyp får sin plats här. Det är det enda stället där logotypen visas, så kopplingen är tydlig utan att kalendern ser ut som tranemo.se.</p>
+
+  <!-- ================= TON ================= -->
+  <h2 id="ton">Tonen</h2>
+  <div class="grid g2">
+    <div class="panel"><h3>Så här låter vi</h3><ul class="rules"><li>«Hej Tranemo!» på startsidan, inte «Välkommen till portalen».</li><li>Vi säger «du» och «vi». «Anmäl mig», «Vi ses i Uddebo», «Tack för i år».</li><li>Platser nämns med sitt riktiga namn: Väveriet, Glasets Hus, Centralen, Forumtorget.</li><li>Arrangörer tackas: «Tack till de 48 arrangörer som fyller kalendern.»</li><li>Tid skrivs som folk säger den: «fredag 17:30», «varje måndag», «ikväll».</li></ul></div>
+    <div class="panel"><h3>Så här låter vi inte</h3><ul class="rules"><li>Inga «aktiviteter», «resurser» eller «entiteter» i gränssnittet. Det heter evenemang, platser och föreningar.</li><li>Inga utropstecken i fel. Fel säger vad som hände och vad man kan göra.</li><li>Inga tomma «Inga resultat». I stället: «Inget i Limmared den här veckan. Titta i hela kommunen?»</li><li>Inga ikoner som ersätter ord i menyn.</li></ul></div>
+  </div>
+
+  <!-- ================= VÄGEN ================= -->
+  <h2 id="vagen">Vägen dit</h2>
+  <p>Allt ovan går att göra stegvis på den befintliga koden. Ordningen är vald så att varje steg syns och ingen bryter nästa.</p>
+  <div class="steps">
+    <div class="step"><div><b>Byt material: tema och golv</b><span>Nyans 78/30, accent 118/48 i adminpanelen. Papper och linne som nya variabler i globalStylesManager. En eftermiddag, hela sajten blir varm.</span></div></div>
+    <div class="step"><div><b>Lägg till Fraunces på rubriker</b><span>Ladda fonten i main.css, sätt den på Heading och på kortens titlar. Headern rörs inte.</span></div></div>
+    <div class="step"><div><b>Tegel som tredje temafärg</b><span>En accentvariabel, använd på Idag, paneletiketter och datumetiketten. Lingon kvar för fel.</span></div></div>
+    <div class="step"><div><b>Ortstämplar och orttaggar</b><span>En Stamp-komponent med namn och färg per ort (ett nytt fält på location: <code>colorKey</code>). Ersätter Tag på kort och i hero.</span></div></div>
+    <div class="step"><div><b>Anslagstavlan och datumetiketten</b><span>Idag-rutan byggs om till lappar, SexyThumb får datum som etikett. Vävtexturen som en CSS-klass.</span></div></div>
+    <div class="step"><div><b>Årstid och tack</b><span>Hero får årstidston från datumet och räknar arrangörer. Sidfoten får logotypen och den nya texten.</span></div></div>
+    <div class="step"><div><b>Tonen i texterna</b><span>Gå igenom sv/common.yml och knapparna. Det är det billigaste steget och det som märks mest.</span></div></div>
+  </div>
+</div>
