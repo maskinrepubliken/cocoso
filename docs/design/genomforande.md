@@ -20,6 +20,7 @@ du rör utseendet; målsidan säger *vart*, det här säger *hur*.
 | Kalendern (färger, listvy, toolbar) | `imports/ui/pages/calendar/CalendarView.tsx`, `CalendarHandler.tsx`, sektionen `=== Calendar ===` i `client/main.css` |
 | Kontosidornas ark | `imports/ui/pages/auth/AuthPanel.tsx` |
 | Adminpanelens sidomeny | `imports/ui/pages/admin/AdminMenu.tsx`, `AdminContainer.tsx` |
+| Favicon, delningsbild, sidhuvudets meta | `public/icons/`, `public/images/og-default.jpg`, `imports/ui/layout/HelmetHybrid.tsx`, `PageHeading.tsx`, `TablyCentered.tsx` |
 
 ## Variabler
 
@@ -72,6 +73,13 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
 - **Kontosidorna** (logga in, registrera, glömt/återställ lösenord) är ett
   pappersark mitt på sidan (`AuthPanel`) i stället för en modal över en
   tom sida.
+- **Favicon och delningsbild.** Ikonerna i `public/icons` (SVG plus
+  PNG renderade från den) används när inställningarna inte pekar på
+  en CDN (`iconsBaseUrl`). Delningsbilden är ritad en gång; vill ni
+  byta den, rendera om `public/images/og-default.jpg` (1200×630).
+- **Kärnkomponenternas kortprops** (`mb`, `maxW` …) strippas innan de
+  sprids på DOM-element (`omitStyleProps`), så de aldrig blir attribut
+  och aldrig skiljer sig mellan server och klient.
 - **SSR och språk.** i18next-klonen per request initieras med
   `initImmediate: false`, annars byter den språk först i nästa tick och
   sidor utan asynkron loader (login, 404) renderades på engelska och
