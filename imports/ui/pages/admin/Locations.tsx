@@ -284,7 +284,7 @@ export default function Locations() {
       </Flex>
 
       <Boxling
-        style={{ backgroundColor: 'var(--cocoso-colors-bluegray-50)' }}
+        style={{ backgroundColor: 'var(--cocoso-colors-theme-50)' }}
       >
         {localLocations.length === 0 && (
           <Text color="gray.600">{t('locations.none')}</Text>

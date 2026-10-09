@@ -122,8 +122,8 @@ const underlineCss = {
 };
 
 const rowCss = {
-  borderBottom: '1px solid var(--cocoso-colors-bluegray-100)',
-  color: 'var(--cocoso-colors-bluegray-900)',
+  borderBottom: '1px solid var(--cocoso-linje)',
+  color: 'var(--cocoso-mylla)',
   padding: '0.625rem 0',
   '&:hover': { color: 'var(--cocoso-colors-theme-600)' },
 };
@@ -140,7 +140,7 @@ function Section({
   return (
     // Leave room for the sticky status bar when jumped to.
     <Boxling css={{ scrollMarginTop: '6rem' }} id={id} mb="6">
-      <Heading color="bluegray.800" css={{ marginBottom: '0.75rem' }} size="sm">
+      <Heading css={{ marginBottom: '0.75rem' }} size="sm">
         {title}
       </Heading>
       {children}
@@ -237,7 +237,7 @@ function StatusBar({ items }: { items: StatItem[] }) {
       gap="2"
       mb="6"
       css={{
-        backgroundColor: 'var(--cocoso-colors-bluegray-100)',
+        backgroundColor: 'var(--cocoso-season-golv)',
         padding: '0.5rem 0',
         position: 'sticky',
         top: '0',
@@ -252,15 +252,15 @@ function StatusBar({ items }: { items: StatItem[] }) {
             aria-current={isActive ? 'true' : undefined}
             type="button"
             style={{
-              background: isActive
-                ? 'white'
-                : 'var(--cocoso-colors-bluegray-50)',
+              background: 'var(--cocoso-papper)',
               border: 'none',
               borderBottom: '3px solid',
               borderBottomColor: isActive
-                ? 'var(--cocoso-colors-theme-500)'
+                ? 'var(--cocoso-colors-theme-700)'
                 : 'transparent',
-              borderRadius: 'var(--cocoso-border-radius)',
+              borderRadius: 'var(--cocoso-radius-falt)',
+              boxShadow: isActive ? 'var(--cocoso-skugga-kort)' : 'var(--cocoso-skugga)',
+              fontFamily: 'var(--cocoso-font-ui)',
               cursor: 'pointer',
               flex: '1 1 0',
               minWidth: 0,
@@ -271,8 +271,10 @@ function StatusBar({ items }: { items: StatItem[] }) {
           >
             <Text
               css={{
-                color: 'var(--cocoso-colors-bluegray-900)',
+                color: 'var(--cocoso-mylla)',
                 display: 'block',
+                fontFamily: 'var(--cocoso-font-display)',
+                fontVariationSettings: '"SOFT" 60',
                 lineHeight: '1.1',
               }}
               fontSize="2xl"
@@ -355,7 +357,7 @@ function Upcoming({ overview, dateLocale }: ListProps) {
       {days.map((day) => (
         <Box key={day.date} mb="3">
           <Flex align="center" gap="2">
-            <Text color="bluegray.600" fontSize="sm" fontWeight="bold">
+            <Text fontSize="sm" fontWeight="bold" css={{ color: 'var(--cocoso-mylla-soft)' }}>
               {capitalize(
                 dayjs(day.date).locale(dateLocale).format('dddd D MMMM')
               )}
@@ -485,7 +487,7 @@ function Settings() {
 
   return (
     <Box mt="8">
-      <Heading color="bluegray.800" size="sm">
+      <Heading size="sm">
         {t('overview.settings.title')}
       </Heading>
       <Text css={{ display: 'block', marginBottom: '0.75rem' }} fontSize="sm">

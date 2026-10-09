@@ -9,7 +9,6 @@ import {
   Badge,
   Box,
   Flex,
-  Heading,
   List,
   ListItem,
   Text,
@@ -23,29 +22,32 @@ import {
 } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
 
+// Back to the site: the site's name in Fraunces with an arrow, at the top
+// of the admin sidebar.
 export function AdminMenuHeader({ site }) {
   return (
     <Link to="/" style={{ width: '100%' }}>
       <Box
-        bg="white"
         px="4"
-        py="2"
+        py="3"
         css={{
+          borderBottom: '1px solid var(--cocoso-linje)',
           '&:hover': {
-            backgroundColor: 'var(--cocoso-colors-bluegray-200)',
-          },
-          ':focus': {
-            backgroundColor: 'var(--cocoso-colors-bluegray-300)',
+            backgroundColor: 'var(--cocoso-colors-theme-50)',
           },
         }}
       >
-        <Flex
-          align="center"
-          gap="2"
-          css={{ color: 'var(--cocoso-colors-bluegray-900)' }}
-        >
-          <ArrowLeft />
-          <Text color="bluegray.900" fontWeight="bold" fontSize="lg">
+        <Flex align="center" gap="2" css={{ color: 'var(--cocoso-mylla)' }}>
+          <ArrowLeft width={18} height={18} />
+          <Text
+            css={{
+              fontFamily: 'var(--cocoso-font-display)',
+              fontVariationSettings: '"SOFT" 60',
+              fontSize: '1.05rem',
+              fontWeight: 600,
+              lineHeight: 1.2,
+            }}
+          >
             {site.settings?.name}
           </Text>
         </Flex>
@@ -65,41 +67,53 @@ export function AdminUserThumb() {
   const isCurrentRoute = location?.pathname?.includes('my-profile');
   const avatarSrc = getImageUrl(currentUser.avatar?.src, 'medium') || undefined;
 
+  const fullName = getFullName(currentUser);
+
   return (
     <Box
-      bg={isCurrentRoute ? 'bluegray.900' : 'bluegray.700'}
-      p="4"
+      p="3"
+      px="4"
       css={{
+        backgroundColor: isCurrentRoute
+          ? 'var(--cocoso-colors-theme-100)'
+          : 'transparent',
         '&:hover': {
-          backgroundColor: 'var(--cocoso-colors-bluegray-800)',
+          backgroundColor: 'var(--cocoso-colors-theme-50)',
         },
       }}
     >
-      <Flex align="center">
+      <Flex align="center" gap="3">
         <Avatar
           name={currentUser.username}
-          size="lg"
+          size="md"
           src={avatarSrc}
-          css={{
-            backgroundColor: 'var(--cocoso-colors-theme-100)',
-            borderRadius: 'var(--cocoso-border-radius)',
-            '&:hover': {
-              backgroundColor: 'var(--cocoso-colors-theme-200)',
-            },
-          }}
+          css={{ backgroundColor: 'var(--cocoso-colors-theme-100)' }}
         />
 
-        <Flex direction="column" pl="2">
-          <Box>
-            <Text fontSize="lg" css={{ color: 'white', fontWeight: 'bold' }}>
-              {currentUser.username}
+        <Flex direction="column" css={{ minWidth: 0 }}>
+          <Text
+            css={{
+              color: 'var(--cocoso-mylla)',
+              fontFamily: 'var(--cocoso-font-ui)',
+              fontWeight: 700,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {currentUser.username}
+          </Text>
+          {fullName && fullName !== '---' && (
+            <Text
+              fontSize="sm"
+              css={{
+                color: 'var(--cocoso-mylla-soft)',
+                fontFamily: 'var(--cocoso-font-ui)',
+              }}
+            >
+              {fullName}
             </Text>
-          </Box>
-          <Box>
-            <Text fontWeight="light" css={{ color: 'white' }}>
-              {getFullName(currentUser)}
-            </Text>
-          </Box>
+          )}
         </Flex>
       </Flex>
     </Box>
@@ -120,32 +134,39 @@ function AdminMenuItem({ item, isSub = false, parentValue, onClick }) {
     return null;
   }
 
+  const isActive = isCurrentRoute && !item.isMulti;
+
+  // One row in the sidebar: a rounded field, green when it is the page
+  // you are on, like the chips in the site's own menu.
   return (
     <Box
-      cursor="pointer"
-      p="2.5"
+      className="admin-menu-item"
       css={{
-        backgroundColor:
-          isCurrentRoute && !item.isMulti
-            ? 'var(--cocoso-colors-bluegray-100)'
-            : null,
-        borderRightColor: 'var(--cocoso-colors-bluegray-500)',
-        borderRightStyle: 'solid',
-        borderRightWidth: isCurrentRoute && !item.isMulti ? '3px' : '0',
-        marginLeft: isSub ? '1rem' : '0',
+        backgroundColor: isActive ? 'var(--cocoso-colors-theme-100)' : null,
+        borderRadius: 'var(--cocoso-radius-falt)',
+        cursor: 'pointer',
+        marginLeft: isSub ? '0.9rem' : '0',
+        marginBottom: '2px',
         overflow: 'hidden',
+        padding: isSub ? '0.4rem 0.75rem' : '0.5rem 0.75rem',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
         '&:hover': {
-          backgroundColor: 'var(--cocoso-colors-bluegray-100)',
+          backgroundColor: isActive
+            ? 'var(--cocoso-colors-theme-100)'
+            : 'var(--cocoso-colors-theme-50)',
         },
       }}
       onClick={onClick}
     >
       <Text
         css={{
-          color: 'var(--cocoso-colors-bluegray-800)',
-          fontWeight: isCurrentRoute ? 'bold' : 'normal',
+          color: isActive
+            ? 'var(--cocoso-colors-theme-800)'
+            : 'var(--cocoso-mylla)',
+          fontFamily: 'var(--cocoso-font-ui)',
+          fontSize: isSub ? '0.9rem' : '0.95rem',
+          fontWeight: isCurrentRoute ? 700 : 600,
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
@@ -181,10 +202,11 @@ export default function AdminMenu({ routes, onItemClick }) {
 
   return (
     <Flex
-      bg="bluegray.50"
       h={isDesktop ? '100%' : 'calc(100% - 80px)'}
-      w={isDesktop ? '320px' : '100%'}
+      w={isDesktop ? '280px' : '100%'}
       css={{
+        backgroundColor: 'var(--cocoso-papper)',
+        borderRight: isDesktop ? '1px solid var(--cocoso-linje)' : 'none',
         flexDirection: 'column',
         justifyContent: 'space-between',
         position: 'fixed',
@@ -200,21 +222,24 @@ export default function AdminMenu({ routes, onItemClick }) {
         css={{ overflowY: 'auto' }}
       >
         {isDesktop && isAdmin && (
-          <Heading
-            p="2"
+          <Text
             css={{
-              color: 'var(--cocoso-colors-bluegray-800)',
+              color: 'var(--cocoso-mylla-soft)',
               flexGrow: '0',
-              fontSize: '1.25rem',
-              textAlign: 'center',
+              fontFamily: 'var(--cocoso-font-ui)',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              padding: '1rem 1.25rem 0.25rem',
+              textTransform: 'uppercase',
               width: '100%',
             }}
           >
             {t('panel')}
-          </Heading>
+          </Text>
         )}
 
-        <Box h="100%" p="4" w="100%" css={{ flexGrow: '1', overflowY: 'auto' }}>
+        <Box h="100%" p="3" w="100%" css={{ flexGrow: '1', overflowY: 'auto' }}>
           <List w="100%">
             {routes?.map((item) => (
               <ListItem key={item.value} p="0">
@@ -241,31 +266,38 @@ export default function AdminMenu({ routes, onItemClick }) {
           }}
         >
           <List
-            bg={
-              location?.pathname?.includes('messages')
-                ? 'bluegray.900'
-                : 'bluegray.700'
-            }
             p="0"
             css={{
-              borderBottom: '1px solid var(--cocoso-colors-bluegray-600)',
+              backgroundColor: location?.pathname?.includes('messages')
+                ? 'var(--cocoso-colors-theme-100)'
+                : 'transparent',
+              borderTop: '1px solid var(--cocoso-linje)',
               width: '100%',
               '&:hover': {
-                backgroundColor: 'var(--cocoso-colors-bluegray-800)',
+                backgroundColor: 'var(--cocoso-colors-theme-50)',
               },
             }}
           >
             <ListItem
-              css={{ color: 'white', cursor: 'pointer', width: '100%' }}
+              css={{
+                color: 'var(--cocoso-mylla)',
+                cursor: 'pointer',
+                fontFamily: 'var(--cocoso-font-ui)',
+                fontWeight: 600,
+                width: '100%',
+              }}
               mb="0"
-              px="6"
-              py="4"
+              px="4"
+              py="3"
               onClick={handleMessagesClick}
             >
               {ta('messages.label')} <Badge>beta</Badge>
             </ListItem>
           </List>
-          <Box css={{ cursor: 'pointer' }} onClick={handleUserThumbClick}>
+          <Box
+            css={{ borderTop: '1px solid var(--cocoso-linje)', cursor: 'pointer' }}
+            onClick={handleUserThumbClick}
+          >
             <AdminUserThumb />
           </Box>
         </Box>
