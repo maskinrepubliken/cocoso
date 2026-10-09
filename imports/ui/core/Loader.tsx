@@ -15,7 +15,7 @@ const StyledLoader = styled('div', {
   height: '2px',
   zIndex: 1500,
   background:
-    'linear-gradient(90deg, hsl(0, 70%, 60%), hsl(18, 70%, 60%), hsl(36, 70%, 60%), hsl(54, 70%, 60%), hsl(72, 70%, 60%), hsl(90, 70%, 60%), hsl(108, 70%, 60%), hsl(126, 70%, 60%), hsl(144, 70%, 60%), hsl(162, 70%, 60%), hsl(180, 70%, 60%), hsl(198, 70%, 60%), hsl(216, 70%, 60%), hsl(234, 70%, 60%), hsl(252, 70%, 60%), hsl(270, 70%, 60%), hsl(288, 70%, 60%), hsl(306, 70%, 60%), hsl(324, 70%, 60%), hsl(342, 70%, 60%), hsl(360, 70%, 60%))',
+    'linear-gradient(90deg, var(--cocoso-tegel), var(--cocoso-colors-theme-500), var(--cocoso-season-glod-a), var(--cocoso-tegel))',
   backgroundSize: '200% 100%',
 });
 

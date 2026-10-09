@@ -31,10 +31,21 @@ interface ButtonProps {
   style?: any;
 }
 
+// "Hemma i Tranemo": every button is a pill. Solid is the green of the
+// municipality, outline is paper with a hairline, ghost is text only. The
+// 'tegel' colour scheme is the warm accent, for at most one action per view.
 const ButtonComponentStyled = styled('button', {
-  borderRadius: 'var(--cocoso-border-radius)',
+  borderRadius: '999px',
   borderStyle: 'solid',
-  fontWeight: 'bold',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontWeight: 700,
+  lineHeight: 1.2,
+  transition: 'background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease',
+  '&:focus-visible': {
+    outline: '2px solid var(--cocoso-colors-theme-500)',
+    outlineOffset: '2px',
+  },
+  '&:active:not(:disabled)': { transform: 'translateY(1px)' },
 });
 
 const ButtonComponent = (props: ButtonProps) => {
@@ -51,31 +62,48 @@ const ButtonComponent = (props: ButtonProps) => {
   const disabled = disabledProp || isDisabled;
 
   // Color variables
+  const isTegel = colorScheme === 'tegel';
+  const isLingon = colorScheme === 'red' || colorScheme === 'lingon';
+  const main = isTegel
+    ? 'var(--cocoso-tegel)'
+    : isLingon
+    ? 'var(--cocoso-lingon)'
+    : `var(--cocoso-colors-${colorScheme}-500)`;
+  const mainHover = isTegel
+    ? 'var(--cocoso-tegel-600)'
+    : isLingon
+    ? '#8e2a31'
+    : `var(--cocoso-colors-${colorScheme}-600)`;
+  const ink = isTegel
+    ? 'var(--cocoso-tegel-600)'
+    : isLingon
+    ? 'var(--cocoso-lingon)'
+    : `var(--cocoso-colors-${colorScheme}-700)`;
+  const soft = isTegel
+    ? 'var(--cocoso-tegel-100)'
+    : isLingon
+    ? 'var(--cocoso-lingon-100)'
+    : `var(--cocoso-colors-${colorScheme}-100)`;
   const bg =
     variant === 'ghost'
-      ? 'none'
+      ? 'transparent'
       : variant === 'outline'
-      ? 'white'
-      : `var(--cocoso-colors-${colorScheme}-500)`;
-  const border = props.color || `var(--cocoso-colors-${colorScheme}-200)`;
-  const textColor =
-    variant === 'solid' ? 'white' : `var(--cocoso-colors-${colorScheme}-500)`;
-  const hoverBg =
-    variant === 'solid'
-      ? `var(--cocoso-colors-${colorScheme}-600)`
-      : `var(--cocoso-colors-${colorScheme}-50)`;
-  const focusBg =
-    variant === 'solid'
-      ? `var(--cocoso-colors-${colorScheme}-700)`
-      : `var(--cocoso-colors-${colorScheme}-100)`;
+      ? 'var(--cocoso-papper)'
+      : main;
+  const border =
+    variant === 'outline' ? props.color || 'var(--cocoso-linje)' : 'transparent';
+  const textColor = variant === 'solid' ? 'white' : ink;
+  const hoverBg = variant === 'solid' ? mainHover : soft;
+  const focusBg = hoverBg;
 
   return (
     <ButtonComponentStyled
       disabled={disabled}
       css={{
         backgroundColor: bg,
-        borderWidth: variant === 'ghost' ? '0' : '2px',
+        borderWidth: variant === 'outline' ? '1.5px' : '0',
         borderColor: border,
+        boxShadow: variant === 'solid' ? 'var(--cocoso-skugga)' : 'none',
         color: textColor,
         cursor: disabled ? 'not-allowed' : 'pointer',
         fontSize:
@@ -95,31 +123,35 @@ const ButtonComponent = (props: ButtonProps) => {
         opacity: disabled ? 0.6 : 1,
         paddingInline:
           size === 'xs'
-            ? '0.65rem'
+            ? '0.75rem'
             : size === 'sm'
-            ? '0.85rem'
+            ? '0.9rem'
             : size === 'lg'
-            ? '1.15rem'
-            : '1rem',
+            ? '1.4rem'
+            : '1.15rem',
         paddingTop:
           size === 'xs'
             ? '0.35rem'
             : size === 'sm'
-            ? '0.35rem'
+            ? '0.45rem'
             : size === 'lg'
-            ? '0.55rem'
-            : '0.45rem',
+            ? '0.75rem'
+            : '0.6rem',
         paddingBottom:
           size === 'xs'
             ? '0.35rem'
             : size === 'sm'
-            ? '0.35rem'
+            ? '0.45rem'
             : size === 'lg'
-            ? '0.55rem'
-            : '0.45rem',
+            ? '0.75rem'
+            : '0.6rem',
         pointerEvents: disabled ? 'none' : 'auto',
         '&:hover': {
           backgroundColor: disabled ? undefined : hoverBg,
+          boxShadow:
+            variant === 'solid' && !disabled
+              ? '0 6px 14px -8px rgba(30, 50, 25, 0.5)'
+              : undefined,
         },
         '&:focus': {
           backgroundColor: disabled ? undefined : focusBg,

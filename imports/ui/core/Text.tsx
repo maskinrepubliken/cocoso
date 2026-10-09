@@ -23,22 +23,23 @@ const fontSizes = {
 
 const TagStyled = styled('span', {
   alignItems: 'center',
-  backgroundColor: 'white',
-  borderRadius: 'var(--cocoso-border-radius)',
+  backgroundColor: 'var(--cocoso-papper)',
+  borderRadius: '999px',
   borderWidth: '1px',
   borderStyle: 'solid',
   display: 'inline-flex',
-  fontSize: '0.875rem',
-  fontWeight: '400',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.8rem',
+  fontWeight: '600',
   lineHeight: '1.35rem',
-  paddingInline: '0.55rem',
+  paddingInline: '0.65rem',
 });
 
 export const Tag = (props: any) => {
   const { children, colorScheme = 'theme', ...rest } = props;
-  const borderColor = `var(--cocoso-colors-${colorScheme}-500)`;
-  const color = `var(--cocoso-colors-${colorScheme}-800)`;
-  const backgroundColor = `var(--cocoso-colors-${colorScheme}-50)`;
+  const borderColor = `var(--cocoso-colors-${colorScheme}-200)`;
+  const color = `var(--cocoso-colors-${colorScheme}-700)`;
+  const backgroundColor = 'var(--cocoso-papper)';
 
   return (
     <TagStyled

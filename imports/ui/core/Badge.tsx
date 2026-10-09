@@ -5,12 +5,12 @@ const badgeBase = {
   display: 'inline-flex',
   alignItems: 'center',
   borderRadius: '999px',
-  fontWeight: 500,
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontWeight: 600,
   lineHeight: 1.2,
   verticalAlign: 'middle',
   whiteSpace: 'nowrap',
   transition: 'background 0.2s, color 0.2s, border 0.2s',
-  fontFamily: 'inherit',
 };
 
 const sizeStyles = {
@@ -19,41 +19,52 @@ const sizeStyles = {
   lg: { fontSize: '1rem', padding: '0.25rem 1rem' },
 };
 
+// Lingon for warnings and counters, forest green for the good, glass blue
+// for information, sand for the neutral, tegel for what is near in time.
 const colorSchemes = {
   red: {
-    solid: { background: '#EF4444', color: 'white', border: 'none' },
-    subtle: { background: '#FEE2E2', color: '#B91C1C', border: 'none' },
+    solid: { background: 'var(--cocoso-lingon)', color: 'white', border: 'none' },
+    subtle: { background: 'var(--cocoso-lingon-100)', color: 'var(--cocoso-lingon)', border: 'none' },
     outline: {
       background: 'transparent',
-      color: '#B91C1C',
-      border: '1px solid #EF4444',
+      color: 'var(--cocoso-lingon)',
+      border: '1px solid var(--cocoso-lingon)',
     },
   },
   green: {
-    solid: { background: '#22C55E', color: 'white', border: 'none' },
-    subtle: { background: '#DCFCE7', color: '#15803D', border: 'none' },
+    solid: { background: 'var(--cocoso-colors-theme-500)', color: 'white', border: 'none' },
+    subtle: { background: 'var(--cocoso-colors-theme-100)', color: 'var(--cocoso-colors-theme-700)', border: 'none' },
     outline: {
       background: 'transparent',
-      color: '#15803D',
-      border: '1px solid #22C55E',
+      color: 'var(--cocoso-colors-theme-700)',
+      border: '1px solid var(--cocoso-colors-theme-500)',
     },
   },
   blue: {
-    solid: { background: '#707EAE', color: 'white', border: 'none' },
-    subtle: { background: '#EEF4FD', color: '#1B2559', border: 'none' },
+    solid: { background: '#3f6b7a', color: 'white', border: 'none' },
+    subtle: { background: '#dbe8ef', color: '#2f5868', border: 'none' },
     outline: {
       background: 'transparent',
-      color: '#1B2559',
-      border: '1px solid #707EAE',
+      color: '#2f5868',
+      border: '1px solid #3f6b7a',
     },
   },
   gray: {
-    solid: { background: '#6B7280', color: 'white', border: 'none' },
-    subtle: { background: '#F3F4F6', color: '#4B5563', border: 'none' },
+    solid: { background: '#8a7f6a', color: 'white', border: 'none' },
+    subtle: { background: '#e9dcc4', color: '#5a4a2a', border: 'none' },
     outline: {
       background: 'transparent',
-      color: '#4B5563',
-      border: '1px solid #6B7280',
+      color: '#5a4a2a',
+      border: '1px solid #8a7f6a',
+    },
+  },
+  tegel: {
+    solid: { background: 'var(--cocoso-tegel)', color: 'white', border: 'none' },
+    subtle: { background: 'var(--cocoso-tegel-100)', color: 'var(--cocoso-tegel-600)', border: 'none' },
+    outline: {
+      background: 'transparent',
+      color: 'var(--cocoso-tegel-600)',
+      border: '1px solid var(--cocoso-tegel)',
     },
   },
 };

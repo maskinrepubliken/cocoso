@@ -72,19 +72,19 @@ const CloseButton = styled('button', {
   background: 'transparent',
   border: 'none',
   borderRadius: '9999px',
-  color: 'var(--cocoso-colors-gray-600)',
+  color: 'var(--cocoso-mylla-soft)',
   cursor: 'pointer',
   padding: '0.5rem',
-  transition: 'all 0.3s',
+  transition: 'all 0.2s',
   '&:hover': {
-    backgroundColor: '#f3f4f6',
-    color: '#4b5563',
+    backgroundColor: 'var(--cocoso-colors-theme-100)',
+    color: 'var(--cocoso-mylla)',
   },
 });
 
 const Footer = styled('div', {
   alignItems: 'center',
-  borderTop: '1px solid #e5e7eb',
+  borderTop: '1px solid var(--cocoso-linje)',
   display: 'flex',
   gap: '0.75rem',
   justifyContent: 'flex-end',
@@ -94,7 +94,7 @@ const Footer = styled('div', {
 
 const Header = styled('div', {
   alignItems: 'center',
-  borderBottom: '1px solid #e5e7eb',
+  borderBottom: '1px solid var(--cocoso-linje)',
   display: 'flex',
   justifyContent: 'space-between',
   minHeight: '1rem',
@@ -103,16 +103,18 @@ const Header = styled('div', {
 });
 
 const Title = styled('h2', {
-  color: '#111827',
-  fontSize: '1.25rem',
+  color: 'var(--cocoso-mylla)',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.35rem',
   fontWeight: 600,
   margin: 0,
 });
 
 // Overlay component
 const BaseOverlayStyled = styled('div', {
-  backdropFilter: 'brightness(0.8)',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backdropFilter: 'blur(3px)',
+  backgroundColor: 'rgba(34, 48, 42, 0.45)',
   bottom: 0,
   left: 0,
   position: 'fixed',
@@ -165,9 +167,9 @@ export const Overlay: React.FC<OverlayProps> = ({
 
 // Modal content styling
 const ModalContent = styled('div', {
-  backgroundColor: 'var(--cocoso-colors-gray-50)',
-  borderRadius: '0.5rem',
-  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+  backgroundColor: 'var(--cocoso-papper)',
+  borderRadius: 'var(--cocoso-radius-meny)',
+  boxShadow: 'var(--cocoso-skugga-meny)',
   display: 'flex',
   flexDirection: 'column',
   maxHeight: '90vh',
@@ -205,8 +207,8 @@ const ModalContent = styled('div', {
 
 // Drawer content styling
 const DrawerContent = styled('div', {
-  backgroundColor: 'var(--cocoso-colors-gray-50)',
-  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+  backgroundColor: 'var(--cocoso-papper)',
+  boxShadow: 'var(--cocoso-skugga-meny)',
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
