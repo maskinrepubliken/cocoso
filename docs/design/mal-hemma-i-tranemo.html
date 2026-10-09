@@ -3,21 +3,21 @@
 <style>
   :root {
     /* === Målpaletten === */
-    --lin: #f6f2e8;        /* golvet: varmt linne */
-    --papper: #fffdf8;     /* öarna: krämvitt */
-    --mylla: #2a2520;      /* text: varmt nästan-svart */
-    --mylla-soft: #6b625a;
-    --skog-100: #e4ecd9;   /* ljusgrönt som ton, inte golv */
-    --skog-200: #c9d8b6;
-    --skog-500: #2f6b3a;   /* handling */
-    --skog-600: #26592f;
+    --lin: #edf3df;        /* golvet: äng, ett varmt ljusgrönt */
+    --papper: #fffdf7;     /* öarna: krämvitt */
+    --mylla: #22302a;      /* text: mörk skogsgrön-svart */
+    --mylla-soft: #5c6b60;
+    --skog-100: #dcebc6;   /* ljusgrönt som ton */
+    --skog-200: #b9d49c;
+    --skog-500: #2e7d3e;   /* handling, lite friskare än kommunens */
+    --skog-600: #256a33;
     --skog-700: #1e4f1b;   /* kommungrönt, tyngd */
     --skog-800: #10300f;
-    --tegel: #b9603f;      /* varm accent, Väveriets tegel */
-    --tegel-100: #f3e0d6;
+    --tegel: #c8613a;      /* varm accent, Väveriets tegel */
+    --tegel-100: #f6dfd2;
     --lingon: #a8323a;     /* varningar och räknare, skilt från tegel */
     --sand: #e9dcc4; --clay: #e2c6a8; --ochre: #d9c79a; --olive: #c9cfa4; --sage: #c3d1b8; --terra: #d8bfa9; --stone: #cdc3b4; --leaf: #b9dba0;
-    --linje: #e3dcCc;
+    --linje: #d5dfc2;
     --skugga: 0 1px 2px rgba(60, 40, 20, .06), 0 6px 18px -14px rgba(60, 40, 20, .35);
     --skugga-kort: 0 8px 22px -14px rgba(60, 40, 20, .45);
 
@@ -132,6 +132,14 @@
 
   /* hero i målstil */
   .hero { position: relative; border-radius: 16px; overflow: hidden; padding: 40px 32px 32px; box-shadow: var(--skugga); color: var(--mylla); }
+  .hero.host {
+    background-color: var(--skog-100);
+    background-image:
+      radial-gradient(circle at 88% 18%, rgba(217,199,154,.95), rgba(217,199,154,0) 42%),
+      radial-gradient(circle at 10% 95%, rgba(185,219,160,.9), rgba(185,219,160,0) 40%),
+      repeating-linear-gradient(0deg, rgba(30,79,27,.07) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(90deg, rgba(30,79,27,.07) 0 1px, transparent 1px 7px);
+  }
   .hero .eyebrow { color: var(--tegel); }
   .hero h1 { margin-top: 10px; color: var(--skog-800); }
   .hero p { font-size: 17px; color: #4b4239; }
@@ -143,6 +151,7 @@
   .place b { position: absolute; left: 12px; bottom: 10px; z-index: 1; color: #fff; font: 600 19px var(--font-display); font-variation-settings: "SOFT" 60; text-shadow: 0 1px 3px rgba(0,0,0,.4); }
   .place .stamp.sm { position: absolute; top: 10px; right: 10px; z-index: 1; background: rgba(255,253,248,.9); }
   .season { position: absolute; top: 18px; right: 20px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: rgba(255,253,248,.85); font: 600 12px var(--font-ui); color: var(--mylla); }
+  .demo .season { position: static; }
   .season i { width: 22px; height: 22px; border-radius: 999px; background: var(--ochre); display: block; }
 
   /* knappar */
@@ -173,6 +182,7 @@
   .kort .orttag { position: absolute; top: 12px; right: 12px; z-index: 1; }
 
   /* anslagstavlan */
+  .tavla.vav { background-color: #cfe4b4; }
   .tavla { border-radius: 14px; padding: 18px 20px 20px; box-shadow: var(--skugga); color: var(--mylla); }
   .tavla .h { display: flex; align-items: baseline; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
   .tavla .h b { font: 600 26px var(--font-display); font-variation-settings: "SOFT" 60; }
@@ -208,6 +218,7 @@
   .field input:focus { outline: 2px solid var(--skog-500); outline-offset: 1px; }
 
   /* sidfot */
+  .footer.vav { background-color: var(--skog-100); }
   .footer { border-radius: 14px; padding: 28px 24px; color: var(--mylla); display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
   @media (max-width: 720px) { .footer { grid-template-columns: 1fr; } }
   .footer b { font: 600 22px var(--font-display); font-variation-settings: "SOFT" 60; display: block; }
@@ -236,7 +247,7 @@
   <h2 id="ide">Idén: tre ord, tre beslut</h2>
   <div class="grid g3">
     <div class="panel"><div class="eyebrow">Proffsig</div><h3 style="margin-top:6px">Strukturen består</h3><p class="note">Headern, pillerna, gridet, 4 px-skalan och «hela kommunen som normalläge» är rätt och behålls. Proffsigheten sitter i att allt beter sig likadant överallt, inte i att det ser företagsgrått ut.</p></div>
-    <div class="panel"><div class="eyebrow" style="color:var(--tegel)">Hemtrevlig</div><h3 style="margin-top:6px">Materialen byts</h3><p class="note">Golvet går från ljusgrönt till varmt linne. Öarna blir krämvita, inte vita. Rubrikerna får en mjuk serif med rundade former. Skuggorna blir varma. Grönt blir en färg man använder, inte en färg man står på.</p></div>
+    <div class="panel"><div class="eyebrow" style="color:var(--tegel)">Hemtrevlig</div><h3 style="margin-top:6px">Materialen byts</h3><p class="note">Golvet förblir ljusgrönt men blir varmare, som en äng i stället för mint. Öarna blir krämvita, inte vita. Rubrikerna får en mjuk serif med rundade former. Skuggorna blir varma. Grönt blir en färg man använder, inte en färg man står på.</p></div>
     <div class="panel"><div class="eyebrow">Lokal</div><h3 style="margin-top:6px">Detaljerna kommer härifrån</h3><p class="note">Ortstämplar i stället för generiska taggar. En vävtextur från Väveriet i Uddebo. Tegel från bruket som varm accent. Årstiden syns i hero. Arrangörer tackas med namn. Ingenting av det kräver nya bilder, bara att vi använder det vi har.</p></div>
   </div>
 
@@ -253,38 +264,38 @@
       <div style="display:flex;gap:8px;margin-top:14px;align-items:center"><span class="orttag u"><i>U</i>Uddebo</span><button class="btn sm">Anmäl</button></div>
     </div>
   </div>
-  <p class="note">Samma information, samma komponenter. Det som ändras är material och ton: linne i stället för mint, serif i stället för grotesk, en ortstämpel i stället för en vit tagg.</p>
+  <p class="note">Samma information, samma komponenter. Det som ändras är material och ton: äng i stället för mint, serif i stället för grotesk, en ortstämpel i stället för en vit tagg.</p>
 
   <!-- ================= FÄRG ================= -->
   <h2 id="farg">Färg</h2>
-  <p>Grönt blir kommunens gröna, inte ett eget blågrönt. Golvet blir varmt. En varm accent tillkommer för det som är nära och nu. Jordfärgerna för veckan behålls precis som de är, de var redan rätt.</p>
+  <p>Grönt blir kommunens gröna, inte ett eget blågrönt. Golvet förblir grönt men går mot äng och sol i stället för mint. En varm accent tillkommer för det som är nära och nu. Jordfärgerna för veckan behålls precis som de är, de var redan rätt.</p>
 
   <h3>Material</h3>
   <div class="swatches">
-    <div class="sw"><div class="c" style="background:var(--lin)"></div><div class="m"><b>Linne</b>#F6F2E8<br><small>golvet</small></div></div>
-    <div class="sw"><div class="c" style="background:var(--papper);border-bottom:1px solid var(--line)"></div><div class="m"><b>Papper</b>#FFFDF8<br><small>öar, kort, piller</small></div></div>
-    <div class="sw"><div class="c" style="background:var(--linje)"></div><div class="m"><b>Linje</b>#E3DCCC<br><small>kanter, avdelare</small></div></div>
-    <div class="sw"><div class="c" style="background:var(--mylla)"></div><div class="m"><b>Mylla</b>#2A2520<br><small>text</small></div></div>
-    <div class="sw"><div class="c" style="background:var(--mylla-soft)"></div><div class="m"><b>Mylla, dämpad</b>#6B625A<br><small>sekundär text</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--lin)"></div><div class="m"><b>Äng</b>#EDF3DF<br><small>golvet, varmare än mint</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--papper);border-bottom:1px solid var(--line)"></div><div class="m"><b>Papper</b>#FFFDF7<br><small>öar, kort, piller</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--linje)"></div><div class="m"><b>Linje</b>#D5DFC2<br><small>kanter, avdelare</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--mylla)"></div><div class="m"><b>Mylla</b>#22302A<br><small>text</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--mylla-soft)"></div><div class="m"><b>Mylla, dämpad</b>#5C6B60<br><small>sekundär text</small></div></div>
   </div>
 
   <h3>Skog, från tranemo.se</h3>
   <div class="swatches">
-    <div class="sw"><div class="c" style="background:var(--skog-100)"></div><div class="m"><b>skog-100</b>#E4ECD9<br><small>toning, hover, chips</small></div></div>
-    <div class="sw"><div class="c" style="background:var(--skog-200)"></div><div class="m"><b>skog-200</b>#C9D8B6<br><small>kanter på gröna ytor</small></div></div>
-    <div class="sw"><div class="c" style="background:var(--skog-500)"></div><div class="m"><b>skog-500</b>#2F6B3A<br><small>primär knapp, länk</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--skog-100)"></div><div class="m"><b>skog-100</b>#DCEBC6<br><small>toning, hover, chips</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--skog-200)"></div><div class="m"><b>skog-200</b>#B9D49C<br><small>kanter på gröna ytor</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--skog-500)"></div><div class="m"><b>skog-500</b>#2E7D3E<br><small>primär knapp, länk</small></div></div>
     <div class="sw"><div class="c" style="background:var(--skog-700)"></div><div class="m"><b>skog-700</b>#1E4F1B<br><small>kommungrönt: valt, tyngd</small></div></div>
     <div class="sw"><div class="c" style="background:var(--skog-800)"></div><div class="m"><b>skog-800</b>#10300F<br><small>rubriker på ljust</small></div></div>
   </div>
 
   <h3>Tegel och lingon</h3>
   <div class="swatches">
-    <div class="sw"><div class="c" style="background:var(--tegel)"></div><div class="m"><b>Tegel</b>#B9603F<br><small>nära och nu: Idag, nålen, etiketter</small></div></div>
-    <div class="sw"><div class="c" style="background:var(--tegel-100)"></div><div class="m"><b>Tegel, ljus</b>#F3E0D6<br><small>bakgrund till tegelmärken</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--tegel)"></div><div class="m"><b>Tegel</b>#C8613A<br><small>nära och nu: Idag, nålen, etiketter</small></div></div>
+    <div class="sw"><div class="c" style="background:var(--tegel-100)"></div><div class="m"><b>Tegel, ljus</b>#F6DFD2<br><small>bakgrund till tegelmärken</small></div></div>
     <div class="sw"><div class="c" style="background:var(--lingon)"></div><div class="m"><b>Lingon</b>#A8323A<br><small>bara varningar och räknare</small></div></div>
     <div class="sw"><div class="c" style="background:linear-gradient(90deg,var(--sand),var(--clay),var(--ochre),var(--olive),var(--sage),var(--terra),var(--stone))"></div><div class="m"><b>Veckan</b>oförändrad<br><small>sand … sten, idag i löv</small></div></div>
   </div>
-  <p class="note">Tegel är Väveriets och glasbrukets färg och används för det som händer nära i tid: Idag-rubriken, nålen på lappen, datumetiketten på kortet, versala paneletiketter. Lingon är reserverat för fel och räknare, så att varmt aldrig betyder «något är fel». I koden: temats nyans går till 78/30 (linne) och accenten till 118/48 så att theme-700 blir kommungrönt. Tegel läggs till som en tredje variabel, <code>--cocoso-colors-accent-500</code>.</p>
+  <p class="note">Tegel är Väveriets och glasbrukets färg och används för det som händer nära i tid: Idag-rubriken, nålen på lappen, datumetiketten på kortet, versala paneletiketter. Lingon är reserverat för fel och räknare, så att varmt aldrig betyder «något är fel». I koden: temats nyans går till 85/45 (äng) och accenten till 118/48 så att theme-700 blir kommungrönt. Tegel läggs till som en tredje variabel, <code>--cocoso-colors-accent-500</code>.</p>
 
   <!-- ================= TYPOGRAFI ================= -->
   <h2 id="typografi">Typografi</h2>
@@ -329,7 +340,7 @@
   </div>
 
   <h3>Startsidans hero i målstil</h3>
-  <div class="hero vav" style="margin-top:12px">
+  <div class="hero host" style="margin-top:12px">
     <span class="season"><i></i>Höst i Tranemo</span>
     <div class="eyebrow">Välkommen till</div>
     <h1>Tranemo<br>Evenemangskalender</h1>
@@ -340,7 +351,7 @@
       <div class="place cool"><span class="stamp sm" style="box-shadow:inset 0 0 0 1.5px #3f6b7a;color:#3f6b7a">L</span><b>Limmared</b></div>
     </div>
   </div>
-  <p class="note">Vävtexturen ersätter de generativa formerna som bakgrund. Formerna behålls på ort- och platskort, där de ger varje ort ett eget ansikte. Raden «Tack till de 48 arrangörer» räknas live. Ortkorten får varsin färgvärld: skog, lera, glas.</p>
+  <p class="note">Väv och två mjuka ljusfläckar, en i årstidens färg och en i löv, ersätter de generativa formerna som bakgrund. Formerna behålls på ort- och platskort, där de ger varje ort ett eget ansikte. Raden «Tack till de 48 arrangörer» räknas live. Ortkorten får varsin färgvärld: skog, lera, glas.</p>
 
   <!-- ================= KOMPONENTER ================= -->
   <h2 id="komponenter">Komponenter</h2>
@@ -372,7 +383,7 @@
       <div class="lapp"><span class="tid">19:00</span><b>Höstkonsert med kammarkören</b><small>Tranemo kyrka</small></div>
     </div>
   </div>
-  <p class="note">Idag-rutan blir en anslagstavla: vävtextur som bakgrund, varje händelse en papperslapp med en tegelfärgad nål. Det är den varmaste ytan på sajten och den enda med nålar. Lapparna är lika höga, tre i bredd på desktop, en i taget på mobil.</p>
+  <p class="note">Idag-rutan blir en anslagstavla: lövgrön väv som bakgrund, varje händelse en papperslapp med en tegelfärgad nål. Det är den varmaste ytan på sajten och den enda med nålar. Lapparna är lika höga, tre i bredd på desktop, en i taget på mobil.</p>
 
   <h3>Varje vecka</h3>
   <div class="week">
@@ -409,7 +420,7 @@
     <div><b>Tranemo Evenemangskalender</b><small>En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar i Tranemo tätort, Uddebo och Limmared.</small><nav><span>Om kalendern</span><span>Lägg till evenemang</span><span>Kontakt</span><span>Villkor</span><span>Svenska ⌄</span></nav></div>
     <img src="tranemo_logo.svg" alt="Tranemo kommun">
   </div>
-  <p class="note">Sidfoten går från mörkbrun till linne med väv, och kommunens logotyp får sin plats här. Det är det enda stället där logotypen visas, så kopplingen är tydlig utan att kalendern ser ut som tranemo.se.</p>
+  <p class="note">Sidfoten går från mörkbrun till ljusgrönt med väv, och kommunens logotyp får sin plats här. Det är det enda stället där logotypen visas, så kopplingen är tydlig utan att kalendern ser ut som tranemo.se.</p>
 
   <!-- ================= TON ================= -->
   <h2 id="ton">Tonen</h2>
@@ -422,7 +433,7 @@
   <h2 id="vagen">Vägen dit</h2>
   <p>Allt ovan går att göra stegvis på den befintliga koden. Ordningen är vald så att varje steg syns och ingen bryter nästa.</p>
   <div class="steps">
-    <div class="step"><div><b>Byt material: tema och golv</b><span>Nyans 78/30, accent 118/48 i adminpanelen. Papper och linne som nya variabler i globalStylesManager. En eftermiddag, hela sajten blir varm.</span></div></div>
+    <div class="step"><div><b>Byt material: tema och golv</b><span>Nyans 85/45, accent 118/48 i adminpanelen. Papper och äng som nya variabler i globalStylesManager. En eftermiddag, hela sajten blir varm.</span></div></div>
     <div class="step"><div><b>Lägg till Fraunces på rubriker</b><span>Ladda fonten i main.css, sätt den på Heading och på kortens titlar. Headern rörs inte.</span></div></div>
     <div class="step"><div><b>Tegel som tredje temafärg</b><span>En accentvariabel, använd på Idag, paneletiketter och datumetiketten. Lingon kvar för fel.</span></div></div>
     <div class="step"><div><b>Ortstämplar och orttaggar</b><span>En Stamp-komponent med namn och färg per ort (ett nytt fält på location: <code>colorKey</code>). Ersätter Tag på kort och i hero.</span></div></div>
