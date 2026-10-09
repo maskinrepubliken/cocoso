@@ -151,7 +151,7 @@
   /* hero i målstil */
   .hero { position: relative; border-radius: 16px; overflow: hidden; padding: 40px 32px 32px; box-shadow: var(--skugga); color: var(--mylla); }
   .hero.host {
-    background-color: var(--skog-100);
+    background-color: var(--season-golv);
     background-image:
       radial-gradient(circle at 88% 18%, var(--season-glod-a), transparent 42%),
       radial-gradient(circle at 10% 95%, var(--season-glod-b), transparent 40%),
@@ -270,8 +270,14 @@
   .menu-home .i3 { width: 40px; height: 40px; filter: drop-shadow(0 3px 4px rgba(0,0,0,.3)); }
   .menu-home b { display: block; font-size: 15px; } .menu-home small { font-size: 12px; opacity: .75; }
   .seasons { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 14px; }
-  .season-card { position: relative; border-radius: 14px; padding: 18px 18px 16px; overflow: hidden; background-color: var(--season-golv); background-image: radial-gradient(circle at 85% 15%, var(--season-glod-a), transparent 50%), radial-gradient(circle at 10% 100%, var(--season-glod-b), transparent 45%), repeating-linear-gradient(0deg, rgba(30,79,27,.06) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(30,79,27,.06) 0 1px, transparent 1px 7px); box-shadow: var(--skugga); color: var(--mylla); min-height: 230px; }
-  .season-card .i3 { position: absolute; right: 14px; top: 12px; width: 84px; height: 84px; }
+  .season-card { position: relative; border-radius: 14px; padding: 18px 18px 16px; overflow: hidden; background-color: var(--season-golv); background-image: radial-gradient(circle at 85% 15%, var(--season-glod-a), transparent 50%), radial-gradient(circle at 10% 100%, var(--season-glod-b), transparent 45%), repeating-linear-gradient(0deg, rgba(30,79,27,.06) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(30,79,27,.06) 0 1px, transparent 1px 7px); box-shadow: var(--skugga); color: var(--mylla); min-height: 230px; padding-right: 124px; }
+  .season-card .mini { margin-right: -106px; }
+  .season-card .card-cluster { position: absolute; right: 10px; top: 10px; width: 110px; height: 96px; }
+  .season-card .card-cluster .i3 { position: absolute; width: 52px; height: 52px; }
+  .season-card .card-cluster .i3:nth-child(1) { left: 0; top: 0; width: 60px; height: 60px; transform: rotate(-8deg); }
+  .season-card .card-cluster .i3:nth-child(2) { left: 56px; top: 14px; transform: rotate(6deg); }
+  .season-card .card-cluster .i3:nth-child(3) { left: 10px; top: 50px; width: 44px; height: 44px; }
+  .season-card .card-cluster .i3:nth-child(4) { left: 62px; top: 58px; width: 40px; height: 40px; transform: rotate(10deg); }
   .season-card .eyebrow { color: var(--season-accent); }
   .season-card h4 { margin: 8px 0 0; font: 700 26px var(--font-display); font-variation-settings: "SOFT" 60; color: var(--skog-800); }
   .season-card .sw-row { display: flex; gap: 6px; margin-top: 14px; }
@@ -391,8 +397,8 @@
 
   <h3>Startsidans hero i målstil</h3>
   <div class="hero host" style="margin-top:12px">
-    <span class="season"><i style="background:var(--season-glod-a)"></i><span data-season-label>Höst</span> i Tranemo</span>
-    <div class="cluster"><img class="i3" src="../../public/3dicons/megaphone.webp" alt="" style="left:30px;top:0;width:140px;height:140px;transform:rotate(-8deg)"><img class="i3" src="../../public/3dicons/calendar.webp" alt="" style="left:175px;top:60px;width:110px;height:110px;transform:rotate(6deg)"><img class="i3" src="../../public/3dicons/map-pin.webp" alt="" style="left:0;top:130px;width:96px;height:96px"><img class="i3" src="../../public/3dicons/puzzle.webp" alt="" style="left:140px;top:160px;width:80px;height:80px;transform:rotate(10deg)"></div>
+    <span class="season"><i style="background:var(--season-glod-a)"></i><span data-season-label>Höst</span>&nbsp;i Tranemo</span>
+    <div class="cluster" data-season-cluster><img class="i3" src="../../public/3dicons/umbrella.webp" alt="" style="left:30px;top:0;width:140px;height:140px;transform:rotate(-8deg)"><img class="i3" src="../../public/3dicons/fire.webp" alt="" style="left:175px;top:60px;width:110px;height:110px;transform:rotate(6deg)"><img class="i3" src="../../public/3dicons/cup.webp" alt="" style="left:0;top:130px;width:96px;height:96px"><img class="i3" src="../../public/3dicons/chess.webp" alt="" style="left:140px;top:160px;width:80px;height:80px;transform:rotate(10deg)"></div>
     <div class="eyebrow">Välkommen till</div>
     <h1>Tranemo<br>Evenemangskalender</h1>
     <p>Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe. Tack till de 48 arrangörer som fyller den.</p>
@@ -402,7 +408,7 @@
       <div class="place cool"><span class="stamp sm" style="box-shadow:inset 0 0 0 1.5px #3f6b7a;color:#3f6b7a">L</span><b>Limmared</b></div>
     </div>
   </div>
-  <p class="note">Väv och två mjuka ljusfläckar i årstidens färger ersätter de generativa formerna som bakgrund, och ett kluster av 3D-ikoner tar över rollen som blickfång till höger. Formerna behålls på ort- och platskort, där de ger varje ort ett eget ansikte. Raden «Tack till de 48 arrangörer» räknas live. Ortkorten får varsin färgvärld: skog, lera, glas.</p>
+  <p class="note">Väv och två mjuka ljusfläckar i årstidens färger ersätter de generativa formerna som bakgrund, och ett kluster av fyra 3D-ikoner tar över rollen som blickfång till höger. Ikonerna byts med årstiden: byt årstid i avsnittet nedan och se klustret ändras. Formerna behålls på ort- och platskort, där de ger varje ort ett eget ansikte. Raden «Tack till de 48 arrangörer» räknas live. Ortkorten får varsin färgvärld: skog, lera, glas.</p>
 
   <!-- ================= ÅRSTIDER ================= -->
   <h2 id="arstider">Årstider</h2>
@@ -413,15 +419,15 @@
     <div class="season-pick" role="group" aria-label="Årstid"><button type="button" data-set-season="var">Vår</button><button type="button" data-set-season="sommar">Sommar</button><button type="button" data-set-season="host">Höst</button><button type="button" data-set-season="vinter">Vinter</button></div>
   </div>
   <div class="seasons">
-    <div class="season-card s-var"><img class="i3" src="../../public/3dicons/sun.webp" alt=""><div class="eyebrow">1 mars – 31 maj</div><h4>Vår</h4><div class="sw-row"><i style="background:#e9f3dc"></i><i style="background:#b9dba0"></i><i style="background:#f2e6b8"></i><i style="background:#c8613a"></i></div><div class="dates">Golv lövgrönt · glöd löv och ljus sol</div><div class="mini"><i></i>Idag-tavlan i löv. «Vårens första …»</div></div>
-    <div class="season-card s-sommar"><img class="i3" src="../../public/3dicons/glass.webp" alt=""><div class="eyebrow">1 juni – 31 augusti</div><h4>Sommar</h4><div class="sw-row"><i style="background:#edf3df"></i><i style="background:#f1dc8a"></i><i style="background:#b9dba0"></i><i style="background:#c8613a"></i></div><div class="dates">Golv äng · glöd sol och löv</div><div class="mini"><i></i>Idag-tavlan i löv. «I kväll ute …»</div></div>
-    <div class="season-card s-host"><img class="i3" src="../../public/3dicons/umbrella.webp" alt=""><div class="eyebrow">1 september – 30 november</div><h4>Höst</h4><div class="sw-row"><i style="background:#eeeedb"></i><i style="background:#d9c79a"></i><i style="background:#d8bfa9"></i><i style="background:#c8613a"></i></div><div class="dates">Golv halm · glöd ockra och terrakotta</div><div class="mini"><i></i>Idag-tavlan i ockra. «Höstlov …»</div></div>
-    <div class="season-card s-vinter"><img class="i3" src="../../public/3dicons/tea-cup.webp" alt=""><div class="eyebrow">1 december – 28 februari</div><h4>Vinter</h4><div class="sw-row"><i style="background:#eceee7"></i><i style="background:#cfe0ea"></i><i style="background:#cdc3b4"></i><i style="background:#b9603f"></i></div><div class="dates">Golv snö · glöd is och sten</div><div class="mini"><i></i>Idag-tavlan i is. «Julmarknad …»</div></div>
+    <div class="season-card s-var"><div class="card-cluster"><img class="i3" src="../../public/3dicons/sun.webp" alt=""><img class="i3" src="../../public/3dicons/flag.webp" alt=""><img class="i3" src="../../public/3dicons/music.webp" alt=""><img class="i3" src="../../public/3dicons/camera.webp" alt=""></div><div class="eyebrow">1 mars – 31 maj</div><h4>Vår</h4><div class="sw-row"><i style="background:#e9f3dc"></i><i style="background:#b9dba0"></i><i style="background:#f2e6b8"></i><i style="background:#c8613a"></i></div><div class="dates">Golv lövgrönt · glöd löv och ljus sol</div><div class="mini"><i></i>Idag-tavlan i löv. «Vårens första …»</div></div>
+    <div class="season-card s-sommar"><div class="card-cluster"><img class="i3" src="../../public/3dicons/glass.webp" alt=""><img class="i3" src="../../public/3dicons/sun.webp" alt=""><img class="i3" src="../../public/3dicons/trophy.webp" alt=""><img class="i3" src="../../public/3dicons/music.webp" alt=""></div><div class="eyebrow">1 juni – 31 augusti</div><h4>Sommar</h4><div class="sw-row"><i style="background:#edf3df"></i><i style="background:#f1dc8a"></i><i style="background:#b9dba0"></i><i style="background:#c8613a"></i></div><div class="dates">Golv äng · glöd sol och löv</div><div class="mini"><i></i>Idag-tavlan i löv. «I kväll ute …»</div></div>
+    <div class="season-card s-host"><div class="card-cluster"><img class="i3" src="../../public/3dicons/umbrella.webp" alt=""><img class="i3" src="../../public/3dicons/fire.webp" alt=""><img class="i3" src="../../public/3dicons/cup.webp" alt=""><img class="i3" src="../../public/3dicons/chess.webp" alt=""></div><div class="eyebrow">1 september – 30 november</div><h4>Höst</h4><div class="sw-row"><i style="background:#eeeedb"></i><i style="background:#d9c79a"></i><i style="background:#d8bfa9"></i><i style="background:#c8613a"></i></div><div class="dates">Golv halm · glöd ockra och terrakotta</div><div class="mini"><i></i>Idag-tavlan i ockra. «Höstlov …»</div></div>
+    <div class="season-card s-vinter"><div class="card-cluster"><img class="i3" src="../../public/3dicons/tea-cup.webp" alt=""><img class="i3" src="../../public/3dicons/gift.webp" alt=""><img class="i3" src="../../public/3dicons/star.webp" alt=""><img class="i3" src="../../public/3dicons/bell.webp" alt=""></div><div class="eyebrow">1 december – 28 februari</div><h4>Vinter</h4><div class="sw-row"><i style="background:#eceee7"></i><i style="background:#cfe0ea"></i><i style="background:#cdc3b4"></i><i style="background:#b9603f"></i></div><div class="dates">Golv snö · glöd is och sten</div><div class="mini"><i></i>Idag-tavlan i is. «Julmarknad …»</div></div>
   </div>
   <ul class="rules">
     <li><b>Datumgränserna</b> följer meteorologisk årstid i Sverige, fasta månader, så att bytet är förutsägbart och går att testa. Bytet sker vid midnatt, servern avgör, så att SSR och klient visar samma.</li>
     <li><b>Bara fyra variabler byter:</b> golv, glöd A, glöd B och tavlans färg. Accenten tegel är gemensam, med ett snäpp mörkare på vintern så den håller mot det kalla golvet.</li>
-    <li><b>Ikonen i årstidsmärket</b> är en 3D-ikon: sol, glas, paraply, tekopp. Den syns bara i hero.</li>
+    <li><b>Klustret i hero byts med årstiden.</b> Vår: sol, flagga, musik, kamera. Sommar: glas, sol, pokal, musik. Höst: paraply, brasa, kaffe, schack. Vinter: tekopp, paket, stjärna, klocka. Den första ikonen i varje uppsättning är också årstidsmärkets ikon.</li>
     <li><b>Innehållet styr också:</b> vi kan låta redaktionen sätta en årstidsrubrik på tavlan («Vårens första utemarknader»), men designen ska bära sig utan den.</li>
     <li><b>Mörkt läge</b> behåller sin palett; årstiden syns där bara i glöden.</li>
     <li>I koden: <code>getSeason(date)</code> returnerar <code>var | sommar | host | vinter</code>, sätts som <code>data-season</code> på <code>&lt;html&gt;</code> i SSR, och fyra block i <code>globalStylesManager</code> ger variablerna. En adminknapp kan låsa en årstid för förhandsgranskning.</li>
@@ -432,7 +438,7 @@
   <p>Setet från 3dicons.co, CC0, 124 motiv. Vi använder vinkeln «dynamic» i stilen «color»: varma röda och orange toner som lyfter från det gröna golvet. De är prydnad med mening, inte gränssnittsikoner: streckikoner i knappar och menyer stannar som de är. Nedan sex sätt att använda dem, från mest till minst självklart.</p>
 
   <h3>1. Blickfång i hero</h3>
-  <p class="note">Fyra ikoner som motsvarar sajtens fyra huvudsektioner, lätt roterade, med mjuk fallskugga och ett långsamt svävande (avstängt vid reducerad rörelse). Se hero ovan. Det här är den stora användningen och den som ger startsidan sin känsla.</p>
+  <p class="note">Fyra ikoner som hör till årstiden, lätt roterade, med mjuk fallskugga och ett långsamt svävande (avstängt vid reducerad rörelse). Se hero ovan, och byt årstid i avsnittet Årstider för att se de andra uppsättningarna. Sektionsikonerna (megafon, pussel, kalender, kartnål) används i stället vid rubrikerna, så att hero och listsidor inte säger samma sak två gånger.</p>
 
   <h3>2. Bredvid sektionsrubriken</h3>
   <div class="demo" style="gap:28px"><span class="heading-row"><img class="i3" src="../../public/3dicons/megaphone.webp" alt="" width="56" height="56"><span class="disp" style="font-size:32px;font-weight:600">Evenemang</span></span><span class="heading-row"><img class="i3" src="../../public/3dicons/puzzle.webp" alt="" width="56" height="56"><span class="disp" style="font-size:32px;font-weight:600">Föreningar</span></span><span class="heading-row"><img class="i3" src="../../public/3dicons/map-pin.webp" alt="" width="56" height="56"><span class="disp" style="font-size:32px;font-weight:600">Platser</span></span></div>
@@ -555,11 +561,13 @@
 (function () {
   var names = { var: 'Vår', sommar: 'Sommar', host: 'Höst', vinter: 'Vinter' };
   function getSeason(d) { var m = d.getMonth() + 1; if (m >= 3 && m <= 5) return 'var'; if (m >= 6 && m <= 8) return 'sommar'; if (m >= 9 && m <= 11) return 'host'; return 'vinter'; }
+  var clusters = { var: ['sun','flag','music','camera'], sommar: ['glass','sun','trophy','music'], host: ['umbrella','fire','cup','chess'], vinter: ['tea-cup','gift','star','bell'] };
   var root = document.documentElement;
   function apply(season) {
     root.setAttribute('data-season', season);
     document.querySelectorAll('[data-season-label]').forEach(function (el) { el.textContent = names[season]; });
     document.querySelectorAll('[data-set-season]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set-season') === season)); });
+    document.querySelectorAll('[data-season-cluster] img').forEach(function (img, i) { img.src = '../../public/3dicons/' + clusters[season][i] + '.webp'; });
   }
   apply(getSeason(new Date()));
   document.querySelectorAll('[data-set-season]').forEach(function (b) { b.addEventListener('click', function () { apply(b.getAttribute('data-set-season')); }); });
