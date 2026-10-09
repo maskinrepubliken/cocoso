@@ -378,7 +378,6 @@ event:
     intro: "Enter the last name and email you signed up with."
     find: "Find my sign-up"
     notFound: "We found no sign-up with those details. Check the date and spelling and try again."
-    onlyYou: "Archived events are only shown to you and the admins."
     save: "Save changes"
     cancel: "Cancel my sign-up"
     updated: "Your sign-up is changed."
@@ -397,6 +396,7 @@ event:
   archived:
     tag: "Archived"
     notFound: "This event is not available."
+    onlyYou: "Archived events are only shown to you and the admins."
   discussion:
     open: "Open the discussion"
     onlyVerified: "For verified members"
