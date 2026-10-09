@@ -32,13 +32,14 @@ export function Bio({ user }: BioProps) {
   return (
     <Flex justify="center" mb="4">
       <Box
-        bg="white"
         className="text-content"
         p="4"
         w="100%"
         css={{
-          borderColor: 'var(--cocoso-colors-theme-500)',
-          borderLeft: '4px solid',
+          backgroundColor: 'var(--cocoso-papper)',
+          borderLeft: '4px solid var(--cocoso-tegel)',
+          borderRadius: 'var(--cocoso-radius-kort)',
+          boxShadow: 'var(--cocoso-skugga)',
           maxWidth: '480px',
         }}
       >

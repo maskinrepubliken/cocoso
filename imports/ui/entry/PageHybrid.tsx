@@ -63,12 +63,17 @@ function SimplePage({
       {description && (
         <Center>
           <Box
-            bg="white"
             className="text-content"
             mt="2"
             mb="24"
             p="6"
-            css={{ maxWidth: '540px' }}
+            css={{
+              backgroundColor: 'var(--cocoso-papper)',
+              borderRadius: 'var(--cocoso-radius-kort)',
+              boxShadow: 'var(--cocoso-skugga)',
+              maxWidth: '620px',
+              width: '100%',
+            }}
           >
             {description && HTMLReactParser(DOMPurify.sanitize(description))}
           </Box>

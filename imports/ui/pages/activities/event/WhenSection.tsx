@@ -17,7 +17,7 @@ const Chips = styled('div', {
 });
 
 const Chip = styled('button', {
-  backgroundColor: 'white',
+  backgroundColor: 'var(--cocoso-papper)',
   border: '1px solid var(--cocoso-colors-theme-200)',
   borderRadius: '999px',
   color: 'var(--cocoso-colors-theme-800)',

@@ -1,3 +1,4 @@
+import { useAtomValue } from 'jotai';
 import React from 'react';
 import { Link, useLoaderData, useRouteLoaderData } from 'react-router';
 import { Helmet } from 'react-helmet';
@@ -10,6 +11,9 @@ import ComposablePageHybrid from '/imports/ui/entry/ComposablePageHybrid';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
+import Stamp from '/imports/ui/generic/Stamp';
+import { locationsAtom } from '/imports/state';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { publicUrl } from '/imports/api/_utils/shared';
 
@@ -46,6 +50,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
   const { activities, composablePage, groups, resources } =
     (useLoaderData() as any) || {};
   const [tc] = useTranslation('common');
+  const locations = useAtomValue(locationsAtom);
 
   const location = slugData?.location;
   if (!location) {
@@ -57,6 +62,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
     menu.find((item: any) => item.name === name)?.isVisible;
   const prefix = `/${location.slug}`;
   const heroImage = getImageUrl(location.images?.[0], 'full');
+  const world = worldForLocation(locations, location._id);
   const title = `${location.name} | ${siteDoc?.settings?.name}`;
   const description = location.description
     ? DOMPurify.sanitize(location.description, { ALLOWED_TAGS: [] })
@@ -68,12 +74,17 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
   return (
     <Box>
       <Box
+        className="location-hero"
         css={{
           backgroundColor: 'var(--cocoso-colors-theme-100)',
-          backgroundImage: heroImage ? `url('${heroImage}')` : undefined,
+          backgroundImage: heroImage
+            ? `url('${heroImage}')`
+            : world
+            ? `linear-gradient(135deg, ${world.from}, ${world.to})`
+            : undefined,
           backgroundPosition: 'center',
           backgroundSize: 'cover',
-          minHeight: heroImage ? '320px' : '240px',
+          minHeight: heroImage ? '340px' : '260px',
           overflow: 'hidden',
           position: 'relative',
         }}
@@ -82,24 +93,38 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
         {!heroImage && (
           <PlaceholderImage
             seed={location._id}
-            style={{ left: 0, position: 'absolute', top: 0 }}
+            style={{
+              left: 0,
+              mixBlendMode: 'multiply',
+              opacity: 0.55,
+              position: 'absolute',
+              top: 0,
+            }}
           />
         )}
         <Center
           css={{
             background: heroImage
-              ? 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.05))'
-              : 'linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0))',
-            minHeight: heroImage ? '320px' : '240px',
+              ? 'linear-gradient(to top, rgba(42,37,32,0.72), rgba(42,37,32,0.05))'
+              : 'linear-gradient(to top, rgba(42,37,32,0.45), rgba(42,37,32,0))',
+            flexDirection: 'column',
+            gap: '0.9rem',
+            minHeight: heroImage ? '340px' : '260px',
             padding: '2rem 1rem',
             position: 'relative',
           }}
         >
+          <Stamp
+            className="location-hero-stamp"
+            name={location.name}
+            size="lg"
+            world={world}
+          />
           <Heading
             color="white"
-            size="xl"
+            size="2xl"
             textAlign="center"
-            css={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
+            css={{ textShadow: '0 1px 3px rgba(0,0,0,0.45)' }}
           >
             {location.name}
           </Heading>

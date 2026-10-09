@@ -44,7 +44,15 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
     {
       title: <Trans i18nKey="common:labels.info">Info</Trans>,
       content: (
-        <Box bg="white" className="text-content" p="6">
+        <Box
+          className="text-content"
+          p="6"
+          css={{
+            backgroundColor: 'var(--cocoso-papper)',
+            borderRadius: 'var(--cocoso-radius-kort)',
+            boxShadow: 'var(--cocoso-skugga)',
+          }}
+        >
           {work?.longDescription &&
             HTMLReactParser(DOMPurify.sanitize(work?.longDescription))}
         </Box>
@@ -57,7 +65,11 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
     tabs.push({
       title: <Trans i18nKey="common:labels.extra">Extra</Trans>,
       content: (
-        <Box bg="white" p="6">
+        <Box p="6" css={{
+            backgroundColor: 'var(--cocoso-papper)',
+            borderRadius: 'var(--cocoso-radius-kort)',
+            boxShadow: 'var(--cocoso-skugga)',
+          }}>
           <Text textAlign="center">{work?.additionalInfo}</Text>
         </Box>
       ),

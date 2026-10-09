@@ -64,7 +64,8 @@ interface TablyCenteredProps extends HeaderProps {
 }
 
 const placeholderStyle: React.CSSProperties = {
-  borderRadius: 'var(--cocoso-border-radius)',
+  borderRadius: 'var(--cocoso-radius-kort)',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   height: '280px',
   maxWidth: '780px',
 };
@@ -120,10 +121,10 @@ const Header: React.FC<HeaderProps> = ({
           <Heading
             size="lg"
             css={{
-              lineHeight: 1,
+              lineHeight: 1.08,
               margin: '0.5rem 0',
               textAlign: author ? 'left' : 'center',
-              textShadow: '1px 1px 1px #fff',
+              fontSize: '2.2rem',
             }}
           >
             {title}
@@ -132,11 +133,13 @@ const Header: React.FC<HeaderProps> = ({
             <Heading
               size="sm"
               css={{
-                lineHeight: 1,
+                color: 'var(--cocoso-mylla-soft)',
+                fontFamily: 'var(--cocoso-body-font-family)',
+                fontSize: '1.1rem',
                 fontWeight: 'normal',
+                lineHeight: 1.3,
                 margin: '0.5rem 0',
                 textAlign: author ? 'left' : 'center',
-                textShadow: '1px 1px 1px #fff',
               }}
             >
               {subTitle}

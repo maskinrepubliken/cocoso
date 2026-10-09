@@ -2315,3 +2315,16 @@ body {
   font-size: 13px;
   font-weight: 700;
 }
+
+/* === Place landing hero === */
+
+.location-hero-stamp {
+  background: rgba(255, 253, 247, 0.92);
+  box-shadow: inset 0 0 0 2.5px var(--stamp-ink), inset 0 0 0 7px rgba(255, 253, 247, 0.92), inset 0 0 0 8.5px var(--stamp-ink), var(--cocoso-skugga-kort);
+}
+
+.text-content blockquote {
+  border-left: 4px solid var(--cocoso-tegel);
+  font-family: var(--cocoso-font-display);
+  font-style: italic;
+}

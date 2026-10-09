@@ -8,10 +8,9 @@ export const WIDE = '@media (min-width: 900px)';
 export const NARROW = '@media (max-width: 899px)';
 
 const SectionBox = styled('section', {
-  backgroundColor: 'white',
-  border: '1px solid var(--cocoso-colors-theme-100)',
-  borderRadius: 'var(--cocoso-border-radius)',
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+  backgroundColor: 'var(--cocoso-papper)',
+  borderRadius: 'var(--cocoso-radius-kort)',
+  boxShadow: 'var(--cocoso-skugga)',
   padding: '1.25rem 1.5rem',
   wordBreak: 'break-word',
 });
@@ -25,16 +24,17 @@ const SectionHeader = styled('div', {
 });
 
 const SectionTitle = styled('h2', {
-  color: 'var(--cocoso-colors-theme-800)',
-  fontSize: '0.8rem',
+  color: 'var(--cocoso-tegel)',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.72rem',
   fontWeight: 700,
-  letterSpacing: '0.08em',
+  letterSpacing: '0.1em',
   margin: 0,
   textTransform: 'uppercase',
 });
 
 const SectionAside = styled('span', {
-  color: 'var(--cocoso-colors-gray-600)',
+  color: 'var(--cocoso-mylla-soft)',
   fontSize: '0.875rem',
 });
 
@@ -67,13 +67,16 @@ export default function Section({
 
 // Small shared pieces of text styling.
 export const Muted = styled('p', {
-  color: 'var(--cocoso-colors-gray-600)',
+  color: 'var(--cocoso-mylla-soft)',
   fontSize: '0.875rem',
   margin: 0,
 });
 
 export const Strong = styled('p', {
-  fontSize: '1.05rem',
-  fontWeight: 700,
-  margin: '0 0 0.25rem',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.25rem',
+  fontWeight: 600,
+  lineHeight: 1.2,
+  margin: '0 0 0.35rem',
 });

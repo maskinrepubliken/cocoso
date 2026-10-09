@@ -74,7 +74,8 @@ const Hero = styled('header', {
 
 const ImageBox = styled('div', {
   aspectRatio: '4 / 3',
-  borderRadius: 'var(--cocoso-border-radius)',
+  borderRadius: 'var(--cocoso-radius-kort)',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   overflow: 'hidden',
   width: '100%',
   '& img': {
@@ -89,16 +90,23 @@ const ImageBox = styled('div', {
 const HeroText = styled('div', { minWidth: 0 });
 
 const Title = styled('h1', {
-  fontSize: '1.6rem',
-  lineHeight: 1.15,
-  margin: '0 0 0.35rem',
-  [WIDE]: { fontSize: '1.85rem' },
+  color: 'var(--cocoso-colors-theme-800)',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '2rem',
+  fontWeight: 600,
+  letterSpacing: '-0.01em',
+  lineHeight: 1.08,
+  margin: '0 0 0.45rem',
+  textWrap: 'balance',
+  [WIDE]: { fontSize: '2.5rem' },
 });
 
 const SubTitle = styled('p', {
-  color: 'var(--cocoso-colors-gray-700)',
-  fontSize: '1.05rem',
-  margin: '0 0 0.5rem',
+  color: 'var(--cocoso-mylla-soft)',
+  fontSize: '1.1rem',
+  lineHeight: 1.4,
+  margin: '0 0 0.6rem',
 });
 
 const Tags = styled('div', {
@@ -135,8 +143,10 @@ const Column = styled('div', {
 });
 
 const Description = styled('div', {
-  lineHeight: 1.55,
-  maxWidth: '68ch',
+  color: 'var(--cocoso-mylla)',
+  fontSize: '1.02rem',
+  lineHeight: 1.6,
+  maxWidth: '66ch',
   '& p:first-child': { marginTop: 0 },
   '& p:last-child': { marginBottom: 0 },
 });
