@@ -19,3 +19,7 @@ export const canCreateContentAtom = atom<boolean>((get) => {
   const role = get(roleAtom);
   return role !== null && ['admin', 'contributor'].includes(role);
 });
+
+// Username an admin is currently "viewing as" (see imports/utils/viewAs.ts),
+// or null when nobody is borrowing a session.
+export const viewAsAtom = atom<string | null>(null);

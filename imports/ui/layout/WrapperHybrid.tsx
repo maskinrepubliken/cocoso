@@ -27,12 +27,14 @@ import {
 } from '/imports/state';
 import { applyGlobalStyles } from '/imports/ui/utils/globalStylesManager';
 import { restoreKeyFromSession } from '/imports/utils/setupEncryption';
+import { restoreViewAsState } from '/imports/utils/viewAs';
 import { call } from '/imports/api/_utils/shared';
 import { Box, Loader } from '/imports/ui/core';
 
 import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
 import Header from './Header';
+import ViewAsBanner from './ViewAsBanner';
 import { Footer } from './Footers';
 
 dayjs.extend(updateLocale);
@@ -102,6 +104,7 @@ export default function WrapperHybrid({
   useEffect(() => {
     setValues();
     restoreKeyFromSession();
+    restoreViewAsState();
     setTimeout(() => {
       setRendered(true);
     }, 1000);
@@ -167,6 +170,7 @@ export default function WrapperHybrid({
             animate={rendered && !isDesktopValue}
             theme={site?.theme || siteDoc?.theme}
           >
+            <ViewAsBanner />
             {!adminPage && (
               <Header
                 site={site || siteDoc}

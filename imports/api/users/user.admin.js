@@ -1,11 +1,41 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { Accounts } from 'meteor/accounts-base';
 
 import { isAdmin, isContributorOrAdmin, isContributor } from './user.roles';
 import Activities from '../activities/activity';
 import Memberships from '../memberships/membership';
 
 Meteor.methods({
+  // Lets an admin see the site as another (non-admin) member: a fresh login
+  // token for that member is issued and returned, and the client logs in
+  // with it. The admin's own token stays in the browser so they can switch
+  // back; logging out of the borrowed session removes the token again.
+  async viewAsUser(memberId) {
+    check(memberId, String);
+    const user = await Meteor.userAsync();
+    if (!user || !(await isAdmin(user._id))) {
+      throw new Meteor.Error('not-allowed', 'Only admins can view as a member');
+    }
+    if (memberId === user._id) {
+      throw new Meteor.Error('same-user', 'You are already this user');
+    }
+    const membership = await Memberships.findOneAsync({ userId: memberId });
+    if (!membership || membership.role === 'admin') {
+      throw new Meteor.Error(
+        'not-a-member',
+        'Only verified or non-verified members can be viewed as'
+      );
+    }
+    const stamped = Accounts._generateStampedLoginToken();
+    await Accounts._insertLoginToken(memberId, stamped);
+    // eslint-disable-next-line no-console
+    console.log(
+      `[view-as] admin ${user.username} (${user._id}) now views as ${memberId}`
+    );
+    return stamped.token;
+  },
+
   async setAsAdmin(memberId) {
     const user = await Meteor.userAsync();
     const isAdminUser = await isAdmin(user._id);

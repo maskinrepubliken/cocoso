@@ -1,5 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { useLoaderData, useRevalidator, useSearchParams } from 'react-router';
+import {
+  useLoaderData,
+  useNavigate,
+  useRevalidator,
+  useSearchParams,
+} from 'react-router';
 import dayjs from 'dayjs';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
@@ -22,6 +27,7 @@ import NiceList from '/imports/ui/generic/NiceList';
 import { currentUserAtom, isDesktopAtom, roleAtom } from '/imports/state';
 import { call } from '../../../api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
+import { startViewAs } from '/imports/utils/viewAs';
 
 import UsageReport from './UsageReport';
 import Boxling from './Boxling';
@@ -163,6 +169,18 @@ export default function Members() {
     }
   };
 
+  const navigate = useNavigate();
+
+  const viewAs = async (member: any) => {
+    try {
+      await startViewAs(member.id, member.username);
+      message.success(t('viewAs.started', { username: member.username }));
+      navigate('/');
+    } catch (error: any) {
+      message.error(error.reason || error.message || error.error);
+    }
+  };
+
   const safeMembers = members || [];
 
   const membersList = useMemo(
@@ -195,6 +213,11 @@ export default function Members() {
             ),
             handleClick: () => setOrganizer(member, !member.isOrganizer),
             isDisabled: role !== 'admin',
+          },
+          {
+            content: t('actions.viewAs'),
+            handleClick: () => viewAs(member),
+            isDisabled: role !== 'admin' || member.role === 'admin',
           },
           {
             content: t('actions.usageReport'),
