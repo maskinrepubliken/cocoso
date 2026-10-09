@@ -114,6 +114,8 @@ function Nav({
   itemClassName,
 }: NavProps) {
   const activeRef = useRef<HTMLAnchorElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const [scrollState, setScrollState] = useState('');
 
   // Keep the active chip visible when the section changes on mobile.
   useEffect(() => {
@@ -124,11 +126,34 @@ function Nav({
     });
   }, [section]);
 
+  // Fade the edge that has more chips behind it, so the row reads as
+  // scrollable on a phone.
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav || !isClient) {
+      return undefined;
+    }
+    const update = () => {
+      const left = nav.scrollLeft > 4;
+      const right = nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 4;
+      setScrollState(
+        `${left ? 'can-scroll-left' : ''} ${right ? 'can-scroll-right' : ''}`
+      );
+    };
+    update();
+    nav.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      nav.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [items.length]);
+
   const isActive = (item: HeaderMenuItem, index: number) =>
     section === '' ? index === 0 : section === item.name;
 
   return (
-    <nav className={className}>
+    <nav className={`${className} ${scrollState}`} ref={navRef}>
       {items.map((item, index) =>
         item.name === 'info' ? (
           <InfoPagesMenu

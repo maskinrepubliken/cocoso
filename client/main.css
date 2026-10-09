@@ -1891,8 +1891,31 @@ body {
   padding: 0 14px 10px;
   overflow-x: auto;
   scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
-  mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+  scroll-padding: 0 14px;
+  --chips-fade-left: 0px;
+  --chips-fade-right: 36px;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--chips-fade-left),
+    #000 calc(100% - var(--chips-fade-right)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--chips-fade-left),
+    #000 calc(100% - var(--chips-fade-right)),
+    transparent
+  );
+}
+
+.site-chips.can-scroll-left {
+  --chips-fade-left: 36px;
+}
+
+.site-chips:not(.can-scroll-right) {
+  --chips-fade-right: 0px;
 }
 
 .site-chips::-webkit-scrollbar {
@@ -1923,7 +1946,7 @@ body {
 }
 
 .site-chip:last-child {
-  margin-right: 36px;
+  margin-right: 14px;
 }
 
 .site-chip.is-active {
@@ -2338,34 +2361,48 @@ body {
   .home-hero,
   .home-hero.vav {
     margin-top: -104px;
-    padding: 128px 0 28px;
+    padding: 116px 0 28px;
   }
 
   .season-badge {
     position: static;
     order: -2;
-    flex: 0 0 auto;
-    align-self: flex-start;
-    margin-bottom: 4px;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: max-content;
+    align-self: center;
+    margin-bottom: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .home-hero-inner {
     padding: 0 16px;
-    gap: 24px;
+    gap: 20px;
   }
 
   .home-hero-tagline {
     font-size: 16px;
   }
 
+  /* The places scroll sideways; the third card peeks in from the edge so
+     the row reads as a row. */
   .location-cards {
     margin: 0 -16px;
     padding: 0 16px 4px;
+    scroll-snap-type: x proximity;
+    scroll-padding: 0 16px;
   }
 
   .location-card {
-    width: 168px;
-    height: 110px;
+    width: clamp(132px, 40vw, 168px);
+    height: 104px;
+    scroll-snap-align: start;
+  }
+
+  .location-card-name {
+    font-size: 17px;
+    padding: 24px 10px 8px;
   }
 }
 
@@ -2437,26 +2474,34 @@ body {
 }
 
 @media (max-width: 959px) {
+  /* Badge on the left, a small cluster of icons on the right, one row. */
   .home-hero-icons {
     position: static;
     width: auto;
     height: auto;
     display: flex;
-    gap: 10px;
+    gap: 0;
     align-items: flex-end;
     order: -1;
+    flex: 0 0 auto;
+    margin: 0 0 -6px auto;
+  }
+
+  .home-hero-icons + .home-hero-text {
     flex-basis: 100%;
-    margin-bottom: -8px;
   }
 
   .home-hero-icon {
     position: static;
-    width: 64px;
-    height: 64px;
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 8px 10px rgba(30, 50, 25, 0.2));
   }
 
-  .home-hero-icon.is-1 { width: 84px; height: 84px; }
-  .home-hero-icon.is-2 { width: 72px; height: 72px; }
+  .home-hero-icon.is-1 { width: 56px; height: 56px; }
+  .home-hero-icon.is-2 { width: 46px; height: 46px; }
+  .home-hero-icon.is-3 { transform: rotate(-4deg) translateY(-6px); }
+  .home-hero-icon.is-4 { display: none; }
 }
 
 /* === Place tag (orttag) === */
