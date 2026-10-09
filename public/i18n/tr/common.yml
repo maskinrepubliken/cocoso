@@ -441,3 +441,8 @@ seasons:
   sommar: Yaz
   host: Sonbahar
   vinter: Kış
+
+footer:
+  and: ve
+  byline: Tranemo belediyesinden bir hizmet; {{ places }} bölgelerindeki dernekler, düzenleyiciler ve komşular tarafından doldurulur.
+  bylineShort: Tranemo belediyesinden bir hizmet; dernekler, düzenleyiciler ve komşular tarafından doldurulur.

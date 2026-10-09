@@ -444,3 +444,8 @@ seasons:
   sommar: Summer
   host: Autumn
   vinter: Winter
+
+footer:
+  and: and
+  byline: A service from Tranemo municipality, filled by associations, organizers and neighbours in {{ places }}.
+  bylineShort: A service from Tranemo municipality, filled by associations, organizers and neighbours.

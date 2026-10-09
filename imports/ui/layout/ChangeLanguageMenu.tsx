@@ -34,9 +34,12 @@ export default function ChangeLanguage({
 
   return (
     <Box
-      bg="theme.50"
-      p="4"
-      css={{ borderRadius: 'var(--cocoso-border-radius)' }}
+      p={hideHelper ? '0' : '4'}
+      css={{
+        backgroundColor: hideHelper ? 'transparent' : 'var(--cocoso-papper)',
+        borderRadius: 'var(--cocoso-radius-kort)',
+        minWidth: hideHelper ? '160px' : undefined,
+      }}
     >
       {!hideHelper && (
         <Text

@@ -441,3 +441,8 @@ seasons:
   sommar: Sommar
   host: Höst
   vinter: Vinter
+
+footer:
+  and: och
+  byline: En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar i {{ places }}.
+  bylineShort: En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar.

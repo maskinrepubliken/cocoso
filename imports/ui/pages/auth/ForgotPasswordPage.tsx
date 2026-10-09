@@ -72,12 +72,12 @@ export default function ForgotPasswordPage() {
 
           <Flex justify="space-around" mt="4">
             <Link to="/login">
-              <CLink as="span" color="blue.500">
+              <CLink as="span" color="theme.500">
                 <b>{t('actions.login')}</b>
               </CLink>
             </Link>
             <Link to="/register">
-              <CLink as="span" color="blue.500">
+              <CLink as="span" color="theme.500">
                 <b>{t('actions.signup')}</b>
               </CLink>
             </Link>

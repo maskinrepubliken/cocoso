@@ -202,7 +202,22 @@ export default function WrapperHybrid({
         </Suspense>
 
         {rendered && (
-          <Toaster containerStyle={{ minWidth: '120px', zIndex: 999999 }} />
+          <Toaster
+            containerStyle={{ minWidth: '120px', zIndex: 999999 }}
+            toastOptions={{
+              style: {
+                background: 'var(--cocoso-papper)',
+                borderRadius: 'var(--cocoso-radius-kort)',
+                boxShadow: 'var(--cocoso-skugga-meny)',
+                color: 'var(--cocoso-mylla)',
+                fontFamily: 'var(--cocoso-font-ui)',
+                fontWeight: 600,
+                padding: '10px 14px',
+              },
+              success: { iconTheme: { primary: 'var(--cocoso-colors-theme-500)', secondary: '#fff' } },
+              error: { iconTheme: { primary: 'var(--cocoso-lingon)', secondary: '#fff' } },
+            }}
+          />
         )}
       </I18nextProvider>
     </>

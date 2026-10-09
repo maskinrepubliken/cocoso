@@ -105,22 +105,14 @@ export default function LoginPage() {
               <Text>
                 {t('login.labels.subtitle')}{' '}
                 <Link to="/register">
-                  <CLink as="span" color="blue.500">
+                  <CLink as="span" color="theme.500">
                     <b>{t('actions.signup')}</b>
                   </CLink>
                 </Link>
               </Text>
             </Center>
 
-            <Box
-              bg="gray.50"
-              mb="4"
-              p="4"
-              css={{
-                border: '1px solid',
-                borderColor: 'var(--cocoso-colors-gray-300)',
-              }}
-            >
+            <Box mb="4" py="2">
               <Login isSubmitted={submitted} onSubmit={handleSubmit} />
             </Box>
             <Center>
@@ -130,7 +122,7 @@ export default function LoginPage() {
                 <Link to="/forgot-password">
                   <CLink
                     as="span"
-                    color="blue.500"
+                    color="theme.500"
                     css={{ marginTop: '0.5rem' }}
                   >
                     <b>{t('actions.reset')}</b>

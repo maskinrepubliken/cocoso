@@ -1,121 +1,102 @@
 import { Link } from 'react-router';
 import React from 'react';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
-import { Box, Center, Flex, Heading, Text } from '/imports/ui/core';
+import { useAtomValue } from 'jotai';
+
+import { locationsAtom } from '/imports/state';
 
 import FeedbackForm from './FeedbackForm';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import ChangeLanguageMenu from './ChangeLanguageMenu';
 
-export interface OldFooterProps {
-  settings: any;
-}
-
-export function OldFooter({ settings }: OldFooterProps) {
-  return (
-    <Box
-      p="4"
-      css={{
-        fontSize: '85%',
-        lineHeight: '2',
-        textAlign: 'center',
-      }}
-    >
-      <Text color="gray.100" size="sm">
-        {settings?.address}
-        {', '} {settings?.city}
-      </Text>
-      <br />
-      <Text color="gray.100" fontSize="sm">
-        {settings?.email}
-      </Text>
-    </Box>
-  );
-}
-
 export interface FooterProps {
   site: any;
 }
 
+// The foot of every page: the site's name and who it is for on the left,
+// the municipality's mark on the right, on the woven season floor. The only
+// place the municipality's logo appears, so the kinship with tranemo.se is
+// said once, plainly.
 export function Footer({ site }: FooterProps) {
   const prefix = useLocationPrefix();
+  const locations = useAtomValue(locationsAtom);
+  const [tc] = useTranslation('common');
+
   if (!site || !site.settings) {
     return null;
   }
 
   const { settings } = site;
-  const activeMenu = site.settings?.menu?.filter(
-    (item) => item.isVisible
-  );
+  const activeMenu = settings?.menu?.filter((item: any) => item.isVisible);
+  const places = (locations || []).map((location) => location.name);
+  const placesText =
+    places.length > 1
+      ? `${places.slice(0, -1).join(', ')} ${tc('footer.and')} ${places[places.length - 1]}`
+      : places[0] || '';
+
+  const routeFor = (item: any) =>
+    item.name === 'info'
+      ? `${prefix}/info/about`
+      : item.isComposablePage
+      ? `${prefix}/cp/${item.name}`
+      : `${prefix}/${item.name}`;
 
   return (
-    <Box bg="gray.700" bottom={0} color="gray.100">
-      <Center p="4">
-        <Flex wrap="wrap" justify="center">
-          {activeMenu.map((item) => (
-            <Box key={item.name} p="2">
-              <Link
-                to={
-                  item.name === 'info'
-                    ? `${prefix}/info/about`
-                    : item.isComposablePage
-                    ? `${prefix}/cp/${item.name}`
-                    : `${prefix}/${item.name}`
-                }
-              >
-                <Text color="theme.50">{item.label}</Text>{' '}
-              </Link>
-            </Box>
-          ))}
-        </Flex>
-      </Center>
+    <footer className="site-footer vav">
+      <div className="site-footer-inner">
+        <div className="site-footer-text">
+          <p className="site-footer-name">{settings.name}</p>
+          {settings.footer ? (
+            <div className="site-footer-byline text-content">
+              {HTMLReactParser(DOMPurify.sanitize(settings.footer))}
+            </div>
+          ) : (
+            <p className="site-footer-byline">
+              {places.length > 0
+                ? tc('footer.byline', { places: placesText })
+                : tc('footer.bylineShort')}
+            </p>
+          )}
 
-      <Center pt="2">
-          <Flex
-            direction="column"
-            justify="center"
-            css={{
-              textAlign: 'center',
-            }}
-          >
-            <Center>
-              <Heading size="md">{settings.name}</Heading>
-            </Center>
-            <Center>
-              {settings.footer ? (
-                <Box
-                  className="text-content dark"
-                  mt="4"
-                  w="100%"
-                  css={{
-                    fontSize: '85%',
-                    textAlign: 'center',
-                    maxWidth: '480px',
-                  }}
-                >
-                  {HTMLReactParser(DOMPurify.sanitize(settings.footer))}
-                </Box>
-              ) : (
-                <OldFooter settings={settings} />
-              )}
-            </Center>
-            <Center>
-              <Link to="/terms-&-privacy-policy">
-                <Text color="blue.100" fontSize="xs">
-                  <Trans i18nKey="common:terms.title">
-                    Terms of Service & Privacy Policy
-                  </Trans>
-                </Text>
+          <nav className="site-footer-nav" aria-label={tc('menu.label')}>
+            {activeMenu?.map((item: any) => (
+              <Link key={item.name} to={routeFor(item)}>
+                {item.label}
               </Link>
-            </Center>
+            ))}
+            <Link to="/terms-&-privacy-policy">
+              <Trans i18nKey="common:terms.title">
+                Terms of Service & Privacy Policy
+              </Trans>
+            </Link>
+          </nav>
+
+          <div className="site-footer-meta">
+            {(settings.address || settings.city) && (
+              <span>
+                {[settings.address, settings.city].filter(Boolean).join(', ')}
+              </span>
+            )}
+            {settings.email && <span>{settings.email}</span>}
+          </div>
+
+          <div className="site-footer-tools">
             <FeedbackForm />
-          </Flex>
-        </Center>
-      <Center p="4">
-        <ChangeLanguageMenu centered />
-      </Center>
-    </Box>
+            <ChangeLanguageMenu hideHelper />
+          </div>
+        </div>
+
+        <a
+          className="site-footer-mark"
+          href="https://www.tranemo.se/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <img alt="Tranemo kommun" src="/images/tranemo-kommun.svg" />
+        </a>
+      </div>
+    </footer>
   );
 }

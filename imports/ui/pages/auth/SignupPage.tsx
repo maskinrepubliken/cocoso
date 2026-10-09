@@ -66,7 +66,7 @@ export default function SignupPage() {
               <Text>
                 {t('signup.labels.subtitle')}{' '}
                 <Link to="/login">
-                  <CLink as="span" color="blue.500">
+                  <CLink as="span" color="theme.500">
                     <b>{t('actions.login')}</b>
                   </CLink>
                 </Link>
