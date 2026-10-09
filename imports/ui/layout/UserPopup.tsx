@@ -212,7 +212,7 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
                     <em>{item.title}</em>{' '}
                   </Text>
                   <Box pl="2">
-                    <Badge colorScheme="red" size="xs">
+                    <Badge colorScheme="red" size="sm">
                       {' '}
                       {item.count}
                     </Badge>

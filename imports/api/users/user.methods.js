@@ -24,6 +24,11 @@ const userModel = async (user) => ({
 });
 
 Meteor.methods({
+  // How many people are marked as organizers: the start page thanks them.
+  async getOrganizerCount() {
+    return Memberships.find({ isOrganizer: true }).countAsync();
+  },
+
   async getCurrentUserLang() {
     const user = await Meteor.userAsync();
     if (!user) {

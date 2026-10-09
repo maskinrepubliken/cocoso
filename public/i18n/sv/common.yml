@@ -402,6 +402,8 @@ home:
   hero:
     welcome: Välkommen till
     tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
+    seasonIn: '{{ season }} i {{ place }}'
+    thanks: Tack till de {{ count }} arrangörer som fyller den.
 
 # Förfrågningar (works shown as requests between neighbours)
 requests:
@@ -433,3 +435,9 @@ requests:
     tips:
       name: "Tips"
       description: "Bra att veta: ställen, idéer och erbjudanden."
+
+seasons:
+  var: Vår
+  sommar: Sommar
+  host: Höst
+  vinter: Vinter

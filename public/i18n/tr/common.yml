@@ -402,6 +402,8 @@ home:
   hero:
     welcome: Hoş geldiniz
     tagline: Tüm belediyedeki etkinlikler, dernekler ve yerler tek bir yerde.
+    seasonIn: '{{ place }} için {{ season }}'
+    thanks: Takvimi dolduran {{ count }} düzenleyiciye teşekkürler.
 
 # Talepler (komşular arası talepler olarak gösterilen işler)
 requests:
@@ -433,3 +435,9 @@ requests:
     tips:
       name: "İpuçları"
       description: "Bilmekte fayda var: yerler, fikirler ve teklifler."
+
+seasons:
+  var: İlkbahar
+  sommar: Yaz
+  host: Sonbahar
+  vinter: Kış

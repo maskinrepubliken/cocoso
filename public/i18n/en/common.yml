@@ -405,6 +405,8 @@ home:
   hero:
     welcome: Welcome to
     tagline: Events, associations and places across the whole municipality, in one place.
+    seasonIn: '{{ season }} in {{ place }}'
+    thanks: Thanks to the {{ count }} organizers who fill it.
 
 # Requests (works shown as requests between neighbours)
 requests:
@@ -436,3 +438,9 @@ requests:
     tips:
       name: "Tips"
       description: "Good to know: places, ideas and offers."
+
+seasons:
+  var: Spring
+  sommar: Summer
+  host: Autumn
+  vinter: Winter
