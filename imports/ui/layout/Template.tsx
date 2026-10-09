@@ -32,7 +32,7 @@ export default function Template({
         <title>{heading || publicSettings.name}</title>
       </Helmet>
       {isDesktop ? (
-        <Grid columns={{ md: 1, lg: 3 }} p="3" templateColumns="30% 40% 30%">
+        <Grid columns={{ md: 1, lg: 3 }} p="3" templateColumns="3fr 4fr 3fr">
           <Box>{leftContent}</Box>
 
           <Box>
