@@ -36,12 +36,24 @@ const Page = styled('div', {
   width: '100%',
 });
 
+// On a phone the kinds are one row you swipe, with the next one peeking in
+// from the edge, so the list of requests starts within the first screen.
 const Kinds = styled('div', {
   display: 'grid',
   gap: '0.6rem',
   gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
   marginBottom: '1.5rem',
-  '@media (max-width: 480px)': { gridTemplateColumns: '1fr 1fr' },
+  '@media (max-width: 600px)': {
+    display: 'flex',
+    gap: '0.5rem',
+    margin: '0 -16px 1.25rem',
+    overflowX: 'auto',
+    padding: '4px 16px 8px',
+    scrollbarWidth: 'none',
+    scrollPadding: '0 16px',
+    scrollSnapType: 'x proximity',
+    '&::-webkit-scrollbar': { display: 'none' },
+  },
 });
 
 const KindTile = styled('button', {
@@ -63,6 +75,13 @@ const KindTile = styled('button', {
     selected: { true: { borderColor: green } },
     dimmed: { true: { opacity: 0.55 } },
   },
+  '@media (max-width: 600px)': {
+    flex: '0 0 auto',
+    gap: '0.4rem',
+    padding: '0.6rem 0.75rem',
+    scrollSnapAlign: 'start',
+    width: '128px',
+  },
 });
 
 const KindHead = styled('span', {
@@ -81,6 +100,11 @@ const KindIcon = styled('span', {
   justifyContent: 'center',
   width: '2.1rem',
   '& svg': { height: '1.15rem', width: '1.15rem' },
+  '@media (max-width: 600px)': {
+    height: '1.8rem',
+    width: '1.8rem',
+    '& svg': { height: '1rem', width: '1rem' },
+  },
 });
 
 const KindCount = styled('span', {
@@ -91,13 +115,17 @@ const KindCount = styled('span', {
   padding: '0.1rem 0.5rem',
 });
 
-const KindName = styled('span', { fontSize: '1.02rem', fontWeight: 700 });
+const KindName = styled('span', {
+  fontSize: '1.02rem',
+  fontWeight: 700,
+  '@media (max-width: 600px)': { fontSize: '0.92rem', whiteSpace: 'nowrap' },
+});
 
 const KindText = styled('span', {
   fontSize: '0.82rem',
   lineHeight: 1.35,
   opacity: 0.85,
-  '@media (max-width: 480px)': { display: 'none' },
+  '@media (max-width: 600px)': { display: 'none' },
 });
 
 const ListHead = styled('div', {
