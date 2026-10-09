@@ -22,7 +22,6 @@ export default function PreviousNewsletters() {
       <Box pb="4" maxW="800px">
         <Center>
           <Heading
-            color="gray.800"
             size="lg"
             css={{ marginBottom: '16px' }}
             textAlign="center"
@@ -31,9 +30,18 @@ export default function PreviousNewsletters() {
           </Heading>
         </Center>
 
+        {(!newsletters || newsletters.length === 0) && (
+          <Text
+            textAlign="center"
+            css={{ color: 'var(--cocoso-mylla-soft)', padding: '1rem' }}
+          >
+            {tc('labels.noNewsletters')}
+          </Text>
+        )}
+
         <NiceList
           actionsDisabled
-          list={newsletters}
+          list={newsletters || []}
           keySelector="_id"
           spacing="0"
           bg="white"

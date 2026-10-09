@@ -94,6 +94,7 @@ labels:
   editFormEntry: '{{ context }} içerisinde içerik düzenle'
   thislisting: bu liste
   newsletters: Önceki Bültenler
+  noNewsletters: Henüz bülten gönderilmedi.
   avatar:
     checklabel: Avatarını görüntüle
     helper: Bu içerik ile avatarını görüntülemek için işaretle

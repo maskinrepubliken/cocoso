@@ -1,6 +1,10 @@
 import { styled, xToRem } from '/stitches.config';
 import React from 'react';
-import { getPropStyles, getSpacing } from '/imports/ui/core/functions';
+import {
+  getPropStyles,
+  getSpacing,
+  omitStyleProps,
+} from '/imports/ui/core/functions';
 
 // Base primitives
 const BaseDiv = styled('div', {});
@@ -13,7 +17,7 @@ const BaseLi = styled('li', {});
 export const Box = ({ css, children, ...props }: any) => (
   <BaseDiv
     css={{ display: 'block', ...getPropStyles(props), ...css }}
-    {...props}
+    {...omitStyleProps(props)}
   >
     {children}
   </BaseDiv>
@@ -31,7 +35,7 @@ export const Center = ({ css, children, ...props }: any) => (
       ...getPropStyles(props),
       ...css,
     }}
-    {...props}
+    {...omitStyleProps(props)}
   >
     {children}
   </BaseDiv>
@@ -88,7 +92,7 @@ export const Flex = ({
       ...getPropStyles(rest),
       ...css,
     }}
-    {...rest}
+    {...omitStyleProps(rest)}
   >
     {children}
   </BaseDiv>
@@ -107,7 +111,7 @@ export const FormLabel = ({ css, children, ...props }: any) => (
       ...getPropStyles(props),
       ...css,
     }}
-    {...props}
+    {...omitStyleProps(props)}
   >
     {children}
   </BaseLabel>
@@ -165,7 +169,7 @@ export const Divider = ({ css, ...props }: DividerProps & any) => {
         width: vertical ? props.thickness || '1px' : '100%',
         ...css,
       }}
-      {...props}
+      {...omitStyleProps(props)}
     />
   );
 };
@@ -173,7 +177,7 @@ export const Divider = ({ css, ...props }: DividerProps & any) => {
 export const List = ({ css, children, ...props }: any) => (
   <BaseUl
     css={{ listStyleType: 'none', padding: 0, ...getPropStyles(props), ...css }}
-    {...props}
+    {...omitStyleProps(props)}
   >
     {children}
   </BaseUl>
@@ -182,7 +186,7 @@ export const List = ({ css, children, ...props }: any) => (
 export const ListItem = ({ css, children, ...props }: any) => (
   <BaseLi
     css={{ marginBottom: '0.5rem', ...getPropStyles(props), ...css }}
-    {...props}
+    {...omitStyleProps(props)}
   >
     {children}
   </BaseLi>

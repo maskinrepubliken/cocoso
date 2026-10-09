@@ -94,6 +94,7 @@ labels:
   editFormEntry: Edit Entry in {{ context }}
   thislisting: this listing
   newsletters: Previous Newsletters
+  noNewsletters: No newsletters have been sent yet.
   avatar:
     checklabel: Show Avatar
     helper: Check to show your avatar with this entry

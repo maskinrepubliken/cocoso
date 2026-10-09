@@ -94,6 +94,7 @@ labels:
   editFormEntry: Redigera inlägget i {{ context }}
   thislisting: denna lista
   newsletters: Tidigare nyhetsbrev
+  noNewsletters: Inga nyhetsbrev har skickats än.
   avatar:
     checklabel: Visa din avatar
     helper: Dra reglaget för att visa din avatar vid det här inlägget

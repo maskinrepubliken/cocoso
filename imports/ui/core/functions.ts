@@ -58,6 +58,26 @@ export const getColor = (color: string) => {
     : 'gray.900';
 };
 
+// The shorthand props getPropStyles turns into CSS. Stripped before a
+// primitive spreads the rest onto a DOM element, so "mb" or "maxW" never
+// end up as attributes (React warns, and the server and client can
+// disagree on them at hydration).
+const STYLE_PROP_KEYS = [
+  'bg', 'borderRadius', 'color', 'cursor', 'gap', 'h', 'flex', 'maxH', 'maxW',
+  'w', 'p', 'px', 'py', 'pb', 'pl', 'pr', 'pt', 'm', 'mx', 'my', 'mb', 'ml',
+  'mr', 'mt', 'hover',
+];
+
+export const omitStyleProps = (props: any) => {
+  const rest: any = {};
+  Object.keys(props || {}).forEach((key) => {
+    if (!STYLE_PROP_KEYS.includes(key)) {
+      rest[key] = props[key];
+    }
+  });
+  return rest;
+};
+
 export const getPropStyles = (props: any) => {
   const styles = {
     ...(props.bg && {
