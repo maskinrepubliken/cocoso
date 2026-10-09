@@ -13,7 +13,12 @@ import {
 } from '/imports/ui/core';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
+import PlaceTag from '../generic/PlaceTag';
 import Tag from '../generic/Tag';
+import {
+  worldShapeColors,
+  type LocationWorld,
+} from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '../utils/imageHelper';
 
 const isClient = Meteor.isClient;
@@ -46,6 +51,9 @@ export interface NewGridThumbProps {
   subTitle?: string;
   title?: string;
   tag?: string;
+  /** The place the item belongs to: colours its shapes and its tag. */
+  placeName?: string | null;
+  world?: LocationWorld;
 }
 
 function NewGridThumb({
@@ -60,6 +68,8 @@ function NewGridThumb({
   subTitle,
   title,
   tag,
+  placeName,
+  world,
 }: NewGridThumbProps) {
   if (!title && !imageUrl) {
     return null;
@@ -115,6 +125,8 @@ function NewGridThumb({
             <>
               <PlaceholderImage
                 seed={placeholderSeed || title}
+                palette={world ? worldShapeColors(world) : undefined}
+                background={world?.tint}
                 style={{
                   height: fixedImageHeight ? '100%' : '180px',
                   left: 0,
@@ -174,6 +186,7 @@ function NewGridThumb({
                 {subTitle}
               </Heading>
             )}
+            {placeName && <PlaceTag name={placeName} world={world} />}
             {tag && <Tag filterColor={color} label={tag} />}
           </Box>
 

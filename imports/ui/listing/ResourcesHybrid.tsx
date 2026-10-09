@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { siteAtom, locationsAtom } from '/imports/state';
 import { Box } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PageHeading from './PageHeading';
 import useOpenEntry from './useOpenEntry';
@@ -47,8 +48,9 @@ export default function ResourcesHybrid({
                 imageUrl={getImageUrl(resource.images?.[0], 'small')}
                 index={index}
                 placeholderSeed={resource._id}
-                tag={locationNameOf(resource)}
+                placeName={locationNameOf(resource)}
                 title={resource.label}
+                world={worldForLocation(locations, resource.locationId)}
               />
             </Box>
           )}

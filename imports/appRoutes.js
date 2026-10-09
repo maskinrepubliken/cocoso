@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { useNavigation } from 'react-router';
+import { redirect, useNavigation } from 'react-router';
+
+import { parseTitle } from '/imports/api/_utils/shared';
 import loadable from '@loadable/component';
 
 import WrapperHybrid from '/imports/ui/layout/WrapperHybrid';
@@ -526,6 +528,20 @@ export default function appRoutes(props) {
             shouldRevalidate: revalidateOn(['edit']),
           },
         ],
+      },
+      {
+        // /info on its own opens the first page instead of a 404.
+        path: 'info',
+        element: el(NotFoundPage),
+        loader: async ({ request }) => {
+          const { pages } = await getPages();
+          const first = pages?.[0];
+          if (!first) {
+            return null;
+          }
+          const base = new URL(request.url).pathname.replace(/\/$/, '');
+          return redirect(encodeURI(`${base}/${parseTitle(first.title)}`));
+        },
       },
       {
         path: 'info/:pageTitle',

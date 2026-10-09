@@ -190,6 +190,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
                     index={index}
                     placeholderSeed={resource._id}
                     title={resource.label}
+                    world={world}
                   />
                 </Link>
               ))}

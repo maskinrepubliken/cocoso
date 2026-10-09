@@ -36,3 +36,9 @@ export function worldForLocation(
   const index = locations.findIndex((location) => location._id === locationId);
   return index === -1 ? undefined : worldForIndex(index);
 }
+
+// Five fills for the generated placeholder shapes, from the world's light
+// end to its ink, so a place's cards without a photo still carry its colour.
+export function worldShapeColors(world: LocationWorld): string[] {
+  return [world.from, world.tint, world.to, world.ink, world.to];
+}
