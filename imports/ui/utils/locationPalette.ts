@@ -22,19 +22,33 @@ const WORLDS: LocationWorld[] = [
   { key: 'salvia', from: '#c3d1b8', to: '#5a7a5a', ink: '#3f5a3f', tint: '#dde6d6' },
 ];
 
+export const WORLD_KEYS = WORLDS.map((world) => world.key);
+
 export function worldForIndex(index: number): LocationWorld {
   return WORLDS[((index % WORLDS.length) + WORLDS.length) % WORLDS.length];
 }
 
+export function worldForKey(key?: string | null): LocationWorld | undefined {
+  return WORLDS.find((world) => world.key === key);
+}
+
+// A place's world: the one an admin picked (colorKey), else by its order.
+export function worldForPlace(
+  location: { colorKey?: string | null } | undefined,
+  index: number
+): LocationWorld {
+  return worldForKey(location?.colorKey) || worldForIndex(index);
+}
+
 export function worldForLocation(
-  locations: { _id: string }[] | undefined,
+  locations: { _id: string; colorKey?: string | null }[] | undefined,
   locationId?: string | null
 ): LocationWorld | undefined {
   if (!locations || !locationId) {
     return undefined;
   }
   const index = locations.findIndex((location) => location._id === locationId);
-  return index === -1 ? undefined : worldForIndex(index);
+  return index === -1 ? undefined : worldForPlace(locations[index], index);
 }
 
 // Five fills for the generated placeholder shapes, from the world's light

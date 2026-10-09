@@ -22,6 +22,13 @@ Locations.schema = new SimpleSchema({
   // Optional composable page shown above the automatic sections of the
   // location's landing page.
   landingPageId: { type: String, optional: true },
+  // The colour world the place's cards, stamp and calendar events use
+  // (imports/ui/utils/locationPalette.ts). Picked by order when unset.
+  colorKey: {
+    type: String,
+    optional: true,
+    allowedValues: ["skog","lera","glas","ockra","salvia"],
+  },
   coordinates: { type: Object, optional: true },
   'coordinates.lat': { type: Number },
   'coordinates.lng': { type: Number },
@@ -41,6 +48,7 @@ Locations.publicFields = {
   isPublished: 1,
   order: 1,
   landingPageId: 1,
+  colorKey: 1,
   coordinates: 1,
 };
 

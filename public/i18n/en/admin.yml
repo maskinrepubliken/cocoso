@@ -228,6 +228,16 @@ locations:
       label: Landing page content
       helper: Optionally show a composable page above the automatic sections
       none: None
+    color:
+      label: Colour
+      helper: "The colour world used on the place's cards, stamp and calendar events. 'By order' gives each place the next one in turn."
+      auto: By order
+      worlds:
+        skog: Forest green
+        lera: Clay
+        glas: Glass blue
+        ockra: Ochre
+        salvia: Sage
     published:
       label: Published
       helper: Unpublished places are hidden from visitors but can still be assigned to content

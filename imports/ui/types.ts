@@ -188,6 +188,7 @@ export interface Location {
   isPublished?: boolean;
   order?: number;
   landingPageId?: string;
+  colorKey?: string;
   coordinates?: { lat: number; lng: number };
 }
 

@@ -64,7 +64,7 @@ function AccordionItem({
           {option.header}
           <ChevronStyled
             css={{
-              color: isOpen ? 'white' : 'var(--cocoso-colors-gray-900)',
+              color: isOpen ? 'white' : 'var(--cocoso-mylla)',
               transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
             }}
           />

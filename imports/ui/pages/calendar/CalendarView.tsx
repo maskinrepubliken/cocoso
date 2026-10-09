@@ -138,6 +138,7 @@ export default function CalendarView({
         components={{ event: EventContent }}
         culture={culture}
         date={date}
+        dayLayoutAlgorithm="no-overlap"
         events={activities}
         formats={formats}
         length={isNarrow ? 21 : 30}

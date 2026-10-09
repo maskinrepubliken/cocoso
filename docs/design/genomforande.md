@@ -76,9 +76,9 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
   `initImmediate: false`, annars byter den språk först i nästa tick och
   sidor utan asynkron loader (login, 404) renderades på engelska och
   föll i hydreringen.
-- **Orternas färgvärld bestäms av ordningen** admin gett orterna
-  (`worldForIndex`), inte av ett fält. Vill ni välja färg per ort,
-  lägg till `colorKey` på location och läs det i `locationPalette.ts`.
+- **Orternas färgvärld** bestäms av ordningen admin gett orterna
+  (`worldForIndex`), om inte orten fått ett `colorKey` i adminpanelen
+  (fältet "Färg" på orten; `worldForPlace` i `locationPalette.ts`).
 - **Antalet arrangörer** i hero räknas med `getOrganizerCount` på
   klienten efter hydrering, så serverns HTML saknar meningen. Det är
   avsiktligt för att slippa en mismatch.
@@ -106,11 +106,13 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
 
 1. Kategorichips för evenemang med 3D-ikoner (kräver kategorier på
    evenemang).
-2. Ett `colorKey`-fält på orter.
-3. En adminknapp som låser årstid (idag bara `?season=`).
-4. Adminpanelens formulär och listor (medlemmar, e-post, menyordning)
+2. En adminknapp som låser årstid (idag bara `?season=`).
+3. Adminpanelens formulär och listor (medlemmar, e-post, menyordning)
    i samma material som sidomenyn.
-5. Veckovyn i kalendern: överlappande händelser blir smala; en egen
-   dagvy på papper vore bättre än react-big-calendars tidsrutnät.
-6. Dalstorp och Länghem har innehåll men ingen ort; antingen orter för
+4. Veckovyn i kalendern: samtidiga händelser blir smala trots
+   `no-overlap`; en egen dagvy på papper vore bättre än
+   react-big-calendars tidsrutnät.
+5. Dalstorp och Länghem har innehåll men ingen ort; antingen orter för
    dem eller en tydligare "hela kommunen"-etikett.
+6. Användarvillkorssidan (`imports/ui/entry/Terms.tsx`) är Cocosos
+   generiska engelska text och behöver skrivas om för kommunen.

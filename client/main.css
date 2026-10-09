@@ -767,23 +767,32 @@ body {
   width: 100%;
 }
 .szh-accordion__item-btn {
-  background-color: var(--cocoso-colors-theme-100);
-  border-radius: var(--cocoso-border-radius);
-  color: var(--cocoso-colors-gray-900);
+  background-color: var(--cocoso-papper);
+  border-radius: var(--cocoso-radius-falt);
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-mylla);
+  cursor: pointer;
+  font-family: var(--cocoso-font-ui);
+  font-weight: 600;
   margin: 0.5rem 0;
-  padding: 1rem;
+  padding: 0.85rem 1rem;
   width: 100%;
 }
 .szh-accordion__item-btn:hover {
-  background-color: var(--cocoso-colors-theme-200);
+  background-color: var(--cocoso-colors-theme-50);
+}
+.szh-accordion__item-btn:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 2px;
 }
 .szh-accordion__item-btn--open {
-  background-color: var(--cocoso-colors-theme-500);
+  background-color: var(--cocoso-colors-theme-700);
   color: white;
 }
 .szh-accordion__item-content {
-  background-color: var(--cocoso-colors-theme-100);
-  border-radius: var(--cocoso-border-radius);
+  background-color: var(--cocoso-papper);
+  border-radius: var(--cocoso-radius-falt);
+  box-shadow: var(--cocoso-skugga);
   padding: 1rem;
 }
 

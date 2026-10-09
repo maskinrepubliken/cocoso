@@ -228,6 +228,16 @@ locations:
       label: Açılış sayfası içeriği
       helper: İsteğe bağlı olarak otomatik bölümlerin üstünde özelleştirilebilir bir sayfa gösterin
       none: Yok
+    color:
+      label: Renk
+      helper: "Yerin kartlarında, damgasında ve takvim etkinliklerinde kullanılan renk dünyası. \"Sıraya göre\" her yere sıradaki rengi verir."
+      auto: Sıraya göre
+      worlds:
+        skog: Orman yeşili
+        lera: Kil
+        glas: Cam mavisi
+        ockra: Okra
+        salvia: Adaçayı
     published:
       label: Yayında
       helper: Yayınlanmamış yerler ziyaretçilerden gizlenir ancak yine de içeriğe atanabilir

@@ -7,7 +7,7 @@ import { Box, Center, Flex, Heading } from '/imports/ui/core';
 import { locationsAtom } from '/imports/state';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
-import { worldForIndex } from '/imports/ui/utils/locationPalette';
+import { worldForPlace } from '/imports/ui/utils/locationPalette';
 import Stamp from '/imports/ui/generic/Stamp';
 
 interface LocationCardsProps {
@@ -21,7 +21,7 @@ export function LocationCards({ locations }: LocationCardsProps) {
     <div className="location-cards">
       {locations.map((location, index) => {
         const imageUrl = getImageUrl(location.images?.[0], 'small');
-        const world = worldForIndex(index);
+        const world = worldForPlace(location, index);
         return (
           <Link
             key={location._id}

@@ -26,6 +26,7 @@ import Quill from '/imports/ui/forms/Quill';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
 import { slugify } from '/imports/api/locations/reservedSlugs';
+import { WORLD_KEYS, worldForKey } from '/imports/ui/utils/locationPalette';
 import { locationsAtom } from '/imports/state';
 import type { Location } from '/imports/ui/types';
 
@@ -37,6 +38,7 @@ interface LocationFormValues {
   description: string;
   isPublished: boolean;
   landingPageId: string;
+  colorKey: string;
 }
 
 const emptyValues: LocationFormValues = {
@@ -45,6 +47,7 @@ const emptyValues: LocationFormValues = {
   description: '',
   isPublished: false,
   landingPageId: '',
+  colorKey: '',
 };
 
 interface LocationFormProps {
@@ -75,12 +78,14 @@ function LocationForm({
             description: location.description || '',
             isPublished: Boolean(location.isPublished),
             landingPageId: location.landingPageId || '',
+            colorKey: location.colorKey || '',
           }
         : emptyValues,
     });
 
   const nameTyped = watch('name');
   const slugTyped = watch('slug');
+  const colorKeyTyped = watch('colorKey');
 
   useEffect(() => {
     // Keep the address in step with the name until it is edited by hand.
@@ -96,6 +101,7 @@ function LocationForm({
       slug: slugify(values.slug || values.name),
       images,
       landingPageId: values.landingPageId || null,
+      colorKey: values.colorKey || null,
     };
     try {
       if (location) {
@@ -167,6 +173,34 @@ function LocationForm({
             </option>
           ))}
         </Select>
+      </FormField>
+
+      <FormField
+        helper={t('locations.form.color.helper')}
+        label={t('locations.form.color.label')}
+      >
+        <Flex align="center" gap="3">
+          <Select {...register('colorKey')}>
+            <option value="">{t('locations.form.color.auto')}</option>
+            {WORLD_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {t(`locations.form.color.worlds.${key}`)}
+              </option>
+            ))}
+          </Select>
+          <span
+            aria-hidden="true"
+            style={{
+              background: `linear-gradient(135deg, ${
+                worldForKey(colorKeyTyped)?.from || 'var(--cocoso-colors-theme-100)'
+              }, ${worldForKey(colorKeyTyped)?.to || 'var(--cocoso-colors-theme-500)'})`,
+              borderRadius: '999px',
+              flexShrink: 0,
+              height: '28px',
+              width: '28px',
+            }}
+          />
+        </Flex>
       </FormField>
 
       <FormField helper={t('locations.form.published.helper')}>

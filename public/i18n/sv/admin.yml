@@ -228,6 +228,16 @@ locations:
       label: Innehåll på startsidan
       helper: Visa valfritt en komponerbar sida ovanför de automatiska avsnitten
       none: Ingen
+    color:
+      label: Färg
+      helper: "Färgvärlden som används på ortens kort, stämpel och kalenderhändelser. \"Efter ordning\" ger varje ort nästa i turordning."
+      auto: Efter ordning
+      worlds:
+        skog: Skogsgrön
+        lera: Lera
+        glas: Glasblå
+        ockra: Ockra
+        salvia: Salvia
     published:
       label: Publicerad
       helper: Opublicerade orter är dolda för besökare men kan fortfarande kopplas till innehåll
