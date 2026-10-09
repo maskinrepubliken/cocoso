@@ -24,7 +24,7 @@
     /* utgångsläget, för jämförelser */
     --u-golv: hsl(78 55% 92%); --u-ink: hsl(145 50% 12%); --u-500: hsl(145 50% 40%);
 
-    --bg: var(--lin); --surface: var(--papper); --ink: var(--mylla); --ink-soft: var(--mylla-soft); --line: var(--linje);
+    --bg: var(--season-golv, var(--lin)); --surface: var(--papper); --ink: var(--mylla); --ink-soft: var(--mylla-soft); --line: var(--linje);
     --font-display: Fraunces, Georgia, "Times New Roman", serif;
     --font-ui: Raleway, "Helvetica Neue", Arial, sans-serif;
     --font-body: Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -37,6 +37,24 @@
       --skugga: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px -14px rgba(0,0,0,.6);
       --skugga-kort: 0 8px 22px -14px rgba(0,0,0,.7);
     }
+  }
+  /* === Årstider: fyra uppsättningar av golv, glöd och accentfärg. Roten
+     får data-season från dagens datum; .s-* visar en årstid lokalt. === */
+  :root, .s-var {
+    --season-golv: #e9f3dc; --season-glod-a: #b9dba0; --season-glod-b: #f2e6b8;
+    --season-tavla: #cfe4b4; --season-accent: #c8613a; --season-name: "Vår";
+  }
+  :root[data-season="sommar"], .s-sommar {
+    --season-golv: #edf3df; --season-glod-a: #f1dc8a; --season-glod-b: #b9dba0;
+    --season-tavla: #cfe4b4; --season-accent: #c8613a;
+  }
+  :root[data-season="host"], .s-host {
+    --season-golv: #eeeedb; --season-glod-a: #d9c79a; --season-glod-b: #d8bfa9;
+    --season-tavla: #d9c79a; --season-accent: #c8613a;
+  }
+  :root[data-season="vinter"], .s-vinter {
+    --season-golv: #eceee7; --season-glod-a: #cfe0ea; --season-glod-b: #cdc3b4;
+    --season-tavla: #cfe0ea; --season-accent: #b9603f;
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
@@ -135,8 +153,8 @@
   .hero.host {
     background-color: var(--skog-100);
     background-image:
-      radial-gradient(circle at 88% 18%, rgba(217,199,154,.95), rgba(217,199,154,0) 42%),
-      radial-gradient(circle at 10% 95%, rgba(185,219,160,.9), rgba(185,219,160,0) 40%),
+      radial-gradient(circle at 88% 18%, var(--season-glod-a), transparent 42%),
+      radial-gradient(circle at 10% 95%, var(--season-glod-b), transparent 40%),
       repeating-linear-gradient(0deg, rgba(30,79,27,.07) 0 1px, transparent 1px 7px),
       repeating-linear-gradient(90deg, rgba(30,79,27,.07) 0 1px, transparent 1px 7px);
   }
@@ -182,7 +200,7 @@
   .kort .orttag { position: absolute; top: 12px; right: 12px; z-index: 1; }
 
   /* anslagstavlan */
-  .tavla.vav { background-color: #cfe4b4; }
+  .tavla.vav { background-color: var(--season-tavla); }
   .tavla { border-radius: 14px; padding: 18px 20px 20px; box-shadow: var(--skugga); color: var(--mylla); }
   .tavla .h { display: flex; align-items: baseline; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
   .tavla .h b { font: 600 26px var(--font-display); font-variation-settings: "SOFT" 60; }
@@ -233,6 +251,38 @@
   .step span { font-size: 14px; color: var(--ink-soft); }
 
   :focus-visible { outline: 2px solid var(--skog-500); outline-offset: 2px; }
+
+  /* 3D-ikoner */
+  .i3 { display: inline-block; object-fit: contain; user-select: none; filter: drop-shadow(0 6px 10px rgba(30,50,25,.18)); vertical-align: middle; }
+  .hero .cluster { position: absolute; right: 28px; top: 8px; width: 300px; height: 230px; pointer-events: none; }
+  .hero .cluster .i3 { position: absolute; filter: drop-shadow(0 14px 18px rgba(30,50,25,.22)); }
+  @media (max-width: 760px) { .hero .cluster { position: static; width: auto; height: auto; display: flex; gap: 8px; margin-bottom: 8px; } .hero .cluster .i3 { position: static; width: 64px; height: 64px; } }
+  .heading-row { display: inline-flex; align-items: center; gap: 12px; }
+  .heading-row .i3 { margin-top: -6px; }
+  .empty { background: var(--surface); border-radius: 14px; padding: 28px 24px; text-align: center; box-shadow: var(--skugga); }
+  .empty .i3 { width: 96px; height: 96px; }
+  .empty b { display: block; margin-top: 10px; font: 600 20px var(--font-display); font-variation-settings: "SOFT" 60; }
+  .empty p { margin: 6px auto 0; max-width: 36ch; color: var(--ink-soft); font-size: 14px; }
+  .cat { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 6px; border-radius: 999px; background: var(--papper); box-shadow: var(--skugga); font: 600 13px var(--font-ui); color: var(--skog-700); }
+  .cat .i3 { width: 30px; height: 30px; filter: drop-shadow(0 2px 3px rgba(30,50,25,.2)); }
+  .cat.on { background: var(--skog-700); color: #fff; }
+  .menu-home { display: flex; align-items: center; gap: 12px; width: 272px; padding: 10px 12px; border-radius: 12px; background: var(--skog-700); color: #fff; font-family: var(--font-ui); }
+  .menu-home .i3 { width: 40px; height: 40px; filter: drop-shadow(0 3px 4px rgba(0,0,0,.3)); }
+  .menu-home b { display: block; font-size: 15px; } .menu-home small { font-size: 12px; opacity: .75; }
+  .seasons { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 14px; }
+  .season-card { position: relative; border-radius: 14px; padding: 18px 18px 16px; overflow: hidden; background-color: var(--season-golv); background-image: radial-gradient(circle at 85% 15%, var(--season-glod-a), transparent 50%), radial-gradient(circle at 10% 100%, var(--season-glod-b), transparent 45%), repeating-linear-gradient(0deg, rgba(30,79,27,.06) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(30,79,27,.06) 0 1px, transparent 1px 7px); box-shadow: var(--skugga); color: var(--mylla); min-height: 230px; }
+  .season-card .i3 { position: absolute; right: 14px; top: 12px; width: 84px; height: 84px; }
+  .season-card .eyebrow { color: var(--season-accent); }
+  .season-card h4 { margin: 8px 0 0; font: 700 26px var(--font-display); font-variation-settings: "SOFT" 60; color: var(--skog-800); }
+  .season-card .sw-row { display: flex; gap: 6px; margin-top: 14px; }
+  .season-card .sw-row i { width: 28px; height: 28px; border-radius: 8px; display: block; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .season-card .dates { margin-top: 10px; font: 600 12px var(--font-ui); color: var(--ink-soft); }
+  .season-card .mini { margin-top: 12px; background: var(--papper); border-radius: 8px; padding: 8px 10px; font-size: 12px; display: flex; gap: 8px; align-items: center; }
+  .season-card .mini i { width: 10px; height: 10px; border-radius: 999px; background: var(--season-accent); display: block; }
+  .season-pick { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--skog-100); margin-top: 14px; }
+  .season-pick button { all: unset; cursor: pointer; height: 30px; padding: 0 14px; border-radius: 999px; font: 700 13px var(--font-ui); color: var(--skog-800); }
+  .season-pick button[aria-pressed="true"] { background: var(--skog-700); color: #fff; }
+  .season-pick button:focus-visible { outline: 2px solid var(--skog-500); }
 </style>
 
 <div class="wrap">
@@ -240,7 +290,7 @@
   <h1 style="margin-top:10px">Hemma i Tranemo</h1>
   <p class="lead">Dit vi vill: en sajt som känns som kommunens egen, byggd med samma omsorg som en bra lokaltidning. Proffsig i strukturen, hemtrevlig i materialen, lokal i detaljerna. Det här dokumentet beskriver målet och jämför med <a href="https://claude.ai/artifact/6XYXRtRNtTkMPyonytaZo4">utgångsläget</a>, som också ligger i repot under <code>docs/design/utgangslage.html</code>.</p>
   <nav class="toc">
-    <a href="#ide">Idén</a><a href="#farg">Färg</a><a href="#typografi">Typografi</a><a href="#lokalt">Lokala detaljer</a><a href="#komponenter">Komponenter</a><a href="#ton">Tonen</a><a href="#vagen">Vägen dit</a>
+    <a href="#ide">Idén</a><a href="#farg">Färg</a><a href="#typografi">Typografi</a><a href="#lokalt">Lokala detaljer</a><a href="#arstider">Årstider</a><a href="#ikoner">3D-ikoner</a><a href="#komponenter">Komponenter</a><a href="#ton">Tonen</a><a href="#vagen">Vägen dit</a>
   </nav>
 
   <!-- ================= IDÉN ================= -->
@@ -334,14 +384,15 @@
       <p class="note">En fin rutväv i 7 px, lagd som textur på gröna och tegelfärgade ytor: hero, anslagstavlan, sidfoten. Den syns knappt, men ytan känns som tyg i stället för plast. Den är två repeterande gradienter i CSS, ingen bild.</p>
       <div class="demo" style="padding:0;overflow:hidden;gap:0"><div class="vav" style="flex:1;height:90px"></div><div class="vav tegel" style="flex:1;height:90px"></div></div>
       <h3>Årstid</h3>
-      <p class="note">Hero tonas efter årstiden: löv på våren, äng på sommaren, ockra på hösten, sten på vintern. Ett litet märke säger vilken. Fyra färger i koden, datumet väljer.</p>
+      <p class="note">Hela sajten byter ton med årstiden, se avsnittet <a href="#arstider">Årstider</a>. Ett litet märke i hero säger vilken det är.</p>
       <div class="demo"><span class="season"><i></i>Höst i Tranemo</span><span class="season"><i style="background:var(--stone)"></i>Vinter</span><span class="season"><i style="background:var(--leaf)"></i>Vår</span><span class="season"><i style="background:var(--olive)"></i>Sommar</span></div>
     </div>
   </div>
 
   <h3>Startsidans hero i målstil</h3>
   <div class="hero host" style="margin-top:12px">
-    <span class="season"><i></i>Höst i Tranemo</span>
+    <span class="season"><i style="background:var(--season-glod-a)"></i><span data-season-label>Höst</span> i Tranemo</span>
+    <div class="cluster"><img class="i3" src="../../public/3dicons/megaphone.webp" alt="" style="left:30px;top:0;width:140px;height:140px;transform:rotate(-8deg)"><img class="i3" src="../../public/3dicons/calendar.webp" alt="" style="left:175px;top:60px;width:110px;height:110px;transform:rotate(6deg)"><img class="i3" src="../../public/3dicons/map-pin.webp" alt="" style="left:0;top:130px;width:96px;height:96px"><img class="i3" src="../../public/3dicons/puzzle.webp" alt="" style="left:140px;top:160px;width:80px;height:80px;transform:rotate(10deg)"></div>
     <div class="eyebrow">Välkommen till</div>
     <h1>Tranemo<br>Evenemangskalender</h1>
     <p>Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe. Tack till de 48 arrangörer som fyller den.</p>
@@ -351,7 +402,62 @@
       <div class="place cool"><span class="stamp sm" style="box-shadow:inset 0 0 0 1.5px #3f6b7a;color:#3f6b7a">L</span><b>Limmared</b></div>
     </div>
   </div>
-  <p class="note">Väv och två mjuka ljusfläckar, en i årstidens färg och en i löv, ersätter de generativa formerna som bakgrund. Formerna behålls på ort- och platskort, där de ger varje ort ett eget ansikte. Raden «Tack till de 48 arrangörer» räknas live. Ortkorten får varsin färgvärld: skog, lera, glas.</p>
+  <p class="note">Väv och två mjuka ljusfläckar i årstidens färger ersätter de generativa formerna som bakgrund, och ett kluster av 3D-ikoner tar över rollen som blickfång till höger. Formerna behålls på ort- och platskort, där de ger varje ort ett eget ansikte. Raden «Tack till de 48 arrangörer» räknas live. Ortkorten får varsin färgvärld: skog, lera, glas.</p>
+
+  <!-- ================= ÅRSTIDER ================= -->
+  <h2 id="arstider">Årstider</h2>
+  <p>Sajten finns i fyra varianter och byter själv efter datum. Det som ändras är golvets ton, de två ljusfläckarna i hero och anslagstavlan, och vilken 3D-ikon som sitter i årstidsmärket. Allt annat är lika: grönt, tegel, papper, typografi. Förändringen ska märkas som en känsla när man kommer tillbaka efter några månader, inte som ett nytt tema.</p>
+  <div class="panel" style="margin-top:14px">
+    <h3>Förhandsgranska på den här sidan</h3>
+    <p class="note">Sidan har just nu valt <b data-season-label>…</b> efter dagens datum. Tryck för att se de andra. Valet gäller bara tills sidan laddas om.</p>
+    <div class="season-pick" role="group" aria-label="Årstid"><button type="button" data-set-season="var">Vår</button><button type="button" data-set-season="sommar">Sommar</button><button type="button" data-set-season="host">Höst</button><button type="button" data-set-season="vinter">Vinter</button></div>
+  </div>
+  <div class="seasons">
+    <div class="season-card s-var"><img class="i3" src="../../public/3dicons/sun.webp" alt=""><div class="eyebrow">1 mars – 31 maj</div><h4>Vår</h4><div class="sw-row"><i style="background:#e9f3dc"></i><i style="background:#b9dba0"></i><i style="background:#f2e6b8"></i><i style="background:#c8613a"></i></div><div class="dates">Golv lövgrönt · glöd löv och ljus sol</div><div class="mini"><i></i>Idag-tavlan i löv. «Vårens första …»</div></div>
+    <div class="season-card s-sommar"><img class="i3" src="../../public/3dicons/glass.webp" alt=""><div class="eyebrow">1 juni – 31 augusti</div><h4>Sommar</h4><div class="sw-row"><i style="background:#edf3df"></i><i style="background:#f1dc8a"></i><i style="background:#b9dba0"></i><i style="background:#c8613a"></i></div><div class="dates">Golv äng · glöd sol och löv</div><div class="mini"><i></i>Idag-tavlan i löv. «I kväll ute …»</div></div>
+    <div class="season-card s-host"><img class="i3" src="../../public/3dicons/umbrella.webp" alt=""><div class="eyebrow">1 september – 30 november</div><h4>Höst</h4><div class="sw-row"><i style="background:#eeeedb"></i><i style="background:#d9c79a"></i><i style="background:#d8bfa9"></i><i style="background:#c8613a"></i></div><div class="dates">Golv halm · glöd ockra och terrakotta</div><div class="mini"><i></i>Idag-tavlan i ockra. «Höstlov …»</div></div>
+    <div class="season-card s-vinter"><img class="i3" src="../../public/3dicons/tea-cup.webp" alt=""><div class="eyebrow">1 december – 28 februari</div><h4>Vinter</h4><div class="sw-row"><i style="background:#eceee7"></i><i style="background:#cfe0ea"></i><i style="background:#cdc3b4"></i><i style="background:#b9603f"></i></div><div class="dates">Golv snö · glöd is och sten</div><div class="mini"><i></i>Idag-tavlan i is. «Julmarknad …»</div></div>
+  </div>
+  <ul class="rules">
+    <li><b>Datumgränserna</b> följer meteorologisk årstid i Sverige, fasta månader, så att bytet är förutsägbart och går att testa. Bytet sker vid midnatt, servern avgör, så att SSR och klient visar samma.</li>
+    <li><b>Bara fyra variabler byter:</b> golv, glöd A, glöd B och tavlans färg. Accenten tegel är gemensam, med ett snäpp mörkare på vintern så den håller mot det kalla golvet.</li>
+    <li><b>Ikonen i årstidsmärket</b> är en 3D-ikon: sol, glas, paraply, tekopp. Den syns bara i hero.</li>
+    <li><b>Innehållet styr också:</b> vi kan låta redaktionen sätta en årstidsrubrik på tavlan («Vårens första utemarknader»), men designen ska bära sig utan den.</li>
+    <li><b>Mörkt läge</b> behåller sin palett; årstiden syns där bara i glöden.</li>
+    <li>I koden: <code>getSeason(date)</code> returnerar <code>var | sommar | host | vinter</code>, sätts som <code>data-season</code> på <code>&lt;html&gt;</code> i SSR, och fyra block i <code>globalStylesManager</code> ger variablerna. En adminknapp kan låsa en årstid för förhandsgranskning.</li>
+  </ul>
+
+  <!-- ================= 3D-IKONER ================= -->
+  <h2 id="ikoner">3D-ikoner</h2>
+  <p>Setet från 3dicons.co, CC0, 124 motiv. Vi använder vinkeln «dynamic» i stilen «color»: varma röda och orange toner som lyfter från det gröna golvet. De är prydnad med mening, inte gränssnittsikoner: streckikoner i knappar och menyer stannar som de är. Nedan sex sätt att använda dem, från mest till minst självklart.</p>
+
+  <h3>1. Blickfång i hero</h3>
+  <p class="note">Fyra ikoner som motsvarar sajtens fyra huvudsektioner, lätt roterade, med mjuk fallskugga och ett långsamt svävande (avstängt vid reducerad rörelse). Se hero ovan. Det här är den stora användningen och den som ger startsidan sin känsla.</p>
+
+  <h3>2. Bredvid sektionsrubriken</h3>
+  <div class="demo" style="gap:28px"><span class="heading-row"><img class="i3" src="../../public/3dicons/megaphone.webp" alt="" width="56" height="56"><span class="disp" style="font-size:32px;font-weight:600">Evenemang</span></span><span class="heading-row"><img class="i3" src="../../public/3dicons/puzzle.webp" alt="" width="56" height="56"><span class="disp" style="font-size:32px;font-weight:600">Föreningar</span></span><span class="heading-row"><img class="i3" src="../../public/3dicons/map-pin.webp" alt="" width="56" height="56"><span class="disp" style="font-size:32px;font-weight:600">Platser</span></span></div>
+  <p class="note">En ikon per sektion, 56 px, samma på listsidan och i ortväljarens meny. Megafon, pussel, kalender, bild, mikrofon, kartnål, anteckningsbok.</p>
+
+  <h3>3. Tomma vyer</h3>
+  <div class="grid g3">
+    <div class="empty"><img class="i3" src="../../public/3dicons/zoom.webp" alt=""><b>Inget i Limmared den här veckan</b><p>Titta i hela kommunen, eller lägg till det som saknas.</p><div style="margin-top:12px"><button class="btn sm">Visa hela kommunen</button></div></div>
+    <div class="empty"><img class="i3" src="../../public/3dicons/bell.webp" alt=""><b>Inga aviseringar</b><p>När något händer med dina evenemang eller anmälningar dyker det upp här.</p></div>
+    <div class="empty"><img class="i3" src="../../public/3dicons/rocket.webp" alt=""><b>Ditt första evenemang</b><p>Det tar två minuter. Titel, tid, plats, en bild om du har.</p><div style="margin-top:12px"><button class="btn sm tegel">Skapa evenemang</button></div></div>
+  </div>
+  <p class="note">Det här är där ikonerna gör mest nytta för tonen: en tom vy slutar kännas som ett fel och blir en vänlig uppmaning.</p>
+
+  <h3>4. Kategorichips</h3>
+  <div class="demo"><span class="cat on"><img class="i3" src="../../public/3dicons/music.webp" alt="">Musik</span><span class="cat"><img class="i3" src="../../public/3dicons/trophy.webp" alt="">Sport</span><span class="cat"><img class="i3" src="../../public/3dicons/cup.webp" alt="">Mat &amp; fika</span><span class="cat"><img class="i3" src="../../public/3dicons/star.webp" alt="">Barn &amp; familj</span><span class="cat"><img class="i3" src="../../public/3dicons/picture.webp" alt="">Konst</span><span class="cat"><img class="i3" src="../../public/3dicons/chat.webp" alt="">Föreläsning</span><span class="cat"><img class="i3" src="../../public/3dicons/gift.webp" alt="">Marknad</span></div>
+  <p class="note">Om evenemangen får kategorier blir ikonerna filterchips på startsidan. 30 px i chipen, 56 px som rubrik på kategorisidan.</p>
+
+  <h3>5. Ortväljarens hemkort och inloggning</h3>
+  <div class="demo"><div class="menu-home"><img class="i3" src="../../public/3dicons/map-pin.webp" alt=""><span><b>Hela kommunen</b><small>Alla orter</small></span></div><div class="empty" style="width:260px;padding:20px"><img class="i3" src="../../public/3dicons/heart.webp" alt="" style="width:72px;height:72px"><b style="font-size:18px">Välkommen tillbaka</b><p style="font-size:13px">Logga in för att anmäla dig och skapa evenemang.</p></div></div>
+  <p class="note">Små punktinsatser där sajten annars är som torrast. Hjärtat på inloggningen är medvetet: det är grannarna som fyller kalendern.</p>
+
+  <h3>6. Årstidsmärket</h3>
+  <div class="demo"><span class="season" style="position:static"><img class="i3" src="../../public/3dicons/sun.webp" alt="" style="width:26px;height:26px">Vår i Tranemo</span><span class="season" style="position:static"><img class="i3" src="../../public/3dicons/glass.webp" alt="" style="width:26px;height:26px">Sommar i Tranemo</span><span class="season" style="position:static"><img class="i3" src="../../public/3dicons/umbrella.webp" alt="" style="width:26px;height:26px">Höst i Tranemo</span><span class="season" style="position:static"><img class="i3" src="../../public/3dicons/tea-cup.webp" alt="" style="width:26px;height:26px">Vinter i Tranemo</span></div>
+
+  <div class="panel" style="margin-top:18px"><h3>Regler för ikonerna</h3><ul class="rules" style="margin-top:6px"><li>Aldrig mindre än 30 px. Under det blir de en suddig fläck; där används streckikoner.</li><li>Högst ett kluster per sida, och högst en ikon per rubrik. De är kryddan, inte maten.</li><li>Alltid med fallskugga från temat, aldrig med egen bakgrundsplatta.</li><li>Alltid <code>alt=""</code> när texten bredvid säger samma sak.</li><li>Håll dig till «color». «Clay» (vit) är reserverad för inaktiva tillstånd om vi någonsin behöver det.</li></ul></div>
 
   <!-- ================= KOMPONENTER ================= -->
   <h2 id="komponenter">Komponenter</h2>
@@ -439,6 +545,23 @@
     <div class="step"><div><b>Ortstämplar och orttaggar</b><span>En Stamp-komponent med namn och färg per ort (ett nytt fält på location: <code>colorKey</code>). Ersätter Tag på kort och i hero.</span></div></div>
     <div class="step"><div><b>Anslagstavlan och datumetiketten</b><span>Idag-rutan byggs om till lappar, SexyThumb får datum som etikett. Vävtexturen som en CSS-klass.</span></div></div>
     <div class="step"><div><b>Årstid och tack</b><span>Hero får årstidston från datumet och räknar arrangörer. Sidfoten får logotypen och den nya texten.</span></div></div>
+    <div class="step"><div><b>Årstider</b><span><code>getSeason()</code>, fyra variabelblock, <code>data-season</code> i SSR och en förhandsgranskning i admin.</span></div></div>
+    <div class="step"><div><b>3D-ikoner på fler ställen</b><span>Tomma vyer, kategorichips, ortväljarens hemkort och inloggningen. Hero och rubriker finns redan.</span></div></div>
     <div class="step"><div><b>Tonen i texterna</b><span>Gå igenom sv/common.yml och knapparna. Det är det billigaste steget och det som märks mest.</span></div></div>
   </div>
 </div>
+
+<script>
+(function () {
+  var names = { var: 'Vår', sommar: 'Sommar', host: 'Höst', vinter: 'Vinter' };
+  function getSeason(d) { var m = d.getMonth() + 1; if (m >= 3 && m <= 5) return 'var'; if (m >= 6 && m <= 8) return 'sommar'; if (m >= 9 && m <= 11) return 'host'; return 'vinter'; }
+  var root = document.documentElement;
+  function apply(season) {
+    root.setAttribute('data-season', season);
+    document.querySelectorAll('[data-season-label]').forEach(function (el) { el.textContent = names[season]; });
+    document.querySelectorAll('[data-set-season]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set-season') === season)); });
+  }
+  apply(getSeason(new Date()));
+  document.querySelectorAll('[data-set-season]').forEach(function (b) { b.addEventListener('click', function () { apply(b.getAttribute('data-set-season')); }); });
+})();
+</script>
