@@ -23,7 +23,7 @@ export const sectionIcons: Record<string, ThreeDIconName> = {
   groups: 'puzzle',
   works: 'picture',
   people: 'mic',
-  resources: 'map-pin',
+  resources: 'pin',
   info: 'notebook',
   requests: 'chat',
   members: 'boy',

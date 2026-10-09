@@ -1596,6 +1596,7 @@ body {
   padding: 0.5rem 1rem;
   color: var(--site-ink);
   font-weight: 500;
+  font-family: var(--cocoso-font-ui);
 }
 
 /* --- chip row (mobile) --- */
