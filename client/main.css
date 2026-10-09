@@ -1956,3 +1956,93 @@ body {
     height: 110px;
   }
 }
+
+/* === 3D icons (3dicons.co, CC0) === */
+
+.threed-icon {
+  display: inline-block;
+  object-fit: contain;
+  user-select: none;
+  filter: drop-shadow(0 6px 10px rgba(30, 50, 25, 0.18));
+}
+
+/* Listing page heading: icon + title side by side */
+
+.page-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-heading-icon {
+  flex: 0 0 auto;
+  margin-top: -6px;
+}
+
+/* Start page hero: a small cluster of icons, lifted off the page */
+
+.home-hero-inner {
+  position: relative;
+}
+
+.home-hero-icons {
+  position: absolute;
+  right: 24px;
+  top: -40px;
+  width: 320px;
+  height: 260px;
+  pointer-events: none;
+}
+
+.home-hero-icon {
+  position: absolute;
+  filter: drop-shadow(0 14px 18px rgba(30, 50, 25, 0.22));
+}
+
+.home-hero-icon.is-1 { left: 40px; top: 10px; transform: rotate(-8deg); }
+.home-hero-icon.is-2 { left: 190px; top: 70px; transform: rotate(6deg); }
+.home-hero-icon.is-3 { left: 0; top: 140px; transform: rotate(-4deg); }
+.home-hero-icon.is-4 { left: 150px; top: 180px; transform: rotate(10deg); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero-icon { animation: hero-float 7s ease-in-out infinite; }
+  .home-hero-icon.is-2 { animation-delay: -2s; }
+  .home-hero-icon.is-3 { animation-delay: -4s; }
+  .home-hero-icon.is-4 { animation-delay: -1s; }
+}
+
+@keyframes hero-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+
+@media (max-width: 1100px) {
+  .home-hero-icons { width: 260px; height: 220px; top: -20px; }
+  .home-hero-icon.is-1 { width: 120px; height: 120px; left: 30px; }
+  .home-hero-icon.is-2 { width: 96px; height: 96px; left: 150px; top: 60px; }
+  .home-hero-icon.is-3 { width: 88px; height: 88px; top: 120px; }
+  .home-hero-icon.is-4 { width: 72px; height: 72px; left: 120px; top: 150px; }
+}
+
+@media (max-width: 959px) {
+  .home-hero-icons {
+    position: static;
+    width: auto;
+    height: auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    order: -1;
+    flex-basis: 100%;
+    margin-bottom: -8px;
+  }
+
+  .home-hero-icon {
+    position: static;
+    width: 64px;
+    height: 64px;
+  }
+
+  .home-hero-icon.is-1 { width: 84px; height: 84px; }
+  .home-hero-icon.is-2 { width: 72px; height: 72px; }
+}

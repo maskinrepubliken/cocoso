@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 
 import { locationsAtom, siteAtom } from '/imports/state';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
+import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import { LocationCards } from './LocationsGrid';
 
 interface HomeHeroProps {
@@ -36,6 +37,12 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
     <section className="home-hero">
       <PlaceholderImage className="home-hero-bg" seed={settings.name} />
       <div className="home-hero-inner">
+        <div className="home-hero-icons" aria-hidden="true">
+          <ThreeDIcon className="home-hero-icon is-1" name="megaphone" size={150} />
+          <ThreeDIcon className="home-hero-icon is-2" name="calendar" size={120} />
+          <ThreeDIcon className="home-hero-icon is-3" name="map-pin" size={110} />
+          <ThreeDIcon className="home-hero-icon is-4" name="puzzle" size={90} />
+        </div>
         <div className="home-hero-text">
           <span className="home-hero-eyebrow">{tc('home.hero.welcome')}</span>
           <h1 className="home-hero-title">

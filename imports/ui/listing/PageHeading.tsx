@@ -11,6 +11,7 @@ import type { Site } from '/imports/ui/types';
 import { canCreateContentAtom, siteAtom } from '/imports/state';
 
 import NewButton, { type NewButtonAnimState } from './NewButton';
+import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { publicUrl } from '/imports/api/_utils/shared';
 
 export interface PageHeadingProps {
@@ -56,6 +57,7 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
   const heading = listingInMenu?.label;
   const url = publicUrl(`/${listingInMenu?.name}`);
   const imageUrl = site?.logo;
+  const icon = sectionIcons[listing];
 
   // ── Record heading position before the button appears ─────────────────────
   // useEffect (not layout) is fine here — we just store a number, no DOM change.
@@ -195,7 +197,10 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
       <Center>
         <Box px="2">
           <Center position="relative">
-            <div ref={headingWrapRef}>
+            <div ref={headingWrapRef} className="page-heading">
+              {icon && (
+                <ThreeDIcon className="page-heading-icon" name={icon} size={56} />
+              )}
               <Heading as="h1" size="lg" textAlign="center">
                 {heading}
               </Heading>
