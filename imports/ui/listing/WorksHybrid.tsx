@@ -124,10 +124,9 @@ const Cards = styled('div', {
 });
 
 const Card = styled(Link, {
-  background: 'white',
-  border: '1px solid rgba(40, 30, 15, 0.12)',
-  borderRadius: '16px',
-  boxShadow: '0 10px 24px -20px rgba(60, 35, 10, 0.5)',
+  background: 'var(--cocoso-papper)',
+  borderRadius: 'var(--cocoso-radius-kort)',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   color: ink,
   display: 'flex',
   flexDirection: 'column',
@@ -163,8 +162,11 @@ const CardBody = styled('div', {
 });
 
 const CardTitle = styled('h3', {
-  fontSize: '1.05rem',
-  lineHeight: 1.25,
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.2rem',
+  fontWeight: 600,
+  lineHeight: 1.2,
   margin: '0 0 0.25rem',
 });
 

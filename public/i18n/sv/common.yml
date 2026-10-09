@@ -27,7 +27,7 @@ actions:
   entryPage: Besök sidan
   toHost: Besök
   share: Dela
-  copied: Kopierade länken!
+  copied: Länken är kopierad
   preview: Förhandsvisa
   next: Nästa
   previous: Tidigare
@@ -140,9 +140,9 @@ message:
   updatedBy: uppdaterad av
 
   newentryhelper:
-    title: Nytt inlägg
-    description: Skapa ditt inlägg och publicera i den här listan
-    button: Skapa
+    title: Lägg till något här
+    description: Det tar ett par minuter. Titel, tid, plats och en bild om du har.
+    button: Lägg till
     bio:
       title: Skriv om dig
       description: Det verkar som att du inte har angett information om dig själv. Gå till din profilinställning, skriv om dig själv, hur du vill engagera dig och låt de andra communitymedlemmarna veta om dig
@@ -150,8 +150,8 @@ message:
       title: Bli kontaktad
       description: Låt andra komma i kontakt med dig
     emptylisting:
-      title: Inget inlägg publicerat än
-      description: Du har inte lagt upp något inlägg än. Skapa ditt första inlägg och publicera här i denna lista
+      title: Inget här än
+      description: Bli först. Det tar ett par minuter att lägga till något.
 
 # MODAL POP-UPS
 modals:
@@ -240,7 +240,7 @@ locations:
     resources: Platser och lokaler i {{ name }}
     groups: Grupper i {{ name }}
     seeAll: Visa alla
-    nothingYet: Inget här ännu
+    nothingYet: Inget här än. Bli först att lägga till något.
   grid:
     title: Välj din ort
   form:
@@ -325,7 +325,7 @@ recurring:
   today: "Idag"
   tomorrow: "Imorgon"
   now: "Pågår nu"
-  nothing: "Inget planerat den här dagen."
+  nothing: "Inget på tavlan den här dagen."
   weekTitle: "Varje vecka"
   weekIntro: "Återkommande aktiviteter, visade en gång per veckodag"
   next: "Nästa {{date}}"

@@ -94,7 +94,7 @@ public:
         number: Antal personer
       loading: Loading
       actions:
-        create: Anmäl
+        create: Anmäl mig
         update: Uppdatera
         remove: Avboka din anmälan
       hideName: "Dölj mitt namn för andra besökare"
@@ -109,7 +109,7 @@ public:
       info: Anmälan är stängd.
   attendance:
     label: Deltagare
-    create: Tack, du är anmäld. Välkommen!
+    create: Tack, du är anmäld. Vi ses!
     update: Din anmälan är ändrad
     remove: Din anmälan är avbokad
     show: Visa deltagare
