@@ -151,6 +151,7 @@ interface Activity {
   imageUrl?: string;
   images?: string[];
   isPublicActivity?: boolean;
+  isArchived?: boolean;
   isRegistrationDisabled?: boolean;
   capacity?: number;
   place?: string;
@@ -306,9 +307,12 @@ export default function ActivityHybrid({
         <HeroText>
           <Title>{activity.title}</Title>
           {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
-          {locationName && (
+          {(locationName || activity.isArchived) && (
             <Tags>
-              <Tag colorScheme="gray">{locationName}</Tag>
+              {locationName && <Tag colorScheme="gray">{locationName}</Tag>}
+              {activity.isArchived && (
+                <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
+              )}
             </Tags>
           )}
           {activity.longDescription && (

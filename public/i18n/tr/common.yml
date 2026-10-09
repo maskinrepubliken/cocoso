@@ -36,6 +36,7 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  archived: Arşivlenmiş
   activity: Aktivite
   all: Tümü
   book: Ayır
@@ -384,6 +385,14 @@ event:
     remove: "Etkinliği sil"
     people: "Kişi"
     noOne: "Bu tarih için kayıt yok."
+    archive: "Etkinliği arşivle"
+    unarchive: "Arşivden geri al"
+    archiveFirst: "Bir etkinlik silinmeden önce arşivlenmelidir."
+    archived: "Etkinlik arşivlendi ve artık listelenmiyor."
+    unarchived: "Etkinlik yeniden listelerde."
+  archived:
+    tag: "Arşivlenmiş"
+    notFound: "Bu etkinlik mevcut değil."
   discussion:
     open: "Tartışmayı aç"
     onlyVerified: "Doğrulanmış üyeler için"

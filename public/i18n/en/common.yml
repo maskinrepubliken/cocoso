@@ -36,6 +36,7 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  archived: Archived
   activity: Activity
   all: All
   author: author
@@ -387,6 +388,14 @@ event:
     remove: "Delete event"
     people: "People"
     noOne: "No sign-ups for this date."
+    archive: "Archive event"
+    unarchive: "Restore from archive"
+    archiveFirst: "An event has to be archived before it can be deleted."
+    archived: "The event is archived and no longer listed."
+    unarchived: "The event is back in the listings."
+  archived:
+    tag: "Archived"
+    notFound: "This event is not available."
   discussion:
     open: "Open the discussion"
     onlyVerified: "For verified members"

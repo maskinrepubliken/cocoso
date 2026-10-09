@@ -1,5 +1,10 @@
-import { Outlet, useLocation, useParams } from 'react-router';
-import React, { useState } from 'react';
+import {
+  Outlet,
+  useLocation,
+  useParams,
+  useRevalidator,
+} from 'react-router';
+import React, { useEffect, useState } from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { Trans, useTranslation } from 'react-i18next';
@@ -11,7 +16,7 @@ import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import { displayName } from '/imports/ui/listing/UsersHybrid';
 import Tabs from '/imports/ui/core/Tabs';
-import { locationsAtom } from '/imports/state';
+import { currentUserAtom, locationsAtom, roleAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
 
 import TablyCentered from './TablyCentered';
@@ -51,7 +56,11 @@ export function Bio({ user }: BioProps) {
 interface Events {
   upcoming: any[];
   past: any[];
+  // Only filled for the person themself and admins.
+  archived?: any[];
 }
+
+type EventsView = 'past' | 'upcoming' | 'archived';
 
 interface OrganizerEventsProps {
   events?: Events;
@@ -65,12 +74,13 @@ function OrganizerEvents({ events, username }: OrganizerEventsProps) {
   const locations = useAtomValue(locationsAtom);
   const upcoming = events?.upcoming || [];
   const past = events?.past || [];
-  const [showPast, setShowPast] = useState(
-    upcoming.length === 0 && past.length > 0
+  const archived = events?.archived || [];
+  const [view, setView] = useState<EventsView>(
+    upcoming.length === 0 && past.length > 0 ? 'past' : 'upcoming'
   );
   const openEntry = useOpenEntry('activities');
 
-  if (upcoming.length === 0 && past.length === 0) {
+  if (upcoming.length === 0 && past.length === 0 && archived.length === 0) {
     return (
       <Center p="4" mb="12">
         <Text color="gray.600">{tc('people.noEvents', { username })}</Text>
@@ -86,21 +96,36 @@ function OrganizerEvents({ events, username }: OrganizerEventsProps) {
     {
       key: 'past',
       title: tc('labels.past'),
-      onClick: () => setShowPast(true),
+      onClick: () => setView('past'),
     },
     {
       key: 'upcoming',
       title: tc('labels.upcoming'),
-      onClick: () => setShowPast(false),
+      onClick: () => setView('upcoming'),
     },
+    ...(archived.length > 0
+      ? [
+          {
+            key: 'archived',
+            title: tc('labels.archived'),
+            onClick: () => setView('archived'),
+          },
+        ]
+      : []),
   ];
 
-  const items = showPast ? past : upcoming;
+  const items =
+    view === 'past' ? past : view === 'archived' ? archived : upcoming;
+  const showPast = view !== 'upcoming';
+  const tabIndex = Math.max(
+    0,
+    tabs.findIndex((tab) => tab.key === view)
+  );
 
   return (
     <Box mb="12">
       <Center mb="4">
-        <Tabs tabs={tabs} index={showPast ? 0 : 1} />
+        <Tabs tabs={tabs} index={tabIndex} />
       </Center>
 
       <Flex justify="center" wrap="wrap" gap="4" px="2">
@@ -147,6 +172,22 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
   const { workId } = useParams<{ workId?: string }>();
   const { pathname } = useLocation();
   const [tc] = useTranslation('common');
+  const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
+  const revalidator = useRevalidator();
+
+  // The server renders the page for an anonymous visitor, without the
+  // archived events; fetch again once we know this is the person or an admin.
+  const seesArchived = Boolean(
+    user &&
+      currentUser &&
+      (role === 'admin' || currentUser._id === user._id)
+  );
+  useEffect(() => {
+    if (seesArchived) {
+      revalidator.revalidate();
+    }
+  }, [seesArchived, user?._id]);
 
   if (!user) {
     return (

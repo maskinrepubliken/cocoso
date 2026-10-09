@@ -1,11 +1,13 @@
 import React from 'react';
-import { useSearchParams } from 'react-router';
+import { useRevalidator, useSearchParams } from 'react-router';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
 
 import { styled } from '/stitches.config';
 import { Button } from '/imports/ui/core';
 import DeleteEntryHandler from '/imports/ui/entry/DeleteEntryHandler';
+import { call } from '/imports/api/_utils/shared';
+import { message } from '/imports/ui/generic/message';
 
 import Section, { Muted } from './Section';
 import { Occurrence, countPeople } from './occurrences';
@@ -34,7 +36,12 @@ const Buttons = styled('div', {
 });
 
 interface OrganizerToolsSectionProps {
-  activity: { _id: string; title?: string; isPublicActivity?: boolean };
+  activity: {
+    _id: string;
+    title?: string;
+    isPublicActivity?: boolean;
+    isArchived?: boolean;
+  };
   occurrence?: Occurrence | null;
 }
 
@@ -46,6 +53,7 @@ export default function OrganizerToolsSection({
 }: OrganizerToolsSectionProps) {
   const [tc] = useTranslation('common');
   const [, setSearchParams] = useSearchParams();
+  const revalidator = useRevalidator();
   const attendees = occurrence?.attendees || [];
 
   const csvData = attendees.map((a) => ({
@@ -57,6 +65,21 @@ export default function OrganizerToolsSection({
   const fileName = `${activity.title || 'event'} ${
     occurrence?.startDate || ''
   }.csv`;
+
+  const setArchived = async (archived: boolean) => {
+    try {
+      await call(
+        archived ? 'archiveActivity' : 'unarchiveActivity',
+        activity._id
+      );
+      message.success(
+        tc(archived ? 'event.tools.archived' : 'event.tools.unarchived')
+      );
+      revalidator.revalidate();
+    } catch (error: any) {
+      message.error(error.reason || error.error);
+    }
+  };
 
   return (
     <Section
@@ -120,15 +143,40 @@ export default function OrganizerToolsSection({
         >
           {tc('event.tools.edit')}
         </Button>
-        <Button
-          colorScheme="red"
-          size="sm"
-          variant="ghost"
-          onClick={() => setSearchParams({ delete: 'true' })}
-        >
-          {tc('event.tools.remove')}
-        </Button>
+        {activity.isArchived ? (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setArchived(false)}
+            >
+              {tc('event.tools.unarchive')}
+            </Button>
+            <Button
+              colorScheme="red"
+              size="sm"
+              variant="ghost"
+              onClick={() => setSearchParams({ delete: 'true' })}
+            >
+              {tc('event.tools.remove')}
+            </Button>
+          </>
+        ) : (
+          <Button
+            colorScheme="red"
+            size="sm"
+            variant="ghost"
+            onClick={() => setArchived(true)}
+          >
+            {tc('event.tools.archive')}
+          </Button>
+        )}
       </Buttons>
+      {!activity.isArchived && (
+        <Muted css={{ marginTop: '0.5rem' }}>
+          {tc('event.tools.archiveFirst')}
+        </Muted>
+      )}
 
       <DeleteEntryHandler context="activities" item={activity as any} />
     </Section>

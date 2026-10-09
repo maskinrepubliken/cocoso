@@ -146,6 +146,14 @@ async function resolveActivityLocation(values) {
   return values.locationId || undefined;
 }
 
+// Archived events stay out of every listing except their organizer's own.
+const notArchived = { isArchived: { $ne: true } };
+
+const canManage = async (activity, user) =>
+  Boolean(
+    user && (activity.authorId === user._id || (await isAdmin(user._id)))
+  );
+
 Meteor.methods({
   async getAllPublicActivities(showPast = false, locationId) {
     check(locationId, Match.Maybe(String));
@@ -154,7 +162,9 @@ Meteor.methods({
     const visibility = {
       $or: [{ isPublicActivity: true }, { isGroupMeeting: true }],
     };
-    const selector = { $and: [visibility, locationSelector(locationId)] };
+    const selector = {
+      $and: [visibility, locationSelector(locationId), notArchived],
+    };
 
     try {
       if (showPast) {
@@ -191,9 +201,10 @@ Meteor.methods({
     check(locationId, Match.Maybe(String));
     const user = await Meteor.userAsync();
     try {
-      const allActs = await Activities.find(
-        locationSelector(locationId)
-      ).fetchAsync();
+      const allActs = await Activities.find({
+        ...locationSelector(locationId),
+        ...notArchived,
+      }).fetchAsync();
       const allActsParsed = parseGroupActivities(allActs);
       return await redactAttendees(
         await filterPrivateGroups(allActsParsed, user),
@@ -208,10 +219,12 @@ Meteor.methods({
     check(activityId, String);
     const user = await Meteor.userAsync();
     try {
-      return await redactAttendees(
-        await Activities.findOneAsync({ _id: activityId }),
-        user
-      );
+      const activity = await Activities.findOneAsync({ _id: activityId });
+      // An archived event is only there for its organizer and the admins.
+      if (activity?.isArchived && !(await canManage(activity, user))) {
+        return null;
+      }
+      return await redactAttendees(activity, user);
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
@@ -248,7 +261,7 @@ Meteor.methods({
     const since = dayjs().subtract(7, 'day').toDate();
 
     const activities = await Activities.find(
-      userIsAdmin ? {} : { authorId: user._id },
+      userIsAdmin ? { ...notArchived } : { authorId: user._id, ...notArchived },
       { fields: { longDescription: 0, images: 0, imagesLegacy: 0 } }
     ).fetchAsync();
 
@@ -346,10 +359,13 @@ Meteor.methods({
     }
 
     const user = await Meteor.userAsync();
+    const seesArchived =
+      user && (user.username === username || (await isAdmin(user._id)));
     try {
       return await redactAttendees(
         await Activities.find({
           authorName: username,
+          ...(seesArchived ? {} : notArchived),
         }).fetchAsync(),
         user
       );
@@ -373,14 +389,24 @@ Meteor.methods({
         await filterPrivateGroups(activities, user),
         user
       );
+      // Archived events are listed only for the person themself and admins.
+      const seesArchived = Boolean(
+        user && (user.username === username || (await isAdmin(user._id)))
+      );
+      const live = visible.filter((a) => !a.isArchived);
 
       return {
-        upcoming: visible
+        upcoming: live
           .filter((a) => a.datesAndTimes?.some((d) => d.endDate >= today))
           .sort(compareDatesForSortActivities),
-        past: visible
+        past: live
           .filter((a) => !a.datesAndTimes?.some((d) => d.endDate >= today))
           .sort(compareDatesForSortActivitiesReverse),
+        archived: seesArchived
+          ? visible
+              .filter((a) => a.isArchived)
+              .sort(compareDatesForSortActivitiesReverse)
+          : [],
       };
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch activities");
@@ -545,7 +571,8 @@ Meteor.methods({
     }
 
     // Ownership fields are never client-writable.
-    const { _id, authorId, authorName, ...safeValues } = values;
+    const { _id, authorId, authorName, isArchived, archivedAt, ...safeValues } =
+      values;
     const locationId = await resolveActivityLocation({
       ...theActivity,
       ...safeValues,
@@ -585,11 +612,64 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
+    // Deleting is a two-step thing: archive first, then delete.
+    if (!theActivity.isArchived) {
+      throw new Meteor.Error(
+        'not-archived',
+        'Archive the event before deleting it'
+      );
+    }
+
     try {
       await Activities.removeAsync(activityId);
       return true;
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't remove from collection");
+    }
+  },
+
+  // The organizer or an admin takes the event out of every listing. It stays
+  // reachable for them (and on their profile under "archived") and can be
+  // brought back, or deleted for good.
+  async archiveActivity(activityId) {
+    check(activityId, String);
+    const user = await Meteor.userAsync();
+    const theActivity = await Activities.findOneAsync({ _id: activityId });
+    if (!theActivity) {
+      throw new Meteor.Error('not-found', 'Activity not found');
+    }
+    if (!(await canManage(theActivity, user))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    try {
+      await Activities.updateAsync(
+        { _id: activityId },
+        { $set: { isArchived: true, archivedAt: new Date() } }
+      );
+      return true;
+    } catch (error) {
+      throw new Meteor.Error(error, "Couldn't archive activity");
+    }
+  },
+
+  async unarchiveActivity(activityId) {
+    check(activityId, String);
+    const user = await Meteor.userAsync();
+    const theActivity = await Activities.findOneAsync({ _id: activityId });
+    if (!theActivity) {
+      throw new Meteor.Error('not-found', 'Activity not found');
+    }
+    if (!(await canManage(theActivity, user))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    try {
+      await Activities.updateAsync(
+        { _id: activityId },
+        { $set: { isArchived: false }, $unset: { archivedAt: 1 } }
+      );
+      return true;
+    } catch (error) {
+      throw new Meteor.Error(error, "Couldn't unarchive activity");
     }
   },
 

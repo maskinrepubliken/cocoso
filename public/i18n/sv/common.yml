@@ -36,6 +36,7 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  archived: Arkiverade
   activity: Aktiviteten
   all: Alla
   book: Boka
@@ -384,6 +385,14 @@ event:
     remove: "Ta bort evenemanget"
     people: "Personer"
     noOne: "Inga anmälningar till det här datumet."
+    archive: "Arkivera evenemanget"
+    unarchive: "Återställ från arkivet"
+    archiveFirst: "Ett evenemang måste arkiveras innan det kan tas bort."
+    archived: "Evenemanget är arkiverat och visas inte längre i listorna."
+    unarchived: "Evenemanget är tillbaka i listorna."
+  archived:
+    tag: "Arkiverat"
+    notFound: "Det här evenemanget är inte tillgängligt."
   discussion:
     open: "Öppna diskussionen"
     onlyVerified: "För verifierade medlemmar"

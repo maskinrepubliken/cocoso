@@ -63,6 +63,9 @@ Activities.schema = new SimpleSchema({
   isRegistrationDisabled: { type: Boolean, optional: true },
   isRegistrationEnabled: { type: Boolean, optional: true, defaultValue: true },
   isPublished: { type: Boolean },
+  // Archived events leave every public listing and can only then be deleted.
+  isArchived: { type: Boolean, optional: true },
+  archivedAt: { type: Date, optional: true },
 
   groupId: { type: String, regEx: SimpleSchema.RegEx.Id, optional: true },
   isGroupMeeting: { type: Boolean, optional: true },
