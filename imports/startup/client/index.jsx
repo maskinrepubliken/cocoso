@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import appRoutes from '/imports/appRoutes';
 import SetupHome from '/imports/ui/pages/setup';
 import i18n, { getChosenLang, setDayjsLocale } from '/imports/startup/i18n';
+import { resolveSeason } from '/imports/api/_utils/season';
 
 // Meteor's `autoupdate` package tracks whether the server has a newer client
 // bundle than the one this tab is running (e.g. after a deploy). Lazily
@@ -77,6 +78,10 @@ onPageLoad(async () => {
     siteDoc: site,
     pageTitles,
     locations,
+    // The same season the server rendered with: the clock, or ?season=
+    season: resolveSeason(
+      new URLSearchParams(window.location.search).get('season')
+    ),
   };
 
   const router = createBrowserRouter(appRoutes(props));

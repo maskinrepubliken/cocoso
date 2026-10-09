@@ -2612,6 +2612,14 @@ body {
   }
 }
 
+/* Event cards carry a date label, a tag and a title on the picture, and
+   need the whole width of a phone. */
+@media (max-width: 599px) {
+  .card-grid.card-grid-wide {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* === Filter chips === */
 
 .filter-chip {

@@ -159,7 +159,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           {activities?.length ? (
-            <div className="card-grid">
+            <div className="card-grid card-grid-wide">
               {activities.map((activity: any, index: number) => (
                 <Link key={activity._id} to={`${prefix}/activities/${activity._id}`}>
                   <SexyThumb activity={activity} index={index} />

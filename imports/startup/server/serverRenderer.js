@@ -7,6 +7,7 @@ import {
   createStaticRouter,
   StaticRouterProvider,
 } from 'react-router';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 
 import { getSite, sitePublicFields } from '/imports/api/site/site';
 import appRoutes from '/imports/appRoutes';
@@ -97,8 +98,14 @@ export default async function serverRenderer(sink) {
   // dayjs has one global locale; renderToString is synchronous, so setting
   // it right before rendering holds for this request.
   setDayjsLocale(resolvedLang);
+  // Jotai's default store is a module singleton. useHydrateAtoms only
+  // hydrates once per store, so without a store of its own every request
+  // after the first would render with the first visitor's season. Each
+  // request gets a fresh store; the browser keeps using the default one.
   const appHtml = renderToString(
-    <StaticRouterProvider router={router} context={context} />
+    <JotaiProvider store={createStore()}>
+      <StaticRouterProvider router={router} context={context} />
+    </JotaiProvider>
   );
 
   const helmet = Helmet.renderStatic();

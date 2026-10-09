@@ -145,7 +145,8 @@ export default function WrapperHybrid({
     applyGlobalStyles(site.theme, season);
     // Only apply host language if no user preference has been detected/stored yet.
     // User language is applied in the currentUser effect with higher priority.
-    if (!currentUser && !getChosenLang()) {
+    const hasLangParam = new URLSearchParams(window.location.search).has('lng');
+    if (!currentUser && !getChosenLang() && !hasLangParam) {
       const hostLang = site?.settings?.lang;
       if (hostLang && hostLang !== i18n.language) {
         i18n.changeLanguage(hostLang);
