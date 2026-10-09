@@ -36,6 +36,7 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  bookable: Rezerve edilebilir
   archived: Arşivlenmiş
   activity: Aktivite
   all: Tümü

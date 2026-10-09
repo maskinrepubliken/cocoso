@@ -3,9 +3,7 @@ import { Link, useSearchParams } from 'react-router';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 import { Trans } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import { useAtomValue } from 'jotai';
 
-import { isMobileAtom } from '/imports/state';
 import {
   Avatar,
   Box,
@@ -210,7 +208,6 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
   url,
 }) => {
   const [searchParams] = useSearchParams();
-  const isMobile = useAtomValue(isMobileAtom);
 
   const selectedTabValue = searchParams.get('tab');
   let tabIndex = tabs?.findIndex((tab) => tab.path === selectedTabValue);
@@ -283,7 +280,13 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
                 </Box>
               )}
 
-              <Box mb={isMobile ? '0' : '2'} css={{ wordBreak: 'break-word' }}>
+              <Box
+                css={{
+                  marginBottom: '0.5rem',
+                  wordBreak: 'break-word',
+                  '@media (max-width: 480px)': { marginBottom: 0 },
+                }}
+              >
                 {selectedTab?.content}
               </Box>
             </Box>

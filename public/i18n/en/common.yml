@@ -36,6 +36,7 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  bookable: Bookable
   archived: Archived
   activity: Activity
   all: All

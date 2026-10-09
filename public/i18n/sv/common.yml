@@ -36,6 +36,7 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  bookable: Bokningsbar
   archived: Arkiverade
   activity: Aktiviteten
   all: Alla
