@@ -584,6 +584,27 @@ export default function appRoutes(props) {
             ),
             shouldRevalidate: revalidateOn(),
           },
+          // A request's page lives under its author (/@user/works/:id). A
+          // shared or guessed /works/:id goes there instead of a 404. Not
+          // under a slug: there the author's own route handles it.
+          ...(forSlug
+            ? []
+            : [
+                {
+                  path: ':workId',
+                  element: el(NotFoundPage),
+                  loader: async ({ params }) => {
+                    const { works } = await getWorks({});
+                    const work = works?.find((w) => w._id === params.workId);
+                    if (!work?.authorUsername) {
+                      return null;
+                    }
+                    return redirect(
+                      `/@${work.authorUsername}/works/${work._id}`
+                    );
+                  },
+                },
+              ]),
         ],
       },
       {
