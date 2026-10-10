@@ -62,6 +62,9 @@ export async function startViewAs(memberId: string, username: string) {
     throw new Error('not-logged-in');
   }
   const token = (await call('viewAsUser', memberId)) as string;
+  // Only once the borrowed login has succeeded: a failed login leaves the
+  // admin as themself, with nothing parked and no half-switched state.
+  await loginWithToken(token);
   s.setItem(TOKEN_KEY, adminToken);
   s.setItem(NAME_KEY, username);
   const e2ee = s.getItem(E2EE_KEY);
@@ -69,8 +72,19 @@ export async function startViewAs(memberId: string, username: string) {
     s.setItem(E2EE_PARKED_KEY, e2ee);
     s.removeItem(E2EE_KEY);
   }
-  await loginWithToken(token);
   getDefaultStore().set(viewAsAtom, username);
+}
+
+// Logging out ends a view-as session too: the parked admin token and key
+// are dropped, so nothing lingers for the next visitor of this browser.
+export function clearViewAsState() {
+  const s = storage();
+  if (s) {
+    s.removeItem(TOKEN_KEY);
+    s.removeItem(NAME_KEY);
+    s.removeItem(E2EE_PARKED_KEY);
+  }
+  getDefaultStore().set(viewAsAtom, null);
 }
 
 export async function stopViewAs() {

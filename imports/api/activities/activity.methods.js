@@ -612,8 +612,9 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
-    // Deleting is a two-step thing: archive first, then delete.
-    if (!theActivity.isArchived) {
+    // Deleting a public event is a two-step thing: archive first, then
+    // delete. A group's own meeting is removed from the group page directly.
+    if (!theActivity.isArchived && !theActivity.isGroupMeeting) {
       throw new Meteor.Error(
         'not-archived',
         'Archive the event before deleting it'
@@ -687,7 +688,10 @@ Meteor.methods({
     if (!theActivity || !theActivity.datesAndTimes?.[occurenceIndex]) {
       throw new Meteor.Error('not-found', 'Activity or occurrence not found');
     }
-    if (theActivity.isRegistrationDisabled) {
+    if (
+      theActivity.isRegistrationDisabled ||
+      theActivity.isRegistrationEnabled === false
+    ) {
       throw new Meteor.Error('registration-closed', 'Registration is closed');
     }
     const theOccurrence = theActivity.datesAndTimes[occurenceIndex];

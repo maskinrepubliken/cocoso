@@ -164,6 +164,7 @@ interface Activity {
   isPublicActivity?: boolean;
   isArchived?: boolean;
   isRegistrationDisabled?: boolean;
+  isRegistrationEnabled?: boolean;
   capacity?: number;
   place?: string;
   resource?: string;

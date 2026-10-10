@@ -147,6 +147,7 @@ interface RegistrationSectionProps {
     _id: string;
     capacity?: number;
     isRegistrationDisabled?: boolean;
+    isRegistrationEnabled?: boolean;
   };
   occurrence: Occurrence;
   occurrenceIndex: number;
@@ -285,7 +286,12 @@ export default function RegistrationSection({
     }
   };
 
-  const canSignUp = !activity.isRegistrationDisabled && !isPast && !isFull;
+  // The organizer's switch is stored as isRegistrationEnabled; the older
+  // flag isRegistrationDisabled is still honoured.
+  const registrationClosed =
+    Boolean(activity.isRegistrationDisabled) ||
+    activity.isRegistrationEnabled === false;
+  const canSignUp = !registrationClosed && !isPast && !isFull;
 
   return (
     <Section
@@ -298,7 +304,7 @@ export default function RegistrationSection({
       order={3}
       title={tc('event.sections.register')}
     >
-      {activity.isRegistrationDisabled ? (
+      {registrationClosed ? (
         <Status>{tc('event.register.closed')}</Status>
       ) : isPast ? (
         <Status>{tc('event.register.past')}</Status>

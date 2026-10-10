@@ -80,15 +80,19 @@ export function getWeeklyPattern(
     }
     intervalWeeks = slotInterval;
 
+    const slotSkipped: string[] = [];
     dates.slice(1).forEach((_date, i) => {
       for (let w = slotInterval; w < gaps[i]; w += slotInterval) {
-        skipped.push(dayjs(dates[i]).add(w, 'week').format('YYYY-MM-DD'));
+        slotSkipped.push(dayjs(dates[i]).add(w, 'week').format('YYYY-MM-DD'));
       }
     });
-    // A rhythm with more holes than dates is not a rhythm.
-    if (skipped.length > dates.length / 2) {
+    // A rhythm with more holes than dates is not a rhythm. Judged per
+    // weekday, so a Tuesday-and-Thursday pattern is held to the same bar
+    // as a single-day one.
+    if (slotSkipped.length > dates.length / 2) {
       return null;
     }
+    skipped.push(...slotSkipped);
 
     const [weekday, startTime, endTime] = key.split('|');
     slots.push({ weekday: Number(weekday), startTime, endTime });

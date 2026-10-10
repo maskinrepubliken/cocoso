@@ -9,6 +9,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import MessagesSquare from 'lucide-react/dist/esm/icons/messages-square';
 
 import { clearEncryptionKey } from '/imports/utils/setupEncryption';
+import { clearViewAsState } from '/imports/utils/viewAs';
 
 import {
   Badge,
@@ -111,6 +112,7 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
   }
 
   const handleLogout = () => {
+    clearViewAsState();
     clearEncryptionKey();
     Meteor.logout();
     setCurrentUser(null);
