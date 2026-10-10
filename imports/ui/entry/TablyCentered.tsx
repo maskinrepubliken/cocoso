@@ -20,6 +20,7 @@ import Tabs from '../core/Tabs';
 import BackLink, { BackLinkData } from './BackLink';
 import { getImageUrl, getImageUrlBest } from '../utils/imageHelper';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { shareLink } from '../utils/shareLink';
 
 interface Author {
   username: string;
@@ -99,12 +100,13 @@ const Header: React.FC<HeaderProps> = ({
   const [copied, setCopied] = useState<boolean>(false);
 
   const handleCopyLink = async (): Promise<void> => {
-    const href = window.location.href;
-    await navigator.clipboard.writeText(href);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    const outcome = await shareLink(window.location.href, title);
+    if (outcome === 'copied') {
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
   };
 
   const renderTitles = () => (

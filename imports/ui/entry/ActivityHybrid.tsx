@@ -21,6 +21,7 @@ import { useLocationTag } from '/imports/ui/utils/useLocation';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
 import { getImageUrl, getImageUrlBest } from '../utils/imageHelper';
+import { shareLink } from '../utils/shareLink';
 import BackLink from './BackLink';
 
 import Section, { NARROW, WIDE } from '../pages/activities/event/Section';
@@ -177,12 +178,14 @@ export interface ActivityHybridProps {
   siteDoc: Site;
 }
 
-function ShareButton() {
+function ShareButton({ title }: { title?: string }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
-    await navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const outcome = await shareLink(window.location.href, title);
+    if (outcome === 'copied') {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
   return (
     <Button
@@ -295,7 +298,7 @@ export default function ActivityHybrid({
 
       <TopBar>
         <BackLink backLink={backLink} />
-        <ShareButton />
+        <ShareButton title={activity.title} />
       </TopBar>
 
       <Hero noImage={!isPublicActivity}>
