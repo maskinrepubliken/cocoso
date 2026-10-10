@@ -173,7 +173,6 @@ const ModalContent = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   maxHeight: '90vh',
-  minHeight: '50vh',
   overflow: 'hidden',
   position: 'relative',
   transition: 'all 0.3s ease-in-out',

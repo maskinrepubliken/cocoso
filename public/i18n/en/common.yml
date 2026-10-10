@@ -36,6 +36,8 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  loginToJoin: Log in to join
+  noContactInfo: No contact details given.
   bookable: Bookable
   archived: Archived
   activity: Activity

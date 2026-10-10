@@ -36,6 +36,8 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  loginToJoin: Logga in för att gå med
+  noContactInfo: Inga kontaktuppgifter angivna.
   bookable: Bokningsbar
   archived: Arkiverade
   activity: Aktiviteten

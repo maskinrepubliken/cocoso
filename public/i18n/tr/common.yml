@@ -36,6 +36,8 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  loginToJoin: Katılmak için giriş yapın
+  noContactInfo: İletişim bilgisi verilmemiş.
   bookable: Rezerve edilebilir
   archived: Arşivlenmiş
   activity: Aktivite
