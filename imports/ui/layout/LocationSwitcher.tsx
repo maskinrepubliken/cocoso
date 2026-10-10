@@ -71,7 +71,7 @@ export default function LocationSwitcher({
   const trigger = current ? (
     <span className="site-brand-loc">{current.name}</span>
   ) : (
-    <span className="site-brand-loc is-root" aria-label={tc('locations.switcher.open')}>
+    <span className="site-brand-loc is-root">
       <ChevronDownIcon width={15} height={15} />
     </span>
   );
@@ -81,7 +81,11 @@ export default function LocationSwitcher({
       {home}
       {current && <span className="site-brand-sep">/</span>}
 
-      <Menu align="start" button={trigger}>
+      <Menu
+        align="start"
+        ariaLabel={current ? undefined : tc('locations.switcher.open')}
+        button={trigger}
+      >
         <div className="site-loc-menu">
           <MenuItem
             className={`site-loc-home ${current ? '' : 'is-current'}`}

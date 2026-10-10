@@ -1,4 +1,4 @@
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import React from 'react';
 import ListFilter from 'lucide-react/dist/esm/icons/list-filter';
 
@@ -17,6 +17,7 @@ function Inputs({
   sortValue,
   setSortValue,
 }: InputsProps) {
+  const [tc] = useTranslation('common');
   return (
     <Flex justify="space-between" w="100">
       <Box>
@@ -26,6 +27,7 @@ function Inputs({
           </Trans>
         </Text>
         <Input
+          aria-label={tc('labels.filter')}
           size="sm"
           value={filterValue}
           style={{ margin: '0.5rem 0' }}
@@ -40,6 +42,7 @@ function Inputs({
           </Trans>
         </Text>
         <Select
+          aria-label={tc('labels.sort')}
           name="sorter"
           size="sm"
           value={sortValue}

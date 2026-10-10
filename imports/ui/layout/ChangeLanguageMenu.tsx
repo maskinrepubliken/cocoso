@@ -19,7 +19,7 @@ export default function ChangeLanguage({
   select,
   onChange,
 }: ChangeLanguageProps) {
-  const { i18n } = useTranslation();
+  const { i18n, t: tc } = useTranslation('common');
   const currentLang = i18n.language;
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -54,6 +54,7 @@ export default function ChangeLanguage({
         </Text>
       )}
       <Select
+        aria-label={tc('langs.label')}
         name="lang"
         placeholder={
           <Trans i18nKey="common:langs.form.holder">Select a language</Trans>

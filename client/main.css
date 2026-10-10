@@ -2565,6 +2565,13 @@ body {
   margin-top: 4px;
 }
 
+/* A form field's label, when it points at its control */
+.form-field-label {
+  color: var(--cocoso-colors-gray-800);
+  display: inline-block;
+  font-weight: 700;
+}
+
 /* === Skip link === */
 
 .skip-link {
