@@ -2926,3 +2926,53 @@ body {
   background: var(--cocoso-colors-theme-200);
   color: var(--cocoso-colors-theme-800);
 }
+
+/* === Print ===
+   An event page or a list printed as a notice: the content on white, no
+   header, menus, shelf or footer, cards kept whole across pages. */
+@media print {
+  .skip-link,
+  .site-header,
+  .site-chips,
+  .site-footer,
+  .cocoso-slide,
+  #slide-widget,
+  .new-entry-helper,
+  .filter-chip,
+  #filtrer-sorter,
+  .szh-accordion__item-btn,
+  .rbc-toolbar .rbc-btn-group,
+  main form {
+    display: none !important;
+  }
+
+  html,
+  body,
+  .home-hero,
+  .home-hero.vav {
+    background: #fff !important;
+    background-image: none !important;
+    color: #000;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+
+  article,
+  .card-grid > *,
+  .rbc-agenda-view tr {
+    break-inside: avoid;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .threed-icon,
+  .home-hero-icons,
+  .home-hero-icon {
+    display: none !important;
+  }
+}

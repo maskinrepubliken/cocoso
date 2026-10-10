@@ -24,9 +24,13 @@ if (isClient) {
   import 'react-lazy-load-image-component/src/effects/black-and-white.css';
 }
 
-const today = dayjs().format('YYYY-MM-DD');
-const yesterday = dayjs(new Date()).add(-1, 'days').format('YYYY-MM-DD');
-const tomorrow = dayjs(new Date()).add(1, 'days').format('YYYY-MM-DD');
+// Computed per render, not per module load: the server runs for weeks and
+// would otherwise keep the day it started on.
+const dayBounds = () => ({
+  today: dayjs().format('YYYY-MM-DD'),
+  yesterday: dayjs().add(-1, 'days').format('YYYY-MM-DD'),
+  tomorrow: dayjs().add(1, 'days').format('YYYY-MM-DD'),
+});
 
 // An event card: the picture fills the card, the date sits top-left as a
 // paper label like a page of an almanac, the place top-right as its tag,
@@ -221,7 +225,7 @@ export function ThumbDate({ occurrence }: ThumbDateProps) {
   if (!occurrence) {
     return null;
   }
-  const isPast = dayjs(occurrence.endDate)?.isBefore(today);
+  const isPast = dayjs(occurrence.endDate)?.isBefore(dayBounds().today);
   const start = dayjs(occurrence.startDate);
   const label =
     occurrence.startDate === occurrence.endDate
@@ -236,7 +240,7 @@ function AlmanacDate({ occurrence }: ThumbDateProps) {
   if (!occurrence) {
     return null;
   }
-  const isPast = dayjs(occurrence.endDate)?.isBefore(today);
+  const isPast = dayjs(occurrence.endDate)?.isBefore(dayBounds().today);
   const start = dayjs(occurrence.startDate);
   const multi = occurrence.startDate !== occurrence.endDate;
   return (
@@ -251,7 +255,7 @@ function AlmanacDate({ occurrence }: ThumbDateProps) {
 function ThumbRule({ dates }: { dates: Occurrence[] }) {
   const [t, i18n] = useTranslation('common');
   const pattern = getWeeklyPattern(dates);
-  const next = getNextOccurrence(dates, today);
+  const next = getNextOccurrence(dates, dayBounds().today);
   if (!pattern || !next) {
     return null;
   }
@@ -309,6 +313,7 @@ function SexyThumb({
     place?.name ||
     (activity.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
 
+  const { yesterday, tomorrow } = dayBounds();
   const dates = datesAndTimes || [];
   const futureDates = dates.filter((date) =>
     dayjs(date.endDate, 'YYYY-MM-DD').isAfter(yesterday)
