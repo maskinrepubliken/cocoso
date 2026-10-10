@@ -175,9 +175,7 @@ function BodyContentHandler({ content }) {
 export default function EmailForm({ site, onSubmit }) {
   const [state, setState] = useAtom(newsletterAtom);
   const { email } = state;
-  const { handleSubmit } = useForm({
-    email,
-  });
+  const { handleSubmit } = useForm({ defaultValues: email });
   const [t] = useTranslation('admin');
   const [tc] = useTranslation('common');
 

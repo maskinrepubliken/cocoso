@@ -117,6 +117,7 @@ const Header: React.FC<HeaderProps> = ({
       >
         <Box px="2">
           <Heading
+            as="h1"
             size="lg"
             css={{
               lineHeight: 1.08,

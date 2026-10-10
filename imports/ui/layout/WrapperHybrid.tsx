@@ -31,7 +31,7 @@ import { resolveSeason } from '/imports/api/_utils/season';
 import { restoreKeyFromSession } from '/imports/utils/setupEncryption';
 import { restoreViewAsState } from '/imports/utils/viewAs';
 import { call } from '/imports/api/_utils/shared';
-import { Box, Loader } from '/imports/ui/core';
+import { Loader } from '/imports/ui/core';
 
 import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
@@ -206,9 +206,9 @@ export default function WrapperHybrid({
               />
             )}
 
-            <Box id="main-content-container">
+            <main id="main-content-container">
               <Outlet />
-            </Box>
+            </main>
 
             {!adminPage && <Footer site={site || siteDoc} />}
           </DummyWrapper>

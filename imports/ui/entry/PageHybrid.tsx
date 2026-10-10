@@ -49,7 +49,12 @@ function SimplePage({
       </Helmet>
 
       <Center>
-        <Heading css={{ margin: '1rem 0.5rem 0' }} size="lg" textAlign="center">
+        <Heading
+          as="h1"
+          css={{ margin: '1rem 0.5rem 0' }}
+          size="lg"
+          textAlign="center"
+        >
           {title}
         </Heading>
       </Center>

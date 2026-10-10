@@ -122,6 +122,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
             world={world}
           />
           <Heading
+            as="h1"
             color="white"
             size="2xl"
             textAlign="center"
