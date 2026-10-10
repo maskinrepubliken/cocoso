@@ -6,6 +6,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 import ResourceHybrid from '/imports/ui/entry/ResourceHybrid';
 import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
+import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
 const ResourceInteractionHandler = loadable(
   () => import('./components/ResourceInteractionHandler')
@@ -23,6 +24,10 @@ export default function ResourceItemHandler({ siteDoc }) {
   useEffect(() => {
     setResource(resource);
   }, [resource]);
+
+  if (!resource?._id) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>

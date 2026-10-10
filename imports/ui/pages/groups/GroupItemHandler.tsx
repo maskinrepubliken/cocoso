@@ -6,6 +6,7 @@ import { atom, useAtomValue, useAtom } from 'jotai';
 import GroupHybrid from '/imports/ui/entry/GroupHybrid';
 import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
+import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
 const GroupInteractionHandler = loadable(
   () => import('./components/GroupInteractionHandler')
@@ -23,6 +24,11 @@ export default function GroupItemHandler({ siteDoc }) {
   useEffect(() => {
     setGroup(group);
   }, [group, documents]);
+
+  // An unknown or removed group comes back as a shell without an id.
+  if (!group?._id) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>
