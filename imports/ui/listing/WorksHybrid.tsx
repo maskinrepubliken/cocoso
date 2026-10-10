@@ -19,7 +19,7 @@ import {
 } from '/imports/ui/pages/works/requestKinds';
 
 import PageHeading from './PageHeading';
-import { getEntryPath } from './useOpenEntry';
+import { entryPathWithin } from './useOpenEntry';
 
 // The works listing, shown as förfrågningar: neighbours sharing rides,
 // lending, giving away and tipping each other off. The kinds at the top are
@@ -266,7 +266,7 @@ function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
   const author = work.showAvatar !== false ? work.authorUsername : null;
 
   return (
-    <Card to={`${prefix}${getEntryPath(work, 'works')}`}>
+    <Card to={entryPathWithin(prefix, work, 'works')}>
       <CardTop>
         <Badge css={{ background: kind?.color || '#e9dcc4' }}>
           {Icon && <Icon />}

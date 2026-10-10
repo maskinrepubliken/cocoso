@@ -14,9 +14,15 @@ export const getEntryPath = (item: any, kind: string) => {
   return `/${kind}/${item._id}`;
 };
 
+// A request's page lives under its author, which has no place prefix.
+export const entryPathWithin = (prefix: string, item: any, kind: string) =>
+  kind === 'works'
+    ? getEntryPath(item, kind)
+    : `${prefix}${getEntryPath(item, kind)}`;
+
 // Clicking a card goes straight to its page, within the current place.
 export default function useOpenEntry(kind: string) {
   const navigate = useNavigate();
   const prefix = useLocationPrefix();
-  return (item: any) => navigate(`${prefix}${getEntryPath(item, kind)}`);
+  return (item: any) => navigate(entryPathWithin(prefix, item, kind));
 }
