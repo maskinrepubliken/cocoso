@@ -67,7 +67,7 @@ export default function ActivitiesHybrid({
   return (
     <>
       {!showPast && (
-        <Box px="4" pt="1">
+        <Box className="page-wrap" pt="1">
           <DayAgenda activities={activities} placeOf={locationNameOf} />
           <WeeklySchedule activities={activities} placeOf={locationNameOf} />
         </Box>
@@ -79,12 +79,16 @@ export default function ActivitiesHybrid({
         <Tabs tabs={tabs} index={showPast ? 0 : 1} />
       </Center>
 
-      <InfiniteScroller items={cardActivities} filtrerMarginTop={-72}>
+      <InfiniteScroller
+        gridWide
+        isGrid
+        items={cardActivities}
+        filtrerMarginTop={-72}
+      >
         {(item, index) => (
-          <Center
+          <div
             key={item._id}
-            flex="0 1 290px"
-            css={{ alignSelf: 'stretch', cursor: 'pointer' }}
+            style={{ cursor: 'pointer' }}
             onClick={() => openEntry(item)}
           >
             <SexyThumb
@@ -97,7 +101,7 @@ export default function ActivitiesHybrid({
                 ) as string[]
               }
             />
-          </Center>
+          </div>
         )}
       </InfiniteScroller>
     </>

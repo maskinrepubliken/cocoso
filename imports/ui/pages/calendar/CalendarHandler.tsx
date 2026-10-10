@@ -272,7 +272,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
 
       <PageHeading site={site || siteDoc} listing="calendar" />
 
-      <Box>
+      <Box className="page-wrap">
         {publishedLocations.length > 0 && !prefix && (
           <Center mb="2" css={pillShapes}>
             <Flex justify="center" px="1" wrap="wrap">

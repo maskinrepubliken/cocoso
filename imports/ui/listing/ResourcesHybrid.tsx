@@ -31,16 +31,12 @@ export default function ResourcesHybrid({
     <>
       <PageHeading site={site || siteDoc} listing="resources" />
 
-      <Box px="2" pb="8">
-        <InfiniteScroller isMasonry items={resources} filtrerMarginTop={-82}>
+      <Box pb="8">
+        <InfiniteScroller isGrid items={resources} filtrerMarginTop={-82}>
           {(resource, index) => (
             <Box
               key={resource._id}
-              mb="2"
-              css={{
-                borderRadius: 'var(--cocoso-border-radius)',
-                cursor: 'pointer',
-              }}
+              css={{ cursor: 'pointer' }}
               onClick={() => openEntry(resource)}
             >
               <NewGridThumb

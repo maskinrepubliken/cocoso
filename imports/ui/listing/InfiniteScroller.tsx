@@ -108,6 +108,8 @@ export default function InfiniteScroller({
   isHoneycomb = false,
   // Equal paper cards in a responsive grid (föreningar).
   isGrid = false,
+  // Event cards: one per row on phones, they carry a date label and title
+  gridWide = false,
   items,
   itemsPerPage = defaultItemsPerPage,
   newHelperLink,
@@ -120,6 +122,7 @@ export default function InfiniteScroller({
   isMasonry?: boolean;
   isHoneycomb?: boolean;
   isGrid?: boolean;
+  gridWide?: boolean;
   items: any[];
   itemsPerPage?: number;
   newHelperLink?: string;
@@ -157,6 +160,7 @@ export default function InfiniteScroller({
     <>
       {!hideFiltrerSorter && (
         <Flex
+          className="page-wrap"
           justify="flex-end"
           css={{
             '@media(min-width: 960px)': { marginTop: `${filtrerMarginTop}px` },
@@ -166,11 +170,11 @@ export default function InfiniteScroller({
         </Flex>
       )}
 
-      <Box px="2" pb="8" w="100%">
+      <Box className="page-wrap" pb="8">
         <InfiniteScroll pageStart={1} loadMore={handleLoad} hasMore={hasMore}>
           {isGrid ? (
             <>
-              <div className="card-grid">
+              <div className={`card-grid ${gridWide ? 'card-grid-wide' : ''}`}>
                 {currentItems?.map((item, index) => children(item, index))}
                 {!hasMore && canCreateContent && (
                   <NewEntryHelper buttonLink={newHelperLink || ''} small />

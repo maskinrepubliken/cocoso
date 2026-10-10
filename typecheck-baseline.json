@@ -128,7 +128,6 @@
   "imports/ui/listing/InfiniteScroller.tsx | TS7006 | Parameter 'v' implicitly has an 'any' type.": 2,
   "imports/ui/listing/NewGridThumb.tsx | TS1232 | An import declaration can only be used at the top level of a namespace or module.": 1,
   "imports/ui/listing/NewGridThumb.tsx | TS18048 | 'index' is possibly 'undefined'.": 1,
-  "imports/ui/listing/NewGridThumb.tsx | TS2322 | Type '{ alt: string | undefined; effect: \"black-and-white\"; fit: string; src: string; style: CSSProperties; }' is not assignable to type 'IntrinsicAttributes & LazyLoadImageProps'.": 1,
   "imports/ui/listing/NewGridThumb.tsx | TS2322 | Type '{ children: string | undefined; className: string; truncated: true; mb: string; mt: string; css: { fontSize: \"1.25rem\"; overflowWrap: \"anywhere\"; }; }' is not assignable to type 'IntrinsicAttributes & HeadingProps'.": 1,
   "imports/ui/listing/NewGridThumb.tsx | TS2322 | Type '{ children: string; className: string; truncated: true; css: { fontSize: \"1rem\"; fontWeight: \"light\"; marginBottom: \"0.5rem\"; overflowWrap: \"anywhere\"; }; }' is not assignable to type 'IntrinsicAttributes & HeadingProps'.": 1,
   "imports/ui/listing/PageHeading.tsx | TS2339 | Property '_flipTimers' does not exist on type 'HTMLDivElement'.": 2,

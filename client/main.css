@@ -24,7 +24,6 @@ html {
 body {
   margin: 0;
   line-height: 1.5;
-  min-height: 101vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -101,10 +100,41 @@ img {
   }
 }
 
+/* One measure for the page: content is at most --cocoso-page wide and
+   keeps --cocoso-gutter from the screen's edge, on every block from the
+   hero to the footer. */
+:root {
+  --cocoso-page: 1180px;
+  --cocoso-gutter: 24px;
+}
+
+@media (max-width: 959px) {
+  :root {
+    --cocoso-gutter: 16px;
+  }
+}
+
+.page-wrap {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: calc(var(--cocoso-page) + 2 * var(--cocoso-gutter));
+  padding-left: var(--cocoso-gutter);
+  padding-right: var(--cocoso-gutter);
+  width: 100%;
+}
+
+/* The footer sits at the bottom even when the page is short */
 .wrapper {
   background-color: var(--cocoso-colors-gray-100);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   padding-top: 0;
   transition: all 0.5s ease;
+}
+
+#main-content-container {
+  flex: 1 0 auto;
 }
 
 .wrapper.mobile-wrapper {
@@ -278,11 +308,11 @@ input::placeholder {
 }
 
 .my-masonry-grid {
-  display: -webkit-box; /* Not needed if autoprefixing */
-  display: -ms-flexbox; /* Not needed if autoprefixing */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  /* the columns carry the gutter on their left; pull the first one back */
+  margin-left: -8px;
   width: auto;
 }
 .my-masonry-grid_column {
@@ -1051,11 +1081,6 @@ body {
 
 .rbc-calendar {
   font-family: var(--cocoso-font-ui);
-  padding: 0 0.75rem;
-}
-
-.rbc-calendar.is-narrow {
-  padding: 0 0.25rem;
 }
 
 /* Each view sets its own height: the grids need one to lay out their rows,
@@ -2192,9 +2217,10 @@ body {
   align-items: flex-end;
   justify-content: space-between;
   gap: 32px 48px;
-  max-width: 1180px;
+  box-sizing: border-box;
+  max-width: calc(var(--cocoso-page) + 2 * var(--cocoso-gutter));
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--cocoso-gutter);
 }
 
 .home-hero-text {
@@ -2386,7 +2412,6 @@ body {
   }
 
   .home-hero-inner {
-    padding: 0 16px;
     gap: 20px;
   }
 
@@ -2397,8 +2422,8 @@ body {
   /* The places scroll sideways; the third card peeks in from the edge so
      the row reads as a row. */
   .location-cards {
-    margin: 0 -16px;
-    padding: 0 16px 4px;
+    margin: 0 calc(-1 * var(--cocoso-gutter));
+    padding: 0 var(--cocoso-gutter) 4px;
     scroll-snap-type: x proximity;
     scroll-padding: 0 16px;
   }
@@ -2614,9 +2639,6 @@ body {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 8px;
 }
 
 .card-grid > * {
@@ -2627,7 +2649,6 @@ body {
   .card-grid {
     gap: 10px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: 0;
   }
 }
 
@@ -2782,9 +2803,10 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  max-width: 1180px;
+  box-sizing: border-box;
+  max-width: calc(var(--cocoso-page) + 2 * var(--cocoso-gutter));
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--cocoso-gutter);
 }
 
 .site-footer-text {

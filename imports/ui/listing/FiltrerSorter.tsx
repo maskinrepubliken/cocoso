@@ -75,7 +75,7 @@ export interface FiltrerSorterProps {
 
 export default function FiltrerSorter(props: FiltrerSorterProps) {
   return (
-    <Flex justify="flex-end" my="2" w="300px" px="2">
+    <Flex justify="flex-end" my="2" w="300px">
       <Accordion
         options={[
           {

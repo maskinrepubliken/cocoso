@@ -41,6 +41,11 @@ export default function DummyWrapper({
         backgroundColor: theme?.body?.backgroundColor,
         backgroundImage: `url("${theme?.body?.backgroundImage}")`,
         backgroundRepeat: theme?.body?.backgroundRepeat,
+        // A column as tall as the screen, so the footer sits at the
+        // bottom on short pages (main grows; see #main-content-container).
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
       }}
       {...rest}
     >

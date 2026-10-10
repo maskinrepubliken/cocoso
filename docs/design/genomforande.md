@@ -98,6 +98,14 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
 
 ## Regler att hålla
 
+- Sidans mått är ett: innehållet är högst `--cocoso-page` (1180 px)
+  brett och håller `--cocoso-gutter` (24 px, 16 på mobil) från kanten.
+  Lägg varje block i `.page-wrap`; hero, anslagstavla, listor, ortsida,
+  kalender och sidfot gör det. Rader som ska svepas i kant drar ut sig
+  med `margin: 0 calc(-1 * var(--cocoso-gutter))`.
+- Sidfoten står alltid i botten: `.wrapper` är en flex-kolumn med
+  `min-height: 100vh` och `<main>` växer.
+
 - Lägg innehåll på papper mot årstidens golv. Inga linjer för att skilja
   ytor åt.
 - Kommungrönt (`theme-700`) för exakt en sak per vy: det som är valt.

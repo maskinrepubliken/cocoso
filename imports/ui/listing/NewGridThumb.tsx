@@ -33,6 +33,14 @@ const imageStyle: React.CSSProperties = {
   width: '100%',
 };
 
+// Fills the picture area edge to edge when it has a set height
+const coverStyle: React.CSSProperties = {
+  display: 'block',
+  height: '100%',
+  objectFit: 'cover',
+  width: '100%',
+};
+
 interface Avatar {
   name: string;
   url?: string;
@@ -98,10 +106,15 @@ function NewGridThumb({
       >
         <Center
           bg={imageUrl ? 'white' : 'theme.100'}
-          h={fixedImageHeight ? '220px' : 'auto'}
           css={{
+            // A fixed height on wide screens, the card's own proportion on
+            // phones where two cards share the width.
+            height: fixedImageHeight ? '220px' : 'auto',
             overflow: 'hidden',
             position: 'relative',
+            '@media (max-width: 599px)': fixedImageHeight
+              ? { aspectRatio: '4 / 3', height: 'auto' }
+              : {},
           }}
         >
           {imageUrl ? (
@@ -110,15 +123,15 @@ function NewGridThumb({
                 alt={title}
                 loading="lazy"
                 src={imageUrl}
-                style={imageStyle}
+                style={fixedImageHeight ? coverStyle : imageStyle}
               />
             ) : (
               <LazyLoadImage
                 alt={title}
                 effect="black-and-white"
-                fit={fixedImageHeight ? 'cover' : 'contain'}
                 src={imageUrl}
-                style={imageStyle}
+                style={fixedImageHeight ? coverStyle : imageStyle}
+                wrapperProps={{ style: fixedImageHeight ? coverStyle : undefined }}
               />
             )
           ) : (

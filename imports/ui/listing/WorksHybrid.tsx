@@ -30,9 +30,10 @@ const ink = '#151515';
 const green = 'var(--cocoso-colors-theme-800)';
 
 const Page = styled('div', {
+  boxSizing: 'border-box',
   margin: '0 auto',
-  maxWidth: '1180px',
-  padding: '0 1rem 3rem',
+  maxWidth: 'calc(var(--cocoso-page) + 2 * var(--cocoso-gutter))',
+  padding: '0 var(--cocoso-gutter) 3rem',
   width: '100%',
 });
 
@@ -46,11 +47,11 @@ const Kinds = styled('div', {
   '@media (max-width: 600px)': {
     display: 'flex',
     gap: '0.5rem',
-    margin: '0 -16px 1.25rem',
+    margin: '0 calc(-1 * var(--cocoso-gutter)) 1.25rem',
     overflowX: 'auto',
-    padding: '4px 16px 8px',
+    padding: '4px var(--cocoso-gutter) 8px',
     scrollbarWidth: 'none',
-    scrollPadding: '0 16px',
+    scrollPadding: '0 var(--cocoso-gutter)',
     scrollSnapType: 'x proximity',
     '&::-webkit-scrollbar': { display: 'none' },
   },

@@ -32,7 +32,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <Box mb="10" px="4" css={{ margin: '0 auto 2.5rem', maxWidth: '1196px' }}>
+    <Box className="page-wrap" mb="10">
       <Flex align="center" justify="space-between" mb="3" wrap="wrap">
         <Heading size="md">{title}</Heading>
         <Link to={seeAllTo}>
