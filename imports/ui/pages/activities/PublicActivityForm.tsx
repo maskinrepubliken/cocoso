@@ -4,9 +4,10 @@ import AutoCompleteSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { useAtom } from 'jotai';
 
-import { Checkbox, NumberInput, Text } from '/imports/ui/core';
+import { Checkbox, NumberInput, Select, Text } from '/imports/ui/core';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
+import { EVENT_KINDS } from './eventKinds';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
@@ -44,6 +45,7 @@ interface ActivityData extends ActivityFormValues {
   isExclusiveActivity?: boolean;
   isRegistrationEnabled?: boolean;
   isRegistrationDisabled?: boolean;
+  category?: { key?: string } | null;
 }
 
 interface PublicActivityFormProps {
@@ -74,6 +76,7 @@ export default function PublicActivityForm({
     isRegistrationEnabled: activity ? activity.isRegistrationEnabled : false,
     locationId: activity?.locationId || null,
     isMunicipalityOnly: Boolean(activity?.isMunicipalityOnly),
+    categoryKey: activity?.category?.key || '',
     resources: [],
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
@@ -206,6 +209,7 @@ export default function PublicActivityForm({
       isPublicActivity: true,
       isRegistrationEnabled: state.isRegistrationEnabled,
       isExclusiveActivity: state.isExclusiveActivity,
+      category: state.categoryKey ? { key: state.categoryKey } : null,
       locationId: state.selectedResource ? null : state.locationId,
       isMunicipalityOnly: state.selectedResource
         ? false
@@ -251,6 +255,29 @@ export default function PublicActivityForm({
           ping={loaders?.isUploadingImages}
           onUploadedImages={handleUploadedImages}
         />
+      </FormField>
+
+      <FormField
+        helper={tc('eventKinds.form.helper')}
+        label={tc('eventKinds.form.label')}
+        my="8"
+      >
+        <Select
+          value={state.categoryKey}
+          onChange={(event) =>
+            setState((prevState: any) => ({
+              ...prevState,
+              categoryKey: event.target.value,
+            }))
+          }
+        >
+          <option value="">{tc('eventKinds.form.none')}</option>
+          {EVENT_KINDS.map((kind) => (
+            <option key={kind.key} value={kind.key}>
+              {tc(`eventKinds.${kind.key}`)}
+            </option>
+          ))}
+        </Select>
       </FormField>
 
       <FormField

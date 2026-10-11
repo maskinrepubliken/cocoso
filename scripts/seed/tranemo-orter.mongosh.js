@@ -33,6 +33,18 @@ const places = [
     description: '<p>Glasbruksorten med Glasets Hus, Sveriges äldsta glasbruk i drift.</p>',
     patterns: [/Limmared/],
   },
+  {
+    slug: 'dalstorp',
+    name: 'Dalstorp',
+    description: '<p>Orten vid Dalstorpasjön med skolan, idrottshallen, Dalshov och badplatsen.</p>',
+    patterns: [/Dalstorp/],
+  },
+  {
+    slug: 'langhem',
+    name: 'Länghem',
+    description: '<p>Samhället vid Sävsjön med Torpa stenhus, Hofsnäs herrgård och Ingsvallen.</p>',
+    patterns: [/Länghem/],
+  },
 ];
 
 places.forEach((place, order) => {
@@ -64,5 +76,14 @@ db.resources.find({ locationId: { $exists: false } }).forEach((resource) => {
   print(`  ${resource.label} -> ${place.name}`);
   assigned += 1;
 });
-print(`assigned ${assigned} resource(s)`);
+// Groups whose title names a place are filed under it too.
+db.groups.find({ locationId: { $exists: false } }).forEach((group) => {
+  const place = places.find((p) => p.patterns.some((re) => re.test(group.title)));
+  if (!place) return;
+  const location = db.locations.findOne({ slug: place.slug });
+  db.groups.updateOne({ _id: group._id }, { $set: { locationId: location._id } });
+  print(`  ${group.title} -> ${place.name}`);
+  assigned += 1;
+});
+print(`assigned ${assigned} resource(s) and group(s)`);
 print(`without a place: ${db.resources.countDocuments({ locationId: { $exists: false } })}`);

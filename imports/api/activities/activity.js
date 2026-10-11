@@ -25,6 +25,9 @@ Activities.schema = new SimpleSchema({
   // Copied from the resource when one is set, otherwise chosen by the
   // author. Empty means the whole municipality.
   locationId: { type: String, optional: true },
+  // The kind of event, one of the keys in imports/ui/pages/activities/eventKinds.ts
+  category: { type: Object, optional: true },
+  'category.key': { type: String },
   // Shown only when no place is selected (the municipality pages).
   isMunicipalityOnly: { type: Boolean, optional: true },
 

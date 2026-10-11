@@ -495,3 +495,18 @@ termsPage:
     - title: Contact
       paragraphs:
         - "Questions about the service or your data go through the Give feedback button at the bottom of the page, or to the municipality's data protection officer via tranemo.se."
+
+eventKinds:
+  all: All kinds
+  kultur: Culture
+  idrott: Sport
+  barn: Children & family
+  marknad: Market
+  mat: Food
+  natur: Outdoors
+  larande: Learning
+  social: Social
+  form:
+    label: Kind of event
+    helper: Shown as a chip on the card, and visitors can filter the listing by it.
+    none: No particular kind

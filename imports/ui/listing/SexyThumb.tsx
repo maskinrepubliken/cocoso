@@ -15,6 +15,7 @@ import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
 import PlaceTag from '../generic/PlaceTag';
+import { findEventKind } from '../pages/activities/eventKinds';
 import { getImageUrl } from '../utils/imageHelper';
 import { describePattern } from './recurringText';
 
@@ -280,6 +281,7 @@ interface Activity {
   imageUrl?: string;
   locationId?: string | null;
   isMunicipalityOnly?: boolean;
+  category?: { key?: string } | null;
 }
 
 export interface SexyThumbProps {
@@ -326,6 +328,7 @@ function SexyThumb({
   const isWeekly =
     !showPast && futureDates.length > 0 && Boolean(getWeeklyPattern(dates));
   const headline = showPast ? pastDates[pastDates.length - 1] : futureDates[0];
+  const kind = findEventKind(activity.category?.key);
 
   return (
     <Card world={world?.key || 'skog'}>
@@ -363,9 +366,10 @@ function SexyThumb({
         {(subTitle || readingMaterial) && (
           <SubTitle>{subTitle || readingMaterial}</SubTitle>
         )}
-        {tags && tags.length > 0 && (
+        {((tags && tags.length > 0) || kind) && (
           <Meta>
-            {tags.map((t) => (
+            {kind && <Chip>{tc(`eventKinds.${kind.key}`)}</Chip>}
+            {tags?.map((t) => (
               <Chip key={t} place>
                 {t}
               </Chip>

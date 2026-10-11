@@ -93,6 +93,7 @@ export interface Site {
     isBurgerMenuOnDesktop?: boolean;
     menu?: MenuItem[];
     lang?: string;
+    season?: string;
   };
 }
 

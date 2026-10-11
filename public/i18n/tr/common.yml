@@ -492,3 +492,18 @@ termsPage:
     - title: İletişim
       paragraphs:
         - "Hizmet veya verileriniz hakkındaki sorular için sayfanın altındaki Geri bildirim ver düğmesini kullanın ya da tranemo.se üzerinden belediyenin veri koruma görevlisine başvurun."
+
+eventKinds:
+  all: Tüm türler
+  kultur: Kültür
+  idrott: Spor
+  barn: Çocuk ve aile
+  marknad: Pazar
+  mat: Yemek
+  natur: Doğa
+  larande: Öğrenme
+  social: Sosyal
+  form:
+    label: Etkinlik türü
+    helper: Kartta bir etiket olarak gösterilir; ziyaretçiler listeyi buna göre süzebilir.
+    none: Belirli bir tür yok

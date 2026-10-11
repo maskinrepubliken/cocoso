@@ -492,3 +492,18 @@ termsPage:
     - title: Kontakt
       paragraphs:
         - "Frågor om tjänsten eller dina uppgifter ställer du via knappen Ge feedback längst ner på sidan, eller till kommunens dataskyddsombud via tranemo.se."
+
+eventKinds:
+  all: Alla slag
+  kultur: Kultur
+  idrott: Idrott
+  barn: Barn & familj
+  marknad: Marknad
+  mat: Mat
+  natur: Ute
+  larande: Lärande
+  social: Umgänge
+  form:
+    label: Slags evenemang
+    helper: Visas som ett chip på kortet, och besökare kan filtrera listan på det.
+    none: Inget särskilt slag
