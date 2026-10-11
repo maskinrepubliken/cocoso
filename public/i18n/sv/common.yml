@@ -330,6 +330,8 @@ recurring:
   tomorrow: "Imorgon"
   now: "Pågår nu"
   nothing: "Inget på tavlan den här dagen."
+  earlier: "Tidigare dagar"
+  later: "Fler dagar"
   weekTitle: "Varje vecka"
   weekIntro: "Återkommande aktiviteter, visade en gång per veckodag"
   next: "Nästa {{date}}"

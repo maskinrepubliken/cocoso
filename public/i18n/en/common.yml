@@ -333,6 +333,8 @@ recurring:
   tomorrow: "Tomorrow"
   now: "On now"
   nothing: "Nothing planned for this day."
+  earlier: "Earlier days"
+  later: "More days"
   weekTitle: "Every week"
   weekIntro: "Recurring activities, shown once on their weekday"
   next: "Next {{date}}"

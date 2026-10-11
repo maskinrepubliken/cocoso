@@ -214,8 +214,35 @@ const SectionHead = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.25rem 0.75rem',
-  margin: '0 auto 0.5rem',
-  maxWidth: '1180px',
+  margin: '0 0 0.5rem',
+});
+
+const WeekArrows = styled('div', {
+  display: 'flex',
+  gap: '4px',
+  marginLeft: 'auto',
+  '@media (max-width: 900px)': { display: 'none' },
+});
+
+const WeekArrow = styled('button', {
+  all: 'unset',
+  alignItems: 'center',
+  background: 'var(--cocoso-papper)',
+  borderRadius: '999px',
+  boxShadow: 'var(--cocoso-skugga)',
+  color: 'var(--cocoso-colors-theme-800)',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  fontSize: '1.1rem',
+  height: '32px',
+  justifyContent: 'center',
+  width: '32px',
+  '&:hover': { background: 'var(--cocoso-colors-theme-50)' },
+  '&:focus-visible': {
+    outline: '2px solid var(--cocoso-colors-theme-500)',
+    outlineOffset: '2px',
+  },
+  '&:disabled': { cursor: 'default', opacity: 0.4 },
 });
 
 const SectionTitle = styled('h2', {
@@ -232,29 +259,40 @@ const SectionIntro = styled('p', {
   margin: 0,
 });
 
+// A strip of days you scroll sideways, today first, a week in view on a
+// wide screen and more weeks added as you go. Each day snaps into place.
+const WEEK_GAP = 6;
+
 const Week = styled('div', {
-  display: 'grid',
-  gap: '0.4rem',
-  gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-  margin: '0 auto 1.25rem',
-  maxWidth: '1180px',
+  display: 'flex',
+  gap: `${WEEK_GAP}px`,
+  margin: '0 0 1.25rem',
+  overflowX: 'auto',
+  paddingBottom: '0.5rem',
+  scrollSnapType: 'x mandatory',
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': { display: 'none' },
   '@media (max-width: 900px)': {
-    display: 'flex',
-    margin: '0 -1rem 1.25rem',
-    overflowX: 'auto',
-    padding: '0 1rem 0.5rem',
-    scrollSnapType: 'x mandatory',
+    margin: '0 calc(-1 * var(--cocoso-gutter)) 1.25rem',
+    padding: '0 var(--cocoso-gutter) 0.5rem',
+    scrollPadding: '0 var(--cocoso-gutter)',
   },
 });
 
 const Day = styled('div', {
   borderRadius: '10px',
   boxShadow: 'var(--cocoso-skugga-kort)',
+  boxSizing: 'border-box',
   color: ink,
+  flex: `0 0 calc((100% - ${6 * WEEK_GAP}px) / 7)`,
+  minWidth: 0,
   padding: '0.55rem',
+  scrollSnapAlign: 'start',
+  '@media (max-width: 1100px)': {
+    flex: `0 0 calc((100% - ${4 * WEEK_GAP}px) / 5)`,
+  },
   '@media (max-width: 900px)': {
     flex: '0 0 68%',
-    scrollSnapAlign: 'start',
   },
   variants: {
     today: {
@@ -275,6 +313,13 @@ const DayName = styled('h3', {
   margin: '0 0 0.35rem',
   textTransform: 'uppercase',
   fontFamily: 'var(--cocoso-font-ui)',
+  '& small': {
+    fontWeight: 500,
+    letterSpacing: 0,
+    marginLeft: '0.4rem',
+    opacity: 0.7,
+    textTransform: 'none',
+  },
   variants: {
     today: {
       true: {
@@ -482,27 +527,49 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
   );
 }
 
-// Monday first
-const weekOrder = [1, 2, 3, 4, 5, 6, 0];
+// The days from today on: each repeats its weekday's activities, within
+// the span of their pattern and skipping the dates it skips. Seven days
+// to begin with, seven more whenever the end comes into view.
+const INITIAL_DAYS = 14;
+const MORE_DAYS = 7;
 
 export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
   const [t] = useTranslation('common');
   const entryLink = useEntryLink();
   const recurring = useMemo(() => withPatterns(activities), [activities]);
-  const todayWeekday = dayjs().day();
   const weekRef = useRef<HTMLDivElement>(null);
+  const [dayCount, setDayCount] = useState(INITIAL_DAYS);
+  const [atStart, setAtStart] = useState(true);
+  const todayKey = dayjs().format('YYYY-MM-DD');
 
-  // When the week scrolls sideways (phones), start at today.
+  const days = useMemo(
+    () =>
+      Array.from({ length: dayCount }, (_, i) => dayjs(todayKey).add(i, 'day')),
+    [dayCount, todayKey]
+  );
+
   useEffect(() => {
     const week = weekRef.current;
-    const today = week?.querySelector<HTMLElement>('[data-today]');
-    if (week && today && week.scrollWidth > week.clientWidth) {
-      week.scrollLeft +=
-        today.getBoundingClientRect().left -
-        week.getBoundingClientRect().left -
-        16;
-    }
-  }, [recurring.length]);
+    if (!week) return undefined;
+    const onScroll = () => {
+      setAtStart(week.scrollLeft < 8);
+      const column = week.firstElementChild as HTMLElement | null;
+      const width = column?.offsetWidth || 160;
+      if (week.scrollLeft + week.clientWidth > week.scrollWidth - width * 3) {
+        setDayCount((count) => count + MORE_DAYS);
+      }
+    };
+    week.addEventListener('scroll', onScroll, { passive: true });
+    return () => week.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const step = (direction: 1 | -1) => {
+    const week = weekRef.current;
+    if (!week) return;
+    const column = week.firstElementChild as HTMLElement | null;
+    const width = (column?.offsetWidth || 160) + WEEK_GAP;
+    week.scrollBy({ left: direction * width * 3, behavior: 'smooth' });
+  };
 
   if (recurring.length === 0) {
     return null;
@@ -515,30 +582,65 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
           {t('recurring.weekTitle')}
         </SectionTitle>
         <SectionIntro>{t('recurring.weekIntro')}</SectionIntro>
+        <WeekArrows>
+          <WeekArrow
+            aria-label={t('recurring.earlier')}
+            disabled={atStart}
+            type="button"
+            onClick={() => step(-1)}
+          >
+            ‹
+          </WeekArrow>
+          <WeekArrow
+            aria-label={t('recurring.later')}
+            type="button"
+            onClick={() => step(1)}
+          >
+            ›
+          </WeekArrow>
+        </WeekArrows>
       </SectionHead>
       <Week ref={weekRef}>
-        {weekOrder.map((weekday) => {
+        {days.map((day, offset) => {
+          const date = day.format('YYYY-MM-DD');
+          const weekday = day.day();
           const slots = recurring
+            .filter(
+              ({ pattern }) =>
+                pattern.from <= date &&
+                pattern.until >= date &&
+                !pattern.skipped.includes(date)
+            )
             .flatMap(({ activity, pattern }) =>
               pattern.slots
                 .filter((slot) => slot.weekday === weekday)
                 .map((slot) => ({ activity, pattern, slot }))
             )
             .sort((a, b) => a.slot.startTime.localeCompare(b.slot.startTime));
-          const isToday = weekday === todayWeekday;
+          const isToday = offset === 0;
           return (
             <Day
-              key={weekday}
+              key={date}
               css={{ background: dayColor(weekday, isToday) }}
               today={isToday}
-              data-today={isToday || undefined}
             >
               <DayName today={isToday}>
-                <span>{weekdayName(weekday, 'ddd')}</span>
+                <span>
+                  {weekdayName(weekday, 'ddd')}
+                  <small>{day.format('D MMM')}</small>
+                </span>
                 {isToday && <span>{t('recurring.today')}</span>}
               </DayName>
+              {slots.length === 0 && (
+                <Empty css={{ fontSize: '0.9rem', margin: '0.3rem 0 0' }}>
+                  {t('recurring.nothing')}
+                </Empty>
+              )}
               {slots.map(({ activity, pattern, slot }) => (
-                <Slot key={activity._id} to={entryLink(activity)}>
+                <Slot
+                  key={activity._id}
+                  to={entryLink(activity, { startDate: date, startTime: slot.startTime })}
+                >
                   <b>{timeSpan(slot.startTime, slot.endTime)}</b>
                   <strong>{activity.title}</strong>
                   <small>
