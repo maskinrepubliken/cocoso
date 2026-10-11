@@ -73,42 +73,8 @@ const PanelTitle = styled('h2', {
   },
 });
 
-const Segmented = styled('div', {
-  background: 'rgba(255, 253, 247, 0.7)',
-  borderRadius: '999px',
-  display: 'flex',
-  padding: '3px',
-});
 
-const SegButton = styled('button', {
-  background: 'transparent',
-  border: 0,
-  borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
-  cursor: 'pointer',
-  fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '0.875rem',
-  fontWeight: 700,
-  padding: '0.35rem 0.95rem',
-  transition: 'background-color 0.15s ease',
-  variants: {
-    active: {
-      true: { background: 'var(--cocoso-colors-theme-700)', color: 'white' },
-    },
-  },
-});
 
-const Rows = styled('ul', {
-  display: 'grid',
-  gap: '0.9rem 0.75rem',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
-  listStyle: 'none',
-  margin: '0.9rem 0 0',
-  padding: '0.3rem 0 0',
-  variants: {
-    single: { true: {} },
-  },
-});
 
 // A note on the board: paper, a pin, the time in green, the title in
 // Fraunces, the place in small type.
@@ -200,13 +166,6 @@ const Pill = styled('span', {
   },
 });
 
-const Empty = styled('p', {
-  color: 'var(--cocoso-mylla-soft)',
-  fontFamily: 'var(--cocoso-font-display)',
-  fontStyle: 'italic',
-  fontSize: '1.05rem',
-  margin: '0.75rem 0 0',
-});
 
 // The week heads with its title and intro on one line to save height.
 const SectionHead = styled('div', {
@@ -396,88 +355,224 @@ function rowsForDate(activities: Activity[], date: string) {
   );
 }
 
+// The notice board: one column per day, today first, then as many days
+// as you care to scroll. More days are added when the end comes into
+// view, so the strip never runs out. Arrows on wide screens, a swipe on
+// phones; each day snaps into place.
+const DAY_WIDTH = 300;
+const INITIAL_DAYS = 7;
+const MORE_DAYS = 7;
+
+const Strip = styled('div', {
+  display: 'flex',
+  gap: '0.75rem',
+  margin: '0.9rem calc(-1 * var(--board-pad, 1.25rem)) 0',
+  overflowX: 'auto',
+  padding: '0.3rem var(--board-pad, 1.25rem) 0.25rem',
+  scrollPadding: '0 var(--board-pad, 1.25rem)',
+  scrollSnapType: 'x mandatory',
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': { display: 'none' },
+});
+
+const DayColumn = styled('section', {
+  flex: `0 0 ${DAY_WIDTH}px`,
+  minWidth: 0,
+  scrollSnapAlign: 'start',
+  '@media (max-width: 700px)': { flex: '0 0 84%' },
+});
+
+const DayHead = styled('h3', {
+  alignItems: 'baseline',
+  display: 'flex',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.15rem',
+  fontWeight: 600,
+  gap: '0.5rem',
+  margin: '0 0 0.6rem',
+  '& small': {
+    color: 'var(--cocoso-mylla-soft)',
+    fontFamily: 'var(--cocoso-body-font-family)',
+    fontSize: '0.85rem',
+    fontWeight: 400,
+  },
+});
+
+const DayRows = styled('ul', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.9rem',
+  listStyle: 'none',
+  margin: 0,
+  padding: '0.3rem 0 0',
+});
+
+const DayEmpty = styled('p', {
+  background: 'rgba(255, 253, 247, 0.5)',
+  border: '1px dashed rgba(60, 40, 20, 0.25)',
+  borderRadius: '8px',
+  color: 'var(--cocoso-mylla-soft)',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontSize: '0.95rem',
+  fontStyle: 'italic',
+  margin: 0,
+  padding: '0.9rem',
+});
+
+const Arrows = styled('div', {
+  display: 'flex',
+  gap: '4px',
+  '@media (max-width: 700px)': { display: 'none' },
+});
+
+const Arrow = styled('button', {
+  all: 'unset',
+  alignItems: 'center',
+  background: 'rgba(255, 253, 247, 0.7)',
+  borderRadius: '999px',
+  color: 'var(--cocoso-colors-theme-800)',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  height: '34px',
+  justifyContent: 'center',
+  width: '34px',
+  '&:hover': { background: 'var(--cocoso-papper)' },
+  '&:focus-visible': {
+    outline: '2px solid var(--cocoso-colors-theme-500)',
+    outlineOffset: '2px',
+  },
+  '&:disabled': { cursor: 'default', opacity: 0.4 },
+});
+
 export function DayAgenda({ activities, placeOf }: OverviewProps) {
   const [t, i18n] = useTranslation('common');
   const entryLink = useEntryLink();
   const rendered = useAtomValue(renderedAtom);
-  const [offset, setOffset] = useState(0);
-  const day = dayjs().add(offset, 'day');
-  const date = day.format('YYYY-MM-DD');
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [dayCount, setDayCount] = useState(INITIAL_DAYS);
+  const [atStart, setAtStart] = useState(true);
+  const todayKey = dayjs().format('YYYY-MM-DD');
   const now = dayjs().format('HH:mm');
 
-  const rows = rowsForDate(activities, date);
+  const days = useMemo(
+    () => Array.from({ length: dayCount }, (_, i) => dayjs(todayKey).add(i, 'day')),
+    [dayCount, todayKey]
+  );
 
-  const isOngoing = (o: Occurrence) =>
+  // Add days as the end comes into view; note where we are for the arrows.
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip) return undefined;
+    const onScroll = () => {
+      setAtStart(strip.scrollLeft < 8);
+      if (strip.scrollLeft + strip.clientWidth > strip.scrollWidth - DAY_WIDTH * 2) {
+        setDayCount((count) => count + MORE_DAYS);
+      }
+    };
+    strip.addEventListener('scroll', onScroll, { passive: true });
+    return () => strip.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const step = (direction: 1 | -1) => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    const column = strip.firstElementChild as HTMLElement | null;
+    const width = (column?.offsetWidth || DAY_WIDTH) + 12;
+    strip.scrollBy({ left: direction * width, behavior: 'smooth' });
+  };
+
+  const isOngoing = (offset: number, o: Occurrence) =>
     rendered &&
     offset === 0 &&
     (o.startTime || '') <= now &&
     (!o.endTime || o.endTime > now);
 
+  const dayLabel = (offset: number, day: dayjs.Dayjs) => {
+    if (offset === 0) return t('recurring.today');
+    if (offset === 1) return t('recurring.tomorrow');
+    const text = day.format('dddd');
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  };
+
   return (
     <Panel
       aria-labelledby="day-agenda-title"
-      css={{ backgroundColor: 'var(--cocoso-season-tavla)' }}
+      css={{
+        backgroundColor: 'var(--cocoso-season-tavla)',
+        '--board-pad': '1.25rem',
+        '@media (max-width: 700px)': { '--board-pad': '0.9rem' },
+      }}
     >
       <PanelHead>
         <PanelTitle id="day-agenda-title">
-          {offset === 0 ? t('recurring.today') : t('recurring.tomorrow')}
-          <small>{day.format('dddd D MMMM')}</small>
+          {t('recurring.boardTitle')}
+          <small>{t('recurring.boardHelper')}</small>
         </PanelTitle>
-        <Segmented role="group">
-          <SegButton
-            active={offset === 0}
-            aria-pressed={offset === 0}
-            onClick={() => setOffset(0)}
+        <Arrows>
+          <Arrow
+            aria-label={t('recurring.earlier')}
+            disabled={atStart}
+            type="button"
+            onClick={() => step(-1)}
           >
-            {t('recurring.today')}
-          </SegButton>
-          <SegButton
-            active={offset === 1}
-            aria-pressed={offset === 1}
-            onClick={() => setOffset(1)}
-          >
-            {t('recurring.tomorrow')}
-          </SegButton>
-        </Segmented>
+            ‹
+          </Arrow>
+          <Arrow aria-label={t('recurring.later')} type="button" onClick={() => step(1)}>
+            ›
+          </Arrow>
+        </Arrows>
       </PanelHead>
 
-      {rows.length === 0 ? (
-        <Empty>{t('recurring.nothing')}</Empty>
-      ) : (
-        <Rows single={rows.length < 4}>
-          {rows.map(({ activity, occurrence, pattern }) => {
-            const multiDay =
-              occurrence.endDate && occurrence.endDate !== occurrence.startDate;
-            const ongoing = isOngoing(occurrence);
-            return (
-              <li
-                key={activity._id + occurrence.startDate + occurrence.startTime}
-              >
-                <Row to={entryLink(activity, occurrence)}>
-                  <Time>
-                    {multiDay
-                      ? occurrence.startTime
-                      : timeSpan(occurrence.startTime, occurrence.endTime)}
-                  </Time>
-                  <What>
-                    <strong>{activity.title}</strong>
-                    <small>{placeText(activity, placeOf)}</small>
-                  </What>
-                  {ongoing ? (
-                    <Pill kind="now">{t('recurring.now')}</Pill>
-                  ) : pattern ? (
-                    <Pill kind="recurring">
-                      {describeDays(pattern, t, i18n.language)}
-                    </Pill>
-                  ) : (
-                    <span />
-                  )}
-                </Row>
-              </li>
-            );
-          })}
-        </Rows>
-      )}
+      <Strip ref={stripRef}>
+        {days.map((day, offset) => {
+          const date = day.format('YYYY-MM-DD');
+          const rows = rowsForDate(activities, date);
+          return (
+            <DayColumn key={date} aria-label={day.format('dddd D MMMM')}>
+              <DayHead>
+                {dayLabel(offset, day)}
+                <small>{day.format('D MMM')}</small>
+              </DayHead>
+              {rows.length === 0 ? (
+                <DayEmpty>{t('recurring.nothing')}</DayEmpty>
+              ) : (
+                <DayRows>
+                  {rows.map(({ activity, occurrence, pattern }) => {
+                    const multiDay =
+                      occurrence.endDate && occurrence.endDate !== occurrence.startDate;
+                    const ongoing = isOngoing(offset, occurrence);
+                    return (
+                      <li key={activity._id + occurrence.startDate + occurrence.startTime}>
+                        <Row to={entryLink(activity, occurrence)}>
+                          <Time>
+                            {multiDay
+                              ? occurrence.startTime
+                              : timeSpan(occurrence.startTime, occurrence.endTime)}
+                          </Time>
+                          <What>
+                            <strong>{activity.title}</strong>
+                            <small>{placeText(activity, placeOf)}</small>
+                          </What>
+                          {ongoing ? (
+                            <Pill kind="now">{t('recurring.now')}</Pill>
+                          ) : pattern ? (
+                            <Pill kind="recurring">
+                              {describeDays(pattern, t, i18n.language)}
+                            </Pill>
+                          ) : (
+                            <span />
+                          )}
+                        </Row>
+                      </li>
+                    );
+                  })}
+                </DayRows>
+              )}
+            </DayColumn>
+          );
+        })}
+      </Strip>
     </Panel>
   );
 }
