@@ -118,17 +118,24 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
 - Rörelse: kort tonar in (`card-in`), hero-ikoner svävar, hover lyfter
   2–3 px. Allt stängs av vid `prefers-reduced-motion`.
 
+## Gjort från listan
+
+- Kategorichips för evenemang: `category.key` på aktiviteten, slagen i
+  `imports/ui/pages/activities/eventKinds.ts` med varsin 3D-ikon, chips
+  under rubriken på `/activities` (`?kind=`), chip på kortet.
+- Årstid kan låsas under Inställningar → Info (`settings.season`);
+  `?season=` vinner fortfarande.
+- Kalenderns dagvy är egen (`DayView.tsx`), rader på papper.
+- Dalstorp och Länghem är orter (`scripts/seed/tranemo-orter.mongosh.js`).
+- Användarvillkoren är kommunens egna, i tre språk
+  (`termsPage` i `common.yml`).
+- Arrangörer har hjärtat som ikon.
+
 ## Att göra härnäst
 
-1. Kategorichips för evenemang med 3D-ikoner (kräver kategorier på
-   evenemang).
-2. En adminknapp som låser årstid (idag bara `?season=`).
-3. Adminpanelens formulär och listor (medlemmar, e-post, menyordning)
-   i samma material som sidomenyn.
-4. Veckovyn i kalendern: samtidiga händelser blir smala trots
-   `no-overlap`; en egen dagvy på papper vore bättre än
-   react-big-calendars tidsrutnät.
-5. Dalstorp och Länghem har innehåll men ingen ort; antingen orter för
-   dem eller en tydligare "hela kommunen"-etikett.
-6. Användarvillkorssidan (`imports/ui/entry/Terms.tsx`) är Cocosos
-   generiska engelska text och behöver skrivas om för kommunen.
+1. Adminpanelens formulär (medlemmar, e-post, menyordning) sitter på
+   papper via `Boxling` men har kvar sin gamla struktur; en genomgång
+   med samma rubriker och fältavstånd som resten av sajten.
+2. Veckovyn i kalendern är fortfarande react-big-calendars tidsrutnät;
+   dagvyn visar hur en egen vy kan se ut.
+3. Bilder till Dalstorp och Länghem (ortsidorna har bara färgvärld).

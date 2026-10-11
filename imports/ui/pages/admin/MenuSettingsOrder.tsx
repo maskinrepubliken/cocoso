@@ -204,7 +204,7 @@ export default function MenuSettingsOrder() {
                       </Flex>
                       <IconButton
                         aria-label="Remove"
-                        colorScheme="bluegray"
+                        colorScheme="theme"
                         icon={
                           <XIcon
                             size="18px"

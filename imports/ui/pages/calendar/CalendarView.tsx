@@ -15,6 +15,7 @@ import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import NewEntryHandler from '/imports/ui/forms/NewEntryHandler';
 
 import NewCalendarActivity from './NewCalendarActivity';
+import DayView from './DayView';
 
 const weekday = require('dayjs/plugin/weekday');
 
@@ -60,9 +61,16 @@ function EventContent({ event }: { event: CalendarActivity }) {
 }
 
 const DESKTOP_VIEWS: View[] = ['month', 'week', 'day', 'agenda'];
-// On a phone the month grid can't hold text, so the list comes first and
-// the grid is kept as an overview of which days are busy.
-const MOBILE_VIEWS: View[] = ['agenda', 'month'];
+// On a phone the month grid can't hold text, so the list comes first, the
+// day on paper next, and the grid is kept as an overview of busy days.
+const MOBILE_VIEWS: View[] = ['agenda', 'day', 'month'];
+// The day view is our own (DayView.tsx); the rest are react-big-calendar's.
+const VIEW_COMPONENTS = {
+  month: true,
+  week: true,
+  day: DayView,
+  agenda: true,
+} as any;
 
 export default function CalendarView({
   activities,
@@ -152,7 +160,9 @@ export default function CalendarView({
         showMultiDayTimes
         step={60}
         view={shownView}
-        views={views}
+        views={Object.fromEntries(
+          views.map((view) => [view, VIEW_COMPONENTS[view]])
+        ) as any}
         eventPropGetter={(event) => ({
           className: `cal-event ${event.isRecurring ? 'is-recurring' : ''}`,
           style: {

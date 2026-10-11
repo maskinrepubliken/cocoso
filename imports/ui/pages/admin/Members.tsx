@@ -295,7 +295,7 @@ export default function Members() {
       <Tabs tabs={tabs} index={tabIndex} />
 
       <Boxling mb="4" mt="8">
-        <Heading color="gray.600" mb="2" size="md">
+        <Heading size="md" css={{ marginBottom: "0.5rem" }}>
           <span
             style={{
               fontSize: '150%',
