@@ -41,7 +41,7 @@ export default function PreviousNewsletters() {
             list={newsletters}
             keySelector="_id"
             spacing="0"
-            bg="white"
+            bg="papper"
             p="8"
           >
             {(email) => {

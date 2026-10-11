@@ -253,7 +253,7 @@ export default function ContentInserter({ onSelect }) {
         {activeTab === 0 && activitiesInMenu?.isVisible && (
           <Box>
             {!activitiesLoading ? (
-              <List bg="white">
+              <List bg="papper">
                 {activitiesFiltered?.map((activity) => (
                   <ListItemCheckbox
                     key={activity._id}
@@ -273,7 +273,7 @@ export default function ContentInserter({ onSelect }) {
         {activeTab === 1 && worksInMenu?.isVisible && (
           <Box>
             {!worksLoading ? (
-              <List bg="white">
+              <List bg="papper">
                 {worksFiltered?.map((work) => (
                   <ListItemCheckbox
                     key={work._id}

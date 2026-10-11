@@ -306,7 +306,6 @@
   "imports/ui/pages/admin/Emails.tsx | TS2345 | Argument of type 'string | null' is not assignable to parameter of type 'string'.": 1,
   "imports/ui/pages/admin/Emails.tsx | TS6133 | 'email' is declared but its value is never read.": 1,
   "imports/ui/pages/admin/Locations.tsx | TS2345 | Argument of type '{}' is not assignable to parameter of type 'SetStateAction<{ _id: string; title: string; }[]>'.": 1,
-  "imports/ui/pages/admin/Members.tsx | TS2322 | Type '{ children: (string | Element)[]; color: string; mb: string; size: \"md\"; }' is not assignable to type 'IntrinsicAttributes & HeadingProps'.": 1,
   "imports/ui/pages/admin/Members.tsx | TS2322 | Type '{ children: any[]; size: \"md\"; fontWeight: string; mb: string; }' is not assignable to type 'IntrinsicAttributes & HeadingProps'.": 1,
   "imports/ui/pages/admin/Members.tsx | TS2322 | Type '{ children: string; size: string; color: string; fontStyle: string; }' is not assignable to type 'IntrinsicAttributes & TextProps'.": 1,
   "imports/ui/pages/admin/Members.tsx | TS2322 | Type '{ isOpen: boolean; user: null; onClose: () => void; }' is not assignable to type 'IntrinsicAttributes & { user: any; onClose: any; }'.": 1,

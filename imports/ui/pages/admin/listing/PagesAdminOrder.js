@@ -86,7 +86,7 @@ export default function PagesAdminOrder() {
                 <div>
                   <Flex
                     align="center"
-                    bg="white"
+                    bg="papper"
                     borderRadius="md"
                     mb="4"
                     px="4"
