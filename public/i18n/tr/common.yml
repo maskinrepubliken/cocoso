@@ -191,6 +191,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Menü
+  home: Ana sayfa
   guest:
     login: Giriş yap
     register: Hesap aç

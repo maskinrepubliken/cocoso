@@ -193,6 +193,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Menu
+  home: Home
   guest:
     login: Login
     register: Register

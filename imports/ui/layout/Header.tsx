@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
@@ -25,18 +26,27 @@ export interface HeaderMenuItem {
   route: string;
 }
 
-export function getMenuItems(site: any, prefix: string): HeaderMenuItem[] {
+export function getMenuItems(
+  site: any,
+  prefix: string,
+  homeLabel?: string
+): HeaderMenuItem[] {
   const menu = site?.settings?.menu || [];
-  return menu
-    .filter((item: any) => item.isVisible)
-    .map((item: any) => ({
-      name: item.name,
-      label: item.label,
-      isComposablePage: item.isComposablePage,
-      route: item.isComposablePage
-        ? `${prefix}/cp/${item.name}`
-        : `${prefix}/${item.name}`,
-    }));
+  const home: HeaderMenuItem[] = homeLabel
+    ? [{ name: 'home', label: homeLabel, route: prefix || '/' }]
+    : [];
+  return home.concat(
+    menu
+      .filter((item: any) => item.isVisible)
+      .map((item: any) => ({
+        name: item.name,
+        label: item.label,
+        isComposablePage: item.isComposablePage,
+        route: item.isComposablePage
+          ? `${prefix}/cp/${item.name}`
+          : `${prefix}/${item.name}`,
+      }))
+  );
 }
 
 // The first path segment after the location prefix: 'activities',
@@ -73,7 +83,11 @@ export function InfoPagesMenu({
           suppressHydrationWarning
         >
           {label}
-          <ChevronDownIcon className="site-nav-chevron" width={13} height={13} />
+          <ChevronDownIcon
+            className="site-nav-chevron"
+            width={13}
+            height={13}
+          />
         </span>
       }
     >
@@ -150,7 +164,9 @@ function Nav({
   }, [items.length]);
 
   const isActive = (item: HeaderMenuItem, index: number) =>
-    section === '' ? index === 0 : section === item.name;
+    section === ''
+      ? item.name === 'home' || index === 0
+      : section === item.name;
 
   return (
     <nav className={`${className} ${scrollState}`} ref={navRef}>
@@ -194,6 +210,7 @@ export interface HeaderProps {
 export default function Header({ site, pageTitles }: HeaderProps) {
   const location = useLocation();
   const prefix = useLocationPrefix();
+  const [tc] = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -210,7 +227,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     return null;
   }
 
-  const items = getMenuItems(site, prefix);
+  const items = getMenuItems(site, prefix, tc('menu.home'));
   const section = getCurrentSection(location.pathname, prefix);
 
   return (

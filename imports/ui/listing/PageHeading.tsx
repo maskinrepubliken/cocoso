@@ -203,11 +203,7 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
               {icon && (
                 <ThreeDIcon className="page-heading-icon" name={icon} size={56} />
               )}
-              <Heading
-                as={location.pathname === '/' ? 'h2' : 'h1'}
-                size="lg"
-                textAlign="center"
-              >
+              <Heading as="h1" size="lg" textAlign="center">
                 {heading}
               </Heading>
             </div>

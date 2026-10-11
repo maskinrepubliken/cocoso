@@ -61,6 +61,7 @@ export function Footer({ site }: FooterProps) {
           )}
 
           <nav className="site-footer-nav" aria-label={tc('menu.label')}>
+            <Link to="/">{tc('menu.home')}</Link>
             {activeMenu?.map((item: any) => (
               <Link key={item.name} to={routeFor(item)}>
                 {item.label}

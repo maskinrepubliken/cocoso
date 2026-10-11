@@ -191,6 +191,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Meny
+  home: Hem
   guest:
     login: Logga in
     register: Registrera

@@ -11,28 +11,10 @@ function localFirst(items, locationId) {
   ];
 }
 
-export async function getHomeLoader({ siteDoc, params, request }) {
-  const menu = siteDoc?.settings?.menu;
-  const homeRouteName = menu && menu[0]?.name;
-
-  switch (homeRouteName) {
-    case 'activities':
-      return await getActivities({ request });
-    case 'calendar':
-      return await getCalendarEntries();
-    case 'groups':
-      return await getGroups();
-    case 'info':
-      return await getPages();
-    case 'resources':
-      return await getResources();
-    case 'works':
-      return await getWorks();
-    case 'users':
-      return await getPeople();
-    default:
-      return await getComposablePage({ params, siteDoc });
-  }
+// The start page shows today, tomorrow and the week, so it needs the
+// upcoming activities.
+export async function getHomeLoader({ request }) {
+  return await getActivities({ request });
 }
 
 export async function getActivities({ request, locationId }) {
