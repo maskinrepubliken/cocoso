@@ -2742,7 +2742,9 @@ body {
 
 .kind-chip {
   all: unset;
+  box-sizing: border-box;
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 6px;
   height: 40px;
@@ -2781,12 +2783,17 @@ body {
   .kind-chips {
     flex-wrap: nowrap;
     justify-content: flex-start;
-    margin-left: calc(-1 * var(--cocoso-gutter));
-    margin-right: calc(-1 * var(--cocoso-gutter));
-    max-width: none;
+    /* .page-wrap already carries the gutter as padding; the row scrolls
+       inside it, so the chips start in line with the cards */
     overflow-x: auto;
-    padding-bottom: 6px;
+    padding-bottom: 8px;
+    padding-top: 4px;
+    scroll-padding: 0 var(--cocoso-gutter);
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
+  }
+  .kind-chip {
+    scroll-snap-align: start;
   }
   .kind-chips::-webkit-scrollbar {
     display: none;
