@@ -467,3 +467,31 @@ groupCard:
 
 a11y:
   skipToContent: Skip to content
+
+termsPage:
+  title: Terms of use and privacy policy
+  updated: In effect from October 2026.
+  sections:
+    - title: About the service
+      paragraphs:
+        - "{{site}} is run by Tranemo municipality. It gathers events, associations, places and requests in the municipality. Reading and searching needs no account."
+        - "With an account you can publish events, present your association, book venues, sign up for events and answer requests. The account is personal."
+    - title: How we behave
+      paragraphs:
+        - "What you publish is visible to every visitor. Be respectful, stick to the truth, and only publish what you have the right to, such as pictures you took yourself or have permission to use."
+        - "The municipality may remove content that breaks the law, is offensive or does not belong here, and may close accounts that are misused."
+    - title: What we store
+      paragraphs:
+        - "When you create an account we store your username, your e-mail address and an encrypted password. What you fill in on your page, such as name, picture and presentation, is stored too and shown to visitors."
+        - "When you sign up for an event, your name, e-mail address and number of people are stored. The organizer sees them; other visitors see only your name, unless you chose to hide it."
+        - "We keep no data about you for marketing and hand nothing to anyone outside the municipality. Data is stored on servers within the EU."
+    - title: Cookies
+      paragraphs:
+        - "The service uses only the cookies it needs to work: one to keep you logged in and one to remember your language. No tracking or advertising cookies."
+    - title: Your rights
+      paragraphs:
+        - "You can see and change your data under your profile at any time, and delete your account there. Your personal data is then erased. Events and posts you created may remain without your name if others depend on them."
+        - "Under the GDPR you have the right to an extract of the data we hold about you, to have it corrected or erased, and to complain to the Swedish Authority for Privacy Protection."
+    - title: Contact
+      paragraphs:
+        - "Questions about the service or your data go through the Give feedback button at the bottom of the page, or to the municipality's data protection officer via tranemo.se."

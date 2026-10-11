@@ -28,7 +28,11 @@ export default async function serverRenderer(sink) {
   if (!stitchesConfig) {
     stitchesConfig = await import('/stitches.config');
   }
-  const season = resolveSeason(sink?.request?.url?.query?.season);
+  const season = resolveSeason(
+    sink?.request?.url?.query?.season,
+    undefined,
+    siteDoc?.settings?.season
+  );
   const globalCssString = siteDoc ? getGlobalStyles(siteDoc.theme, season) : '';
   const { getCssText } = stitchesConfig;
 

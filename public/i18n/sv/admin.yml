@@ -458,3 +458,8 @@ overview:
     title: 'Inställningar och utseende'
     helper: 'Sådant du ställer in en gång och ändrar ibland.'
   error: 'Kunde inte hämta översikten.'
+
+season:
+  label: Årstid
+  helper: "Sajten byter utseende med årstiderna. Lås en här för att behålla den, till exempel under en kampanj."
+  auto: Följ kalendern

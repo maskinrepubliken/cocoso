@@ -264,7 +264,7 @@ const Signup = ({
         open={modalOpen}
         scrollBehavior="inside"
         size="full"
-        title="Terms of Service & Privacy Policy"
+        title={tc('termsPage.title')}
         onConfirm={confirmModal}
         onClose={() => setModalOpen(false)}
       >

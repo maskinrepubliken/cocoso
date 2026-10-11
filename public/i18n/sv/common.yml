@@ -464,3 +464,31 @@ groupCard:
 
 a11y:
   skipToContent: Hoppa till innehållet
+
+termsPage:
+  title: Användarvillkor och sekretesspolicy
+  updated: Gäller från oktober 2026.
+  sections:
+    - title: Om tjänsten
+      paragraphs:
+        - "{{site}} drivs av Tranemo kommun. Tjänsten samlar evenemang, föreningar, platser och förfrågningar i kommunen. Att läsa och söka kräver inget konto."
+        - "Med ett konto kan du publicera evenemang, visa din förening, boka lokaler, anmäla dig till evenemang och svara på förfrågningar. Kontot är personligt."
+    - title: Så här uppför vi oss
+      paragraphs:
+        - "Det du publicerar syns för alla besökare. Skriv respektfullt, håll dig till sanningen och publicera bara sådant du har rätt att publicera, till exempel bilder du tagit själv eller har tillstånd att använda."
+        - "Kommunen kan ta bort innehåll som bryter mot lag, som är kränkande eller som inte hör hemma i tjänsten, och kan stänga av konton som missbrukas."
+    - title: Vilka uppgifter vi sparar
+      paragraphs:
+        - "När du skapar ett konto sparar vi ditt användarnamn, din e-postadress och ett krypterat lösenord. Det du själv fyller i på din sida, som namn, bild och presentation, sparas också och visas för besökare."
+        - "När du anmäler dig till ett evenemang sparas namn, e-postadress och antal personer. Arrangören ser uppgifterna; andra besökare ser bara ditt namn, om du inte valt att dölja det."
+        - "Vi sparar inga uppgifter om dig i marknadsföringssyfte och lämnar inte ut dem till någon utanför kommunen. Lagringen sker på servrar inom EU."
+    - title: Kakor
+      paragraphs:
+        - "Tjänsten använder bara kakor som behövs för att den ska fungera: en för att hålla dig inloggad och en för att minnas vilket språk du valt. Inga kakor för spårning eller reklam."
+    - title: Dina rättigheter
+      paragraphs:
+        - "Du kan när som helst se och ändra dina uppgifter under din profil, och ta bort ditt konto där. Då raderas dina personuppgifter. Evenemang och inlägg du skapat kan ligga kvar utan ditt namn om andra är beroende av dem."
+        - "Enligt dataskyddsförordningen (GDPR) har du rätt att få ett utdrag av de uppgifter vi har om dig, att få dem rättade eller raderade, och att klaga hos Integritetsskyddsmyndigheten."
+    - title: Kontakt
+      paragraphs:
+        - "Frågor om tjänsten eller dina uppgifter ställer du via knappen Ge feedback längst ner på sidan, eller till kommunens dataskyddsombud via tranemo.se."

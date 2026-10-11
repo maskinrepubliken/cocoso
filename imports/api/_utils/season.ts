@@ -18,8 +18,15 @@ export function isSeason(value: unknown): value is Season {
   return typeof value === 'string' && (SEASONS as string[]).includes(value);
 }
 
-// Season for a request or page: an explicit override (admin preview, or
-// `?season=vinter` while designing) wins over the calendar.
-export function resolveSeason(override?: unknown, date?: Date): Season {
-  return isSeason(override) ? override : getSeason(date);
+// Season for a request or page: an explicit override (`?season=vinter`
+// while designing) wins, then the season an admin locked in the site's
+// settings, then the calendar.
+export function resolveSeason(
+  override?: unknown,
+  date?: Date,
+  locked?: unknown
+): Season {
+  if (isSeason(override)) return override;
+  if (isSeason(locked)) return locked;
+  return getSeason(date);
 }

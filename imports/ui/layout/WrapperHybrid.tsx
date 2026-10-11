@@ -128,7 +128,7 @@ export default function WrapperHybrid({
     // The browser decides the season from its own clock, with ?season=
     // as a preview override.
     const override = new URLSearchParams(window.location.search).get('season');
-    setSeason(resolveSeason(override));
+    setSeason(resolveSeason(override, undefined, siteDoc?.settings?.season));
     restoreViewAsState();
     setTimeout(() => {
       setRendered(true);
@@ -139,6 +139,14 @@ export default function WrapperHybrid({
     setIsDesktop(isDesktopValue);
     setIsMobile(isMobileValue);
   }, [isDesktopValue, isMobileValue]);
+
+  // An admin locking the season in settings takes effect on the next load
+  // of the site document, without a reload.
+  useEffect(() => {
+    if (!site) return;
+    const override = new URLSearchParams(window.location.search).get('season');
+    setSeason(resolveSeason(override, undefined, site.settings?.season));
+  }, [site?.settings?.season]);
 
   useEffect(() => {
     if (!site) return;

@@ -458,3 +458,8 @@ overview:
     title: 'Ayarlar ve görünüm'
     helper: 'Bir kez ayarlayıp arada bir değiştirdiğiniz şeyler.'
   error: 'Genel bakış yüklenemedi.'
+
+season:
+  label: Mevsim
+  helper: "Site mevsimlerle görünüm değiştirir. Örneğin bir kampanya hazırlarken korumak için burada birini kilitleyin."
+  auto: Takvimi izle

@@ -458,3 +458,8 @@ overview:
     title: 'Settings and appearance'
     helper: 'Things you set up once and change now and then.'
   error: 'Could not load the overview.'
+
+season:
+  label: Season
+  helper: "The site changes look with the seasons. Lock one here to keep it, for instance while preparing a campaign."
+  auto: Follow the calendar

@@ -80,7 +80,9 @@ onPageLoad(async () => {
     locations,
     // The same season the server rendered with: the clock, or ?season=
     season: resolveSeason(
-      new URLSearchParams(window.location.search).get('season')
+      new URLSearchParams(window.location.search).get('season'),
+      undefined,
+      site.settings?.season
     ),
   };
 

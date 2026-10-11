@@ -464,3 +464,31 @@ groupCard:
 
 a11y:
   skipToContent: İçeriğe atla
+
+termsPage:
+  title: Kullanım koşulları ve gizlilik politikası
+  updated: Ekim 2026'dan itibaren geçerlidir.
+  sections:
+    - title: Hizmet hakkında
+      paragraphs:
+        - "{{site}} Tranemo belediyesi tarafından işletilir. Belediyedeki etkinlikleri, dernekleri, yerleri ve talepleri bir araya getirir. Okumak ve aramak için hesap gerekmez."
+        - "Bir hesapla etkinlik yayınlayabilir, derneğinizi tanıtabilir, mekân ayırtabilir, etkinliklere kaydolabilir ve taleplere yanıt verebilirsiniz. Hesap kişiseldir."
+    - title: Nasıl davranırız
+      paragraphs:
+        - "Yayınladıklarınız her ziyaretçiye görünür. Saygılı olun, doğruyu söyleyin ve yalnızca hakkınız olanı yayınlayın; örneğin kendi çektiğiniz veya kullanma izniniz olan fotoğrafları."
+        - "Belediye yasayı çiğneyen, rencide edici veya buraya ait olmayan içeriği kaldırabilir ve kötüye kullanılan hesapları kapatabilir."
+    - title: Neleri saklıyoruz
+      paragraphs:
+        - "Hesap oluşturduğunuzda kullanıcı adınızı, e-posta adresinizi ve şifrelenmiş bir parolayı saklarız. Sayfanıza girdiğiniz ad, resim ve tanıtım gibi bilgiler de saklanır ve ziyaretçilere gösterilir."
+        - "Bir etkinliğe kaydolduğunuzda adınız, e-posta adresiniz ve kişi sayısı saklanır. Düzenleyici bunları görür; diğer ziyaretçiler, gizlemeyi seçmediyseniz yalnızca adınızı görür."
+        - "Pazarlama amacıyla hakkınızda veri tutmayız ve belediye dışında kimseye vermeyiz. Veriler AB içindeki sunucularda saklanır."
+    - title: Çerezler
+      paragraphs:
+        - "Hizmet yalnızca çalışması için gereken çerezleri kullanır: biri oturumunuzu açık tutmak, biri dilinizi hatırlamak için. İzleme veya reklam çerezi yoktur."
+    - title: Haklarınız
+      paragraphs:
+        - "Verilerinizi profilinizden istediğiniz zaman görebilir, değiştirebilir ve hesabınızı silebilirsiniz. Kişisel verileriniz o zaman silinir. Oluşturduğunuz etkinlikler ve gönderiler, başkaları bağımlıysa adınız olmadan kalabilir."
+        - "GDPR kapsamında hakkınızda tuttuğumuz verilerin bir dökümünü alma, düzelttirme veya sildirme ve İsveç Gizlilik Koruma Kurumu'na şikâyet etme hakkınız vardır."
+    - title: İletişim
+      paragraphs:
+        - "Hizmet veya verileriniz hakkındaki sorular için sayfanın altındaki Geri bildirim ver düğmesini kullanın ya da tranemo.se üzerinden belediyenin veri koruma görevlisine başvurun."

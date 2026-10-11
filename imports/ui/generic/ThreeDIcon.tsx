@@ -22,7 +22,7 @@ export const sectionIcons: Record<string, ThreeDIconName> = {
   calendar: 'calendar',
   groups: 'puzzle',
   works: 'picture',
-  people: 'mic',
+  people: 'heart',
   resources: 'pin',
   info: 'notebook',
   requests: 'chat',

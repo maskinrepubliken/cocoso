@@ -52,6 +52,7 @@ Site.schema = new SimpleSchema({
   'settings.city': { type: String },
   'settings.country': { type: String },
   'settings.lang': { type: String, optional: true },
+  'settings.season': { type: String, optional: true },
   'settings.menu': { type: Array },
   'settings.menu.$': new SimpleSchema(SchemasSite.menu),
   'settings.mainColor': { type: Object, optional: true },
