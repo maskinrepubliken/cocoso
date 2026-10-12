@@ -2274,6 +2274,27 @@ body {
   white-space: nowrap;
 }
 
+/* An event that has already taken place: dimmed, and says so */
+.site-search-hit.is-past .site-search-hit-title,
+.site-search-hit.is-past .site-search-hit-detail {
+  color: var(--site-ink-soft);
+  opacity: 0.85;
+}
+
+.site-search-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-100);
+  color: var(--site-ink-soft);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
 .site-search-hit-detail {
   overflow: hidden;
   color: var(--site-ink-soft);

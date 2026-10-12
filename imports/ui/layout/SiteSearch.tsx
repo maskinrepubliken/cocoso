@@ -22,6 +22,8 @@ export interface SearchHit {
   title: string;
   detail?: string;
   date?: string | null;
+  // Events only: false once every occurrence has passed.
+  isUpcoming?: boolean;
   isGroupMeeting?: boolean;
   groupId?: string;
   authorUsername?: string;
@@ -276,13 +278,15 @@ export default function SiteSearch({ site }: SiteSearchProps) {
                 <div className="site-search-group-label">{group.label}</div>
                 {group.hits.map((hit) => {
                   const index = hits.indexOf(hit);
+                  const isPast =
+                    hit.kind === 'activities' && hit.isUpcoming === false;
                   return (
                     <Link
                       key={`${hit.kind}-${hit._id}`}
                       id={`${listId}-${index}`}
                       className={`site-search-hit ${
                         index === activeIndex ? 'is-active' : ''
-                      }`}
+                      } ${isPast ? 'is-past' : ''}`}
                       role="option"
                       aria-selected={index === activeIndex}
                       to={hitPath(hit, prefix)}
@@ -301,6 +305,11 @@ export default function SiteSearch({ site }: SiteSearchProps) {
                       <span className="site-search-hit-text">
                         <span className="site-search-hit-title">
                           {hit.title}
+                          {isPast && (
+                            <span className="site-search-badge">
+                              {tc('search.past')}
+                            </span>
+                          )}
                         </span>
                         {(hit.detail || hit.date) && (
                           <span className="site-search-hit-detail">

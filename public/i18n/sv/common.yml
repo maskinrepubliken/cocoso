@@ -523,6 +523,7 @@ eventKinds:
     none: Inget särskilt slag
 search:
   open: Sök
+  past: Avslutat
   placeholder: Sök på webbplatsen
   clear: Rensa sökningen
   searching: Söker…

@@ -526,6 +526,7 @@ eventKinds:
     none: No particular kind
 search:
   open: Search
+  past: Past
   placeholder: Search the site
   clear: Clear search
   searching: Searching…
