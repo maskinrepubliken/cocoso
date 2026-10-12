@@ -93,7 +93,7 @@ export default function EditProfile() {
       tabs &&
       !tabs.find((tab) => tab.path === pathnameLastPart)
     ) {
-      navigate(tabs[0].path);
+      navigate(tabs[0].path, { replace: true });
     }
   }, [isMember, tabs, pathnameLastPart]);
 

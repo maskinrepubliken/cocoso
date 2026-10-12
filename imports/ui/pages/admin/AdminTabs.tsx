@@ -11,7 +11,7 @@ export default function AdminTabs({ tabs, children }) {
 
   useEffect(() => {
     if (!tabs.find((tab) => pathname.includes(tab.path))) {
-      navigate(tabs[0]?.path);
+      navigate(tabs[0]?.path, { replace: true });
     }
   }, [pathname]);
 
