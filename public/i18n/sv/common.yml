@@ -528,6 +528,7 @@ search:
   noResults: Inget hittades för ”{{query}}”
   kinds:
     activities: Evenemang
+    pastActivities: Tidigare evenemang
     groups: Föreningar
     resources: Platser
     works: Förfrågningar

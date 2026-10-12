@@ -531,6 +531,7 @@ search:
   noResults: Nothing found for “{{query}}”
   kinds:
     activities: Events
+    pastActivities: Past events
     groups: Groups
     resources: Places
     works: Requests

@@ -528,6 +528,7 @@ search:
   noResults: "“{{query}}” için sonuç bulunamadı"
   kinds:
     activities: Etkinlikler
+    pastActivities: Geçmiş etkinlikler
     groups: Gruplar
     resources: Mekânlar
     works: Talepler

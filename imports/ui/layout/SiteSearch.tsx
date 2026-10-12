@@ -31,8 +31,12 @@ export interface SearchHit {
   avatar?: string | null;
 }
 
-const KIND_ORDER: SearchHit['kind'][] = [
+// The headings in the results; past events get one of their own.
+type GroupKey = SearchHit['kind'] | 'pastActivities';
+
+const GROUP_ORDER: GroupKey[] = [
   'activities',
+  'pastActivities',
   'groups',
   'resources',
   'works',
@@ -201,10 +205,18 @@ export default function SiteSearch({ site }: SiteSearchProps) {
     }
   };
 
-  const groups = KIND_ORDER.map((kind) => ({
-    kind,
-    label: kindLabel(site, kind, tc(`search.kinds.${kind}`)),
-    hits: hits.filter((hit) => hit.kind === kind),
+  const isPastEvent = (hit: SearchHit) =>
+    hit.kind === 'activities' && hit.isUpcoming === false;
+  const groupOf = (hit: SearchHit): GroupKey =>
+    isPastEvent(hit) ? 'pastActivities' : hit.kind;
+
+  const groups = GROUP_ORDER.map((key) => ({
+    key,
+    label:
+      key === 'pastActivities'
+        ? tc('search.kinds.pastActivities')
+        : kindLabel(site, key, tc(`search.kinds.${key}`)),
+    hits: hits.filter((hit) => groupOf(hit) === key),
   })).filter((group) => group.hits.length > 0);
 
   const listId = 'site-search-results';
@@ -274,12 +286,11 @@ export default function SiteSearch({ site }: SiteSearchProps) {
             </div>
           ) : (
             groups.map((group) => (
-              <div className="site-search-group" key={group.kind}>
+              <div className="site-search-group" key={group.key}>
                 <div className="site-search-group-label">{group.label}</div>
                 {group.hits.map((hit) => {
                   const index = hits.indexOf(hit);
-                  const isPast =
-                    hit.kind === 'activities' && hit.isUpcoming === false;
+                  const isPast = isPastEvent(hit);
                   return (
                     <Link
                       key={`${hit.kind}-${hit._id}`}

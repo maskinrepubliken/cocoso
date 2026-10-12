@@ -14,6 +14,7 @@ import Works from '../works/work';
 // list per kind of content, only what a visitor could open anyway.
 
 const PER_KIND = 5;
+const PAST_EVENTS = 3;
 const MIN_LENGTH = 2;
 const MAX_LENGTH = 80;
 
@@ -111,17 +112,17 @@ async function searchActivities(words, locationId, user) {
     });
   }
 
-  // Upcoming first, soonest first; then the most recent of the past.
-  return visible
-    .sort((a, b) => {
-      if (a.isUpcoming !== b.isUpcoming) {
-        return a.isUpcoming ? -1 : 1;
-      }
-      return a.isUpcoming
-        ? (a.date || '').localeCompare(b.date || '')
-        : (b.date || '').localeCompare(a.date || '');
-    })
+  // Upcoming soonest first, then a few of the most recent past ones; the
+  // header lists the two under separate headings.
+  const upcoming = visible
+    .filter((activity) => activity.isUpcoming)
+    .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
     .slice(0, PER_KIND);
+  const past = visible
+    .filter((activity) => !activity.isUpcoming)
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    .slice(0, PAST_EVENTS);
+  return [...upcoming, ...past];
 }
 
 async function searchGroups(words, locationId, user) {
