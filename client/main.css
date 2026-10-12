@@ -2050,6 +2050,64 @@ body {
   font-family: var(--cocoso-font-ui);
 }
 
+/* The account menu: the Info menu's links, with a name line on top */
+.site-account-menu {
+  min-width: 220px;
+}
+
+.site-account-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0.5rem 1rem 0.6rem;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--cocoso-linje);
+}
+
+.site-account-name {
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 60;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--site-ink);
+}
+
+.site-account-role {
+  font-family: var(--cocoso-font-ui);
+  font-size: 12px;
+  color: var(--site-ink-soft);
+  text-transform: lowercase;
+}
+
+.site-account-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.site-account-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--cocoso-tegel);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.site-account-logout {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
 /* --- chip row (mobile) --- */
 
 .site-chips {

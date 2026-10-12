@@ -6,35 +6,11 @@ import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
 import { useAtomValue } from 'jotai';
 
-
-import {
-  Badge,
-  Box,
-  Button,
-  Center,
-  Divider,
-  Flex,
-  Text,
-} from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
-import {
-  canCreateContentAtom,
-  siteAtom,
-  currentUserAtom,
-  roleAtom,
-} from '/imports/state';
+import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
 import useLogout from './useLogout';
-
-interface NotificationLinkItemProps {
-  item: any;
-  children: React.ReactNode;
-}
-
-function NotificationLinkItem({ item, children }: NotificationLinkItemProps) {
-  return <Link to={`/${item.context}/${item.contextId}`}>{children}</Link>;
-}
 
 export interface UserThumbProps {
   notificationsCounter?: number;
@@ -87,7 +63,6 @@ export interface UserPopupProps {
 }
 
 export default function UserPopup({ site: siteProp }: UserPopupProps) {
-  const canCreateContent = useAtomValue(canCreateContentAtom);
   const siteFromAtom = useAtomValue(siteAtom);
   const site = siteProp || siteFromAtom;
   const currentUser = useAtomValue(currentUserAtom);
@@ -104,7 +79,6 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
     return null;
   }
 
-
   const notifications = currentUser?.notifications;
 
   const isNotification = notifications && notifications.length > 0;
@@ -115,116 +89,63 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
     });
   }
 
-  const roleTranslated = <Trans i18nKey={`roles.${role}`} ns="members" />;
-
   const isAdmin = role === 'admin';
 
+  // The account menu, as plain as the Info menu: a name line, a few links,
+  // and logout.
   return (
-    <Box>
-      <Menu
-        align="end"
-        button={<UserThumb notificationsCounter={notificationsCounter} />}
-      >
-        <Box p="2">
-          <Text fontWeight="bold" fontSize="xl" css={{ marginLeft: '1rem' }}>
-            {currentUser.username}{' '}
-            <span
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: '300',
-                textTransform: 'lowercase',
-              }}
-            >
-              {roleTranslated}
-            </span>
-          </Text>
-        </Box>
-
-        <Divider />
+    <Menu
+      align="end"
+      button={<UserThumb notificationsCounter={notificationsCounter} />}
+    >
+      <div className="site-info-menu site-account-menu">
+        <div className="site-account-head">
+          <span className="site-account-name">{currentUser.username}</span>
+          <span className="site-account-role">
+            <Trans i18nKey={`roles.${role}`} ns="members" />
+          </span>
+        </div>
 
         {isAdmin && (
-          <Link to="/admin/home">
-            <MenuItem>
-              <Text>
-                <Flex align="center" gap="2">
-                  <BoltIcon fontSize="18" />
-                  <Trans i18nKey="members:dashboard">Admin Panel</Trans>
-                </Flex>
-              </Text>
-            </MenuItem>
-          </Link>
+          <MenuItem style={{ padding: 0 }}>
+            <Link className="site-info-menu-link" to="/admin/home">
+              <Trans i18nKey="members:dashboard">Admin Panel</Trans>
+            </Link>
+          </MenuItem>
         )}
 
-        {isAdmin && <Divider />}
-
-        {isNotification && (
-          <>
-            <Box pl="6" pt="2">
-              <Text color="gray.600" size="xs">
-                <Trans i18nKey="common:menu.notifications.label">
-                  Notifications
-                </Trans>
-              </Text>
-            </Box>
-            {notifications.map((item) => (
-              <NotificationLinkItem
-                key={item.contextId + item.count}
-                item={item}
+        {isNotification &&
+          notifications.map((item: any) => (
+            <MenuItem key={item.contextId + item.count} style={{ padding: 0 }}>
+              <Link
+                className="site-info-menu-link site-account-notice"
+                to={`/${item.context}/${item.contextId}`}
               >
-                <MenuItem>
-                  <Text>
-                    <em>{item.title}</em>{' '}
-                  </Text>
-                  <Box pl="2">
-                    <Badge colorScheme="red" size="sm">
-                      {' '}
-                      {item.count}
-                    </Badge>
-                  </Box>
-                </MenuItem>
-              </NotificationLinkItem>
-            ))}
-          </>
-        )}
-
-        {isNotification && <Divider />}
-
-        <Link to={currentUser && `/@${currentUser?.username}`}>
-          <MenuItem>
-            <Text>
-              <Trans i18nKey="common:menu.member.profile">My Profile</Trans>
-            </Text>
-          </MenuItem>
-        </Link>
-        <Link to={'/admin/my-profile'}>
-          <MenuItem as="span">
-            <Text>
-              <Trans i18nKey="common:menu.member.settings">
-                Profile Settings
-              </Trans>
-            </Text>
-          </MenuItem>
-        </Link>
-        {canCreateContent && (
-          <Link to="/admin/home">
-            <MenuItem as="span">
-              <Text>
-                <Trans i18nKey="common:menu.member.activities">
-                  My Activities
-                </Trans>
-              </Text>
+                <span>{item.title}</span>
+                <span className="site-account-count">{item.count}</span>
+              </Link>
             </MenuItem>
+          ))}
+
+        <MenuItem style={{ padding: 0 }}>
+          <Link
+            className="site-info-menu-link"
+            to={`/@${currentUser.username}`}
+          >
+            <Trans i18nKey="common:menu.member.profile">My Profile</Trans>
           </Link>
-        )}
+        </MenuItem>
 
-        <Divider />
-
-        <Center py="2">
-          <Button size="sm" variant="ghost" onClick={() => handleLogout()}>
+        <MenuItem style={{ padding: 0 }}>
+          <button
+            type="button"
+            className="site-info-menu-link site-account-logout"
+            onClick={() => handleLogout()}
+          >
             <Trans i18nKey="common:actions.logout">Logout</Trans>
-          </Button>
-        </Center>
-      </Menu>
-    </Box>
+          </button>
+        </MenuItem>
+      </div>
+    </Menu>
   );
 }
