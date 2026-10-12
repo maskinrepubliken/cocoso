@@ -406,6 +406,16 @@ event:
     onlyVerified: "Doğrulanmış üyeler için"
 
 home:
+  sections:
+    title: "Sitede yolunuzu bulun"
+    intro: "Belediyede olan her şey, aradığınızı bulabilmeniz için düzenlenmiş."
+    activities: "Konserler, pazarlar, antrenmanlar ve olan biten her şey; kayıt doğrudan sayfada."
+    calendar: "Aynı etkinlikler bir takvim olarak, ay ay veya liste halinde."
+    groups: "Belediyenin dernekleri ve grupları: ne yaptıkları, ne zaman buluştukları ve nasıl katılacağınız."
+    works: "Komşular arasında araç paylaşımı, ödünç verme, hediye etme ve yardım isteme."
+    people: "Düzenleyenler: dernekler, kurumlar ve gönüllüler, yaklaşan etkinlikleriyle."
+    resources: "Mekânlar, buluşma noktaları ve gezi yerleri, ve orada neler olduğu."
+    info: "Hizmet hakkında, nasıl kullanılacağı ve kiminle iletişime geçileceği."
   hero:
     welcome: Hoş geldiniz
     tagline: Tüm belediyedeki etkinlikler, dernekler ve yerler tek bir yerde.

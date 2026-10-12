@@ -406,6 +406,16 @@ event:
     onlyVerified: "För verifierade medlemmar"
 
 home:
+  sections:
+    title: "Hitta runt på sajten"
+    intro: "Allt som händer i kommunen, sorterat så att du hittar det du letar efter."
+    activities: "Konserter, marknader, träningar och allt annat som händer, med anmälan direkt på sidan."
+    calendar: "Samma evenemang som en kalender, månad för månad eller som en lista."
+    groups: "Kommunens föreningar och grupper: vad de gör, när de träffas och hur du går med."
+    works: "Samåk, låna, ge bort och be om hjälp, grannar emellan."
+    people: "De som arrangerar: föreningar, verksamheter och eldsjälar, med sina kommande evenemang."
+    resources: "Lokaler, mötesplatser och utflyktsmål, och vad som händer där."
+    info: "Om tjänsten, hur du använder den och vem du kontaktar."
   hero:
     welcome: Välkommen till
     tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
