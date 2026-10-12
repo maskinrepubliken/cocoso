@@ -2106,9 +2106,9 @@ body {
 }
 
 /* --- site search (header, left of the account) ---
-   A pill field on desktop that widens on focus; on a phone a magnifier
-   that opens a full-width field under the bar. The results drop down
-   from the field, grouped by section. */
+   A magnifier button that unfolds into a field to its left; below 1200px
+   the open field takes the whole bar instead. The results drop down from
+   the field, grouped by section. */
 
 .site-search {
   position: relative;
@@ -2117,7 +2117,8 @@ body {
 }
 
 .site-search-toggle {
-  display: none;
+  order: 2;
+  display: grid;
   place-items: center;
   width: 36px;
   height: 36px;
@@ -2135,22 +2136,43 @@ body {
 }
 
 .site-search-field {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 6px;
-  width: 180px;
+  width: 280px;
   height: 34px;
   padding: 0 10px 0 12px;
   border-radius: 999px;
   background: var(--site-island);
   box-shadow: var(--site-island-shadow);
   color: var(--site-ink-soft);
-  transition: width 0.2s ease, box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Unfolds to the left of the button, floating over the bar so the menu
+   does not move while someone searches. */
+.site-search.is-open .site-search-field {
+  position: absolute;
+  top: 50%;
+  right: 44px;
+  display: flex;
+  translate: 0 -50%;
+  animation: site-search-unfold 0.2s ease-out;
 }
 
 .site-search-field:focus-within {
-  width: 280px;
   box-shadow: var(--site-island-shadow), 0 0 0 2px var(--cocoso-colors-theme-300);
+}
+
+@keyframes site-search-unfold {
+  from {
+    width: 40px;
+    opacity: 0;
+  }
+  to {
+    width: 280px;
+    opacity: 1;
+  }
 }
 
 .site-search-icon {
@@ -2414,19 +2436,9 @@ body {
   box-shadow: 0 0 0 1px var(--cocoso-colors-theme-200);
 }
 
-/* Up to 1199px the search is a magnifier; open, the field takes the bar,
-   brand and menu step aside and the account stays on the right. */
+/* Up to 1199px the open field takes the bar: brand and menu step aside
+   and the account stays on the right. */
 @media (max-width: 1199px) {
-  .site-search-toggle {
-    display: grid;
-  }
-
-  .site-search-field {
-    display: none;
-  }
-
-  /* Open: the field takes the bar, the brand steps aside, the account
-     stays on the right. */
   .site-header-bar:has(.site-search.is-open) {
     grid-template-columns: 1fr;
   }
@@ -2447,18 +2459,13 @@ body {
   }
 
   .site-search.is-open .site-search-field {
-    display: flex;
+    position: static;
     flex: 1 1 auto;
     width: auto;
     height: 36px;
-  }
-
-  .site-search.is-open .site-search-field:focus-within {
-    width: auto;
-  }
-
-  .site-search.is-open .site-search-toggle {
-    order: 2;
+    margin-right: 8px;
+    translate: none;
+    animation: none;
   }
 
   .site-search-input {
