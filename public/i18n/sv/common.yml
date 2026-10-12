@@ -513,6 +513,24 @@ eventKinds:
   natur: Ute
   larande: Lärande
   social: Umgänge
+  headings:
+    kultur: Kulturevenemang
+    idrott: Idrottsevenemang
+    barn: Barn- och familjeevenemang
+    marknad: Marknader
+    mat: Matevenemang
+    natur: Uteevenemang
+    larande: Lärandeevenemang
+    social: Umgängesevenemang
+  subjects:
+    kultur: kulturevenemangen
+    idrott: idrottsevenemangen
+    barn: barn- och familjeevenemangen
+    marknad: marknaderna
+    mat: matevenemangen
+    natur: uteevenemangen
+    larande: lärandeevenemangen
+    social: umgängesevenemangen
   form:
     label: Slags evenemang
     helper: Visas som ett chip på kortet, och besökare kan filtrera listan på det.
@@ -551,4 +569,11 @@ entry:
   seeProfile: 'Till {{ name }}'
 
 listing:
-  onlyIn: "Endast i {{place}}"
+  showingIn: "Visar {{what}} i {{place}}"
+  subjects:
+    activities: evenemangen
+    calendar: kalendern
+    groups: föreningarna
+    people: arrangörerna
+    resources: platserna
+    works: förfrågningarna

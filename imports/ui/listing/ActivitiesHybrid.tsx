@@ -71,7 +71,10 @@ export default function ActivitiesHybrid({
       <PageHeading
         site={site || siteDoc}
         listing="activities"
-        title={kindFilter ? tc(`eventKinds.${kindFilter}`) : undefined}
+        title={kindFilter ? tc(`eventKinds.headings.${kindFilter}`) : undefined}
+        subject={
+          kindFilter ? tc(`eventKinds.subjects.${kindFilter}`) : undefined
+        }
         aside={
           <div className="seg" role="group">
             <button

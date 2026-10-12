@@ -516,6 +516,24 @@ eventKinds:
   natur: Outdoors
   larande: Learning
   social: Social
+  headings:
+    kultur: Culture events
+    idrott: Sport events
+    barn: Children & family events
+    marknad: Markets
+    mat: Food events
+    natur: Outdoor events
+    larande: Learning events
+    social: Social events
+  subjects:
+    kultur: the culture events
+    idrott: the sport events
+    barn: the children & family events
+    marknad: the markets
+    mat: the food events
+    natur: the outdoor events
+    larande: the learning events
+    social: the social events
   form:
     label: Kind of event
     helper: Shown as a chip on the card, and visitors can filter the listing by it.
@@ -554,4 +572,11 @@ entry:
   seeProfile: 'Go to {{ name }}'
 
 listing:
-  onlyIn: "Only in {{place}}"
+  showingIn: "Showing {{what}} in {{place}}"
+  subjects:
+    activities: the events
+    calendar: the calendar
+    groups: the groups
+    people: the organizers
+    resources: the places
+    works: the requests

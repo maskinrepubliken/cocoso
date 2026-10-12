@@ -16,6 +16,9 @@ export interface PageHeadingProps {
   aside?: React.ReactNode;
   // A heading other than the section's name, e.g. the chosen kind
   title?: string;
+  // What is listed, in the definite plural ("kulturevenemangen"), for the
+  // "Visar … i <ort>" line; defaults to the section's own
+  subject?: string;
 }
 
 // The heading of a listing page: the section's icon, name and description
@@ -25,6 +28,7 @@ export default function PageHeading({
   listing,
   aside,
   title,
+  subject,
 }: PageHeadingProps) {
   const currentLocation = useCurrentLocation();
   const listingInMenu = site?.settings?.menu?.find(
@@ -82,7 +86,10 @@ export default function PageHeading({
             {currentLocation && (
               <Center>
                 <p className="page-heading-place">
-                  {tc('listing.onlyIn', { place: currentLocation.name })}
+                  {tc('listing.showingIn', {
+                    what: subject || tc(`listing.subjects.${listing}`),
+                    place: currentLocation.name,
+                  })}
                 </p>
               </Center>
             )}
