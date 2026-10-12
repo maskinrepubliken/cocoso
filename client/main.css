@@ -2553,9 +2553,31 @@ body {
   gap: 12px;
 }
 
+/* The listing icon hovers a touch over the sticky header's lower edge and
+   bobs slowly. It never catches clicks, so the nav under it stays usable. */
 .page-heading-icon {
   flex: 0 0 auto;
-  margin-top: -6px;
+  margin-top: -12px;
+  pointer-events: none;
+  position: relative;
+  z-index: 1001;
+}
+
+@media (max-width: 959px) {
+  .page-heading-icon {
+    margin-top: -6px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-heading-icon {
+    animation: heading-float 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+}
+
+@keyframes heading-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -6px; }
 }
 
 /* Start page hero: a small cluster of icons, lifted off the page */
