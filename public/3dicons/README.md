@@ -6,3 +6,7 @@ Soft 3D icons from https://3dicons.co by Vijay Verma, released under CC0 1.0
 WebP. The full set (124 icons, four styles, three angles, Blender sources)
 is at https://3dicons.co. Add more by dropping `<name>.webp` here and using
 `<ThreeDIcon name="<name>" />` from `imports/ui/generic/ThreeDIcon`.
+
+`trana.webp` is not from 3dicons.co: it is our own crane (Tranemo's trana),
+modelled and rendered in Blender to match the set. Source, script and
+render pipeline are in `docs/design/trana/`.

@@ -13,8 +13,8 @@ export type ThreeDIconName =
   | 'map-pin' | 'medal' | 'megaphone' | 'mic' | 'mobile' | 'money-bag'
   | 'music' | 'notebook' | 'paint-brush' | 'pencil' | 'picture' | 'pin'
   | 'plus' | 'puzzle' | 'rocket' | 'setting' | 'sphere' | 'star' | 'sun'
-  | 'target' | 'tea-cup' | 'text' | 'tick' | 'tool' | 'travel' | 'trophy'
-  | 'umbrella' | 'video-camera' | 'wallet' | 'zoom';
+  | 'target' | 'tea-cup' | 'text' | 'tick' | 'tool' | 'trana' | 'travel'
+  | 'trophy' | 'umbrella' | 'video-camera' | 'wallet' | 'zoom';
 
 // One icon per section of the site, keyed by the menu item's name.
 export const sectionIcons: Record<string, ThreeDIconName> = {
