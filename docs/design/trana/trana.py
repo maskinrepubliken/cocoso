@@ -212,10 +212,9 @@ def spine_param(p):
     return best[1], best[2], best[3]
 
 
-def body_color(p):
+def body_color(p, normal):
     u, q, r = spine_param(p)
-    off = p - q
-    d = off.normalized() if off.length > 1e-6 else Vector((0, 0, 1))
+    d = Vector(normal).normalized()   # smooth, unlike the per-segment offset
 
     # Grey plumage, a little lighter on the chest and belly, darker on the back
     front = smoothstep(-0.2, 0.8, d.x * 0.6 - d.z * 0.8)
@@ -247,7 +246,7 @@ def build_body():
     obj = skin_chain("BodySkin", pts, rad, subdiv=3)
     obj = evaluate_to_mesh(obj, "Body")
     mesh = obj.data
-    cols = [body_color(v.co) for v in mesh.vertices]
+    cols = [body_color(v.co, v.normal) for v in mesh.vertices]
     set_vertex_colors(mesh, cols)
     obj.data.materials.append(
         clay_material("Plumage", use_attr=True, roughness=0.6, specular=0.2,
@@ -405,6 +404,71 @@ def build_wings():
     return [far, near]
 
 
+def body_section(x):
+    """Centre height and radius of the body tube at a given x, from the
+    first body points of SPINE; beyond the tail the radius fades out."""
+    pts = [(p[0][0], p[0][2], p[1]) for p in SPINE[:6]]
+    if x >= pts[-1][0]:
+        return pts[-1][1], pts[-1][2]
+    if x <= pts[0][0]:
+        d = pts[0][0] - x
+        return pts[0][1] - 0.10 * d, pts[0][2] * max(0.35, 1.0 - 0.9 * d)
+    for (x0, z0, r0), (x1, z1, r1) in zip(pts, pts[1:]):
+        if x0 <= x <= x1:
+            t = (x - x0) / (x1 - x0)
+            return z0 + (z1 - z0) * t, r0 + (r1 - r0) * t
+    return pts[0][1], pts[0][2]
+
+
+def build_folded_wings():
+    """Wings folded against the body: one surface per side wrapped around
+    the flank from the shoulder back past the tail, where the black
+    primaries of both wings droop together as the crane's bustle."""
+    mat = clay_material("Wing", use_attr=True, roughness=0.6, specular=0.2,
+                        subsurface=0.03)
+    objs = []
+    n_s, n_u, fingers = 90, 16, 5
+    x_front, length = 0.27, 1.22
+    for side in (1, -1):
+        verts, faces, weights, colors = [], [], [], []
+        for i in range(n_s + 1):
+            s = i / n_s
+            x = x_front - length * s
+            zc, r = body_section(x)
+            r += 0.045
+            rear = smoothstep(0.55, 1.0, s)
+            # angular extent down the flank: wide at the front, narrowing
+            # towards the tip, scalloped along the lower rear edge
+            top = math.radians(30 - 18 * smoothstep(0.0, 0.22, s) + 14 * rear)
+            extent = math.radians(118) * (1 - 0.40 * smoothstep(0.35, 1.0, s))
+            extent *= 1.0 - 0.5 * max(0.0, 1.0 - s / 0.10) ** 2   # rounded shoulder
+            phase = ((s - 0.76) / 0.24) * fingers
+            tri = abs((phase % 1.0) * 2 - 1)
+            notch = smoothstep(0.0, 1.0, 1 - tri) * 0.30 * smoothstep(0.78, 0.86, s)
+            extent *= 1.0 - notch
+            extent *= 0.25 + 0.75 * smoothstep(1.0, 0.985, s)
+            droop = 0.70 * max(0.0, s - 0.70) ** 2
+            for j in range(n_u + 1):
+                u = j / n_u
+                th = top + extent * u
+                y = side * r * math.sin(th)
+                z = zc + r * math.cos(th) - droop
+                verts.append(Vector((x, y, z)))
+                weights.append((1 - s) ** 1.2 * (0.4 + 0.6 * (1 - u)))
+                black = smoothstep(0.78, 0.90, s) + smoothstep(0.62, 0.80, s) * smoothstep(0.55, 0.95, u)
+                c = mix(mix(COL_BODY, COL_BODY_DARK, 0.35 + 0.5 * u), COL_FEATHER, min(1.0, black))
+                colors.append(c)
+        for i in range(n_s):
+            for j in range(n_u):
+                a = i * (n_u + 1) + j
+                faces.append((a, a + 1, a + n_u + 2, a + n_u + 1))
+        obj = mesh_object("Wing%s" % ("L" if side > 0 else "R"), verts, faces,
+                          weights, colors, thickness=0.075, min_thick=0.3)
+        obj.data.materials.append(mat)
+        objs.append(obj)
+    return objs
+
+
 def build_tail():
     """Short dark drooping plume behind the body, built as a small fan."""
     verts, faces, weights, colors = [], [], [], []
@@ -443,23 +507,31 @@ def build_legs():
     mat = clay_material("Leg", COL_LEG, roughness=0.55, specular=0.2)
     objs = []
     for side in (1, -1):
-        dx = 0.06 if side < 0 else -0.04   # near leg a touch forward
-        hip = (-0.12 + dx * 0.3, side * 0.10, -0.02)
-        thigh = (-0.22 + dx, side * 0.12, -0.18)
-        knee = (-0.35 + dx * 1.6, side * 0.13, -0.36)
-        foot = (-0.56 + dx * 2.2, side * 0.14, -0.66)
+        y = side * 0.10
+        if side < 0:
+            # near leg: standing, straight down and a little back
+            hip, thigh = (-0.10, y, -0.04), (-0.16, y * 1.15, -0.20)
+            knee, foot = (-0.18, y * 1.25, -0.42), (-0.12, y * 1.3, -0.80)
+            toe_dir = Vector((1.0, 0.0, 0.0))
+            toe_up = Vector((0, 1, 0))
+        else:
+            # far leg: lifted forward, foot hanging, the dance step
+            hip, thigh = (-0.08, y, -0.04), (0.02, y * 1.15, -0.17)
+            knee, foot = (0.06, y * 1.25, -0.36), (-0.06, y * 1.3, -0.60)
+            toe_dir = Vector((0.45, 0.0, -0.60)).normalized()
+            toe_up = Vector((0, 1, 0))
         kx, ky, kz = knee
         above = ((thigh[0] + kx) / 2, (thigh[1] + ky) / 2, (thigh[2] + kz) / 2)
         below = (kx + (foot[0] - kx) * 0.25, ky + (foot[1] - ky) * 0.25,
                  kz + (foot[2] - kz) * 0.25)
         pts = [hip, thigh, above, knee, below, foot]
-        rad = [0.09, 0.058, 0.040, 0.046, 0.036, 0.035]
+        rad = [0.09, 0.058, 0.040, 0.046, 0.036, 0.034]
         toes = []
-        leg_dir = (Vector(foot) - Vector(knee)).normalized()
-        for ang, ln in ((-30, 0.15), (0, 0.19), (30, 0.15)):
-            d = Matrix.Rotation(math.radians(ang), 3, "Y") @ leg_dir
-            tip = Vector(foot) + d * ln + Vector((0, side * 0.012 * abs(ang) / 30, 0))
-            toes.append((5, [((tip.x, tip.y, tip.z), 0.027)]))
+        for ang, ln in ((-32, 0.14), (0, 0.19), (32, 0.14)):
+            d = Matrix.Rotation(math.radians(ang) * side, 3, toe_up.cross(toe_dir).normalized() if False else Vector((0, 0, 1))) @ toe_dir
+            mid = Vector(foot) + d * ln * 0.5
+            tip = Vector(foot) + d * ln
+            toes.append((5, [((mid.x, mid.y, mid.z), 0.022), ((tip.x, tip.y, tip.z), 0.013)]))
         obj = skin_chain("Leg", pts, rad, branches=toes, branch_smooth=0.4, subdiv=3)
         obj.data.materials.append(mat)
         objs.append(obj)
@@ -589,8 +661,7 @@ def main():
     objects.append(build_body())
     objects.append(build_beak())
     objects += build_eyes()
-    objects += build_wings()
-    objects.append(build_tail())
+    objects += build_folded_wings()
     objects += build_legs()
 
     build_lights(scene)
