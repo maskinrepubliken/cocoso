@@ -552,3 +552,6 @@ entry:
   postedBy: 'Posted by {{ name }}'
   contact: Contact
   seeProfile: 'Go to {{ name }}'
+
+listing:
+  onlyIn: "Only in {{place}}"

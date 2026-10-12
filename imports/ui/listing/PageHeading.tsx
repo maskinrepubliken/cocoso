@@ -7,12 +7,15 @@ import type { Site } from '/imports/ui/types';
 
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 
 export interface PageHeadingProps {
   site: Site;
   listing: string;
   // Something that floats to the right of the heading, such as a switch
   aside?: React.ReactNode;
+  // A heading other than the section's name, e.g. the chosen kind
+  title?: string;
 }
 
 // The heading of a listing page: the section's icon, name and description
@@ -21,13 +24,15 @@ export default function PageHeading({
   site,
   listing,
   aside,
+  title,
 }: PageHeadingProps) {
+  const currentLocation = useCurrentLocation();
   const listingInMenu = site?.settings?.menu?.find(
     (item) => item.name === listing
   );
   const [tc] = useTranslation('common');
   const description = listingInMenu?.description;
-  const heading = listingInMenu?.label;
+  const heading = title || listingInMenu?.label;
   const url = publicUrl(`/${listingInMenu?.name}`);
   // What a link to this page shows elsewhere: the menu's description when
   // the admin wrote one, else the site's own line; the site's social image.
@@ -73,6 +78,14 @@ export default function PageHeading({
             {aside && <div className="page-heading-aside">{aside}</div>}
           </div>
           <Box py="2">
+            {/* Inside a place, say so: the listing shows that place only */}
+            {currentLocation && (
+              <Center>
+                <p className="page-heading-place">
+                  {tc('listing.onlyIn', { place: currentLocation.name })}
+                </p>
+              </Center>
+            )}
             {description && (
               <Center>
                 <Text

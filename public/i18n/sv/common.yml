@@ -549,3 +549,6 @@ entry:
   postedBy: 'Upplagd av {{ name }}'
   contact: Kontakt
   seeProfile: 'Till {{ name }}'
+
+listing:
+  onlyIn: "Endast i {{place}}"
