@@ -3035,6 +3035,110 @@ body {
   font-weight: 700;
 }
 
+/* === Place landing === */
+
+/* One rhythm down the page: intro, then each section 56px apart. */
+.landing-intro {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.landing-section {
+  margin-bottom: 56px;
+}
+
+.landing-section:last-of-type {
+  margin-bottom: 8px;
+}
+
+.landing-head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.landing-head-icon {
+  flex: 0 0 auto;
+}
+
+.landing-title {
+  flex: 1 1 auto;
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 60;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+  min-width: 0;
+}
+
+.landing-title-place {
+  color: var(--cocoso-mylla-soft);
+  font-size: 1.1rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.landing-more {
+  align-self: center;
+  background: var(--cocoso-papper);
+  border-radius: 999px;
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-colors-theme-800);
+  flex: 0 0 auto;
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.landing-more:hover {
+  background: var(--cocoso-colors-theme-50);
+  text-decoration: none;
+}
+
+.landing-more:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 2px;
+}
+
+.landing-empty {
+  color: var(--cocoso-mylla-soft);
+  margin: 0;
+}
+
+@media (max-width: 959px) {
+  .landing-intro {
+    margin-bottom: 32px;
+  }
+
+  .landing-section {
+    margin-bottom: 44px;
+  }
+
+  .landing-head {
+    gap: 10px;
+  }
+
+  .landing-head-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .landing-title {
+    font-size: 1.3rem;
+  }
+
+  .landing-title-place {
+    display: block;
+    font-size: 0.95rem;
+    white-space: normal;
+  }
+}
+
 /* === Place landing hero === */
 
 .location-hero-stamp {

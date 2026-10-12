@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 
-import { Box, Button, Center, Flex, Heading, Text } from '/imports/ui/core';
+import { Box, Center, Heading } from '/imports/ui/core';
 import ComposablePageHybrid from '/imports/ui/entry/ComposablePageHybrid';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 import GroupCard from '/imports/ui/listing/GroupCard';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import Stamp from '/imports/ui/generic/Stamp';
+import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { locationsAtom } from '/imports/state';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
@@ -20,29 +21,37 @@ import { publicUrl } from '/imports/api/_utils/shared';
 
 import type { SlugData } from './SlugHandler';
 
+// A section of the place page: the section's 3D icon, its name with the
+// place as a quieter suffix, and the way to the full listing kept on the
+// same line at every width.
 function Section({
+  icon,
   title,
+  place,
   seeAllTo,
   seeAllLabel,
   children,
 }: {
+  icon: string;
   title: string;
+  place: string;
   seeAllTo: string;
   seeAllLabel: string;
   children: React.ReactNode;
 }) {
   return (
-    <Box className="page-wrap" mb="10">
-      <Flex align="center" justify="space-between" mb="3" wrap="wrap">
-        <Heading size="md">{title}</Heading>
-        <Link to={seeAllTo}>
-          <Button size="sm" variant="ghost">
-            {seeAllLabel}
-          </Button>
+    <section className="page-wrap landing-section">
+      <div className="landing-head">
+        <ThreeDIcon className="landing-head-icon" name={icon} size={44} />
+        <h2 className="landing-title">
+          {title} <span className="landing-title-place">{place}</span>
+        </h2>
+        <Link className="landing-more" to={seeAllTo}>
+          {seeAllLabel} <span aria-hidden="true">→</span>
         </Link>
-      </Flex>
+      </div>
       {children}
-    </Box>
+    </section>
   );
 }
 
@@ -89,7 +98,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           overflow: 'hidden',
           position: 'relative',
         }}
-        mb="6"
+        mb="8"
       >
         {!heroImage && (
           <PlaceholderImage
@@ -134,7 +143,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
       </Box>
 
       {location.description && (
-        <Center mb="8" px="4">
+        <Center className="page-wrap landing-intro">
           <Box className="text-content" css={{ maxWidth: '680px' }}>
             {HTMLReactParser(DOMPurify.sanitize(location.description))}
           </Box>
@@ -142,7 +151,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
       )}
 
       {composablePage?.isPublished && (
-        <Box mb="8">
+        <Box className="landing-section">
           <ComposablePageHybrid
             siteDoc={siteDoc}
             composablePage={{
@@ -155,7 +164,9 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
 
       {isVisible('activities') && (
         <Section
-          title={tc('locations.landing.activities', { name: location.name })}
+          icon={sectionIcons.activities}
+          title={tc('locations.landing.activities')}
+          place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/activities`}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
@@ -168,14 +179,16 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
               ))}
             </div>
           ) : (
-            <Text color="gray.600">{tc('locations.landing.nothingYet')}</Text>
+            <p className="landing-empty">{tc('locations.landing.nothingYet')}</p>
           )}
         </Section>
       )}
 
       {isVisible('resources') && (
         <Section
-          title={tc('locations.landing.resources', { name: location.name })}
+          icon={sectionIcons.resources}
+          title={tc('locations.landing.resources')}
+          place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/resources`}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
@@ -197,14 +210,16 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
               ))}
             </div>
           ) : (
-            <Text color="gray.600">{tc('locations.landing.nothingYet')}</Text>
+            <p className="landing-empty">{tc('locations.landing.nothingYet')}</p>
           )}
         </Section>
       )}
 
       {isVisible('groups') && groups?.length > 0 && (
         <Section
-          title={tc('locations.landing.groups', { name: location.name })}
+          icon={sectionIcons.groups}
+          title={tc('locations.landing.groups')}
+          place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/groups`}
           seeAllLabel={tc('locations.landing.seeAll')}
         >

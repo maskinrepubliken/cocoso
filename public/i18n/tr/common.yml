@@ -241,9 +241,10 @@ locations:
     open: Bir yer seçin
     clear: Tüm belediyeyi göster
   landing:
-    activities: '{{ name }} bölgesinde neler var'
-    resources: '{{ name }} bölgesindeki yerler ve mekânlar'
-    groups: '{{ name }} bölgesindeki gruplar'
+    activities: Neler var
+    resources: Yerler ve mekânlar
+    groups: Gruplar
+    inPlace: '{{ name }} bölgesinde'
     seeAll: Tümünü gör
     nothingYet: Henüz bir şey yok
   grid:

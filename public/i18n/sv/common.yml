@@ -241,9 +241,10 @@ locations:
     open: Välj ort
     clear: Visa hela kommunen
   landing:
-    activities: På gång i {{ name }}
-    resources: Platser och lokaler i {{ name }}
-    groups: Grupper i {{ name }}
+    activities: På gång
+    resources: Platser och lokaler
+    groups: Grupper
+    inPlace: i {{ name }}
     seeAll: Visa alla
     nothingYet: Inget här än. Bli först att lägga till något.
   grid:
