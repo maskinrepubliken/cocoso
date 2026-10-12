@@ -10,8 +10,7 @@ interface HomeHeroProps {
   siteDoc?: any;
 }
 
-// Four icons that belong to the season; the first is also the season
-// badge's icon.
+// Four icons that belong to the season.
 export const seasonIcons: Record<Season, ThreeDIconName[]> = {
   var: ['sun', 'flag', 'music', 'camera'],
   sommar: ['sun', 'travel', 'trophy', 'music'],
@@ -37,19 +36,10 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
 
   const icons = seasonIcons[season] || seasonIcons.host;
 
-  const place = settings.shortName || settings.name;
 
   return (
     <section className="home-hero vav">
       <div className="home-hero-inner">
-        <span className="season-badge">
-          <ThreeDIcon name={icons[0]} size={26} />
-          {tc('home.hero.seasonIn', {
-            season: tc(`seasons.${season}`),
-            place,
-          })}
-        </span>
-
         <div className="home-hero-icons" aria-hidden="true">
           {icons.map((name, index) => (
             <ThreeDIcon

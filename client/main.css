@@ -2564,7 +2564,7 @@ body {
   position: relative;
   overflow: hidden;
   margin-top: -56px;
-  padding: 96px 0 44px;
+  padding: 96px 0 88px;
   font-family: var(--cocoso-font-ui);
   background-color: var(--cocoso-season-golv);
   background-image:
@@ -2572,26 +2572,8 @@ body {
     radial-gradient(circle at 8% 100%, var(--cocoso-season-glod-b), transparent 40%),
     repeating-linear-gradient(0deg, rgba(30, 79, 27, 0.07) 0 1px, transparent 1px 7px),
     repeating-linear-gradient(90deg, rgba(30, 79, 27, 0.07) 0 1px, transparent 1px 7px);
-  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
-}
-
-.season-badge {
-  position: absolute;
-  right: 24px;
-  top: -34px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 14px 0 6px;
-  border-radius: 999px;
-  background: rgba(255, 253, 247, 0.85);
-  box-shadow: var(--cocoso-skugga);
-  color: var(--cocoso-mylla);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 72px), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 72px), transparent 100%);
 }
 
 .home-hero-inner {
@@ -2774,19 +2756,7 @@ body {
   .home-hero,
   .home-hero.vav {
     margin-top: -104px;
-    padding: 116px 0 28px;
-  }
-
-  .season-badge {
-    position: static;
-    order: -2;
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: max-content;
-    align-self: center;
-    margin-bottom: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 116px 0 64px;
   }
 
   .home-hero-inner {

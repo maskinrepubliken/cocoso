@@ -420,7 +420,6 @@ home:
   hero:
     welcome: Välkommen till
     tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
-    seasonIn: '{{ season }} i {{ place }}'
 
 # Förfrågningar (works shown as requests between neighbours)
 requests:

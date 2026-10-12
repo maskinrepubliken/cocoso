@@ -423,7 +423,6 @@ home:
   hero:
     welcome: Welcome to
     tagline: Events, associations and places across the whole municipality, in one place.
-    seasonIn: '{{ season }} in {{ place }}'
 
 # Requests (works shown as requests between neighbours)
 requests:

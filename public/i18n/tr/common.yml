@@ -420,7 +420,6 @@ home:
   hero:
     welcome: Hoş geldiniz
     tagline: Tüm belediyedeki etkinlikler, dernekler ve yerler tek bir yerde.
-    seasonIn: '{{ place }} için {{ season }}'
 
 # Talepler (komşular arası talepler olarak gösterilen işler)
 requests:
