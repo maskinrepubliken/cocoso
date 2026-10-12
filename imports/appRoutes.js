@@ -130,12 +130,6 @@ const ResourcesAdmin = loadable(() =>
 const WorksAdmin = loadable(() =>
   import('./ui/pages/admin/listing/WorksAdmin')
 );
-const DirectMessagesInbox = loadable(() =>
-  import('/imports/ui/pages/messages/DirectMessagesInbox')
-);
-const DirectMessageThread = loadable(() =>
-  import('/imports/ui/pages/messages/DirectMessageThread')
-);
 const Reports = loadable(() => import('/imports/ui/pages/admin/Reports'));
 
 const EditProfile = loadable(() =>
@@ -266,16 +260,6 @@ const getAdminRoutes = (props) => [
   {
     path: 'home',
     element: createRouteElement(AdminHome, props),
-  },
-  {
-    path: 'messages',
-    element: createRouteElement(DirectMessagesInbox, props),
-    children: [
-      {
-        path: ':conversationId',
-        element: createRouteElement(DirectMessageThread, props),
-      },
-    ],
   },
   {
     path: 'my-profile',

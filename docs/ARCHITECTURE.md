@@ -100,8 +100,8 @@ user id only. Location-scoped roles are not implemented yet.
    Meteor methods through the `call()` wrapper. Components read loader data
    with `useLoaderData()` and global state with jotai atoms. Mutations call
    methods directly and then revalidate.
-4. **Realtime.** Only the current user document, memberships, chats and
-   direct messages use publications; everything else is request/response.
+4. **Realtime.** Only the current user document, memberships and chats
+   use publications; everything else is request/response.
 
 Route components that are not needed for public SSR (admin, auth, profile,
 messages) are code-split with `@loadable/component`. After a deploy the
@@ -110,9 +110,7 @@ client detects the new bundle and reloads at the next idle navigation.
 ## Authentication
 
 Accounts use `accounts-password`; login, signup and password reset happen
-on the site itself. Direct messages are end-to-end encrypted in the browser;
-the server stores public keys and encrypted private keys but never
-plaintext.
+on the site itself.
 
 ## Media storage
 

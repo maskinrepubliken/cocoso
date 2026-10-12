@@ -12,7 +12,6 @@ import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 import { loginWithPassword } from './functions';
 import { Login } from './index';
 import AuthPanel from './AuthPanel';
-import { clearEncryptionKey } from '/imports/utils/setupEncryption';
 
 export default function LoginPage() {
   const site = useAtomValue(siteAtom);
@@ -51,7 +50,6 @@ export default function LoginPage() {
   };
 
   const cancelJoin = () => {
-    clearEncryptionKey();
     Meteor.logout();
     setJoinModal(false);
     setSubmitted(false);

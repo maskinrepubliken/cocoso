@@ -6,12 +6,10 @@ import { viewAsAtom } from '../state';
 import { call } from '../api/_utils/shared';
 
 // "View as": an admin borrows a member's session to see the site the way
-// that member sees it. The admin's own login token (and their end-to-end
-// encryption key) are parked in localStorage for the switch back.
+// that member sees it. The admin's own login token is parked in
+// localStorage for the switch back.
 const TOKEN_KEY = 'cocoso.viewAs.adminToken';
 const NAME_KEY = 'cocoso.viewAs.username';
-const E2EE_KEY = 'e2ee_pk';
-const E2EE_PARKED_KEY = 'cocoso.viewAs.e2ee_pk';
 
 const storage = () => {
   try {
@@ -67,22 +65,16 @@ export async function startViewAs(memberId: string, username: string) {
   await loginWithToken(token);
   s.setItem(TOKEN_KEY, adminToken);
   s.setItem(NAME_KEY, username);
-  const e2ee = s.getItem(E2EE_KEY);
-  if (e2ee) {
-    s.setItem(E2EE_PARKED_KEY, e2ee);
-    s.removeItem(E2EE_KEY);
-  }
   getDefaultStore().set(viewAsAtom, username);
 }
 
-// Logging out ends a view-as session too: the parked admin token and key
-// are dropped, so nothing lingers for the next visitor of this browser.
+// Logging out ends a view-as session too: the parked admin token is
+// dropped, so nothing lingers for the next visitor of this browser.
 export function clearViewAsState() {
   const s = storage();
   if (s) {
     s.removeItem(TOKEN_KEY);
     s.removeItem(NAME_KEY);
-    s.removeItem(E2EE_PARKED_KEY);
   }
   getDefaultStore().set(viewAsAtom, null);
 }
@@ -97,11 +89,6 @@ export async function stopViewAs() {
   await logout();
   s.removeItem(TOKEN_KEY);
   s.removeItem(NAME_KEY);
-  const e2ee = s.getItem(E2EE_PARKED_KEY);
-  if (e2ee) {
-    s.setItem(E2EE_KEY, e2ee);
-    s.removeItem(E2EE_PARKED_KEY);
-  }
   getDefaultStore().set(viewAsAtom, null);
   await loginWithToken(adminToken);
 }

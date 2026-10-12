@@ -39,7 +39,6 @@ with your own data.
   builder for landing pages.
 - **People** — member directory with roles (participant, contributor,
   admin), verification, keywords and profiles.
-- **Direct messages** — end-to-end encrypted in the browser.
 - **Newsletters** — compose from existing activities and works, preview,
   send to members.
 - **Admin** — per-community settings, theme and colours, menu, emails,

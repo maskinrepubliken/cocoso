@@ -108,36 +108,9 @@ profile:
       description: Burada seni ve becerilerini iyi açıklayan bazı anahtar kelimeleri seçip oluşturabilirsin. Bunlar profil sayfanda gösterilecek ve üyeler sayfasında filtrelenebilecektir.
       placeholder: Birşeyler yaz...
 
-messages:
-  label: Mesajlar
-  title: Mesaj Kutusu
-  description: Kullanıcılar arasında özel mesajlar. Mesajların uçtan uca şifrelenmiştir, bu da sadece sen ve alıcının okuyabileceği anlamına gelir.
-  search: Yeni bir sohbet başlat...
-  empty: Henüz konuşma yok. Yukarıdan birini ara.
-  encryption:
-    notLoaded: Şifreleme anahtarları yüklenmedi. Lütfen çıkış yapıp tekrar giriş yapın.
-    notSetUp: '{{ username }} henüz şifrelemeyi etkinleştirmemiş.'
-    needsRelogin: Bu sitede uçtan uca şifreli mesajlaşmayı etkinleştirmek için şifreni gir.
-    passwordPlaceholder: Şifren
-    unlockAction: Mesajları aç
-    wrongPassword: Yanlış şifre. Lütfen tekrar dene.
-  sendPrivate: Özel mesaj gönder
-  e2eeNote: Uçtan uca şifreli — yöneticiler mesajlarını okuyamaz
-  actions:
-    block: '{{ username }} kişisini engelle'
-    unblock: '{{ username }} engelini kaldır'
-    report: '{{ username }} kişisini şikayet et'
-    unblockLink: Engeli kaldır
-  blocked:
-    notice: Bu kullanıcıyı engellediniz.
-  notify:
-    blocked: '{{ username }} engellendi.'
-    unblocked: '{{ username }} engeli kaldırıldı.'
-
 report:
   title: '{{ username }} kişisini şikayet et'
   titleGeneric: Şikayet gönder
-  e2eeWarning: Mesajlar uçtan uca şifreleniyor — onları okuyamayız. Ne olduğunu açıklayın ve gerekirse konuşmanın ekran görüntüsünü yöneticilerle paylaşın.
   form:
     label: Sorunu açıkla
     placeholder: Ne oldu? Lütfen mümkün olduğunca ayrıntılı açıklayın…

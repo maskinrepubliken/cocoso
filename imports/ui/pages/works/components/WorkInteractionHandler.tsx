@@ -20,7 +20,7 @@ export default function WorkInteractionHandler() {
   if (!currentUser || currentUser._id !== work.authorId) {
     return (
       <SlideWidget justify="center">
-        <ContactInfo username={work.authorUsername} userId={work.authorId} />
+        <ContactInfo username={work.authorUsername} />
       </SlideWidget>
     );
   } else {
@@ -31,7 +31,6 @@ export default function WorkInteractionHandler() {
         </Box>
         <ContactInfo
           username={work.authorUsername}
-          userId={work.authorId}
           value={work.contactInfo}
         />
         <Box w="40px" />

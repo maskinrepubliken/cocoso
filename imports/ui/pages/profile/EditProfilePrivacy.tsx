@@ -21,7 +21,6 @@ import {
 import { message } from '/imports/ui/generic/message';
 import Boxling from '/imports/ui/pages/admin/Boxling';
 import { call } from '/imports/api/_utils/shared';
-import { clearEncryptionKey } from '/imports/utils/setupEncryption';
 
 import { useNavigate } from 'react-router';
 
@@ -70,7 +69,6 @@ export default function EditProfilePrivacy() {
           host: site?.settings?.name,
         })
       );
-      clearEncryptionKey();
       Meteor.logout();
       navigate('/');
       setIsLeaveModalOn(false);

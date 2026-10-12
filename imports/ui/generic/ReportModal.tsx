@@ -2,13 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { Alert, Box, Modal, Text, Textarea } from '/imports/ui/core';
+import { Box, Modal, Textarea } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
 
 import { message } from './message';
 
 export type ReportContentType =
-  | 'directMessage'
   | 'activity'
   | 'group'
   | 'work'
@@ -86,19 +85,6 @@ export default function ReportModal({
       onClose={handleClose}
     >
       <Box>
-        {contentType === 'directMessage' && (
-          <Alert
-            mb="8"
-            type="info"
-            css={{
-              backgroundColor: 'var(--cocoso-colors-gray-100)',
-              border: 'none',
-            }}
-          >
-            <Text fontSize="sm">{t('report.e2eeWarning')}</Text>
-          </Alert>
-        )}
-
         <FormField label={t('report.form.label')}>
           <Textarea
             placeholder={t('report.form.placeholder')}

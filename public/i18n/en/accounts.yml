@@ -108,36 +108,9 @@ profile:
       description: Here you can select and create some keywords that explains you and your skills well. They will be shown on your profile page, as well as be filterable on the members page.
       placeholder: Type something...
 
-messages:
-  label: Messages
-  title: Message Inbox
-  description: Private messages between users. Your messages are end-to-end encrypted, which means that only you and the recipient can read them
-  search: Start a new conversation...
-  empty: No conversations yet. Search for someone above.
-  encryption:
-    notLoaded: Encryption keys not loaded. Please log out and back in.
-    notSetUp: "{{ username }} hasn't set up encryption yet."
-    needsRelogin: Enter your password to unlock end-to-end encrypted messaging on this site.
-    passwordPlaceholder: Your password
-    unlockAction: Unlock messages
-    wrongPassword: Wrong password. Please try again.
-  sendPrivate: Send a private message
-  e2eeNote: End-to-end encrypted — admins cannot read your messages
-  actions:
-    block: Block {{ username }}
-    unblock: Unblock {{ username }}
-    report: Report {{ username }}
-    unblockLink: Unblock
-  blocked:
-    notice: You blocked this user.
-  notify:
-    blocked: '{{ username }} blocked.'
-    unblocked: '{{ username }} unblocked.'
-
 report:
   title: Report {{ username }}
   titleGeneric: Submit a report
-  e2eeWarning: Messages are end-to-end encrypted — we cannot read them. Please describe what happened and take a screenshot of the conversation to share with admins if needed.
   form:
     label: Describe the issue
     placeholder: What happened? Please be as specific as possible…

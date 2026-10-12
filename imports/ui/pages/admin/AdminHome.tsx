@@ -5,7 +5,6 @@ import { useAtomValue } from 'jotai';
 import dayjs from 'dayjs';
 import Plus from 'lucide-react/dist/esm/icons/plus';
 import CalendarDays from 'lucide-react/dist/esm/icons/calendar-days';
-import MessagesSquare from 'lucide-react/dist/esm/icons/messages-square';
 import Users from 'lucide-react/dist/esm/icons/users';
 import MapPin from 'lucide-react/dist/esm/icons/map-pin';
 
@@ -525,7 +524,6 @@ export default function AdminHome() {
 
   const isAdmin = role === 'admin';
   const dateLocale = i18n.language === 'en' ? 'en-gb' : i18n.language;
-  const unread = Math.max(0, (currentUser as any)?.unreadMessageCount ?? 0);
 
   useEffect(() => {
     if (!currentUser) {
@@ -560,14 +558,6 @@ export default function AdminHome() {
           onClick={() => navigate('/calendar')}
         >
           {t('overview.actions.calendar')}
-        </Button>
-        <Button
-          leftIcon={<MessagesSquare />}
-          variant="outline"
-          onClick={() => navigate('/admin/messages')}
-        >
-          {t('overview.actions.messages')}
-          {unread > 0 && ` (${unread})`}
         </Button>
         {isAdmin && (
           <>

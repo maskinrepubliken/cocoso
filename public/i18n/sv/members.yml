@@ -126,7 +126,6 @@ report:
 labels:
   list: Lista
   search: Sök
-  messages: Meddelanden
 
 viewAs:
   started: Du ser nu sajten som {{ username }}

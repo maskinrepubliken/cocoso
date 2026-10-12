@@ -428,7 +428,6 @@ overview:
   actions:
     newActivity: 'New activity'
     calendar: 'Open the calendar'
-    messages: 'Messages'
     users: 'Users'
     locations: 'Locations'
   stats:

@@ -367,7 +367,6 @@ event:
     eventContact: "Contact for this event"
     noContact: "The organizer has not given any contact details."
     write: "Write to the organizer"
-    message: "Send a message on the site"
   attendees:
     none: "No one has signed up yet."
     hidden: "+ {{count}} who chose not to show their name"

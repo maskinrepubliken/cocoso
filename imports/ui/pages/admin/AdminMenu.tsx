@@ -6,7 +6,6 @@ import { useAtomValue } from 'jotai';
 
 import {
   Avatar,
-  Badge,
   Box,
   Flex,
   List,
@@ -179,7 +178,6 @@ export default function AdminMenu({ routes, onItemClick }) {
   const isDesktop = useAtomValue(isDesktopAtom);
   const role = useAtomValue(roleAtom);
   const [t] = useTranslation('admin');
-  const [ta] = useTranslation('accounts');
 
   const isAdmin = role === 'admin';
 
@@ -189,10 +187,6 @@ export default function AdminMenu({ routes, onItemClick }) {
 
   const handleUserThumbClick = () => {
     onItemClick({ value: '/admin/my-profile' });
-  };
-
-  const handleMessagesClick = () => {
-    onItemClick({ value: '/admin/messages' });
   };
 
   return (
@@ -260,35 +254,6 @@ export default function AdminMenu({ routes, onItemClick }) {
             flexGrow: '0',
           }}
         >
-          <List
-            p="0"
-            css={{
-              backgroundColor: location?.pathname?.includes('messages')
-                ? 'var(--cocoso-colors-theme-100)'
-                : 'transparent',
-              borderTop: '1px solid var(--cocoso-linje)',
-              width: '100%',
-              '&:hover': {
-                backgroundColor: 'var(--cocoso-colors-theme-50)',
-              },
-            }}
-          >
-            <ListItem
-              css={{
-                color: 'var(--cocoso-mylla)',
-                cursor: 'pointer',
-                fontFamily: 'var(--cocoso-font-ui)',
-                fontWeight: 600,
-                width: '100%',
-              }}
-              mb="0"
-              px="4"
-              py="3"
-              onClick={handleMessagesClick}
-            >
-              {ta('messages.label')} <Badge>beta</Badge>
-            </ListItem>
-          </List>
           <Box
             css={{ borderTop: '1px solid var(--cocoso-linje)', cursor: 'pointer' }}
             onClick={handleUserThumbClick}

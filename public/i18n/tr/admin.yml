@@ -428,7 +428,6 @@ overview:
   actions:
     newActivity: 'Yeni etkinlik'
     calendar: 'Takvimi aç'
-    messages: 'Mesajlar'
     users: 'Kullanıcılar'
     locations: 'Yerler'
   stats:

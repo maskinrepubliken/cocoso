@@ -22,10 +22,7 @@ Meteor.publish('currentUser', function () {
         lastName: 1,
         notifications: 1,
         publicContact: 1,
-        unreadMessageCount: 1,
-        publicKey: 1,
         username: 1,
-        blockedUserIds: 1,
       },
     }
   );

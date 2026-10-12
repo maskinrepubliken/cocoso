@@ -6,7 +6,7 @@ const Reports = new Mongo.Collection('reports');
 Reports.schema = new SimpleSchema({
   reporterId: { type: String },
   reportedUserId: { type: String, optional: true },
-  contentType: { type: String }, // 'directMessage' | 'activity' | 'group' | 'work' | 'page' | 'user'
+  contentType: { type: String }, // 'activity' | 'group' | 'work' | 'page' | 'user'
   contentId: { type: String, optional: true },
   description: { type: String },
   createdAt: { type: Date },

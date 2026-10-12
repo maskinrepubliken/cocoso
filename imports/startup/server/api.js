@@ -28,9 +28,6 @@ import '../../api/chats/chat';
 import '../../api/chats/chat.methods';
 import '../../api/chats/chat.publications';
 
-import '../../api/directMessages/directMessage';
-import '../../api/directMessages/directMessages.methods';
-import '../../api/directMessages/directMessages.publications';
 
 import '../../api/reports/report';
 import '../../api/reports/report.methods';

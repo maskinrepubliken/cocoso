@@ -364,7 +364,6 @@ event:
     eventContact: "Kontakt för evenemanget"
     noContact: "Arrangören har inte angett några kontaktuppgifter."
     write: "Skriv till arrangören"
-    message: "Skicka meddelande på sajten"
   attendees:
     none: "Ingen har anmält sig än."
     hidden: "+ {{count}} som valt att inte visa sitt namn"

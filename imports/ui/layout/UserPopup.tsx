@@ -1,14 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import BellIcon from 'lucide-react/dist/esm/icons/bell';
 import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
 import { useAtom, useAtomValue } from 'jotai';
-import MessagesSquare from 'lucide-react/dist/esm/icons/messages-square';
 
-import { clearEncryptionKey } from '/imports/utils/setupEncryption';
 import { clearViewAsState } from '/imports/utils/viewAs';
 
 import {
@@ -91,7 +89,6 @@ export interface UserPopupProps {
 }
 
 export default function UserPopup({ site: siteProp }: UserPopupProps) {
-  const [t] = useTranslation('members');
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const siteFromAtom = useAtomValue(siteAtom);
   const site = siteProp || siteFromAtom;
@@ -113,7 +110,6 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
 
   const handleLogout = () => {
     clearViewAsState();
-    clearEncryptionKey();
     Meteor.logout();
     setCurrentUser(null);
     message.info(<Trans i18nKey="accounts:logout.messages.success" />);
@@ -129,11 +125,6 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
       notificationsCounter = notification.count + notificationsCounter;
     });
   }
-  const unreadMessageCount = Math.max(
-    0,
-    (currentUser as any)?.unreadMessageCount ?? 0
-  );
-  notificationsCounter += unreadMessageCount;
 
   const roleTranslated = <Trans i18nKey={`roles.${role}`} ns="members" />;
 
@@ -159,24 +150,6 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
             </span>
           </Text>
         </Box>
-
-        <Divider />
-
-        <Link to="/admin/messages">
-          <MenuItem>
-            <Text>
-              <Flex align="center" gap="2">
-                <MessagesSquare />
-                {t('labels.messages')}
-                {unreadMessageCount > 0 && (
-                  <Badge colorScheme="red" size="sm">
-                    {unreadMessageCount}
-                  </Badge>
-                )}
-              </Flex>
-            </Text>
-          </MenuItem>
-        </Link>
 
         <Divider />
 

@@ -1,14 +1,5 @@
 export default {
   en: {
-    directMessage: {
-      subject: 'New message from',
-      subjectVerb: 'sent you a message',
-      body: 'You have received a new message from',
-      bodyLong: 'Click the button below to open your messages and reply.',
-      bodyLongFederation:
-        "You can access your messages inbox from any community you're part of. Below is a link to",
-      visitPage: 'Go to messages',
-    },
     general: {
       dateAndTime: 'Date & Time',
       dear: 'Dear',
@@ -45,16 +36,6 @@ export default {
     },
   },
   sv: {
-    directMessage: {
-      subject: 'Nytt meddelande från',
-      subjectVerb: 'skickade dig ett meddelande',
-      body: 'Du har fått ett nytt meddelande från',
-      bodyLong:
-        'Klicka på knappen nedan för att öppna dina meddelanden och svara.',
-      bodyLongFederation:
-        'Du kan komma åt dina meddelanden från alla communities du är med i. Nedan finns en länk till',
-      visitPage: 'Gå till meddelanden',
-    },
     general: {
       dateAndTime: 'Datum & tid',
       dear: 'Hej',
@@ -90,16 +71,6 @@ export default {
     },
   },
   tr: {
-    directMessage: {
-      subject: 'Yeni mesaj',
-      subjectVerb: 'sana mesaj gönderdi',
-      body: 'Sana şu kişiden yeni bir mesaj geldi:',
-      bodyLong:
-        'Mesajlarını okumak ve yanıtlamak için aşağıdaki düğmeye tıkla.',
-      bodyLongFederation:
-        'Mesaj kutuna üye olduğun herhangi bir topluluktan erişebilirsin. Aşağıda şu topluluğa bir bağlantı var:',
-      visitPage: 'Mesajlara git',
-    },
     general: {
       dateAndTime: 'Zaman ve tarih',
       dear: 'Merhaba',

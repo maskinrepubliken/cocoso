@@ -364,7 +364,6 @@ event:
     eventContact: "Bu etkinlik için iletişim"
     noContact: "Düzenleyen herhangi bir iletişim bilgisi vermedi."
     write: "Düzenleyene yaz"
-    message: "Sitede mesaj gönder"
   attendees:
     none: "Henüz kimse kayıt olmadı."
     hidden: "+ adını göstermemeyi seçen {{count}} kişi"

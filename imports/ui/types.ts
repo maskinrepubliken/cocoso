@@ -8,7 +8,6 @@ export interface User extends Meteor.User {
   };
   username?: string;
   emails?: Array<{ address: string; verified: boolean }>;
-  publicKey?: string;
   memberships?: Array<{
     userId?: string;
     role: string;

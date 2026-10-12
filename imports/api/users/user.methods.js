@@ -7,7 +7,6 @@ import { publicUrl } from '../_utils/shared';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import Works from '../works/work';
 import Groups from '../groups/group';
-import DirectMessages from '../directMessages/directMessage';
 import Memberships from '../memberships/membership';
 import { getUserMemberships } from '../memberships/membership.helpers';
 import {
@@ -264,23 +263,6 @@ Meteor.methods({
         }
       );
 
-      // participantAvatars is a parallel array to participantIds, so the
-      // positional operator cannot be used (it would resolve against the
-      // filtered array, participantIds). Update each thread by index.
-      const threads = await DirectMessages.find(
-        { participantIds: userId },
-        { fields: { participantIds: 1 } }
-      ).fetchAsync();
-      const thumbAvatar = avatar.replace('full', 'thumb');
-      await Promise.all(
-        threads.map((thread) => {
-          const index = thread.participantIds.indexOf(userId);
-          if (index === -1) return null;
-          return DirectMessages.updateAsync(thread._id, {
-            $set: { [`participantAvatars.${index}`]: thumbAvatar },
-          });
-        })
-      );
     } catch (error) {
       throw new Meteor.Error(error);
     }
@@ -424,102 +406,4 @@ Meteor.methods({
     }
   },
 
-  async saveEncryptionKeys({ publicKey, encryptedPrivateKey, keySalt }) {
-    check(publicKey, String);
-    check(encryptedPrivateKey, String);
-    check(keySalt, String);
-
-    const user = await Meteor.userAsync();
-    if (!user) {
-      throw new Meteor.Error('not-authorized');
-    }
-
-    await Meteor.users.updateAsync(user._id, {
-      $set: { publicKey, encryptedPrivateKey, keySalt },
-    });
-  },
-
-  async getEncryptionKeyBackup() {
-    const user = await Meteor.userAsync();
-    if (!user) throw new Meteor.Error('not-authorized');
-    const doc = await Meteor.users.findOneAsync(user._id, {
-      fields: { publicKey: 1, encryptedPrivateKey: 1, keySalt: 1 },
-    });
-    return doc || null;
-  },
-
-  async getPublicKey(targetUserId) {
-    check(targetUserId, String);
-    const user = await Meteor.users.findOneAsync(targetUserId, {
-      fields: { publicKey: 1 },
-    });
-    return user?.publicKey || null;
-  },
-
-  async users_blockUser(targetUserId) {
-    check(targetUserId, String);
-    const user = await Meteor.userAsync();
-    if (!user) throw new Meteor.Error('not-authorized');
-    if (targetUserId === user._id)
-      throw new Meteor.Error('invalid', 'Cannot block yourself.');
-    await Meteor.users.updateAsync(user._id, {
-      $addToSet: { blockedUserIds: targetUserId },
-    });
-  },
-
-  async users_unblockUser(targetUserId) {
-    check(targetUserId, String);
-    const user = await Meteor.userAsync();
-    if (!user) throw new Meteor.Error('not-authorized');
-    await Meteor.users.updateAsync(user._id, {
-      $pull: { blockedUserIds: targetUserId },
-    });
-  },
-
-  async users_searchForMessages(query) {
-    check(query, String);
-    const caller = await Meteor.userAsync();
-    if (!caller) throw new Meteor.Error('not-authorized');
-
-    const q = query.trim().toLowerCase();
-
-    const membershipsAtHost = await Memberships.find(
-      {},
-      { fields: { userId: 1 } }
-    ).fetchAsync();
-    const candidateIds = membershipsAtHost
-      .map((m) => m.userId)
-      .filter((id) => id !== caller._id);
-
-    const filter = { _id: { $in: candidateIds } };
-
-    const users = await Meteor.users
-      .find(filter, {
-        fields: {
-          _id: 1,
-          username: 1,
-          avatar: 1,
-          firstName: 1,
-          lastName: 1,
-        },
-      })
-      .fetchAsync();
-
-    const filtered = users.filter((u) => {
-      const full = `${u.firstName ?? ''} ${u.lastName ?? ''} ${
-        u.username ?? ''
-      }`.toLowerCase();
-      return full.includes(q);
-    });
-
-    return filtered
-      .map((u) => ({
-        _id: u._id,
-        username: u.username,
-        avatar: u.avatar,
-        firstName: u.firstName,
-        lastName: u.lastName,
-      }))
-      .slice(0, 8);
-  },
 });

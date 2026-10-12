@@ -125,7 +125,6 @@ report:
 labels:
   list: List
   search: Search
-  messages: Messages
 
 viewAs:
   started: You now see the site as {{ username }}

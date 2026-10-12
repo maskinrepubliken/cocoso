@@ -28,7 +28,6 @@ import {
 } from '/imports/state';
 import { applyGlobalStyles } from '/imports/ui/utils/globalStylesManager';
 import { resolveSeason } from '/imports/api/_utils/season';
-import { restoreKeyFromSession } from '/imports/utils/setupEncryption';
 import { restoreViewAsState } from '/imports/utils/viewAs';
 import { call } from '/imports/api/_utils/shared';
 import { Loader } from '/imports/ui/core';
@@ -124,7 +123,6 @@ export default function WrapperHybrid({
 
   useEffect(() => {
     setValues();
-    restoreKeyFromSession();
     // The browser decides the season from its own clock, with ?season=
     // as a preview override.
     const override = new URLSearchParams(window.location.search).get('season');

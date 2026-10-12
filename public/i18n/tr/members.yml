@@ -126,7 +126,6 @@ report:
 labels:
   list: Listele
   search: Ara
-  messages: Mesajlar
 
 viewAs:
   started: Siteyi artık {{ username }} olarak görüyorsun

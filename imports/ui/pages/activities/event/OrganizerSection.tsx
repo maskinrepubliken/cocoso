@@ -1,18 +1,13 @@
-import { Meteor } from 'meteor/meteor';
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import React from 'react';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useAtomValue } from 'jotai';
 import MailIcon from 'lucide-react/dist/esm/icons/mail';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
-import MessageIcon from 'lucide-react/dist/esm/icons/message-circle';
 
 import { styled } from '/stitches.config';
 import { Avatar, Button } from '/imports/ui/core';
-import { currentUserAtom } from '/imports/state';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
-import { message } from '/imports/ui/generic/message';
 
 import Section, { Muted } from './Section';
 
@@ -152,9 +147,6 @@ function ContactRows({
 // way to write to the organizer about this event in particular.
 export default function OrganizerSection({ activity }: OrganizerSectionProps) {
   const [tc] = useTranslation('common');
-  const currentUser = useAtomValue(currentUserAtom);
-  const navigate = useNavigate();
-  const [startingConvo, setStartingConvo] = useState(false);
 
   const organizers: OrganizerProfile[] =
     activity.organizerProfiles && activity.organizerProfiles.length > 0
@@ -168,27 +160,6 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
   const mailTo =
     activity.contact?.email ||
     organizers.find((o) => o.publicContact?.email)?.publicContact?.email;
-
-  // Logged-in members can also message the organizer inside the site.
-  const author = organizers[0];
-  const canMessage =
-    currentUser && author?.userId && author.userId !== currentUser._id;
-
-  const handleSendMessage = async () => {
-    if (startingConvo || !author?.userId) return;
-    setStartingConvo(true);
-    try {
-      const conversationId = await Meteor.callAsync(
-        'directMessages_findOrCreate',
-        author.userId
-      );
-      navigate(`/admin/messages/${conversationId}`);
-    } catch (error: any) {
-      message.error(error.reason || error.message);
-    } finally {
-      setStartingConvo(false);
-    }
-  };
 
   return (
     <Section
@@ -249,17 +220,6 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
             }}
           >
             {tc('event.organizer.write')}
-          </Button>
-        )}
-        {canMessage && (
-          <Button
-            leftIcon={<MessageIcon />}
-            loading={startingConvo}
-            size="sm"
-            variant="outline"
-            onClick={handleSendMessage}
-          >
-            {tc('event.organizer.message')}
           </Button>
         )}
       </Actions>
