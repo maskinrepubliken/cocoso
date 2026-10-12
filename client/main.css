@@ -2431,9 +2431,9 @@ body {
   line-height: 1;
 }
 
-/* The account avatar, as the design's avatar: a warm clay-to-brick
-   gradient under a paper edge, and the initial in Fraunces when there is
-   no picture. */
+/* The account avatar: the same paper island as the search, the pen and
+   the bell, with the initial in Fraunces when there is no picture, so the
+   right side of the header reads as one row. */
 .site-avatar {
   position: relative;
   display: grid;
@@ -2441,12 +2441,11 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 999px;
-  border: 2px solid var(--cocoso-papper, #fffdf7);
+  background: var(--site-island);
   box-shadow: var(--site-island-shadow);
-  background: linear-gradient(135deg, #e2c6a8, var(--cocoso-tegel, #c8613a));
-  color: #fff;
+  color: var(--site-ink);
   font-family: var(--cocoso-font-display);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   font-variation-settings: 'SOFT' 60;
   line-height: 1;
