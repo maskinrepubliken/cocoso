@@ -11,7 +11,7 @@ export const EVENT_KINDS: { key: string; icon: ThreeDIconName }[] = [
   { key: 'mat', icon: 'cup' },
   { key: 'natur', icon: 'sun' },
   { key: 'larande', icon: 'bulb' },
-  { key: 'social', icon: 'glass' },
+  { key: 'social', icon: 'tea-cup' },
 ];
 
 export const EVENT_KIND_KEYS = EVENT_KINDS.map((kind) => kind.key);

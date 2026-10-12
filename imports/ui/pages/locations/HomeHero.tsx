@@ -16,7 +16,7 @@ interface HomeHeroProps {
 // badge's icon.
 export const seasonIcons: Record<Season, ThreeDIconName[]> = {
   var: ['sun', 'flag', 'music', 'camera'],
-  sommar: ['glass', 'sun', 'trophy', 'music'],
+  sommar: ['sun', 'travel', 'trophy', 'music'],
   host: ['umbrella', 'fire', 'cup', 'chess'],
   vinter: ['tea-cup', 'gift', 'star', 'bell'],
 };
