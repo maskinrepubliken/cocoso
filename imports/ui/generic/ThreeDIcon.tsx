@@ -8,7 +8,7 @@ export type ThreeDIconName =
   | 'at' | 'bag' | 'bell' | 'bookmark' | 'brush' | 'bulb' | 'boy' | 'calendar'
   | 'camera' | 'can' | 'card' | 'chat' | 'chess' | 'circle' | 'clock'
   | 'colour-palette' | 'computer' | 'crown' | 'cube' | 'cup' | 'file-text'
-  | 'fire' | 'flag' | 'gift' | 'girl' | 'glass' | 'gym' | 'hash' | 'headphone'
+  | 'fire' | 'flag' | 'gift' | 'girl' | 'gym' | 'hash' | 'headphone'
   | 'heart' | 'key' | 'lab' | 'location' | 'lock' | 'magic-trick' | 'mail'
   | 'map-pin' | 'medal' | 'megaphone' | 'mic' | 'mobile' | 'money-bag'
   | 'music' | 'notebook' | 'paint-brush' | 'pencil' | 'picture' | 'pin'
