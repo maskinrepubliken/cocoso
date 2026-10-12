@@ -3499,7 +3499,7 @@ body {
 }
 
 .site-footer-byline {
-  margin: 8px 0 0;
+  margin: 18px 0 0;
   max-width: 52ch;
   color: var(--cocoso-mylla-soft);
   font-size: 14px;
@@ -3533,11 +3533,16 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
-/* Feedback and languages as paper pills with line icons, like the header */
+/* About, feedback and languages as paper pills with line icons, like the
+   header */
+.site-footer-pill,
 .site-footer-tools .cocoso-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   height: 34px;
   padding: 0 14px;
   border: 0;
@@ -3550,6 +3555,11 @@ body {
   font-weight: 600;
 }
 
+.site-footer-pill {
+  text-decoration: none;
+}
+
+.site-footer-pill:hover,
 .site-footer-tools .cocoso-button:hover {
   background: var(--cocoso-papper);
   color: var(--cocoso-colors-theme-800);

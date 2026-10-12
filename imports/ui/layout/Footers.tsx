@@ -5,6 +5,7 @@ import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { useAtomValue } from 'jotai';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
+import InfoIcon from 'lucide-react/dist/esm/icons/info';
 
 import { pageTitlesAtom } from '/imports/state';
 import { parseTitle } from '/imports/api/_utils/shared';
@@ -76,6 +77,22 @@ export function Footer({ site }: FooterProps) {
       <div className="site-footer-inner">
         <div className="site-footer-text">
           <p className="site-footer-name">{settings.name}</p>
+
+          {/* The tools right under the name: about, feedback, language */}
+          <div className="site-footer-tools">
+            {aboutPage && (
+              <Link
+                className="site-footer-pill"
+                to={`${prefix}/info/${parseTitle(aboutPage.title)}`}
+              >
+                <InfoIcon width={16} height={16} />
+                {tc('footer.about')}
+              </Link>
+            )}
+            <FeedbackForm />
+            <LanguageSwitch />
+          </div>
+
           {settings.footer ? (
             <div className="site-footer-byline text-content">
               {HTMLReactParser(DOMPurify.sanitize(settings.footer))}
@@ -91,22 +108,12 @@ export function Footer({ site }: FooterProps) {
                 {item.label}
               </Link>
             ))}
-            {aboutPage && (
-              <Link to={`${prefix}/info/${parseTitle(aboutPage.title)}`}>
-                {tc('footer.about')}
-              </Link>
-            )}
             <Link to="/terms-&-privacy-policy">
               <Trans i18nKey="common:terms.title">
                 Terms of Service & Privacy Policy
               </Trans>
             </Link>
           </nav>
-
-          <div className="site-footer-tools">
-            <FeedbackForm />
-            <LanguageSwitch />
-          </div>
         </div>
 
         <div className="site-footer-marks">
