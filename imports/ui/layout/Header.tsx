@@ -252,7 +252,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
 
         <div className="site-header-right">
           <SiteSearch site={site} />
-          <NewButton site={site} pageTitles={pageTitles} />
+          <NewButton site={site} />
           <UserPopup site={site} />
         </div>
       </div>

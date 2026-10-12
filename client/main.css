@@ -905,12 +905,6 @@ body {
   transform: scale(1.12);
 }
 
-.new-button-wrapper .szh-menu-button {
-  all: unset;
-  display: inline-flex;
-  cursor: pointer;
-}
-
 .site-new-button {
   display: inline-flex;
   padding: 0;
@@ -934,8 +928,7 @@ body {
   transition: rotate 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.new-button-wrapper:hover .site-new svg,
-.new-button-wrapper .szh-menu-button--open .site-new svg {
+.new-button-wrapper:hover .site-new svg {
   rotate: 90deg;
 }
 
