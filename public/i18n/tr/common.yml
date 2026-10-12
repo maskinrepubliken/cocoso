@@ -242,7 +242,7 @@ locations:
     seeAll: Tümünü gör
     nothingYet: Henüz bir şey yok
   grid:
-    title: Yerinizi seçin
+    title: Yaşadığınız yerde neler oluyor?
     intro: Her yerin tam orada olup bitenleri gösteren kendi sayfası var.
   form:
     label: Yer
@@ -421,7 +421,6 @@ home:
     welcome: Hoş geldiniz
     tagline: Tüm belediyedeki etkinlikler, dernekler ve yerler tek bir yerde.
     seasonIn: '{{ place }} için {{ season }}'
-    thanks: Takvimi dolduran {{ count }} düzenleyiciye teşekkürler.
 
 # Talepler (komşular arası talepler olarak gösterilen işler)
 requests:
@@ -524,7 +523,7 @@ eventKinds:
 search:
   open: Ara
   past: Sona erdi
-  placeholder: Sitede ara
+  placeholder: Ara
   clear: Aramayı temizle
   searching: Aranıyor…
   noResults: "“{{query}}” için sonuç bulunamadı"

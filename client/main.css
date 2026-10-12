@@ -2587,22 +2587,6 @@ body {
   white-space: nowrap;
 }
 
-.home-hero-flag {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 14px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--cocoso-season-accent);
-  color: #fff;
-  font-family: var(--cocoso-font-ui);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  transform: translateY(-0.2em);
-}
-
 .home-hero-inner {
   position: relative;
   z-index: 1;
@@ -2651,13 +2635,6 @@ body {
   font-family: var(--cocoso-body-font-family);
   font-size: 17px;
   line-height: 1.5;
-}
-
-.home-hero-thanks {
-  font-family: var(--cocoso-font-display);
-  font-variation-settings: "SOFT" 60;
-  font-style: italic;
-  color: var(--cocoso-colors-theme-700);
 }
 
 .home-hero-places {

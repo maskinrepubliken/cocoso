@@ -245,7 +245,7 @@ locations:
     seeAll: See all
     nothingYet: Nothing here yet
   grid:
-    title: Choose your place
+    title: What is on where you live?
     intro: Each place has a page of its own with what happens right there.
   form:
     label: Place
@@ -424,7 +424,6 @@ home:
     welcome: Welcome to
     tagline: Events, associations and places across the whole municipality, in one place.
     seasonIn: '{{ season }} in {{ place }}'
-    thanks: Thanks to the {{ count }} organizers who fill it.
 
 # Requests (works shown as requests between neighbours)
 requests:
@@ -527,7 +526,7 @@ eventKinds:
 search:
   open: Search
   past: Past
-  placeholder: Search the site
+  placeholder: Search
   clear: Clear search
   searching: Searching…
   noResults: Nothing found for “{{query}}”
