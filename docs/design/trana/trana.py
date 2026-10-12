@@ -172,20 +172,28 @@ SPINE = [
     ((0.46, 0, 1.10), 0.088),
     ((0.57, 0, 1.20), 0.098),     # head back
     ((0.66, 0, 1.26), 0.105),     # head
-    ((0.74, 0, 1.305), 0.080),    # head front, into the beak
-    ((0.79, 0, 1.335), 0.045),
+    ((0.74, 0, 1.29), 0.080),     # head front, into the beak
+    ((0.79, 0, 1.305), 0.045),
 ]
 
-# Turn the head towards the camera (which sits on the -Y side): the top of
-# the neck and the head pivot around the last straight neck point.
-HEAD_YAW = Matrix.Rotation(math.radians(-28), 3, "Z")
-_PIVOT = Vector(SPINE[11][0])
-for _i in range(11, len(SPINE)):
+# Turn the head towards the camera (which sits on the -Y side): the twist
+# grows along the upper neck, so the neck itself looks turned, and reaches
+# HEAD_YAW at the head.
+_YAW_DEG = -48
+_TWIST_FROM = 7                      # spine index where the twist starts
+_PIVOT = Vector(SPINE[_TWIST_FROM][0])
+_n = len(SPINE) - 1
+for _i in range(_TWIST_FROM, len(SPINE)):
+    _t = (_i - _TWIST_FROM) / (11 - _TWIST_FROM)
+    _t = min(1.0, _t)
+    _t = _t * _t * (3 - 2 * _t)
+    _rot = Matrix.Rotation(math.radians(_YAW_DEG * _t), 3, "Z")
     _p = Vector(SPINE[_i][0])
-    SPINE[_i] = (tuple(_PIVOT + HEAD_YAW @ (_p - _PIVOT)), SPINE[_i][1])
+    SPINE[_i] = (tuple(_PIVOT + _rot @ (_p - _PIVOT)), SPINE[_i][1])
+HEAD_YAW = Matrix.Rotation(math.radians(_YAW_DEG), 3, "Z")
 
 HEAD = _PIVOT + HEAD_YAW @ (Vector((0.66, 0, 1.26)) - _PIVOT)
-BEAK_DIR = HEAD_YAW @ Vector((math.cos(math.radians(32)), 0, math.sin(math.radians(32))))
+BEAK_DIR = HEAD_YAW @ Vector((math.cos(math.radians(18)), 0, math.sin(math.radians(18))))
 
 COL_BODY = hexcol("#C6BDAE")
 COL_BODY_LIGHT = hexcol("#DED6CA")
@@ -272,7 +280,7 @@ def build_beak():
     bm.free()
     shade_smooth(mesh)
     obj = new_object("Beak", mesh)
-    base = _PIVOT + HEAD_YAW @ (Vector((0.74, 0, 1.305)) - _PIVOT)
+    base = _PIVOT + HEAD_YAW @ (Vector((0.74, 0, 1.29)) - _PIVOT)
     centre = base + BEAK_DIR * 0.15
     obj.matrix_world = Matrix.Translation(centre) @ \
         BEAK_DIR.to_track_quat("Z", "Y").to_matrix().to_4x4()
