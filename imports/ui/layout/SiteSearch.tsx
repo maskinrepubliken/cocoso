@@ -17,7 +17,14 @@ const DEBOUNCE_MS = 220;
 const MIN_LENGTH = 2;
 
 export interface SearchHit {
-  kind: 'activities' | 'groups' | 'resources' | 'works' | 'info' | 'people';
+  kind:
+    | 'activities'
+    | 'groups'
+    | 'resources'
+    | 'works'
+    | 'info'
+    | 'people'
+    | 'locations';
   _id: string;
   title: string;
   detail?: string;
@@ -29,6 +36,7 @@ export interface SearchHit {
   authorUsername?: string;
   username?: string;
   avatar?: string | null;
+  slug?: string;
 }
 
 // The headings in the results; past events get one of their own.
@@ -42,6 +50,7 @@ const GROUP_ORDER: GroupKey[] = [
   'works',
   'info',
   'people',
+  'locations',
 ];
 
 // Where a hit leads: the same places the listings' cards go.
@@ -51,6 +60,9 @@ export const hitPath = (hit: SearchHit, prefix: string): string => {
   }
   if (hit.kind === 'people') {
     return `/@${hit.username}`;
+  }
+  if (hit.kind === 'locations') {
+    return `/${hit.slug}`;
   }
   return entryPathWithin(prefix, hit, hit.kind);
 };

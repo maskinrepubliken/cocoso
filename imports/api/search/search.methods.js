@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { locationSelector } from '../_utils/shared';
 import Activities from '../activities/activity';
 import Groups from '../groups/group';
+import Locations from '../locations/location';
 import Memberships from '../memberships/membership';
 import Pages from '../pages/page';
 import Resources from '../resources/resource';
@@ -282,6 +283,28 @@ async function searchPeople(words) {
   }));
 }
 
+// The places of the municipality, each with pages of its own.
+async function searchLocations(words) {
+  const found = await Locations.find(
+    {
+      $and: [{ isPublished: true }, wordsSelector(words, ['name', 'description'])],
+    },
+    {
+      fields: { name: 1, slug: 1, description: 1 },
+      sort: { name: 1 },
+      limit: PER_KIND,
+    }
+  ).fetchAsync();
+
+  return found.map((location) => ({
+    kind: 'locations',
+    _id: location._id,
+    title: location.name,
+    detail: excerpt(location.description),
+    slug: location.slug,
+  }));
+}
+
 Meteor.methods({
   async searchSite(query, locationId) {
     check(query, String);
@@ -296,7 +319,7 @@ Meteor.methods({
     const user = await Meteor.userAsync();
 
     try {
-      const [activities, groups, resources, works, pages, people] =
+      const [activities, groups, resources, works, pages, people, locations] =
         await Promise.all([
           searchActivities(words, locationId, user),
           searchGroups(words, locationId, user),
@@ -304,6 +327,7 @@ Meteor.methods({
           searchWorks(words, locationId),
           searchPages(words),
           searchPeople(words),
+          searchLocations(words),
         ]);
       return [
         ...activities,
@@ -312,6 +336,7 @@ Meteor.methods({
         ...works,
         ...pages,
         ...people,
+        ...locations,
       ];
     } catch (error) {
       throw new Meteor.Error('search-failed', "Couldn't search");

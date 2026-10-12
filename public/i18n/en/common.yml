@@ -535,6 +535,7 @@ search:
     works: Requests
     info: Info
     people: People
+    locations: Places in the municipality
 
 # The entry pages (group, place, request); in common because SSR only
 # loads common

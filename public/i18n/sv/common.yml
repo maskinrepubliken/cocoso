@@ -532,6 +532,7 @@ search:
     works: Förfrågningar
     info: Info
     people: Arrangörer
+    locations: Orter
 
 # The entry pages (förening, plats, förfrågan); in common because SSR only
 # loads common
