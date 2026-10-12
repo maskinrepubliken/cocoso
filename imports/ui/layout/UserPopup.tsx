@@ -100,12 +100,10 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
     return null;
   }
 
+  // Logged out, the header stays quiet; the login link lives in the
+  // footer, since most visitors never log in.
   if (!currentUser) {
-    return (
-      <Link className="site-login" to="/login">
-        <Trans i18nKey="common:menu.guest.login">Login</Trans>
-      </Link>
-    );
+    return null;
   }
 
   const handleLogout = () => {

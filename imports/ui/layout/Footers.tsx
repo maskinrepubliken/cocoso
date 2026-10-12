@@ -6,8 +6,9 @@ import DOMPurify from 'isomorphic-dompurify';
 import { useAtomValue } from 'jotai';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 import InfoIcon from 'lucide-react/dist/esm/icons/info';
+import LogInIcon from 'lucide-react/dist/esm/icons/log-in';
 
-import { pageTitlesAtom } from '/imports/state';
+import { currentUserAtom, pageTitlesAtom } from '/imports/state';
 import { parseTitle } from '/imports/api/_utils/shared';
 import { allLangs, rememberLang } from '/imports/startup/i18n';
 
@@ -55,6 +56,7 @@ function LanguageSwitch() {
 export function Footer({ site }: FooterProps) {
   const prefix = useLocationPrefix();
   const pageTitles = useAtomValue(pageTitlesAtom);
+  const currentUser = useAtomValue(currentUserAtom);
   const [tc] = useTranslation('common');
 
   if (!site || !site.settings) {
@@ -78,8 +80,15 @@ export function Footer({ site }: FooterProps) {
         <div className="site-footer-text">
           <p className="site-footer-name">{settings.name}</p>
 
-          {/* The tools right under the name: about, feedback, language */}
+          {/* The tools right under the name: login (when logged out),
+              about, feedback, language */}
           <div className="site-footer-tools">
+            {!currentUser && (
+              <Link className="site-footer-pill is-primary" to="/login">
+                <LogInIcon width={16} height={16} />
+                {tc('menu.guest.login')}
+              </Link>
+            )}
             {aboutPage && (
               <Link
                 className="site-footer-pill"
