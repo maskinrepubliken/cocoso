@@ -34,6 +34,12 @@ const RULES = [
     limit: 30,
     intervalMs: 60 * 1000,
   },
+  // The header search fires as people type (debounced in the browser).
+  {
+    methods: ['searchSite'],
+    limit: 120,
+    intervalMs: 60 * 1000,
+  },
   // Login attempts (Meteor's built-in `login` method).
   {
     methods: ['login'],

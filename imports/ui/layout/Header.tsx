@@ -8,6 +8,7 @@ import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { parseTitle } from '/imports/api/_utils/shared';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import LocationSwitcher from './LocationSwitcher';
+import SiteSearch from './SiteSearch';
 import UserPopup from './UserPopup';
 
 const isClient = Meteor?.isClient;
@@ -203,7 +204,8 @@ export interface HeaderProps {
 }
 
 // The site header: one 56px row with the brand/location pill on the left,
-// the menu as a floating pill in the middle and the account on the right.
+// the menu as a floating pill in the middle and the search box and the
+// account on the right.
 // Below 960px the menu moves to a chip row under the bar. The bar is
 // transparent at the top of the page and gains a blurred backdrop once the
 // page scrolls.
@@ -248,6 +250,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         />
 
         <div className="site-header-right">
+          <SiteSearch site={site} />
           <UserPopup site={site} />
         </div>
       </div>

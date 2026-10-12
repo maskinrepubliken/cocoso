@@ -521,3 +521,16 @@ eventKinds:
     label: Etkinlik türü
     helper: Kartta bir etiket olarak gösterilir; ziyaretçiler listeyi buna göre süzebilir.
     none: Belirli bir tür yok
+search:
+  open: Ara
+  placeholder: Sitede ara
+  clear: Aramayı temizle
+  searching: Aranıyor…
+  noResults: "“{{query}}” için sonuç bulunamadı"
+  kinds:
+    activities: Etkinlikler
+    groups: Gruplar
+    resources: Mekânlar
+    works: Talepler
+    info: Bilgi
+    people: Kişiler

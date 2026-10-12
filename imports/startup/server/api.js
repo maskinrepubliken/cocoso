@@ -55,3 +55,6 @@ import '../../api/newsletters/newsletter.methods';
 
 import '../../api/composablepages/composablepage';
 import '../../api/composablepages/composablepage.methods';
+
+// Site-wide search (the box in the header)
+import '../../api/search/search.methods';
