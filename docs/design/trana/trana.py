@@ -176,8 +176,16 @@ SPINE = [
     ((0.79, 0, 1.335), 0.045),
 ]
 
-HEAD = Vector((0.66, 0, 1.26))
-BEAK_DIR = Vector((math.cos(math.radians(32)), 0, math.sin(math.radians(32))))
+# Turn the head towards the camera (which sits on the -Y side): the top of
+# the neck and the head pivot around the last straight neck point.
+HEAD_YAW = Matrix.Rotation(math.radians(-28), 3, "Z")
+_PIVOT = Vector(SPINE[11][0])
+for _i in range(11, len(SPINE)):
+    _p = Vector(SPINE[_i][0])
+    SPINE[_i] = (tuple(_PIVOT + HEAD_YAW @ (_p - _PIVOT)), SPINE[_i][1])
+
+HEAD = _PIVOT + HEAD_YAW @ (Vector((0.66, 0, 1.26)) - _PIVOT)
+BEAK_DIR = HEAD_YAW @ Vector((math.cos(math.radians(32)), 0, math.sin(math.radians(32))))
 
 COL_BODY = hexcol("#C6BDAE")
 COL_BODY_LIGHT = hexcol("#DED6CA")
@@ -227,14 +235,15 @@ def body_color(p, normal):
     col = mix(col, COL_BLACK, black)
 
     # White stripe from behind the eye down the nape
-    behind = smoothstep(0.15, 0.55, -d.x - d.z * 0.35)
+    dl = HEAD_YAW.inverted() @ d                     # head-local direction
+    behind = smoothstep(0.15, 0.55, -dl.x - dl.z * 0.35)
     band = smoothstep(0.88, 0.96, q.z) * smoothstep(1.30, 1.22, q.z)
     stripe = black * behind * band * smoothstep(0.7, 0.35, abs(d.z))
     col = mix(col, COL_WHITE, stripe)
 
     # Red crown on top of the head
     local = p - HEAD
-    crown = smoothstep(0.14, 0.095, (local - Vector((0.02, 0, 0.0))).length) \
+    crown = smoothstep(0.14, 0.095, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
         * smoothstep(0.35, 0.65, d.z) * smoothstep(1.28, 1.31, p.z)
     col = mix(col, COL_RED, crown)
     return col
@@ -263,7 +272,7 @@ def build_beak():
     bm.free()
     shade_smooth(mesh)
     obj = new_object("Beak", mesh)
-    base = Vector((0.74, 0, 1.305))
+    base = _PIVOT + HEAD_YAW @ (Vector((0.74, 0, 1.305)) - _PIVOT)
     centre = base + BEAK_DIR * 0.15
     obj.matrix_world = Matrix.Translation(centre) @ \
         BEAK_DIR.to_track_quat("Z", "Y").to_matrix().to_4x4()
@@ -286,7 +295,7 @@ def build_eyes():
         bm.free()
         shade_smooth(mesh)
         obj = new_object("Eye", mesh)
-        obj.location = HEAD + Vector((0.04, side * 0.094, 0.014))
+        obj.location = HEAD + HEAD_YAW @ Vector((0.04, side * 0.094, 0.014))
         obj.data.materials.append(mat)
         objs.append(obj)
     return objs
@@ -412,10 +421,11 @@ def body_section(x):
         return pts[-1][1], pts[-1][2]
     if x <= pts[0][0]:
         d = pts[0][0] - x
-        return pts[0][1] - 0.10 * d, pts[0][2] * max(0.35, 1.0 - 0.9 * d)
+        return pts[0][1] - 0.10 * d, pts[0][2] * max(0.45, 1.0 - 0.7 * d)
     for (x0, z0, r0), (x1, z1, r1) in zip(pts, pts[1:]):
         if x0 <= x <= x1:
             t = (x - x0) / (x1 - x0)
+            t = t * t * (3 - 2 * t)          # smooth, no creases at the points
             return z0 + (z1 - z0) * t, r0 + (r1 - r0) * t
     return pts[0][1], pts[0][2]
 
@@ -428,26 +438,26 @@ def build_folded_wings():
                         subsurface=0.03)
     objs = []
     n_s, n_u, fingers = 90, 16, 5
-    x_front, length = 0.27, 1.22
+    x_front, length = 0.27, 1.34
     for side in (1, -1):
         verts, faces, weights, colors = [], [], [], []
         for i in range(n_s + 1):
             s = i / n_s
             x = x_front - length * s
             zc, r = body_section(x)
-            r += 0.045
+            r += 0.045 + 0.05 * smoothstep(0.25, 0.85, s)     # fuller, lifting off
             rear = smoothstep(0.55, 1.0, s)
             # angular extent down the flank: wide at the front, narrowing
             # towards the tip, scalloped along the lower rear edge
-            top = math.radians(30 - 18 * smoothstep(0.0, 0.22, s) + 14 * rear)
-            extent = math.radians(118) * (1 - 0.40 * smoothstep(0.35, 1.0, s))
+            top = math.radians(24 - 12 * smoothstep(0.0, 0.22, s) - 10 * smoothstep(0.3, 0.9, s))
+            extent = math.radians(118) * (1 - 0.30 * smoothstep(0.35, 1.0, s))
             extent *= 1.0 - 0.5 * max(0.0, 1.0 - s / 0.10) ** 2   # rounded shoulder
             phase = ((s - 0.76) / 0.24) * fingers
             tri = abs((phase % 1.0) * 2 - 1)
             notch = smoothstep(0.0, 1.0, 1 - tri) * 0.30 * smoothstep(0.78, 0.86, s)
             extent *= 1.0 - notch
-            extent *= 0.25 + 0.75 * smoothstep(1.0, 0.985, s)
-            droop = 0.70 * max(0.0, s - 0.70) ** 2
+            extent *= 0.35 + 0.65 * smoothstep(1.0, 0.985, s)
+            droop = 1.9 * max(0.0, s - 0.60) ** 1.7
             for j in range(n_u + 1):
                 u = j / n_u
                 th = top + extent * u
@@ -455,7 +465,7 @@ def build_folded_wings():
                 z = zc + r * math.cos(th) - droop
                 verts.append(Vector((x, y, z)))
                 weights.append((1 - s) ** 1.2 * (0.4 + 0.6 * (1 - u)))
-                black = smoothstep(0.78, 0.90, s) + smoothstep(0.62, 0.80, s) * smoothstep(0.55, 0.95, u)
+                black = smoothstep(0.62, 0.76, s) + smoothstep(0.50, 0.66, s) * smoothstep(0.5, 0.95, u)
                 c = mix(mix(COL_BODY, COL_BODY_DARK, 0.35 + 0.5 * u), COL_FEATHER, min(1.0, black))
                 colors.append(c)
         for i in range(n_s):
@@ -463,7 +473,7 @@ def build_folded_wings():
                 a = i * (n_u + 1) + j
                 faces.append((a, a + 1, a + n_u + 2, a + n_u + 1))
         obj = mesh_object("Wing%s" % ("L" if side > 0 else "R"), verts, faces,
-                          weights, colors, thickness=0.075, min_thick=0.3)
+                          weights, colors, thickness=0.10, min_thick=0.3)
         obj.data.materials.append(mat)
         objs.append(obj)
     return objs
