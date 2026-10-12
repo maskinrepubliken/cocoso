@@ -248,7 +248,7 @@ locations:
     seeAll: Visa alla
     nothingYet: Inget här än. Bli först att lägga till något.
   grid:
-    title: Välj din ort
+    title: Vad händer på din ort?
     intro: Varje ort har en egen sida med det som händer just där.
   form:
     label: Ort
@@ -421,8 +421,6 @@ home:
   hero:
     welcome: Välkommen till
     tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
-    seasonIn: '{{ season }} i {{ place }}'
-    thanks: Tack till de {{ count }} arrangörer som fyller den.
 
 # Förfrågningar (works shown as requests between neighbours)
 requests:

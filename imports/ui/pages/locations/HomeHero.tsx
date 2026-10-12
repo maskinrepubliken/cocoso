@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { seasonAtom, siteAtom } from '/imports/state';
-import { call } from '/imports/api/_utils/shared';
 import type { Season } from '/imports/api/_utils/season';
 import ThreeDIcon, { type ThreeDIconName } from '/imports/ui/generic/ThreeDIcon';
 
@@ -11,8 +10,7 @@ interface HomeHeroProps {
   siteDoc?: any;
 }
 
-// Four icons that belong to the season; the first is also the season
-// badge's icon.
+// Four icons that belong to the season.
 export const seasonIcons: Record<Season, ThreeDIconName[]> = {
   var: ['sun', 'flag', 'music', 'camera'],
   sommar: ['sun', 'travel', 'trophy', 'music'],
@@ -30,13 +28,6 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
   const site = useAtomValue(siteAtom) || siteDoc;
   const season = useAtomValue(seasonAtom);
   const [tc] = useTranslation('common');
-  const [organizerCount, setOrganizerCount] = useState<number | null>(null);
-
-  useEffect(() => {
-    call<number>('getOrganizerCount')
-      .then((count) => setOrganizerCount(count))
-      .catch(() => setOrganizerCount(null));
-  }, []);
 
   const settings = site?.settings;
   if (!settings?.name) {
@@ -45,24 +36,10 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
 
   const icons = seasonIcons[season] || seasonIcons.host;
 
-  // "Tranemo Evenemangskalender (BETA)" → the name, plus "BETA" as a small
-  // label beside it rather than part of the big title.
-  const match = settings.name.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-  const title = match ? match[1] : settings.name;
-  const label = match ? match[2] : null;
-  const place = settings.shortName || settings.name;
 
   return (
     <section className="home-hero vav">
       <div className="home-hero-inner">
-        <span className="season-badge">
-          <ThreeDIcon name={icons[0]} size={26} />
-          {tc('home.hero.seasonIn', {
-            season: tc(`seasons.${season}`),
-            place,
-          })}
-        </span>
-
         <div className="home-hero-icons" aria-hidden="true">
           {icons.map((name, index) => (
             <ThreeDIcon
@@ -76,20 +53,9 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
 
         <div className="home-hero-text">
           <span className="home-hero-eyebrow">{tc('home.hero.welcome')}</span>
-          <h1 className="home-hero-title">
-            {title}
-            {label && <span className="home-hero-flag">{label}</span>}
-          </h1>
+          <h1 className="home-hero-title">{settings.name}</h1>
           <p className="home-hero-tagline">
             {settings.tagline || tc('home.hero.tagline')}
-            {organizerCount !== null && organizerCount > 0 && (
-              <>
-                {' '}
-                <span className="home-hero-thanks">
-                  {tc('home.hero.thanks', { count: organizerCount })}
-                </span>
-              </>
-            )}
           </p>
         </div>
       </div>
