@@ -17,8 +17,8 @@ import EntryHero, {
   EntryMeta,
   EntryPage,
   EntryTopBar,
+  FramedPicture,
   Panel,
-  RoundPicture,
   SectionHead,
   plainText,
 } from './EntryHero';
@@ -40,8 +40,8 @@ export interface GroupHybridProps {
   siteDoc: Site;
 }
 
-// A förening's page: the card with its picture, what it is and who is in
-// it, then its meetings and documents.
+// A förening's page: the card with its picture, framed like a place's, what
+// it is and who is in it, then its meetings and documents.
 export default function GroupHybrid({
   group,
   documents,
@@ -101,7 +101,7 @@ export default function GroupHybrid({
           ) : null
         }
         picture={
-          <RoundPicture
+          <FramedPicture
             alt={group.title}
             seed={group._id}
             src={group.imageUrl}
