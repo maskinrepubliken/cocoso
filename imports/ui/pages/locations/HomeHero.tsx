@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { locationsAtom, seasonAtom, siteAtom } from '/imports/state';
+import { seasonAtom, siteAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
 import type { Season } from '/imports/api/_utils/season';
 import ThreeDIcon, { type ThreeDIconName } from '/imports/ui/generic/ThreeDIcon';
-import { LocationCards } from './LocationsGrid';
 
 interface HomeHeroProps {
   siteDoc?: any;
@@ -24,12 +23,11 @@ export const seasonIcons: Record<Season, ThreeDIconName[]> = {
 // The welcome band at the top of the start page. The header above it is
 // deliberately compact, so this is where a first-time visitor is told where
 // they have arrived: the site's name, one line about what it is, and the
-// municipality's places as the way in. Woven texture and two seasonal glows
-// behind, a cluster of seasonal 3D icons to the right. Rendered only at the
-// root.
+// what it is for. Woven texture and two seasonal glows behind, a cluster of
+// seasonal 3D icons to the right. Rendered only at the root; the places
+// come further down the page.
 export default function HomeHero({ siteDoc }: HomeHeroProps) {
   const site = useAtomValue(siteAtom) || siteDoc;
-  const locations = useAtomValue(locationsAtom);
   const season = useAtomValue(seasonAtom);
   const [tc] = useTranslation('common');
   const [organizerCount, setOrganizerCount] = useState<number | null>(null);
@@ -45,7 +43,6 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
     return null;
   }
 
-  const hasLocations = locations && locations.length > 0;
   const icons = seasonIcons[season] || seasonIcons.host;
 
   // "Tranemo Evenemangskalender (BETA)" → the name, plus "BETA" as a small
@@ -95,15 +92,6 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
             )}
           </p>
         </div>
-
-        {hasLocations && (
-          <div className="home-hero-places">
-            <span className="home-hero-label">
-              {tc('locations.grid.title')}
-            </span>
-            <LocationCards locations={locations} />
-          </div>
-        )}
       </div>
     </section>
   );

@@ -252,6 +252,7 @@ locations:
     nothingYet: Nothing here yet
   grid:
     title: Choose your place
+    intro: Each place has a page of its own with what happens right there.
   form:
     label: Place
     helperResource: The village or place where this resource is. Activities held here follow it automatically.

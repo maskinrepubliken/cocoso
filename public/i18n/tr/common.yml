@@ -249,6 +249,7 @@ locations:
     nothingYet: Henüz bir şey yok
   grid:
     title: Yerinizi seçin
+    intro: Her yerin tam orada olup bitenleri gösteren kendi sayfası var.
   form:
     label: Yer
     helperResource: Bu kaynağın bulunduğu köy veya yer. Burada yapılan etkinlikler otomatik olarak onu izler.

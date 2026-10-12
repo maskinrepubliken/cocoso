@@ -249,6 +249,7 @@ locations:
     nothingYet: Inget här än. Bli först att lägga till något.
   grid:
     title: Välj din ort
+    intro: Varje ort har en egen sida med det som händer just där.
   form:
     label: Ort
     helperResource: Orten eller platsen där resursen finns. Aktiviteter som hålls här följer den automatiskt.
