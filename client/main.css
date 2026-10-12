@@ -3220,12 +3220,56 @@ body {
 /* === Event kind chips ===
    Under the events heading: one chip per kind that has an upcoming event,
    a soft 3D icon and the name, green when chosen. Swipes on phones. */
+/* === Segmented switch ===
+   Two or three choices in one pill, the chosen one filled: Idag/Imorgon
+   on the start page, Kommande/Tidigare on the events page. */
+.seg {
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.7);
+}
+
+.seg-button {
+  padding: 0.35rem 0.95rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cocoso-colors-theme-800);
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.seg-button.is-active {
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
+}
+
+.seg-button:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 2px;
+}
+
+/* The events page's toolbar: kinds left, the switch right */
+.events-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 1.25rem;
+}
+
+/* The kind chips: drawn on the floor with a hairline, square-ish corners,
+   so they read as filters and not as another header pill. */
 .kind-chips {
   display: flex;
   gap: 8px;
-  justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 1.25rem;
+  min-width: 0;
 }
 
 .kind-chip {
@@ -3237,16 +3281,16 @@ body {
   gap: 6px;
   height: 40px;
   padding: 0 14px 0 6px;
-  border-radius: 999px;
-  background: var(--cocoso-papper);
-  box-shadow: var(--cocoso-skugga);
+  border: 1.5px solid var(--cocoso-linje);
+  border-radius: var(--cocoso-radius-falt);
+  background: transparent;
   color: var(--cocoso-mylla);
   cursor: pointer;
   font-family: var(--cocoso-font-ui);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .kind-chip:not(:has(.threed-icon)) {
@@ -3254,7 +3298,8 @@ body {
 }
 
 .kind-chip:hover {
-  transform: translateY(-1px);
+  background: var(--cocoso-papper);
+  border-color: var(--cocoso-colors-theme-300);
 }
 
 .kind-chip:focus-visible {
@@ -3264,11 +3309,20 @@ body {
 
 .kind-chip.is-active {
   background: var(--cocoso-colors-theme-700);
+  border-color: var(--cocoso-colors-theme-700);
   color: #fff;
 }
 
 @media (max-width: 599px) {
+  /* Phone: the switch on its own row, then the chips scroll */
+  .events-toolbar {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
   .kind-chips {
+    width: 100%;
     flex-wrap: nowrap;
     justify-content: flex-start;
     /* .page-wrap already carries the gutter as padding; the row scrolls

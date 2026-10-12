@@ -99,7 +99,6 @@
   "imports/ui/layout/WrapperHybrid.tsx | TS2339 | Property 'theme' does not exist on type 'Site'.": 2,
   "imports/ui/layout/WrapperHybrid.tsx | TS2345 | Argument of type '{ memberships: Document[]; _id: string; username?: string | undefined; emails?: Meteor.UserEmail[] | undefined; createdAt?: Date | undefined; profile?: Meteor.UserProfile; services?: Meteor.UserServices; }' is not assignable to parameter of type 'SetStateAction<User | null>'.": 1,
   "imports/ui/layout/WrapperHybrid.tsx | TS2769 | No overload matches this call.": 1,
-  "imports/ui/listing/ActivitiesHybrid.tsx | TS2322 | Type '{ key: string; title: Element; onClick: () => void; }[]' is not assignable to type 'TabType[]'.": 1,
   "imports/ui/listing/NewGridThumb.tsx | TS1232 | An import declaration can only be used at the top level of a namespace or module.": 1,
   "imports/ui/listing/NewGridThumb.tsx | TS18048 | 'index' is possibly 'undefined'.": 1,
   "imports/ui/listing/NewGridThumb.tsx | TS2322 | Type '{ children: string | undefined; className: string; truncated: true; mb: string; mt: string; css: { fontSize: \"1.25rem\"; overflowWrap: \"anywhere\"; }; }' is not assignable to type 'IntrinsicAttributes & HeadingProps'.": 1,
