@@ -536,3 +536,19 @@ search:
     works: Requests
     info: Info
     people: People
+
+# The entry pages (group, place, request); in common because SSR only
+# loads common
+entry:
+  group: Association
+  place: Place
+  meetings: Meetings
+  members_one: '{{ count }} member'
+  members_other: '{{ count }} members'
+  capacity: 'Room for {{ count }}'
+  combo: Made up of several places
+  comboParts: Includes
+  pictures: Pictures
+  postedBy: 'Posted by {{ name }}'
+  contact: Contact
+  seeProfile: 'Go to {{ name }}'

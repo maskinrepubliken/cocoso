@@ -533,3 +533,19 @@ search:
     works: Förfrågningar
     info: Info
     people: Arrangörer
+
+# The entry pages (förening, plats, förfrågan); in common because SSR only
+# loads common
+entry:
+  group: Förening
+  place: Plats
+  meetings: Träffar
+  members_one: '{{ count }} medlem'
+  members_other: '{{ count }} medlemmar'
+  capacity: 'Plats för {{ count }}'
+  combo: Består av flera platser
+  comboParts: Ingår
+  pictures: Bilder
+  postedBy: 'Upplagd av {{ name }}'
+  contact: Kontakt
+  seeProfile: 'Till {{ name }}'

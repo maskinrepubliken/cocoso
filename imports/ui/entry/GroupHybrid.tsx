@@ -1,17 +1,27 @@
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import React from 'react';
-import HTMLReactParser from 'html-react-parser';
-import DOMPurify from 'isomorphic-dompurify';
-import { Box } from '/imports/ui/core';
+import UsersIcon from 'lucide-react/dist/esm/icons/users';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import LockIcon from 'lucide-react/dist/esm/icons/lock';
+
 import GroupDocuments from '../generic/Documents';
 import GroupMembers from '/imports/ui/pages/groups/components/GroupMembers';
 import type { Document, Site } from '/imports/ui/types';
-
-import TablyCentered from './TablyCentered';
-import ActionDates from './ActionDates';
-import { DateOccurrence } from './ActionDates';
-import { publicUrl } from '/imports/api/_utils/shared';
 import { useLocationTag } from '/imports/ui/utils/useLocation';
+
+import ActionDates, { DateOccurrence } from './ActionDates';
+import EntryHero, {
+  Actions,
+  Chip,
+  EntryColumn,
+  EntryMeta,
+  EntryPage,
+  EntryTopBar,
+  Panel,
+  RoundPicture,
+  SectionHead,
+  plainText,
+} from './EntryHero';
 
 interface Group {
   _id: string;
@@ -21,6 +31,7 @@ interface Group {
   imageUrl?: string;
   isPrivate?: boolean;
   meetings?: DateOccurrence[];
+  members?: any[];
 }
 
 export interface GroupHybridProps {
@@ -29,75 +40,106 @@ export interface GroupHybridProps {
   siteDoc: Site;
 }
 
+// A förening's page: the card with its picture, what it is and who is in
+// it, then its meetings and documents.
 export default function GroupHybrid({
   group,
   documents,
   siteDoc,
 }: GroupHybridProps) {
+  const [tc] = useTranslation('common');
   const locationName = useLocationTag(group as any);
   if (!group) {
     return null;
   }
 
-  const tabs = [
-    {
-      title: <Trans i18nKey="common:labels.info">Info</Trans>,
-      content: (
-        <Box
-          className="text-content"
-          p="6"
-          css={{
-            backgroundColor: 'var(--cocoso-papper)',
-            borderRadius: 'var(--cocoso-radius-kort)',
-            boxShadow: 'var(--cocoso-skugga)',
-          }}
-        >
-          {group?.description &&
-            HTMLReactParser(DOMPurify.sanitize(group?.description))}
-        </Box>
-      ),
-      path: 'info',
-    },
-  ];
-
-  if (documents && documents.length > 0) {
-    tabs.push({
-      title: <Trans i18nKey="common:documents.label">Documents</Trans>,
-      content: <GroupDocuments documents={documents} />,
-      path: 'documents',
-    });
-  }
-
   const groupsInMenu = siteDoc.settings?.menu.find(
     (item: any) => item.name === 'groups'
   );
-  const tags: any[] = [];
-  if (locationName) {
-    tags.push(locationName);
-  }
-  if (group.isPrivate) {
-    tags.push(<Trans i18nKey="common:labels.private">Private</Trans>);
-  }
-
-  const url = publicUrl(`/groups/${group._id}`);
-
-  const groupDatesParsed = {
-    ...group,
-    datesAndTimes: group.meetings,
-  };
+  const memberCount = group.members?.length || 0;
+  const meetings = { ...group, datesAndTimes: group.meetings };
+  const hasMeetings = Boolean(group.meetings?.length);
 
   return (
-    <TablyCentered
-      dates={<ActionDates activity={groupDatesParsed} />}
-      action={<GroupMembers group={group} />}
-      backLink={{ value: '/groups', label: groupsInMenu?.label }}
-      images={[group.imageUrl]}
-      placeholderSeed={group._id}
-      subTitle={group.readingMaterial}
-      tabs={tabs}
-      tags={tags}
-      title={group.title}
-      url={url}
-    />
+    <EntryPage>
+      <EntryMeta
+        description={group.readingMaterial || plainText(group.description)}
+        image={group.imageUrl}
+        path={`/groups/${group._id}`}
+        title={group.title}
+      />
+
+      <EntryTopBar
+        backLink={{ value: '/groups', label: groupsInMenu?.label }}
+      />
+
+      <EntryHero
+        chips={
+          <>
+            <Chip accent>{tc('entry.group')}</Chip>
+            {locationName && (
+              <Chip>
+                <MapPinIcon aria-hidden />
+                {locationName}
+              </Chip>
+            )}
+            {group.isPrivate && (
+              <Chip>
+                <LockIcon aria-hidden />
+                <Trans i18nKey="common:labels.private">Private</Trans>
+              </Chip>
+            )}
+          </>
+        }
+        html={group.description}
+        meta={
+          memberCount > 0 ? (
+            <span>
+              <UsersIcon aria-hidden />
+              {tc('entry.members', { count: memberCount })}
+            </span>
+          ) : null
+        }
+        picture={
+          <RoundPicture
+            alt={group.title}
+            seed={group._id}
+            src={group.imageUrl}
+          />
+        }
+        subtitle={group.readingMaterial}
+        title={group.title}
+      >
+        {memberCount > 0 && (
+          <Actions css={{ marginLeft: '-1rem' }}>
+            <GroupMembers group={group} />
+          </Actions>
+        )}
+      </EntryHero>
+
+      {hasMeetings && (
+        <EntryColumn>
+          <SectionHead>
+            <h2>{tc('entry.meetings')}</h2>
+          </SectionHead>
+          <Panel>
+            <ActionDates activity={meetings} />
+          </Panel>
+        </EntryColumn>
+      )}
+
+      {documents && documents.length > 0 && (
+        <EntryColumn>
+          <SectionHead>
+            <h2>
+              <Trans i18nKey="common:documents.label">Documents</Trans>
+            </h2>
+          </SectionHead>
+          <Panel>
+            <GroupDocuments documents={documents} />
+          </Panel>
+        </EntryColumn>
+      )}
+    </EntryPage>
   );
 }

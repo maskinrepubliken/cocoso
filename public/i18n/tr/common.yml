@@ -533,3 +533,19 @@ search:
     works: Talepler
     info: Bilgi
     people: Kişiler
+
+# Giriş sayfaları (dernek, yer, talep); SSR yalnızca common yüklediği için
+# common içinde
+entry:
+  group: Dernek
+  place: Yer
+  meetings: Buluşmalar
+  members_one: '{{ count }} üye'
+  members_other: '{{ count }} üye'
+  capacity: '{{ count }} kişilik'
+  combo: Birkaç yerden oluşur
+  comboParts: İçerir
+  pictures: Resimler
+  postedBy: '{{ name }} tarafından paylaşıldı'
+  contact: İletişim
+  seeProfile: '{{ name }} sayfasına git'

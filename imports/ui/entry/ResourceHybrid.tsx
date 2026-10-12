@@ -1,16 +1,28 @@
 import { Link } from 'react-router';
 import React from 'react';
-import { Trans } from 'react-i18next';
-import HTMLReactParser from 'html-react-parser';
-import DOMPurify from 'isomorphic-dompurify';
+import { Trans, useTranslation } from 'react-i18next';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import UsersIcon from 'lucide-react/dist/esm/icons/users';
+import CalendarCheckIcon from 'lucide-react/dist/esm/icons/calendar-check';
+import LayersIcon from 'lucide-react/dist/esm/icons/layers';
 
-import { Box, Flex, Text } from '/imports/ui/core';
+import { styled } from '/stitches.config';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
 import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
+import { useLocationName, useLocationPrefix } from '/imports/ui/utils/useLocation';
 
-import TablyCentered from './TablyCentered';
-import { publicUrl } from '/imports/api/_utils/shared';
-import { useLocationName } from '/imports/ui/utils/useLocation';
+import EntryHero, {
+  Chip,
+  EntryColumn,
+  EntryMeta,
+  EntryPage,
+  EntryTopBar,
+  FramedPicture,
+  MorePictures,
+  Panel,
+  SectionHead,
+  plainText,
+} from './EntryHero';
 
 interface Resource {
   _id: string;
@@ -21,6 +33,7 @@ interface Resource {
   capacity?: number;
   isBookable?: boolean;
   isCombo?: boolean;
+  locationId?: string;
   resourcesForCombo?: ResourceForCombo[];
 }
 
@@ -30,114 +43,138 @@ export interface ResourceHybridProps {
   siteDoc: Site;
 }
 
+const Parts = styled('div', {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.5rem',
+  '& a': {
+    border: '1.5px solid var(--cocoso-colors-theme-800)',
+    borderRadius: '999px',
+    color: 'var(--cocoso-colors-theme-800)',
+    fontWeight: 600,
+    padding: '0.4rem 0.9rem',
+    textDecoration: 'none',
+  },
+  '& a:hover': {
+    backgroundColor: 'var(--cocoso-colors-theme-800)',
+    color: 'white',
+  },
+});
+
+// A place's page: the card with its picture and what it is, then what it
+// is made of, more pictures and documents.
 export default function ResourceHybrid({
   documents,
   resource,
   siteDoc,
 }: ResourceHybridProps) {
-  const locationName = useLocationName((resource as any)?.locationId);
+  const [tc] = useTranslation('common');
+  const prefix = useLocationPrefix();
+  const locationName = useLocationName(resource?.locationId);
   if (!resource) {
     return null;
   }
 
-  const tabs = [
-    {
-      title: <Trans i18nKey="common:labels.info">Info</Trans>,
-      content: (
-        <Box
-          className="text-content"
-          p="6"
-          css={{
-            backgroundColor: 'var(--cocoso-papper)',
-            borderRadius: 'var(--cocoso-radius-kort)',
-            boxShadow: 'var(--cocoso-skugga)',
-          }}
-        >
-          {resource?.description &&
-            HTMLReactParser(DOMPurify.sanitize(resource?.description))}
-        </Box>
-      ),
-      path: 'info',
-    },
-  ];
-
-  if (resource.isCombo) {
-    tabs.push({
-      title: <Trans i18nKey="resources:labels.combo">Combo</Trans>,
-      content: (
-        <Flex direction="column" gap="2" pt="6">
-          {resource.resourcesForCombo.map((res) => (
-            <Link key={res._id} to={`/resources/${res._id}/info`}>
-              <Box
-                css={{
-                  '&:hover': {
-                    backgroundColor: 'white',
-                  },
-                }}
-                px="4"
-                py="2"
-              >
-                <Text fontSize="lg">{res.label}</Text>
-              </Box>
-            </Link>
-          ))}
-        </Flex>
-      ),
-      path: 'combo',
-    });
-  }
-
-  if (documents && documents[0]) {
-    tabs.push({
-      title: <Trans i18nKey="common:documents.label">Documents</Trans>,
-      content: (
-        <Box p="6">
-          <DocumentsField contextType="works" contextId={resource?._id} />
-        </Box>
-      ),
-      path: 'documents',
-    });
-  }
-
-  // if (currentUser && canCreateContent && resource.isBookable) {
-  //   tabs.push({
-  //     title: t('booking.labels.field'),
-  //     content: <BookingsField currentUser={currentUser} selectedResource={resource} />,
-  //     path: 'bookings',
-  //   });
-  // }
-
-  const tags: any[] = [];
-  if (locationName) {
-    tags.push(locationName);
-  }
-  if (resource.isCombo) {
-    tags.push(<Trans i18nKey="resources:cards.isCombo">Combo</Trans>);
-  }
-
-  if (resource.isBookable) {
-    tags.push(<Trans i18nKey="common:labels.bookable">Bookable</Trans>);
-  }
+  const images = (
+    resource.images?.length ? resource.images : [resource.imageUrl]
+  ).filter((img): img is string => Boolean(img));
 
   const resourcesInMenu = siteDoc?.settings?.menu?.find(
     (item) => item.name === 'resources'
   );
-  const backLink = {
-    value: '/resources',
-    label: resourcesInMenu?.label,
-  };
-
-  const url = publicUrl(`/resources/${resource._id}`);
 
   return (
-    <TablyCentered
-      backLink={backLink}
-      images={resource?.images}
-      placeholderSeed={resource?._id}
-      tabs={tabs}
-      tags={tags}
-      title={resource.label}
-      url={url}
-    />
+    <EntryPage>
+      <EntryMeta
+        description={plainText(resource.description)}
+        image={images[0]}
+        path={`/resources/${resource._id}`}
+        title={resource.label}
+      />
+
+      <EntryTopBar
+        backLink={{ value: '/resources', label: resourcesInMenu?.label }}
+      />
+
+      <EntryHero
+        chips={
+          <>
+            <Chip accent>{tc('entry.place')}</Chip>
+            {locationName && (
+              <Chip>
+                <MapPinIcon aria-hidden />
+                {locationName}
+              </Chip>
+            )}
+            {resource.isCombo && (
+              <Chip>
+                <LayersIcon aria-hidden />
+                {tc('entry.combo')}
+              </Chip>
+            )}
+            {resource.isBookable && (
+              <Chip>
+                <CalendarCheckIcon aria-hidden />
+                <Trans i18nKey="common:labels.bookable">Bookable</Trans>
+              </Chip>
+            )}
+          </>
+        }
+        html={resource.description}
+        meta={
+          resource.capacity ? (
+            <span>
+              <UsersIcon aria-hidden />
+              {tc('entry.capacity', { count: resource.capacity })}
+            </span>
+          ) : null
+        }
+        picture={
+          <FramedPicture
+            alt={resource.label}
+            seed={resource._id}
+            src={images[0]}
+          />
+        }
+        title={resource.label}
+      />
+
+      {resource.isCombo && resource.resourcesForCombo?.length ? (
+        <EntryColumn>
+          <SectionHead>
+            <h2>{tc('entry.comboParts')}</h2>
+          </SectionHead>
+          <Parts>
+            {resource.resourcesForCombo.map((part) => (
+              <Link key={part._id} to={`${prefix}/resources/${part._id}`}>
+                {part.label}
+              </Link>
+            ))}
+          </Parts>
+        </EntryColumn>
+      ) : null}
+
+      {images.length > 1 && (
+        <EntryColumn>
+          <SectionHead>
+            <h2>{tc('entry.pictures')}</h2>
+          </SectionHead>
+          <MorePictures alt={resource.label} images={images} />
+        </EntryColumn>
+      )}
+
+      {documents && documents[0] && (
+        <EntryColumn>
+          <SectionHead>
+            <h2>
+              <Trans i18nKey="common:documents.label">Documents</Trans>
+            </h2>
+          </SectionHead>
+          <Panel>
+            <DocumentsField contextType="resources" contextId={resource._id} />
+          </Panel>
+        </EntryColumn>
+      )}
+    </EntryPage>
   );
 }
