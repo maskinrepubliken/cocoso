@@ -4,12 +4,14 @@ import { Trans } from 'react-i18next';
 import BellIcon from 'lucide-react/dist/esm/icons/bell';
 import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
+import LogOutIcon from 'lucide-react/dist/esm/icons/log-out';
 import { useAtomValue } from 'jotai';
 
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
+import LanguageSwitch from './LanguageSwitch';
 import useLogout from './useLogout';
 
 export interface UserThumbProps {
@@ -136,12 +138,17 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
           </Link>
         </MenuItem>
 
+        <div className="site-account-langs">
+          <LanguageSwitch variant="row" />
+        </div>
+
         <MenuItem style={{ padding: 0 }}>
           <button
             type="button"
             className="site-info-menu-link site-account-logout"
             onClick={() => handleLogout()}
           >
+            <LogOutIcon width={16} height={16} />
             <Trans i18nKey="common:actions.logout">Logout</Trans>
           </button>
         </MenuItem>

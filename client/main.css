@@ -2107,7 +2107,23 @@ body {
   font-weight: 700;
 }
 
+/* Language choice inside the account menu: same chips, no pill around */
+.site-account-langs {
+  margin: 4px 0;
+  padding: 6px 10px;
+  border-top: 1px solid var(--cocoso-linje);
+  border-bottom: 1px solid var(--cocoso-linje);
+}
+
+.site-footer-langs.is-row {
+  height: auto;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
 .site-account-logout {
+  gap: 8px;
   border: 0;
   background: none;
   font: inherit;
