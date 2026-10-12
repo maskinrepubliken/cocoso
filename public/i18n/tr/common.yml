@@ -243,6 +243,7 @@ locations:
     nothingYet: Henüz bir şey yok
   grid:
     title: Yerinizi seçin
+    intro: Her yerin tam orada olup bitenleri gösteren kendi sayfası var.
   form:
     label: Yer
     helperResource: Bu kaynağın bulunduğu köy veya yer. Burada yapılan etkinlikler otomatik olarak onu izler.
@@ -520,3 +521,16 @@ eventKinds:
     label: Etkinlik türü
     helper: Kartta bir etiket olarak gösterilir; ziyaretçiler listeyi buna göre süzebilir.
     none: Belirli bir tür yok
+search:
+  open: Ara
+  placeholder: Sitede ara
+  clear: Aramayı temizle
+  searching: Aranıyor…
+  noResults: "“{{query}}” için sonuç bulunamadı"
+  kinds:
+    activities: Etkinlikler
+    groups: Gruplar
+    resources: Mekânlar
+    works: Talepler
+    info: Bilgi
+    people: Kişiler

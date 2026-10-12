@@ -243,6 +243,7 @@ locations:
     nothingYet: Inget här än. Bli först att lägga till något.
   grid:
     title: Välj din ort
+    intro: Varje ort har en egen sida med det som händer just där.
   form:
     label: Ort
     helperResource: Orten eller platsen där resursen finns. Aktiviteter som hålls här följer den automatiskt.
@@ -520,3 +521,16 @@ eventKinds:
     label: Slags evenemang
     helper: Visas som ett chip på kortet, och besökare kan filtrera listan på det.
     none: Inget särskilt slag
+search:
+  open: Sök
+  placeholder: Sök på webbplatsen
+  clear: Rensa sökningen
+  searching: Söker…
+  noResults: Inget hittades för ”{{query}}”
+  kinds:
+    activities: Evenemang
+    groups: Föreningar
+    resources: Platser
+    works: Förfrågningar
+    info: Info
+    people: Arrangörer

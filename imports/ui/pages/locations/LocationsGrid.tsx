@@ -12,13 +12,27 @@ import Stamp from '/imports/ui/generic/Stamp';
 
 interface LocationCardsProps {
   locations: any[];
+  // A first card for the whole municipality, leading to everything at once
+  all?: { name: string; to: string };
 }
 
 // One card per place: its image (or generated shapes) with the name over a
-// dark fade. Used by the start page's hero.
-export function LocationCards({ locations }: LocationCardsProps) {
+// dark fade. Used by the start page and anywhere else that offers the
+// places as a way in.
+export function LocationCards({ locations, all }: LocationCardsProps) {
   return (
     <div className="location-cards">
+      {all && (
+        <Link className="location-card location-card-all" to={all.to}>
+          <PlaceholderImage
+            className="location-card-shapes"
+            seed="hela-kommunen"
+            style={{ left: 0, position: 'absolute', top: 0 }}
+          />
+          <Stamp className="location-card-stamp" name={all.name} size="sm" />
+          <span className="location-card-name">{all.name}</span>
+        </Link>
+      )}
       {locations.map((location, index) => {
         const imageUrl = getImageUrl(location.images?.[0], 'small');
         const world = worldForPlace(location, index);

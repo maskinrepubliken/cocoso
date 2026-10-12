@@ -246,6 +246,7 @@ locations:
     nothingYet: Nothing here yet
   grid:
     title: Choose your place
+    intro: Each place has a page of its own with what happens right there.
   form:
     label: Place
     helperResource: The village or place where this resource is. Activities held here follow it automatically.
@@ -523,3 +524,16 @@ eventKinds:
     label: Kind of event
     helper: Shown as a chip on the card, and visitors can filter the listing by it.
     none: No particular kind
+search:
+  open: Search
+  placeholder: Search the site
+  clear: Clear search
+  searching: Searching…
+  noResults: Nothing found for “{{query}}”
+  kinds:
+    activities: Events
+    groups: Groups
+    resources: Places
+    works: Requests
+    info: Info
+    people: People
