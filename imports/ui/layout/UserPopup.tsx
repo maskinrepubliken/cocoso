@@ -98,7 +98,7 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
       align="end"
       button={<UserThumb notificationsCounter={notificationsCounter} />}
     >
-      <div className="site-info-menu site-account-menu">
+      <div className="site-info-menu">
         <div className="site-account-head">
           <span className="site-account-name">{currentUser.username}</span>
           <span className="site-account-role">
