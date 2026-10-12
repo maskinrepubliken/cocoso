@@ -2,27 +2,33 @@ import { Outlet, useLocation, useParams, useRevalidator } from 'react-router';
 import React, { useEffect, useState } from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
-import LinkIcon from 'lucide-react/dist/esm/icons/link';
 import MailIcon from 'lucide-react/dist/esm/icons/mail';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
 import { styled } from '/stitches.config';
-import { Alert, Box, Button, Center, Flex, Text } from '/imports/ui/core';
-import { publicUrl } from '/imports/api/_utils/shared';
+import { Alert, Box, Center, Flex, Text } from '/imports/ui/core';
 import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import { displayName } from '/imports/ui/listing/UsersHybrid';
 import Tabs from '/imports/ui/core/Tabs';
-import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
-import { getImageUrl, getImageUrlBest } from '/imports/ui/utils/imageHelper';
 import { currentUserAtom, locationsAtom, roleAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
 
-import BackLink from './BackLink';
+import EntryHero, {
+  Actions,
+  Chip,
+  EntryColumn,
+  EntryMeta,
+  EntryPage,
+  EntryTopBar,
+  PillLink,
+  RoundPicture,
+  SectionHead,
+  plainText,
+} from './EntryHero';
 
 interface UserBio {
   bio?: string;
@@ -63,210 +69,11 @@ interface PublicContact {
   website?: string;
 }
 
-const WIDE = '@media (min-width: 760px)';
-
-const Page = styled('div', {
-  boxSizing: 'border-box',
-  margin: '0 auto',
-  maxWidth: '1180px',
-  padding: '0 1rem 3rem',
-  width: '100%',
-});
-
-const TopBar = styled('div', {
-  alignItems: 'center',
-  display: 'flex',
-  justifyContent: 'space-between',
-  marginBottom: '0.5rem',
-});
-
-// The top of the page: the portrait on a band of the site's green, and
-// beside it who they are, what they do and how to reach them.
-const Hero = styled('header', {
-  backgroundColor: 'var(--cocoso-papper)',
-  borderRadius: '20px',
-  boxShadow: 'var(--cocoso-skugga)',
-  display: 'grid',
-  margin: '0 auto 2rem',
-  maxWidth: '980px',
-  overflow: 'hidden',
-  [WIDE]: { gridTemplateColumns: '280px minmax(0, 1fr)' },
-});
-
-const PortraitBand = styled('div', {
-  alignItems: 'center',
-  background:
-    'linear-gradient(160deg, var(--cocoso-colors-theme-100), var(--cocoso-colors-theme-200))',
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '1.75rem 1rem',
-  [WIDE]: { padding: '2rem 1.5rem' },
-});
-
-const Portrait = styled('div', {
-  aspectRatio: '1 / 1',
-  background: 'var(--cocoso-colors-theme-700)',
-  borderRadius: '50%',
-  boxShadow: '0 14px 30px -18px rgba(20, 50, 20, 0.7)',
-  overflow: 'hidden',
-  padding: '5px',
-  width: '160px',
-  [WIDE]: { width: '210px' },
-  '& > *': {
-    borderRadius: '50%',
-    display: 'block',
-    height: '100%',
-    objectFit: 'cover',
-    overflow: 'hidden',
-    width: '100%',
-  },
-});
-
-const About = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.75rem',
-  padding: '1.5rem 1.25rem 1.75rem',
-  [WIDE]: { padding: '2rem 2.25rem 2.25rem' },
-});
-
-const Chips = styled('div', {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.4rem',
-});
-
-const Chip = styled('span', {
-  border: '1px solid currentColor',
-  borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
-  fontSize: '0.78rem',
-  fontWeight: 700,
-  letterSpacing: '0.04em',
-  padding: '0.15rem 0.65rem',
-  variants: {
-    accent: {
-      true: {
-        backgroundColor: 'var(--cocoso-tegel)',
-        borderColor: 'var(--cocoso-tegel)',
-        color: 'white',
-      },
-    },
-  },
-});
-
-const Name = styled('h1', {
-  fontFamily: 'var(--cocoso-font-display)',
-  fontSize: '2rem',
-  fontVariationSettings: '"SOFT" 60',
-  fontWeight: 600,
-  lineHeight: 1.1,
-  margin: 0,
-  [WIDE]: { fontSize: '2.5rem' },
-});
-
-const Count = styled('p', {
-  color: 'var(--cocoso-mylla-soft)',
-  fontSize: '0.95rem',
-  margin: 0,
-});
-
-const BioText = styled('div', {
-  lineHeight: 1.6,
-  maxWidth: '62ch',
-  '& p': { margin: '0 0 0.6rem' },
-  '& p:last-child': { marginBottom: 0 },
-  '& em': { color: 'var(--cocoso-mylla-soft)', fontSize: '0.82rem' },
-});
-
-const Contacts = styled('div', {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.5rem',
-  marginTop: '0.25rem',
-});
-
-const ContactLink = styled('a', {
-  alignItems: 'center',
-  border: '1.5px solid var(--cocoso-colors-theme-800)',
-  borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
-  display: 'inline-flex',
-  fontSize: '0.92rem',
-  fontWeight: 600,
-  gap: '0.45rem',
-  maxWidth: '100%',
-  overflowWrap: 'anywhere',
-  padding: '0.45rem 0.95rem',
-  textDecoration: 'none',
-  transition: 'background-color 0.15s ease, color 0.15s ease',
-  '& svg': { flexShrink: 0, height: '1rem', width: '1rem' },
-  '&:hover': {
-    backgroundColor: 'var(--cocoso-colors-theme-800)',
-    color: 'white',
-  },
-  variants: {
-    primary: {
-      true: {
-        backgroundColor: 'var(--cocoso-colors-theme-800)',
-        color: 'white',
-        '&:hover': { backgroundColor: 'var(--cocoso-colors-theme-900)' },
-      },
-    },
-  },
-});
-
-// The events sit in a column as wide as the card above them.
-const EventsColumn = styled('section', {
-  margin: '0 auto 3rem',
-  maxWidth: '980px',
-});
-
 const EventCards = styled('div', {
   display: 'grid',
   gap: '1rem',
   gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
 });
-
-const EventsHead = styled('div', {
-  alignItems: 'center',
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.5rem 1.5rem',
-  justifyContent: 'space-between',
-  marginBottom: '1rem',
-  '& h2': {
-    fontFamily: 'var(--cocoso-font-display)',
-    fontSize: '1.6rem',
-    fontVariationSettings: '"SOFT" 60',
-    fontWeight: 600,
-    margin: 0,
-  },
-});
-
-function ShareButton() {
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    await navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-  return (
-    <Button
-      leftIcon={<LinkIcon />}
-      size="lg"
-      variant="ghost"
-      css={{ fontWeight: 'normal' }}
-      onClick={copy}
-    >
-      {copied ? (
-        <Trans i18nKey="actions.copied" ns="common" />
-      ) : (
-        <Trans i18nKey="actions.share" ns="common" />
-      )}
-    </Button>
-  );
-}
 
 // The ways to reach them they chose to make public.
 function ContactLinks({ contact }: { contact?: PublicContact | null }) {
@@ -275,25 +82,25 @@ function ContactLinks({ contact }: { contact?: PublicContact | null }) {
     return null;
   }
   return (
-    <Contacts>
+    <Actions>
       {contact.email && (
-        <ContactLink
+        <PillLink
           href={`mailto:${contact.email}`}
           primary
           title={tc('people.email')}
         >
           <MailIcon aria-hidden />
           {contact.email}
-        </ContactLink>
+        </PillLink>
       )}
       {contact.phone && (
-        <ContactLink href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}>
+        <PillLink href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}>
           <PhoneIcon aria-hidden />
           {contact.phone}
-        </ContactLink>
+        </PillLink>
       )}
       {contact.website && (
-        <ContactLink
+        <PillLink
           href={contact.website}
           rel="noopener noreferrer"
           target="_blank"
@@ -301,12 +108,11 @@ function ContactLinks({ contact }: { contact?: PublicContact | null }) {
         >
           <GlobeIcon aria-hidden />
           {contact.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}
-        </ContactLink>
+        </PillLink>
       )}
-    </Contacts>
+    </Actions>
   );
 }
-
 interface Events {
   upcoming: any[];
   past: any[];
@@ -376,11 +182,11 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
   );
 
   return (
-    <EventsColumn>
-      <EventsHead>
+    <EntryColumn>
+      <SectionHead>
         <h2>{tc('people.events')}</h2>
         <Tabs tabs={tabs} index={tabIndex} />
-      </EventsHead>
+      </SectionHead>
 
       {view === 'archived' && (
         <Center mb="4" px="2">
@@ -404,7 +210,7 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
           </Box>
         ))}
       </EventCards>
-    </EventsColumn>
+    </EntryColumn>
   );
 }
 
@@ -474,13 +280,6 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
     Boolean
   ) as string[];
   const upcomingCount = events?.upcoming?.length || 0;
-  const avatar = getImageUrl(user.avatar?.src, 'medium') || user.avatar?.src;
-  const url = publicUrl(`/@${user.username}`);
-  const description = (user.bio || '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  const shareImage = getImageUrlBest(user.avatar?.src);
 
   // Groups and works still have their own pages under the profile.
   const showsSubPage = ['groups', 'works'].some((segment) =>
@@ -488,67 +287,51 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
   );
 
   return (
-    <Page>
-      <Helmet>
-        <title>{name}</title>
-        <meta name="title" content={name} />
-        <meta name="description" content={description} />
-        <meta property="og:title" content={name?.substring(0, 40)} />
-        <meta property="og:url" content={url} />
-        <meta
-          property="og:image"
-          content={shareImage || publicUrl('/images/og-default.jpg')}
-        />
-        <meta
-          property="og:description"
-          content={description.substring(0, 150)}
-        />
-        <meta property="og:type" content="profile" />
-      </Helmet>
+    <EntryPage>
+      <EntryMeta
+        description={plainText(user.bio)}
+        image={user.avatar?.src}
+        path={`/@${user.username}`}
+        title={name}
+        type="profile"
+      />
 
-      <TopBar>
-        <BackLink
-          backLink={
-            people?.isVisible
-              ? { label: people.label, value: '/people' }
-              : undefined
-          }
-        />
-        <ShareButton />
-      </TopBar>
+      <EntryTopBar
+        backLink={
+          people?.isVisible
+            ? { label: people.label, value: '/people' }
+            : undefined
+        }
+      />
 
-      <Hero>
-        <PortraitBand>
-          <Portrait>
-            {avatar ? (
-              <img alt={name} src={avatar} />
-            ) : (
-              <PlaceholderImage seed={user._id || user.username} />
-            )}
-          </Portrait>
-        </PortraitBand>
-
-        <About>
-          {(isOrganizer || keywords.length > 0) && (
-            <Chips>
+      <EntryHero
+        chips={
+          isOrganizer || keywords.length > 0 ? (
+            <>
               {isOrganizer && <Chip accent>{tc('people.organizer')}</Chip>}
               {keywords.map((keyword) => (
                 <Chip key={keyword}>{keyword}</Chip>
               ))}
-            </Chips>
-          )}
-          <Name>{name}</Name>
-          {upcomingCount > 0 && (
-            <Count>{tc('people.upcoming', { count: upcomingCount })}</Count>
-          )}
-          {user.bio && (
-            <BioText className="text-content">
-              {HTMLReactParser(DOMPurify.sanitize(user.bio))}
-            </BioText>
-          )}
-          <ContactLinks contact={user.publicContact} />
-        </About>
-      </Hero>
+            </>
+          ) : null
+        }
+        html={user.bio}
+        meta={
+          upcomingCount > 0 ? (
+            <span>{tc('people.upcoming', { count: upcomingCount })}</span>
+          ) : null
+        }
+        picture={
+          <RoundPicture
+            alt={name}
+            seed={user._id || user.username}
+            src={user.avatar?.src}
+          />
+        }
+        title={name}
+      >
+        <ContactLinks contact={user.publicContact} />
+      </EntryHero>
 
       {showsSubPage ? (
         <Center mb="12">
@@ -559,6 +342,6 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
       ) : (
         <OrganizerEvents events={events} name={name} />
       )}
-    </Page>
+    </EntryPage>
   );
 }
