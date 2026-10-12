@@ -13,6 +13,7 @@ import { parseTitle } from '/imports/api/_utils/shared';
 import { allLangs, rememberLang } from '/imports/startup/i18n';
 
 import FeedbackForm from './FeedbackForm';
+import useLogout from './useLogout';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 export interface FooterProps {
@@ -58,6 +59,7 @@ export function Footer({ site }: FooterProps) {
   const pageTitles = useAtomValue(pageTitlesAtom);
   const currentUser = useAtomValue(currentUserAtom);
   const [tc] = useTranslation('common');
+  const logout = useLogout();
 
   if (!site || !site.settings) {
     return null;
@@ -101,6 +103,23 @@ export function Footer({ site }: FooterProps) {
               </Link>
             )}
           </div>
+
+          {currentUser && (
+            <p className="site-footer-account">
+              <Trans
+                i18nKey="common:footer.signedInAs"
+                values={{ name: currentUser.username }}
+                components={{ me: <Link to="/admin/home" /> }}
+              />{' '}
+              <button
+                type="button"
+                className="site-footer-logout"
+                onClick={logout}
+              >
+                {tc('actions.logout')}
+              </button>
+            </p>
+          )}
 
           {settings.footer ? (
             <div className="site-footer-byline text-content">

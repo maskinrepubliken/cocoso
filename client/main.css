@@ -3498,6 +3498,29 @@ body {
   color: var(--cocoso-colors-theme-800);
 }
 
+/* Logged in: a quiet line under the pills, name linking to one's admin */
+.site-footer-account {
+  margin: 12px 0 0;
+  color: var(--cocoso-mylla-soft);
+  font-size: 13px;
+}
+
+.site-footer-account a {
+  color: var(--cocoso-colors-theme-700);
+  font-weight: 600;
+}
+
+.site-footer-logout {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cocoso-colors-theme-700);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .site-footer-byline {
   margin: 18px 0 0;
   max-width: 52ch;

@@ -459,6 +459,7 @@ seasons:
 footer:
   byline: En tjänst skapad av och för föreningslivet i Tranemo Kommun. Utvecklas av Uddebo Makerspace, Tranemo Kommun och Maskinrepubliken.
   about: Om sidan
+  signedInAs: "Inloggad som <me>{{name}}</me>."
 
 calendarFilter:
   anyResource: Alla platser och lokaler

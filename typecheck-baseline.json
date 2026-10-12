@@ -95,7 +95,6 @@
   "imports/ui/layout/Template.tsx | TS2322 | Type '{ children: string; as: \"h1\"; mb: string; size: \"lg\"; textAlign: string; }' is not assignable to type 'IntrinsicAttributes & HeadingProps'.": 1,
   "imports/ui/layout/UserPopup.tsx | TS2322 | Type '{ children: Element; as: string; }' is not assignable to type 'IntrinsicAttributes & MenuItemProps'.": 2,
   "imports/ui/layout/UserPopup.tsx | TS2339 | Property 'notifications' does not exist on type 'User'.": 1,
-  "imports/ui/layout/UserPopup.tsx | TS2345 | Argument of type 'Element' is not assignable to parameter of type 'string'.": 1,
   "imports/ui/layout/UserPopup.tsx | TS2559 | Type 'User' has no properties in common with type 'UserProfile'.": 1,
   "imports/ui/layout/UserPopup.tsx | TS7006 | Parameter 'item' implicitly has an 'any' type.": 1,
   "imports/ui/layout/WrapperHybrid.tsx | TS2339 | Property 'lang' does not exist on type '{ memberships: Document[]; _id: string; username?: string | undefined; emails?: UserEmail[] | undefined; createdAt?: Date | undefined; profile?: UserProfile | undefined; services?: UserServices | undefined; }'.": 1,

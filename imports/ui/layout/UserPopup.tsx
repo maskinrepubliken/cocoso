@@ -1,13 +1,11 @@
-import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { Trans } from 'react-i18next';
 import BellIcon from 'lucide-react/dist/esm/icons/bell';
 import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 
-import { clearViewAsState } from '/imports/utils/viewAs';
 
 import {
   Badge,
@@ -27,7 +25,7 @@ import {
   roleAtom,
 } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
-import { message } from '/imports/ui/generic/message';
+import useLogout from './useLogout';
 
 interface NotificationLinkItemProps {
   item: any;
@@ -92,9 +90,9 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const siteFromAtom = useAtomValue(siteAtom);
   const site = siteProp || siteFromAtom;
-  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
-  const navigate = useNavigate();
+  const handleLogout = useLogout();
 
   if (!site) {
     return null;
@@ -106,13 +104,6 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
     return null;
   }
 
-  const handleLogout = () => {
-    clearViewAsState();
-    Meteor.logout();
-    setCurrentUser(null);
-    message.info(<Trans i18nKey="accounts:logout.messages.success" />);
-    navigate('/');
-  };
 
   const notifications = currentUser?.notifications;
 

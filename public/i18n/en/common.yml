@@ -462,6 +462,7 @@ seasons:
 footer:
   byline: A service made by and for the associations of Tranemo municipality. Developed by Uddebo Makerspace, Tranemo municipality and Maskinrepubliken.
   about: About this site
+  signedInAs: "Signed in as <me>{{name}}</me>."
 
 calendarFilter:
   anyResource: All places and venues
