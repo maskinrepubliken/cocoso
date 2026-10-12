@@ -1,15 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { useMatches, useParams, useSearchParams } from 'react-router';
+import {
+  Link,
+  useLocation,
+  useMatches,
+  useParams,
+  useSearchParams,
+} from 'react-router';
 import { useTranslation } from 'react-i18next';
 import PenIcon from 'lucide-react/dist/esm/icons/pen-line';
 import { useAtomValue } from 'jotai';
 
 import { parseTitle } from '/imports/api/_utils/shared';
-import { canCreateContentAtom, currentUserAtom, roleAtom } from '/imports/state';
+import {
+  canCreateContentAtom,
+  currentUserAtom,
+  roleAtom,
+} from '/imports/state';
 
 const BLOOM_MS = 900;
 
-type Context = 'activities' | 'groups' | 'resources' | 'works' | 'info';
+type Context =
+  | 'activities'
+  | 'groups'
+  | 'resources'
+  | 'works'
+  | 'info'
+  | 'profile';
 
 // What the page under the header shows, taken from its route's loader data,
 // and whether this visitor may edit it. Mirrors the server's own checks so
@@ -17,11 +33,19 @@ type Context = 'activities' | 'groups' | 'resources' | 'works' | 'info';
 function useEditable(): { context: Context; id: string } | null {
   const matches = useMatches();
   const { pageTitle } = useParams();
+  const { pathname } = useLocation();
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
 
-  if (!currentUser || !canCreateContent) {
+  if (!currentUser) {
+    return null;
+  }
+  // One's own profile page: anyone logged in may edit that.
+  if (pathname.replace(/\/$/, '') === `/@${currentUser.username}`) {
+    return { context: 'profile', id: currentUser._id };
+  }
+  if (!canCreateContent) {
     return null;
   }
   const userId = currentUser._id;
@@ -93,6 +117,26 @@ export default function EditButton() {
 
   if (!editable) {
     return null;
+  }
+
+  // On one's own profile the pen is the filled, green one and leads to the
+  // profile settings; it is the thing to do there.
+  if (editable.context === 'profile') {
+    const label = tc('menu.member.settings');
+    return (
+      <div className={`new-button-wrapper new-button-${animState}`}>
+        <Link
+          className="site-new-button"
+          to="/admin/my-profile"
+          aria-label={label}
+          title={label}
+        >
+          <span className="site-new" aria-hidden>
+            <PenIcon width={18} height={18} />
+          </span>
+        </Link>
+      </div>
+    );
   }
 
   const label = tc(`labels.update.${editable.context}`, tc('actions.update'));

@@ -138,6 +138,14 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
           </Link>
         </MenuItem>
 
+        <MenuItem style={{ padding: 0 }}>
+          <Link className="site-info-menu-link" to="/admin/my-profile">
+            <Trans i18nKey="common:menu.member.settings">
+              Profile Settings
+            </Trans>
+          </Link>
+        </MenuItem>
+
         <div className="site-account-langs">
           <LanguageSwitch variant="row" />
         </div>
