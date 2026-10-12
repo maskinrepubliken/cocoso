@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router';
+import { useLocation, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import { useAtomValue } from 'jotai';
 
-import { parseTitle } from '/imports/api/_utils/shared';
-import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { canCreateContentAtom, roleAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
@@ -21,13 +19,12 @@ const SUBTLE_MS = 900;
 
 export interface NewButtonProps {
   site: any;
-  pageTitles?: any[];
 }
 
-// The plus in the header, next to the search, for those who may create
-// content. On a listing it opens that listing's form; elsewhere it offers
-// the sections one can create in.
-export default function NewButton({ site, pageTitles = [] }: NewButtonProps) {
+// The plus in the header, next to the search. Shown only to those who may
+// create content, and only on a listing where they can: it opens that
+// listing's form.
+export default function NewButton({ site }: NewButtonProps) {
   const [tc] = useTranslation('common');
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const role = useAtomValue(roleAtom);
@@ -37,7 +34,17 @@ export default function NewButton({ site, pageTitles = [] }: NewButtonProps) {
 
   const isAdmin = role === 'admin';
   const section = getCurrentSection(location.pathname, prefix);
-  const isVisible = Boolean(site) && canCreateContent;
+
+  // The sections one can create in, as the menu lists them. Info pages and
+  // places are the admins' to add.
+  const creatable = (site?.settings?.menu || [])
+    .filter((item: any) => item.isVisible && !item.isComposablePage)
+    .filter((item: any) => item.name !== 'people')
+    .filter(
+      (item: any) => isAdmin || !['info', 'resources'].includes(item.name)
+    );
+  const current = creatable.find((item: any) => item.name === section);
+  const isVisible = Boolean(site) && canCreateContent && Boolean(current);
 
   const [animState, setAnimState] = useState<NewButtonAnimState>('idle');
 
@@ -68,30 +75,7 @@ export default function NewButton({ site, pageTitles = [] }: NewButtonProps) {
     return null;
   }
 
-  // The sections one can create in, as the menu lists them. Info pages and
-  // places are the admins' to add.
-  const creatable = (site?.settings?.menu || [])
-    .filter((item: any) => item.isVisible && !item.isComposablePage)
-    .filter((item: any) => item.name !== 'people')
-    .filter(
-      (item: any) => isAdmin || !['info', 'resources'].includes(item.name)
-    );
-
-  const targetFor = (name: string) => {
-    if (name === 'info') {
-      const first = pageTitles[0];
-      return first ? `${prefix}/info/${parseTitle(first.title)}?new=true` : null;
-    }
-    return `${prefix}/${name}?new=true`;
-  };
-
-  const current = creatable.find((item: any) => item.name === section);
-
-  const button = (
-    <span className="site-new" aria-hidden>
-      <PlusIcon width={20} height={20} />
-    </span>
-  );
+  const label = tc(`labels.create.${current.name}`);
 
   const ring = (
     <svg
@@ -111,51 +95,26 @@ export default function NewButton({ site, pageTitles = [] }: NewButtonProps) {
     </svg>
   );
 
-  if (current) {
-    const label = tc(`labels.create.${current.name}`);
-    return (
-      <div className={`new-button-wrapper new-button-${animState}`}>
-        {ring}
-        <button
-          type="button"
-          className="site-new-button"
-          aria-label={label}
-          title={label}
-          onClick={() =>
-            setSearchParams((params) => {
-              const next = new URLSearchParams(params);
-              next.set('new', 'true');
-              return next;
-            })
-          }
-        >
-          {button}
-        </button>
-      </div>
-    );
-  }
-
-  const options = creatable
-    .map((item: any) => ({ ...item, to: targetFor(item.name) }))
-    .filter((item: any) => item.to);
-  if (options.length === 0) {
-    return null;
-  }
-
   return (
     <div className={`new-button-wrapper new-button-${animState}`}>
       {ring}
-      <Menu align="end" ariaLabel={tc('actions.create')} button={button}>
-        <div className="site-info-menu">
-          {options.map((item: any) => (
-            <MenuItem key={item.name} style={{ padding: 0 }}>
-              <Link className="site-info-menu-link" to={item.to}>
-                {tc(`labels.create.${item.name}`)}
-              </Link>
-            </MenuItem>
-          ))}
-        </div>
-      </Menu>
+      <button
+        type="button"
+        className="site-new-button"
+        aria-label={label}
+        title={label}
+        onClick={() =>
+          setSearchParams((params) => {
+            const next = new URLSearchParams(params);
+            next.set('new', 'true');
+            return next;
+          })
+        }
+      >
+        <span className="site-new" aria-hidden>
+          <PlusIcon width={20} height={20} />
+        </span>
+      </button>
     </div>
   );
 }
