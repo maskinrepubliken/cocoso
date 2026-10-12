@@ -11,11 +11,17 @@ import { publicUrl } from '/imports/api/_utils/shared';
 export interface PageHeadingProps {
   site: Site;
   listing: string;
+  // Something that floats to the right of the heading, such as a switch
+  aside?: React.ReactNode;
 }
 
 // The heading of a listing page: the section's icon, name and description
 // as the menu has them. The plus for creating content lives in the header.
-export default function PageHeading({ site, listing }: PageHeadingProps) {
+export default function PageHeading({
+  site,
+  listing,
+  aside,
+}: PageHeadingProps) {
   const listingInMenu = site?.settings?.menu?.find(
     (item) => item.name === listing
   );
@@ -50,17 +56,22 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
         <meta property="og:type" content="website" />
       </Helmet>
       <Center>
-        <Box px="2">
-          <Center position="relative">
+        <Box px="2" w="100%">
+          <div className="page-heading-row page-wrap">
             <div className="page-heading">
               {icon && (
-                <ThreeDIcon className="page-heading-icon" name={icon} size={56} />
+                <ThreeDIcon
+                  className="page-heading-icon"
+                  name={icon}
+                  size={56}
+                />
               )}
               <Heading as="h1" size="lg" textAlign="center">
                 {heading}
               </Heading>
             </div>
-          </Center>
+            {aside && <div className="page-heading-aside">{aside}</div>}
+          </div>
           <Box py="2">
             {description && (
               <Center>

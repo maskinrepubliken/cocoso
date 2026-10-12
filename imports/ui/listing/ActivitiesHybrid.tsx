@@ -68,58 +68,60 @@ export default function ActivitiesHybrid({
 
   return (
     <>
-      <PageHeading site={site || siteDoc} listing="activities" />
-
-      {/* The toolbar: the kinds on the left, upcoming/past as a segmented
-          switch on the right, like Idag/Imorgon on the start page */}
-      <div className="events-toolbar page-wrap">
-        {presentKinds.length > 1 ? (
-          <div className="kind-chips">
+      <PageHeading
+        site={site || siteDoc}
+        listing="activities"
+        aside={
+          <div className="seg" role="group">
             <button
               type="button"
-              className={`kind-chip ${kindFilter ? '' : 'is-active'}`}
-              onClick={() => setKind('')}
+              className={`seg-button ${showPast ? 'is-active' : ''}`}
+              aria-pressed={Boolean(showPast)}
+              onClick={() => setShowPast(true)}
             >
-              {tc('eventKinds.all')}
+              <Trans i18nKey="common:labels.past">Past</Trans>
             </button>
-            {presentKinds.map((kind) => (
-              <button
-                key={kind.key}
-                type="button"
-                aria-pressed={kindFilter === kind.key}
-                className={`kind-chip ${
-                  kindFilter === kind.key ? 'is-active' : ''
-                }`}
-                onClick={() => setKind(kindFilter === kind.key ? '' : kind.key)}
-              >
-                <ThreeDIcon name={kind.icon} size={30} />
-                {tc(`eventKinds.${kind.key}`)}
-              </button>
-            ))}
+            <button
+              type="button"
+              className={`seg-button ${showPast ? '' : 'is-active'}`}
+              aria-pressed={!showPast}
+              onClick={() => setShowPast(false)}
+            >
+              <Trans i18nKey="common:labels.upcoming">Upcoming</Trans>
+            </button>
           </div>
-        ) : (
-          <div />
-        )}
+        }
+      />
 
-        <div className="seg" role="group">
+      {/* The kinds as a strip of icons with small labels, the chosen one
+          underlined in green; nothing boxed, so it is not another pill. */}
+      {presentKinds.length > 1 && (
+        <div className="kind-strip page-wrap">
           <button
             type="button"
-            className={`seg-button ${showPast ? '' : 'is-active'}`}
-            aria-pressed={!showPast}
-            onClick={() => setShowPast(false)}
+            className={`kind-tile ${kindFilter ? '' : 'is-active'}`}
+            aria-pressed={!kindFilter}
+            onClick={() => setKind('')}
           >
-            <Trans i18nKey="common:labels.upcoming">Upcoming</Trans>
+            <ThreeDIcon name="star" size={36} />
+            <span>{tc('eventKinds.all')}</span>
           </button>
-          <button
-            type="button"
-            className={`seg-button ${showPast ? 'is-active' : ''}`}
-            aria-pressed={Boolean(showPast)}
-            onClick={() => setShowPast(true)}
-          >
-            <Trans i18nKey="common:labels.past">Past</Trans>
-          </button>
+          {presentKinds.map((kind) => (
+            <button
+              key={kind.key}
+              type="button"
+              aria-pressed={kindFilter === kind.key}
+              className={`kind-tile ${
+                kindFilter === kind.key ? 'is-active' : ''
+              }`}
+              onClick={() => setKind(kindFilter === kind.key ? '' : kind.key)}
+            >
+              <ThreeDIcon name={kind.icon} size={36} />
+              <span>{tc(`eventKinds.${kind.key}`)}</span>
+            </button>
+          ))}
         </div>
-      </div>
+      )}
 
       <InfiniteScroller gridWide isGrid items={cardActivities}>
         {(item, index) => (

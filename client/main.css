@@ -2931,6 +2931,21 @@ body {
 
 /* Listing page heading: icon + title side by side */
 
+/* The heading row: the heading centred, and room at the right for
+   something that floats beside it (the events page's switch). */
+.page-heading-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.page-heading-aside {
+  position: absolute;
+  top: 50%;
+  right: var(--cocoso-gutter);
+  translate: 0 -50%;
+}
+
 .page-heading {
   display: inline-flex;
   align-items: center;
@@ -3254,93 +3269,118 @@ body {
   outline-offset: 2px;
 }
 
-/* The events page's toolbar: kinds left, the switch right */
-.events-toolbar {
+/* The kinds on the events page: a strip of 3D icons with small
+   uppercase labels, centred, nothing boxed. The chosen one carries a
+   green bar under its label. */
+.kind-strip {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 1.25rem;
+  justify-content: center;
+  gap: 4px;
+  margin: 4px 0 1.25rem;
 }
 
-/* The kind chips: drawn on the floor with a hairline, square-ish corners,
-   so they read as filters and not as another header pill. */
-.kind-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
-.kind-chip {
+.kind-tile {
   all: unset;
   box-sizing: border-box;
-  display: inline-flex;
+  display: flex;
   flex: 0 0 auto;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  height: 40px;
-  padding: 0 14px 0 6px;
-  border: 1.5px solid var(--cocoso-linje);
-  border-radius: var(--cocoso-radius-falt);
-  background: transparent;
-  color: var(--cocoso-mylla);
+  gap: 4px;
+  min-width: 84px;
+  padding: 8px 10px 10px;
+  border-radius: var(--cocoso-radius-kort);
+  color: var(--cocoso-mylla-soft);
   cursor: pointer;
   font-family: var(--cocoso-font-ui);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   white-space: nowrap;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.kind-chip:not(:has(.threed-icon)) {
-  padding-left: 14px;
+/* A fixed box for every icon, whatever its proportions, so the labels
+   line up */
+.kind-tile .threed-icon {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.kind-chip:hover {
-  background: var(--cocoso-papper);
-  border-color: var(--cocoso-colors-theme-300);
+.kind-tile > span {
+  position: relative;
+  padding-bottom: 6px;
 }
 
-.kind-chip:focus-visible {
+.kind-tile > span::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-500);
+  opacity: 0;
+  scale: 0.4 1;
+  transition: opacity 0.15s ease, scale 0.2s ease;
+}
+
+.kind-tile:hover {
+  color: var(--cocoso-colors-theme-800);
+}
+
+.kind-tile:hover .threed-icon {
+  transform: translateY(-2px);
+}
+
+.kind-tile.is-active {
+  color: var(--cocoso-colors-theme-800);
+}
+
+.kind-tile.is-active > span::after {
+  opacity: 1;
+  scale: 1 1;
+}
+
+.kind-tile:focus-visible {
   outline: 2px solid var(--cocoso-colors-theme-500);
   outline-offset: 2px;
 }
 
-.kind-chip.is-active {
-  background: var(--cocoso-colors-theme-700);
-  border-color: var(--cocoso-colors-theme-700);
-  color: #fff;
-}
-
-@media (max-width: 599px) {
-  /* Phone: the switch on its own row, then the chips scroll */
-  .events-toolbar {
-    flex-direction: column-reverse;
-    align-items: flex-end;
+@media (max-width: 720px) {
+  /* Narrow: the switch under the heading instead of beside it */
+  .page-heading-row {
+    flex-wrap: wrap;
     gap: 10px;
   }
 
-  .kind-chips {
+  .page-heading-aside {
+    position: static;
+    translate: none;
     width: 100%;
-    flex-wrap: nowrap;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 599px) {
+  /* Phone: the strip scrolls sideways, starting at the gutter */
+  .kind-strip {
     justify-content: flex-start;
-    /* .page-wrap already carries the gutter as padding; the row scrolls
-       inside it, so the chips start in line with the cards */
     overflow-x: auto;
-    padding-bottom: 8px;
-    padding-top: 4px;
+    padding-bottom: 4px;
     scroll-padding: 0 var(--cocoso-gutter);
-    scroll-snap-type: x proximity;
     scrollbar-width: none;
   }
-  .kind-chip {
-    scroll-snap-align: start;
-  }
-  .kind-chips::-webkit-scrollbar {
+
+  .kind-strip::-webkit-scrollbar {
     display: none;
   }
 }
+
 
 /* === Card grid (föreningar) === */
 
