@@ -108,12 +108,7 @@ export default function ActivitiesHybrid({
         </div>
       )}
 
-      <InfiniteScroller
-        gridWide
-        isGrid
-        items={cardActivities}
-        filtrerMarginTop={presentKinds.length > 1 ? 0 : -72}
-      >
+      <InfiniteScroller gridWide isGrid items={cardActivities}>
         {(item, index) => (
           <div
             key={item._id}

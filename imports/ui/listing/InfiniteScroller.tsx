@@ -5,7 +5,6 @@ import Masonry from 'react-masonry-css';
 import { Box, Flex, Loader } from '/imports/ui/core';
 
 import NewEntryHelper from '../generic/NewEntryHelper';
-import FiltrerSorter from './FiltrerSorter';
 import Honeycomb from './Honeycomb';
 
 const breakpointColumnsObj = (isLarger: boolean) => ({
@@ -19,91 +18,13 @@ const breakpointColumnsObj = (isLarger: boolean) => ({
 
 const defaultItemsPerPage = 12;
 
-const filterHelper = (item: any, lowerCaseFilterValue: string): boolean => {
-  const {
-    title,
-    subTitle,
-    shortDescription,
-    label,
-    readingMaterial,
-    username,
-  } = item;
-
-  const checker = (field?: string) => {
-    if (!field) {
-      return false;
-    }
-    return field.toLowerCase().indexOf(lowerCaseFilterValue) !== -1;
-  };
-
-  const itemFiltered =
-    checker(label) ||
-    checker(readingMaterial) ||
-    checker(subTitle) ||
-    checker(shortDescription) ||
-    checker(title) ||
-    checker(username);
-
-  return itemFiltered;
-};
-
-const filterItems = (items: any[], filterValue: string) => {
-  if (!filterValue || filterValue === '') {
-    return items;
-  }
-
-  return items.filter((item) => {
-    if (!item || typeof item !== 'object') {
-      return false;
-    }
-
-    const lowerCaseFilterValue = filterValue.toLowerCase();
-
-    return filterHelper(item, lowerCaseFilterValue);
-  });
-};
-
-const sortItems = (items: any[], sortValue: string) => {
-  if (!sortValue || sortValue === '') {
-    return items;
-  }
-
-  return items.sort((a, b) => {
-    if (sortValue === 'name') {
-      return a.label
-        ? a.label?.localeCompare(b.label)
-        : a.title
-        ? a.title?.localeCompare(b.title)
-        : a.username?.localeCompare(b.username);
-    }
-    return (
-      new Date(b.createdAt || b.creationDate) -
-      new Date(a.createdAt || a.creationDate)
-    );
-  });
-};
-
-const filterSortItems = (
-  items: any[],
-  filterValue: string,
-  sortValue: string,
-  currentPage: number,
-  itemsPerPage: number
-) => {
-  if (!items) {
-    return [];
-  }
-  const filteredItems = filterItems(items, filterValue);
-  const filteredSortedItems = sortItems(filteredItems, sortValue);
-  return filteredSortedItems
-    ? filteredSortedItems.slice(0, itemsPerPage * currentPage)
-    : null;
-};
+// Listing pages show their items in the order the loader gave them; the
+// site-wide search in the header replaced the per-page filter box.
+const pageItems = (items: any[], currentPage: number, itemsPerPage: number) =>
+  items ? items.slice(0, itemsPerPage * currentPage) : [];
 
 export default function InfiniteScroller({
   canCreateContent = false,
-  hideFiltrerSorter = false,
-  filtrerMarginTop = 0,
   isMasonry = false,
   isHoneycomb = false,
   // Equal paper cards in a responsive grid (föreningar).
@@ -117,8 +38,6 @@ export default function InfiniteScroller({
   children,
 }: {
   canCreateContent?: boolean;
-  hideFiltrerSorter?: boolean;
-  filtrerMarginTop?: number;
   isMasonry?: boolean;
   isHoneycomb?: boolean;
   isGrid?: boolean;
@@ -130,13 +49,10 @@ export default function InfiniteScroller({
   children: (item: any, index: number) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterValue, setFilterValue] = useState('');
-  const [sortValue, setSortValue] = useState('');
 
   const currentItems = useMemo(
-    () =>
-      filterSortItems(items, filterValue, sortValue, currentPage, itemsPerPage),
-    [items, filterValue, sortValue, currentPage]
+    () => pageItems(items, currentPage, itemsPerPage),
+    [items, currentPage, itemsPerPage]
   );
 
   const handleLoad = () => {
@@ -149,27 +65,8 @@ export default function InfiniteScroller({
     items?.length > currentItems?.length &&
     currentItems?.length >= itemsPerPage;
 
-  const filtrerProps = {
-    filterValue,
-    setFilterValue: (v) => setFilterValue(v),
-    sortValue,
-    setSortValue: (v) => setSortValue(v),
-  };
-
   return (
     <>
-      {!hideFiltrerSorter && (
-        <Flex
-          className="page-wrap"
-          justify="flex-end"
-          css={{
-            '@media(min-width: 960px)': { marginTop: `${filtrerMarginTop}px` },
-          }}
-        >
-          <FiltrerSorter {...filtrerProps} />
-        </Flex>
-      )}
-
       <Box className="page-wrap" pb="8">
         <InfiniteScroll pageStart={1} loadMore={handleLoad} hasMore={hasMore}>
           {isGrid ? (

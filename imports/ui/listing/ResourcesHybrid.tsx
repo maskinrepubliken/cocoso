@@ -32,7 +32,7 @@ export default function ResourcesHybrid({
       <PageHeading site={site || siteDoc} listing="resources" />
 
       <Box pb="8">
-        <InfiniteScroller isGrid items={resources} filtrerMarginTop={-82}>
+        <InfiniteScroller isGrid items={resources}>
           {(resource, index) => (
             <Box
               key={resource._id}

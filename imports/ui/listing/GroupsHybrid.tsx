@@ -21,7 +21,7 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
     <>
       <PageHeading site={site || siteDoc} listing="groups" />
 
-      <InfiniteScroller isGrid items={groups} filtrerMarginTop={-76}>
+      <InfiniteScroller isGrid items={groups}>
         {(item: any, index: number) => (
           <div key={item._id} onClick={() => openEntry(item)}>
             <GroupCard group={item} index={index} />
