@@ -892,8 +892,10 @@ body {
 
 /* === New Button === */
 
+/* The plus in the header (next to the search) for those who may create
+   content. The ring draws itself around it the first time it appears. */
 .new-button-wrapper {
-  border-radius: var(--cocoso-border-radius);
+  border-radius: 999px;
   display: inline-flex;
   position: relative;
   transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -901,6 +903,46 @@ body {
 
 .new-button-wrapper:hover {
   transform: scale(1.12);
+}
+
+.new-button-wrapper .szh-menu-button {
+  all: unset;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.site-new-button {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.site-new {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-500);
+  box-shadow: var(--site-island-shadow);
+  color: #fff;
+}
+
+.site-new svg {
+  transition: rotate 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.new-button-wrapper:hover .site-new svg,
+.new-button-wrapper .szh-menu-button--open .site-new svg {
+  rotate: 90deg;
+}
+
+.site-new-button:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 3px;
+  border-radius: 999px;
 }
 
 /* SVG ring — sits exactly on the button border, hidden by default */
@@ -922,15 +964,6 @@ body {
   stroke-dashoffset: 100;
   stroke-linecap: round;
   stroke-width: 4;
-}
-
-/* --- Pending: in DOM for FLIP measurement but invisible until heading settles --- */
-
-.new-button-pending {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(20px) scale(1);
-  transition: none;
 }
 
 /* --- Intro animation (first page visit only) --- */
@@ -1025,7 +1058,7 @@ body {
     var(--cocoso-colors-theme-200) 0%,
     transparent 65%
   );
-  border-radius: calc(var(--cocoso-border-radius) + 8px);
+  border-radius: 999px;
   content: '';
   inset: -8px;
   pointer-events: none;
@@ -2444,7 +2477,8 @@ body {
   }
 
   .site-header-bar:has(.site-search.is-open) > .site-brand,
-  .site-header-bar:has(.site-search.is-open) > .site-nav {
+  .site-header-bar:has(.site-search.is-open) > .site-nav,
+  .site-header-bar:has(.site-search.is-open) .new-button-wrapper {
     display: none;
   }
 
@@ -2528,7 +2562,8 @@ body {
     padding: 0 12px;
   }
 
-  .site-search-toggle {
+  .site-search-toggle,
+  .site-new {
     width: 32px;
     height: 32px;
   }

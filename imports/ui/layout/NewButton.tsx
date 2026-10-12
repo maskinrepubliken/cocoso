@@ -1,103 +1,161 @@
-import { useLocation, useSearchParams } from 'react-router';
-import React from 'react';
-import AddIcon from 'lucide-react/dist/esm/icons/plus';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import { useAtomValue } from 'jotai';
 
-import { IconButton } from '/imports/ui/core';
+import { parseTitle } from '/imports/api/_utils/shared';
+import Menu, { MenuItem } from '/imports/ui/generic/Menu';
+import { canCreateContentAtom, roleAtom } from '/imports/state';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
-import { canCreateContentAtom, siteAtom, roleAtom } from '../../state';
+import { getCurrentSection } from './Header';
 
-interface MenuItem {
-  name: string;
-  isVisible?: boolean;
+export type NewButtonAnimState = 'idle' | 'intro' | 'subtle';
+
+// The intro (ring draw and spring) plays once per session; later section
+// changes get the short bloom.
+let introShown = false;
+const INTRO_MS = 2800;
+const SUBTLE_MS = 900;
+
+export interface NewButtonProps {
+  site: any;
+  pageTitles?: any[];
 }
 
-const getRoute = (item: MenuItem): string => {
-  if (item.name === 'info') {
-    return '/info/new';
-  }
-  return `/${item.name}/new`;
-};
-
-export type NewButtonAnimState = 'pending' | 'idle' | 'intro' | 'subtle';
-
-interface NewButtonProps {
-  animState?: NewButtonAnimState;
-}
-
-export default function NewButton({ animState = 'idle' }: NewButtonProps) {
+// The plus in the header, next to the search, for those who may create
+// content. On a listing it opens that listing's form; elsewhere it offers
+// the sections one can create in.
+export default function NewButton({ site, pageTitles = [] }: NewButtonProps) {
+  const [tc] = useTranslation('common');
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  const site = useAtomValue(siteAtom);
   const role = useAtomValue(roleAtom);
-
   const location = useLocation();
+  const prefix = useLocationPrefix();
   const [, setSearchParams] = useSearchParams();
 
-  const { pathname } = location;
-  const menu = site?.settings?.menu;
   const isAdmin = role === 'admin';
+  const section = getCurrentSection(location.pathname, prefix);
+  const isVisible = Boolean(site) && canCreateContent;
 
-  const menuItems = (menu ?? [])
-    .filter((item) => {
-      if (isAdmin) {
-        return item.isVisible;
-      }
-      return item.isVisible && !['info', 'resources'].includes(item.name);
-    })
-    .map((item) => ({
-      ...item,
-      route: getRoute(item),
-    }));
+  const [animState, setAnimState] = useState<NewButtonAnimState>('idle');
 
-  const activeMenuItem = menuItems.find((item, index) => {
-    if (pathname === '/') {
-      return index === 0;
+  // Intro when the button first appears, bloom when the section changes:
+  // decided while rendering, so the first frame already animates.
+  const [seenSection, setSeenSection] = useState<string | null>(null);
+  const sectionKey = isVisible ? section : null;
+  if (sectionKey !== seenSection) {
+    setSeenSection(sectionKey);
+    if (isVisible) {
+      setAnimState(introShown ? 'subtle' : 'intro');
     }
-    return pathname.includes(item?.name);
-  });
+  }
 
-  const isVisible =
-    Boolean(site) &&
-    Boolean(canCreateContent) &&
-    Boolean(menu) &&
-    Boolean(activeMenuItem) &&
-    !['members', 'people'].includes(activeMenuItem?.name ?? '');
+  useEffect(() => {
+    if (animState === 'idle') {
+      return undefined;
+    }
+    introShown = true;
+    const timer = setTimeout(
+      () => setAnimState('idle'),
+      animState === 'intro' ? INTRO_MS : SUBTLE_MS
+    );
+    return () => clearTimeout(timer);
+  }, [animState]);
 
   if (!isVisible) {
     return null;
   }
 
+  // The sections one can create in, as the menu lists them. Info pages and
+  // places are the admins' to add.
+  const creatable = (site?.settings?.menu || [])
+    .filter((item: any) => item.isVisible && !item.isComposablePage)
+    .filter((item: any) => item.name !== 'people')
+    .filter(
+      (item: any) => isAdmin || !['info', 'resources'].includes(item.name)
+    );
+
+  const targetFor = (name: string) => {
+    if (name === 'info') {
+      const first = pageTitles[0];
+      return first ? `${prefix}/info/${parseTitle(first.title)}?new=true` : null;
+    }
+    return `${prefix}/${name}?new=true`;
+  };
+
+  const current = creatable.find((item: any) => item.name === section);
+
+  const button = (
+    <span className="site-new" aria-hidden>
+      <PlusIcon width={20} height={20} />
+    </span>
+  );
+
+  const ring = (
+    <svg
+      className="new-button-ring"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <circle
+        className="new-button-ring-path"
+        cx="50"
+        cy="50"
+        r="48"
+        pathLength={100}
+        transform="rotate(-90 50 50)"
+      />
+    </svg>
+  );
+
+  if (current) {
+    const label = tc(`labels.create.${current.name}`);
+    return (
+      <div className={`new-button-wrapper new-button-${animState}`}>
+        {ring}
+        <button
+          type="button"
+          className="site-new-button"
+          aria-label={label}
+          title={label}
+          onClick={() =>
+            setSearchParams((params) => {
+              const next = new URLSearchParams(params);
+              next.set('new', 'true');
+              return next;
+            })
+          }
+        >
+          {button}
+        </button>
+      </div>
+    );
+  }
+
+  const options = creatable
+    .map((item: any) => ({ ...item, to: targetFor(item.name) }))
+    .filter((item: any) => item.to);
+  if (options.length === 0) {
+    return null;
+  }
+
   return (
     <div className={`new-button-wrapper new-button-${animState}`}>
-      <svg
-        className="new-button-ring"
-        viewBox="0 0 100 100"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        {/*
-          r=48 + stroke-width=4: stroke spans r=46–r=50.
-          r=50 = SVG boundary = button outer edge → stroke sits on the border.
-          rotate(-90) shifts start point from 3 o'clock to 12 o'clock.
-        */}
-        <circle
-          className="new-button-ring-path"
-          cx="50"
-          cy="50"
-          r="48"
-          pathLength={100}
-          transform="rotate(-90 50 50)"
-        />
-      </svg>
-      <IconButton
-        aria-label="Create new"
-        css={{ borderRadius: '50%', margin: '0 1rem' }}
-        icon={<AddIcon />}
-        mx="2"
-        size="sm"
-        variant="outline"
-        onClick={() => setSearchParams({ new: 'true' })}
-      />
+      {ring}
+      <Menu align="end" ariaLabel={tc('actions.create')} button={button}>
+        <div className="site-info-menu">
+          {options.map((item: any) => (
+            <MenuItem key={item.name} style={{ padding: 0 }}>
+              <Link className="site-info-menu-link" to={item.to}>
+                {tc(`labels.create.${item.name}`)}
+              </Link>
+            </MenuItem>
+          ))}
+        </div>
+      </Menu>
     </div>
   );
 }
