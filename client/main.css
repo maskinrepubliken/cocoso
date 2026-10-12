@@ -928,6 +928,21 @@ body {
   transition: rotate 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* The pen: same round island as the search, so the plus stays the one
+   filled button. It tilts a little on hover, as if picked up. */
+.site-edit {
+  background: var(--site-island);
+  color: var(--site-ink-soft);
+}
+
+.new-button-wrapper:hover .site-edit {
+  color: var(--site-ink);
+}
+
+.new-button-wrapper:hover .site-edit svg {
+  rotate: -12deg;
+}
+
 .new-button-wrapper:hover .site-new svg {
   rotate: 90deg;
 }
@@ -2563,7 +2578,8 @@ body {
   }
 
   .site-search-toggle,
-  .site-new {
+  .site-new,
+  .site-edit {
     width: 32px;
     height: 32px;
   }

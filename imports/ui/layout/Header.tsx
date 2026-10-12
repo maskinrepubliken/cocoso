@@ -7,6 +7,7 @@ import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { parseTitle } from '/imports/api/_utils/shared';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import EditButton from './EditButton';
 import LocationSwitcher from './LocationSwitcher';
 import NewButton from './NewButton';
 import SiteSearch from './SiteSearch';
@@ -206,7 +207,8 @@ export interface HeaderProps {
 
 // The site header: one 56px row with the brand/location pill on the left,
 // the menu as a floating pill in the middle and, on the right, the search,
-// the plus for those who may create content, and the account.
+// the plus for those who may create content, the pen on a page one may
+// edit, and the account.
 // Below 960px the menu moves to a chip row under the bar. The bar is
 // transparent at the top of the page and gains a blurred backdrop once the
 // page scrolls.
@@ -253,6 +255,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         <div className="site-header-right">
           <SiteSearch site={site} />
           <NewButton site={site} />
+          <EditButton />
           <UserPopup site={site} />
         </div>
       </div>
