@@ -929,7 +929,7 @@ body {
 }
 
 /* The pen: same round island as the search, so the plus stays the one
-   filled button. It tilts a little on hover, as if picked up. */
+   filled button. It only darkens on hover; the turn is the plus's. */
 .site-edit {
   background: var(--site-island);
   color: var(--site-ink-soft);
@@ -939,11 +939,7 @@ body {
   color: var(--site-ink);
 }
 
-.new-button-wrapper:hover .site-edit svg {
-  rotate: -12deg;
-}
-
-.new-button-wrapper:hover .site-new svg {
+.new-button-wrapper:hover .site-new:not(.site-edit) svg {
   rotate: 90deg;
 }
 
@@ -2435,6 +2431,9 @@ body {
   line-height: 1;
 }
 
+/* The account avatar, as the design's avatar: a warm clay-to-brick
+   gradient under a paper edge, and the initial in Fraunces when there is
+   no picture. */
 .site-avatar {
   position: relative;
   display: grid;
@@ -2442,16 +2441,15 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 999px;
-  border: 2px solid #fff;
+  border: 2px solid var(--cocoso-papper, #fffdf7);
   box-shadow: var(--site-island-shadow);
-  background: linear-gradient(
-    135deg,
-    var(--cocoso-colors-theme-300),
-    var(--cocoso-colors-theme-500)
-  );
+  background: linear-gradient(135deg, #e2c6a8, var(--cocoso-tegel, #c8613a));
   color: #fff;
-  font-size: 14px;
+  font-family: var(--cocoso-font-display);
+  font-size: 16px;
   font-weight: 700;
+  font-variation-settings: 'SOFT' 60;
+  line-height: 1;
   text-transform: uppercase;
   overflow: visible;
 }
