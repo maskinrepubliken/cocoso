@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 
-import { Box, Center, Divider, Heading, Text } from '/imports/ui/core';
+import { Box, Center, Heading, Text } from '/imports/ui/core';
 import type { Site } from '/imports/ui/types';
 
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
@@ -62,12 +62,6 @@ export default function PageHeading({ site, listing }: PageHeadingProps) {
             </div>
           </Center>
           <Box py="2">
-            <Divider
-              css={{
-                borderColor: 'var(--cocoso-linje)',
-                minWidth: '280px',
-              }}
-            />
             {description && (
               <Center>
                 <Text
