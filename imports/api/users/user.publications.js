@@ -21,6 +21,7 @@ Meteor.publish('currentUser', function () {
         lang: 1,
         lastName: 1,
         notifications: 1,
+        publicContact: 1,
         unreadMessageCount: 1,
         publicKey: 1,
         username: 1,

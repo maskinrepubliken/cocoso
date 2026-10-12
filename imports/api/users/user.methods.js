@@ -10,12 +10,18 @@ import Groups from '../groups/group';
 import DirectMessages from '../directMessages/directMessage';
 import Memberships from '../memberships/membership';
 import { getUserMemberships } from '../memberships/membership.helpers';
+import {
+  ContactPattern,
+  cleanContact,
+} from '../activities/activity.organizers';
+import { isContributorOrAdmin } from './user.roles';
 
 const userModel = async (user) => ({
   _id: user._id,
   avatar: user.avatar,
   bio: user.bio,
   contactInfo: user.contactInfo,
+  publicContact: user.publicContact || null,
   firstName: user.firstName,
   keywords: user.keywords,
   lastName: user.lastName,
@@ -153,17 +159,22 @@ Meteor.methods({
       lastName: Match.Maybe(String),
       bio: Match.Maybe(String),
       contactInfo: Match.Maybe(String),
+      publicContact: ContactPattern,
     });
     const user = await Meteor.userAsync();
     if (!user) {
       throw new Meteor.Error('not-authorized', 'You must be logged in');
     }
 
+    const { publicContact, ...rest } = values;
+    const set = { ...rest };
+    if ('publicContact' in values) {
+      set.publicContact = cleanContact(publicContact);
+    }
+
     try {
       await Meteor.users.updateAsync(user._id, {
-        $set: {
-          ...values,
-        },
+        $set: set,
       });
     } catch (error) {
       throw new Meteor.Error(error);
@@ -278,6 +289,34 @@ Meteor.methods({
     } catch (error) {
       throw new Meteor.Error(error);
     }
+  },
+
+  // Whom a contributor can name as co-organizer of an event: everyone who
+  // may publish content. Only name and username leave the server.
+  async getOrganizerOptions() {
+    const user = await Meteor.userAsync();
+    if (!user || !(await isContributorOrAdmin(user._id))) {
+      throw new Meteor.Error('not-allowed', 'Not allowed');
+    }
+    const memberships = await Memberships.find(
+      { role: { $in: ['contributor', 'admin'] } },
+      { fields: { userId: 1 } }
+    ).fetchAsync();
+    const ids = memberships.map((m) => m.userId).filter((id) => id !== user._id);
+    const users = await Meteor.users
+      .find(
+        { _id: { $in: ids } },
+        { fields: { username: 1, firstName: 1, lastName: 1 } }
+      )
+      .fetchAsync();
+    return users
+      .map((u) => ({
+        _id: u._id,
+        username: u.username,
+        firstName: u.firstName,
+        lastName: u.lastName,
+      }))
+      .sort((a, b) => a.username.localeCompare(b.username));
   },
 
   async getUserContactInfo(username) {

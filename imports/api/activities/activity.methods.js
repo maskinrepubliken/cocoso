@@ -14,6 +14,12 @@ import {
   getUnregistrationEmailBody,
 } from './activity.mails';
 import {
+  attachOrganizerProfiles,
+  cleanContact,
+  isOrganizerOf,
+  resolveOrganizers,
+} from './activity.organizers';
+import {
   compareDatesForSortActivities,
   compareDatesForSortActivitiesReverse,
   parseGroupActivities,
@@ -56,7 +62,7 @@ const redactAttendees = async (activities, user) => {
     if (
       !activity?.datesAndTimes ||
       userIsAdmin ||
-      (user && activity.authorId === user._id)
+      (user && isOrganizerOf(activity, user._id))
     ) {
       return activity;
     }
@@ -86,7 +92,7 @@ const redactAttendees = async (activities, user) => {
 
 const canManageAttendees = async (activity, user) =>
   Boolean(user) &&
-  (activity.authorId === user._id || (await isAdmin(user._id)));
+  (isOrganizerOf(activity, user._id) || (await isAdmin(user._id)));
 
 const sameText = (a, b) =>
   (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
@@ -151,8 +157,16 @@ const notArchived = { isArchived: { $ne: true } };
 
 const canManage = async (activity, user) =>
   Boolean(
-    user && (activity.authorId === user._id || (await isAdmin(user._id)))
+    user && (isOrganizerOf(activity, user._id) || (await isAdmin(user._id)))
   );
+
+// Events the user organizes, as author or co-organizer.
+const organizedBy = (userId) => ({
+  $or: [{ authorId: userId }, { 'organizers.userId': userId }],
+});
+const organizedByName = (username) => ({
+  $or: [{ authorName: username }, { 'organizers.username': username }],
+});
 
 Meteor.methods({
   async getAllPublicActivities(showPast = false, locationId) {
@@ -224,7 +238,9 @@ Meteor.methods({
       if (activity?.isArchived && !(await canManage(activity, user))) {
         return null;
       }
-      return await redactAttendees(activity, user);
+      return await attachOrganizerProfiles(
+        await redactAttendees(activity, user)
+      );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
     }
@@ -237,9 +253,9 @@ Meteor.methods({
     }
 
     try {
-      const activities = await Activities.find({
-        authorId: user._id,
-      }).fetchAsync();
+      const activities = await Activities.find(
+        organizedBy(user._id)
+      ).fetchAsync();
       return activities;
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
@@ -261,7 +277,9 @@ Meteor.methods({
     const since = dayjs().subtract(7, 'day').toDate();
 
     const activities = await Activities.find(
-      userIsAdmin ? { ...notArchived } : { authorId: user._id, ...notArchived },
+      userIsAdmin
+        ? { ...notArchived }
+        : { ...organizedBy(user._id), ...notArchived },
       { fields: { longDescription: 0, images: 0, imagesLegacy: 0 } }
     ).fetchAsync();
 
@@ -364,7 +382,7 @@ Meteor.methods({
     try {
       return await redactAttendees(
         await Activities.find({
-          authorName: username,
+          ...organizedByName(username),
           ...(seesArchived ? {} : notArchived),
         }).fetchAsync(),
         user
@@ -382,7 +400,7 @@ Meteor.methods({
 
     try {
       const activities = await Activities.find({
-        authorName: username,
+        ...organizedByName(username),
         isPublicActivity: true,
       }).fetchAsync();
       const visible = await redactAttendees(
@@ -525,10 +543,14 @@ Meteor.methods({
     }
 
     const locationId = await resolveActivityLocation(values);
+    const organizers = await resolveOrganizers(values.organizers, user._id);
+    const contact = cleanContact(values.contact);
 
     try {
       const activityId = await Activities.insertAsync({
         ...values,
+        organizers,
+        contact,
         locationId,
         isMunicipalityOnly: !locationId && Boolean(values.isMunicipalityOnly),
         authorId: user._id,
@@ -566,7 +588,7 @@ Meteor.methods({
       throw new Meteor.Error('not-found', 'Activity not found');
     }
 
-    if (user._id !== theActivity.authorId && !(await isAdmin(user._id))) {
+    if (!(await canManage(theActivity, user))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
@@ -577,6 +599,15 @@ Meteor.methods({
       ...theActivity,
       ...safeValues,
     });
+    if ('organizers' in safeValues) {
+      safeValues.organizers = await resolveOrganizers(
+        safeValues.organizers,
+        theActivity.authorId
+      );
+    }
+    if ('contact' in safeValues) {
+      safeValues.contact = cleanContact(safeValues.contact);
+    }
 
     try {
       return await Activities.updateAsync(activityId, {

@@ -31,6 +31,16 @@ Activities.schema = new SimpleSchema({
   // Shown only when no place is selected (the municipality pages).
   isMunicipalityOnly: { type: Boolean, optional: true },
 
+  // Co-organizers next to the author: they can edit the event and see
+  // the sign-ups, and their public contact details are shown on the page.
+  organizers: { type: Array, optional: true },
+  'organizers.$': new SimpleSchema({
+    userId: Schemas.Id,
+    username: { type: String },
+  }),
+  // Contact details for this event in particular, next to the organizers'.
+  contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
+
   address: { type: String, optional: true },
   capacity: { type: SimpleSchema.Integer, defaultValue: 40 },
   place: { type: String, optional: true },

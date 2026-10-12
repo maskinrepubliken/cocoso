@@ -12,11 +12,18 @@ interface AvatarSchema {
   date: { type: DateConstructor };
 }
 
+interface PublicContactSchema {
+  email: SchemaField;
+  phone: SchemaField;
+  website: SchemaField;
+}
+
 interface SchemasType {
   Id: SchemaField;
   Email: SchemaField;
   Src: SchemaField;
   Avatar: AvatarSchema;
+  PublicContact: PublicContactSchema;
 }
 
 const Schemas: SchemasType = {
@@ -38,6 +45,13 @@ const Schemas: SchemasType = {
       type: String,
     },
     date: { type: Date },
+  },
+  // Contact details meant to be shown to everyone: an organizer's, or an
+  // event's own. All optional, all plain text.
+  PublicContact: {
+    email: { type: String, optional: true },
+    phone: { type: String, optional: true },
+    website: { type: String, optional: true },
   },
 };
 

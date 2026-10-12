@@ -21,6 +21,12 @@ Users.schema.UserProfile = {
   lastName: { type: String, optional: true, defaultValue: '' },
   bio: { type: String, defaultValue: '', optional: true },
   contactInfo: { type: String, defaultValue: '', optional: true },
+  // Public contact details for an organizer: shown on the person's page and
+  // on every event they organize, so visitors can reach them directly.
+  publicContact: {
+    type: new SimpleSchema(Schemas.PublicContact),
+    optional: true,
+  },
   lang: { type: String, optional: true },
   avatar: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   avatarLegacy: { type: new SimpleSchema(Schemas.Avatar), optional: true },
