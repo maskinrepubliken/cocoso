@@ -2524,9 +2524,16 @@ body {
 }
 
 @media (max-width: 959px) {
+  /* The menu pill is gone from the bar, so two columns: brand, account.
+     Otherwise the right side would land in the empty middle column. */
   .site-header-bar {
+    grid-template-columns: 1fr auto;
     height: 52px;
     padding: 0 10px;
+  }
+
+  .site-header-bar:has(.site-search.is-open) {
+    grid-template-columns: 1fr;
   }
 
   .site-nav {

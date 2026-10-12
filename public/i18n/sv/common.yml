@@ -216,6 +216,11 @@ plugins:
 
 people:
   organizer: Arrangör
+  events: Evenemang
+  upcoming_one: '{{ count }} kommande evenemang'
+  upcoming_other: '{{ count }} kommande evenemang'
+  email: Skicka e-post
+  website: Webbplats
   noEvents: '{{ username }} har inga evenemang ännu'
   noOrganizers: Det finns inga arrangörer ännu
 

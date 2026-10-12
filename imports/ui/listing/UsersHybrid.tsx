@@ -35,11 +35,6 @@ const Person = styled(Link, {
   '&:hover .portrait': { transform: 'scale(1.04)' },
   '&:hover strong': { textDecoration: 'underline' },
   '& strong': { display: 'block', fontSize: '1.05rem' },
-  '& small': {
-    color: 'var(--cocoso-colors-theme-700)',
-    display: 'block',
-    fontSize: '0.85rem',
-  },
   '@media (max-width: 480px)': { width: '150px' },
 });
 
@@ -160,10 +155,7 @@ export default function UsersHybrid({
                   <PlaceholderImage seed={user._id || user.username} />
                 )}
               </Portrait>
-              <span>
-                <strong>{name}</strong>
-                {name !== user.username && <small>@{user.username}</small>}
-              </span>
+              <strong>{name}</strong>
             </Person>
           );
         })}

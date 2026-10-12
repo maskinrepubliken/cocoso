@@ -105,6 +105,12 @@ organizers.forEach((o) => {
     user = { _id };
     print(`organizer ${o.username}: created`);
   }
+  // A public address for the organizer page. It is on example.org, so
+  // nothing sent to it reaches a real inbox.
+  db.users.updateOne(
+    { _id: user._id, 'publicContact.email': { $exists: false } },
+    { $set: { 'publicContact.email': `${o.username}@example.org` } }
+  );
   db.memberships.updateOne(
     { userId: user._id },
     {

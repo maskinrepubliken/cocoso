@@ -219,6 +219,11 @@ plugins:
 
 people:
   organizer: Organizer
+  events: Events
+  upcoming_one: '{{ count }} upcoming event'
+  upcoming_other: '{{ count }} upcoming events'
+  email: Send an email
+  website: Website
   noEvents: '{{ username }} has no events yet'
   noOrganizers: There are no organizers yet
 

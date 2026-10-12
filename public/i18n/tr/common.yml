@@ -216,6 +216,11 @@ plugins:
 
 people:
   organizer: Organizatör
+  events: Etkinlikler
+  upcoming_one: '{{ count }} yaklaşan etkinlik'
+  upcoming_other: '{{ count }} yaklaşan etkinlik'
+  email: E-posta gönder
+  website: Web sitesi
   noEvents: '{{ username }} henüz etkinlik düzenlemedi'
   noOrganizers: Henüz organizatör yok
 
