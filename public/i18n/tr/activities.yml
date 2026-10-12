@@ -6,6 +6,16 @@ label:
   next: Bir sonraki aktivite
 
 form:
+  organizers:
+    label: "Ortak düzenleyiciler"
+    helper: "Bu etkinliği sizinle birlikte düzenleyen kişiler. Etkinliği düzenleyebilir ve kayıtları görebilirler; herkese açık iletişim bilgileri sayfada gösterilir."
+    holder: "Kişi seçin…"
+  contact:
+    label: "Bu etkinlik için iletişim"
+    helper: "İsteğe bağlı: özellikle bu etkinlikle ilgili sorular için bir e-posta, telefon veya web sitesi. Düzenleyicilerin kendi herkese açık iletişim bilgileri de gösterilir."
+    email: "E-posta"
+    phone: "Telefon"
+    website: "Web sitesi"
   title:
     label: Başlık
     helper: Tipik olarak etkinliğin başlığı

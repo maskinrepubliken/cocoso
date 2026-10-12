@@ -344,6 +344,7 @@ event:
     when: "Ne zaman"
     where: "Yer"
     organizer: "Düzenleyen"
+    organizers: "Düzenleyenler"
     about: "Etkinlik hakkında"
     register: "Kayıt"
     attendees: "Katılımcılar"
@@ -360,6 +361,10 @@ event:
     map: "Haritada aç"
   organizer:
     profile: "{{name}} tarafından düzenlenen tüm etkinlikler"
+    eventContact: "Bu etkinlik için iletişim"
+    noContact: "Düzenleyen herhangi bir iletişim bilgisi vermedi."
+    write: "Düzenleyene yaz"
+    message: "Sitede mesaj gönder"
   attendees:
     none: "Henüz kimse kayıt olmadı."
     hidden: "+ adını göstermemeyi seçen {{count}} kişi"

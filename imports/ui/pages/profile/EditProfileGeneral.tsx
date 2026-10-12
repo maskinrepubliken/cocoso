@@ -31,6 +31,11 @@ export default function EditProfileGeneral() {
       lastName: values.lastName || '',
       bio: values.bio || '',
       contactInfo: values.contactInfo || '',
+      publicContact: {
+        email: values.publicContact?.email || '',
+        phone: values.publicContact?.phone || '',
+        website: values.publicContact?.website || '',
+      },
     };
     try {
       await call('saveUserInfo', formValues);
@@ -39,8 +44,8 @@ export default function EditProfileGeneral() {
           domain: `${tc('domains.your')} ${tc('domains.data')}`,
         })
       );
-    } catch (error) {
-      message.error(error.reason);
+    } catch (error: any) {
+      message.error(error.reason || error.error);
     }
   };
 

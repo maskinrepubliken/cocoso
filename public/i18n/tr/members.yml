@@ -63,6 +63,12 @@ profile:
       label: Hakkında
     contact:
       label: İletişim
+    publicContact:
+      title: "Herkese açık iletişim bilgileri"
+      helper: "Sayfanızda ve düzenlediğiniz her etkinlikte gösterilir; ziyaretçiler size ulaşabilsin diye. Paylaşmak istemediklerinizi boş bırakın."
+      email: E-posta
+      phone: Telefon
+      website: Web sitesi
   message:
     role: '{{username}} olarak sen, {{role}} rolüyle bu topluluğun bir parçasısın'
     membership: '{{ host }} içerisinde {{ role }}'

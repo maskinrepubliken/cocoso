@@ -6,6 +6,16 @@ label:
   next: Next Event
 
 form:
+  organizers:
+    label: "Co-organizers"
+    helper: "Other people organizing this event with you. They can edit it and see the sign-ups, and their public contact details are shown on the page."
+    holder: "Choose people…"
+  contact:
+    label: "Contact for this event"
+    helper: "Optional: an email, phone or website for questions about this event in particular. The organizers’ own public contact details are shown as well."
+    email: "Email"
+    phone: "Phone"
+    website: "Website"
   title:
     label: Title
     holder: Give it a title

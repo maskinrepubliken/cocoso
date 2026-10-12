@@ -4,7 +4,7 @@ import AutoCompleteSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { useAtom } from 'jotai';
 
-import { Checkbox, NumberInput, Select, Text } from '/imports/ui/core';
+import { Checkbox, Input, NumberInput, Select, Text } from '/imports/ui/core';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
 import { EVENT_KINDS } from './eventKinds';
@@ -46,7 +46,34 @@ interface ActivityData extends ActivityFormValues {
   isRegistrationEnabled?: boolean;
   isRegistrationDisabled?: boolean;
   category?: { key?: string } | null;
+  organizers?: OrganizerRef[];
+  contact?: ContactValues | null;
 }
+
+interface OrganizerRef {
+  userId: string;
+  username: string;
+}
+
+interface OrganizerOption {
+  _id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+interface ContactValues {
+  email?: string;
+  phone?: string;
+  website?: string;
+}
+
+const organizerLabel = (o: OrganizerOption) => {
+  const name = [o.firstName, o.lastName].filter(Boolean).join(' ');
+  return name ? `${name} (@${o.username})` : `@${o.username}`;
+};
+
+const emptyContact: ContactValues = { email: '', phone: '', website: '' };
 
 interface PublicActivityFormProps {
   activity?: ActivityData;
@@ -77,8 +104,13 @@ export default function PublicActivityForm({
     locationId: activity?.locationId || null,
     isMunicipalityOnly: Boolean(activity?.isMunicipalityOnly),
     categoryKey: activity?.category?.key || '',
+    organizers: activity?.organizers || [],
+    contact: { ...emptyContact, ...(activity?.contact || {}) },
     resources: [],
   });
+  const [organizerOptions, setOrganizerOptions] = useState<OrganizerOption[]>(
+    []
+  );
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('activities');
   const [tc] = useTranslation('common');
@@ -105,7 +137,40 @@ export default function PublicActivityForm({
 
   useEffect(() => {
     getResources();
+    call<OrganizerOption[]>('getOrganizerOptions')
+      .then((options) => setOrganizerOptions(options || []))
+      .catch(() => setOrganizerOptions([]));
   }, []);
+
+  const selectedOrganizers = state.organizers
+    .map(
+      (o: OrganizerRef) =>
+        organizerOptions.find((option) => option._id === o.userId) || {
+          _id: o.userId,
+          username: o.username,
+        }
+    )
+    .filter(Boolean);
+
+  const handleOrganizersChange = (options: readonly OrganizerOption[]) => {
+    setState((prevState: any) => ({
+      ...prevState,
+      organizers: (options || []).map((o) => ({
+        userId: o._id,
+        username: o.username,
+      })),
+    }));
+  };
+
+  const handleContactChange =
+    (field: keyof ContactValues) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setState((prevState: any) => ({
+        ...prevState,
+        contact: { ...prevState.contact, [field]: value },
+      }));
+    };
 
   const isFormValid = () => {
     const { datesAndTimes } = state;
@@ -210,6 +275,8 @@ export default function PublicActivityForm({
       isRegistrationEnabled: state.isRegistrationEnabled,
       isExclusiveActivity: state.isExclusiveActivity,
       category: state.categoryKey ? { key: state.categoryKey } : null,
+      organizers: state.organizers,
+      contact: state.contact,
       locationId: state.selectedResource ? null : state.locationId,
       isMunicipalityOnly: state.selectedResource
         ? false
@@ -278,6 +345,59 @@ export default function PublicActivityForm({
             </option>
           ))}
         </Select>
+      </FormField>
+
+      <FormField
+        helper={t('form.organizers.helper')}
+        label={t('form.organizers.label')}
+        my="8"
+      >
+        <AutoCompleteSelect
+          isMulti
+          components={animatedComponents}
+          options={organizerOptions}
+          placeholder={t('form.organizers.holder')}
+          styles={{
+            control: (base) => ({
+              ...base,
+              borderRadius: 'var(--cocoso-border-radius)',
+            }),
+          }}
+          value={selectedOrganizers}
+          getOptionLabel={organizerLabel}
+          getOptionValue={(option) => option._id}
+          onChange={handleOrganizersChange}
+        />
+      </FormField>
+
+      <FormField
+        helper={t('form.contact.helper')}
+        label={t('form.contact.label')}
+        my="8"
+      >
+        <Input
+          aria-label={t('form.contact.email')}
+          placeholder={t('form.contact.email')}
+          type="email"
+          value={state.contact.email || ''}
+          onChange={handleContactChange('email')}
+        />
+        <Input
+          aria-label={t('form.contact.phone')}
+          placeholder={t('form.contact.phone')}
+          style={{ marginTop: '0.5rem' }}
+          type="tel"
+          value={state.contact.phone || ''}
+          onChange={handleContactChange('phone')}
+        />
+        <Input
+          aria-label={t('form.contact.website')}
+          placeholder={t('form.contact.website')}
+          style={{ marginTop: '0.5rem' }}
+          type="url"
+          value={state.contact.website || ''}
+          onChange={handleContactChange('website')}
+        />
       </FormField>
 
       <FormField

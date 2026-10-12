@@ -6,6 +6,16 @@ label:
   next: Nästa aktivitet
 
 form:
+  organizers:
+    label: "Medarrangörer"
+    helper: "Andra som arrangerar evenemanget tillsammans med dig. De kan redigera det och se anmälningarna, och deras publika kontaktuppgifter visas på sidan."
+    holder: "Välj personer…"
+  contact:
+    label: "Kontakt för evenemanget"
+    helper: "Valfritt: en e-postadress, ett telefonnummer eller en webbplats för frågor om just det här evenemanget. Arrangörernas egna publika kontaktuppgifter visas också."
+    email: "E-post"
+    phone: "Telefon"
+    website: "Webbplats"
   title:
     label: Titel
     helper: Ange ett namn på din aktivitet eller bokning

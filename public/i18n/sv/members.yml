@@ -63,6 +63,12 @@ profile:
       label: Bio
     contact:
       label: Kontaktinfo
+    publicContact:
+      title: "Publika kontaktuppgifter"
+      helper: "Visas på din sida och vid varje evenemang du arrangerar, så att besökare kan nå dig. Lämna tomt det du inte vill dela."
+      email: E-post
+      phone: Telefon
+      website: Webbplats
   message:
     role: Du som {{username}} är en del av denna organisation med rollen {{role}}
     membership: '{{ role }} i {{ host }}'

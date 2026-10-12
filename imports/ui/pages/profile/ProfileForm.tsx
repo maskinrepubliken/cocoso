@@ -2,7 +2,7 @@ import { Controller, useForm } from 'react-hook-form';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Flex, Input } from '/imports/ui/core';
+import { Button, Flex, Heading, Input, Text } from '/imports/ui/core';
 
 import FormField from '../../forms/FormField';
 import Quill from '../../forms/Quill';
@@ -12,6 +12,11 @@ interface ProfileFormValues {
   lastName: string;
   bio: string;
   contactInfo: string;
+  publicContact: {
+    email?: string;
+    phone?: string;
+    website?: string;
+  } | null;
 }
 
 interface ProfileFormProps {
@@ -53,6 +58,37 @@ function ProfileForm({ defaultValues, onSubmit }: ProfileFormProps) {
               control={control}
               name="contactInfo"
               render={({ field }) => <Quill {...field} />}
+            />
+          </FormField>
+
+          <Heading size="sm" css={{ marginTop: '1rem' }}>
+            {t('profile.form.publicContact.title')}
+          </Heading>
+          <Text size="sm" css={{ color: 'var(--cocoso-mylla-soft)' }}>
+            {t('profile.form.publicContact.helper')}
+          </Text>
+
+          <FormField label={t('profile.form.publicContact.email')}>
+            <Input
+              {...register('publicContact.email')}
+              placeholder="namn@exempel.se"
+              type="email"
+            />
+          </FormField>
+
+          <FormField label={t('profile.form.publicContact.phone')}>
+            <Input
+              {...register('publicContact.phone')}
+              placeholder="070-123 45 67"
+              type="tel"
+            />
+          </FormField>
+
+          <FormField label={t('profile.form.publicContact.website')}>
+            <Input
+              {...register('publicContact.website')}
+              placeholder="https://"
+              type="url"
             />
           </FormField>
 

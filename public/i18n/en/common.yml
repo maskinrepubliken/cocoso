@@ -347,6 +347,7 @@ event:
     when: "When"
     where: "Where"
     organizer: "Organizer"
+    organizers: "Organizers"
     about: "About the event"
     register: "Sign up"
     attendees: "Attendees"
@@ -363,6 +364,10 @@ event:
     map: "Open in map"
   organizer:
     profile: "See all events by {{name}}"
+    eventContact: "Contact for this event"
+    noContact: "The organizer has not given any contact details."
+    write: "Write to the organizer"
+    message: "Send a message on the site"
   attendees:
     none: "No one has signed up yet."
     hidden: "+ {{count}} who chose not to show their name"

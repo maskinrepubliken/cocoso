@@ -4,6 +4,9 @@ import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
+import MailIcon from 'lucide-react/dist/esm/icons/mail';
+import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
+import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
 import { Alert, Box, Center, Flex, Text } from '/imports/ui/core';
 import { publicUrl } from '/imports/api/_utils/shared';
@@ -44,6 +47,82 @@ export function Bio({ user }: BioProps) {
         }}
       >
         {HTMLReactParser(DOMPurify.sanitize(user.bio))}
+      </Box>
+    </Flex>
+  );
+}
+
+interface PublicContact {
+  email?: string;
+  phone?: string;
+  website?: string;
+}
+
+// The contact details an organizer chose to make public, under the bio.
+export function PublicContactCard({
+  contact,
+}: {
+  contact?: PublicContact | null;
+}) {
+  const [tc] = useTranslation('common');
+  if (!contact || !(contact.email || contact.phone || contact.website)) {
+    return null;
+  }
+  const rowStyle = {
+    alignItems: 'center',
+    display: 'flex',
+    gap: '0.5rem',
+    overflowWrap: 'anywhere' as const,
+  };
+  const iconStyle = { color: 'var(--cocoso-tegel)', flexShrink: 0, height: '1rem', width: '1rem' };
+  return (
+    <Flex justify="center" mb="4">
+      <Box
+        p="4"
+        w="100%"
+        css={{
+          backgroundColor: 'var(--cocoso-papper)',
+          borderRadius: 'var(--cocoso-radius-kort)',
+          boxShadow: 'var(--cocoso-skugga)',
+          maxWidth: '480px',
+        }}
+      >
+        <Text
+          size="sm"
+          css={{
+            color: 'var(--cocoso-tegel)',
+            fontWeight: 700,
+            letterSpacing: '0.1em',
+            marginBottom: '0.5rem',
+            textTransform: 'uppercase',
+          }}
+        >
+          {tc('labels.contact')}
+        </Text>
+        <Flex direction="column" gap="2">
+          {contact.email && (
+            <div style={rowStyle}>
+              <MailIcon aria-hidden style={iconStyle} />
+              <a href={`mailto:${contact.email}`}>{contact.email}</a>
+            </div>
+          )}
+          {contact.phone && (
+            <div style={rowStyle}>
+              <PhoneIcon aria-hidden style={iconStyle} />
+              <a href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}>
+                {contact.phone}
+              </a>
+            </div>
+          )}
+          {contact.website && (
+            <div style={rowStyle}>
+              <GlobeIcon aria-hidden style={iconStyle} />
+              <a href={contact.website} rel="noopener noreferrer" target="_blank">
+                {contact.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}
+              </a>
+            </div>
+          )}
+        </Flex>
       </Box>
     </Flex>
   );
@@ -160,6 +239,7 @@ interface User {
   avatar?: { src?: string };
   keywords?: Array<{ keywordLabel?: string }>;
   memberships?: Array<{ isOrganizer?: boolean }>;
+  publicContact?: PublicContact | null;
 }
 
 export interface UserHybridProps {
@@ -238,6 +318,7 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
       url={publicUrl(`/@${user.username}`)}
     >
       <Bio user={user} />
+      <PublicContactCard contact={user.publicContact} />
       {showsSubPage ? (
         <Center mb="12">
           <Box css={{ maxWidth: '600px' }} w="100%">

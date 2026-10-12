@@ -63,6 +63,12 @@ profile:
       label: Bio
     contact:
       label: Contact Info
+    publicContact:
+      title: "Public contact details"
+      helper: "Shown on your page and on every event you organize, so visitors can reach you. Leave empty what you do not want to share."
+      email: Email
+      phone: Phone
+      website: Website
   message:
     role: You as {{username}} are part of this organisation with the {{role}} role
     membership: '{{ role }} in {{ host }}'

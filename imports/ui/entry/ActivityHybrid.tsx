@@ -27,7 +27,10 @@ import BackLink from './BackLink';
 import Section, { NARROW, WIDE } from '../pages/activities/event/Section';
 import WhenSection from '../pages/activities/event/WhenSection';
 import PlaceSection from '../pages/activities/event/PlaceSection';
-import OrganizerSection from '../pages/activities/event/OrganizerSection';
+import OrganizerSection, {
+  OrganizerProfile,
+  PublicContact,
+} from '../pages/activities/event/OrganizerSection';
 import AttendeesSection from '../pages/activities/event/AttendeesSection';
 import RegistrationSection from '../pages/activities/event/RegistrationSection';
 import OrganizerToolsSection from '../pages/activities/event/OrganizerToolsSection';
@@ -172,6 +175,9 @@ interface Activity {
   address?: string;
   locationId?: string;
   datesAndTimes?: Occurrence[];
+  organizers?: { userId: string; username: string }[];
+  contact?: PublicContact | null;
+  organizerProfiles?: OrganizerProfile[];
 }
 
 export interface ActivityHybridProps {
@@ -220,10 +226,13 @@ export default function ActivityHybrid({
   const role = useAtomValue(roleAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
 
+  // The author, any co-organizer and the admins manage the event.
   const isOrganizer = Boolean(
     activity &&
       currentUser &&
-      (role === 'admin' || activity.authorId === currentUser._id)
+      (role === 'admin' ||
+        activity.authorId === currentUser._id ||
+        activity.organizers?.some((o) => o.userId === currentUser._id))
   );
 
   // The server renders the page for an anonymous visitor, without the
@@ -388,7 +397,7 @@ export default function ActivityHybrid({
             />
           )}
           <PlaceSection activity={activity} locationName={locationName} />
-          <OrganizerSection username={activity.authorName} />
+          <OrganizerSection activity={activity} />
         </Column>
       </Layout>
     </Page>
