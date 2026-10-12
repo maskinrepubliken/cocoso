@@ -3559,17 +3559,6 @@ body {
   text-decoration: none;
 }
 
-/* The login pill is the filled one, as the plus is in the header */
-.site-footer-pill.is-primary,
-.site-footer-pill.is-primary:hover {
-  background: var(--cocoso-colors-theme-500);
-  color: #fff;
-}
-
-.site-footer-pill.is-primary:hover {
-  background: var(--cocoso-colors-theme-600);
-}
-
 .site-footer-pill:hover,
 .site-footer-tools .cocoso-button:hover {
   background: var(--cocoso-papper);

@@ -80,15 +80,10 @@ export function Footer({ site }: FooterProps) {
         <div className="site-footer-text">
           <p className="site-footer-name">{settings.name}</p>
 
-          {/* The tools right under the name: login (when logged out),
-              about, feedback, language */}
+          {/* The tools right under the name: language, about, feedback,
+              and login last when logged out */}
           <div className="site-footer-tools">
-            {!currentUser && (
-              <Link className="site-footer-pill is-primary" to="/login">
-                <LogInIcon width={16} height={16} />
-                {tc('menu.guest.login')}
-              </Link>
-            )}
+            <LanguageSwitch />
             {aboutPage && (
               <Link
                 className="site-footer-pill"
@@ -99,7 +94,12 @@ export function Footer({ site }: FooterProps) {
               </Link>
             )}
             <FeedbackForm />
-            <LanguageSwitch />
+            {!currentUser && (
+              <Link className="site-footer-pill" to="/login">
+                <LogInIcon width={16} height={16} />
+                {tc('menu.guest.login')}
+              </Link>
+            )}
           </div>
 
           {settings.footer ? (
