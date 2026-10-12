@@ -3528,15 +3528,6 @@ body {
   text-decoration: underline;
 }
 
-.site-footer-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 12px;
-  color: var(--cocoso-mylla-soft);
-  font-size: 13px;
-}
-
 .site-footer-tools {
   display: flex;
   flex-wrap: wrap;
@@ -3545,26 +3536,105 @@ body {
   margin-top: 18px;
 }
 
-.site-footer-tools .cocoso-select {
+/* Feedback and languages as paper pills with line icons, like the header */
+.site-footer-tools .cocoso-button {
   height: 34px;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-colors-theme-800);
+  font-family: var(--cocoso-font-ui);
   font-size: 13px;
+  font-weight: 600;
+}
+
+.site-footer-tools .cocoso-button:hover {
+  background: var(--cocoso-papper);
+  color: var(--cocoso-colors-theme-800);
+  box-shadow: var(--cocoso-skugga), 0 0 0 2px var(--cocoso-colors-theme-200);
+}
+
+.site-footer-langs {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 34px;
+  padding: 0 4px 0 12px;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-colors-theme-800);
+}
+
+.site-footer-langs-icon {
+  display: inline-flex;
+  margin-right: 6px;
+  color: var(--cocoso-colors-theme-700);
+}
+
+.site-footer-lang {
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cocoso-colors-theme-700);
+  font-family: var(--cocoso-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.site-footer-lang:hover {
+  color: var(--cocoso-colors-theme-800);
+  background: var(--cocoso-colors-theme-100);
+}
+
+.site-footer-lang.is-active {
+  background: var(--cocoso-colors-theme-500);
+  color: #fff;
+}
+
+.site-footer-lang:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 1px;
+}
+
+/* The marks: the municipality's, and under it Maskinrepubliken's wordmark
+   in ink on paper, smaller. Both are plain links to their sites. */
+.site-footer-marks {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
 }
 
 .site-footer-mark {
-  flex: 0 0 auto;
-  display: block;
+  display: flex;
+  justify-content: center;
   padding: 14px 18px;
   border-radius: var(--cocoso-radius-kort);
   background: var(--cocoso-papper);
   box-shadow: var(--cocoso-skugga);
+  color: #1c1613;
 }
 
 .site-footer-mark img {
   display: block;
   height: 56px;
   width: auto;
+}
+
+.site-footer-mark-small {
+  padding: 12px 18px;
+}
+
+.site-footer-mark-small img {
+  width: 128px;
+  height: auto;
 }
 
 @media (max-width: 720px) {
@@ -3576,6 +3646,11 @@ body {
 
   .site-footer {
     padding: 32px 0 36px;
+  }
+
+  .site-footer-marks {
+    flex-direction: row;
+    align-items: center;
   }
 }
 

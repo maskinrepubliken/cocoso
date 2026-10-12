@@ -457,9 +457,8 @@ seasons:
   vinter: Vinter
 
 footer:
-  and: och
-  byline: En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar i {{ places }}.
-  bylineShort: En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar.
+  byline: En tjänst skapad av och för föreningslivet i Tranemo Kommun. Utvecklas av Uddebo Makerspace, Tranemo Kommun och Maskinrepubliken.
+  about: Om sidan
 
 calendarFilter:
   anyResource: Alla platser och lokaler

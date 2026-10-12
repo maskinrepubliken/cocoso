@@ -457,9 +457,8 @@ seasons:
   vinter: Kış
 
 footer:
-  and: ve
-  byline: Tranemo belediyesinden bir hizmet; {{ places }} bölgelerindeki dernekler, düzenleyiciler ve komşular tarafından doldurulur.
-  bylineShort: Tranemo belediyesinden bir hizmet; dernekler, düzenleyiciler ve komşular tarafından doldurulur.
+  byline: Tranemo belediyesindeki dernekler tarafından ve onlar için yapılmış bir hizmet. Uddebo Makerspace, Tranemo belediyesi ve Maskinrepubliken tarafından geliştirilmektedir.
+  about: Bu site hakkında
 
 calendarFilter:
   anyResource: Tüm yerler ve mekânlar

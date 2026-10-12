@@ -4,24 +4,56 @@ import { Trans, useTranslation } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { useAtomValue } from 'jotai';
+import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
-import { locationsAtom } from '/imports/state';
+import { pageTitlesAtom } from '/imports/state';
+import { parseTitle } from '/imports/api/_utils/shared';
+import { allLangs, rememberLang } from '/imports/startup/i18n';
 
 import FeedbackForm from './FeedbackForm';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
-import ChangeLanguageMenu from './ChangeLanguageMenu';
 
 export interface FooterProps {
   site: any;
 }
 
-// The foot of every page: the site's name and who it is for on the left,
-// the municipality's mark on the right, on the woven season floor. The only
-// place the municipality's logo appears, so the kinship with tranemo.se is
+// The language switch: a globe and the languages written out, the current
+// one marked, so it reads as a choice and not as a form field.
+function LanguageSwitch() {
+  const { i18n, t: tc } = useTranslation('common');
+  const current = i18n.language;
+  const choose = (value: string) => {
+    rememberLang(value);
+    i18n.changeLanguage(value);
+  };
+  return (
+    <div className="site-footer-langs" role="group" aria-label={tc('langs.label')}>
+      <span className="site-footer-langs-icon" aria-hidden>
+        <GlobeIcon width={16} height={16} />
+      </span>
+      {allLangs.map((lang) => (
+        <button
+          key={lang.value}
+          type="button"
+          className={`site-footer-lang ${current === lang.value ? 'is-active' : ''}`}
+          aria-pressed={current === lang.value}
+          lang={lang.value}
+          onClick={() => choose(lang.value)}
+        >
+          {lang.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// The foot of every page: the site's name and who made it on the left, the
+// marks of the municipality and of Maskinrepubliken on the right, on the
+// woven season floor. The only place the logos appear, so the kinship is
 // said once, plainly.
 export function Footer({ site }: FooterProps) {
   const prefix = useLocationPrefix();
-  const locations = useAtomValue(locationsAtom);
+  const pageTitles = useAtomValue(pageTitlesAtom);
   const [tc] = useTranslation('common');
 
   if (!site || !site.settings) {
@@ -30,11 +62,7 @@ export function Footer({ site }: FooterProps) {
 
   const { settings } = site;
   const activeMenu = settings?.menu?.filter((item: any) => item.isVisible);
-  const places = (locations || []).map((location) => location.name);
-  const placesText =
-    places.length > 1
-      ? `${places.slice(0, -1).join(', ')} ${tc('footer.and')} ${places[places.length - 1]}`
-      : places[0] || '';
+  const aboutPage = pageTitles?.[0];
 
   const routeFor = (item: any) =>
     item.name === 'info'
@@ -53,11 +81,7 @@ export function Footer({ site }: FooterProps) {
               {HTMLReactParser(DOMPurify.sanitize(settings.footer))}
             </div>
           ) : (
-            <p className="site-footer-byline">
-              {places.length > 0
-                ? tc('footer.byline', { places: placesText })
-                : tc('footer.bylineShort')}
-            </p>
+            <p className="site-footer-byline">{tc('footer.byline')}</p>
           )}
 
           <nav className="site-footer-nav" aria-label={tc('menu.label')}>
@@ -67,6 +91,11 @@ export function Footer({ site }: FooterProps) {
                 {item.label}
               </Link>
             ))}
+            {aboutPage && (
+              <Link to={`${prefix}/info/${parseTitle(aboutPage.title)}`}>
+                {tc('footer.about')}
+              </Link>
+            )}
             <Link to="/terms-&-privacy-policy">
               <Trans i18nKey="common:terms.title">
                 Terms of Service & Privacy Policy
@@ -74,29 +103,30 @@ export function Footer({ site }: FooterProps) {
             </Link>
           </nav>
 
-          <div className="site-footer-meta">
-            {(settings.address || settings.city) && (
-              <span>
-                {[settings.address, settings.city].filter(Boolean).join(', ')}
-              </span>
-            )}
-            {settings.email && <span>{settings.email}</span>}
-          </div>
-
           <div className="site-footer-tools">
             <FeedbackForm />
-            <ChangeLanguageMenu hideHelper />
+            <LanguageSwitch />
           </div>
         </div>
 
-        <a
-          className="site-footer-mark"
-          href="https://www.tranemo.se/"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <img alt="Tranemo kommun" src="/images/tranemo-kommun.svg" />
-        </a>
+        <div className="site-footer-marks">
+          <a
+            className="site-footer-mark"
+            href="https://www.tranemo.se/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <img alt="Tranemo kommun" src="/images/tranemo-kommun.svg" />
+          </a>
+          <a
+            className="site-footer-mark site-footer-mark-small"
+            href="https://maskinrepubliken.se/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <img alt="Maskinrepubliken" src="/images/maskinrepubliken.svg" />
+          </a>
+        </div>
       </div>
     </footer>
   );

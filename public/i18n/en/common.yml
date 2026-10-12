@@ -460,9 +460,8 @@ seasons:
   vinter: Winter
 
 footer:
-  and: and
-  byline: A service from Tranemo municipality, filled by associations, organizers and neighbours in {{ places }}.
-  bylineShort: A service from Tranemo municipality, filled by associations, organizers and neighbours.
+  byline: A service made by and for the associations of Tranemo municipality. Developed by Uddebo Makerspace, Tranemo municipality and Maskinrepubliken.
+  about: About this site
 
 calendarFilter:
   anyResource: All places and venues
