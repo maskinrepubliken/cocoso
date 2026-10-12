@@ -939,7 +939,8 @@ body {
   color: var(--site-ink);
 }
 
-.new-button-wrapper:hover .site-new:not(.site-edit) svg {
+/* Only the plus turns on hover; the pens, green or white, keep still */
+.new-button-wrapper:hover .site-plus svg {
   rotate: 90deg;
 }
 
