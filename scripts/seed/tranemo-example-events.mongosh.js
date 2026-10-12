@@ -4,7 +4,7 @@
 //   mongosh "mongodb://mongo:27017/cocoso" --file scripts/seed/tranemo-example-events.mongosh.js
 //
 // Creates four example organizers (members marked as organizers, no password,
-// so nobody can log in as them, each with an illustrated portrait) and 29 events at the seeded places: 14 recur
+// so nobody can log in as them, each with a photo of their activity) and 29 events at the seeded places: 14 recur
 // weekly (one occurrence per week, at least two each weekday), the rest are
 // one-off. A few occurrences
 // get example registrations.
@@ -28,6 +28,7 @@ const addDays = (d, n) => new Date(d.getTime() + n * 86400000);
 const day = (s) => new Date(`${s}T00:00:00Z`);
 
 const LAST_DAY = day('2026-12-20');
+const THUMB = 'https://thumb.wikimedia.org/wikipedia/commons/thumb';
 
 // ---- organizers ------------------------------------------------------------
 
@@ -36,29 +37,29 @@ const organizers = [
     username: 'anna.lindqvist',
     firstName: 'Anna',
     lastName: 'Lindqvist',
-    bio: '<p>Bibliotekarie i Tranemo som håller i stickcaféet och bokcirklarna.</p>',
-    avatar: '/images/examples/organizers/anna-lindqvist.svg',
+    bio: '<p>Bibliotekarie i Tranemo som håller i stickcaféet och bokcirklarna.</p><p><em>Foto: nathan williams (CC BY 2.0, Wikimedia Commons).</em></p>',
+    avatar: `${THUMB}/5/57/Bibliotecaestantes.jpg/500px-Bibliotecaestantes.jpg`,
   },
   {
     username: 'erik.johansson',
     firstName: 'Erik',
     lastName: 'Johansson',
-    bio: '<p>Ledare i den lokala idrottsföreningen, med innebandy och friluftsliv.</p>',
-    avatar: '/images/examples/organizers/erik-johansson.svg',
+    bio: '<p>Ledare i den lokala idrottsföreningen, med innebandy och friluftsliv.</p><p><em>Foto: NPS/Jim Peaco (public domain, Wikimedia Commons).</em></p>',
+    avatar: `${THUMB}/5/57/File-Hikers_on_Bunsen_Peak_Trail%3B-Jim_Peaco_%28ec5a501d-b0b1-4dfc-8c64-e26fe97f1aa8%29.jpg/500px-File-Hikers_on_Bunsen_Peak_Trail%3B-Jim_Peaco_%28ec5a501d-b0b1-4dfc-8c64-e26fe97f1aa8%29.jpg`,
   },
   {
     username: 'fatima.hassan',
     firstName: 'Fatima',
     lastName: 'Hassan',
-    bio: '<p>Arrangerar läxhjälp, språkcafé och matlagningskvällar.</p>',
-    avatar: '/images/examples/organizers/fatima-hassan.svg',
+    bio: '<p>Arrangerar läxhjälp, språkcafé och matlagningskvällar.</p><p><em>Foto: Shixart1985 (CC BY 2.0, Wikimedia Commons).</em></p>',
+    avatar: `${THUMB}/e/e7/Parent_helps_child_with_homework_during_afternoon_study_session_at_home.jpg/500px-Parent_helps_child_with_homework_during_afternoon_study_session_at_home.jpg`,
   },
   {
     username: 'lars.svensson',
     firstName: 'Lars',
     lastName: 'Svensson',
-    bio: '<p>Glasblåsare i Limmared och eldsjäl i Uddebos verkstäder.</p>',
-    avatar: '/images/examples/organizers/lars-svensson.svg',
+    bio: '<p>Glasblåsare i Limmared och eldsjäl i Uddebos verkstäder.</p><p><em>Foto: Paul Harrison (CC BY-SA 4.0, Wikimedia Commons).</em></p>',
+    avatar: `${THUMB}/a/a7/Glass-making_Electric_Furnace_1.jpg/500px-Glass-making_Electric_Furnace_1.jpg`,
   },
 ];
 
@@ -85,11 +86,12 @@ organizers.forEach((o) => {
     print(`organizer ${o.username}: created`);
   }
   userIdByUsername[o.username] = user._id;
-  // Illustrated portraits (public/images/examples/organizers): the
-  // organizers are made up, so they get drawings rather than photos.
+  // The organizers are made up, so their photos show what they do (books,
+  // a trail, homework, a glass furnace) rather than a face: freely licensed
+  // pictures from Wikimedia Commons, linked and credited in the bio.
   db.users.updateOne(
     { _id: user._id, 'avatar.src': { $ne: o.avatar } },
-    { $set: { avatar: { src: o.avatar, date: new Date() } } }
+    { $set: { avatar: { src: o.avatar, date: new Date() }, bio: o.bio } }
   );
   db.memberships.updateOne(
     { userId: user._id },
