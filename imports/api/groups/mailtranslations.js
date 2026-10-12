@@ -70,39 +70,4 @@ export default {
         'Du är välkommen att följa uppdateringar, registrera dig till kommande möten och delta i diskussionerna på gruppens/groupens sida.',
     },
   },
-  tr: {
-    general: {
-      dateAndTime: 'Zaman ve tarih',
-      dear: 'Merhaba',
-      person: 'insan',
-      people: 'insan',
-      title: 'Başlık',
-      groupPage: 'Sayfayı ziyaret et',
-      visitPage: 'Sayfayı ziyaret et',
-    },
-    joinGroup: {
-      confirmedApprovalText: 'Başarılı şekilde katıldın',
-      confirmedApprovalTextLong:
-        'İçtenlikle, güncellemeleri takip etmeni, toplantılara katılmak için kaydolmanı ve sayfada tartışmaya katılmanı dileriz.',
-      confirmedApprovalTextLeave: 'Süreçten ayrıldın',
-      confirmedApprovalTextLongLeave:
-        'Eğer tekrar katılmak istersen, sayfada tekrar yapabilirsin',
-    },
-    invitePrivateGroup: {
-      confirmedApprovalText:
-        'Bu, seni özel bir sürece davet eden bir e-postadır.',
-      confirmedApprovalTextLong:
-        'Bu daveti kabul etmek ve katılmak istiyorsan, sayfaya git ve "Katıl" düğmesini tıkla. İçeriği görüntüleyebilmek için, bu e-postayı aldığın bu e-posta adresiyle bir hesabın olması veya bir hesap oluşturman gerekiyor. Güncellemeleri takip etmen, toplantılara katılmak için kaydolman ve bu sayfadaki tartışmalara katılman önerilir.',
-    },
-    attendMeeting: {
-      confirmedApprovalText: 'Buluşmaya kaydın başarılı şekilde gerçekleşti',
-      confirmedApprovalTextLong:
-        'Güncellemeleri takip etmen, toplantılara katılmak için kaydolman ve sayfada tartışmaya katılman önerilir.',
-    },
-    unattendMeeting: {
-      confirmedApprovalText: 'Buluşmaya kaydın silindi',
-      confirmedApprovalTextLong:
-        'Güncellemeleri takip etmen, toplantılara katılmak için kaydolman ve sayfada tartışmaya katılman önerilir.',
-    },
-  },
 };

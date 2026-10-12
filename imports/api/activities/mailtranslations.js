@@ -73,39 +73,4 @@ export default {
         <a href="${publicUrl(`/groups/${groupId}`)}">${publicUrl(`/groups/${groupId}`)}</a>`,
     },
   },
-  tr: {
-    general: {
-      address: 'Adres',
-      attendee: 'Katılımcı',
-      attendees: 'Katılımcı',
-      dateAndTime: 'Tarih',
-      dear: 'Merhaba',
-      person: 'insan',
-      people: 'insan',
-      title: 'Başlık',
-    },
-    activityRegister: {
-      activityPage: 'Sayfayı ziyaret et',
-      confirmedApprovalText: 'Kaydın onaylandı',
-      confirmedApprovalTextUpdate: 'Kaydına yaptığın güncelleme onaylandı',
-      confirmedApprovalTextLong:
-        'Kaydında değişiklik yapmak veya iptal etmek istersen; etkinlik sayfasına gidip, kaydolduğun tarihi seç ve ardından "Varolan kaydı güncelle ya da iptal et" bağlantısına tıkla. Ardından, bilgilerini güncellemek veya bu etkinliğe olan kaydını tamamen iptal etmek için oradaki talimatları izle.',
-      visitPage: 'Sayfayı ziyaret et',
-    },
-    activityUnregister: {
-      activityPage: 'Sayfayı ziyaret et',
-      confirmedApprovalText: 'Kaydın silindi',
-      confirmedApprovalTextLong:
-        'Tekrar kayıt yapmak istersen, etkinlik sayfasından yapabilirsin',
-      visitPage: 'Sayfayı ziyaret et',
-    },
-    newGroupMessage: {
-      subject: (groupTitle) => `${groupTitle} grubunda yeni mesaj`,
-      text: (groupTitle, groupId) =>
-        `${groupTitle} grubunda yeni bir mesaj var. <br />
-        Mesajı görmek ve tartışmaya katılmak için <a href="${publicUrl(`/groups/${groupId}`)}">${groupTitle}</a> sayfasına git.
-        <br /><br />
-        <a href="${publicUrl(`/groups/${groupId}`)}">${publicUrl(`/groups/${groupId}`)}</a>`,
-    },
-  },
 };

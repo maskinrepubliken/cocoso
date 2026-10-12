@@ -18,7 +18,7 @@ The short version:
 - JSX uses the classic runtime: every JSX file needs `import React from 'react'`.
 - Uploads live on local disk (`imports/api/_utils/services/mediaStorage.ts`),
   served under `/media`. There is no S3 any more.
-- Translations: `public/i18n/<lang>/<ns>.yml`; add English first, then sv and tr.
+- Translations: `public/i18n/<lang>/<ns>.yml`; add English first, then sv.
 - Escape user input with `imports/api/_utils/escapeHtml.js` inside email HTML.
 
 Before finishing any change run:

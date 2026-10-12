@@ -7,7 +7,6 @@ import yaml from 'js-yaml';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/sv';
-import 'dayjs/locale/tr';
 
 const { cdnServer } = Meteor.settings;
 
@@ -19,10 +18,6 @@ const allLangs = [
   {
     value: 'sv',
     label: 'Svenska',
-  },
-  {
-    value: 'tr',
-    label: 'Türkçe',
   },
 ];
 

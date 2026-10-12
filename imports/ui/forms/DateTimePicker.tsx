@@ -24,8 +24,6 @@ const loadLocale = async (lang: string) => {
   switch (lang) {
     case 'sv':
       return (await import('antd/locale/sv_SE')).default;
-    case 'tr':
-      return (await import('antd/locale/tr_TR')).default;
     default:
       return (await import('antd/locale/en_GB')).default;
   }

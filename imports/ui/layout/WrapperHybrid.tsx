@@ -9,7 +9,6 @@ import { Toaster } from 'react-hot-toast';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/sv';
-import 'dayjs/locale/tr';
 import updateLocale from 'dayjs/plugin/updateLocale';
 
 import useMediaQuery from '/imports/api/_utils/useMediaQuery';

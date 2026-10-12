@@ -62,7 +62,7 @@ optional `locationId` and use `locationSelector()` from `_utils/shared`.
 global state. Avoid new publications unless the data must be realtime.
 
 **Translations.** Every user-facing string goes through `useTranslation`.
-Add keys to `public/i18n/en/*.yml` first, then to `sv` and `tr`;
+Add keys to `public/i18n/en/*.yml` first, then to `sv`;
 `npm run check:i18n` fails otherwise.
 
 **Styling.** Stitches `styled()` and the `css` prop on core components. Theme
