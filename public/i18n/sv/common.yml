@@ -521,16 +521,3 @@ eventKinds:
     label: Slags evenemang
     helper: Visas som ett chip på kortet, och besökare kan filtrera listan på det.
     none: Inget särskilt slag
-search:
-  open: Sök
-  placeholder: Sök på webbplatsen
-  clear: Rensa sökningen
-  searching: Söker…
-  noResults: Inget hittades för ”{{query}}”
-  kinds:
-    activities: Evenemang
-    groups: Föreningar
-    resources: Platser
-    works: Förfrågningar
-    info: Info
-    people: Arrangörer

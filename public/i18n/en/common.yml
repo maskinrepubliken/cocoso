@@ -524,16 +524,3 @@ eventKinds:
     label: Kind of event
     helper: Shown as a chip on the card, and visitors can filter the listing by it.
     none: No particular kind
-search:
-  open: Search
-  placeholder: Search the site
-  clear: Clear search
-  searching: Searching…
-  noResults: Nothing found for “{{query}}”
-  kinds:
-    activities: Events
-    groups: Groups
-    resources: Places
-    works: Requests
-    info: Info
-    people: People
