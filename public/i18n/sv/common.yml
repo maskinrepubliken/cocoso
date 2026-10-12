@@ -504,7 +504,7 @@ termsPage:
         - "Frågor om tjänsten eller dina uppgifter ställer du via knappen Ge feedback längst ner på sidan, eller till kommunens dataskyddsombud via tranemo.se."
 
 eventKinds:
-  all: Alla slag
+  all: Alla
   kultur: Kultur
   idrott: Idrott
   barn: Barn & familj

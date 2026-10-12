@@ -507,7 +507,7 @@ termsPage:
         - "Questions about the service or your data go through the Give feedback button at the bottom of the page, or to the municipality's data protection officer via tranemo.se."
 
 eventKinds:
-  all: All kinds
+  all: All
   kultur: Culture
   idrott: Sport
   barn: Children & family

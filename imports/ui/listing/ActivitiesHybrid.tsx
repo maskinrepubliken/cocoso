@@ -78,10 +78,6 @@ export default function ActivitiesHybrid({
     <>
       <PageHeading site={site || siteDoc} listing="activities" />
 
-      <Center>
-        <Tabs tabs={tabs} index={showPast ? 0 : 1} />
-      </Center>
-
       {presentKinds.length > 1 && (
         <div className="kind-chips page-wrap">
           <button
@@ -107,6 +103,10 @@ export default function ActivitiesHybrid({
           ))}
         </div>
       )}
+
+      <Center>
+        <Tabs tabs={tabs} index={showPast ? 0 : 1} />
+      </Center>
 
       <InfiniteScroller gridWide isGrid items={cardActivities}>
         {(item, index) => (
