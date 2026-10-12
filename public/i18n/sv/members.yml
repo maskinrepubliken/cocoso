@@ -89,7 +89,7 @@ works:
   category:
     label: Typ av förfrågan
     holder: Välj alternativ eller skriv för att skapa en ny
-    helper: Välj Samåkning, Låna ut, Vill låna, Ge bort, Hjälp sökes, Sällskap eller Tips.
+    helper: Välj Samåkning, Låna ut, Vill låna, Ge bort eller Hjälp sökes.
   longDescription:
     label: Beskrivning
     holder: Plats för en längre beskrivande text…

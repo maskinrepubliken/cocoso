@@ -448,12 +448,6 @@ requests:
     help:
       name: "Help wanted"
       description: "Shopping, shovelling snow, carrying a sofa."
-    company:
-      name: "Company"
-      description: "Someone to walk, have coffee or exercise with."
-    tips:
-      name: "Tips"
-      description: "Good to know: places, ideas and offers."
 
 seasons:
   var: Spring

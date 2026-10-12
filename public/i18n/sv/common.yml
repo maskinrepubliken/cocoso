@@ -445,12 +445,6 @@ requests:
     help:
       name: "Hjälp sökes"
       description: "Handla, skotta snö, bära en soffa."
-    company:
-      name: "Sällskap"
-      description: "Någon att promenera, fika eller träna med."
-    tips:
-      name: "Tips"
-      description: "Bra att veta: ställen, idéer och erbjudanden."
 
 seasons:
   var: Vår

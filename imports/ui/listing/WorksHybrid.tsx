@@ -22,7 +22,7 @@ import PageHeading from './PageHeading';
 import { entryPathWithin } from './useOpenEntry';
 
 // The works listing, shown as förfrågningar: neighbours sharing rides,
-// lending, giving away and tipping each other off. The kinds at the top are
+// lending, borrowing, giving away and helping each other. The kinds at the top are
 // the filter; the requests below are cards with their kind, text and who
 // asks.
 
@@ -42,7 +42,7 @@ const Page = styled('div', {
 const Kinds = styled('div', {
   display: 'grid',
   gap: '0.6rem',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
   marginBottom: '1.5rem',
   '@media (max-width: 600px)': {
     display: 'flex',

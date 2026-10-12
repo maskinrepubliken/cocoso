@@ -22,7 +22,7 @@ function meteorId() {
 const location = (slug) => db.locations.findOne({ slug })?._id;
 const admin = db.users.findOne({ username: 'lyret' }) || db.users.findOne();
 
-const KINDS = ['samåkning', 'låna ut', 'vill låna', 'ge bort', 'hjälp sökes', 'sällskap', 'tips'];
+const KINDS = ['samåkning', 'låna ut', 'vill låna', 'ge bort', 'hjälp sökes'];
 const categoryId = {};
 KINDS.forEach((label) => {
   const existing = db.categories.findOne({ label });
@@ -146,46 +146,6 @@ const requests = [
       '<p>Min granne har svårt att ta sig till affären i vinter. Finns det någon som handlar i Limmared ändå och kan ta med hennes lista?</p>',
     created: 7,
   },
-  {
-    kind: 'sällskap',
-    author: 'fatima.hassan',
-    locationId: location('tranemo'),
-    title: 'Promenadsällskap runt Tranemosjön',
-    shortDescription: 'Söndagar kl 10, i lugnt tempo. Alla är välkomna, även hundar.',
-    longDescription:
-      '<p>Jag går runt sjön varje söndag och vill gärna ha sällskap. Vi träffas vid badplatsen och går ungefär en timme.</p>',
-    created: 3,
-  },
-  {
-    kind: 'sällskap',
-    author: 'erik.johansson',
-    locationId: location('uddebo'),
-    title: 'Löparkompis sökes',
-    shortDescription: 'Springer 5–8 km två kvällar i veckan, runt 6 min/km.',
-    longDescription:
-      '<p>Det är lättare att komma ut när någon väntar. Vill du springa med mig i Uddebo på tisdagar och torsdagar?</p>',
-    created: 8,
-  },
-  {
-    kind: 'tips',
-    author: 'anna.lindqvist',
-    isMunicipalityOnly: true,
-    title: 'Tips: lånecyklar och sportutrustning på biblioteket',
-    shortDescription: 'Skridskor, snöskor och cykelhjälmar går att låna gratis med lånekort.',
-    longDescription:
-      '<p>Visste du att biblioteket lånar ut mer än böcker? Fråga i disken – det finns skridskor, snöskor, stavar och cykelhjälmar.</p>',
-    created: 4,
-  },
-  {
-    kind: 'tips',
-    author: 'lars.svensson',
-    locationId: location('uddebo'),
-    title: 'Tips: höstmarknad och loppis i Uddebo',
-    shortDescription: 'Lokala hantverkare, äppelmust och loppis i ladan hela lördagen.',
-    longDescription:
-      '<p>Missa inte höstmarknaden i Uddebo! Där finns hantverk, must från bygdens äpplen och en stor loppis i ladan.</p>',
-    created: 1,
-  },
 ];
 
 let created = 0;
@@ -224,7 +184,7 @@ db.site.updateOne(
     $set: {
       'settings.menu.$.label': 'Förfrågningar',
       'settings.menu.$.description':
-        'Samåk, låna, ge bort och tipsa varandra – grannar emellan i hela kommunen.',
+        'Samåk, låna, ge bort och hjälp varandra – grannar emellan i hela kommunen.',
     },
   }
 );
