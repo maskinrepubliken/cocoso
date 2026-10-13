@@ -17,7 +17,7 @@ import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import PlaceholderImage from '../generic/PlaceholderImage';
 import PlaceTag from '../generic/PlaceTag';
 import { getImageUrl } from '../utils/imageHelper';
-import { describePattern } from './recurringText';
+import { describeDays, timeSpan } from './recurringText';
 
 const isClient = Meteor?.isClient;
 
@@ -168,13 +168,6 @@ const More = styled('span', {
   fontWeight: 700,
 });
 
-const Rule = styled('span', {
-  fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '0.82rem',
-  fontWeight: 600,
-  '& small': { fontWeight: 500, marginLeft: '0.35rem', opacity: 0.85 },
-});
-
 const TopLeft = styled('div', {
   left: '0.7rem',
   position: 'absolute',
@@ -224,6 +217,28 @@ const DateLabel = styled('span', {
         '& small': { color: 'var(--cocoso-mylla-soft)' },
       },
     },
+  },
+});
+
+// The weekly rule as a paper label in the corner: "Varje tisdag" and the
+// time, with the next date under it.
+const RecurringLabel = styled(DateLabel, {
+  alignItems: 'flex-start',
+  padding: '0.45rem 0.6rem 0.4rem',
+  '& b': {
+    fontFamily: 'var(--cocoso-font-ui)',
+    fontSize: '0.82rem',
+    fontWeight: 700,
+    whiteSpace: 'nowrap',
+  },
+  '& small': {
+    letterSpacing: '0.02em',
+    textTransform: 'none',
+    whiteSpace: 'nowrap',
+  },
+  '& small.muted': {
+    color: 'var(--cocoso-mylla-soft)',
+    fontWeight: 600,
   },
 });
 
@@ -281,13 +296,18 @@ function ThumbRule({ dates }: { dates: Occurrence[] }) {
   if (!pattern || !next) {
     return null;
   }
+  const times = [
+    ...new Set(pattern.slots.map((s) => timeSpan(s.startTime, s.endTime))),
+  ];
+  const time = times.length === 1 && times[0] ? times[0] : null;
   return (
-    <Rule>
-      ↻ {describePattern(pattern, t, i18n.language)}
-      <small>
+    <RecurringLabel>
+      <b>↻ {describeDays(pattern, t, i18n.language)}</b>
+      {time && <small>{time}</small>}
+      <small className="muted">
         {t('recurring.next', { date: dayjs(next.startDate).format('D MMM') })}
       </small>
-    </Rule>
+    </RecurringLabel>
   );
 }
 
@@ -380,16 +400,18 @@ function SexyThumb({
         )}
       </Picture>
 
-      {headline && !isWeekly && (
+      {placeName && !hideLocation && (
         <TopLeft>
-          <AlmanacDate occurrence={headline} />
+          <PlaceTag name={placeName} world={world} onImage />
         </TopLeft>
       )}
-      {placeName && !hideLocation && (
-        <TopRight>
-          <PlaceTag name={placeName} world={world} onImage />
-        </TopRight>
-      )}
+      <TopRight>
+        {isWeekly ? (
+          <ThumbRule dates={dates} />
+        ) : (
+          headline && <AlmanacDate occurrence={headline} />
+        )}
+      </TopRight>
 
       <Body>
         <Title>{title}</Title>
@@ -413,7 +435,6 @@ function SexyThumb({
         )}
 
         <Meta>
-          {isWeekly && <ThumbRule dates={dates} />}
           {!showPast &&
             !isWeekly &&
             futureDates
