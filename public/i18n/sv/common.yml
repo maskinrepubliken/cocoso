@@ -27,7 +27,7 @@ actions:
   entryPage: Besök sidan
   toHost: Besök
   share: Dela
-  copied: Kopierade länken!
+  copied: Länken är kopierad
   preview: Förhandsvisa
   next: Nästa
   previous: Tidigare
@@ -36,6 +36,10 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  loginToJoin: Logga in för att gå med
+  noContactInfo: Inga kontaktuppgifter angivna.
+  bookable: Bokningsbar
+  archived: Arkiverade
   activity: Aktiviteten
   all: Alla
   book: Boka
@@ -92,6 +96,7 @@ labels:
   editFormEntry: Redigera inlägget i {{ context }}
   thislisting: denna lista
   newsletters: Tidigare nyhetsbrev
+  noNewsletters: Inga nyhetsbrev har skickats än.
   avatar:
     checklabel: Visa din avatar
     helper: Dra reglaget för att visa din avatar vid det här inlägget
@@ -139,9 +144,9 @@ message:
   updatedBy: uppdaterad av
 
   newentryhelper:
-    title: Nytt inlägg
-    description: Skapa ditt inlägg och publicera i den här listan
-    button: Skapa
+    title: Lägg till något här
+    description: Det tar ett par minuter. Titel, tid, plats och en bild om du har.
+    button: Lägg till
     bio:
       title: Skriv om dig
       description: Det verkar som att du inte har angett information om dig själv. Gå till din profilinställning, skriv om dig själv, hur du vill engagera dig och låt de andra communitymedlemmarna veta om dig
@@ -149,8 +154,8 @@ message:
       title: Bli kontaktad
       description: Låt andra komma i kontakt med dig
     emptylisting:
-      title: Inget inlägg publicerat än
-      description: Du har inte lagt upp något inlägg än. Skapa ditt första inlägg och publicera här i denna lista
+      title: Inget här än
+      description: Bli först. Det tar ett par minuter att lägga till något.
 
 # MODAL POP-UPS
 modals:
@@ -186,6 +191,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Meny
+  home: Hem
   guest:
     login: Logga in
     register: Registrera
@@ -195,7 +201,7 @@ menu:
     profile: Min profil
     settings: Profilinställningar
     activities: Mina aktiviteter
-    works: Mina Verk
+    works: Mina förfrågningar
   admin:
     label: Admin
     settings: Inställningar
@@ -229,14 +235,21 @@ locations:
   here: Här i {{ name }}
   switcher:
     choose: Välj ort
+    whole: Hela kommunen
+    wholeHelper: Alla orter
+    zoom: …eller zooma in på en ort
+    open: Välj ort
+    clear: Visa hela kommunen
   landing:
-    activities: På gång i {{ name }}
-    resources: Platser och lokaler i {{ name }}
-    groups: Grupper i {{ name }}
+    activities: På gång
+    resources: Platser och lokaler
+    groups: Grupper
+    inPlace: i {{ name }}
     seeAll: Visa alla
-    nothingYet: Inget här ännu
+    nothingYet: Inget här än. Bli först att lägga till något.
   grid:
-    title: Välj din ort
+    title: Vad händer på din ort?
+    intro: Varje ort har en egen sida med det som händer just där.
   form:
     label: Ort
     helperResource: Orten eller platsen där resursen finns. Aktiviteter som hålls här följer den automatiskt.
@@ -310,3 +323,200 @@ auth:
 
 public:
   labels:
+
+# Recurring activities on the activities listing
+recurring:
+  every: "Varje {{days}}"
+  everyOther: "Varannan {{days}}"
+  everyOtherWeek: "varannan vecka"
+  today: "Idag"
+  tomorrow: "Imorgon"
+  now: "Pågår nu"
+  nothing: "Inget på tavlan den här dagen."
+  earlier: "Tidigare dagar"
+  later: "Fler dagar"
+  weekTitle: "Varje vecka"
+  weekIntro: "Återkommande aktiviteter, visade en gång per veckodag"
+  next: "Nästa {{date}}"
+
+# The event page (the strings are in common because SSR only loads common)
+event:
+  sections:
+    when: "När"
+    where: "Plats"
+    organizer: "Arrangör"
+    about: "Om evenemanget"
+    register: "Anmälan"
+    attendees: "Deltagare"
+    organizerTools: "För arrangören"
+    discussion: "Diskussion"
+  dates:
+    choose: "Välj datum"
+    more: "Visa alla {{count}} datum"
+    fewer: "Visa färre datum"
+    past: "Tidigare datum"
+    occurrences: "{{count}} tillfällen"
+  place:
+    address: "Adress"
+    map: "Öppna i karta"
+  organizer:
+    profile: "Se alla evenemang av {{name}}"
+  attendees:
+    none: "Ingen har anmält sig än."
+    hidden: "+ {{count}} som valt att inte visa sitt namn"
+    count: "{{count}} anmälda"
+    left: "{{count}} av {{capacity}} platser kvar"
+  register:
+    firstName: "Förnamn"
+    lastName: "Efternamn"
+    email: "E-post"
+    submit: "Anmäl"
+    hideName: "Dölj mitt namn för andra besökare"
+    emailPrivate: "Bara arrangören ser din e-post."
+    done: "Tack, du är anmäld. Välkommen!"
+    already: "Du är redan anmäld till det här datumet."
+    full: "Evenemanget är fullt."
+    closed: "Anmälan är stängd."
+    past: "Det här datumet har redan varit."
+    forDate: "Anmälan till {{date}}"
+  change:
+    toggle: "Ändra eller avboka din anmälan"
+    intro: "Ange efternamnet och e-postadressen du anmälde dig med."
+    find: "Hitta min anmälan"
+    notFound: "Vi hittade ingen anmälan med de uppgifterna. Kontrollera datum och stavning och försök igen."
+    save: "Spara ändringar"
+    cancel: "Avboka min anmälan"
+    updated: "Din anmälan är ändrad."
+    removed: "Din anmälan är avbokad."
+  tools:
+    intro: "Bara du och administratörerna ser den här listan med e-postadresser."
+    edit: "Redigera evenemanget"
+    remove: "Ta bort evenemanget"
+    people: "Personer"
+    noOne: "Inga anmälningar till det här datumet."
+    archive: "Arkivera evenemanget"
+    unarchive: "Återställ från arkivet"
+    archiveFirst: "Ett evenemang måste arkiveras innan det kan tas bort."
+    archived: "Evenemanget är arkiverat och visas inte längre i listorna."
+    unarchived: "Evenemanget är tillbaka i listorna."
+  archived:
+    tag: "Arkiverat"
+    notFound: "Det här evenemanget är inte tillgängligt."
+    onlyYou: "Arkiverade evenemang visas bara för dig och administratörerna."
+  discussion:
+    open: "Öppna diskussionen"
+    onlyVerified: "För verifierade medlemmar"
+
+home:
+  sections:
+    title: "Hitta runt på sajten"
+    intro: "Allt som händer i kommunen, sorterat så att du hittar det du letar efter."
+    activities: "Konserter, marknader, träningar och allt annat som händer, med anmälan direkt på sidan."
+    calendar: "Samma evenemang som en kalender, månad för månad eller som en lista."
+    groups: "Kommunens föreningar och grupper: vad de gör, när de träffas och hur du går med."
+    works: "Samåk, låna, ge bort och be om hjälp, grannar emellan."
+    people: "De som arrangerar: föreningar, verksamheter och eldsjälar, med sina kommande evenemang."
+    resources: "Lokaler, mötesplatser och utflyktsmål, och vad som händer där."
+    info: "Om tjänsten, hur du använder den och vem du kontaktar."
+  hero:
+    welcome: Välkommen till
+    tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
+
+# Förfrågningar (works shown as requests between neighbours)
+requests:
+  all: "Alla"
+  count_one: "{{count}} förfrågan"
+  count_other: "{{count}} förfrågningar"
+  empty: "Inga förfrågningar här än."
+  emptyHint: "Logga in och skapa den första."
+  contact: "Kontakt"
+  kinds:
+    carpool:
+      name: "Samåkning"
+      description: "Dela bilen till jobbet, skolan eller ett evenemang."
+    lend:
+      name: "Låna ut"
+      description: "Verktyg, släpvagn, tält – saker andra får låna."
+    borrow:
+      name: "Vill låna"
+      description: "Behöver du något en kort stund? Fråga grannarna."
+    giveaway:
+      name: "Ge bort"
+      description: "Sådant du inte behöver längre, gratis att hämta."
+    help:
+      name: "Hjälp sökes"
+      description: "Handla, skotta snö, bära en soffa."
+    company:
+      name: "Sällskap"
+      description: "Någon att promenera, fika eller träna med."
+    tips:
+      name: "Tips"
+      description: "Bra att veta: ställen, idéer och erbjudanden."
+
+seasons:
+  var: Vår
+  sommar: Sommar
+  host: Höst
+  vinter: Vinter
+
+footer:
+  and: och
+  byline: En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar i {{ places }}.
+  bylineShort: En tjänst från Tranemo kommun, fylld av föreningar, arrangörer och grannar.
+
+calendarFilter:
+  anyResource: Alla platser och lokaler
+  pickResource: Välj plats eller lokal…
+  recurring: Återkommande
+  legend: Färgen följer orten
+
+groupCard:
+  members_one: '{{count}} medlem'
+  members_other: '{{count}} medlemmar'
+  nextMeeting: Nästa träff {{date}}
+
+a11y:
+  skipToContent: Hoppa till innehållet
+
+termsPage:
+  title: Användarvillkor och sekretesspolicy
+  updated: Gäller från oktober 2026.
+  sections:
+    - title: Om tjänsten
+      paragraphs:
+        - "{{site}} drivs av Tranemo kommun. Tjänsten samlar evenemang, föreningar, platser och förfrågningar i kommunen. Att läsa och söka kräver inget konto."
+        - "Med ett konto kan du publicera evenemang, visa din förening, boka lokaler, anmäla dig till evenemang och svara på förfrågningar. Kontot är personligt."
+    - title: Så här uppför vi oss
+      paragraphs:
+        - "Det du publicerar syns för alla besökare. Skriv respektfullt, håll dig till sanningen och publicera bara sådant du har rätt att publicera, till exempel bilder du tagit själv eller har tillstånd att använda."
+        - "Kommunen kan ta bort innehåll som bryter mot lag, som är kränkande eller som inte hör hemma i tjänsten, och kan stänga av konton som missbrukas."
+    - title: Vilka uppgifter vi sparar
+      paragraphs:
+        - "När du skapar ett konto sparar vi ditt användarnamn, din e-postadress och ett krypterat lösenord. Det du själv fyller i på din sida, som namn, bild och presentation, sparas också och visas för besökare."
+        - "När du anmäler dig till ett evenemang sparas namn, e-postadress och antal personer. Arrangören ser uppgifterna; andra besökare ser bara ditt namn, om du inte valt att dölja det."
+        - "Vi sparar inga uppgifter om dig i marknadsföringssyfte och lämnar inte ut dem till någon utanför kommunen. Lagringen sker på servrar inom EU."
+    - title: Kakor
+      paragraphs:
+        - "Tjänsten använder bara kakor som behövs för att den ska fungera: en för att hålla dig inloggad och en för att minnas vilket språk du valt. Inga kakor för spårning eller reklam."
+    - title: Dina rättigheter
+      paragraphs:
+        - "Du kan när som helst se och ändra dina uppgifter under din profil, och ta bort ditt konto där. Då raderas dina personuppgifter. Evenemang och inlägg du skapat kan ligga kvar utan ditt namn om andra är beroende av dem."
+        - "Enligt dataskyddsförordningen (GDPR) har du rätt att få ett utdrag av de uppgifter vi har om dig, att få dem rättade eller raderade, och att klaga hos Integritetsskyddsmyndigheten."
+    - title: Kontakt
+      paragraphs:
+        - "Frågor om tjänsten eller dina uppgifter ställer du via knappen Ge feedback längst ner på sidan, eller till kommunens dataskyddsombud via tranemo.se."
+
+eventKinds:
+  all: Alla slag
+  kultur: Kultur
+  idrott: Idrott
+  barn: Barn & familj
+  marknad: Marknad
+  mat: Mat
+  natur: Ute
+  larande: Lärande
+  social: Umgänge
+  form:
+    label: Slags evenemang
+    helper: Visas som ett chip på kortet, och besökare kan filtrera listan på det.
+    none: Inget särskilt slag

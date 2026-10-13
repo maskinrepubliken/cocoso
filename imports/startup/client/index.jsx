@@ -8,7 +8,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import appRoutes from '/imports/appRoutes';
 import SetupHome from '/imports/ui/pages/setup';
-import i18n from '/imports/startup/i18n';
+import i18n, { getChosenLang, setDayjsLocale } from '/imports/startup/i18n';
+import { resolveSeason } from '/imports/api/_utils/season';
 
 // Meteor's `autoupdate` package tracks whether the server has a newer client
 // bundle than the one this tab is running (e.g. after a deploy). Lazily
@@ -63,10 +64,26 @@ onPageLoad(async () => {
     return;
   }
 
+  // Start in the language the server rendered in: the querystring, else
+  // the visitor's pick, else the site's language (resolveLang in
+  // serverI18n.js).
+  const hasLangParam = new URLSearchParams(window.location.search).has('lng');
+  const startLang = getChosenLang() || site.settings?.lang;
+  if (startLang && !hasLangParam && i18n.language !== startLang) {
+    await i18n.changeLanguage(startLang);
+  }
+  setDayjsLocale(i18n.language);
+
   const props = {
     siteDoc: site,
     pageTitles,
     locations,
+    // The same season the server rendered with: the clock, or ?season=
+    season: resolveSeason(
+      new URLSearchParams(window.location.search).get('season'),
+      undefined,
+      site.settings?.season
+    ),
   };
 
   const router = createBrowserRouter(appRoutes(props));

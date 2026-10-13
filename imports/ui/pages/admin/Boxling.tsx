@@ -35,10 +35,11 @@ const Boxling: React.FC<BoxlingProps> = ({
 }) => {
   return (
     <Box
-      bg="bluegray.50"
       p="6"
       css={{
-        borderRadius: 'var(--cocoso-border-radius)',
+        backgroundColor: 'var(--cocoso-papper)',
+        borderRadius: 'var(--cocoso-radius-kort)',
+        boxShadow: 'var(--cocoso-skugga)',
         ...(!noHoverEffect && {
           '&:hover': {
             backgroundColor: 'white',

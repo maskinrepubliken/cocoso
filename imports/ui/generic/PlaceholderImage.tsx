@@ -156,8 +156,14 @@ export function composeShapes(seed: string): ShapeWithStyle[] {
   return shapes;
 }
 
-function renderShape({ shape, shade, opacity }: ShapeWithStyle, key: number) {
-  const fill = themeColor(shade);
+function renderShape(
+  { shape, shade, opacity }: ShapeWithStyle,
+  key: number,
+  palette?: string[]
+) {
+  const fill = palette
+    ? palette[SHADES.indexOf(shade as (typeof SHADES)[number]) % palette.length]
+    : themeColor(shade);
   switch (shape.kind) {
     case 'circle':
       return (
@@ -206,6 +212,10 @@ function renderShape({ shape, shade, opacity }: ShapeWithStyle, key: number) {
 export interface PlaceholderImageProps {
   /** Anything stable that identifies the item: its _id, or failing that its title. */
   seed?: string;
+  /** Fills for the shapes, light to dark; the theme's shades when left out. */
+  palette?: string[];
+  /** The ground behind the shapes; the theme's lightest shade when left out. */
+  background?: string;
   /** Accessible description; leave empty for a purely decorative image. */
   alt?: string;
   className?: string;
@@ -214,6 +224,8 @@ export interface PlaceholderImageProps {
 
 export default function PlaceholderImage({
   seed,
+  palette,
+  background,
   alt,
   className,
   style,
@@ -234,9 +246,9 @@ export default function PlaceholderImage({
       <rect
         width={VIEW_W}
         height={VIEW_H}
-        style={{ fill: 'var(--cocoso-colors-theme-100)' }}
+        style={{ fill: background || 'var(--cocoso-colors-theme-100)' }}
       />
-      {shapes.map(renderShape)}
+      {shapes.map((shape, index) => renderShape(shape, index, palette))}
     </svg>
   );
 }

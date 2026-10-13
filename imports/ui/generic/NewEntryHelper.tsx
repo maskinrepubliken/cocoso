@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next';
 import parseHtml from 'html-react-parser';
 import { useAtomValue } from 'jotai';
 
-import { Box } from '/imports/ui/core';
-
 import { siteAtom } from '../../state';
+import ThreeDIcon from './ThreeDIcon';
 
 export interface NewEntryHelperProps {
   buttonLabel?: string;
@@ -17,13 +16,14 @@ export interface NewEntryHelperProps {
   title?: string;
 }
 
+// The card that invites the next entry, at the end of a listing or alone
+// when it is empty. A 3D icon makes an empty list a friendly start rather
+// than a gap.
 function NewEntryHelper({
   buttonLabel,
   buttonLink,
-  children,
   isEmptyListing = false,
   small = false,
-  title,
 }: NewEntryHelperProps) {
   const site = useAtomValue(siteAtom);
   const location = useLocation();
@@ -43,44 +43,17 @@ function NewEntryHelper({
     ? tc('message.newentryhelper.emptylisting.description')
     : tc('message.newentryhelper.description');
 
-  const buttonLabelGeneric = tc('message.newentryhelper.button');
-
-  const w = '100%';
-  const h = small ? '240px' : '315px';
+  const buttonLabelGeneric = buttonLabel || tc('message.newentryhelper.button');
 
   return (
-    <Link className="sexy-thumb-container" to={buttonLink}>
-      <Box
-        bg="theme.50"
-        h={h}
-        px="4"
-        py="8"
-        w={w}
-        css={{
-          border: '1px solid',
-          borderColor: 'var(--cocoso-colors-theme-500)',
-          fontWeight: 'bold',
-          '&:hover': {
-            bg: 'var(--cocoso-colors-theme-100)',
-          },
-          ':active': {
-            bg: 'var(--cocoso-colors-theme-200)',
-          },
-        }}
-      >
-        <h3
-          className="thumb-title"
-          style={{ color: 'var(--cocoso-colors-theme-500)' }}
-        >
-          {titleGeneric}
-        </h3>
-        <h4
-          className="thumb-subtitle"
-          style={{ color: 'var(--cocoso-colors-theme-500)' }}
-        >
-          {descriptionGeneric}
-        </h4>
-      </Box>
+    <Link
+      className={`new-entry-helper ${small ? 'is-small' : ''}`}
+      to={buttonLink}
+    >
+      <ThreeDIcon name="rocket" size={small ? 72 : 96} />
+      <h3>{titleGeneric}</h3>
+      <p>{descriptionGeneric}</p>
+      <span className="new-entry-helper-button">{buttonLabelGeneric}</span>
     </Link>
   );
 }

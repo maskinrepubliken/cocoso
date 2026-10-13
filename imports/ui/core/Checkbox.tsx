@@ -63,16 +63,19 @@ interface CheckboxBoxProps
 
 const CheckboxBox = ({
   checked,
+  focused,
   indeterminate,
   size,
   ...rest
 }: CheckboxBoxProps) => (
   <CheckboxBoxStyled
     css={{
-      background: checked ? 'var(--cocoso-colors-theme-500)' : '#fff',
-      border: `2px solid ${
-        checked ? 'var(--cocoso-colors-theme-500)' : '#b3b3b3'
+      boxShadow: focused ? '0 0 0 3px var(--cocoso-colors-theme-200)' : 'none',
+      background: checked ? 'var(--cocoso-colors-theme-500)' : 'var(--cocoso-papper)',
+      border: `1.5px solid ${
+        checked ? 'var(--cocoso-colors-theme-500)' : 'var(--cocoso-colors-theme-300)'
       }`,
+      borderRadius: '6px',
       flexShrink: 0,
       height: size === 'sm' ? '1rem' : size === 'lg' ? '1.5rem' : '1.25rem',
       width: size === 'sm' ? '1rem' : size === 'lg' ? '1.5rem' : '1.25rem',

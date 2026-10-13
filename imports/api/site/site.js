@@ -43,11 +43,16 @@ Site.schema = new SimpleSchema({
 
   settings: { type: Object },
   'settings.name': { type: String },
+  // Short form shown in the header pill ("Tranemo"); falls back to name.
+  'settings.shortName': { type: String, optional: true },
+  // One line under the name in the start page's welcome band.
+  'settings.tagline': { type: String, optional: true },
   'settings.email': Schemas.Email,
   'settings.address': { type: String },
   'settings.city': { type: String },
   'settings.country': { type: String },
   'settings.lang': { type: String, optional: true },
+  'settings.season': { type: String, optional: true },
   'settings.menu': { type: Array },
   'settings.menu.$': new SimpleSchema(SchemasSite.menu),
   'settings.mainColor': { type: Object, optional: true },
@@ -68,6 +73,11 @@ Site.schema = new SimpleSchema({
 
   theme: { type: Object, optional: true },
   'theme.hue': { type: String, optional: true },
+  // Optional: the saturation of the palette, and a separate hue and
+  // saturation for the dark shades (500–900) used for text and details.
+  'theme.saturation': { type: String, optional: true },
+  'theme.accentHue': { type: String, optional: true },
+  'theme.accentSaturation': { type: String, optional: true },
   'theme.body': { type: Object, optional: true },
   'theme.body.backgroundColor': { type: String, optional: true },
   'theme.body.backgroundImage': { type: String, optional: true },

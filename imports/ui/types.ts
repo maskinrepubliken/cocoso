@@ -82,8 +82,18 @@ export interface Site {
   color?: string;
   settings?: {
     name?: string;
+    shortName?: string;
+    tagline?: string;
+    email?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+    footer?: string;
+    isBurgerMenuOnMobile?: boolean;
+    isBurgerMenuOnDesktop?: boolean;
     menu?: MenuItem[];
     lang?: string;
+    season?: string;
   };
 }
 
@@ -179,6 +189,7 @@ export interface Location {
   isPublished?: boolean;
   order?: number;
   landingPageId?: string;
+  colorKey?: string;
   coordinates?: { lat: number; lng: number };
 }
 

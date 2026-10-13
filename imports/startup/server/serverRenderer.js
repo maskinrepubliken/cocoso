@@ -7,11 +7,13 @@ import {
   createStaticRouter,
   StaticRouterProvider,
 } from 'react-router';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 
 import { getSite, sitePublicFields } from '/imports/api/site/site';
 import appRoutes from '/imports/appRoutes';
 import { getGlobalStyles } from '/imports/ui/utils/globalStylesManager';
-import i18n from '/imports/startup/i18n';
+import { resolveSeason } from '/imports/api/_utils/season';
+import i18n, { setDayjsLocale } from '/imports/startup/i18n';
 import { resolveLangFromRequest } from '/imports/api/_utils/i18n/serverI18n';
 
 let stitchesConfig = null;
@@ -26,7 +28,12 @@ export default async function serverRenderer(sink) {
   if (!stitchesConfig) {
     stitchesConfig = await import('/stitches.config');
   }
-  const globalCssString = siteDoc ? getGlobalStyles(siteDoc.theme) : '';
+  const season = resolveSeason(
+    sink?.request?.url?.query?.season,
+    undefined,
+    siteDoc?.settings?.season
+  );
+  const globalCssString = siteDoc ? getGlobalStyles(siteDoc.theme, season) : '';
   const { getCssText } = stitchesConfig;
 
   const pageTitles = pages.map((p) => p.title);
@@ -51,13 +58,24 @@ export default async function serverRenderer(sink) {
   // that preloads common+accounts for all languages), so this is cheap and
   // synchronous, not a fresh fetch.
   const lngParam = new URLSearchParams(search || '').get('lng');
-  const resolvedLang = resolveLangFromRequest(sink.request, lngParam);
-  const requestI18n = i18n.cloneInstance({ lng: resolvedLang });
+  const resolvedLang = resolveLangFromRequest(
+    sink.request,
+    lngParam,
+    siteDoc?.settings?.lang
+  );
+  // initImmediate: false makes the clone switch language synchronously.
+  // With the default it does so in a setTimeout, so a route without an
+  // async loader rendered in English and failed hydration.
+  const requestI18n = i18n.cloneInstance({
+    lng: resolvedLang,
+    initImmediate: false,
+  });
 
   const props = {
     siteDoc,
     pageTitles,
     locations,
+    season,
     i18nInstance: requestI18n,
   };
 
@@ -81,8 +99,17 @@ export default async function serverRenderer(sink) {
 
   const router = createStaticRouter(dataRoutes, context);
 
+  // dayjs has one global locale; renderToString is synchronous, so setting
+  // it right before rendering holds for this request.
+  setDayjsLocale(resolvedLang);
+  // Jotai's default store is a module singleton. useHydrateAtoms only
+  // hydrates once per store, so without a store of its own every request
+  // after the first would render with the first visitor's season. Each
+  // request gets a fresh store; the browser keeps using the default one.
   const appHtml = renderToString(
-    <StaticRouterProvider router={router} context={context} />
+    <JotaiProvider store={createStore()}>
+      <StaticRouterProvider router={router} context={context} />
+    </JotaiProvider>
   );
 
   const helmet = Helmet.renderStatic();

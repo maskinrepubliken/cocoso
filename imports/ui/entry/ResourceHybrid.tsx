@@ -44,7 +44,15 @@ export default function ResourceHybrid({
     {
       title: <Trans i18nKey="common:labels.info">Info</Trans>,
       content: (
-        <Box bg="white" className="text-content" p="6">
+        <Box
+          className="text-content"
+          p="6"
+          css={{
+            backgroundColor: 'var(--cocoso-papper)',
+            borderRadius: 'var(--cocoso-radius-kort)',
+            boxShadow: 'var(--cocoso-skugga)',
+          }}
+        >
           {resource?.description &&
             HTMLReactParser(DOMPurify.sanitize(resource?.description))}
         </Box>
@@ -108,7 +116,7 @@ export default function ResourceHybrid({
   }
 
   if (resource.isBookable) {
-    tags.push(<Trans i18nKey="resources:cards.isBookable">Bookable</Trans>);
+    tags.push(<Trans i18nKey="common:labels.bookable">Bookable</Trans>);
   }
 
   const resourcesInMenu = siteDoc?.settings?.menu?.find(

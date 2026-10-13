@@ -3,17 +3,18 @@ import isBetween from 'dayjs/plugin/isBetween';
 
 dayjs.extend(isBetween);
 
-const now = dayjs();
+// A function, not a constant: the server process runs for weeks.
+const now = () => dayjs();
 
 function createDateTime(dateStr, timeStr) {
   return dayjs(`${dateStr} ${timeStr}`, 'YYYY-MM-DD HH:mm');
 }
 
 const getFirstFutureOccurence = (occurrence) =>
-  createDateTime(occurrence.endDate, occurrence.endTime)?.isAfter(now);
+  createDateTime(occurrence.endDate, occurrence.endTime)?.isAfter(now());
 
 const getLastPastOccurence = (occurrence) =>
-  createDateTime(occurrence.startDate, occurrence.startTime)?.isBefore(now);
+  createDateTime(occurrence.startDate, occurrence.startTime)?.isBefore(now());
 
 export function parseGroupActivities(activities) {
   const activitiesParsed = [];

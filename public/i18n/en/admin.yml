@@ -4,7 +4,7 @@ panel: Admin Panel
 menulabel: Admin Menu
 site: Site
 home: Home
-description: Configure, design and manage your website
+description: Your day at a glance – what is coming up and what needs doing
 
 settings:
   title: Settings
@@ -228,6 +228,16 @@ locations:
       label: Landing page content
       helper: Optionally show a composable page above the automatic sections
       none: None
+    color:
+      label: Colour
+      helper: "The colour world used on the place's cards, stamp and calendar events. 'By order' gives each place the next one in turn."
+      auto: By order
+      worlds:
+        skog: Forest green
+        lera: Clay
+        glas: Glass blue
+        ockra: Ochre
+        salvia: Sage
     published:
       label: Published
       helper: Unpublished places are hidden from visitors but can still be assigned to content
@@ -410,3 +420,46 @@ reports:
     save: Save
   messages:
     success: Report updated.
+
+overview:
+  greeting: 'Hi {{name}}!'
+  intro: 'Here is what is happening with your activities.'
+  introAdmin: 'Here is what is happening on the site.'
+  actions:
+    newActivity: 'New activity'
+    calendar: 'Open the calendar'
+    messages: 'Messages'
+    users: 'Users'
+    locations: 'Locations'
+  stats:
+    upcoming: 'Coming up'
+    registrations: 'New sign-ups'
+    activities: 'Activities'
+    members: 'New members'
+  upcoming:
+    title: 'Coming up the next two weeks'
+    empty: 'Nothing planned the next two weeks.'
+    signedUp: '{{count}} signed up'
+    signedUpOf: '{{count}} of {{capacity}} signed up'
+    full: 'Full'
+    noRegistration: 'No sign-up'
+    today: 'Today'
+    more: 'and {{count}} more – see the calendar'
+  registrations:
+    title: 'New sign-ups'
+    empty: 'No new sign-ups the last 7 days.'
+    people: '{{count}} people'
+    for: 'for'
+  members:
+    title: 'New members'
+    empty: 'No new members the last 14 days.'
+    all: 'See all users'
+  settings:
+    title: 'Settings and appearance'
+    helper: 'Things you set up once and change now and then.'
+  error: 'Could not load the overview.'
+
+season:
+  label: Season
+  helper: "The site changes look with the seasons. Lock one here to keep it, for instance while preparing a campaign."
+  auto: Follow the calendar

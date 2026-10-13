@@ -49,7 +49,12 @@ function SimplePage({
       </Helmet>
 
       <Center>
-        <Heading css={{ margin: '1rem 0.5rem 0' }} size="lg" textAlign="center">
+        <Heading
+          as="h1"
+          css={{ margin: '1rem 0.5rem 0' }}
+          size="lg"
+          textAlign="center"
+        >
           {title}
         </Heading>
       </Center>
@@ -63,12 +68,17 @@ function SimplePage({
       {description && (
         <Center>
           <Box
-            bg="white"
             className="text-content"
             mt="2"
             mb="24"
             p="6"
-            css={{ maxWidth: '540px' }}
+            css={{
+              backgroundColor: 'var(--cocoso-papper)',
+              borderRadius: 'var(--cocoso-radius-kort)',
+              boxShadow: 'var(--cocoso-skugga)',
+              maxWidth: '620px',
+              width: '100%',
+            }}
           >
             {description && HTMLReactParser(DOMPurify.sanitize(description))}
           </Box>

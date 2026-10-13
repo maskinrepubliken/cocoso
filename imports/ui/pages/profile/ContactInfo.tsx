@@ -34,12 +34,14 @@ export default function ContactInfo({
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [contactInfo, setContactInfo] = useState(null);
+  const [loaded, setLoaded] = useState(false);
   const [startingConvo, setStartingConvo] = useState(false);
 
   const getContactInfo = async () => {
     try {
       const response = await call('getUserContactInfo', username);
       setContactInfo(response);
+      setLoaded(true);
     } catch (error) {
       message.error(error.reason || error.error);
     }
@@ -53,6 +55,7 @@ export default function ContactInfo({
       getContactInfo();
     } else {
       setContactInfo(value);
+      setLoaded(true);
     }
   }, []);
 
@@ -111,6 +114,14 @@ export default function ContactInfo({
           >
             {HTMLReactParser(DOMPurify.sanitize(contactInfo))}
           </Box>
+        ) : loaded ? (
+          <Text
+            css={{ color: 'var(--cocoso-mylla-soft)', padding: '1rem', textAlign: 'center' }}
+          >
+            <Trans i18nKey="common:labels.noContactInfo">
+              No contact details given.
+            </Trans>
+          </Text>
         ) : (
           <Loader />
         )}

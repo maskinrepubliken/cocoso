@@ -1,0 +1,753 @@
+# Trana (Grus grus) as a 3dicons-style soft 3D icon, built and rendered in
+# Blender from Python so the model is reproducible and adjustable.
+#
+#   blender -b -P docs/design/trana/trana.py -- --out out.png --size 2048 \
+#       --samples 192 --blend docs/design/trana/trana.blend
+#
+# Coordinate system: the bird faces +X, +Y is the bird's left, +Z is up.
+# The camera sits on the -Y side (bird's right), a little in front and above.
+#
+# Construction, all seam-free:
+#   body + neck + head  one chain of skin vertices with varying radius,
+#                       Skin modifier + Subdivision Surface, then vertex
+#                       colours computed along the spine (grey body, lighter
+#                       chest, black upper neck + head, white nape stripe,
+#                       red crown).
+#   wings               one quad grid per wing with the crane planform and
+#                       a scalloped trailing edge that forms the primaries,
+#                       Solidify (tapered via vertex group) + Subdivision.
+#   tail                a small drooping fan built the same way, dark.
+#   legs                skin chains with a knee and three toes.
+#   beak, eyes          a long cone and two small spheres pushed into the head.
+
+import math
+import sys
+
+import bpy
+import bmesh
+from mathutils import Matrix, Vector
+
+
+# ---------------------------------------------------------------- arguments
+
+def parse_args():
+    argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+    opts = {"out": "/tmp/trana.png", "size": 1024, "samples": 64,
+            "blend": "", "device": "auto", "variant": "full"}
+    i = 0
+    while i < len(argv):
+        key = argv[i].lstrip("-")
+        if "=" in key:                      # --yaw=-70 (negative values)
+            key, value = key.split("=", 1)
+            opts[key] = value
+            i += 1
+        else:
+            opts[key] = argv[i + 1]
+            i += 2
+    opts["size"] = int(opts["size"])
+    opts["samples"] = int(opts["samples"])
+    return opts
+
+
+# ---------------------------------------------------------------- helpers
+
+def srgb_to_linear(c):
+    c = c / 255.0
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def hexcol(h):
+    h = h.lstrip("#")
+    return tuple(srgb_to_linear(int(h[i:i + 2], 16)) for i in (0, 2, 4))
+
+
+def mix(a, b, t):
+    return tuple(a[i] + (b[i] - a[i]) * t for i in range(3))
+
+
+def smoothstep(e0, e1, x):
+    t = max(0.0, min(1.0, (x - e0) / (e1 - e0)))
+    return t * t * (3 - 2 * t)
+
+
+def clear_scene():
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+
+
+def new_object(name, mesh):
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    return obj
+
+
+def shade_smooth(mesh):
+    mesh.polygons.foreach_set("use_smooth", [True] * len(mesh.polygons))
+
+
+def clay_material(name, color=None, use_attr=False, roughness=0.55,
+                  specular=0.25, subsurface=0.0):
+    mat = bpy.data.materials.new(name)
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+    bsdf = nodes["Principled BSDF"]
+    bsdf.inputs["Roughness"].default_value = roughness
+    bsdf.inputs["Specular IOR Level"].default_value = specular
+    if subsurface:
+        bsdf.inputs["Subsurface Weight"].default_value = subsurface
+        bsdf.inputs["Subsurface Radius"].default_value = (0.08, 0.06, 0.05)
+    if use_attr:
+        attr = nodes.new("ShaderNodeAttribute")
+        attr.attribute_name = "Col"
+        links.new(attr.outputs["Color"], bsdf.inputs["Base Color"])
+        if subsurface:
+            links.new(attr.outputs["Color"], bsdf.inputs["Subsurface Radius"]) if False else None
+    elif color is not None:
+        bsdf.inputs["Base Color"].default_value = (*color, 1.0)
+    return mat
+
+
+def set_vertex_colors(mesh, colors):
+    attr = mesh.color_attributes.new("Col", "FLOAT_COLOR", "POINT")
+    for i, c in enumerate(colors):
+        attr.data[i].color = (*c, 1.0)
+
+
+def evaluate_to_mesh(obj, name):
+    """Apply all modifiers and return a fresh object holding the result."""
+    deps = bpy.context.evaluated_depsgraph_get()
+    ev = obj.evaluated_get(deps)
+    mesh = bpy.data.meshes.new_from_object(ev)
+    mesh.name = name
+    new = new_object(name, mesh)
+    new.matrix_world = obj.matrix_world.copy()
+    bpy.data.objects.remove(obj)
+    shade_smooth(mesh)
+    return new
+
+
+# ---------------------------------------------------------------- skin chains
+
+def skin_chain(name, points, radii, branches=(), branch_smooth=0.6,
+               subdiv=3):
+    """Points: list of (x, y, z). radii: per point. branches: list of
+    (parent_index, [(point, radius), ...]) chains hanging off a point."""
+    mesh = bpy.data.meshes.new(name)
+    verts = [Vector(p) for p in points]
+    edges = [(i, i + 1) for i in range(len(points) - 1)]
+    rads = list(radii)
+    for parent, chain in branches:
+        prev = parent
+        for p, r in chain:
+            verts.append(Vector(p))
+            rads.append(r)
+            edges.append((prev, len(verts) - 1))
+            prev = len(verts) - 1
+    mesh.from_pydata(verts, edges, [])
+    obj = new_object(name, mesh)
+    skin = obj.modifiers.new("Skin", "SKIN")
+    skin.use_smooth_shade = True
+    skin.branch_smoothing = branch_smooth
+    for i, r in enumerate(rads):
+        sv = mesh.skin_vertices[0].data[i]
+        sv.radius = (r, r)
+        sv.use_root = i == 0
+    sub = obj.modifiers.new("Subdivision", "SUBSURF")
+    sub.levels = subdiv
+    sub.render_levels = subdiv
+    return obj
+
+
+# ---------------------------------------------------------------- the bird
+
+# Spine of the body, tail end first, up through the chest, the S of the
+# neck, and the head. Radii give the volume; the skin modifier blends them.
+SPINE = [
+    ((-0.52, 0, -0.01), 0.08),    # tail root
+    ((-0.40, 0, 0.01), 0.16),
+    ((-0.22, 0, 0.05), 0.22),
+    ((-0.02, 0, 0.09), 0.245),    # belly / back
+    ((0.16, 0, 0.14), 0.23),      # chest
+    ((0.30, 0, 0.24), 0.175),     # chest top
+    ((0.38, 0, 0.38), 0.115),     # neck base
+    ((0.42, 0, 0.53), 0.095),
+    ((0.41, 0, 0.68), 0.088),
+    ((0.37, 0, 0.84), 0.085),     # S: back
+    ((0.38, 0, 0.98), 0.085),
+    ((0.46, 0, 1.10), 0.088),
+    ((0.57, 0, 1.20), 0.098),     # head back
+    ((0.66, 0, 1.26), 0.105),     # head
+    ((0.74, 0, 1.29), 0.080),     # head front, into the beak
+    ((0.79, 0, 1.305), 0.048),
+    # the beak is part of the same chain, so it grows out of the head
+    ((0.74 + 0.14 * math.cos(math.radians(18)), 0, 1.29 + 0.14 * math.sin(math.radians(18))), 0.034),
+    ((0.74 + 0.27 * math.cos(math.radians(18)), 0, 1.29 + 0.27 * math.sin(math.radians(18))), 0.021),
+    ((0.74 + 0.40 * math.cos(math.radians(18)), 0, 1.29 + 0.40 * math.sin(math.radians(18))), 0.006),
+]
+
+# Turn the head towards the camera (which sits on the -Y side): the twist
+# grows along the upper neck, so the neck itself looks turned, and reaches
+# HEAD_YAW at the head.
+_YAW_DEG = -48
+_TWIST_FROM = 7                      # spine index where the twist starts
+_PIVOT = Vector(SPINE[_TWIST_FROM][0])
+_n = len(SPINE) - 1
+for _i in range(_TWIST_FROM, len(SPINE)):
+    _t = (_i - _TWIST_FROM) / (11 - _TWIST_FROM)
+    _t = min(1.0, _t)
+    _t = _t * _t * (3 - 2 * _t)
+    _rot = Matrix.Rotation(math.radians(_YAW_DEG * _t), 3, "Z")
+    _p = Vector(SPINE[_i][0])
+    SPINE[_i] = (tuple(_PIVOT + _rot @ (_p - _PIVOT)), SPINE[_i][1])
+HEAD_YAW = Matrix.Rotation(math.radians(_YAW_DEG), 3, "Z")
+
+HEAD = _PIVOT + HEAD_YAW @ (Vector((0.66, 0, 1.26)) - _PIVOT)
+BEAK_DIR = HEAD_YAW @ Vector((math.cos(math.radians(18)), 0, math.sin(math.radians(18))))
+BEAK_BASE = _PIVOT + HEAD_YAW @ (Vector((0.74, 0, 1.29)) - _PIVOT)
+
+COL_BODY = hexcol("#C6BDAE")
+COL_BODY_LIGHT = hexcol("#DED6CA")
+COL_BODY_DARK = hexcol("#B5AC9D")
+COL_BLACK = hexcol("#262527")
+COL_FEATHER = hexcol("#2B2A2A")
+COL_WHITE = hexcol("#F2EFEA")
+COL_RED = hexcol("#D9342B")
+COL_BEAK = hexcol("#7D7A5A")
+COL_LEG = hexcol("#2E2D2D")
+HEAD_R = 0.105
+BEAK_LEN = 0.38
+
+
+def spine_param(p):
+    """Project p onto the spine polyline. Returns (fraction 0..1 tail→head,
+    projected point, radius there)."""
+    pts = [Vector(s[0]) for s in SPINE]
+    rad = [s[1] for s in SPINE]
+    lengths = [0.0]
+    for a, b in zip(pts, pts[1:]):
+        lengths.append(lengths[-1] + (b - a).length)
+    total = lengths[-1]
+    best = None
+    for i, (a, b) in enumerate(zip(pts, pts[1:])):
+        ab = b - a
+        t = max(0.0, min(1.0, (p - a).dot(ab) / ab.length_squared))
+        q = a + ab * t
+        d = (p - q).length
+        if best is None or d < best[0]:
+            u = (lengths[i] + ab.length * t) / total
+            r = rad[i] + (rad[i + 1] - rad[i]) * t
+            best = (d, u, q, r)
+    return best[1], best[2], best[3]
+
+
+def body_color(p, normal):
+    u, q, r = spine_param(p)
+    d = Vector(normal).normalized()   # smooth, unlike the per-segment offset
+
+    # Grey plumage, a little lighter on the chest and belly, darker on the back
+    front = smoothstep(-0.2, 0.8, d.x * 0.6 - d.z * 0.8)
+    col = mix(COL_BODY, COL_BODY_LIGHT, front * smoothstep(0.45, 0.2, u) * 1.0)
+    back = smoothstep(0.3, 1.0, d.z) * smoothstep(0.35, 0.15, u)
+    col = mix(col, COL_BODY_DARK, back * 0.6)
+
+    # Black upper neck and head
+    black = smoothstep(HEAD.z - 0.46, HEAD.z - 0.36, q.z)
+    col = mix(col, COL_BLACK, black)
+
+    # White stripe from behind the eye down the nape
+    dl = HEAD_YAW.inverted() @ d                     # head-local direction
+    behind = smoothstep(0.15, 0.55, -dl.x - dl.z * 0.35)
+    band = smoothstep(HEAD.z - 0.38, HEAD.z - 0.30, q.z) * smoothstep(HEAD.z + 0.04, HEAD.z - 0.04, q.z)
+    stripe = black * behind * band * smoothstep(0.7, 0.35, abs(d.z))
+    col = mix(col, COL_WHITE, stripe)
+
+    # Beak: grey-olive from a little in front of the head
+    rel = p - BEAK_BASE
+    along = rel.dot(BEAK_DIR)
+    perp = (rel - BEAK_DIR * along).length          # distance from the beak axis
+    col = mix(col, COL_BEAK, smoothstep(0.065, 0.085, along) * smoothstep(0.10, 0.07, perp))
+
+    # Red crown on top of the head
+    local = p - HEAD
+    crown = smoothstep(1.14 * HEAD_R, 0.98 * HEAD_R, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
+        * smoothstep(0.30, 0.50, d.z) * smoothstep(HEAD.z + 0.03, HEAD.z + 0.06, p.z)
+    col = mix(col, COL_RED, crown)
+    return col
+
+
+def build_body():
+    pts = [s[0] for s in SPINE]
+    rad = [s[1] for s in SPINE]
+    obj = skin_chain("BodySkin", pts, rad, subdiv=3)
+    obj = evaluate_to_mesh(obj, "Body")
+    mesh = obj.data
+    cols = [body_color(v.co, v.normal) for v in mesh.vertices]
+    set_vertex_colors(mesh, cols)
+    obj.data.materials.append(
+        clay_material("Plumage", use_attr=True, roughness=0.6, specular=0.2,
+                      subsurface=0.05))
+    return obj
+
+
+def build_beak():
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=24,
+                          radius1=0.052, radius2=0.006, depth=BEAK_LEN)
+    mesh = bpy.data.meshes.new("Beak")
+    bm.to_mesh(mesh)
+    bm.free()
+    shade_smooth(mesh)
+    obj = new_object("Beak", mesh)
+    centre = BEAK_BASE + BEAK_DIR * (BEAK_LEN * 0.4)
+    obj.matrix_world = Matrix.Translation(centre) @ \
+        BEAK_DIR.to_track_quat("Z", "Y").to_matrix().to_4x4()
+    sub = obj.modifiers.new("Subdivision", "SUBSURF")
+    sub.levels = 2
+    sub.render_levels = 2
+    obj.data.materials.append(
+        clay_material("Beak", COL_BEAK, roughness=0.5, specular=0.3))
+    return obj
+
+
+def build_eyes():
+    objs = []
+    mat = clay_material("Eye", hexcol("#1A1612"), roughness=0.25, specular=0.6)
+    for side in (1, -1):
+        bm = bmesh.new()
+        bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=16, radius=HEAD_R * 0.26)
+        mesh = bpy.data.meshes.new("Eye")
+        bm.to_mesh(mesh)
+        bm.free()
+        shade_smooth(mesh)
+        obj = new_object("Eye", mesh)
+        obj.location = HEAD + HEAD_YAW @ Vector((0.045, side * HEAD_R * 0.80, 0.012))
+        obj.data.materials.append(mat)
+        objs.append(obj)
+    return objs
+
+
+def wing_grid(span, root_chord, n_span=96, n_chord=14, fingers=6,
+              finger_depth=0.80, droop=0.0, camber=0.05, arch=0.0, color=True):
+    """A wing in local space: root at the origin, span along +Y, leading
+    edge towards +X, upper side +Z. Returns (verts, faces, weights, colors).
+
+    Planform of a crane wing: broad and rounded, the leading edge sweeps
+    gently back, the chord narrows past the wrist (s ~ 0.6) and the hand ends
+    in fanned, pointed primaries made by scalloping the trailing edge."""
+    verts, weights, colors = [], [], []
+    for i in range(n_span + 1):
+        s = i / n_span
+        hand = smoothstep(0.55, 1.0, s)
+        shoulder = 1.0 - 0.45 * max(0.0, 1.0 - s / 0.12) ** 2   # rounded root
+        le = root_chord * 0.40 * shoulder + 0.10 * span * math.sin(math.pi * s) ** 1.5 \
+            - 0.06 * span * s - 0.26 * span * hand ** 1.6
+        chord = root_chord * (1.0 - 0.10 * s) * (1.0 - 0.50 * hand ** 1.4)
+        # Primaries: the trailing edge is scalloped between finger centre
+        # lines, so each finger is part of the same surface. The middle
+        # fingers are longest, so the tips describe a fan.
+        fs = smoothstep(0.56, 0.70, s)
+        phase = ((s - 0.56) / 0.44) * fingers
+        tri = abs((phase % 1.0) * 2 - 1)            # 1 on finger centre lines
+        notch = smoothstep(0.0, 1.0, 1 - tri) * finger_depth * fs * (0.35 + 0.65 * s)
+        chord *= (1.0 - notch)
+        chord *= 0.3 + 0.7 * smoothstep(1.0, 0.985, s)   # pinch the very tip
+        te = le - chord
+        for j in range(n_chord + 1):
+            u = j / n_chord
+            x = te + chord * u
+            y = span * s
+            z = -camber * 4 * u * (1 - u) * (1 - 0.4 * s) \
+                - droop * max(0.0, s - 0.55) ** 2 * 4.0 - arch * s * s
+            verts.append(Vector((x, y, z)))
+            weights.append((1 - s) ** 1.2 * (0.3 + 0.7 * (1 - abs(2 * u - 1))))
+            if color:
+                black = smoothstep(0.60, 0.80, s) * smoothstep(0.75, 0.20, u) \
+                    + smoothstep(0.80, 0.92, s)
+                black = min(1.0, black)
+                c = mix(mix(COL_BODY, COL_BODY_DARK, 0.35 * (1 - u)), COL_FEATHER, black)
+                colors.append(c)
+    faces = []
+    for i in range(n_span):
+        for j in range(n_chord):
+            a = i * (n_chord + 1) + j
+            faces.append((a, a + 1, a + n_chord + 2, a + n_chord + 1))
+    return verts, faces, weights, colors
+
+
+def mesh_object(name, verts, faces, weights=None, colors=None, thickness=0.055,
+                min_thick=0.15, subdiv=3):
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata(verts, [], faces)
+    shade_smooth(mesh)
+    obj = new_object(name, mesh)
+    if colors:
+        set_vertex_colors(mesh, colors)
+    if weights:
+        vg = obj.vertex_groups.new(name="thick")
+        for i, w in enumerate(weights):
+            vg.add([i], w, "REPLACE")
+    sol = obj.modifiers.new("Solidify", "SOLIDIFY")
+    sol.thickness = thickness
+    sol.offset = 0.0
+    sol.use_even_offset = True
+    if weights:
+        sol.vertex_group = "thick"
+        sol.thickness_vertex_group = min_thick
+    sub = obj.modifiers.new("Subdivision", "SUBSURF")
+    sub.levels = min(2, subdiv)
+    sub.render_levels = subdiv
+    return obj
+
+
+def wing_matrix(origin, span_dir, normal_hint, mirrored):
+    """Place a wing built in local space (span +Y, leading edge +X, top +Z)
+    so that its span points along span_dir and its top faces normal_hint."""
+    sp = Vector(span_dir).normalized()
+    n = Vector(normal_hint)
+    n = (n - sp * n.dot(sp)).normalized()
+    c = n.cross(sp) if mirrored else sp.cross(n)
+    m = Matrix.Identity(4)
+    for row in range(3):
+        m[row][0] = c[row]
+        m[row][1] = sp[row]
+        m[row][2] = n[row]
+        m[row][3] = origin[row]
+    return m
+
+
+def build_wings():
+    mat = clay_material("Wing", use_attr=True, roughness=0.6, specular=0.2,
+                        subsurface=0.03)
+    span = 1.20
+    root_chord = 0.56
+
+    # Far wing (bird's left, +Y): lifted high and back, primaries fanned.
+    v, f, w, c = wing_grid(span, root_chord, droop=-0.08, camber=0.06)
+    far = mesh_object("WingFar", v, f, w, c)
+    far.matrix_world = wing_matrix((0.06, 0.04, 0.22), (-0.35, 0.30, 0.90),
+                                   (-0.25, -0.90, 0.10), mirrored=False)
+    far.data.materials.append(mat)
+
+    # Near wing (bird's right, -Y): spread forward and down towards the
+    # viewer, so its upper side shows.
+    v, f, w, c = wing_grid(span, root_chord, droop=0.10, camber=0.06, arch=0.12)
+    near = mesh_object("WingNear", v, f, w, c)
+    near.matrix_world = wing_matrix((0.06, 0.00, 0.10), (0.74, -0.28, -0.58),
+                                    (-0.15, -0.80, 0.55), mirrored=True)
+    near.data.materials.append(mat)
+    return [far, near]
+
+
+def body_section(x, _w=0.06):
+    """Smoothed: the mean of the piecewise linear section over a small window,
+    which removes the kinks without flattening at the points."""
+    zs, rs = zip(*(_body_section_raw(x + d) for d in (-_w, -_w / 2, 0.0, _w / 2, _w)))
+    return sum(zs) / len(zs), sum(rs) / len(rs)
+
+
+def _body_section_raw(x):
+    """Centre height and radius of the body tube at a given x, from the
+    first body points of SPINE; beyond the tail the radius fades out."""
+    pts = [(p[0][0], p[0][2], p[1]) for p in SPINE[:6]]
+    if x >= pts[-1][0]:
+        return pts[-1][1], pts[-1][2]
+    if x <= pts[0][0]:
+        d = pts[0][0] - x
+        return pts[0][1] - 0.10 * d, pts[0][2] * max(0.45, 1.0 - 0.7 * d)
+    for (x0, z0, r0), (x1, z1, r1) in zip(pts, pts[1:]):
+        if x0 <= x <= x1:
+            t = (x - x0) / (x1 - x0)
+            return z0 + (z1 - z0) * t, r0 + (r1 - r0) * t
+    return pts[0][1], pts[0][2]
+
+
+def build_folded_wings():
+    """Wings folded against the body: one surface per side wrapped around
+    the flank from the shoulder back past the tail, where the black
+    primaries of both wings droop together as the crane's bustle."""
+    mat = clay_material("Wing", use_attr=True, roughness=0.6, specular=0.2,
+                        subsurface=0.03)
+    objs = []
+    n_s, n_u, fingers = 90, 16, 5
+    x_front, length = 0.27, 1.34
+    for side in (1, -1):
+        verts, faces, weights, colors = [], [], [], []
+        for i in range(n_s + 1):
+            s = i / n_s
+            x = x_front - length * s
+            zc, r = body_section(x)
+            r += 0.045 + 0.05 * smoothstep(0.25, 0.85, s)     # fuller, lifting off
+            rear = smoothstep(0.55, 1.0, s)
+            # angular extent down the flank: wide at the front, narrowing
+            # towards the tip, scalloped along the lower rear edge
+            top = math.radians(24 - 12 * smoothstep(0.0, 0.22, s) - 10 * smoothstep(0.3, 0.9, s))
+            extent = math.radians(118) * (1 - 0.30 * smoothstep(0.35, 1.0, s))
+            extent *= 1.0 - 0.5 * max(0.0, 1.0 - s / 0.10) ** 2   # rounded shoulder
+            phase = ((s - 0.76) / 0.24) * fingers
+            tri = abs((phase % 1.0) * 2 - 1)
+            notch = smoothstep(0.0, 1.0, 1 - tri) * 0.30 * smoothstep(0.78, 0.86, s)
+            extent *= 1.0 - notch
+            extent *= 0.35 + 0.65 * smoothstep(1.0, 0.985, s)
+            droop = 1.9 * max(0.0, s - 0.60) ** 1.7
+            for j in range(n_u + 1):
+                u = j / n_u
+                th = top + extent * u
+                y = side * r * math.sin(th)
+                z = zc + r * math.cos(th) - droop
+                verts.append(Vector((x, y, z)))
+                weights.append((1 - s) ** 1.2 * (0.4 + 0.6 * (1 - u)))
+                black = smoothstep(0.62, 0.76, s) + smoothstep(0.50, 0.66, s) * smoothstep(0.5, 0.95, u)
+                c = mix(mix(COL_BODY, COL_BODY_DARK, 0.35 + 0.5 * u), COL_FEATHER, min(1.0, black))
+                colors.append(c)
+        for i in range(n_s):
+            for j in range(n_u):
+                a = i * (n_u + 1) + j
+                faces.append((a, a + 1, a + n_u + 2, a + n_u + 1))
+        obj = mesh_object("Wing%s" % ("L" if side > 0 else "R"), verts, faces,
+                          weights, colors, thickness=0.10, min_thick=0.3)
+        obj.data.materials.append(mat)
+        objs.append(obj)
+    return objs
+
+
+def build_tail():
+    """Short dark drooping plume behind the body, built as a small fan."""
+    verts, faces, weights, colors = [], [], [], []
+    n_a, n_r = 40, 8
+    a0, a1 = math.radians(-26), math.radians(26)
+    fingers = 5
+    for i in range(n_a + 1):
+        t = i / n_a
+        ang = a0 + (a1 - a0) * t
+        tri = abs(((t * fingers) % 1.0) * 2 - 1)
+        rmax = 0.46 - 0.08 * (1 - tri) ** 1.5 - 0.06 * abs(2 * t - 1) ** 2
+        for j in range(n_r + 1):
+            u = j / n_r
+            r = rmax * u
+            x = -r * math.cos(ang)
+            y = r * math.sin(ang)
+            z = 0.0
+            verts.append(Vector((x, y, z)))
+            weights.append((1 - u) ** 1.2)
+            colors.append(mix(COL_BODY_DARK, COL_FEATHER, smoothstep(0.15, 0.5, u)))
+    for i in range(n_a):
+        for j in range(n_r):
+            a = i * (n_r + 1) + j
+            faces.append((a, a + 1, a + n_r + 2, a + n_r + 1))
+    obj = mesh_object("Tail", verts, faces, weights, colors, thickness=0.12,
+                      min_thick=0.2)
+    obj.matrix_world = Matrix.Translation(Vector((-0.38, 0, 0.04))) @ \
+        Matrix.Rotation(math.radians(-30), 4, "Y") @ \
+        Matrix.Rotation(math.radians(90), 4, "X")
+    obj.data.materials.append(
+        clay_material("Tail", use_attr=True, roughness=0.6, specular=0.2))
+    return obj
+
+
+def build_legs():
+    mat = clay_material("Leg", COL_LEG, roughness=0.55, specular=0.2)
+    objs = []
+    for side in (1, -1):
+        y = side * 0.10
+        if side < 0:
+            # near leg: standing, straight down and a little back
+            hip, thigh = (-0.10, y, -0.04), (-0.16, y * 1.15, -0.20)
+            knee, foot = (-0.18, y * 1.25, -0.42), (-0.12, y * 1.3, -0.80)
+            toe_dir = Vector((1.0, 0.0, 0.0))
+            toe_up = Vector((0, 1, 0))
+        else:
+            # far leg: lifted forward, foot hanging, the dance step
+            hip, thigh = (-0.08, y, -0.04), (0.02, y * 1.15, -0.17)
+            knee, foot = (0.06, y * 1.25, -0.36), (-0.06, y * 1.3, -0.60)
+            toe_dir = Vector((0.45, 0.0, -0.60)).normalized()
+            toe_up = Vector((0, 1, 0))
+        kx, ky, kz = knee
+        above = ((thigh[0] + kx) / 2, (thigh[1] + ky) / 2, (thigh[2] + kz) / 2)
+        below = (kx + (foot[0] - kx) * 0.25, ky + (foot[1] - ky) * 0.25,
+                 kz + (foot[2] - kz) * 0.25)
+        pts = [hip, thigh, above, knee, below, foot]
+        rad = [0.09, 0.058, 0.040, 0.046, 0.036, 0.034]
+        toes = []
+        for ang, ln in ((-32, 0.14), (0, 0.19), (32, 0.14)):
+            d = Matrix.Rotation(math.radians(ang) * side, 3, toe_up.cross(toe_dir).normalized() if False else Vector((0, 0, 1))) @ toe_dir
+            mid = Vector(foot) + d * ln * 0.5
+            tip = Vector(foot) + d * ln
+            toes.append((5, [((mid.x, mid.y, mid.z), 0.022), ((tip.x, tip.y, tip.z), 0.013)]))
+        obj = skin_chain("Leg", pts, rad, branches=toes, branch_smooth=0.4, subdiv=3)
+        obj.data.materials.append(mat)
+        objs.append(obj)
+    return objs
+
+
+def neck_variant(yaw_deg=-35, pitch_deg=-14):
+    """Only the neck and head, as a bust: a rounded chest base, a short
+    stylised S-neck seen in profile, the top of which bends towards the
+    camera so the head looks at the viewer, slightly down."""
+    global SPINE, HEAD, HEAD_YAW, BEAK_DIR, BEAK_BASE, HEAD_R, BEAK_LEN
+    HEAD_R, BEAK_LEN = 0.125, 0.50
+    yaw = Matrix.Rotation(math.radians(yaw_deg), 3, "Z")
+    head = Vector((0.34, 0.00, 1.03))
+    beak = yaw @ Vector((math.cos(math.radians(pitch_deg)), 0,
+                         math.sin(math.radians(pitch_deg))))
+    SPINE = [
+        ((0.00, 0.00, -0.02), 0.28),   # chest base
+        ((0.04, 0.00, 0.13), 0.21),
+        ((0.08, 0.00, 0.28), 0.135),
+        ((0.09, 0.00, 0.42), 0.105),
+        ((0.08, 0.00, 0.58), 0.096),   # a soft S: slightly back ...
+        ((0.10, 0.00, 0.74), 0.094),
+        ((0.17, 0.00, 0.88), 0.098),   # ... then curving forward
+        ((0.25, 0.00, 0.98), 0.108),   # into the head
+        (tuple(head), 0.125),          # only the head turns
+        (tuple(head + beak * 0.09), 0.095),
+        (tuple(head + beak * 0.15), 0.052),
+        (tuple(head + beak * 0.25), 0.036),   # beak, same chain
+        (tuple(head + beak * 0.36), 0.022),
+        (tuple(head + beak * 0.46), 0.006),
+    ]
+    HEAD = head
+    HEAD_YAW = yaw
+    BEAK_DIR = beak
+    BEAK_BASE = head + beak * 0.09
+
+
+# ---------------------------------------------------------------- camera & light
+
+def build_camera(scene, objects, roll_deg=-5.0, elev_deg=12.0, azim_deg=16.0,
+                 focal=55.0, margin=0.40):
+    cam_data = bpy.data.cameras.new("Camera")
+    cam_data.lens = focal
+    cam_data.sensor_fit = "AUTO"
+    cam = new_object("Camera", cam_data)
+    scene.camera = cam
+
+    az, el = math.radians(azim_deg), math.radians(elev_deg)
+    direction = Vector((math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el),
+                        math.sin(el)))
+    target = Vector((0.1, 0, 0.45))
+    dist = 5.0
+
+    deps = bpy.context.evaluated_depsgraph_get()
+    corners = []
+    for obj in objects:
+        ev = obj.evaluated_get(deps)
+        mw = obj.matrix_world
+        for v in ev.data.vertices:
+            corners.append(mw @ v.co)
+
+    from bpy_extras.object_utils import world_to_camera_view
+    for _ in range(6):
+        cam.location = target + direction * dist
+        quat = direction.to_track_quat("Z", "Y")
+        roll = Matrix.Rotation(math.radians(roll_deg), 4, "Z")
+        cam.matrix_world = Matrix.Translation(cam.location) @ \
+            quat.to_matrix().to_4x4() @ roll
+        bpy.context.view_layer.update()
+        xs, ys = [], []
+        for c in corners:
+            p = world_to_camera_view(scene, cam, c)
+            xs.append(p.x)
+            ys.append(p.y)
+        cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+        print("fit: dist %.2f x %.2f..%.2f y %.2f..%.2f" % (dist, min(xs), max(xs), min(ys), max(ys)))
+        extent = max(max(xs) - min(xs), max(ys) - min(ys)) / 2
+        dist *= extent / margin
+        # Shift the frame so the silhouette is centred.
+        cam_data.shift_x += (cx - 0.5) * 0.0  # keep: recentre via target instead
+        right = cam.matrix_world.to_3x3() @ Vector((1, 0, 0))
+        up = cam.matrix_world.to_3x3() @ Vector((0, 1, 0))
+        half_w = dist * math.tan(0.5 * 2 * math.atan(cam_data.sensor_width / (2 * focal)))
+        target += right * (cx - 0.5) * 2 * half_w + up * (cy - 0.5) * 2 * half_w
+    return cam
+
+
+def build_lights(scene):
+    def area(name, loc, target, energy, color, size):
+        data = bpy.data.lights.new(name, "AREA")
+        data.energy = energy
+        data.color = color
+        data.size = size
+        data.shape = "DISK"
+        obj = new_object(name, data)
+        obj.location = Vector(loc)
+        d = (Vector(target) - obj.location).normalized()
+        obj.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+        return obj
+
+    t = (0.1, 0, 0.45)
+    area("Key", (2.2, -3.2, 3.6), t, 720, (1.0, 0.93, 0.84), 3.5)
+    area("Fill", (3.5, 2.6, 1.2), t, 260, (0.86, 0.91, 1.0), 4.0)
+    area("Rim", (-3.5, 1.8, 2.6), t, 500, (1.0, 0.90, 0.78), 2.5)
+    area("Under", (0.5, -2.0, -3.0), t, 90, (0.95, 0.95, 1.0), 4.0)
+
+    world = bpy.data.worlds.new("World")
+    scene.world = world
+    world.use_nodes = True
+    bg = world.node_tree.nodes["Background"]
+    bg.inputs["Color"].default_value = (0.9, 0.9, 0.92, 1.0)
+    bg.inputs["Strength"].default_value = 0.35
+
+
+def setup_render(scene, opts):
+    scene.render.engine = "CYCLES"
+    scene.cycles.samples = opts["samples"]
+    scene.cycles.use_denoising = True
+    scene.cycles.denoiser = "OPENIMAGEDENOISE"
+    scene.cycles.use_adaptive_sampling = True
+    scene.render.film_transparent = True
+    scene.render.resolution_x = opts["size"]
+    scene.render.resolution_y = opts["size"]
+    scene.render.resolution_percentage = 100
+    scene.render.image_settings.file_format = "PNG"
+    scene.render.image_settings.color_mode = "RGBA"
+    scene.render.image_settings.color_depth = "8"
+    scene.render.filepath = opts["out"]
+    scene.view_settings.view_transform = "AgX"
+    scene.view_settings.look = "AgX - Medium High Contrast"
+    scene.view_settings.exposure = -0.12
+    scene.view_settings.gamma = 1.0
+
+    if opts["device"] in ("auto", "gpu"):
+        try:
+            prefs = bpy.context.preferences.addons["cycles"].preferences
+            prefs.compute_device_type = "METAL"
+            prefs.get_devices()
+            for d in prefs.devices:
+                d.use = True
+            scene.cycles.device = "GPU"
+            print("Cycles: using Metal GPU")
+        except Exception as exc:  # noqa: BLE001
+            print("Cycles: GPU not available, using CPU:", exc)
+            scene.cycles.device = "CPU"
+    else:
+        scene.cycles.device = "CPU"
+
+
+# ---------------------------------------------------------------- main
+
+def main():
+    opts = parse_args()
+    clear_scene()
+    scene = bpy.context.scene
+
+    if opts["variant"] == "neck":
+        neck_variant(float(opts.get("yaw", -35)), float(opts.get("pitch", -14)))
+    objects = []
+    objects.append(build_body())
+    objects += build_eyes()
+    if opts["variant"] != "neck":
+        objects += build_folded_wings()
+        objects += build_legs()
+
+    build_lights(scene)
+    setup_render(scene, opts)
+    build_camera(scene, objects)
+
+    if opts["blend"]:
+        bpy.ops.wm.save_as_mainfile(filepath=opts["blend"])
+    bpy.ops.render.render(write_still=True)
+    print("Wrote", opts["out"])
+
+
+if __name__ == "__main__":
+    main()

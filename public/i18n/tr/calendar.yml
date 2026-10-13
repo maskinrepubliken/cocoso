@@ -12,7 +12,7 @@ bigCal:
   yesterday: Dün
   tomorrow: Yarın
   today: Bugün
-  agenda: Ajanda
+  agenda: Liste
   noEventsInRange: Bu aralıkta etkinlik yok
   showMore: '{{ total }} daha'
 

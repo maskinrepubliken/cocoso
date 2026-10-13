@@ -36,6 +36,10 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  loginToJoin: Log in to join
+  noContactInfo: No contact details given.
+  bookable: Bookable
+  archived: Archived
   activity: Activity
   all: All
   author: author
@@ -92,6 +96,7 @@ labels:
   editFormEntry: Edit Entry in {{ context }}
   thislisting: this listing
   newsletters: Previous Newsletters
+  noNewsletters: No newsletters have been sent yet.
   avatar:
     checklabel: Show Avatar
     helper: Check to show your avatar with this entry
@@ -188,6 +193,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Menu
+  home: Home
   guest:
     login: Login
     register: Register
@@ -232,14 +238,21 @@ locations:
   here: Here in {{ name }}
   switcher:
     choose: Choose a place
+    whole: The whole municipality
+    wholeHelper: All places
+    zoom: …or zoom in on a place
+    open: Choose a place
+    clear: Show the whole municipality
   landing:
-    activities: What's on in {{ name }}
-    resources: Places and venues in {{ name }}
-    groups: Groups in {{ name }}
+    activities: What's on
+    resources: Places and venues
+    groups: Groups
+    inPlace: in {{ name }}
     seeAll: See all
     nothingYet: Nothing here yet
   grid:
-    title: Choose your place
+    title: What is on where you live?
+    intro: Each place has a page of its own with what happens right there.
   form:
     label: Place
     helperResource: The village or place where this resource is. Activities held here follow it automatically.
@@ -313,3 +326,200 @@ auth:
 
 public:
   labels:
+
+# Recurring activities on the activities listing
+recurring:
+  every: "Every {{days}}"
+  everyOther: "Every other {{days}}"
+  everyOtherWeek: "every other week"
+  today: "Today"
+  tomorrow: "Tomorrow"
+  now: "On now"
+  nothing: "Nothing planned for this day."
+  earlier: "Earlier days"
+  later: "More days"
+  weekTitle: "Every week"
+  weekIntro: "Recurring activities, shown once on their weekday"
+  next: "Next {{date}}"
+
+# The event page (the strings are in common because SSR only loads common)
+event:
+  sections:
+    when: "When"
+    where: "Where"
+    organizer: "Organizer"
+    about: "About the event"
+    register: "Sign up"
+    attendees: "Attendees"
+    organizerTools: "For the organizer"
+    discussion: "Discussion"
+  dates:
+    choose: "Choose a date"
+    more: "Show all {{count}} dates"
+    fewer: "Show fewer dates"
+    past: "Past dates"
+    occurrences: "{{count}} dates"
+  place:
+    address: "Address"
+    map: "Open in map"
+  organizer:
+    profile: "See all events by {{name}}"
+  attendees:
+    none: "No one has signed up yet."
+    hidden: "+ {{count}} who chose not to show their name"
+    count: "{{count}} signed up"
+    left: "{{count}} of {{capacity}} places left"
+  register:
+    firstName: "First name"
+    lastName: "Last name"
+    email: "Email"
+    submit: "Sign up"
+    hideName: "Hide my name from other visitors"
+    emailPrivate: "Only the organizer sees your email."
+    done: "Thank you, you are signed up. Welcome!"
+    already: "You are already signed up for this date."
+    full: "The event is full."
+    closed: "Sign-up is closed."
+    past: "This date has already passed."
+    forDate: "Signing up for {{date}}"
+  change:
+    toggle: "Change or cancel your sign-up"
+    intro: "Enter the last name and email you signed up with."
+    find: "Find my sign-up"
+    notFound: "We found no sign-up with those details. Check the date and spelling and try again."
+    save: "Save changes"
+    cancel: "Cancel my sign-up"
+    updated: "Your sign-up is changed."
+    removed: "Your sign-up is cancelled."
+  tools:
+    intro: "Only you and the admins see this list with email addresses."
+    edit: "Edit event"
+    remove: "Delete event"
+    people: "People"
+    noOne: "No sign-ups for this date."
+    archive: "Archive event"
+    unarchive: "Restore from archive"
+    archiveFirst: "An event has to be archived before it can be deleted."
+    archived: "The event is archived and no longer listed."
+    unarchived: "The event is back in the listings."
+  archived:
+    tag: "Archived"
+    notFound: "This event is not available."
+    onlyYou: "Archived events are only shown to you and the admins."
+  discussion:
+    open: "Open the discussion"
+    onlyVerified: "For verified members"
+
+home:
+  sections:
+    title: "Find your way around"
+    intro: "Everything that happens in the municipality, sorted so you find what you are after."
+    activities: "Concerts, markets, training sessions and all else that is on, with sign-up right on the page."
+    calendar: "The same events as a calendar, month by month or as a list."
+    groups: "The municipality’s associations and groups: what they do, when they meet and how to join."
+    works: "Carpool, lend, give away and ask for a hand, between neighbours."
+    people: "Those who organize: associations, services and enthusiasts, with their upcoming events."
+    resources: "Venues, meeting places and outings, and what happens there."
+    info: "About the service, how to use it and whom to contact."
+  hero:
+    welcome: Welcome to
+    tagline: Events, associations and places across the whole municipality, in one place.
+
+# Requests (works shown as requests between neighbours)
+requests:
+  all: "All"
+  count_one: "{{count}} request"
+  count_other: "{{count}} requests"
+  empty: "No requests here yet."
+  emptyHint: "Log in and create the first one."
+  contact: "Contact"
+  kinds:
+    carpool:
+      name: "Carpooling"
+      description: "Share the car to work, school or an event."
+    lend:
+      name: "Lend out"
+      description: "Tools, trailer, tent – things others may borrow."
+    borrow:
+      name: "Want to borrow"
+      description: "Need something for a while? Ask your neighbours."
+    giveaway:
+      name: "Give away"
+      description: "Things you no longer need, free to collect."
+    help:
+      name: "Help wanted"
+      description: "Shopping, shovelling snow, carrying a sofa."
+    company:
+      name: "Company"
+      description: "Someone to walk, have coffee or exercise with."
+    tips:
+      name: "Tips"
+      description: "Good to know: places, ideas and offers."
+
+seasons:
+  var: Spring
+  sommar: Summer
+  host: Autumn
+  vinter: Winter
+
+footer:
+  and: and
+  byline: A service from Tranemo municipality, filled by associations, organizers and neighbours in {{ places }}.
+  bylineShort: A service from Tranemo municipality, filled by associations, organizers and neighbours.
+
+calendarFilter:
+  anyResource: All places and venues
+  pickResource: Pick a place or venue…
+  recurring: Recurring
+  legend: Colours follow the place
+
+groupCard:
+  members_one: '{{count}} member'
+  members_other: '{{count}} members'
+  nextMeeting: Next meeting {{date}}
+
+a11y:
+  skipToContent: Skip to content
+
+termsPage:
+  title: Terms of use and privacy policy
+  updated: In effect from October 2026.
+  sections:
+    - title: About the service
+      paragraphs:
+        - "{{site}} is run by Tranemo municipality. It gathers events, associations, places and requests in the municipality. Reading and searching needs no account."
+        - "With an account you can publish events, present your association, book venues, sign up for events and answer requests. The account is personal."
+    - title: How we behave
+      paragraphs:
+        - "What you publish is visible to every visitor. Be respectful, stick to the truth, and only publish what you have the right to, such as pictures you took yourself or have permission to use."
+        - "The municipality may remove content that breaks the law, is offensive or does not belong here, and may close accounts that are misused."
+    - title: What we store
+      paragraphs:
+        - "When you create an account we store your username, your e-mail address and an encrypted password. What you fill in on your page, such as name, picture and presentation, is stored too and shown to visitors."
+        - "When you sign up for an event, your name, e-mail address and number of people are stored. The organizer sees them; other visitors see only your name, unless you chose to hide it."
+        - "We keep no data about you for marketing and hand nothing to anyone outside the municipality. Data is stored on servers within the EU."
+    - title: Cookies
+      paragraphs:
+        - "The service uses only the cookies it needs to work: one to keep you logged in and one to remember your language. No tracking or advertising cookies."
+    - title: Your rights
+      paragraphs:
+        - "You can see and change your data under your profile at any time, and delete your account there. Your personal data is then erased. Events and posts you created may remain without your name if others depend on them."
+        - "Under the GDPR you have the right to an extract of the data we hold about you, to have it corrected or erased, and to complain to the Swedish Authority for Privacy Protection."
+    - title: Contact
+      paragraphs:
+        - "Questions about the service or your data go through the Give feedback button at the bottom of the page, or to the municipality's data protection officer via tranemo.se."
+
+eventKinds:
+  all: All kinds
+  kultur: Culture
+  idrott: Sport
+  barn: Children & family
+  marknad: Market
+  mat: Food
+  natur: Outdoors
+  larande: Learning
+  social: Social
+  form:
+    label: Kind of event
+    helper: Shown as a chip on the card, and visitors can filter the listing by it.
+    none: No particular kind

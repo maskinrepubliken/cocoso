@@ -12,8 +12,8 @@ bigCal:
   yesterday: Igår
   tomorrow: Imorgon
   today: Idag
-  agenda: Agenda
-  noEventsInRange: Det finns inga bokningar i det här intervallet.
+  agenda: Lista
+  noEventsInRange: Inget inplanerat under den här perioden.
   showMore: '{{ total }} mer'
 
 datePicker:

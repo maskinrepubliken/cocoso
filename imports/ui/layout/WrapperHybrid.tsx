@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { useSubscribe, useTracker } from 'meteor/react-meteor-data';
 import React, { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import { I18nextProvider } from 'react-i18next';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useAtom, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Toaster } from 'react-hot-toast';
@@ -14,7 +14,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 
 import useMediaQuery from '/imports/api/_utils/useMediaQuery';
 import Memberships from '/imports/api/memberships/membership';
-import i18n from '/imports/startup/i18n';
+import i18n, { getChosenLang, setDayjsLocale } from '/imports/startup/i18n';
 import {
   siteAtom,
   currentUserAtom,
@@ -24,16 +24,19 @@ import {
   isMobileAtom,
   locationsAtom,
   renderedAtom,
+  seasonAtom,
 } from '/imports/state';
 import { applyGlobalStyles } from '/imports/ui/utils/globalStylesManager';
+import { resolveSeason } from '/imports/api/_utils/season';
 import { restoreKeyFromSession } from '/imports/utils/setupEncryption';
+import { restoreViewAsState } from '/imports/utils/viewAs';
 import { call } from '/imports/api/_utils/shared';
-import { Box, Loader } from '/imports/ui/core';
+import { Loader } from '/imports/ui/core';
 
 import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
-import TopBarHandler from './TopBarHandler';
 import Header from './Header';
+import ViewAsBanner from './ViewAsBanner';
 import { Footer } from './Footers';
 
 dayjs.extend(updateLocale);
@@ -42,6 +45,9 @@ export interface WrapperHybridProps {
   siteDoc: any;
   pageTitles: any[];
   locations?: any[];
+  // The seasonal variant the server rendered with; the client resolves the
+  // same from its own clock (or ?season=) once hydrated.
+  season?: any;
   // Set only by serverRenderer.js — a per-request i18next clone
   // (i18n.cloneInstance) already resolved to the visitor's actual
   // language, so SSR output matches what the client will hydrate with.
@@ -49,13 +55,29 @@ export interface WrapperHybridProps {
   i18nInstance?: any;
 }
 
+// For keyboard and screen-reader users: the first tab stop jumps past the
+// header to the page's content. Visible only while focused.
+function SkipLink() {
+  const [tc] = useTranslation('common');
+  return (
+    <a className="skip-link" href="#main-content-container">
+      {tc('a11y.skipToContent')}
+    </a>
+  );
+}
+
 export default function WrapperHybrid({
   siteDoc,
   pageTitles,
   locations,
+  season: seasonProp,
   i18nInstance,
 }: WrapperHybridProps) {
-  useHydrateAtoms([[locationsAtom, locations || []]]);
+  useHydrateAtoms([
+    [locationsAtom, locations || []],
+    [seasonAtom, resolveSeason(seasonProp)],
+  ]);
+  const [season, setSeason] = useAtom(seasonAtom);
   const [site, setCurrentHost] = useAtom(siteAtom);
   const [pTitles, setPageTitles] = useAtom(pageTitlesAtom);
   const setCurrentUser = useSetAtom(currentUserAtom);
@@ -93,7 +115,7 @@ export default function WrapperHybrid({
     if (!i18n) return;
     const userLang = currentUser?.lang;
     const hostLang = site?.settings?.lang;
-    const lang = userLang || hostLang || i18n.language;
+    const lang = userLang || getChosenLang() || hostLang || i18n.language;
 
     if (lang !== i18n.language) {
       i18n.changeLanguage(lang);
@@ -103,6 +125,11 @@ export default function WrapperHybrid({
   useEffect(() => {
     setValues();
     restoreKeyFromSession();
+    // The browser decides the season from its own clock, with ?season=
+    // as a preview override.
+    const override = new URLSearchParams(window.location.search).get('season');
+    setSeason(resolveSeason(override, undefined, siteDoc?.settings?.season));
+    restoreViewAsState();
     setTimeout(() => {
       setRendered(true);
     }, 1000);
@@ -113,18 +140,27 @@ export default function WrapperHybrid({
     setIsMobile(isMobileValue);
   }, [isDesktopValue, isMobileValue]);
 
+  // An admin locking the season in settings takes effect on the next load
+  // of the site document, without a reload.
   useEffect(() => {
     if (!site) return;
-    applyGlobalStyles(site.theme);
+    const override = new URLSearchParams(window.location.search).get('season');
+    setSeason(resolveSeason(override, undefined, site.settings?.season));
+  }, [site?.settings?.season]);
+
+  useEffect(() => {
+    if (!site) return;
+    applyGlobalStyles(site.theme, season);
     // Only apply host language if no user preference has been detected/stored yet.
     // User language is applied in the currentUser effect with higher priority.
-    if (!currentUser) {
+    const hasLangParam = new URLSearchParams(window.location.search).has('lng');
+    if (!currentUser && !getChosenLang() && !hasLangParam) {
       const hostLang = site?.settings?.lang;
       if (hostLang && hostLang !== i18n.language) {
         i18n.changeLanguage(hostLang);
       }
     }
-  }, [site]);
+  }, [site, season]);
 
   useEffect(() => {
     if (!i18n || !i18n.language) {
@@ -137,6 +173,7 @@ export default function WrapperHybrid({
     dayjs.updateLocale(culture, {
       weekStart: 1,
     });
+    setDayjsLocale(i18n.language);
   }, [i18n?.language]);
 
   useEffect(() => {
@@ -162,12 +199,14 @@ export default function WrapperHybrid({
       <HelmetHybrid siteDoc={site || siteDoc} />
 
       <I18nextProvider i18n={i18nInstance || i18n}>
+        <SkipLink />
         <Suspense fallback={<Loader />}>
           <DummyWrapper
             animate={rendered && !isDesktopValue}
+            data-season={season}
             theme={site?.theme || siteDoc?.theme}
           >
-            {rendered && !adminPage && <TopBarHandler slideStart={rendered} />}
+            <ViewAsBanner />
             {!adminPage && (
               <Header
                 site={site || siteDoc}
@@ -175,16 +214,31 @@ export default function WrapperHybrid({
               />
             )}
 
-            <Box id="main-content-container">
+            <main id="main-content-container">
               <Outlet />
-            </Box>
+            </main>
 
             {!adminPage && <Footer site={site || siteDoc} />}
           </DummyWrapper>
         </Suspense>
 
         {rendered && (
-          <Toaster containerStyle={{ minWidth: '120px', zIndex: 999999 }} />
+          <Toaster
+            containerStyle={{ minWidth: '120px', zIndex: 999999 }}
+            toastOptions={{
+              style: {
+                background: 'var(--cocoso-papper)',
+                borderRadius: 'var(--cocoso-radius-kort)',
+                boxShadow: 'var(--cocoso-skugga-meny)',
+                color: 'var(--cocoso-mylla)',
+                fontFamily: 'var(--cocoso-font-ui)',
+                fontWeight: 600,
+                padding: '10px 14px',
+              },
+              success: { iconTheme: { primary: 'var(--cocoso-colors-theme-500)', secondary: '#fff' } },
+              error: { iconTheme: { primary: 'var(--cocoso-lingon)', secondary: '#fff' } },
+            }}
+          />
         )}
       </I18nextProvider>
     </>

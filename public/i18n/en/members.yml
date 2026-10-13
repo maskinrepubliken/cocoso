@@ -28,6 +28,7 @@ actions:
   notOrganizer: Remove as organizer
   visit: Visit Profile
   visithost: Visit profile in {{ host }}
+  viewAs: View site as this user
 
 message:
   success:
@@ -119,3 +120,9 @@ labels:
   list: List
   search: Search
   messages: Messages
+
+viewAs:
+  started: You now see the site as {{ username }}
+  banner: 'You are viewing the site as {{ username }} ({{ role }})'
+  back: Back to my account
+  backSuccess: You are back on your own account

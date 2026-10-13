@@ -30,6 +30,7 @@ interface DateTimeOccurrence {
 interface Activity {
   _id: string;
   title: string;
+  locationId?: string;
   datesAndTimes?: DateTimeOccurrence[];
   resourceId?: string;
   resource?: string;
@@ -60,6 +61,7 @@ interface Resource {
 interface Booking {
   activityId: string;
   title: string;
+  locationId?: string;
   start: Date;
   end: Date;
   startDate: string;
@@ -225,6 +227,7 @@ function helper_parseAllBookingsWithResources(
   return {
     activityId: activity._id,
     title: activity.title,
+    locationId: activity.locationId,
     start: dayjs(startDate + startTime, 'YYYY-MM-DDHH:mm').toDate(),
     end: dayjs(endDate + endTime, 'YYYY-MM-DDHH:mm').toDate(),
     startDate,

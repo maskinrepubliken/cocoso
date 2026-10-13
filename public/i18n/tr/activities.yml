@@ -80,6 +80,8 @@ public:
     info: Bilgi
     location: Yer
     resource: Kaynak
+    organizer: "Düzenleyen"
+    readMore: "Devamını oku"
   register:
     label: Kayıt ol
     form:
@@ -95,6 +97,8 @@ public:
         create: Kayıt ol
         update: Güncelle
         remove: Kaydını iptal et
+      hideName: "Adımı diğer ziyaretçilerden gizle"
+      emailPrivate: "E-posta adresini yalnızca düzenleyen görür."
     email: Bu eposta adresi zaten kayıt olunmuş, lütfen güncelleme seçeneğini seçiniz
     alreadyRegistered: Bu etkinliğe zaten kayıtlısınız. Kaydı değiştirmek için lütfen güncelleme seçeneğini seçiniz.
     notEnoughSeats: Maalesef partinizin tamamına ev sahipliği yapacak yeterli kapasitemiz kalmadı. Yalnızca {{ capacityLeft }} yer kaldı. Lütfen rezervasyonunuzu buna göre yapın.
@@ -109,6 +113,8 @@ public:
     update: Katılımını başarıyla güncelledik. Hoş gelirsin!
     remove: Katılımını başarıyla iptal ettik. Gene bekleriz!
     show: Katılımcıları göster
+    none: "Henüz kimse kayıt olmadı."
+    hidden: "+ adını göstermemeyi seçen {{count}} kişi"
   capacity:
     full: Kapasite doldu.
     fullByYou: Tebrikler! Sonuncu yeri kaptın!

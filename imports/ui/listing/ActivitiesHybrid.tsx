@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
-import { useAtomValue } from 'jotai';
 
 import { Center } from '/imports/ui/core';
-import { locationsAtom } from '/imports/state';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
-import PopupHandler from './PopupHandler';
+import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
 import Tabs from '../core/Tabs';
+import ThreeDIcon from '../generic/ThreeDIcon';
+import { EVENT_KINDS } from '../pages/activities/eventKinds';
 
 export interface ActivitiesHybridProps {
   siteDoc: any;
@@ -24,14 +24,24 @@ export default function ActivitiesHybrid({
   showPast,
 }: ActivitiesHybridProps) {
   const site = { ...siteDoc };
-  const locations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
-  const [modalItem, setModalItem] = useState(null);
-
-  const locationNameOf = (item: any) =>
-    locations.find((l) => l._id === item.locationId)?.name ||
-    (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
-  const [, setSearchParams] = useSearchParams();
+  const openEntry = useOpenEntry('activities');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const kindFilter = searchParams.get('kind') || '';
+  const setKind = (key: string) =>
+    setSearchParams((params) => {
+      const next = new URLSearchParams(params);
+      if (key) next.set('kind', key);
+      else next.delete('kind');
+      return next;
+    });
+  // Only kinds that some upcoming event has, so no chip is a dead end.
+  const presentKinds = useMemo(() => {
+    const keys = new Set(
+      activities.map((a: any) => a.category?.key).filter(Boolean)
+    );
+    return EVENT_KINDS.filter((kind) => keys.has(kind.key));
+  }, [activities]);
 
   const tabs = [
     {
@@ -47,10 +57,22 @@ export default function ActivitiesHybrid({
   ];
 
   const groupsInMenu = site?.settings?.menu?.find(
-    (item) => item.name === 'groups'
+    (item: any) => item.name === 'groups'
   );
 
   const groupsLabel = groupsInMenu?.label;
+
+  // Every event as a card, weekly ones too; the start page has the day and
+  // week overviews.
+  const cardActivities = useMemo(
+    () =>
+      kindFilter
+        ? activities.filter(
+            (activity: any) => activity.category?.key === kindFilter
+          )
+        : activities,
+    [activities, kindFilter]
+  );
 
   return (
     <>
@@ -60,34 +82,57 @@ export default function ActivitiesHybrid({
         <Tabs tabs={tabs} index={showPast ? 0 : 1} />
       </Center>
 
-      <InfiniteScroller items={activities} filtrerMarginTop={-72}>
+      {presentKinds.length > 1 && (
+        <div className="kind-chips page-wrap">
+          <button
+            type="button"
+            className={`kind-chip ${kindFilter ? '' : 'is-active'}`}
+            onClick={() => setKind('')}
+          >
+            {tc('eventKinds.all')}
+          </button>
+          {presentKinds.map((kind) => (
+            <button
+              key={kind.key}
+              type="button"
+              aria-pressed={kindFilter === kind.key}
+              className={`kind-chip ${
+                kindFilter === kind.key ? 'is-active' : ''
+              }`}
+              onClick={() => setKind(kindFilter === kind.key ? '' : kind.key)}
+            >
+              <ThreeDIcon name={kind.icon} size={30} />
+              {tc(`eventKinds.${kind.key}`)}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <InfiniteScroller
+        gridWide
+        isGrid
+        items={cardActivities}
+        filtrerMarginTop={presentKinds.length > 1 ? 0 : -72}
+      >
         {(item, index) => (
-          <Center
+          <div
             key={item._id}
-            flex="1 1 355px"
-            onClick={() => setModalItem(item)}
+            style={{ cursor: 'pointer' }}
+            onClick={() => openEntry(item)}
           >
             <SexyThumb
               activity={item}
               index={index}
               showPast={showPast}
               tags={
-                [
-                  item.isGroupMeeting ? groupsLabel : null,
-                  locationNameOf(item),
-                ].filter(Boolean) as string[]
+                [item.isGroupMeeting ? groupsLabel : null].filter(
+                  Boolean
+                ) as string[]
               }
             />
-          </Center>
+          </div>
         )}
       </InfiniteScroller>
-
-      <PopupHandler
-        item={modalItem}
-        kind="activities"
-        showPast={showPast}
-        onClose={() => setModalItem(null)}
-      />
     </>
   );
 }

@@ -4,7 +4,7 @@ panel: Adminpanel
 menulabel: Adminmenu
 site: Sidan
 home: Hem
-description: Konfigurera, designa och hantera din webbplats
+description: Din dag i överblick – vad som är på gång och vad som behöver göras
 
 settings:
   title: Inställningar
@@ -228,6 +228,16 @@ locations:
       label: Innehåll på startsidan
       helper: Visa valfritt en komponerbar sida ovanför de automatiska avsnitten
       none: Ingen
+    color:
+      label: Färg
+      helper: "Färgvärlden som används på ortens kort, stämpel och kalenderhändelser. \"Efter ordning\" ger varje ort nästa i turordning."
+      auto: Efter ordning
+      worlds:
+        skog: Skogsgrön
+        lera: Lera
+        glas: Glasblå
+        ockra: Ockra
+        salvia: Salvia
     published:
       label: Publicerad
       helper: Opublicerade orter är dolda för besökare men kan fortfarande kopplas till innehåll
@@ -410,3 +420,46 @@ reports:
     save: Spara
   messages:
     success: Rapport uppdaterad.
+
+overview:
+  greeting: 'Hej {{name}}!'
+  intro: 'Så här ser det ut för dina aktiviteter.'
+  introAdmin: 'Så här ser det ut på sajten just nu.'
+  actions:
+    newActivity: 'Ny aktivitet'
+    calendar: 'Öppna kalendern'
+    messages: 'Meddelanden'
+    users: 'Användare'
+    locations: 'Platser'
+  stats:
+    upcoming: 'På gång'
+    registrations: 'Nya anmälningar'
+    activities: 'Aktiviteter'
+    members: 'Nya medlemmar'
+  upcoming:
+    title: 'På gång de närmaste två veckorna'
+    empty: 'Inget inplanerat de närmaste två veckorna.'
+    signedUp: '{{count}} anmälda'
+    signedUpOf: '{{count}} av {{capacity}} anmälda'
+    full: 'Fullt'
+    noRegistration: 'Ingen anmälan'
+    today: 'Idag'
+    more: 'och {{count}} till – se kalendern'
+  registrations:
+    title: 'Nya anmälningar'
+    empty: 'Inga nya anmälningar de senaste 7 dagarna.'
+    people: '{{count}} personer'
+    for: 'till'
+  members:
+    title: 'Nya medlemmar'
+    empty: 'Inga nya medlemmar de senaste 14 dagarna.'
+    all: 'Se alla användare'
+  settings:
+    title: 'Inställningar och utseende'
+    helper: 'Sådant du ställer in en gång och ändrar ibland.'
+  error: 'Kunde inte hämta översikten.'
+
+season:
+  label: Årstid
+  helper: "Sajten byter utseende med årstiderna. Lås en här för att behålla den, till exempel under en kampanj."
+  auto: Följ kalendern

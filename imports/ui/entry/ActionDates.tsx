@@ -4,8 +4,6 @@ import React from 'react';
 import { Box, Flex } from '../core';
 import { DateJust } from './FancyDate';
 
-const today = dayjs().format('YYYY-MM-DD');
-const yesterday = dayjs(new Date()).add(-1, 'days').format('YYYY-MM-DD');
 
 export interface DateOccurrence {
   startDate: string;
@@ -18,11 +16,21 @@ export interface Activity {
   datesAndTimes?: DateOccurrence[];
 }
 
-const getFutureOccurrences = (dates: DateOccurrence[]): DateOccurrence[] =>
-  dates.filter((date) => dayjs(date.endDate, 'YYYY-MM-DD').isAfter(yesterday));
+// Day bounds are read when called, not when the module loads: the server
+// runs for weeks and would otherwise keep the day it started on.
+const getFutureOccurrences = (dates: DateOccurrence[]): DateOccurrence[] => {
+  const yesterday = dayjs().add(-1, 'days').format('YYYY-MM-DD');
+  return dates.filter((date) =>
+    dayjs(date.endDate, 'YYYY-MM-DD').isAfter(yesterday)
+  );
+};
 
-const getPastOccurrences = (dates: DateOccurrence[]): DateOccurrence[] =>
-  dates.filter((date) => dayjs(date.endTime, 'YYYY-MM-DD').isBefore(today));
+const getPastOccurrences = (dates: DateOccurrence[]): DateOccurrence[] => {
+  const today = dayjs().format('YYYY-MM-DD');
+  return dates.filter((date) =>
+    dayjs(date.endDate, 'YYYY-MM-DD').isBefore(today)
+  );
+};
 
 export interface ActionDatesProps {
   activity?: Activity | null;

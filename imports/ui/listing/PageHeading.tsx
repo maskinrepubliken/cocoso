@@ -3,6 +3,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 import { useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { useAtomValue } from 'jotai';
 
@@ -11,6 +12,7 @@ import type { Site } from '/imports/ui/types';
 import { canCreateContentAtom, siteAtom } from '/imports/state';
 
 import NewButton, { type NewButtonAnimState } from './NewButton';
+import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { publicUrl } from '/imports/api/_utils/shared';
 
 export interface PageHeadingProps {
@@ -27,10 +29,7 @@ const BUTTON_INTRO_DELAY_MS = 300; // must match animation-delay in CSS
 const BUTTON_INTRO_DURATION_MS = 2500 + BUTTON_INTRO_DELAY_MS; // 2800 total
 const SUBTLE_DURATION_MS = 900;
 
-export default function PageHeading({
-  site,
-  listing,
-}: PageHeadingProps) {
+export default function PageHeading({ site, listing }: PageHeadingProps) {
   const headingWrapRef = useRef<HTMLDivElement>(null);
   const preBtnLeftRef = useRef<number | null>(null);
   // Set when FLIP finds NewButton still null (data not yet loaded) — allows
@@ -55,10 +54,15 @@ export default function PageHeading({
   const listingInMenu = site?.settings?.menu?.find(
     (item) => item.name === listing
   );
+  const [tc] = useTranslation('common');
   const description = listingInMenu?.description;
   const heading = listingInMenu?.label;
   const url = publicUrl(`/${listingInMenu?.name}`);
-  const imageUrl = site?.logo;
+  // What a link to this page shows elsewhere: the menu's description when
+  // the admin wrote one, else the site's own line; the site's social image.
+  const metaDescription = description || tc('home.hero.tagline');
+  const imageUrl = publicUrl('/images/og-default.jpg');
+  const icon = sectionIcons[listing];
 
   // ── Record heading position before the button appears ─────────────────────
   // useEffect (not layout) is fine here — we just store a number, no DOM change.
@@ -179,10 +183,7 @@ export default function PageHeading({
         <link rel="canonical" href={url} />
         <meta charSet="utf-8" />
         <meta name="title" content={String(heading || 'Page')} />
-        <meta
-          name="description"
-          content={String(description || 'Description')}
-        />
+        <meta name="description" content={String(metaDescription)} />
         <meta
           property="og:title"
           content={String(heading || 'Page')?.substring(0, 40)}
@@ -191,14 +192,17 @@ export default function PageHeading({
         <meta property="og:image" content={imageUrl} />
         <meta
           property="og:description"
-          content={String(description || '')?.substring(0, 150)}
+          content={String(metaDescription)?.substring(0, 150)}
         />
         <meta property="og:type" content="website" />
       </Helmet>
       <Center>
         <Box px="2">
           <Center position="relative">
-            <div ref={headingWrapRef}>
+            <div ref={headingWrapRef} className="page-heading">
+              {icon && (
+                <ThreeDIcon className="page-heading-icon" name={icon} size={56} />
+              )}
               <Heading as="h1" size="lg" textAlign="center">
                 {heading}
               </Heading>
@@ -209,7 +213,7 @@ export default function PageHeading({
           <Box py="2">
             <Divider
               css={{
-                borderColor: 'var(--cocoso-colors-theme-500)',
+                borderColor: 'var(--cocoso-linje)',
                 minWidth: '280px',
               }}
             />
@@ -218,8 +222,9 @@ export default function PageHeading({
                 <Text
                   size="lg"
                   css={{
-                    fontWeight: '300',
-                    lineHeight: '1.3',
+                    color: 'var(--cocoso-mylla-soft)',
+                    fontWeight: '400',
+                    lineHeight: '1.4',
                     maxWidth: '520px',
                     textAlign: 'center',
                   }}

@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 
 import { Box, Center, Heading, Grid } from '/imports/ui/core';
 
-import { isDesktopAtom } from '../../state';
+import { isDesktopAtom, siteAtom } from '../../state';
 
 const publicSettings = Meteor.settings.public;
 
@@ -25,14 +25,16 @@ export default function Template({
   children,
 }: TemplateProps) {
   const isDesktop = useAtomValue(isDesktopAtom);
+  const site = useAtomValue(siteAtom);
+  const siteName = site?.settings?.name || publicSettings.name;
 
   return (
     <>
       <Helmet>
-        <title>{heading || publicSettings.name}</title>
+        <title>{heading ? `${heading} | ${siteName}` : siteName}</title>
       </Helmet>
       {isDesktop ? (
-        <Grid columns={{ md: 1, lg: 3 }} p="3" templateColumns="30% 40% 30%">
+        <Grid columns={{ md: 1, lg: 3 }} p="3" templateColumns="3fr 4fr 3fr">
           <Box>{leftContent}</Box>
 
           <Box>

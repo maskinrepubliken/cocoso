@@ -1,47 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Link,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from 'react-router';
+import { useLoaderData, useNavigate, useSearchParams } from 'react-router';
 import dayjs from 'dayjs';
-import parseHtml from 'html-react-parser';
 import loadable from '@loadable/component';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Link as CLink,
-  Loader,
-  Text,
-  Skeleton,
-} from '/imports/ui/core';
-import Modal from '/imports/ui/core/Modal';
+import { Box, Center, Flex, Loader, Skeleton } from '/imports/ui/core';
 import {
   getNonComboResourcesWithColor,
   getComboResourcesWithColor,
   parseAllBookingsWithResources,
 } from '/imports/api/_utils/shared';
-import {
-  canCreateContentAtom,
-  currentUserAtom,
-  locationsAtom,
-  roleAtom,
-} from '/imports/state';
+import { canCreateContentAtom, locationsAtom } from '/imports/state';
+import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
 import Tag from '/imports/ui/generic/Tag';
 import { cocosoReactSelectAdapter } from '/imports/ui/utils/globalStylesManager';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
 });
 
 const maxResourceLabelsToShow = 13;
+
+// The place and resource filters are pill-shaped, like the event cards'
+// chips; the tags and buttons take their corners from this variable.
+const pillShapes = {
+  '--cocoso-border-radius': '999px',
+  fontFamily: 'Raleway, var(--cocoso-body-font-family, sans-serif)',
+  '& *': { fontFamily: 'inherit' },
+};
 
 interface SlotInfo {
   start: Date;
@@ -75,7 +65,6 @@ interface Activity {
   isPublicActivity?: boolean;
   isGroupPrivate?: boolean;
   longDescription?: string;
-  resourceColor?: string;
 }
 
 interface CalendarHandlerProps {
@@ -106,8 +95,6 @@ const parseNewEntryParams = (
 export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const site = siteDoc;
-  const currentUser = useAtomValue(currentUserAtom);
-  const role = useAtomValue(roleAtom);
   const [locationFilter, setLocationFilter] = useState<string>('');
   const publishedLocations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
@@ -126,9 +113,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [allActivities, locationFilter]
   );
 
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
-    null
-  );
   const [calendarFilter, setCalendarFilter] = useState<Resource | null>(null);
 
   // A place narrows the calendar to its resources and to activities filed
@@ -144,6 +128,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [allResources, locationFilter]
   );
   const navigate = useNavigate();
+  const prefix = useLocationPrefix();
   const [, setSearchParams] = useSearchParams();
 
   const activitiesParsed = useMemo(
@@ -151,9 +136,19 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [activities, resources]
   );
 
+  // An event opens its page on the clicked date; a group meeting its group.
   const handleSelectActivity = (activity: Activity, e: React.MouseEvent) => {
     e.preventDefault();
-    setSelectedActivity(activity);
+    if (activity.isGroupMeeting) {
+      navigate(`${prefix}/groups/${activity.groupId}`);
+      return;
+    }
+    const listing = activity.isPublicActivity ? 'activities' : 'calendar';
+    const query = new URLSearchParams({
+      date: activity.startDate,
+      time: activity.startTime,
+    });
+    navigate(`${prefix}/${listing}/${activity.activityId}?${query}`);
   };
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
@@ -192,55 +187,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     }));
   };
 
-  const getActivityTimes = (activity: Activity | null) => {
-    if (!activity) {
-      return '';
-    }
-    if (activity.startDate === activity.endDate) {
-      return `${activity.startTime}–${activity.endTime} ${dayjs(
-        activity.startDate
-      ).format('DD MMMM')}`;
-    }
-    return `${dayjs(activity.startDate).format('DD MMM')} ${
-      activity.startTime
-    } – ${dayjs(activity.endDate).format('DD MMM')} ${activity.endTime}`;
-  };
-
-  const isCreatorOrAdmin = () =>
-    (selectedActivity &&
-      currentUser &&
-      currentUser.username === selectedActivity.authorName) ||
-    role === 'admin';
-
-  const handlePrimaryButtonClick = () => {
-    if (!selectedActivity) return;
-
-    if (selectedActivity.isGroupMeeting) {
-      navigate(`/groups/${selectedActivity.groupId}`);
-      return;
-    }
-
-    const listing = selectedActivity.isPublicActivity
-      ? 'activities'
-      : 'calendar';
-    navigate(`/${listing}/${selectedActivity.activityId}`);
-  };
-
-  const handleSecondaryButtonClick = () => {
-    if (!isCreatorOrAdmin()) {
-      setSelectedActivity(null);
-      return;
-    }
-
-    if (!selectedActivity) return;
-
-    if (selectedActivity.isGroupMeeting) {
-      navigate(`/groups/${selectedActivity.groupId}`);
-    } else {
-      navigate(`/calendar/${selectedActivity.activityId}?edit=true`);
-    }
-  };
-
   const filteredActivities = activitiesParsed.filter(
     (activity: any) =>
       !calendarFilter ||
@@ -258,17 +204,35 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     nonComboResourcesWithColor
   );
 
-  const allFilteredActsWithColors = filteredActivities.map((act: any) => {
-    const resource = nonComboResourcesWithColor.find(
-      (res: any) => res._id === act.resourceId
-    );
-    const resourceColor = (resource && resource.color) || '#484848';
+  // Weekly activities are drawn lighter so one-off events stand out.
+  const recurringIds = useMemo(
+    () =>
+      new Set(
+        activities
+          .filter((a: any) => getWeeklyPattern(a.datesAndTimes))
+          .map((a) => a._id)
+      ),
+    [activities]
+  );
 
+  // Every event is drawn in its place's colour world; content for the
+  // whole municipality takes the site's green. Weekly activities are
+  // marked recurring and drawn lighter, so one-off events stand out.
+  const allFilteredActsWithColors = filteredActivities.map((act: any) => {
+    const world = worldForLocation(publishedLocations, act.locationId);
     return {
       ...act,
-      resourceColor,
+      isRecurring: recurringIds.has(act.activityId),
+      ink: world?.ink || 'var(--cocoso-colors-theme-700)',
+      tint: world?.tint || 'var(--cocoso-colors-theme-100)',
     };
   });
+
+  // The resource filter: a place's venues share its colour, so the chips
+  // and the select options read as belonging together.
+  const inkForResource = (resource: Resource) =>
+    worldForLocation(publishedLocations, resource.locationId)?.ink ||
+    'var(--cocoso-colors-theme-700)';
 
   const selectFilterView =
     nonComboResourcesWithColor.filter((r: any) => r.isBookable)?.length >=
@@ -308,9 +272,9 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
 
       <PageHeading site={site || siteDoc} listing="calendar" />
 
-      <Box>
-        {publishedLocations.length > 0 && (
-          <Center mb="2">
+      <Box className="page-wrap">
+        {publishedLocations.length > 0 && !prefix && (
+          <Center mb="2" css={pillShapes}>
             <Flex justify="center" px="1" wrap="wrap">
               <Tag
                 key="all-locations"
@@ -340,7 +304,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
           </Center>
         )}
 
-        <Center mb="2">
+        <Center mb="2" css={pillShapes}>
           {!selectFilterView ? (
             <Box>
               <Flex justify="center" px="1" pb="1" mb="3" wrap="wrap">
@@ -363,7 +327,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
                       <Tag
                         checkable
                         label={resource.label}
-                        filterColor={resource.color}
+                        filterColor="#484848"
                         checked={calendarFilter?._id === resource._id}
                         onClick={() => setCalendarFilter(resource)}
                       />
@@ -378,8 +342,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
                       <Tag
                         checkable
                         label={resource.label}
-                        filterColor={'#2d2d2d'}
-                        gradientBackground={resource.color}
+                        filterColor="#484848"
                         checked={calendarFilter?._id === resource._id}
                         onClick={() => setCalendarFilter(resource)}
                       />
@@ -388,43 +351,32 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
               </Flex>
             </Box>
           ) : (
-            <Flex w="30rem">
-              <Button
-                colorScheme="green"
-                mr="2"
-                size="sm"
-                variant={calendarFilter ? 'outline' : 'solid'}
-                onClick={() => setCalendarFilter(null)}
-              >
-                {<Trans i18nKey="common:labels.all">All</Trans>}
-              </Button>
-
-              <Box w="100%">
-                {SelectComponent ? (
-                  <SelectComponent
-                    components={AnimatedComponents || undefined}
-                    isClearable
-                    options={allResourcesForSelect}
-                    style={{ width: '100%', marginTop: '1rem' }}
-                    styles={{
-                      control: cocosoReactSelectAdapter,
-                      option: (styles, { data }) => ({
-                        ...styles,
-                        borderLeft: `8px solid ${data.color}`,
-                        // background: data.color.replace('40%', '90%'),
-                        paddingLeft: !data.isCombo && 6,
-                        fontWeight: data.isCombo ? 'bold' : 'normal',
-                      }),
-                    }}
-                    value={calendarFilter}
-                    getOptionValue={(option) => option._id}
-                    onChange={(value) => setCalendarFilter(value)}
-                  />
-                ) : (
-                  <Box h="2.5rem" w="100%" />
-                )}
-              </Box>
-            </Flex>
+            <Box className="cal-resource-select" w="100%" css={{ maxWidth: '30rem' }}>
+              {SelectComponent ? (
+                <SelectComponent
+                  aria-label={tc('calendarFilter.pickResource')}
+                  components={AnimatedComponents || undefined}
+                  isClearable
+                  options={allResourcesForSelect}
+                  placeholder={tc('calendarFilter.anyResource')}
+                  styles={{
+                    control: cocosoReactSelectAdapter,
+                    option: (styles, { data }) => ({
+                      ...styles,
+                      borderLeft: `4px solid ${inkForResource(data)}`,
+                      paddingLeft: 10,
+                      fontWeight: data.isCombo ? 'bold' : 'normal',
+                    }),
+                  }}
+                  value={calendarFilter}
+                  getOptionLabel={(option: any) => option.label}
+                  getOptionValue={(option: any) => option._id}
+                  onChange={(value) => setCalendarFilter(value)}
+                />
+              ) : (
+                <Box h="2.5rem" w="100%" />
+              )}
+            </Box>
           )}
         </Center>
 
@@ -437,54 +389,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
           />
         </Box>
       </Box>
-
-      <Modal
-        id="calendar-item"
-        open={Boolean(selectedActivity)}
-        title={selectedActivity && selectedActivity.title}
-        confirmText={<Trans i18nKey="common:actions.entryPage" />}
-        cancelText={
-          isCreatorOrAdmin() ? (
-            <Trans i18nKey="common:actions.update">Edit</Trans>
-          ) : (
-            <Trans i18nKey="common:actions.close">Close</Trans>
-          )
-        }
-        onClose={() => setSelectedActivity(null)}
-        onConfirm={() => handlePrimaryButtonClick()}
-        onCancel={() => handleSecondaryButtonClick()}
-      >
-        <Box
-          bg="theme.50"
-          style={{ fontFamily: 'Courier, monospace' }}
-          p="2"
-          my="1"
-        >
-          <div>
-            <Link to={`/@${selectedActivity?.authorName}`}>
-              <CLink as="span" fontWeight="bold">
-                {selectedActivity && selectedActivity.authorName}
-              </CLink>{' '}
-            </Link>
-            <Text as="span">
-              {<Trans i18nKey="common:labels.booked">booked</Trans>}
-            </Text>{' '}
-            <Link to={`/resources/${selectedActivity?.resourceId}`}>
-              <CLink as="span" fontWeight="bold">
-                {selectedActivity && selectedActivity.resource}
-              </CLink>
-            </Link>
-          </div>
-          <Text>{getActivityTimes(selectedActivity)}</Text>
-        </Box>
-
-        <Text fontSize="sm" mt="2" p="1">
-          {selectedActivity?.longDescription &&
-            (selectedActivity?.isGroupPrivate
-              ? ''
-              : parseHtml(selectedActivity?.longDescription))}
-        </Text>
-      </Modal>
     </>
   );
 }

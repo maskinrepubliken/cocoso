@@ -17,6 +17,7 @@ export default function GroupJoinButton() {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [t] = useTranslation('groups');
+  const [tc] = useTranslation('common');
   const navigate = useNavigate();
 
   if (!group) {
@@ -49,9 +50,9 @@ export default function GroupJoinButton() {
       <Center>
         <Button
           size={isDesktop ? 'lg' : 'md'}
-          onClick={() => setModalOpen(true)}
+          onClick={() => (currentUser ? setModalOpen(true) : navigate('/login'))}
         >
-          {t('actions.join')}
+          {currentUser ? t('actions.join') : tc('labels.loginToJoin')}
         </Button>
       </Center>
 

@@ -3,13 +3,70 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { Box, Center, Flex, Heading, Text } from '/imports/ui/core';
+import { Box, Center, Flex, Heading } from '/imports/ui/core';
 import { locationsAtom } from '/imports/state';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { worldForPlace } from '/imports/ui/utils/locationPalette';
+import Stamp from '/imports/ui/generic/Stamp';
 
-// The municipality's places, shown on the home page as the way into each
-// place's own pages.
+interface LocationCardsProps {
+  locations: any[];
+  // A first card for the whole municipality, leading to everything at once
+  all?: { name: string; to: string };
+}
+
+// One card per place: its image (or generated shapes) with the name over a
+// dark fade. Used by the start page and anywhere else that offers the
+// places as a way in.
+export function LocationCards({ locations, all }: LocationCardsProps) {
+  return (
+    <div className="location-cards">
+      {all && (
+        <Link className="location-card location-card-all" to={all.to}>
+          <PlaceholderImage
+            className="location-card-shapes"
+            seed="hela-kommunen"
+            style={{ left: 0, position: 'absolute', top: 0 }}
+          />
+          <Stamp className="location-card-stamp" name={all.name} size="sm" />
+          <span className="location-card-name">{all.name}</span>
+        </Link>
+      )}
+      {locations.map((location, index) => {
+        const imageUrl = getImageUrl(location.images?.[0], 'small');
+        const world = worldForPlace(location, index);
+        return (
+          <Link
+            key={location._id}
+            className={`location-card world-${world.key}`}
+            to={`/${location.slug}`}
+            style={
+              imageUrl
+                ? { backgroundImage: `url('${imageUrl}')` }
+                : {
+                    backgroundImage: `linear-gradient(135deg, ${world.from}, ${world.to})`,
+                  }
+            }
+          >
+            {!imageUrl && (
+              <PlaceholderImage
+                className="location-card-shapes"
+                seed={location._id}
+                style={{ left: 0, position: 'absolute', top: 0 }}
+              />
+            )}
+            <Stamp className="location-card-stamp" name={location.name} size="sm" world={world} />
+            <span className="location-card-name">{location.name}</span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+// The municipality's places with a heading, for pages other than the start
+// page that want the same way in.
 export default function LocationsGrid() {
   const locations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
@@ -25,54 +82,8 @@ export default function LocationsGrid() {
           {tc('locations.grid.title')}
         </Heading>
       </Center>
-      <Flex gap="4" justify="center" wrap="wrap">
-        {locations.map((location) => {
-          const imageUrl = getImageUrl(location.images?.[0], 'small');
-          return (
-            <Link key={location._id} to={`/${location.slug}`}>
-              <Box
-                css={{
-                  backgroundColor: 'var(--cocoso-colors-theme-100)',
-                  backgroundImage: imageUrl ? `url('${imageUrl}')` : undefined,
-                  backgroundPosition: 'center',
-                  backgroundSize: 'cover',
-                  borderRadius: 'var(--cocoso-border-radius)',
-                  height: '140px',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  width: '220px',
-                  '&:hover': { opacity: 0.9 },
-                }}
-              >
-                {!imageUrl && (
-                  <PlaceholderImage
-                    seed={location._id}
-                    style={{ left: 0, position: 'absolute', top: 0 }}
-                  />
-                )}
-                <Box
-                  css={{
-                    background:
-                      'linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0))',
-                    bottom: 0,
-                    left: 0,
-                    padding: '0.75rem',
-                    position: 'absolute',
-                    right: 0,
-                  }}
-                >
-                  <Text
-                    color="white"
-                    fontWeight="bold"
-                    css={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}
-                  >
-                    {location.name}
-                  </Text>
-                </Box>
-              </Box>
-            </Link>
-          );
-        })}
+      <Flex justify="center">
+        <LocationCards locations={locations} />
       </Flex>
     </Box>
   );

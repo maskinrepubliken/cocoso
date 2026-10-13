@@ -31,10 +31,12 @@ interface AlertContainerProps {
 }
 
 const AlertContainerStyled = styled('div', {
-  borderRadius: 'var(--cocoso-border-radius)',
-  backgroundColor: `var(--cocoso-colors-bluegray-50)`,
-  border: '1px solid',
-  color: `var(--cocoso-colors-gray-800)`,
+  borderRadius: 'var(--cocoso-radius-falt)',
+  backgroundColor: 'var(--cocoso-papper)',
+  border: '1px solid var(--cocoso-linje)',
+  borderLeftWidth: '4px',
+  boxShadow: 'var(--cocoso-skugga)',
+  color: 'var(--cocoso-mylla)',
   padding: '1rem',
 });
 
@@ -52,7 +54,14 @@ const AlertContainer = (props: AlertContainerProps) => {
   return (
     <AlertContainerStyled
       css={{
-        borderColor: `var(--cocoso-colors-${color}-300)`,
+        borderLeftColor:
+          color === 'red'
+            ? 'var(--cocoso-lingon)'
+            : color === 'orange'
+            ? 'var(--cocoso-tegel)'
+            : color === 'green'
+            ? 'var(--cocoso-colors-theme-500)'
+            : '#3f6b7a',
       }}
       {...rest}
     >

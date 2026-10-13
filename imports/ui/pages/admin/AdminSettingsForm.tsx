@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
-import { Box, Button, Flex, Heading, Input } from '/imports/ui/core';
+import { Box, Button, Flex, Heading, Input, Select } from '/imports/ui/core';
+import { SEASONS } from '/imports/api/_utils/season';
 import FormField from '/imports/ui/forms/FormField';
 import ChangeLanguage from '/imports/ui/layout/ChangeLanguageMenu';
 import { siteAtom } from '/imports/state';
@@ -13,11 +14,14 @@ import Boxling from './Boxling';
 
 interface SiteSettingsFormValues {
   name?: string;
+  shortName?: string;
+  tagline?: string;
   email?: string;
   address?: string;
   city?: string;
   country?: string;
   lang?: string;
+  season?: string;
   menu?: unknown[];
 }
 
@@ -57,6 +61,18 @@ export default function AdminSettingsForm() {
             <FormField label={t('new.name.label')}>
               <Input {...register('name')} />
             </FormField>
+            <FormField
+              label={t('new.shortName.label')}
+              helper={t('new.shortName.helper')}
+            >
+              <Input {...register('shortName')} />
+            </FormField>
+            <FormField
+              label={t('new.tagline.label')}
+              helper={t('new.tagline.helper')}
+            >
+              <Input {...register('tagline')} />
+            </FormField>
             <FormField label={t('new.email.label')}>
               <Input type="email" {...register('email')} />
             </FormField>
@@ -71,6 +87,19 @@ export default function AdminSettingsForm() {
             </FormField>
             <FormField label={tc('langs.label')}>
               <ChangeLanguage hideHelper select register={register} />
+            </FormField>
+            <FormField
+              label={ta('season.label')}
+              helper={ta('season.helper')}
+            >
+              <Select {...register('season')}>
+                <option value="">{ta('season.auto')}</option>
+                {SEASONS.map((season) => (
+                  <option key={season} value={season}>
+                    {tc(`seasons.${season}`)}
+                  </option>
+                ))}
+              </Select>
             </FormField>
             <Flex justify="flex-end" py="4">
               <Button

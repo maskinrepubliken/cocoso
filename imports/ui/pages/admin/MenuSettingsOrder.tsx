@@ -141,7 +141,7 @@ export default function MenuSettingsOrder() {
 
       <Boxling
         style={{
-          backgroundColor: 'var(--cocoso-colors-bluegray-50)',
+          backgroundColor: 'var(--cocoso-colors-theme-50)',
         }}
       >
         <Flex gap="4" mb="8">
@@ -204,7 +204,7 @@ export default function MenuSettingsOrder() {
                       </Flex>
                       <IconButton
                         aria-label="Remove"
-                        colorScheme="bluegray"
+                        colorScheme="theme"
                         icon={
                           <XIcon
                             size="18px"

@@ -15,6 +15,8 @@ interface MenuOption {
 
 interface GenericMenuProps {
   align?: 'start' | 'center' | 'end';
+  // Accessible name for a button whose content is only an icon
+  ariaLabel?: string;
   button?: React.ReactNode;
   buttonLabel?: React.ReactNode;
   direction?: 'top' | 'bottom' | 'left' | 'right';
@@ -28,6 +30,7 @@ interface GenericMenuProps {
 
 export default function GenericMenu({
   align = 'center',
+  ariaLabel,
   buttonLabel = <Trans i18nKey="common:labels.select" />,
   button,
   direction = 'bottom',
@@ -61,7 +64,7 @@ export default function GenericMenu({
         align={align}
         direction={direction}
         transition
-        menuButton={<MenuButton>{finalButton}</MenuButton>}
+        menuButton={<MenuButton aria-label={ariaLabel}>{finalButton}</MenuButton>}
       >
         {options
           ? options.map((item) => (

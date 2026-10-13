@@ -36,6 +36,10 @@ actions:
 
 # ACTION PAGE TITLES
 labels:
+  loginToJoin: Katılmak için giriş yapın
+  noContactInfo: İletişim bilgisi verilmemiş.
+  bookable: Rezerve edilebilir
+  archived: Arşivlenmiş
   activity: Aktivite
   all: Tümü
   book: Ayır
@@ -92,6 +96,7 @@ labels:
   editFormEntry: '{{ context }} içerisinde içerik düzenle'
   thislisting: bu liste
   newsletters: Önceki Bültenler
+  noNewsletters: Henüz bülten gönderilmedi.
   avatar:
     checklabel: Avatarını görüntüle
     helper: Bu içerik ile avatarını görüntülemek için işaretle
@@ -186,6 +191,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Menü
+  home: Ana sayfa
   guest:
     login: Giriş yap
     register: Hesap aç
@@ -229,14 +235,21 @@ locations:
   here: Burada, {{ name }}
   switcher:
     choose: Bir yer seçin
+    whole: Tüm belediye
+    wholeHelper: Tüm yerler
+    zoom: …ya da bir yere yakınlaş
+    open: Bir yer seçin
+    clear: Tüm belediyeyi göster
   landing:
-    activities: '{{ name }} bölgesinde neler var'
-    resources: '{{ name }} bölgesindeki yerler ve mekânlar'
-    groups: '{{ name }} bölgesindeki gruplar'
+    activities: Neler var
+    resources: Yerler ve mekânlar
+    groups: Gruplar
+    inPlace: '{{ name }} bölgesinde'
     seeAll: Tümünü gör
     nothingYet: Henüz bir şey yok
   grid:
-    title: Yerinizi seçin
+    title: Yaşadığınız yerde neler oluyor?
+    intro: Her yerin tam orada olup bitenleri gösteren kendi sayfası var.
   form:
     label: Yer
     helperResource: Bu kaynağın bulunduğu köy veya yer. Burada yapılan etkinlikler otomatik olarak onu izler.
@@ -310,3 +323,200 @@ auth:
 
 public:
   labels:
+
+# Recurring activities on the activities listing
+recurring:
+  every: "Her {{days}}"
+  everyOther: "İki haftada bir {{days}}"
+  everyOtherWeek: "iki haftada bir"
+  today: "Bugün"
+  tomorrow: "Yarın"
+  now: "Şu anda"
+  nothing: "Bu gün için planlanmış bir şey yok."
+  earlier: "Önceki günler"
+  later: "Sonraki günler"
+  weekTitle: "Her hafta"
+  weekIntro: "Tekrarlanan etkinlikler, haftanın gününe göre bir kez gösterilir"
+  next: "Sonraki {{date}}"
+
+# The event page (the strings are in common because SSR only loads common)
+event:
+  sections:
+    when: "Ne zaman"
+    where: "Yer"
+    organizer: "Düzenleyen"
+    about: "Etkinlik hakkında"
+    register: "Kayıt"
+    attendees: "Katılımcılar"
+    organizerTools: "Düzenleyen için"
+    discussion: "Tartışma"
+  dates:
+    choose: "Tarih seç"
+    more: "{{count}} tarihin hepsini göster"
+    fewer: "Daha az tarih göster"
+    past: "Geçmiş tarihler"
+    occurrences: "{{count}} tarih"
+  place:
+    address: "Adres"
+    map: "Haritada aç"
+  organizer:
+    profile: "{{name}} tarafından düzenlenen tüm etkinlikler"
+  attendees:
+    none: "Henüz kimse kayıt olmadı."
+    hidden: "+ adını göstermemeyi seçen {{count}} kişi"
+    count: "{{count}} kayıtlı"
+    left: "{{capacity}} yerden {{count}} yer kaldı"
+  register:
+    firstName: "Ad"
+    lastName: "Soyad"
+    email: "E-posta"
+    submit: "Kayıt ol"
+    hideName: "Adımı diğer ziyaretçilerden gizle"
+    emailPrivate: "E-posta adresini yalnızca düzenleyen görür."
+    done: "Teşekkürler, kaydın alındı. Hoş geldin!"
+    already: "Bu tarih için zaten kayıtlısın."
+    full: "Etkinlik dolu."
+    closed: "Kayıtlar kapalı."
+    past: "Bu tarih geçti."
+    forDate: "{{date}} için kayıt"
+  change:
+    toggle: "Kaydını değiştir veya iptal et"
+    intro: "Kayıt olurken kullandığın soyadı ve e-posta adresini gir."
+    find: "Kaydımı bul"
+    notFound: "Bu bilgilerle bir kayıt bulamadık. Tarihi ve yazımı kontrol edip tekrar dene."
+    save: "Değişiklikleri kaydet"
+    cancel: "Kaydımı iptal et"
+    updated: "Kaydın değiştirildi."
+    removed: "Kaydın iptal edildi."
+  tools:
+    intro: "E-posta adresleriyle bu listeyi yalnızca sen ve yöneticiler görür."
+    edit: "Etkinliği düzenle"
+    remove: "Etkinliği sil"
+    people: "Kişi"
+    noOne: "Bu tarih için kayıt yok."
+    archive: "Etkinliği arşivle"
+    unarchive: "Arşivden geri al"
+    archiveFirst: "Bir etkinlik silinmeden önce arşivlenmelidir."
+    archived: "Etkinlik arşivlendi ve artık listelenmiyor."
+    unarchived: "Etkinlik yeniden listelerde."
+  archived:
+    tag: "Arşivlenmiş"
+    notFound: "Bu etkinlik mevcut değil."
+    onlyYou: "Arşivlenmiş etkinlikler yalnızca sana ve yöneticilere gösterilir."
+  discussion:
+    open: "Tartışmayı aç"
+    onlyVerified: "Doğrulanmış üyeler için"
+
+home:
+  sections:
+    title: "Sitede yolunuzu bulun"
+    intro: "Belediyede olan her şey, aradığınızı bulabilmeniz için düzenlenmiş."
+    activities: "Konserler, pazarlar, antrenmanlar ve olan biten her şey; kayıt doğrudan sayfada."
+    calendar: "Aynı etkinlikler bir takvim olarak, ay ay veya liste halinde."
+    groups: "Belediyenin dernekleri ve grupları: ne yaptıkları, ne zaman buluştukları ve nasıl katılacağınız."
+    works: "Komşular arasında araç paylaşımı, ödünç verme, hediye etme ve yardım isteme."
+    people: "Düzenleyenler: dernekler, kurumlar ve gönüllüler, yaklaşan etkinlikleriyle."
+    resources: "Mekânlar, buluşma noktaları ve gezi yerleri, ve orada neler olduğu."
+    info: "Hizmet hakkında, nasıl kullanılacağı ve kiminle iletişime geçileceği."
+  hero:
+    welcome: Hoş geldiniz
+    tagline: Tüm belediyedeki etkinlikler, dernekler ve yerler tek bir yerde.
+
+# Talepler (komşular arası talepler olarak gösterilen işler)
+requests:
+  all: "Tümü"
+  count_one: "{{count}} talep"
+  count_other: "{{count}} talep"
+  empty: "Burada henüz talep yok."
+  emptyHint: "Giriş yapın ve ilkini oluşturun."
+  contact: "İletişim"
+  kinds:
+    carpool:
+      name: "Araç paylaşımı"
+      description: "İşe, okula veya bir etkinliğe arabayı paylaşın."
+    lend:
+      name: "Ödünç ver"
+      description: "Alet, römork, çadır – başkalarının ödünç alabileceği şeyler."
+    borrow:
+      name: "Ödünç almak istiyorum"
+      description: "Kısa bir süre bir şeye mi ihtiyacınız var? Komşulara sorun."
+    giveaway:
+      name: "Hediye et"
+      description: "Artık ihtiyacınız olmayan, ücretsiz alınabilecek şeyler."
+    help:
+      name: "Yardım aranıyor"
+      description: "Alışveriş, kar küreme, kanepe taşıma."
+    company:
+      name: "Arkadaşlık"
+      description: "Yürüyüş, kahve ya da spor için birlikte biri."
+    tips:
+      name: "İpuçları"
+      description: "Bilmekte fayda var: yerler, fikirler ve teklifler."
+
+seasons:
+  var: İlkbahar
+  sommar: Yaz
+  host: Sonbahar
+  vinter: Kış
+
+footer:
+  and: ve
+  byline: Tranemo belediyesinden bir hizmet; {{ places }} bölgelerindeki dernekler, düzenleyiciler ve komşular tarafından doldurulur.
+  bylineShort: Tranemo belediyesinden bir hizmet; dernekler, düzenleyiciler ve komşular tarafından doldurulur.
+
+calendarFilter:
+  anyResource: Tüm yerler ve mekânlar
+  pickResource: Bir yer veya mekân seçin…
+  recurring: Tekrarlayan
+  legend: Renkler yere göre
+
+groupCard:
+  members_one: '{{count}} üye'
+  members_other: '{{count}} üye'
+  nextMeeting: Sonraki buluşma {{date}}
+
+a11y:
+  skipToContent: İçeriğe atla
+
+termsPage:
+  title: Kullanım koşulları ve gizlilik politikası
+  updated: Ekim 2026'dan itibaren geçerlidir.
+  sections:
+    - title: Hizmet hakkında
+      paragraphs:
+        - "{{site}} Tranemo belediyesi tarafından işletilir. Belediyedeki etkinlikleri, dernekleri, yerleri ve talepleri bir araya getirir. Okumak ve aramak için hesap gerekmez."
+        - "Bir hesapla etkinlik yayınlayabilir, derneğinizi tanıtabilir, mekân ayırtabilir, etkinliklere kaydolabilir ve taleplere yanıt verebilirsiniz. Hesap kişiseldir."
+    - title: Nasıl davranırız
+      paragraphs:
+        - "Yayınladıklarınız her ziyaretçiye görünür. Saygılı olun, doğruyu söyleyin ve yalnızca hakkınız olanı yayınlayın; örneğin kendi çektiğiniz veya kullanma izniniz olan fotoğrafları."
+        - "Belediye yasayı çiğneyen, rencide edici veya buraya ait olmayan içeriği kaldırabilir ve kötüye kullanılan hesapları kapatabilir."
+    - title: Neleri saklıyoruz
+      paragraphs:
+        - "Hesap oluşturduğunuzda kullanıcı adınızı, e-posta adresinizi ve şifrelenmiş bir parolayı saklarız. Sayfanıza girdiğiniz ad, resim ve tanıtım gibi bilgiler de saklanır ve ziyaretçilere gösterilir."
+        - "Bir etkinliğe kaydolduğunuzda adınız, e-posta adresiniz ve kişi sayısı saklanır. Düzenleyici bunları görür; diğer ziyaretçiler, gizlemeyi seçmediyseniz yalnızca adınızı görür."
+        - "Pazarlama amacıyla hakkınızda veri tutmayız ve belediye dışında kimseye vermeyiz. Veriler AB içindeki sunucularda saklanır."
+    - title: Çerezler
+      paragraphs:
+        - "Hizmet yalnızca çalışması için gereken çerezleri kullanır: biri oturumunuzu açık tutmak, biri dilinizi hatırlamak için. İzleme veya reklam çerezi yoktur."
+    - title: Haklarınız
+      paragraphs:
+        - "Verilerinizi profilinizden istediğiniz zaman görebilir, değiştirebilir ve hesabınızı silebilirsiniz. Kişisel verileriniz o zaman silinir. Oluşturduğunuz etkinlikler ve gönderiler, başkaları bağımlıysa adınız olmadan kalabilir."
+        - "GDPR kapsamında hakkınızda tuttuğumuz verilerin bir dökümünü alma, düzelttirme veya sildirme ve İsveç Gizlilik Koruma Kurumu'na şikâyet etme hakkınız vardır."
+    - title: İletişim
+      paragraphs:
+        - "Hizmet veya verileriniz hakkındaki sorular için sayfanın altındaki Geri bildirim ver düğmesini kullanın ya da tranemo.se üzerinden belediyenin veri koruma görevlisine başvurun."
+
+eventKinds:
+  all: Tüm türler
+  kultur: Kültür
+  idrott: Spor
+  barn: Çocuk ve aile
+  marknad: Pazar
+  mat: Yemek
+  natur: Doğa
+  larande: Öğrenme
+  social: Sosyal
+  form:
+    label: Etkinlik türü
+    helper: Kartta bir etiket olarak gösterilir; ziyaretçiler listeyi buna göre süzebilir.
+    none: Belirli bir tür yok

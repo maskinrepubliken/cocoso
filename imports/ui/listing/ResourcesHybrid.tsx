@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 
 import { siteAtom, locationsAtom } from '/imports/state';
 import { Box } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PageHeading from './PageHeading';
-import PopupHandler from './PopupHandler';
+import useOpenEntry from './useOpenEntry';
 import InfiniteScroller from './InfiniteScroller';
 import NewGridThumb from './NewGridThumb';
 
@@ -21,7 +22,7 @@ export default function ResourcesHybrid({
 }: ResourcesHybridProps) {
   const site = useAtomValue(siteAtom);
   const locations = useAtomValue(locationsAtom);
-  const [modalItem, setModalItem] = useState(null);
+  const openEntry = useOpenEntry('resources');
 
   const locationNameOf = (item: any) =>
     locations.find((l) => l._id === item.locationId)?.name;
@@ -30,35 +31,26 @@ export default function ResourcesHybrid({
     <>
       <PageHeading site={site || siteDoc} listing="resources" />
 
-      <Box px="2" pb="8">
-        <InfiniteScroller isMasonry items={resources} filtrerMarginTop={-82}>
+      <Box pb="8">
+        <InfiniteScroller isGrid items={resources} filtrerMarginTop={-82}>
           {(resource, index) => (
             <Box
               key={resource._id}
-              mb="2"
-              css={{
-                borderRadius: 'var(--cocoso-border-radius)',
-                cursor: 'pointer',
-              }}
-              onClick={() => setModalItem(resource)}
+              css={{ cursor: 'pointer' }}
+              onClick={() => openEntry(resource)}
             >
               <NewGridThumb
                 fixedImageHeight
                 imageUrl={getImageUrl(resource.images?.[0], 'small')}
                 index={index}
                 placeholderSeed={resource._id}
-                tag={locationNameOf(resource)}
+                placeName={locationNameOf(resource)}
                 title={resource.label}
+                world={worldForLocation(locations, resource.locationId)}
               />
             </Box>
           )}
         </InfiniteScroller>
-
-        <PopupHandler
-          item={modalItem}
-          kind="resources"
-          onClose={() => setModalItem(null)}
-        />
       </Box>
     </>
   );

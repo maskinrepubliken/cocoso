@@ -8,16 +8,16 @@ interface SkeletonProps {
 }
 
 const SkeletonItem = styled('div', {
-  backgroundColor: 'var(--cocoso-colors-theme-800)',
-  borderRadius: 'var(--cocoso-border-radius)',
+  backgroundColor: 'var(--cocoso-colors-theme-200)',
+  borderRadius: 'var(--cocoso-radius-kort)',
   width: '100%',
   height: '200px',
   animation: 'pulse 1.5s ease-in-out infinite',
 });
 
 const SkeletonEntry = styled('div', {
-  backgroundColor: 'var(--cocoso-colors-theme-800)',
-  borderRadius: 'var(--cocoso-border-radius)',
+  backgroundColor: 'var(--cocoso-colors-theme-200)',
+  borderRadius: 'var(--cocoso-radius-kort)',
   width: '100%',
   height: '300px',
   animation: 'pulse 1.5s ease-in-out infinite',

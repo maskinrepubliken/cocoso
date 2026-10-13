@@ -48,11 +48,10 @@ export default function FeedbackForm({ isDarkText = false }: FeedbackFormProps) 
 
   return (
     <>
-      <Center p="2">
+      <Center p="0">
         <Button
-          colorScheme="gray"
           size="sm"
-          variant="ghost"
+          variant="outline"
           onClick={() => setShowFeedbackModal(true)}
         >
           <Trans i18nKey="common:modals.feedback.label">Give Feedback</Trans>
@@ -105,13 +104,7 @@ export default function FeedbackForm({ isDarkText = false }: FeedbackFormProps) 
                 </Trans>
               }
             >
-              <Textarea
-                style={{
-                  border: '2px solid var(--cocoso-colors-theme-400)',
-                }}
-                name="message"
-                rows={10}
-              />
+              <Textarea name="message" rows={8} />
             </FormField>
 
             <Flex justify="flex-end" w="100%">

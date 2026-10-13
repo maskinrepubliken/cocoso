@@ -13,7 +13,12 @@ import {
 } from '/imports/ui/core';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
+import PlaceTag from '../generic/PlaceTag';
 import Tag from '../generic/Tag';
+import {
+  worldShapeColors,
+  type LocationWorld,
+} from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '../utils/imageHelper';
 
 const isClient = Meteor.isClient;
@@ -25,6 +30,14 @@ if (isClient) {
 const imageStyle: React.CSSProperties = {
   margin: '0 auto',
   position: 'relative',
+  width: '100%',
+};
+
+// Fills the picture area edge to edge when it has a set height
+const coverStyle: React.CSSProperties = {
+  display: 'block',
+  height: '100%',
+  objectFit: 'cover',
   width: '100%',
 };
 
@@ -46,6 +59,9 @@ export interface NewGridThumbProps {
   subTitle?: string;
   title?: string;
   tag?: string;
+  /** The place the item belongs to: colours its shapes and its tag. */
+  placeName?: string | null;
+  world?: LocationWorld;
 }
 
 function NewGridThumb({
@@ -60,21 +76,26 @@ function NewGridThumb({
   subTitle,
   title,
   tag,
+  placeName,
+  world,
 }: NewGridThumbProps) {
   if (!title && !imageUrl) {
     return null;
   }
 
-
   return (
     <Box
       css={{
-        backgroundColor: 'var(--cocoso-colors-theme-200)',
-        border: '1px solid white',
-        borderRadius: 'var(--cocoso-border-radius)',
+        backgroundColor: 'var(--cocoso-papper)',
+        borderRadius: 'var(--cocoso-radius-kort)',
+        boxShadow: 'var(--cocoso-skugga-kort)',
         cursor: 'pointer',
         overflow: 'hidden',
-        '&:hover': { bg: 'theme.50' },
+        transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+        '&:hover': {
+          boxShadow: '0 18px 30px -14px rgba(60, 40, 20, 0.5)',
+          transform: 'translateY(-3px)',
+        },
       }}
     >
       <Box
@@ -85,10 +106,15 @@ function NewGridThumb({
       >
         <Center
           bg={imageUrl ? 'white' : 'theme.100'}
-          h={fixedImageHeight ? '220px' : 'auto'}
           css={{
+            // A fixed height on wide screens, the card's own proportion on
+            // phones where two cards share the width.
+            height: fixedImageHeight ? '220px' : 'auto',
             overflow: 'hidden',
             position: 'relative',
+            '@media (max-width: 599px)': fixedImageHeight
+              ? { aspectRatio: '4 / 3', height: 'auto' }
+              : {},
           }}
         >
           {imageUrl ? (
@@ -97,21 +123,23 @@ function NewGridThumb({
                 alt={title}
                 loading="lazy"
                 src={imageUrl}
-                style={imageStyle}
+                style={fixedImageHeight ? coverStyle : imageStyle}
               />
             ) : (
               <LazyLoadImage
                 alt={title}
                 effect="black-and-white"
-                fit={fixedImageHeight ? 'cover' : 'contain'}
                 src={imageUrl}
-                style={imageStyle}
+                style={fixedImageHeight ? coverStyle : imageStyle}
+                wrapperProps={{ style: fixedImageHeight ? coverStyle : undefined }}
               />
             )
           ) : (
             <>
               <PlaceholderImage
                 seed={placeholderSeed || title}
+                palette={world ? worldShapeColors(world) : undefined}
+                background={world?.tint}
                 style={{
                   height: fixedImageHeight ? '100%' : '180px',
                   left: 0,
@@ -139,17 +167,10 @@ function NewGridThumb({
 
         <Flex
           align="flex-start"
-          bg="white"
           justify="space-between"
           py="2"
           px="4"
-          css={{
-            borderBottomLeftRadius: 'var(--cocoso-border-radius)',
-            borderBottomRightRadius: 'var(--cocoso-border-radius)',
-            border: '1px solid',
-            borderColor: 'var(--cocoso-colors-gray-100)',
-            borderTopWidth: '0',
-          }}
+          css={{ backgroundColor: 'var(--cocoso-papper)' }}
         >
           <Box pb="2" pr="3">
             <Heading
@@ -158,9 +179,7 @@ function NewGridThumb({
               mb="1"
               mt="2"
               css={{
-                fontFamily: "'Raleway', sans-serif",
-                fontSize: '1.2rem',
-                fontWeight: 'bold',
+                fontSize: '1.25rem',
                 overflowWrap: 'anywhere',
               }}
             >
@@ -180,6 +199,7 @@ function NewGridThumb({
                 {subTitle}
               </Heading>
             )}
+            {placeName && <PlaceTag name={placeName} world={world} />}
             {tag && <Tag filterColor={color} label={tag} />}
           </Box>
 

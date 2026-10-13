@@ -20,6 +20,7 @@ import {
   siteAtom,
   isDesktopAtom,
   roleAtom,
+  canCreateContentAtom,
 } from '/imports/state';
 import FeedbackForm from '/imports/ui/layout/FeedbackForm';
 
@@ -29,21 +30,26 @@ import getAdminRoutes from './getAdminRoutes';
 const iconContainerProps = {
   align: 'center',
   direction: 'column',
-  color: 'bluegray.800',
-  cursor: 'pointer',
   gap: '0',
   p: '2',
+  css: { color: 'var(--cocoso-mylla)', cursor: 'pointer' },
 };
 
 function AdminHeader({ currentRoute }) {
   return (
-    <Box mb="8">
+    <Box mb="6">
       <Heading mb="2">{currentRoute?.label}</Heading>
 
       {currentRoute?.description && (
-        <Heading css={{ fontWeight: '300' }} size="sm">
+        <Text
+          css={{
+            color: 'var(--cocoso-mylla-soft)',
+            fontSize: '1rem',
+            maxWidth: '60ch',
+          }}
+        >
           {currentRoute?.description}
-        </Heading>
+        </Text>
       )}
     </Box>
   );
@@ -54,6 +60,7 @@ export default function AdminContainer({ siteDoc }) {
   const site = siteDoc || siteFromAtom;
   const isDesktop = useAtomValue(isDesktopAtom);
   const role = useAtomValue(roleAtom);
+  const canCreateContent = useAtomValue(canCreateContentAtom);
 
   const [drawerMenuOpen, setDrawerMenuOpen] = useState(false);
   const [t] = useTranslation('admin');
@@ -65,7 +72,14 @@ export default function AdminContainer({ siteDoc }) {
   const menuItems = site?.settings?.menu;
   const isAdmin = role === 'admin';
   const pathname = location?.pathname;
-  const routes: any[] = isAdmin ? getAdminRoutes(menuItems) : [];
+  // Contributors get the home overview of their own activities, nothing else.
+  const allAdminRoutes = getAdminRoutes(menuItems);
+  let routes: any[] = [];
+  if (isAdmin) {
+    routes = allAdminRoutes;
+  } else if (canCreateContent) {
+    routes = allAdminRoutes.filter((r) => r.value === '/admin/home');
+  }
 
   const getCurrentRoute = () => {
     if (!routes) {
@@ -94,11 +108,7 @@ export default function AdminContainer({ siteDoc }) {
     });
 
     allRoutes.push({
-      description: (
-        <Heading css={{ fontWeight: '300' }} size="sm">
-          {ta('messages.description')}
-        </Heading>
-      ),
+      description: ta('messages.description'),
       label: (
         <Flex gap="4" align="flex-start">
           {ta('messages.title')}
@@ -135,6 +145,7 @@ export default function AdminContainer({ siteDoc }) {
 
   if (
     !isAdmin &&
+    !(canCreateContent && pathname.split('/')[2] === 'home') &&
     pathname.split('/')[2] !== 'my-profile' &&
     pathname.split('/')[2] !== 'messages'
   ) {
@@ -147,7 +158,7 @@ export default function AdminContainer({ siteDoc }) {
 
   if (!isDesktop) {
     return (
-      <Box bg="bluegray.100" css={{ minHeight: '100vh' }}>
+      <Box css={{ backgroundColor: 'var(--cocoso-season-golv)', minHeight: '100vh' }}>
         <Drawer
           id="admin-menu-drawer"
           open={drawerMenuOpen}
@@ -163,9 +174,12 @@ export default function AdminContainer({ siteDoc }) {
         <Box>
           <Flex
             align="center"
-            bg="bluegray.50"
             justify="space-between"
             w="100%"
+            css={{
+              backgroundColor: 'var(--cocoso-papper)',
+              borderBottom: '1px solid var(--cocoso-linje)',
+            }}
           >
             <Flex
               {...iconContainerProps}
@@ -175,14 +189,16 @@ export default function AdminContainer({ siteDoc }) {
               <Text fontSize="xs">{t('menu.title')}</Text>
             </Flex>
             <Heading
-              color="bluegray.900"
               size="md"
               textAlign="center"
               css={{
+                color: 'var(--cocoso-mylla)',
                 flexGrow: '1',
               }}
             >
-              {isAdmin ? t('panel') : ta('profile.settings')}
+              {isAdmin
+                ? t('panel')
+                : site?.settings?.shortName || site?.settings?.name}
             </Heading>
 
             <Link to="/">
@@ -193,7 +209,7 @@ export default function AdminContainer({ siteDoc }) {
             </Link>
           </Flex>
 
-          <Box p="6">
+          <Box p="4" css={{ paddingTop: '1.5rem' }}>
             <AdminHeader currentRoute={currentRoute} />
 
             <Outlet />
@@ -204,13 +220,13 @@ export default function AdminContainer({ siteDoc }) {
   }
 
   return (
-    <Box bg="bluegray.100" css={{ minHeight: '100vh' }}>
-      <Grid h="100%" templateColumns="320px 50% 1fr">
+    <Box css={{ backgroundColor: 'var(--cocoso-season-golv)', minHeight: '100vh' }}>
+      <Grid h="100%" templateColumns="280px minmax(0, 1fr) 300px">
         <Box>
           <AdminMenu routes={routes} onItemClick={handleItemClick} />
         </Box>
 
-        <Box p="6">
+        <Box p="8" css={{ maxWidth: '860px', width: '100%' }}>
           <AdminHeader currentRoute={currentRoute} />
           <Outlet />
         </Box>

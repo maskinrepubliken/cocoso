@@ -2,7 +2,7 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Box, Select, Text } from '/imports/ui/core';
-import { allLangs } from '/imports/startup/i18n';
+import { allLangs, rememberLang } from '/imports/startup/i18n';
 
 export interface ChangeLanguageProps {
   hideHelper?: boolean;
@@ -19,7 +19,7 @@ export default function ChangeLanguage({
   select,
   onChange,
 }: ChangeLanguageProps) {
-  const { i18n } = useTranslation();
+  const { i18n, t: tc } = useTranslation('common');
   const currentLang = i18n.language;
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -27,15 +27,19 @@ export default function ChangeLanguage({
     if (onChange) {
       onChange(value);
     } else {
+      rememberLang(value);
       i18n.changeLanguage(value);
     }
   };
 
   return (
     <Box
-      bg="theme.50"
-      p="4"
-      css={{ borderRadius: 'var(--cocoso-border-radius)' }}
+      p={hideHelper ? '0' : '4'}
+      css={{
+        backgroundColor: hideHelper ? 'transparent' : 'var(--cocoso-papper)',
+        borderRadius: 'var(--cocoso-radius-kort)',
+        minWidth: hideHelper ? '160px' : undefined,
+      }}
     >
       {!hideHelper && (
         <Text
@@ -50,6 +54,7 @@ export default function ChangeLanguage({
         </Text>
       )}
       <Select
+        aria-label={tc('langs.label')}
         name="lang"
         placeholder={
           <Trans i18nKey="common:langs.form.holder">Select a language</Trans>

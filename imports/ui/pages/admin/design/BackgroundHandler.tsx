@@ -164,7 +164,7 @@ export default function BackgroundHandler({
 
         <Center>
           <Button
-            bg="white"
+            bg="papper"
             colorScheme="red"
             mt="2"
             size="xs"

@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import { useAtomValue } from 'jotai';
 
-import { isMobileAtom } from '/imports/state';
 import {
   Avatar,
   Box,
@@ -13,7 +11,6 @@ import {
   Center,
   Flex,
   Heading,
-  Link as CLink,
   Tag,
 } from '/imports/ui/core';
 
@@ -22,6 +19,8 @@ import PlaceholderImage from '../generic/PlaceholderImage';
 import Tabs from '../core/Tabs';
 import BackLink, { BackLinkData } from './BackLink';
 import { getImageUrl, getImageUrlBest } from '../utils/imageHelper';
+import { publicUrl } from '/imports/api/_utils/shared';
+import { shareLink } from '../utils/shareLink';
 
 interface Author {
   username: string;
@@ -64,7 +63,8 @@ interface TablyCenteredProps extends HeaderProps {
 }
 
 const placeholderStyle: React.CSSProperties = {
-  borderRadius: 'var(--cocoso-border-radius)',
+  borderRadius: 'var(--cocoso-radius-kort)',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   height: '280px',
   maxWidth: '780px',
 };
@@ -82,7 +82,7 @@ const AvatarHolder: React.FC<AvatarHolderProps> = ({ author }) => {
             size="lg"
             src={getImageUrl(author.src, 'thumb')}
           />
-          <CLink color="theme.500">{author.username}</CLink>
+          <span className="tably-author-name">{author.username}</span>
         </Flex>
       </Link>
     </Box>
@@ -100,12 +100,13 @@ const Header: React.FC<HeaderProps> = ({
   const [copied, setCopied] = useState<boolean>(false);
 
   const handleCopyLink = async (): Promise<void> => {
-    const href = window.location.href;
-    await navigator.clipboard.writeText(href);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    const outcome = await shareLink(window.location.href, title);
+    if (outcome === 'copied') {
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
   };
 
   const renderTitles = () => (
@@ -118,12 +119,13 @@ const Header: React.FC<HeaderProps> = ({
       >
         <Box px="2">
           <Heading
+            as="h1"
             size="lg"
             css={{
-              lineHeight: 1,
+              lineHeight: 1.08,
               margin: '0.5rem 0',
               textAlign: author ? 'left' : 'center',
-              textShadow: '1px 1px 1px #fff',
+              fontSize: '2.2rem',
             }}
           >
             {title}
@@ -132,11 +134,13 @@ const Header: React.FC<HeaderProps> = ({
             <Heading
               size="sm"
               css={{
-                lineHeight: 1,
+                color: 'var(--cocoso-mylla-soft)',
+                fontFamily: 'var(--cocoso-body-font-family)',
+                fontSize: '1.1rem',
                 fontWeight: 'normal',
+                lineHeight: 1.3,
                 margin: '0.5rem 0',
                 textAlign: author ? 'left' : 'center',
-                textShadow: '1px 1px 1px #fff',
               }}
             >
               {subTitle}
@@ -207,14 +211,19 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
   url,
 }) => {
   const [searchParams] = useSearchParams();
-  const isMobile = useAtomValue(isMobileAtom);
+  const [tc] = useTranslation('common');
 
   const selectedTabValue = searchParams.get('tab');
   let tabIndex = tabs?.findIndex((tab) => tab.path === selectedTabValue);
   if (tabIndex === -1) tabIndex = 0;
   const selectedTab = tabs?.find((tab, index) => index === tabIndex);
 
-  const description = subTitle || content?.toString() || author?.username;
+  // What a shared link shows: the subtitle, else the site's own line.
+  // (content is usually a React node, never a string to quote.)
+  const description =
+    subTitle ||
+    (typeof content === 'string' ? content : '') ||
+    tc('home.hero.tagline');
   const showImageArea = images !== null;
   const presentImages = images?.filter((img): img is string => Boolean(img));
   const hasImages = Boolean(presentImages && presentImages.length > 0);
@@ -230,7 +239,10 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
         <meta name="tags" content={tags?.join(',')} />
         <meta property="og:title" content={title?.substring(0, 40)} />
         <meta property="og:url" content={url} />
-        {imageUrl && <meta property="og:image" content={imageUrl} />}
+        <meta
+          property="og:image"
+          content={imageUrl || publicUrl('/images/og-default.jpg')}
+        />
         <meta
           property="og:description"
           content={description?.substring(0, 150)}
@@ -280,7 +292,13 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
                 </Box>
               )}
 
-              <Box mb={isMobile ? '0' : '2'} css={{ wordBreak: 'break-word' }}>
+              <Box
+                css={{
+                  marginBottom: '0.5rem',
+                  wordBreak: 'break-word',
+                  '@media (max-width: 480px)': { marginBottom: 0 },
+                }}
+              >
                 {selectedTab?.content}
               </Box>
             </Box>

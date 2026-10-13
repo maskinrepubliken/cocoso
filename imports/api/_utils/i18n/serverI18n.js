@@ -5,6 +5,8 @@ import i18n, { allLangs, defaultLang } from '../../../startup/i18n';
 
 const SUPPORTED_LANGS = allLangs.map((l) => l.value);
 const COOKIE_NAME = 'i18next'; // i18next-browser-languagedetector's default
+// Set only when the visitor picks a language (imports/startup/i18n.js).
+const CHOICE_COOKIE_NAME = 'cocoso-lang';
 
 function normalizeLang(candidate) {
   if (!candidate) {
@@ -37,13 +39,33 @@ function pickFromAcceptLanguage(header) {
 // localStorage, navigator) as closely as a server request allows —
 // localStorage isn't visible to the server, so it's skipped; navigator's
 // server-side equivalent is the Accept-Language header.
-function resolveLang({ lngParam, cookieHeader, acceptLanguageHeader }) {
+//
+// After the querystring come the visitor's own pick in the language menu
+// and then the site's language: the client starts every page the same way
+// (imports/startup/client/index.jsx and WrapperHybrid), so the first render
+// and hydration agree.
+function resolveLang({
+  lngParam,
+  cookieHeader,
+  acceptLanguageHeader,
+  siteLang,
+}) {
   const fromQuery = normalizeLang(lngParam);
   if (fromQuery) {
     return fromQuery;
   }
 
   const cookies = cookie.parse(cookieHeader || '');
+  const fromChoice = normalizeLang(cookies[CHOICE_COOKIE_NAME]);
+  if (fromChoice) {
+    return fromChoice;
+  }
+
+  const fromSite = normalizeLang(siteLang);
+  if (fromSite) {
+    return fromSite;
+  }
+
   const fromCookie = normalizeLang(cookies[COOKIE_NAME]);
   if (fromCookie) {
     return fromCookie;
@@ -61,9 +83,10 @@ function resolveLang({ lngParam, cookieHeader, acceptLanguageHeader }) {
 // serverRenderer.js). Only reads headers, so it doesn't care that req.url
 // is always a raw string (never a parsed URL object) — callers extract
 // their own lngParam from wherever their query string actually lives.
-function resolveLangFromRequest(req, lngParam) {
+function resolveLangFromRequest(req, lngParam, siteLang) {
   return resolveLang({
     lngParam,
+    siteLang,
     cookieHeader: req?.headers?.cookie,
     acceptLanguageHeader: req?.headers?.['accept-language'],
   });

@@ -31,10 +31,15 @@ export default function HelmetHybrid({ siteDoc }: HelmetHybridProps) {
       ? `https://fonts.googleapis.com/css2?family=${fontFamily}:ital,wght@0,300;0,400;0,700;1,400&display=swap`
       : null;
 
+  // The icons: a CDN when settings name one, else the ones in public/icons.
+  const iconsBase = publicSettings?.iconsBaseUrl || '/icons';
+
   return (
     <Helmet htmlAttributes={{ lang }}>
       <title>{siteDoc.settings?.name}</title>
       <link rel="canonical" href={publicUrl()} />
+      <meta name="theme-color" content="#eeeedb" />
+      <link rel="icon" type="image/svg+xml" href={`${iconsBase}/favicon.svg`} />
 
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
@@ -43,29 +48,29 @@ export default function HelmetHybrid({ siteDoc }: HelmetHybridProps) {
       <link
         rel="android-chrome-192x192"
         sizes="192x192"
-        href={`${publicSettings.iconsBaseUrl}/android-chrome-192x192.png`}
+        href={`${iconsBase}/android-chrome-192x192.png`}
       />
       <link
         rel="android-chrome-512x512"
         sizes="512x512"
-        href={`${publicSettings.iconsBaseUrl}/android-chrome-512x512.png`}
+        href={`${iconsBase}/android-chrome-512x512.png`}
       />
       <link
         rel="apple-touch-icon"
         sizes="180x180"
-        href={`${publicSettings.iconsBaseUrl}/apple-touch-icon.png`}
+        href={`${iconsBase}/apple-touch-icon.png`}
       />
       <link
         rel="icon"
         type="image/png"
         sizes="32x32"
-        href={`${publicSettings.iconsBaseUrl}/favicon-32x32.png`}
+        href={`${iconsBase}/favicon-32x32.png`}
       />
       <link
         rel="icon"
         type="image/png"
         sizes="16x16"
-        href={`${publicSettings.iconsBaseUrl}/favicon-16x16.png`}
+        href={`${iconsBase}/favicon-16x16.png`}
       />
     </Helmet>
   );

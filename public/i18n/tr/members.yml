@@ -28,6 +28,7 @@ actions:
   notOrganizer: Organizatörlükten çıkar
   visit: Profili ziyaret et
   visithost: '{{ host }} profilini ziyaret et'
+  viewAs: Siteyi bu kullanıcı olarak gör
 
 message:
   success:
@@ -120,3 +121,9 @@ labels:
   list: Listele
   search: Ara
   messages: Mesajlar
+
+viewAs:
+  started: Siteyi artık {{ username }} olarak görüyorsun
+  banner: 'Siteyi {{ username }} ({{ role }}) olarak görüyorsun'
+  back: Hesabıma geri dön
+  backSuccess: Kendi hesabına geri döndün

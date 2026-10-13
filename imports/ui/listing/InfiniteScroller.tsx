@@ -6,6 +6,7 @@ import { Box, Flex, Loader } from '/imports/ui/core';
 
 import NewEntryHelper from '../generic/NewEntryHelper';
 import FiltrerSorter from './FiltrerSorter';
+import Honeycomb from './Honeycomb';
 
 const breakpointColumnsObj = (isLarger: boolean) => ({
   default: 6,
@@ -104,11 +105,29 @@ export default function InfiniteScroller({
   hideFiltrerSorter = false,
   filtrerMarginTop = 0,
   isMasonry = false,
+  isHoneycomb = false,
+  // Equal paper cards in a responsive grid (föreningar).
+  isGrid = false,
+  // Event cards: one per row on phones, they carry a date label and title
+  gridWide = false,
   items,
   itemsPerPage = defaultItemsPerPage,
   newHelperLink,
-  smallThumb,
+  smallThumb = false,
   children,
+}: {
+  canCreateContent?: boolean;
+  hideFiltrerSorter?: boolean;
+  filtrerMarginTop?: number;
+  isMasonry?: boolean;
+  isHoneycomb?: boolean;
+  isGrid?: boolean;
+  gridWide?: boolean;
+  items: any[];
+  itemsPerPage?: number;
+  newHelperLink?: string;
+  smallThumb?: boolean;
+  children: (item: any, index: number) => React.ReactNode;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterValue, setFilterValue] = useState('');
@@ -141,6 +160,7 @@ export default function InfiniteScroller({
     <>
       {!hideFiltrerSorter && (
         <Flex
+          className="page-wrap"
           justify="flex-end"
           css={{
             '@media(min-width: 960px)': { marginTop: `${filtrerMarginTop}px` },
@@ -150,9 +170,26 @@ export default function InfiniteScroller({
         </Flex>
       )}
 
-      <Box px="2" pb="8" w="100%">
+      <Box className="page-wrap" pb="8">
         <InfiniteScroll pageStart={1} loadMore={handleLoad} hasMore={hasMore}>
-          {isMasonry ? (
+          {isGrid ? (
+            <>
+              <div className={`card-grid ${gridWide ? 'card-grid-wide' : ''}`}>
+                {currentItems?.map((item, index) => children(item, index))}
+                {!hasMore && canCreateContent && (
+                  <NewEntryHelper buttonLink={newHelperLink || ''} small />
+                )}
+              </div>
+              {hasMore && <Loader relative />}
+            </>
+          ) : isHoneycomb ? (
+            <>
+              <Honeycomb>
+                {currentItems?.map((item, index) => children(item, index))}
+              </Honeycomb>
+              {hasMore && <Loader relative />}
+            </>
+          ) : isMasonry ? (
             <Masonry
               breakpointCols={breakpointColumnsObj(currentItems?.length > 3)}
               className="my-masonry-grid"
@@ -162,7 +199,7 @@ export default function InfiniteScroller({
               {hasMore && <Loader relative />}
               {!hasMore && canCreateContent && (
                 <NewEntryHelper
-                  buttonLink={newHelperLink}
+                  buttonLink={newHelperLink || ''}
                   small={isMasonry || smallThumb}
                 />
               )}
@@ -173,7 +210,7 @@ export default function InfiniteScroller({
               {hasMore && <Loader relative />}
               {!hasMore && canCreateContent && (
                 <NewEntryHelper
-                  buttonLink={newHelperLink}
+                  buttonLink={newHelperLink || ''}
                   small={smallThumb || isMasonry}
                 />
               )}

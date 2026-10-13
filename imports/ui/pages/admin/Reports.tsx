@@ -59,7 +59,7 @@ function ReportItem({ report, onSaved }: { report: any; onSaved: () => void }) {
 
   return (
     <Box
-      bg="white"
+      bg="papper"
       mb="4"
       p="4"
       css={{

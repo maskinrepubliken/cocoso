@@ -16,6 +16,7 @@ const RULES = [
       'registerAttendance',
       'updateAttendance',
       'removeAttendance',
+      'findAttendance',
       'sendNewsletter',
     ],
     limit: 5,

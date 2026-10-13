@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 
-import { siteAtom, locationsAtom } from '/imports/state';
-import { Center } from '/imports/ui/core';
+import { siteAtom } from '/imports/state';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
-import PopupHandler from './PopupHandler';
-import SexyThumb from './SexyThumb';
+import useOpenEntry from './useOpenEntry';
+import GroupCard from './GroupCard';
 
 export interface GroupsHybridProps {
   siteDoc: any;
@@ -17,44 +15,19 @@ export interface GroupsHybridProps {
 
 export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
   const site = useAtomValue(siteAtom);
-  const locations = useAtomValue(locationsAtom);
-  const [modalItem, setModalItem] = useState(null);
-  const [tc] = useTranslation('common');
-
-  const locationNameOf = (item: any) =>
-    locations.find((l) => l._id === item.locationId)?.name ||
-    (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
+  const openEntry = useOpenEntry('groups');
 
   return (
     <>
       <PageHeading site={site || siteDoc} listing="groups" />
 
-      <InfiniteScroller items={groups} filtrerMarginTop={-76}>
-        {(item, index) => (
-          <Center
-            key={item._id}
-            flex="1 1 355px"
-            onClick={() => setModalItem(item)}
-          >
-            <SexyThumb
-              activity={item}
-              index={index}
-              tags={
-                [
-                  item.isPrivate ? tc('labels.private') : null,
-                  locationNameOf(item),
-                ].filter(Boolean) as string[]
-              }
-            />
-          </Center>
+      <InfiniteScroller isGrid items={groups} filtrerMarginTop={-76}>
+        {(item: any, index: number) => (
+          <div key={item._id} onClick={() => openEntry(item)}>
+            <GroupCard group={item} index={index} />
+          </div>
         )}
       </InfiniteScroller>
-
-      <PopupHandler
-        item={modalItem}
-        kind="groups"
-        onClose={() => setModalItem(null)}
-      />
     </>
   );
 }

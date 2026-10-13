@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { useNavigation } from 'react-router';
+import { redirect, useNavigation } from 'react-router';
+
+import { parseTitle } from '/imports/api/_utils/shared';
 import loadable from '@loadable/component';
 
 import WrapperHybrid from '/imports/ui/layout/WrapperHybrid';
@@ -36,7 +38,11 @@ function revalidateOn(relevantParams = []) {
     nextUrl,
     defaultShouldRevalidate,
   }) {
-    if (currentUrl.pathname !== nextUrl.pathname) {
+    // Different page, or an explicit revalidate() (same URL): the default.
+    if (
+      currentUrl.pathname !== nextUrl.pathname ||
+      currentUrl.href === nextUrl.href
+    ) {
       return defaultShouldRevalidate;
     }
 
@@ -524,6 +530,20 @@ export default function appRoutes(props) {
         ],
       },
       {
+        // /info on its own opens the first page instead of a 404.
+        path: 'info',
+        element: el(NotFoundPage),
+        loader: async ({ request }) => {
+          const { pages } = await getPages();
+          const first = pages?.[0];
+          if (!first) {
+            return null;
+          }
+          const base = new URL(request.url).pathname.replace(/\/$/, '');
+          return redirect(encodeURI(`${base}/${parseTitle(first.title)}`));
+        },
+      },
+      {
         path: 'info/:pageTitle',
         element: el(PageItemHandler),
         loader: ld(() => getPages()),
@@ -564,6 +584,27 @@ export default function appRoutes(props) {
             ),
             shouldRevalidate: revalidateOn(),
           },
+          // A request's page lives under its author (/@user/works/:id). A
+          // shared or guessed /works/:id goes there instead of a 404. Not
+          // under a slug: there the author's own route handles it.
+          ...(forSlug
+            ? []
+            : [
+                {
+                  path: ':workId',
+                  element: el(NotFoundPage),
+                  loader: async ({ params }) => {
+                    const { works } = await getWorks({});
+                    const work = works?.find((w) => w._id === params.workId);
+                    if (!work?.authorUsername) {
+                      return null;
+                    }
+                    return redirect(
+                      `/@${work.authorUsername}/works/${work._id}`
+                    );
+                  },
+                },
+              ]),
         ],
       },
       {

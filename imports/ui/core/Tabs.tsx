@@ -49,12 +49,13 @@ const TabsList = ({ alignItems, justify, ...rest }: TabsListProps) => (
 );
 
 const TabItemStyled = styled('div', {
-  color: 'var(--cocoso-colors-gray-700)',
+  color: 'var(--cocoso-mylla-soft)',
   cursor: 'pointer',
   display: 'inline-flex',
+  fontFamily: 'var(--cocoso-font-ui)',
   justifyContent: 'flex-start',
-  paddingInline: '1rem',
-  paddingBlock: '0.5rem',
+  paddingInline: '0.9rem',
+  paddingBlock: '0.6rem',
   transition: 'border-color 0.2s, color 0.2s',
   '&:focus': {
     outline: 'none',
@@ -67,11 +68,12 @@ const TabItem = ({ selected, ...rest }: TabItemProps) => (
       borderBottom: `2px solid ${
         selected ? 'var(--cocoso-colors-theme-500)' : 'transparent'
       }`,
+      color: selected ? 'var(--cocoso-colors-theme-700)' : undefined,
       '&:hover': {
         borderBottomColor: selected
           ? 'var(--cocoso-colors-theme-500)'
           : 'var(--cocoso-colors-theme-200)',
-        color: 'var(--cocoso-colors-theme-500)',
+        color: 'var(--cocoso-colors-theme-700)',
       },
     }}
     {...rest}

@@ -44,7 +44,15 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
     {
       title: <Trans i18nKey="common:labels.info">Info</Trans>,
       content: (
-        <Box bg="white" className="text-content" p="6">
+        <Box
+          className="text-content"
+          p="6"
+          css={{
+            backgroundColor: 'var(--cocoso-papper)',
+            borderRadius: 'var(--cocoso-radius-kort)',
+            boxShadow: 'var(--cocoso-skugga)',
+          }}
+        >
           {work?.longDescription &&
             HTMLReactParser(DOMPurify.sanitize(work?.longDescription))}
         </Box>
@@ -57,7 +65,11 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
     tabs.push({
       title: <Trans i18nKey="common:labels.extra">Extra</Trans>,
       content: (
-        <Box bg="white" p="6">
+        <Box p="6" css={{
+            backgroundColor: 'var(--cocoso-papper)',
+            borderRadius: 'var(--cocoso-radius-kort)',
+            boxShadow: 'var(--cocoso-skugga)',
+          }}>
           <Text textAlign="center">{work?.additionalInfo}</Text>
         </Box>
       ),
@@ -94,7 +106,10 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
         }
       }
       backLink={{ value: '/works', label: worksInMenu.label }}
-      images={work?.images || [work.imageUrl]}
+      images={
+        // A request without a picture is text; no placeholder plate for it.
+        work?.images?.length ? work.images : work.imageUrl ? [work.imageUrl] : null
+      }
       placeholderSeed={work?._id}
       subTitle={work.shortDescription}
       tabs={tabs}

@@ -25,6 +25,9 @@ Activities.schema = new SimpleSchema({
   // Copied from the resource when one is set, otherwise chosen by the
   // author. Empty means the whole municipality.
   locationId: { type: String, optional: true },
+  // The kind of event, one of the keys in imports/ui/pages/activities/eventKinds.ts
+  category: { type: Object, optional: true },
+  'category.key': { type: String },
   // Shown only when no place is selected (the municipality pages).
   isMunicipalityOnly: { type: Boolean, optional: true },
 
@@ -46,6 +49,8 @@ Activities.schema = new SimpleSchema({
         firstName: { type: String, optional: true },
         lastName: { type: String, optional: true },
         numberOfPeople: { type: SimpleSchema.Integer, optional: true },
+        // Hides the name from everyone but the organizer and admins.
+        isNameHidden: { type: Boolean, optional: true },
         registerDate: { type: Date },
       }),
       optional: true,
@@ -61,6 +66,9 @@ Activities.schema = new SimpleSchema({
   isRegistrationDisabled: { type: Boolean, optional: true },
   isRegistrationEnabled: { type: Boolean, optional: true, defaultValue: true },
   isPublished: { type: Boolean },
+  // Archived events leave every public listing and can only then be deleted.
+  isArchived: { type: Boolean, optional: true },
+  archivedAt: { type: Date, optional: true },
 
   groupId: { type: String, regEx: SimpleSchema.RegEx.Id, optional: true },
   isGroupMeeting: { type: Boolean, optional: true },

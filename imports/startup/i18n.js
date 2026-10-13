@@ -4,6 +4,10 @@ import { initReactI18next } from 'react-i18next';
 import I18NextHttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import yaml from 'js-yaml';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en-gb';
+import 'dayjs/locale/sv';
+import 'dayjs/locale/tr';
 
 const { cdnServer } = Meteor.settings;
 
@@ -130,5 +134,39 @@ if (isServer) {
   });
 }
 
+// A language the visitor picked in the language menu. Kept in its own
+// cookie (the detector's `i18next` cookie is also written on automatic
+// detection) so it can outrank the site's language on server and client.
+const LANG_CHOICE_COOKIE = 'cocoso-lang';
+
+const getChosenLang = () => {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie
+    .split('; ')
+    .find((c) => c.startsWith(`${LANG_CHOICE_COOKIE}=`));
+  const value = match && decodeURIComponent(match.split('=')[1]);
+  return allLangs.some((l) => l.value === value) ? value : null;
+};
+
+const rememberLang = (lang) => {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${LANG_CHOICE_COOKIE}=${encodeURIComponent(
+    lang
+  )}; path=/; max-age=31536000; SameSite=Lax`;
+};
+
+// Dates follow the interface language. Server and client both set it
+// before rendering, so month and weekday names match at hydration.
+const setDayjsLocale = (lang) => {
+  dayjs.locale(!lang || lang === 'en' ? 'en-gb' : lang);
+};
+
 export default i18n;
-export { allLangs, defaultLang };
+export {
+  allLangs,
+  defaultLang,
+  setDayjsLocale,
+  LANG_CHOICE_COOKIE,
+  getChosenLang,
+  rememberLang,
+};

@@ -47,7 +47,24 @@ export const xToRem = (x: any) => {
   return `${x * 0.25}rem`;
 };
 
+// The old grey text shades read as the site's ink and soft ink, so pages
+// that still say color="gray.600" match the rest.
+const INK_ALIASES: Record<string, string> = {
+  'gray.900': 'var(--cocoso-mylla)',
+  'gray.800': 'var(--cocoso-mylla)',
+  'gray.700': 'var(--cocoso-mylla)',
+  'gray.600': 'var(--cocoso-mylla-soft)',
+  'gray.500': 'var(--cocoso-mylla-soft)',
+  'bluegray.900': 'var(--cocoso-mylla)',
+  'bluegray.800': 'var(--cocoso-mylla)',
+  'bluegray.600': 'var(--cocoso-mylla-soft)',
+  papper: 'var(--cocoso-papper)',
+};
+
 export const getColor = (color: string) => {
+  if (INK_ALIASES[color]) {
+    return INK_ALIASES[color];
+  }
   const colorParts = color?.split('.');
   if (!colorParts || colorParts.length !== 2) {
     return color;
@@ -56,6 +73,26 @@ export const getColor = (color: string) => {
   return colorParts
     ? `var(--cocoso-colors-${colorParts[0]}-${colorParts[1]})`
     : 'gray.900';
+};
+
+// The shorthand props getPropStyles turns into CSS. Stripped before a
+// primitive spreads the rest onto a DOM element, so "mb" or "maxW" never
+// end up as attributes (React warns, and the server and client can
+// disagree on them at hydration).
+const STYLE_PROP_KEYS = [
+  'bg', 'borderRadius', 'color', 'cursor', 'gap', 'h', 'flex', 'maxH', 'maxW',
+  'w', 'p', 'px', 'py', 'pb', 'pl', 'pr', 'pt', 'm', 'mx', 'my', 'mb', 'ml',
+  'mr', 'mt', 'hover',
+];
+
+export const omitStyleProps = (props: any) => {
+  const rest: any = {};
+  Object.keys(props || {}).forEach((key) => {
+    if (!STYLE_PROP_KEYS.includes(key)) {
+      rest[key] = props[key];
+    }
+  });
+  return rest;
 };
 
 export const getPropStyles = (props: any) => {

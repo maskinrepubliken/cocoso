@@ -12,7 +12,7 @@ bigCal:
   yesterday: Yesterday
   tomorrow: Tomorrow
   today: Today
-  agenda: Agenda
+  agenda: List
   noEventsInRange: There are no events in this range.
   showMore: '{{ total }} more'
 

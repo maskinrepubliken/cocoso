@@ -1,3 +1,4 @@
+import { useAtomValue } from 'jotai';
 import React from 'react';
 import { Link, useLoaderData, useRouteLoaderData } from 'react-router';
 import { Helmet } from 'react-helmet';
@@ -5,39 +6,52 @@ import { useTranslation } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 
-import { Box, Button, Center, Flex, Heading, Text } from '/imports/ui/core';
+import { Box, Center, Heading } from '/imports/ui/core';
 import ComposablePageHybrid from '/imports/ui/entry/ComposablePageHybrid';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
+import GroupCard from '/imports/ui/listing/GroupCard';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
+import Stamp from '/imports/ui/generic/Stamp';
+import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
+import { locationsAtom } from '/imports/state';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { publicUrl } from '/imports/api/_utils/shared';
 
 import type { SlugData } from './SlugHandler';
 
+// A section of the place page: the section's 3D icon, its name with the
+// place as a quieter suffix, and the way to the full listing kept on the
+// same line at every width.
 function Section({
+  icon,
   title,
+  place,
   seeAllTo,
   seeAllLabel,
   children,
 }: {
+  icon: string;
   title: string;
+  place: string;
   seeAllTo: string;
   seeAllLabel: string;
   children: React.ReactNode;
 }) {
   return (
-    <Box mb="10" px="4">
-      <Flex align="center" justify="space-between" mb="3" wrap="wrap">
-        <Heading size="md">{title}</Heading>
-        <Link to={seeAllTo}>
-          <Button size="sm" variant="ghost">
-            {seeAllLabel}
-          </Button>
+    <section className="page-wrap landing-section">
+      <div className="landing-head">
+        <ThreeDIcon className="landing-head-icon" name={icon} size={44} />
+        <h2 className="landing-title">
+          {title} <span className="landing-title-place">{place}</span>
+        </h2>
+        <Link className="landing-more" to={seeAllTo}>
+          {seeAllLabel} <span aria-hidden="true">→</span>
         </Link>
-      </Flex>
+      </div>
       {children}
-    </Box>
+    </section>
   );
 }
 
@@ -46,6 +60,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
   const { activities, composablePage, groups, resources } =
     (useLoaderData() as any) || {};
   const [tc] = useTranslation('common');
+  const locations = useAtomValue(locationsAtom);
 
   const location = slugData?.location;
   if (!location) {
@@ -57,6 +72,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
     menu.find((item: any) => item.name === name)?.isVisible;
   const prefix = `/${location.slug}`;
   const heroImage = getImageUrl(location.images?.[0], 'full');
+  const world = worldForLocation(locations, location._id);
   const title = `${location.name} | ${siteDoc?.settings?.name}`;
   const description = location.description
     ? DOMPurify.sanitize(location.description, { ALLOWED_TAGS: [] })
@@ -68,38 +84,58 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
   return (
     <Box>
       <Box
+        className="location-hero"
         css={{
           backgroundColor: 'var(--cocoso-colors-theme-100)',
-          backgroundImage: heroImage ? `url('${heroImage}')` : undefined,
+          backgroundImage: heroImage
+            ? `url('${heroImage}')`
+            : world
+            ? `linear-gradient(135deg, ${world.from}, ${world.to})`
+            : undefined,
           backgroundPosition: 'center',
           backgroundSize: 'cover',
-          minHeight: heroImage ? '320px' : '240px',
+          minHeight: heroImage ? '340px' : '260px',
           overflow: 'hidden',
           position: 'relative',
         }}
-        mb="6"
+        mb="8"
       >
         {!heroImage && (
           <PlaceholderImage
             seed={location._id}
-            style={{ left: 0, position: 'absolute', top: 0 }}
+            style={{
+              left: 0,
+              mixBlendMode: 'multiply',
+              opacity: 0.55,
+              position: 'absolute',
+              top: 0,
+            }}
           />
         )}
         <Center
           css={{
             background: heroImage
-              ? 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.05))'
-              : 'linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0))',
-            minHeight: heroImage ? '320px' : '240px',
+              ? 'linear-gradient(to top, rgba(42,37,32,0.72), rgba(42,37,32,0.05))'
+              : 'linear-gradient(to top, rgba(42,37,32,0.45), rgba(42,37,32,0))',
+            flexDirection: 'column',
+            gap: '0.9rem',
+            minHeight: heroImage ? '340px' : '260px',
             padding: '2rem 1rem',
             position: 'relative',
           }}
         >
+          <Stamp
+            className="location-hero-stamp"
+            name={location.name}
+            size="lg"
+            world={world}
+          />
           <Heading
+            as="h1"
             color="white"
-            size="xl"
+            size="2xl"
             textAlign="center"
-            css={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
+            css={{ textShadow: '0 1px 3px rgba(0,0,0,0.45)' }}
           >
             {location.name}
           </Heading>
@@ -107,7 +143,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
       </Box>
 
       {location.description && (
-        <Center mb="8" px="4">
+        <Center className="page-wrap landing-intro">
           <Box className="text-content" css={{ maxWidth: '680px' }}>
             {HTMLReactParser(DOMPurify.sanitize(location.description))}
           </Box>
@@ -115,7 +151,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
       )}
 
       {composablePage?.isPublished && (
-        <Box mb="8">
+        <Box className="landing-section">
           <ComposablePageHybrid
             siteDoc={siteDoc}
             composablePage={{
@@ -128,67 +164,72 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
 
       {isVisible('activities') && (
         <Section
-          title={tc('locations.landing.activities', { name: location.name })}
+          icon={sectionIcons.activities}
+          title={tc('locations.landing.activities')}
+          place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/activities`}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           {activities?.length ? (
-            <Flex gap="4" justify="center" wrap="wrap">
+            <div className="card-grid card-grid-wide">
               {activities.map((activity: any, index: number) => (
                 <Link key={activity._id} to={`${prefix}/activities/${activity._id}`}>
                   <SexyThumb activity={activity} index={index} />
                 </Link>
               ))}
-            </Flex>
+            </div>
           ) : (
-            <Text color="gray.600">{tc('locations.landing.nothingYet')}</Text>
+            <p className="landing-empty">{tc('locations.landing.nothingYet')}</p>
           )}
         </Section>
       )}
 
       {isVisible('resources') && (
         <Section
-          title={tc('locations.landing.resources', { name: location.name })}
+          icon={sectionIcons.resources}
+          title={tc('locations.landing.resources')}
+          place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/resources`}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           {resources?.length ? (
-            <Flex gap="4" justify="center" wrap="wrap">
+            <div className="card-grid">
               {resources.map((resource: any, index: number) => (
-                <Box key={resource._id} css={{ width: '260px' }}>
-                  <Link to={`${prefix}/resources/${resource._id}`}>
-                    <NewGridThumb
-                      fixedImageHeight
-                      imageUrl={
-                        getImageUrl(resource.images?.[0], 'small') || undefined
-                      }
-                      index={index}
-                      placeholderSeed={resource._id}
-                      title={resource.label}
-                    />
-                  </Link>
-                </Box>
+                <Link key={resource._id} to={`${prefix}/resources/${resource._id}`}>
+                  <NewGridThumb
+                    fixedImageHeight
+                    imageUrl={
+                      getImageUrl(resource.images?.[0], 'small') || undefined
+                    }
+                    index={index}
+                    placeholderSeed={resource._id}
+                    title={resource.label}
+                    world={world}
+                  />
+                </Link>
               ))}
-            </Flex>
+            </div>
           ) : (
-            <Text color="gray.600">{tc('locations.landing.nothingYet')}</Text>
+            <p className="landing-empty">{tc('locations.landing.nothingYet')}</p>
           )}
         </Section>
       )}
 
       {isVisible('groups') && groups?.length > 0 && (
         <Section
-          title={tc('locations.landing.groups', { name: location.name })}
+          icon={sectionIcons.groups}
+          title={tc('locations.landing.groups')}
+          place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/groups`}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
-          <Flex gap="4" justify="center" wrap="wrap">
+          <div className="card-grid">
             {groups.map((group: any, index: number) => (
               <Link key={group._id} to={`${prefix}/groups/${group._id}`}>
-                <SexyThumb activity={group} index={index} />
+                <GroupCard group={group} index={index} />
               </Link>
             ))}
-          </Flex>
+          </div>
         </Section>
       )}
 

@@ -5,15 +5,18 @@ import { Flex, Slide } from '/imports/ui/core';
 const NEAR_BOTTOM_THRESHOLD = 160; // px from page bottom before widget hides
 const WIDGET_HEIGHT = 86; // matches minHeight in flexProps
 
+// A paper shelf that slides up from the bottom with the page's one action.
 const flexProps = {
   align: 'flex-start',
-  bg: 'theme.900',
   justify: 'center',
   p: '4',
   pb: '2',
   css: {
-    borderTop: '1px solid',
-    borderTopColor: 'var(--cocoso-colors-gray-400)',
+    backgroundColor: 'rgba(255, 253, 247, 0.92)',
+    backdropFilter: 'blur(10px)',
+    borderTop: '1px solid var(--cocoso-linje)',
+    boxShadow: '0 -10px 30px -18px rgba(60, 40, 20, 0.45)',
+    color: 'var(--cocoso-mylla)',
     width: '100%',
     minHeight: `${WIDGET_HEIGHT}px`,
   },

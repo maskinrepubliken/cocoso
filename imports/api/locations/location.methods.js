@@ -47,6 +47,9 @@ function pickValues(values) {
     images: Array.isArray(values.images) ? values.images : [],
     isPublished: Boolean(values.isPublished),
     landingPageId: values.landingPageId || undefined,
+    colorKey: ["skog","lera","glas","ockra","salvia"].includes(values.colorKey)
+      ? values.colorKey
+      : undefined,
     coordinates:
       values.coordinates &&
       Number.isFinite(values.coordinates.lat) &&

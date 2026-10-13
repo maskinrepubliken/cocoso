@@ -81,31 +81,36 @@ export default function GroupMembers({ group }) {
         </AvatarGroup>
       </Box>
 
-      <Modal
-        hideFooter
-        id="group-members"
-        open={modalOpen}
-        title={t('labels.member')}
-        onClose={() => setModalOpen(false)}
-      >
-        <NiceList keySelector="username" list={group.members}>
-          {(member) => (
-            <Link to={`/@${member.username}`}>
-              <Flex align="center">
-                <Avatar
-                  name={member.username}
-                  size="md"
-                  src={getImageUrl(member.avatar, 'thumb')}
-                />
-                <CLink fontWeight={member.isAdmin ? '700' : '400'}>
-                  {member.username}
-                </CLink>
-                <Text ml="1">{member.isAdmin && '(admin)'}</Text>
-              </Flex>
-            </Link>
-          )}
-        </NiceList>
-      </Modal>
+      {/* Rendered only when open: its title is in the groups namespace,
+          which the server does not load, so rendering it closed made the
+          server and client disagree. */}
+      {modalOpen && (
+        <Modal
+          hideFooter
+          id="group-members"
+          open={modalOpen}
+          title={t('labels.member')}
+          onClose={() => setModalOpen(false)}
+        >
+          <NiceList keySelector="username" list={group.members}>
+            {(member) => (
+              <Link to={`/@${member.username}`}>
+                <Flex align="center">
+                  <Avatar
+                    name={member.username}
+                    size="md"
+                    src={getImageUrl(member.avatar, 'thumb')}
+                  />
+                  <CLink fontWeight={member.isAdmin ? '700' : '400'}>
+                    {member.username}
+                  </CLink>
+                  <Text ml="1">{member.isAdmin && '(admin)'}</Text>
+                </Flex>
+              </Link>
+            )}
+          </NiceList>
+        </Modal>
+      )}
     </>
   );
 }
