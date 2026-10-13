@@ -2949,7 +2949,8 @@ body {
   .home-hero,
   .home-hero.vav {
     margin-top: -104px;
-    padding: 116px 0 64px;
+    /* room between the chip row and the icon row on the eyebrow's line */
+    padding: 162px 0 64px;
   }
 
   .home-hero-inner {
@@ -3137,13 +3138,13 @@ body {
      at the right; the text keeps the whole width below. The title is
      held to two lines so it never runs under the icons. */
   .home-hero-text {
-    max-width: 520px;
+    max-width: 440px;
   }
 
   .home-hero-icons {
     position: absolute;
     right: var(--cocoso-gutter);
-    top: 0;
+    top: -8px;
     width: auto;
     height: 20px;
     display: flex;
@@ -3153,24 +3154,29 @@ body {
 
   .home-hero-icon {
     position: static;
-    width: 40px;
-    height: 40px;
+    width: 52px;
+    height: 52px;
     transform: none;
     filter: drop-shadow(0 6px 8px rgba(30, 50, 25, 0.2));
   }
 
   .home-hero-crane {
     position: static;
-    width: 60px;
-    height: 60px;
-    margin-right: -4px;
+    width: 80px;
+    height: 80px;
+    margin-right: -6px;
     filter: drop-shadow(0 6px 8px rgba(30, 50, 25, 0.2));
   }
 
-  .home-hero-icon.is-1 { width: 48px; height: 48px; }
-  .home-hero-icon.is-2 { width: 42px; height: 42px; }
-  .home-hero-icon.is-3 { width: 38px; height: 38px; }
+  .home-hero-icon.is-1 { width: 62px; height: 62px; }
+  .home-hero-icon.is-2 { width: 54px; height: 54px; }
+  .home-hero-icon.is-3 { width: 50px; height: 50px; }
   .home-hero-icon.is-4 { display: none; }
+}
+
+@media (max-width: 480px) {
+  /* A phone has room for the crane and two icons beside the eyebrow */
+  .home-hero-icon.is-3 { display: none; }
 }
 
 /* === Place tag (orttag) === */
