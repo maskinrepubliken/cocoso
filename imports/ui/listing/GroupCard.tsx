@@ -133,11 +133,17 @@ interface Group {
 }
 
 export interface GroupCardProps {
+  // Inside a place, the ort tag says nothing new
+  hideLocation?: boolean;
   group: Group;
   index?: number;
 }
 
-export default function GroupCard({ group, index = 0 }: GroupCardProps) {
+export default function GroupCard({
+  group,
+  index = 0,
+  hideLocation = false,
+}: GroupCardProps) {
   const locations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
 
@@ -156,11 +162,7 @@ export default function GroupCard({ group, index = 0 }: GroupCardProps) {
     <Card>
       <Picture world={world?.key || 'none'}>
         {imageUrl ? (
-          <img
-            alt=""
-            loading={index < 6 ? 'eager' : 'lazy'}
-            src={imageUrl}
-          />
+          <img alt="" loading={index < 6 ? 'eager' : 'lazy'} src={imageUrl} />
         ) : (
           <Shapes>
             <PlaceholderImage
@@ -169,7 +171,7 @@ export default function GroupCard({ group, index = 0 }: GroupCardProps) {
             />
           </Shapes>
         )}
-        {placeName && (
+        {placeName && !hideLocation && (
           <TopRight>
             <PlaceTag name={placeName} world={world} onImage />
           </TopRight>

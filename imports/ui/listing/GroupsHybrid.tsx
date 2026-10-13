@@ -2,6 +2,7 @@ import React from 'react';
 import { useAtomValue } from 'jotai';
 
 import { siteAtom } from '/imports/state';
+import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 
 import InfiniteScroller from './InfiniteScroller';
 import PageHeading from './PageHeading';
@@ -16,6 +17,7 @@ export interface GroupsHybridProps {
 export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
   const site = useAtomValue(siteAtom);
   const openEntry = useOpenEntry('groups');
+  const currentLocation = useCurrentLocation();
 
   return (
     <>
@@ -24,7 +26,11 @@ export default function GroupsHybrid({ siteDoc, groups }: GroupsHybridProps) {
       <InfiniteScroller isGrid items={groups}>
         {(item: any, index: number) => (
           <div key={item._id} onClick={() => openEntry(item)}>
-            <GroupCard group={item} index={index} />
+            <GroupCard
+              group={item}
+              index={index}
+              hideLocation={Boolean(currentLocation)}
+            />
           </div>
         )}
       </InfiniteScroller>
