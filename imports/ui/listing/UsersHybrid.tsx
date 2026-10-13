@@ -32,7 +32,7 @@ const Person = styled(Link, {
   textAlign: 'center',
   textDecoration: 'none',
   width: '200px',
-  '&:hover .portrait': { transform: 'scale(1.04)' },
+  '&:hover .portrait': { transform: 'translateY(-3px)' },
   '&:hover strong': { textDecoration: 'underline' },
   '& strong': { display: 'block', fontSize: '1.05rem' },
   // Three in a row on a phone
@@ -49,12 +49,15 @@ const Ring = styled('div', {
   width: '100%',
 });
 
+// The photo on a paper disc with the cards' shadow, like every other
+// island on the site, instead of a dark ring of its own.
 const Portrait = styled('div', {
   aspectRatio: '1 / 1',
-  background: 'var(--cocoso-colors-theme-700)',
+  background: 'var(--cocoso-papper)',
   borderRadius: '50%',
+  boxShadow: 'var(--cocoso-skugga-kort)',
   overflow: 'hidden',
-  padding: '4px',
+  padding: '5px',
   transition: 'transform 0.2s ease',
   width: '100%',
   '& > *': {
