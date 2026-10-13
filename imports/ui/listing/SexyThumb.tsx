@@ -15,9 +15,8 @@ import { locationsAtom } from '/imports/state';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
-import PlaceTag from '../generic/PlaceTag';
 import { getImageUrl } from '../utils/imageHelper';
-import { describeDays, timeSpan } from './recurringText';
+import { describePattern } from './recurringText';
 
 const isClient = Meteor?.isClient;
 
@@ -168,13 +167,6 @@ const More = styled('span', {
   fontWeight: 700,
 });
 
-const TopLeft = styled('div', {
-  left: '0.7rem',
-  position: 'absolute',
-  top: '0.7rem',
-  zIndex: 1,
-});
-
 const TopRight = styled('div', {
   position: 'absolute',
   right: '0.7rem',
@@ -220,26 +212,11 @@ const DateLabel = styled('span', {
   },
 });
 
-// The weekly rule as a paper label in the corner: "Varje tisdag" and the
-// time, with the next date under it.
-const RecurringLabel = styled(DateLabel, {
-  alignItems: 'flex-start',
-  padding: '0.45rem 0.6rem 0.4rem',
-  '& b': {
-    fontFamily: 'var(--cocoso-font-ui)',
-    fontSize: '0.82rem',
-    fontWeight: 700,
-    whiteSpace: 'nowrap',
-  },
-  '& small': {
-    letterSpacing: '0.02em',
-    textTransform: 'none',
-    whiteSpace: 'nowrap',
-  },
-  '& small.muted': {
-    color: 'var(--cocoso-mylla-soft)',
-    fontWeight: 600,
-  },
+// The weekly rule under the title: "↻ Varje tisdag 19:00–21:00"
+const Rule = styled('span', {
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.82rem',
+  fontWeight: 600,
 });
 
 interface Occurrence {
@@ -296,19 +273,9 @@ function ThumbRule({ dates }: { dates: Occurrence[] }) {
   if (!pattern || !next) {
     return null;
   }
-  const times = [
-    ...new Set(pattern.slots.map((s) => timeSpan(s.startTime, s.endTime))),
-  ];
-  const time = times.length === 1 && times[0] ? times[0] : null;
-  return (
-    <RecurringLabel>
-      <b>↻ {describeDays(pattern, t, i18n.language)}</b>
-      {time && <small>{time}</small>}
-      <small className="muted">
-        {t('recurring.next', { date: dayjs(next.startDate).format('D MMM') })}
-      </small>
-    </RecurringLabel>
-  );
+  // The next date is the big almanac label in the corner, so the rule
+  // only says the rhythm and the time.
+  return <Rule>↻ {describePattern(pattern, t, i18n.language)}</Rule>;
 }
 
 interface Activity {
@@ -332,8 +299,6 @@ export interface SexyThumbProps {
   index?: number;
   showPast?: boolean;
   tags?: string[];
-  // Inside a place, the ort tag says nothing new
-  hideLocation?: boolean;
 }
 
 function SexyThumb({
@@ -341,10 +306,8 @@ function SexyThumb({
   index,
   showPast = false,
   tags,
-  hideLocation = false,
 }: SexyThumbProps) {
   const locations = useAtomValue(locationsAtom);
-  const [tc] = useTranslation('common');
 
   if (!activity) {
     return null;
@@ -355,13 +318,9 @@ function SexyThumb({
   const imageRef = (activity.images && activity.images[0]) || activity.imageUrl;
   const imageUrl = getImageUrl(imageRef, 'medium');
 
-  const place = locations.find((l) => l._id === activity.locationId);
+  // The card's colour world follows the ort; the venue chip names the place,
+  // so no ort tag is shown.
   const world = worldForLocation(locations, activity.locationId);
-  const placeName =
-    place?.name ||
-    (activity.isMunicipalityOnly
-      ? tc('locations.municipalityOnlyShort')
-      : null);
 
   const { yesterday, tomorrow } = dayBounds();
   const dates = datesAndTimes || [];
@@ -400,18 +359,11 @@ function SexyThumb({
         )}
       </Picture>
 
-      {placeName && !hideLocation && (
-        <TopLeft>
-          <PlaceTag name={placeName} world={world} onImage />
-        </TopLeft>
+      {headline && (
+        <TopRight>
+          <AlmanacDate occurrence={headline} />
+        </TopRight>
       )}
-      <TopRight>
-        {isWeekly ? (
-          <ThumbRule dates={dates} />
-        ) : (
-          headline && <AlmanacDate occurrence={headline} />
-        )}
-      </TopRight>
 
       <Body>
         <Title>{title}</Title>
@@ -435,6 +387,7 @@ function SexyThumb({
         )}
 
         <Meta>
+          {isWeekly && <ThumbRule dates={dates} />}
           {!showPast &&
             !isWeekly &&
             futureDates
