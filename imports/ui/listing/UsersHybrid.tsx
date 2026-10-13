@@ -35,9 +35,11 @@ const Person = styled(Link, {
   '&:hover .portrait': { transform: 'translateY(-3px)' },
   '&:hover strong': { textDecoration: 'underline' },
   '& strong': { display: 'block', fontSize: '1.05rem' },
-  // Three in a row on a phone
-  '@media (max-width: 480px)': {
-    width: 'calc((100% - 2 * 0.75rem) / 3)',
+  // Three in a row on a phone, with a little slack so rounding never
+  // pushes the third one down
+  '@media (max-width: 720px)': {
+    flex: '0 0 calc(33.333% - 0.6rem)',
+    width: 'auto',
     gap: '0.4rem',
     '& strong': { fontSize: '0.85rem', lineHeight: 1.2 },
   },
@@ -53,7 +55,7 @@ const Ring = styled('div', {
 const Portrait = styled('div', {
   aspectRatio: '1 / 1',
   background: 'var(--cocoso-papper)',
-  border: '3px solid var(--cocoso-colors-theme-700)',
+  border: '5px solid var(--cocoso-colors-theme-700)',
   borderRadius: '50%',
   boxShadow: 'var(--cocoso-skugga)',
   boxSizing: 'border-box',
@@ -89,7 +91,7 @@ const Upcoming = styled('span', {
   fontSize: '0.9rem',
   fontWeight: 700,
   boxShadow: 'var(--cocoso-skugga)',
-  '@media (max-width: 480px)': {
+  '@media (max-width: 720px)': {
     minWidth: '1.5rem',
     height: '1.5rem',
     padding: '0 0.35rem',
@@ -104,7 +106,7 @@ const People = styled('div', {
   gap: '2rem 2.5rem',
   justifyContent: 'center',
   padding: '1rem 0.5rem 3rem',
-  '@media (max-width: 480px)': {
+  '@media (max-width: 720px)': {
     gap: '1.25rem 0.75rem',
     padding: '0.5rem 0 2rem',
   },
