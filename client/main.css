@@ -1855,8 +1855,8 @@ body {
 }
 
 /* The crane mark: no disc behind it, the pill is its background */
-/* The crane on its disc: the disc is the 32px mark, the bird is drawn
-   larger and sits a touch up and left, so it steps over the disc's edge
+/* The crane's bust on its disc: the disc is the 32px mark, the head is
+   drawn larger and sits a little up, so it steps over the disc's edge
    and just past the pill's. */
 .site-brand-mark-trana {
   position: relative;
@@ -1865,10 +1865,15 @@ body {
 
 .site-brand-mark-trana .threed-icon {
   position: absolute;
-  top: -9px;
-  left: -3px;
-  width: 46px;
-  height: 46px;
+  top: -13px;
+  left: 50%;
+  /* the bust leans left in its picture; nudged right so the neck sits on
+     the disc and the head rises above it */
+  translate: calc(-50% + 5px) 0;
+  width: 34px;
+  height: 50px;
+  /* the splayed base is trimmed so the bust ends inside the disc */
+  clip-path: inset(0 0 10px 0);
   object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.28));
 }
@@ -1958,6 +1963,7 @@ body {
 }
 
 .site-brand-clear:hover {
+  background: var(--cocoso-colors-theme-100);
   color: var(--site-ink);
 }
 
@@ -3376,7 +3382,8 @@ body {
   display: flex;
   justify-content: center;
   gap: 4px;
-  margin: 4px 0 1.25rem;
+  /* auto at the sides keeps .page-wrap centred on a wide screen */
+  margin: 4px auto 1.25rem;
 }
 
 .kind-tile {

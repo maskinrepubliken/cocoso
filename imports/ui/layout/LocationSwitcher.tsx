@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import CheckIcon from 'lucide-react/dist/esm/icons/check';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
-import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 import LandmarkIcon from 'lucide-react/dist/esm/icons/landmark';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
@@ -59,7 +58,7 @@ export default function LocationSwitcher({
     <img alt="" className="site-brand-mark" src={site.logo} />
   ) : (
     <span className="site-brand-mark site-brand-mark-trana">
-      <ThreeDIcon name="trana" size={46} />
+      <ThreeDIcon name="trana-hals" size={40} />
     </span>
   );
 
@@ -111,13 +110,7 @@ export default function LocationSwitcher({
               <b>{tc('locations.switcher.whole')}</b>
               <small>{tc('locations.switcher.wholeHelper')}</small>
             </span>
-            {current ? (
-              <ChevronRightIcon
-                className="site-loc-home-end"
-                width={16}
-                height={16}
-              />
-            ) : (
+            {!current && (
               <CheckIcon className="site-loc-home-end" width={16} height={16} />
             )}
           </MenuItem>
