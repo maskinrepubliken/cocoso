@@ -826,25 +826,42 @@ body {
   padding: 1rem;
 }
 
+/* === Panels ===
+   Every drop-down (search results, account, place, info) is the same
+   soft paper panel: a little see-through, blurred behind, 14px corners.
+   The menu library's own sheet loads after this one, hence the doubled
+   selectors. */
+:root {
+  --cocoso-panel-bg: rgba(255, 253, 247, 0.94);
+}
+
 .szh-menu-container {
   z-index: 1002;
 }
-.szh-menu {
-  border-radius: var(--cocoso-radius-meny);
-  border: 1px solid var(--cocoso-linje);
-  background: var(--cocoso-papper);
-  box-shadow: var(--cocoso-skugga-meny);
+.szh-menu-container .szh-menu,
+.site-search-panel {
   padding: 6px;
+  border: 1px solid var(--cocoso-linje);
+  border-radius: var(--cocoso-radius-meny);
+  background: var(--cocoso-panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--cocoso-skugga-meny);
   color: var(--cocoso-mylla);
   font-family: var(--cocoso-font-ui);
+  font-size: 14px;
 }
-.szh-menu__item {
+.szh-menu-container .szh-menu__item {
+  padding: 8px 10px;
   border-radius: var(--cocoso-radius-falt);
+  font-weight: 600;
 }
-.szh-menu__item--hover {
+.szh-menu-container .szh-menu__item--hover {
   background: var(--cocoso-colors-theme-100);
+  color: var(--cocoso-mylla);
 }
-.szh-menu__divider {
+.szh-menu-container .szh-menu__divider {
+  margin: 4px 0;
   background: var(--cocoso-linje);
 }
 
@@ -1912,18 +1929,13 @@ body {
 
 .site-loc-menu {
   width: 272px;
-  padding: 2px;
-}
-
-.site-loc-menu .szh-menu__item {
-  border-radius: 10px;
 }
 
 .site-loc-home {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   padding: 10px 12px;
   border: 1px solid var(--cocoso-colors-theme-200);
   background: var(--cocoso-colors-theme-50);
@@ -1974,18 +1986,20 @@ body {
 }
 
 .site-loc-label {
-  padding: 6px 12px 4px;
-  font-size: 12px;
-  color: #888;
+  padding: 8px 10px 4px;
+  color: var(--site-ink-soft);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .site-loc-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--site-ink);
 }
 
@@ -2366,13 +2380,6 @@ body {
   width: 380px;
   max-height: min(70vh, 560px);
   overflow-y: auto;
-  padding: 6px;
-  border: 1px solid var(--cocoso-linje);
-  border-radius: var(--cocoso-radius-meny);
-  background: var(--cocoso-papper);
-  box-shadow: var(--cocoso-skugga-meny);
-  color: var(--cocoso-mylla);
-  font-family: var(--cocoso-font-ui);
 }
 
 .site-search-empty {
