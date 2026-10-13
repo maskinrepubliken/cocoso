@@ -2959,16 +2959,29 @@ body {
   align-items: center;
   gap: 8px;
   margin: 0 0 4px;
+  padding: 4px 5px 4px 14px;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
   color: var(--cocoso-colors-theme-700);
   font-family: var(--cocoso-font-ui);
   font-size: 14px;
   font-weight: 600;
-  text-align: center;
+  line-height: 1.3;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow 0.15s ease;
+}
+
+.page-heading-place:hover {
+  color: var(--cocoso-colors-theme-800);
+  box-shadow: var(--cocoso-skugga), 0 0 0 2px var(--cocoso-colors-theme-200);
 }
 
 .page-heading-clear {
   display: grid;
   place-items: center;
+  flex: 0 0 auto;
   width: 22px;
   height: 22px;
   border-radius: 999px;
@@ -2976,7 +2989,7 @@ body {
   color: var(--cocoso-colors-theme-700);
 }
 
-.page-heading-clear:hover {
+.page-heading-place:hover .page-heading-clear {
   background: var(--cocoso-colors-theme-200);
   color: var(--cocoso-colors-theme-800);
 }

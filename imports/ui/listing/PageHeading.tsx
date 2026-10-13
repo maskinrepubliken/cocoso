@@ -94,22 +94,22 @@ export default function PageHeading({
             {/* Inside a place, say so: the listing shows that place only */}
             {currentLocation && (
               <Center>
-                <p className="page-heading-place">
+                {/* The whole line is the button to the whole municipality */}
+                <Link
+                  className="page-heading-place"
+                  to={wholeMunicipalityPath}
+                  title={tc('listing.wholeMunicipality')}
+                >
                   <span>
                     {tc('listing.showingIn', {
                       what: subject || tc(`listing.subjects.${listing}`),
                       place: currentLocation.name,
                     })}
                   </span>
-                  <Link
-                    className="page-heading-clear"
-                    to={wholeMunicipalityPath}
-                    aria-label={tc('listing.wholeMunicipality')}
-                    title={tc('listing.wholeMunicipality')}
-                  >
+                  <span className="page-heading-clear" aria-hidden>
                     <XIcon width={14} height={14} />
-                  </Link>
-                </p>
+                  </span>
+                </Link>
               </Center>
             )}
             {description && (
