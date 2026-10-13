@@ -10,7 +10,10 @@ import {
 } from '../../startup/constants';
 import { isAdmin } from '../users/user.roles';
 import Memberships from '../memberships/membership';
+import dayjs from 'dayjs';
+
 import { attachMembershipsToUsers } from '../memberships/membership.helpers';
+import Activities from '../activities/activity';
 
 function getUsersRandomlyWithAvatarsFirst(users) {
   if (!users || users.length === 0) {
@@ -36,6 +39,36 @@ const publicUserFields = {
   lastName: 1,
   username: 1,
 };
+
+// How many public events each organizer has ahead, as author or
+// co-organizer: the sign of life on the people listing.
+async function attachUpcomingCounts(users) {
+  const today = dayjs().format('YYYY-MM-DD');
+  const ids = users.map((user) => user._id);
+  const upcoming = await Activities.find(
+    {
+      isPublicActivity: true,
+      isArchived: { $ne: true },
+      'datesAndTimes.endDate': { $gte: today },
+      $or: [{ authorId: { $in: ids } }, { 'organizers.userId': { $in: ids } }],
+    },
+    { fields: { authorId: 1, 'organizers.userId': 1 } }
+  ).fetchAsync();
+  const counts = {};
+  upcoming.forEach((activity) => {
+    const people = new Set([
+      activity.authorId,
+      ...(activity.organizers || []).map((o) => o.userId),
+    ]);
+    people.forEach((id) => {
+      counts[id] = (counts[id] || 0) + 1;
+    });
+  });
+  return users.map((user) => ({
+    ...user,
+    upcomingCount: counts[user._id] || 0,
+  }));
+}
 
 async function requireAdmin() {
   const user = await Meteor.userAsync();
@@ -141,8 +174,9 @@ Meteor.methods({
       .fetchAsync();
 
     const usersWithMemberships = await attachMembershipsToUsers(users);
+    const withCounts = await attachUpcomingCounts(usersWithMemberships);
 
-    return getUsersRandomlyWithAvatarsFirst(usersWithMemberships);
+    return getUsersRandomlyWithAvatarsFirst(withCounts);
   },
 
   async updateSiteSettings(newSettings) {

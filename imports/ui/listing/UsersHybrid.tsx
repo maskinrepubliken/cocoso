@@ -35,7 +35,18 @@ const Person = styled(Link, {
   '&:hover .portrait': { transform: 'scale(1.04)' },
   '&:hover strong': { textDecoration: 'underline' },
   '& strong': { display: 'block', fontSize: '1.05rem' },
-  '@media (max-width: 480px)': { width: '150px' },
+  // Three in a row on a phone
+  '@media (max-width: 480px)': {
+    width: 'calc((100% - 2 * 0.75rem) / 3)',
+    gap: '0.4rem',
+    '& strong': { fontSize: '0.85rem', lineHeight: 1.2 },
+  },
+});
+
+// The ring holds the photo; a count of upcoming events sits on its edge.
+const Ring = styled('div', {
+  position: 'relative',
+  width: '100%',
 });
 
 const Portrait = styled('div', {
@@ -56,13 +67,43 @@ const Portrait = styled('div', {
   },
 });
 
+// "3" on the ring's lower right: that many events ahead
+const Upcoming = styled('span', {
+  position: 'absolute',
+  right: '6%',
+  bottom: '6%',
+  display: 'grid',
+  placeItems: 'center',
+  minWidth: '2rem',
+  height: '2rem',
+  padding: '0 0.5rem',
+  borderRadius: '999px',
+  background: 'var(--cocoso-tegel)',
+  border: '3px solid var(--cocoso-papper)',
+  color: '#fff',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.9rem',
+  fontWeight: 700,
+  boxShadow: 'var(--cocoso-skugga)',
+  '@media (max-width: 480px)': {
+    minWidth: '1.5rem',
+    height: '1.5rem',
+    padding: '0 0.35rem',
+    fontSize: '0.75rem',
+    border: '2px solid var(--cocoso-papper)',
+  },
+});
+
 const People = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '2rem 2.5rem',
   justifyContent: 'center',
   padding: '1rem 0.5rem 3rem',
-  '@media (max-width: 480px)': { gap: '1.5rem 1rem' },
+  '@media (max-width: 480px)': {
+    gap: '1.25rem 0.75rem',
+    padding: '0.5rem 0 2rem',
+  },
 });
 
 // The organizers as round portraits. A portrait goes straight to the
@@ -148,13 +189,25 @@ export default function UsersHybrid({
           const name = displayName(user);
           return (
             <Person key={user.username} to={`/@${user.username}`}>
-              <Portrait className="portrait">
-                {avatar ? (
-                  <img alt="" loading="lazy" src={avatar} />
-                ) : (
-                  <PlaceholderImage seed={user._id || user.username} />
+              <Ring>
+                <Portrait className="portrait">
+                  {avatar ? (
+                    <img alt="" loading="lazy" src={avatar} />
+                  ) : (
+                    <PlaceholderImage seed={user._id || user.username} />
+                  )}
+                </Portrait>
+                {user.upcomingCount > 0 && (
+                  <Upcoming
+                    title={tc('people.upcoming', { count: user.upcomingCount })}
+                    aria-label={tc('people.upcoming', {
+                      count: user.upcomingCount,
+                    })}
+                  >
+                    {user.upcomingCount}
+                  </Upcoming>
                 )}
-              </Portrait>
+              </Ring>
               <strong>{name}</strong>
             </Person>
           );
