@@ -1865,15 +1865,16 @@ body {
 
 .site-brand-mark-trana .threed-icon {
   position: absolute;
-  top: -13px;
+  top: -7px;
   left: 50%;
   /* the bust leans left in its picture; nudged right so the neck sits on
-     the disc and the head rises above it */
+     the disc and the head rises a little above it */
   translate: calc(-50% + 5px) 0;
-  width: 34px;
-  height: 50px;
-  /* the splayed base is trimmed so the bust ends inside the disc */
-  clip-path: inset(0 0 10px 0);
+  width: 31px;
+  height: 46px;
+  /* trimmed by a circle whose bottom coincides with the disc's, so the
+     base ends in a curve against the green rather than a straight cut */
+  clip-path: circle(30px at 10.5px 9px);
   object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.28));
 }
