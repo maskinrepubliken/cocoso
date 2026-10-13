@@ -10,12 +10,13 @@ interface HomeHeroProps {
   siteDoc?: any;
 }
 
-// Four icons that belong to the season.
+// Four icons: the crane first, whatever the season, then three that
+// belong to the season.
 export const seasonIcons: Record<Season, ThreeDIconName[]> = {
-  var: ['sun', 'flag', 'music', 'camera'],
-  sommar: ['sun', 'travel', 'trophy', 'music'],
-  host: ['umbrella', 'fire', 'cup', 'chess'],
-  vinter: ['tea-cup', 'gift', 'star', 'bell'],
+  var: ['trana', 'flag', 'music', 'camera'],
+  sommar: ['trana', 'travel', 'trophy', 'music'],
+  host: ['trana', 'fire', 'cup', 'chess'],
+  vinter: ['trana', 'gift', 'star', 'bell'],
 };
 
 // The welcome band at the top of the start page. The header above it is
