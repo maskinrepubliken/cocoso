@@ -49,15 +49,16 @@ const Ring = styled('div', {
   width: '100%',
 });
 
-// The photo on a paper disc with the cards' shadow, like every other
-// island on the site, instead of a dark ring of its own.
+// The photo with a plain dark green border and the site's soft shadow.
 const Portrait = styled('div', {
   aspectRatio: '1 / 1',
   background: 'var(--cocoso-papper)',
+  border: '3px solid var(--cocoso-colors-theme-700)',
   borderRadius: '50%',
-  boxShadow: 'var(--cocoso-skugga-kort)',
+  boxShadow: 'var(--cocoso-skugga)',
+  boxSizing: 'border-box',
   overflow: 'hidden',
-  padding: '5px',
+  padding: 0,
   transition: 'transform 0.2s ease',
   width: '100%',
   '& > *': {
