@@ -42,3 +42,15 @@ with the PNG embedded, 16, 32, 180, 192, 512): the head and upper neck of
 the bust on the site's dark green disc, so the face reads at 16 px. The
 header's brand mark (`LocationSwitcher.tsx`) shows the full crane from
 `public/3dicons/trana.webp` when the site has no uploaded logo.
+
+## The social image
+
+`og-default.html` is the share image (`public/images/og-default.jpg`) as a
+1200×630 page with the site's web fonts and the full crane embedded. To
+re-render it after a change:
+
+    cd docs/design/trana && "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+        --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 \
+        --window-size=1200,630 --virtual-time-budget=6000 \
+        --screenshot="$PWD/og-shot.png" "file://$PWD/og-default.html"
+    python3 -c "from PIL import Image; Image.open('og-shot.png').convert('RGB').save('../../../public/images/og-default.jpg', quality=90, optimize=True)"
