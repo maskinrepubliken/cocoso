@@ -3108,6 +3108,13 @@ body {
   background: rgba(255, 253, 247, 0.92);
 }
 
+/* On a card's own paper: the same tag, no pill behind it */
+.place-tag.bare {
+  padding-right: 0;
+  background: none;
+  box-shadow: none;
+}
+
 .place-tag-mark {
   display: grid;
   place-items: center;

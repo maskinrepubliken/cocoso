@@ -3,10 +3,11 @@ import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import dayjs from 'dayjs';
-import MapPin from 'lucide-react/dist/esm/icons/map-pin';
 
 import { styled } from '/stitches.config';
-import { siteAtom } from '/imports/state';
+import { locationsAtom, siteAtom } from '/imports/state';
+import PlaceTag from '/imports/ui/generic/PlaceTag';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import {
   useLocationPrefix,
   useLocationTag,
@@ -242,13 +243,12 @@ const Avatar = styled('span', {
   '& img': { height: '100%', objectFit: 'cover', width: '100%' },
 });
 
-const Place = styled('span', {
-  alignItems: 'center',
-  color: green,
-  display: 'inline-flex',
-  gap: '0.2rem',
+// When it was posted: the date, and how long ago in words
+const When = styled('span', {
+  color: 'var(--cocoso-mylla-soft)',
   marginLeft: 'auto',
-  '& svg': { height: '0.85rem', width: '0.85rem' },
+  textAlign: 'right',
+  '& b': { color: ink, fontWeight: 600 },
 });
 
 const Empty = styled('div', {
@@ -262,9 +262,13 @@ function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
   const { t } = useTranslation('common');
   const prefix = useLocationPrefix();
   const place = useLocationTag(work);
+  const locations = useAtomValue(locationsAtom);
+  const world = worldForLocation(locations, work.locationId);
   const Icon = kind?.icon;
   const image = work.images?.[0];
-  const author = work.showAvatar !== false ? work.authorUsername : null;
+  const author =
+    work.showAvatar !== false ? work.authorName || work.authorUsername : null;
+  const posted = dayjs(work.creationDate);
 
   return (
     <Card to={entryPathWithin(prefix, work, 'works')}>
@@ -273,7 +277,7 @@ function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
           {Icon && <Icon />}
           {kind ? t(`requests.kinds.${kind.key}.name`) : work.category?.label}
         </Badge>
-        <span>{dayjs(work.creationDate).format('D MMM')}</span>
+        {place && <PlaceTag name={place} world={world} className="bare" />}
       </CardTop>
       <CardBody>
         <div>
@@ -303,12 +307,9 @@ function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
             <span>{author}</span>
           </>
         )}
-        {place && (
-          <Place>
-            <MapPin />
-            {place}
-          </Place>
-        )}
+        <When>
+          <b>{posted.format('D MMM')}</b> · {posted.fromNow()}
+        </When>
       </CardFoot>
     </Card>
   );
@@ -342,8 +343,7 @@ export default function WorksHybrid({ siteDoc, works }: WorksHybridProps) {
 
   const all = works || [];
   const countOf = (kind: RequestKind) =>
-    all.filter((work) => findRequestKind(work.category?.label) === kind)
-      .length;
+    all.filter((work) => findRequestKind(work.category?.label) === kind).length;
   const shown = selected
     ? all.filter((work) => findRequestKind(work.category?.label) === selected)
     : all;

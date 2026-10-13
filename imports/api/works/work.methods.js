@@ -6,13 +6,33 @@ import { locationSelector } from '../_utils/shared';
 import Works from './work';
 import { isContributorOrAdmin } from '../users/user.roles';
 
+// The author's display name on each work: first and last name when set,
+// else the username.
+async function withAuthorNames(works) {
+  const ids = [...new Set(works.map((work) => work.authorId))];
+  const users = await Meteor.users
+    .find({ _id: { $in: ids } }, { fields: { firstName: 1, lastName: 1 } })
+    .fetchAsync();
+  const nameOf = Object.fromEntries(
+    users.map((user) => [
+      user._id,
+      [user.firstName, user.lastName].filter(Boolean).join(' '),
+    ])
+  );
+  return works.map((work) => ({
+    ...work,
+    authorName: nameOf[work.authorId] || work.authorUsername,
+  }));
+}
+
 Meteor.methods({
   async getAllWorks(locationId) {
     check(locationId, Match.Maybe(String));
     try {
-      return await Works.find(locationSelector(locationId), {
+      const works = await Works.find(locationSelector(locationId), {
         sort: { creationDate: -1 },
       }).fetchAsync();
+      return await withAuthorNames(works);
     } catch (error) {
       throw new Meteor.Error(error, 'Could not retrieve data');
     }
@@ -24,9 +44,10 @@ Meteor.methods({
     }
 
     try {
-      return await Works.find({
+      const works = await Works.find({
         authorUsername: username,
       }).fetchAsync();
+      return await withAuthorNames(works);
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch works");
     }
@@ -48,7 +69,6 @@ Meteor.methods({
   },
 
   async getWorkById(workId, username) {
-
     try {
       const work = await Works.findOneAsync({ _id: workId });
       if (work && work.authorUsername !== username) {

@@ -5,8 +5,12 @@ import I18NextHttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import yaml from 'js-yaml';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/sv';
+
+// "för 4 dagar sedan" on the request cards
+dayjs.extend(relativeTime);
 
 const { cdnServer } = Meteor.settings;
 
