@@ -275,7 +275,7 @@ function ThumbRule({ dates }: { dates: Occurrence[] }) {
   }
   // The next date is the big almanac label in the corner, so the rule
   // only says the rhythm and the time.
-  return <Rule>↻ {describePattern(pattern, t, i18n.language)}</Rule>;
+  return <Rule>{describePattern(pattern, t, i18n.language)}</Rule>;
 }
 
 interface Activity {
@@ -313,7 +313,7 @@ function SexyThumb({
     return null;
   }
 
-  const { datesAndTimes, readingMaterial, subTitle, title } = activity;
+  const { datesAndTimes, title } = activity;
   // Resolve image: handles both legacy URLs and new Images collection references
   const imageRef = (activity.images && activity.images[0]) || activity.imageUrl;
   const imageUrl = getImageUrl(imageRef, 'medium');
@@ -367,8 +367,12 @@ function SexyThumb({
 
       <Body>
         <Title>{title}</Title>
-        {(subTitle || readingMaterial) && (
-          <SubTitle>{subTitle || readingMaterial}</SubTitle>
+        {/* The rhythm right under the title; the description stays on the
+            event's own page */}
+        {isWeekly && (
+          <SubTitle>
+            <ThumbRule dates={dates} />
+          </SubTitle>
         )}
         {((tags && tags.length > 0) || venue) && (
           <Meta>
@@ -387,7 +391,6 @@ function SexyThumb({
         )}
 
         <Meta>
-          {isWeekly && <ThumbRule dates={dates} />}
           {!showPast &&
             !isWeekly &&
             futureDates
