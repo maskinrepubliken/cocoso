@@ -3087,11 +3087,25 @@ body {
 
 .home-hero-icon {
   position: absolute;
+  z-index: 1;
   filter: drop-shadow(0 14px 18px rgba(30, 50, 25, 0.22));
 }
 
-/* The crane: upright, in front, a little larger than the rest */
-.home-hero-icon.is-1 { left: 20px; top: -16px; width: 176px; height: 176px; transform: none; z-index: 2; }
+/* The crane behind the cluster, to its left, faded a little into the
+   floor and looking at the icons. */
+.home-hero-crane {
+  position: absolute;
+  left: -160px;
+  top: 36px;
+  width: 220px;
+  height: 220px;
+  z-index: 0;
+  opacity: 0.68;
+  filter: saturate(0.85) drop-shadow(0 10px 14px rgba(30, 50, 25, 0.16));
+  pointer-events: none;
+}
+
+.home-hero-icon.is-1 { left: 40px; top: 10px; transform: rotate(-8deg); }
 .home-hero-icon.is-2 { left: 190px; top: 70px; transform: rotate(6deg); }
 .home-hero-icon.is-3 { left: 0; top: 140px; transform: rotate(-4deg); }
 .home-hero-icon.is-4 { left: 150px; top: 180px; transform: rotate(10deg); }
@@ -3110,7 +3124,8 @@ body {
 
 @media (max-width: 1100px) {
   .home-hero-icons { width: 260px; height: 220px; top: -20px; }
-  .home-hero-icon.is-1 { width: 140px; height: 140px; left: 20px; top: -10px; }
+  .home-hero-crane { left: -120px; top: -10px; width: 180px; height: 180px; }
+  .home-hero-icon.is-1 { width: 120px; height: 120px; left: 30px; }
   .home-hero-icon.is-2 { width: 96px; height: 96px; left: 150px; top: 60px; }
   .home-hero-icon.is-3 { width: 88px; height: 88px; top: 120px; }
   .home-hero-icon.is-4 { width: 72px; height: 72px; left: 120px; top: 150px; }
@@ -3141,7 +3156,15 @@ body {
     filter: drop-shadow(0 8px 10px rgba(30, 50, 25, 0.2));
   }
 
-  .home-hero-icon.is-1 { width: 76px; height: 76px; }
+  .home-hero-crane {
+    position: static;
+    width: 72px;
+    height: 72px;
+    margin-right: -6px;
+    opacity: 0.8;
+  }
+
+  .home-hero-icon.is-1 { width: 56px; height: 56px; }
   .home-hero-icon.is-2 { width: 46px; height: 46px; }
   .home-hero-icon.is-3 { transform: rotate(-4deg) translateY(-6px); }
   .home-hero-icon.is-4 { display: none; }

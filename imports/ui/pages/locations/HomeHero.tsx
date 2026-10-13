@@ -10,13 +10,13 @@ interface HomeHeroProps {
   siteDoc?: any;
 }
 
-// Four icons: the crane first, whatever the season, then three that
-// belong to the season.
+// Four icons that belong to the season. The crane stands behind them,
+// every season, watching.
 export const seasonIcons: Record<Season, ThreeDIconName[]> = {
-  var: ['trana', 'flag', 'music', 'camera'],
-  sommar: ['trana', 'travel', 'trophy', 'music'],
-  host: ['trana', 'fire', 'cup', 'chess'],
-  vinter: ['trana', 'gift', 'star', 'bell'],
+  var: ['sun', 'flag', 'music', 'camera'],
+  sommar: ['sun', 'travel', 'trophy', 'music'],
+  host: ['umbrella', 'fire', 'cup', 'chess'],
+  vinter: ['tea-cup', 'gift', 'star', 'bell'],
 };
 
 // The welcome band at the top of the start page. The header above it is
@@ -42,6 +42,7 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
     <section className="home-hero vav">
       <div className="home-hero-inner">
         <div className="home-hero-icons" aria-hidden="true">
+          <ThreeDIcon className="home-hero-crane" name="trana" size={230} />
           {icons.map((name, index) => (
             <ThreeDIcon
               key={name}
