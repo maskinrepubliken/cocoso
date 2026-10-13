@@ -563,27 +563,26 @@ def build_legs():
     return objs
 
 
-def neck_variant(yaw_deg=-78, pitch_deg=-10):
+def neck_variant(yaw_deg=-35, pitch_deg=-6):
     """Only the neck and head, as a bust: a rounded chest base, a short
     stylised S-neck seen in profile, the top of which bends towards the
     camera so the head looks at the viewer, slightly down."""
     global SPINE, HEAD, HEAD_YAW, BEAK_DIR, BEAK_BASE, HEAD_R, BEAK_LEN
     HEAD_R, BEAK_LEN = 0.125, 0.50
     yaw = Matrix.Rotation(math.radians(yaw_deg), 3, "Z")
-    head = Vector((0.30, -0.16, 0.88))
+    head = Vector((0.31, 0.00, 1.05))
     beak = yaw @ Vector((math.cos(math.radians(pitch_deg)), 0,
                          math.sin(math.radians(pitch_deg))))
     SPINE = [
-        ((0.00, 0.00, -0.02), 0.30),   # chest base
-        ((0.04, 0.00, 0.13), 0.23),
-        ((0.11, 0.00, 0.26), 0.15),
-        ((0.17, 0.00, 0.38), 0.115),
-        ((0.18, 0.00, 0.50), 0.105),
-        ((0.13, 0.00, 0.62), 0.100),   # S: back
-        ((0.12, -0.01, 0.72), 0.100),
-        ((0.18, -0.06, 0.80), 0.105),  # bends towards the camera
-        ((0.25, -0.12, 0.85), 0.112),
-        (tuple(head), 0.125),
+        ((0.00, 0.00, -0.02), 0.28),   # chest base
+        ((0.05, 0.00, 0.13), 0.21),
+        ((0.12, 0.00, 0.28), 0.135),
+        ((0.18, 0.00, 0.42), 0.105),
+        ((0.22, 0.00, 0.58), 0.096),   # a plain, gently leaning neck
+        ((0.25, 0.00, 0.74), 0.094),
+        ((0.27, 0.00, 0.88), 0.098),
+        ((0.29, 0.00, 0.98), 0.108),
+        (tuple(head), 0.125),          # only the head turns
         (tuple(head + beak * 0.09), 0.095),
         (tuple(head + beak * 0.15), 0.050),
     ]
@@ -713,7 +712,7 @@ def main():
     scene = bpy.context.scene
 
     if opts["variant"] == "neck":
-        neck_variant(float(opts.get("yaw", -78)), float(opts.get("pitch", -10)))
+        neck_variant(float(opts.get("yaw", -35)), float(opts.get("pitch", -6)))
     objects = []
     objects.append(build_body())
     objects.append(build_beak())

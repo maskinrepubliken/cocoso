@@ -26,11 +26,11 @@ camera and lights are all named constants near the top of each builder in
 ## Neck-only variant
 
 `trana.py --variant neck` renders only the neck and head as a bust that
-looks at the viewer (`--yaw=-78 --pitch=-10` by default, degrees; use the
+looks at the viewer (`--yaw=-35 --pitch=-6` by default, degrees; use the
 `=` form for negative values). Export it under its own name so the site's
 `trana.webp` is left alone:
 
-    python3 docs/design/trana/export.py docs/design/trana/renders/hals-v03.png trana-hals
+    python3 docs/design/trana/export.py docs/design/trana/renders/hals-v06.png trana-hals
 
 That writes `trana-hals.webp`, `trana-hals-preview-1024.png` and
 `trana-hals-comparison.png` here in `docs/design/trana/`.
