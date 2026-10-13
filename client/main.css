@@ -2757,8 +2757,7 @@ body {
   position: relative;
   overflow: hidden;
   margin-top: -56px;
-  /* room under the icons for the crane to stand lower than they float */
-  padding: 96px 0 200px;
+  padding: 96px 0 88px;
   font-family: var(--cocoso-font-ui);
   background-color: var(--cocoso-season-golv);
   background-image:
@@ -3096,8 +3095,8 @@ body {
    floor and looking at the icons. */
 .home-hero-crane {
   position: absolute;
-  left: -380px;
-  top: 200px;
+  left: -290px;
+  top: 96px;
   width: 220px;
   height: 220px;
   z-index: 0;
