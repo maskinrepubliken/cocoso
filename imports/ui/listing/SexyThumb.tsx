@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import React, { memo } from 'react';
 import dayjs from 'dayjs';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -146,6 +147,18 @@ const Chip = styled('span', {
         color: 'white',
       },
     },
+    // The venue: a pin and the name, ellipsised when long
+    venue: {
+      true: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.25rem',
+        maxWidth: '100%',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        '& svg': { flex: '0 0 auto' },
+      },
+    },
     past: { true: { color: 'var(--cocoso-mylla-soft)' } },
   },
 });
@@ -206,7 +219,12 @@ const DateLabel = styled('span', {
     textTransform: 'uppercase',
   },
   variants: {
-    past: { true: { color: 'var(--cocoso-mylla-soft)', '& small': { color: 'var(--cocoso-mylla-soft)' } } },
+    past: {
+      true: {
+        color: 'var(--cocoso-mylla-soft)',
+        '& small': { color: 'var(--cocoso-mylla-soft)' },
+      },
+    },
   },
 });
 
@@ -246,7 +264,11 @@ function AlmanacDate({ occurrence }: ThumbDateProps) {
   const multi = occurrence.startDate !== occurrence.endDate;
   return (
     <DateLabel past={isPast}>
-      <b>{multi ? `${start.format('D')}–${dayjs(occurrence.endDate).format('D')}` : start.format('D')}</b>
+      <b>
+        {multi
+          ? `${start.format('D')}–${dayjs(occurrence.endDate).format('D')}`
+          : start.format('D')}
+      </b>
       <small>{start.format('MMM').replace('.', '')}</small>
     </DateLabel>
   );
@@ -282,6 +304,8 @@ interface Activity {
   locationId?: string | null;
   isMunicipalityOnly?: boolean;
   category?: { key?: string } | null;
+  resource?: string;
+  place?: string;
 }
 
 export interface SexyThumbProps {
@@ -289,6 +313,10 @@ export interface SexyThumbProps {
   index?: number;
   showPast?: boolean;
   tags?: string[];
+  // Inside a place, the ort tag says nothing new
+  hideLocation?: boolean;
+  // With a kind chosen, neither does the kind chip
+  hideKind?: boolean;
 }
 
 function SexyThumb({
@@ -296,6 +324,8 @@ function SexyThumb({
   index,
   showPast = false,
   tags,
+  hideLocation = false,
+  hideKind = false,
 }: SexyThumbProps) {
   const locations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
@@ -313,7 +343,9 @@ function SexyThumb({
   const world = worldForLocation(locations, activity.locationId);
   const placeName =
     place?.name ||
-    (activity.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
+    (activity.isMunicipalityOnly
+      ? tc('locations.municipalityOnlyShort')
+      : null);
 
   const { yesterday, tomorrow } = dayBounds();
   const dates = datesAndTimes || [];
@@ -328,7 +360,9 @@ function SexyThumb({
   const isWeekly =
     !showPast && futureDates.length > 0 && Boolean(getWeeklyPattern(dates));
   const headline = showPast ? pastDates[pastDates.length - 1] : futureDates[0];
-  const kind = findEventKind(activity.category?.key);
+  const kind = hideKind ? null : findEventKind(activity.category?.key);
+  // Where it happens: the chosen place, else the name typed in by hand
+  const venue = activity.resource || activity.place || null;
 
   return (
     <Card world={world?.key || 'skog'}>
@@ -355,7 +389,7 @@ function SexyThumb({
           <AlmanacDate occurrence={headline} />
         </TopLeft>
       )}
-      {placeName && (
+      {placeName && !hideLocation && (
         <TopRight>
           <PlaceTag name={placeName} world={world} onImage />
         </TopRight>
@@ -366,8 +400,14 @@ function SexyThumb({
         {(subTitle || readingMaterial) && (
           <SubTitle>{subTitle || readingMaterial}</SubTitle>
         )}
-        {((tags && tags.length > 0) || kind) && (
+        {((tags && tags.length > 0) || kind || venue) && (
           <Meta>
+            {venue && (
+              <Chip venue>
+                <MapPinIcon width={12} height={12} />
+                {venue}
+              </Chip>
+            )}
             {kind && <Chip>{tc(`eventKinds.${kind.key}`)}</Chip>}
             {tags?.map((t) => (
               <Chip key={t} place>

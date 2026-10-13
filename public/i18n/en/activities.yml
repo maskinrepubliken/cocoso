@@ -31,9 +31,9 @@ form:
     label: Images
     helper: To represent the event, please choose an image or a set of images from the gallery in your device or a photo you will take now. At least one is required.
   resource:
-    label: Resource
-    holder: Select
-    helper: Optionally, select an item that you want to book, to appear in the calendar
+    label: Place
+    holder: Choose a place
+    helper: Choose one of the municipality's places. A bookable place is booked in the calendar at the same time. If the event is somewhere else, leave this empty and write the name and address below.
   occurrences:
     label: Date & time of occurrences
     helper: Select the date and time of the occurrences of the event. Click + to add more occurrence
@@ -53,13 +53,13 @@ form:
   details:
     label: Enter the details
   place:
-    label: Place
-    holder: Artistosphere
-    helper: Optionally, enter generic name of the physical place where the public event will take place.
+    label: Name of the place
+    holder: The parish hall
+    helper: When the event is not at one of the places above, write where it is
   address:
     label: Address
-    holder: 17th Street, Berlin...
-    helper: Optionally, enter the detailed address of the place where the event will take place
+    holder: Storgatan 1, Tranemo
+    helper: The address to go to
   rsvp:
     label: Registration (RSVP) Enabled
     helper: If selected, people can register/RSVP to attend the occurrence(s) of the event

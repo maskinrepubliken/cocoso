@@ -542,6 +542,10 @@ Meteor.methods({
       throw new Meteor.Error('Image is required for public activities');
     }
 
+    if (!values.resourceId) {
+      delete values.resourceId;
+      delete values.resource;
+    }
     const locationId = await resolveActivityLocation(values);
     const organizers = await resolveOrganizers(values.organizers, user._id);
     const contact = cleanContact(values.contact);
@@ -608,6 +612,17 @@ Meteor.methods({
     if ('contact' in safeValues) {
       safeValues.contact = cleanContact(safeValues.contact);
     }
+    // A place chosen away is removed, not kept from before.
+    const unset = {};
+    if ('resourceId' in safeValues && !safeValues.resourceId) {
+      delete safeValues.resourceId;
+      delete safeValues.resource;
+      unset.resourceId = 1;
+      unset.resource = 1;
+    }
+    if (!locationId) {
+      unset.locationId = 1;
+    }
 
     try {
       return await Activities.updateAsync(activityId, {
@@ -617,7 +632,7 @@ Meteor.methods({
           isMunicipalityOnly:
             !locationId && Boolean(safeValues.isMunicipalityOnly),
         },
-        ...(locationId ? {} : { $unset: { locationId: 1 } }),
+        ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
       });
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update activity");

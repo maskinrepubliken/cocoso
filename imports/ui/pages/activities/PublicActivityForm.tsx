@@ -96,7 +96,7 @@ export default function PublicActivityForm({
     capacity: activity ? activity.capacity : defaultCapacity,
     datesAndTimes: activity ? activity.datesAndTimes : [emptyDateAndTime],
     formValues: activity || emptyFormValues,
-    selectedResource: activity
+    selectedResource: activity?.resourceId
       ? { label: activity.resource, _id: activity.resourceId }
       : null,
     isExclusiveActivity: activity ? activity.isExclusiveActivity : true,
@@ -126,9 +126,10 @@ export default function PublicActivityForm({
   const getResources = async () => {
     try {
       const resources = await call('getResourcesDry');
+      // Every place counts, bookable or not: an event happens somewhere.
       setState((prevState) => ({
         ...prevState,
-        resources: resources.filter((r: SelectedResource) => r.isBookable),
+        resources,
       }));
     } catch (error: any) {
       message.error(error.reason || error.error);
@@ -288,6 +289,13 @@ export default function PublicActivityForm({
     if (selectedResource) {
       newActivity.resourceId = selectedResource._id;
       newActivity.resource = selectedResource.label;
+      // The place says where; a typed name or address would only compete
+      newActivity.place = '';
+      newActivity.address = '';
+    } else {
+      // No place chosen: the server drops any earlier one
+      newActivity.resourceId = null;
+      newActivity.resource = null;
     }
 
     onFinalize(newActivity);
@@ -306,7 +314,11 @@ export default function PublicActivityForm({
     <GenericEntryForm
       childrenIndex={2}
       defaultValues={activity || emptyFormValues}
-      formFields={publicActivityFormFields(t)}
+      formFields={publicActivityFormFields(t).filter(
+        // With a place chosen, its name and address are known
+        (field) =>
+          !state.selectedResource || !['place', 'address'].includes(field.value)
+      )}
       isSubmitButtonDisabled={isSubmitButtonDisabled}
       onSubmit={handleSubmit}
     >

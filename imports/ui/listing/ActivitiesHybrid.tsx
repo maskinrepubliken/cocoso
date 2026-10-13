@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSearchParams } from 'react-router';
+
+import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { Trans, useTranslation } from 'react-i18next';
 
 import InfiniteScroller from './InfiniteScroller';
@@ -24,6 +26,7 @@ export default function ActivitiesHybrid({
   const [tc] = useTranslation('common');
   const openEntry = useOpenEntry('activities');
   const [searchParams, setSearchParams] = useSearchParams();
+  const currentLocation = useCurrentLocation();
   const kindFilter = searchParams.get('kind') || '';
   const setKind = (key: string) =>
     setSearchParams((params) => {
@@ -138,6 +141,8 @@ export default function ActivitiesHybrid({
               activity={item}
               index={index}
               showPast={showPast}
+              hideLocation={Boolean(currentLocation)}
+              hideKind={Boolean(kindFilter)}
               tags={
                 [item.isGroupMeeting ? groupsLabel : null].filter(
                   Boolean
