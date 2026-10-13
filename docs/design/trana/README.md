@@ -34,3 +34,11 @@ looks at the viewer (`--yaw=-35 --pitch=-6` by default, degrees; use the
 
 That writes `trana-hals.webp`, `trana-hals-preview-1024.png` and
 `trana-hals-comparison.png` here in `docs/design/trana/`.
+
+## Favicons and the header mark
+
+`favicons.py <bust render>` writes the whole set in `public/icons/` (SVG
+with the PNG embedded, 16, 32, 180, 192, 512): the head and upper neck of
+the bust on the site's dark green disc, so the face reads at 16 px. The
+header's brand mark (`LocationSwitcher.tsx`) shows the full crane from
+`public/3dicons/trana.webp` when the site has no uploaded logo.

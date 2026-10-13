@@ -10,6 +10,7 @@ import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
+import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import { locationsAtom } from '/imports/state';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import type { HeaderMenuItem } from './Header';
@@ -51,10 +52,11 @@ export default function LocationSwitcher({
 
   const goTo = (prefix: string) => navigate(routeFor(prefix));
 
+  // Without an uploaded logo the mark is the crane (Tranemo's trana).
   const mark = site?.logo ? (
     <img alt="" className="site-brand-mark" src={site.logo} />
   ) : (
-    <span className="site-brand-mark">{name.charAt(0)}</span>
+    <ThreeDIcon className="site-brand-mark site-brand-mark-trana" name="trana" size={36} />
   );
 
   const home = (

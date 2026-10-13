@@ -1799,6 +1799,16 @@ body {
   flex: 0 0 auto;
 }
 
+/* The crane mark: no disc behind it, the pill is its background */
+.site-brand-mark-trana {
+  width: 36px;
+  height: 36px;
+  margin: -2px 0;
+  background: none;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.22));
+}
+
 .site-brand-name {
   font-size: 15px;
   font-weight: 700;
@@ -2211,6 +2221,11 @@ body {
     width: 30px;
     height: 30px;
     font-size: 14px;
+  }
+
+  .site-brand-mark-trana {
+    width: 34px;
+    height: 34px;
   }
 
   .site-brand-name {
