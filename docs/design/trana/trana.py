@@ -178,7 +178,11 @@ SPINE = [
     ((0.57, 0, 1.20), 0.098),     # head back
     ((0.66, 0, 1.26), 0.105),     # head
     ((0.74, 0, 1.29), 0.080),     # head front, into the beak
-    ((0.79, 0, 1.305), 0.045),
+    ((0.79, 0, 1.305), 0.048),
+    # the beak is part of the same chain, so it grows out of the head
+    ((0.74 + 0.14 * math.cos(math.radians(18)), 0, 1.29 + 0.14 * math.sin(math.radians(18))), 0.034),
+    ((0.74 + 0.27 * math.cos(math.radians(18)), 0, 1.29 + 0.27 * math.sin(math.radians(18))), 0.021),
+    ((0.74 + 0.40 * math.cos(math.radians(18)), 0, 1.29 + 0.40 * math.sin(math.radians(18))), 0.006),
 ]
 
 # Turn the head towards the camera (which sits on the -Y side): the twist
@@ -257,9 +261,13 @@ def body_color(p, normal):
     stripe = black * behind * band * smoothstep(0.7, 0.35, abs(d.z))
     col = mix(col, COL_WHITE, stripe)
 
+    # Beak: grey-olive from a little in front of the head
+    along = (p - BEAK_BASE).dot(BEAK_DIR)
+    col = mix(col, COL_BEAK, smoothstep(0.035, 0.075, along))
+
     # Red crown on top of the head
     local = p - HEAD
-    crown = smoothstep(1.33 * HEAD_R, 0.90 * HEAD_R, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
+    crown = smoothstep(1.22 * HEAD_R, 0.82 * HEAD_R, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
         * smoothstep(0.35, 0.65, d.z) * smoothstep(HEAD.z + 0.02, HEAD.z + 0.05, p.z)
     col = mix(col, COL_RED, crown)
     return col
@@ -304,13 +312,13 @@ def build_eyes():
     mat = clay_material("Eye", hexcol("#1A1612"), roughness=0.25, specular=0.6)
     for side in (1, -1):
         bm = bmesh.new()
-        bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=16, radius=0.024)
+        bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=16, radius=HEAD_R * 0.26)
         mesh = bpy.data.meshes.new("Eye")
         bm.to_mesh(mesh)
         bm.free()
         shade_smooth(mesh)
         obj = new_object("Eye", mesh)
-        obj.location = HEAD + HEAD_YAW @ Vector((0.045, side * 0.088, 0.016))
+        obj.location = HEAD + HEAD_YAW @ Vector((0.045, side * HEAD_R * 0.80, 0.012))
         obj.data.materials.append(mat)
         objs.append(obj)
     return objs
@@ -428,7 +436,14 @@ def build_wings():
     return [far, near]
 
 
-def body_section(x):
+def body_section(x, _w=0.06):
+    """Smoothed: the mean of the piecewise linear section over a small window,
+    which removes the kinks without flattening at the points."""
+    zs, rs = zip(*(_body_section_raw(x + d) for d in (-_w, -_w / 2, 0.0, _w / 2, _w)))
+    return sum(zs) / len(zs), sum(rs) / len(rs)
+
+
+def _body_section_raw(x):
     """Centre height and radius of the body tube at a given x, from the
     first body points of SPINE; beyond the tail the radius fades out."""
     pts = [(p[0][0], p[0][2], p[1]) for p in SPINE[:6]]
@@ -440,7 +455,6 @@ def body_section(x):
     for (x0, z0, r0), (x1, z1, r1) in zip(pts, pts[1:]):
         if x0 <= x <= x1:
             t = (x - x0) / (x1 - x0)
-            t = t * t * (3 - 2 * t)          # smooth, no creases at the points
             return z0 + (z1 - z0) * t, r0 + (r1 - r0) * t
     return pts[0][1], pts[0][2]
 
@@ -584,7 +598,10 @@ def neck_variant(yaw_deg=-35, pitch_deg=-6):
         ((0.29, 0.00, 0.98), 0.108),
         (tuple(head), 0.125),          # only the head turns
         (tuple(head + beak * 0.09), 0.095),
-        (tuple(head + beak * 0.15), 0.050),
+        (tuple(head + beak * 0.15), 0.052),
+        (tuple(head + beak * 0.25), 0.036),   # beak, same chain
+        (tuple(head + beak * 0.36), 0.022),
+        (tuple(head + beak * 0.46), 0.006),
     ]
     HEAD = head
     HEAD_YAW = yaw
@@ -715,7 +732,6 @@ def main():
         neck_variant(float(opts.get("yaw", -35)), float(opts.get("pitch", -6)))
     objects = []
     objects.append(build_body())
-    objects.append(build_beak())
     objects += build_eyes()
     if opts["variant"] != "neck":
         objects += build_folded_wings()
