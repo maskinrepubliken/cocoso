@@ -211,7 +211,7 @@ COL_BODY_DARK = hexcol("#B5AC9D")
 COL_BLACK = hexcol("#262527")
 COL_FEATHER = hexcol("#2B2A2A")
 COL_WHITE = hexcol("#F2EFEA")
-COL_RED = hexcol("#C8302A")
+COL_RED = hexcol("#D9342B")
 COL_BEAK = hexcol("#7D7A5A")
 COL_LEG = hexcol("#2E2D2D")
 HEAD_R = 0.105
@@ -262,13 +262,15 @@ def body_color(p, normal):
     col = mix(col, COL_WHITE, stripe)
 
     # Beak: grey-olive from a little in front of the head
-    along = (p - BEAK_BASE).dot(BEAK_DIR)
-    col = mix(col, COL_BEAK, smoothstep(0.035, 0.075, along))
+    rel = p - BEAK_BASE
+    along = rel.dot(BEAK_DIR)
+    perp = (rel - BEAK_DIR * along).length          # distance from the beak axis
+    col = mix(col, COL_BEAK, smoothstep(0.065, 0.085, along) * smoothstep(0.10, 0.07, perp))
 
     # Red crown on top of the head
     local = p - HEAD
-    crown = smoothstep(1.22 * HEAD_R, 0.82 * HEAD_R, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
-        * smoothstep(0.35, 0.65, d.z) * smoothstep(HEAD.z + 0.02, HEAD.z + 0.05, p.z)
+    crown = smoothstep(1.14 * HEAD_R, 0.98 * HEAD_R, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
+        * smoothstep(0.30, 0.50, d.z) * smoothstep(HEAD.z + 0.03, HEAD.z + 0.06, p.z)
     col = mix(col, COL_RED, crown)
     return col
 
@@ -577,25 +579,25 @@ def build_legs():
     return objs
 
 
-def neck_variant(yaw_deg=-35, pitch_deg=-6):
+def neck_variant(yaw_deg=-35, pitch_deg=-14):
     """Only the neck and head, as a bust: a rounded chest base, a short
     stylised S-neck seen in profile, the top of which bends towards the
     camera so the head looks at the viewer, slightly down."""
     global SPINE, HEAD, HEAD_YAW, BEAK_DIR, BEAK_BASE, HEAD_R, BEAK_LEN
     HEAD_R, BEAK_LEN = 0.125, 0.50
     yaw = Matrix.Rotation(math.radians(yaw_deg), 3, "Z")
-    head = Vector((0.31, 0.00, 1.05))
+    head = Vector((0.34, 0.00, 1.03))
     beak = yaw @ Vector((math.cos(math.radians(pitch_deg)), 0,
                          math.sin(math.radians(pitch_deg))))
     SPINE = [
         ((0.00, 0.00, -0.02), 0.28),   # chest base
-        ((0.05, 0.00, 0.13), 0.21),
-        ((0.12, 0.00, 0.28), 0.135),
-        ((0.18, 0.00, 0.42), 0.105),
-        ((0.22, 0.00, 0.58), 0.096),   # a plain, gently leaning neck
-        ((0.25, 0.00, 0.74), 0.094),
-        ((0.27, 0.00, 0.88), 0.098),
-        ((0.29, 0.00, 0.98), 0.108),
+        ((0.04, 0.00, 0.13), 0.21),
+        ((0.08, 0.00, 0.28), 0.135),
+        ((0.09, 0.00, 0.42), 0.105),
+        ((0.08, 0.00, 0.58), 0.096),   # a soft S: slightly back ...
+        ((0.10, 0.00, 0.74), 0.094),
+        ((0.17, 0.00, 0.88), 0.098),   # ... then curving forward
+        ((0.25, 0.00, 0.98), 0.108),   # into the head
         (tuple(head), 0.125),          # only the head turns
         (tuple(head + beak * 0.09), 0.095),
         (tuple(head + beak * 0.15), 0.052),
@@ -729,7 +731,7 @@ def main():
     scene = bpy.context.scene
 
     if opts["variant"] == "neck":
-        neck_variant(float(opts.get("yaw", -35)), float(opts.get("pitch", -6)))
+        neck_variant(float(opts.get("yaw", -35)), float(opts.get("pitch", -14)))
     objects = []
     objects.append(build_body())
     objects += build_eyes()
