@@ -3093,15 +3093,16 @@ body {
 
 /* The crane behind the cluster, to its left, faded a little into the
    floor and looking at the icons. */
+/* The crane behind the cluster: beak at the title's second line, toes in
+   the band's mist */
 .home-hero-crane {
   position: absolute;
-  left: -290px;
-  top: 96px;
-  width: 220px;
-  height: 220px;
+  left: -266px;
+  top: 152px;
+  width: 206px;
+  height: 206px;
   z-index: 0;
-  opacity: 0.68;
-  filter: saturate(0.85) drop-shadow(0 10px 14px rgba(30, 50, 25, 0.16));
+  filter: drop-shadow(0 10px 14px rgba(30, 50, 25, 0.16));
   pointer-events: none;
 }
 
