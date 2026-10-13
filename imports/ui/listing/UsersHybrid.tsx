@@ -52,9 +52,11 @@ const Ring = styled('div', {
 });
 
 // The photo with a plain dark green border and the site's soft shadow.
+// The disc behind the photo is the border's own green, so the hairline
+// the browser leaves between the two circles never shows pale.
 const Portrait = styled('div', {
   aspectRatio: '1 / 1',
-  background: 'var(--cocoso-papper)',
+  background: 'var(--cocoso-colors-theme-700)',
   border: '5px solid var(--cocoso-colors-theme-700)',
   borderRadius: '50%',
   boxShadow: 'var(--cocoso-skugga)',
@@ -64,7 +66,6 @@ const Portrait = styled('div', {
   transition: 'transform 0.2s ease',
   width: '100%',
   '& > *': {
-    borderRadius: '50%',
     display: 'block',
     height: '100%',
     objectFit: 'cover',
