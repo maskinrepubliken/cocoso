@@ -1866,7 +1866,7 @@ body {
 .site-brand-mark-trana .threed-icon {
   position: absolute;
   top: -9px;
-  left: -8px;
+  left: -3px;
   width: 46px;
   height: 46px;
   object-fit: contain;
@@ -1924,6 +1924,15 @@ body {
   padding-left: 0;
 }
 
+/* In the pill itself the name alone is enough; the disc stays in the menu */
+.site-brand-loc .place-tag-mark {
+  display: none;
+}
+
+.site-brand-loc .place-tag {
+  padding-left: 6px;
+}
+
 .site-brand-loc:hover,
 .site-brand .szh-menu-button--open .site-brand-loc {
   background: var(--cocoso-colors-theme-100);
@@ -1958,38 +1967,30 @@ body {
   width: 272px;
 }
 
+/* "Hela kommunen": a row like the places, its mark a dark green disc with
+   the landmark; a check at the end when it is the current choice */
 .site-loc-home {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 4px;
-  padding: 10px 12px;
-  border: 1px solid var(--cocoso-colors-theme-200);
-  background: var(--cocoso-colors-theme-50);
   color: var(--site-ink);
-}
-
-.site-loc-home.is-current,
-.site-loc-home.is-current.szh-menu__item--hover {
-  background: var(--cocoso-colors-theme-700);
-  border-color: var(--cocoso-colors-theme-700);
-  color: #fff;
 }
 
 .site-loc-home-icon {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--cocoso-colors-theme-100);
-  color: var(--cocoso-colors-theme-500);
   flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
 }
 
-.site-loc-home.is-current .site-loc-home-icon {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+.site-loc-home-icon svg {
+  width: 13px;
+  height: 13px;
 }
 
 .site-loc-home-text {
@@ -1999,17 +2000,24 @@ body {
 }
 
 .site-loc-home-text b {
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .site-loc-home-text small {
+  color: var(--site-ink-soft);
   font-size: 12px;
-  opacity: 0.75;
+  font-weight: 500;
 }
 
 .site-loc-home-end {
   margin-left: auto;
   flex: 0 0 auto;
+  color: var(--cocoso-colors-theme-500);
+}
+
+.site-loc-home.is-current {
+  background: var(--cocoso-colors-theme-100);
 }
 
 .site-loc-label {
