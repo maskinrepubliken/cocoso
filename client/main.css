@@ -1855,13 +1855,22 @@ body {
 }
 
 /* The crane mark: no disc behind it, the pill is its background */
+/* The crane on its disc: the disc is the 32px mark, the bird is drawn
+   larger and sits a touch up and left, so it steps over the disc's edge
+   and just past the pill's. */
 .site-brand-mark-trana {
-  width: 36px;
-  height: 36px;
-  margin: -2px 0;
-  background: none;
+  position: relative;
+  overflow: visible;
+}
+
+.site-brand-mark-trana .threed-icon {
+  position: absolute;
+  top: -9px;
+  left: -8px;
+  width: 46px;
+  height: 46px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.22));
+  filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.28));
 }
 
 .site-brand-name {
@@ -1889,12 +1898,30 @@ body {
   align-items: center;
   gap: 5px;
   height: 32px;
-  padding: 0 10px;
+  padding: 0 8px 0 4px;
   border-radius: 999px;
   font-size: 14px;
   font-weight: 600;
   color: var(--site-ink-soft);
   white-space: nowrap;
+}
+
+/* The orttag inside the pill and the menu: a little larger than on cards */
+.site-brand-loc .place-tag,
+.site-loc-item .place-tag {
+  height: 28px;
+  font-size: 14px;
+}
+
+.site-brand-loc .place-tag-mark,
+.site-loc-item .place-tag-mark {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+}
+
+.site-loc-item .place-tag {
+  padding-left: 0;
 }
 
 .site-brand-loc:hover,
@@ -1910,6 +1937,7 @@ body {
   opacity: 0.7;
 }
 
+/* The cross that leaves the place: bare, no disc of its own */
 .site-brand-clear {
   display: grid;
   place-items: center;
@@ -1917,12 +1945,11 @@ body {
   height: 22px;
   margin: 0 4px 0 -4px;
   border-radius: 999px;
-  background: var(--cocoso-colors-theme-100);
   color: var(--site-ink-soft);
 }
 
 .site-brand-clear:hover {
-  background: var(--cocoso-colors-theme-200);
+  color: var(--site-ink);
 }
 
 /* --- location menu --- */
@@ -2003,9 +2030,6 @@ body {
   color: var(--site-ink);
 }
 
-.site-loc-item svg {
-  color: var(--cocoso-colors-theme-500);
-}
 
 .site-loc-item.is-current {
   background: var(--cocoso-colors-theme-100);

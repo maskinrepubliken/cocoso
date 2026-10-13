@@ -5,12 +5,13 @@ import CheckIcon from 'lucide-react/dist/esm/icons/check';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 import LandmarkIcon from 'lucide-react/dist/esm/icons/landmark';
-import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
+import PlaceTag from '/imports/ui/generic/PlaceTag';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { locationsAtom } from '/imports/state';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import type { HeaderMenuItem } from './Header';
@@ -52,11 +53,14 @@ export default function LocationSwitcher({
 
   const goTo = (prefix: string) => navigate(routeFor(prefix));
 
-  // Without an uploaded logo the mark is the crane (Tranemo's trana).
+  // Without an uploaded logo the mark is the crane (Tranemo's trana) on a
+  // dark green disc, stepping a little outside it.
   const mark = site?.logo ? (
     <img alt="" className="site-brand-mark" src={site.logo} />
   ) : (
-    <ThreeDIcon className="site-brand-mark site-brand-mark-trana" name="trana" size={36} />
+    <span className="site-brand-mark site-brand-mark-trana">
+      <ThreeDIcon name="trana" size={46} />
+    </span>
   );
 
   const home = (
@@ -70,8 +74,15 @@ export default function LocationSwitcher({
     return <div className="site-brand">{home}</div>;
   }
 
+  // The chosen place as the same orttag the cards carry
   const trigger = current ? (
-    <span className="site-brand-loc">{current.name}</span>
+    <span className="site-brand-loc">
+      <PlaceTag
+        name={current.name}
+        world={worldForLocation(locations, current._id)}
+        className="bare"
+      />
+    </span>
   ) : (
     <span className="site-brand-loc is-root">
       <ChevronDownIcon width={15} height={15} />
@@ -101,16 +112,18 @@ export default function LocationSwitcher({
               <small>{tc('locations.switcher.wholeHelper')}</small>
             </span>
             {current ? (
-              <ChevronRightIcon className="site-loc-home-end" width={16} height={16} />
+              <ChevronRightIcon
+                className="site-loc-home-end"
+                width={16}
+                height={16}
+              />
             ) : (
               <CheckIcon className="site-loc-home-end" width={16} height={16} />
             )}
           </MenuItem>
 
           <div className="site-loc-label">
-            {current
-              ? tc('locations.label')
-              : tc('locations.switcher.zoom')}
+            {current ? tc('locations.label') : tc('locations.switcher.zoom')}
           </div>
 
           {locations.map((location) => (
@@ -121,8 +134,11 @@ export default function LocationSwitcher({
               }`}
               onClick={() => goTo(`/${location.slug}`)}
             >
-              <MapPinIcon width={15} height={15} />
-              {location.name}
+              <PlaceTag
+                name={location.name}
+                world={worldForLocation(locations, location._id)}
+                className="bare"
+              />
             </MenuItem>
           ))}
         </div>
