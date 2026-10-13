@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router';
+import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 
@@ -31,6 +33,13 @@ export default function PageHeading({
   subject,
 }: PageHeadingProps) {
   const currentLocation = useCurrentLocation();
+  const routerLocation = useLocation();
+  // The same listing for the whole municipality: drop the place prefix,
+  // keep the kind and the past/upcoming choice.
+  const wholeMunicipalityPath = currentLocation
+    ? routerLocation.pathname.replace(`/${currentLocation.slug}`, '') +
+      routerLocation.search
+    : '/';
   const listingInMenu = site?.settings?.menu?.find(
     (item) => item.name === listing
   );
@@ -86,10 +95,20 @@ export default function PageHeading({
             {currentLocation && (
               <Center>
                 <p className="page-heading-place">
-                  {tc('listing.showingIn', {
-                    what: subject || tc(`listing.subjects.${listing}`),
-                    place: currentLocation.name,
-                  })}
+                  <span>
+                    {tc('listing.showingIn', {
+                      what: subject || tc(`listing.subjects.${listing}`),
+                      place: currentLocation.name,
+                    })}
+                  </span>
+                  <Link
+                    className="page-heading-clear"
+                    to={wholeMunicipalityPath}
+                    aria-label={tc('listing.wholeMunicipality')}
+                    title={tc('listing.wholeMunicipality')}
+                  >
+                    <XIcon width={14} height={14} />
+                  </Link>
                 </p>
               </Center>
             )}

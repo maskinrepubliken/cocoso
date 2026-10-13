@@ -572,7 +572,8 @@ entry:
   seeProfile: 'Go to {{ name }}'
 
 listing:
-  showingIn: "Showing {{what}} in {{place}}"
+  showingIn: "Showing only {{what}} in {{place}}"
+  wholeMunicipality: Show the whole municipality
   subjects:
     activities: the events
     calendar: the calendar

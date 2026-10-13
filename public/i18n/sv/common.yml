@@ -569,7 +569,8 @@ entry:
   seeProfile: 'Till {{ name }}'
 
 listing:
-  showingIn: "Visar {{what}} i {{place}}"
+  showingIn: "Visar bara {{what}} i {{place}}"
+  wholeMunicipality: Visa hela kommunen
   subjects:
     activities: evenemangen
     calendar: kalendern

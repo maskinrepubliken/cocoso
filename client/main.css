@@ -2952,14 +2952,33 @@ body {
   gap: 12px;
 }
 
-/* "Visar kulturevenemangen i Limmared" under the heading */
+/* "Visar bara kulturevenemangen i Limmared" under the heading, with a
+   small cross that widens to the whole municipality */
 .page-heading-place {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 4px;
   color: var(--cocoso-colors-theme-700);
   font-family: var(--cocoso-font-ui);
   font-size: 14px;
   font-weight: 600;
   text-align: center;
+}
+
+.page-heading-clear {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-100);
+  color: var(--cocoso-colors-theme-700);
+}
+
+.page-heading-clear:hover {
+  background: var(--cocoso-colors-theme-200);
+  color: var(--cocoso-colors-theme-800);
 }
 
 /* The listing icon sits a little below the header and bobs slowly. */
