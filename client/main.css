@@ -3133,41 +3133,43 @@ body {
 }
 
 @media (max-width: 959px) {
-  /* Badge on the left, a small cluster of icons on the right, one row. */
-  .home-hero-icons {
-    position: static;
-    width: auto;
-    height: auto;
-    display: flex;
-    gap: 0;
-    align-items: flex-end;
-    order: -1;
-    flex: 0 0 auto;
-    margin: 0 0 -6px auto;
+  /* Narrow: a small row of icons sharing the line with "Välkommen till",
+     at the right; the text keeps the whole width below. The title is
+     held to two lines so it never runs under the icons. */
+  .home-hero-text {
+    max-width: 520px;
   }
 
-  .home-hero-icons + .home-hero-text {
-    flex-basis: 100%;
+  .home-hero-icons {
+    position: absolute;
+    right: var(--cocoso-gutter);
+    top: 0;
+    width: auto;
+    height: 20px;
+    display: flex;
+    gap: 2px;
+    align-items: center;
   }
 
   .home-hero-icon {
     position: static;
     width: 40px;
     height: 40px;
-    filter: drop-shadow(0 8px 10px rgba(30, 50, 25, 0.2));
+    transform: none;
+    filter: drop-shadow(0 6px 8px rgba(30, 50, 25, 0.2));
   }
 
   .home-hero-crane {
     position: static;
-    width: 72px;
-    height: 72px;
-    margin-right: -6px;
-    opacity: 0.8;
+    width: 60px;
+    height: 60px;
+    margin-right: -4px;
+    filter: drop-shadow(0 6px 8px rgba(30, 50, 25, 0.2));
   }
 
-  .home-hero-icon.is-1 { width: 56px; height: 56px; }
-  .home-hero-icon.is-2 { width: 46px; height: 46px; }
-  .home-hero-icon.is-3 { transform: rotate(-4deg) translateY(-6px); }
+  .home-hero-icon.is-1 { width: 48px; height: 48px; }
+  .home-hero-icon.is-2 { width: 42px; height: 42px; }
+  .home-hero-icon.is-3 { width: 38px; height: 38px; }
   .home-hero-icon.is-4 { display: none; }
 }
 
