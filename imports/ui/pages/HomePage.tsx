@@ -8,8 +8,12 @@ import { locationsAtom } from '/imports/state';
 import HomeHero from '/imports/ui/pages/locations/HomeHero';
 import { LocationCards } from '/imports/ui/pages/locations/LocationsGrid';
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
+import sectionDescription from '/imports/ui/utils/sectionDescription';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
-import { DayAgenda, WeeklySchedule } from '/imports/ui/listing/RecurringOverview';
+import {
+  DayAgenda,
+  WeeklySchedule,
+} from '/imports/ui/listing/RecurringOverview';
 
 // The start page: the welcome band, what happens today and tomorrow, the
 // week's recurring activities, then the places to choose from and a guide
@@ -45,13 +49,19 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
             <p className="home-sections-intro">{tc('locations.grid.intro')}</p>
             <LocationCards
               locations={locations}
-              all={{ name: tc('locations.municipalityOnlyShort'), to: '/activities' }}
+              all={{
+                name: tc('locations.municipalityOnlyShort'),
+                to: '/activities',
+              }}
             />
           </section>
         )}
 
         {sections.length > 0 && (
-          <section className="home-sections" aria-labelledby="home-sections-title">
+          <section
+            className="home-sections"
+            aria-labelledby="home-sections-title"
+          >
             <h2 id="home-sections-title" className="home-sections-title">
               {tc('home.sections.title')}
             </h2>
@@ -66,7 +76,7 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
                   <ThreeDIcon name={sectionIcons[item.name]} size={56} />
                   <span className="home-section-text">
                     <strong>{item.label}</strong>
-                    <span>{tc(`home.sections.${item.name}`)}</span>
+                    <span>{sectionDescription(item, tc)}</span>
                   </span>
                 </Link>
               ))}

@@ -72,6 +72,7 @@ export default function ActivitiesHybrid({
       <PageHeading
         site={site || siteDoc}
         listing="activities"
+        hideDescription
         title={kindFilter ? tc(`eventKinds.headings.${kindFilter}`) : undefined}
         subject={
           kindFilter ? tc(`eventKinds.subjects.${kindFilter}`) : undefined

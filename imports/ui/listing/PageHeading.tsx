@@ -10,6 +10,7 @@ import type { Site } from '/imports/ui/types';
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { publicUrl } from '/imports/api/_utils/shared';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
+import sectionDescription from '/imports/ui/utils/sectionDescription';
 
 export interface PageHeadingProps {
   site: Site;
@@ -21,6 +22,9 @@ export interface PageHeadingProps {
   // What is listed, in the definite plural ("kulturevenemangen"), for the
   // "Visar … i <ort>" line; defaults to the section's own
   subject?: string;
+  // Leave out the line under the heading (the events page has its kinds
+  // there instead)
+  hideDescription?: boolean;
 }
 
 // The heading of a listing page: the section's icon, name and description
@@ -31,6 +35,7 @@ export default function PageHeading({
   aside,
   title,
   subject,
+  hideDescription = false,
 }: PageHeadingProps) {
   const currentLocation = useCurrentLocation();
   const routerLocation = useLocation();
@@ -44,7 +49,9 @@ export default function PageHeading({
     (item) => item.name === listing
   );
   const [tc] = useTranslation('common');
-  const description = listingInMenu?.description;
+  const description = hideDescription
+    ? ''
+    : sectionDescription(listingInMenu, tc);
   const heading = title || listingInMenu?.label;
   const url = publicUrl(`/${listingInMenu?.name}`);
   // What a link to this page shows elsewhere: the menu's description when
