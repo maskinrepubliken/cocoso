@@ -16,7 +16,6 @@ import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
 import PlaceTag from '../generic/PlaceTag';
-import { findEventKind } from '../pages/activities/eventKinds';
 import { getImageUrl } from '../utils/imageHelper';
 import { describePattern } from './recurringText';
 
@@ -315,8 +314,6 @@ export interface SexyThumbProps {
   tags?: string[];
   // Inside a place, the ort tag says nothing new
   hideLocation?: boolean;
-  // With a kind chosen, neither does the kind chip
-  hideKind?: boolean;
 }
 
 function SexyThumb({
@@ -325,7 +322,6 @@ function SexyThumb({
   showPast = false,
   tags,
   hideLocation = false,
-  hideKind = false,
 }: SexyThumbProps) {
   const locations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
@@ -360,8 +356,8 @@ function SexyThumb({
   const isWeekly =
     !showPast && futureDates.length > 0 && Boolean(getWeeklyPattern(dates));
   const headline = showPast ? pastDates[pastDates.length - 1] : futureDates[0];
-  const kind = hideKind ? null : findEventKind(activity.category?.key);
-  // Where it happens: the chosen place, else the name typed in by hand
+  // Where it happens: the chosen place, else the name typed in by hand.
+  // The kind is not shown on the card; the strip above the list is for that.
   const venue = activity.resource || activity.place || null;
 
   return (
@@ -400,7 +396,7 @@ function SexyThumb({
         {(subTitle || readingMaterial) && (
           <SubTitle>{subTitle || readingMaterial}</SubTitle>
         )}
-        {((tags && tags.length > 0) || kind || venue) && (
+        {((tags && tags.length > 0) || venue) && (
           <Meta>
             {venue && (
               <Chip venue>
@@ -408,7 +404,6 @@ function SexyThumb({
                 {venue}
               </Chip>
             )}
-            {kind && <Chip>{tc(`eventKinds.${kind.key}`)}</Chip>}
             {tags?.map((t) => (
               <Chip key={t} place>
                 {t}

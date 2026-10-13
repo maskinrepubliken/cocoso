@@ -142,7 +142,6 @@ export default function ActivitiesHybrid({
               index={index}
               showPast={showPast}
               hideLocation={Boolean(currentLocation)}
-              hideKind={Boolean(kindFilter)}
               tags={
                 [item.isGroupMeeting ? groupsLabel : null].filter(
                   Boolean
