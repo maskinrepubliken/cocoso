@@ -22,3 +22,15 @@ For quick checks use `--size 768 --samples 48` (a few seconds on Apple
 Silicon with Metal; the script falls back to CPU). Shape, pose, colours,
 camera and lights are all named constants near the top of each builder in
 `trana.py` (`SPINE`, `COL_*`, `build_wings`, `build_camera`, `build_lights`).
+
+## Neck-only variant
+
+`trana.py --variant neck` renders only the neck and head as a bust that
+looks at the viewer (`--yaw=-78 --pitch=-10` by default, degrees; use the
+`=` form for negative values). Export it under its own name so the site's
+`trana.webp` is left alone:
+
+    python3 docs/design/trana/export.py docs/design/trana/renders/hals-v03.png trana-hals
+
+That writes `trana-hals.webp`, `trana-hals-preview-1024.png` and
+`trana-hals-comparison.png` here in `docs/design/trana/`.

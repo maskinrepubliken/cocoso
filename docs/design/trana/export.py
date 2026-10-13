@@ -39,29 +39,32 @@ def on_bg(im, cell):
     return tile
 
 
-def main(render_path):
+def main(render_path, name="trana"):
+    """With the default name the icon goes to public/3dicons; a variant
+    name keeps everything inside docs/design/trana."""
     src = Image.open(render_path).convert("RGBA")
     trimmed = trim(src)
 
     icon = fit(trimmed, 320)
-    icon.save(ICONS / "trana.webp", "WEBP", quality=90, method=6)
-    fit(trimmed, 1024).save(OUT / "trana-preview-1024.png")
+    icon_path = (ICONS if name == "trana" else OUT) / f"{name}.webp"
+    icon.save(icon_path, "WEBP", quality=90, method=6)
+    fit(trimmed, 1024).save(OUT / f"{name}-preview-1024.png")
 
     # Comparison sheet: the set's icons and the crane, then the crane small.
     cell = 360
     names = ["calendar", "megaphone", "trana", "pin", "puzzle"]
     sheet = Image.new("RGBA", (cell * len(names), cell * 2), BG)
-    for i, name in enumerate(names):
-        im = Image.open(ICONS / f"{name}.webp").convert("RGBA")
+    for i, n in enumerate(names):
+        im = icon if n == "trana" else Image.open(ICONS / f"{n}.webp").convert("RGBA")
         sheet.alpha_composite(on_bg(im, cell), (i * cell, 0))
     x = 20
     for size in (320, 128, 64, 32):
         small = fit(icon, size)
         sheet.alpha_composite(small, (x, cell + 20 + (320 - small.height)))
         x += small.width + 40
-    sheet.convert("RGB").save(OUT / "trana-comparison.png")
-    print("icon", icon.size, "->", ICONS / "trana.webp")
+    sheet.convert("RGB").save(OUT / f"{name}-comparison.png")
+    print("icon", icon.size, "->", icon_path)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(*sys.argv[1:3])

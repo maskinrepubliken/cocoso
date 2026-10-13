@@ -33,12 +33,17 @@ from mathutils import Matrix, Vector
 def parse_args():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     opts = {"out": "/tmp/trana.png", "size": 1024, "samples": 64,
-            "blend": "", "device": "auto"}
+            "blend": "", "device": "auto", "variant": "full"}
     i = 0
     while i < len(argv):
         key = argv[i].lstrip("-")
-        opts[key] = argv[i + 1]
-        i += 2
+        if "=" in key:                      # --yaw=-70 (negative values)
+            key, value = key.split("=", 1)
+            opts[key] = value
+            i += 1
+        else:
+            opts[key] = argv[i + 1]
+            i += 2
     opts["size"] = int(opts["size"])
     opts["samples"] = int(opts["samples"])
     return opts
@@ -194,6 +199,7 @@ HEAD_YAW = Matrix.Rotation(math.radians(_YAW_DEG), 3, "Z")
 
 HEAD = _PIVOT + HEAD_YAW @ (Vector((0.66, 0, 1.26)) - _PIVOT)
 BEAK_DIR = HEAD_YAW @ Vector((math.cos(math.radians(18)), 0, math.sin(math.radians(18))))
+BEAK_BASE = _PIVOT + HEAD_YAW @ (Vector((0.74, 0, 1.29)) - _PIVOT)
 
 COL_BODY = hexcol("#C6BDAE")
 COL_BODY_LIGHT = hexcol("#DED6CA")
@@ -204,6 +210,8 @@ COL_WHITE = hexcol("#F2EFEA")
 COL_RED = hexcol("#C8302A")
 COL_BEAK = hexcol("#7D7A5A")
 COL_LEG = hexcol("#2E2D2D")
+HEAD_R = 0.105
+BEAK_LEN = 0.38
 
 
 def spine_param(p):
@@ -239,20 +247,20 @@ def body_color(p, normal):
     col = mix(col, COL_BODY_DARK, back * 0.6)
 
     # Black upper neck and head
-    black = smoothstep(0.80, 0.90, q.z)
+    black = smoothstep(HEAD.z - 0.46, HEAD.z - 0.36, q.z)
     col = mix(col, COL_BLACK, black)
 
     # White stripe from behind the eye down the nape
     dl = HEAD_YAW.inverted() @ d                     # head-local direction
     behind = smoothstep(0.15, 0.55, -dl.x - dl.z * 0.35)
-    band = smoothstep(0.88, 0.96, q.z) * smoothstep(1.30, 1.22, q.z)
+    band = smoothstep(HEAD.z - 0.38, HEAD.z - 0.30, q.z) * smoothstep(HEAD.z + 0.04, HEAD.z - 0.04, q.z)
     stripe = black * behind * band * smoothstep(0.7, 0.35, abs(d.z))
     col = mix(col, COL_WHITE, stripe)
 
     # Red crown on top of the head
     local = p - HEAD
-    crown = smoothstep(0.14, 0.095, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
-        * smoothstep(0.35, 0.65, d.z) * smoothstep(1.28, 1.31, p.z)
+    crown = smoothstep(1.33 * HEAD_R, 0.90 * HEAD_R, (local - HEAD_YAW @ Vector((0.02, 0, 0.0))).length) \
+        * smoothstep(0.35, 0.65, d.z) * smoothstep(HEAD.z + 0.02, HEAD.z + 0.05, p.z)
     col = mix(col, COL_RED, crown)
     return col
 
@@ -274,14 +282,13 @@ def build_body():
 def build_beak():
     bm = bmesh.new()
     bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=24,
-                          radius1=0.052, radius2=0.006, depth=0.38)
+                          radius1=0.052, radius2=0.006, depth=BEAK_LEN)
     mesh = bpy.data.meshes.new("Beak")
     bm.to_mesh(mesh)
     bm.free()
     shade_smooth(mesh)
     obj = new_object("Beak", mesh)
-    base = _PIVOT + HEAD_YAW @ (Vector((0.74, 0, 1.29)) - _PIVOT)
-    centre = base + BEAK_DIR * 0.15
+    centre = BEAK_BASE + BEAK_DIR * (BEAK_LEN * 0.4)
     obj.matrix_world = Matrix.Translation(centre) @ \
         BEAK_DIR.to_track_quat("Z", "Y").to_matrix().to_4x4()
     sub = obj.modifiers.new("Subdivision", "SUBSURF")
@@ -303,7 +310,7 @@ def build_eyes():
         bm.free()
         shade_smooth(mesh)
         obj = new_object("Eye", mesh)
-        obj.location = HEAD + HEAD_YAW @ Vector((0.04, side * 0.094, 0.014))
+        obj.location = HEAD + HEAD_YAW @ Vector((0.045, side * 0.088, 0.016))
         obj.data.materials.append(mat)
         objs.append(obj)
     return objs
@@ -556,6 +563,36 @@ def build_legs():
     return objs
 
 
+def neck_variant(yaw_deg=-78, pitch_deg=-10):
+    """Only the neck and head, as a bust: a rounded chest base, a short
+    stylised S-neck seen in profile, the top of which bends towards the
+    camera so the head looks at the viewer, slightly down."""
+    global SPINE, HEAD, HEAD_YAW, BEAK_DIR, BEAK_BASE, HEAD_R, BEAK_LEN
+    HEAD_R, BEAK_LEN = 0.125, 0.50
+    yaw = Matrix.Rotation(math.radians(yaw_deg), 3, "Z")
+    head = Vector((0.30, -0.16, 0.88))
+    beak = yaw @ Vector((math.cos(math.radians(pitch_deg)), 0,
+                         math.sin(math.radians(pitch_deg))))
+    SPINE = [
+        ((0.00, 0.00, -0.02), 0.30),   # chest base
+        ((0.04, 0.00, 0.13), 0.23),
+        ((0.11, 0.00, 0.26), 0.15),
+        ((0.17, 0.00, 0.38), 0.115),
+        ((0.18, 0.00, 0.50), 0.105),
+        ((0.13, 0.00, 0.62), 0.100),   # S: back
+        ((0.12, -0.01, 0.72), 0.100),
+        ((0.18, -0.06, 0.80), 0.105),  # bends towards the camera
+        ((0.25, -0.12, 0.85), 0.112),
+        (tuple(head), 0.125),
+        (tuple(head + beak * 0.09), 0.095),
+        (tuple(head + beak * 0.15), 0.050),
+    ]
+    HEAD = head
+    HEAD_YAW = yaw
+    BEAK_DIR = beak
+    BEAK_BASE = head + beak * 0.09
+
+
 # ---------------------------------------------------------------- camera & light
 
 def build_camera(scene, objects, roll_deg=-5.0, elev_deg=12.0, azim_deg=16.0,
@@ -675,12 +712,15 @@ def main():
     clear_scene()
     scene = bpy.context.scene
 
+    if opts["variant"] == "neck":
+        neck_variant(float(opts.get("yaw", -78)), float(opts.get("pitch", -10)))
     objects = []
     objects.append(build_body())
     objects.append(build_beak())
     objects += build_eyes()
-    objects += build_folded_wings()
-    objects += build_legs()
+    if opts["variant"] != "neck":
+        objects += build_folded_wings()
+        objects += build_legs()
 
     build_lights(scene)
     setup_render(scene, opts)
