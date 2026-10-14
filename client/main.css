@@ -2198,15 +2198,26 @@ body {
 
 /* --- chip row (mobile) --- */
 
-.site-chips {
+/* The scrolling chips plus a fixed grid button at the right that opens the
+   full menu panel. The row only shows under 960px. */
+.site-chips-row {
   display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px 10px 14px;
+}
+
+.site-chips {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
   gap: 6px;
-  padding: 0 14px 10px;
+  padding: 0;
   overflow-x: auto;
   scrollbar-width: none;
   scroll-padding: 0 14px;
   --chips-fade-left: 0px;
-  --chips-fade-right: 36px;
+  --chips-fade-right: 28px;
   -webkit-mask-image: linear-gradient(
     90deg,
     transparent,
@@ -2224,7 +2235,7 @@ body {
 }
 
 .site-chips.can-scroll-left {
-  --chips-fade-left: 36px;
+  --chips-fade-left: 28px;
 }
 
 .site-chips:not(.can-scroll-right) {
@@ -2244,10 +2255,10 @@ body {
 .site-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   flex: 0 0 auto;
   height: 32px;
-  padding: 0 13px;
+  padding: 0 13px 0 8px;
   border-radius: 999px;
   background: var(--site-island);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -2259,12 +2270,102 @@ body {
 }
 
 .site-chip:last-child {
-  margin-right: 14px;
+  margin-right: 6px;
 }
 
 .site-chip.is-active {
   background: var(--cocoso-colors-theme-700);
   color: #fff;
+}
+
+.site-chip-icon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
+}
+
+.site-more {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--site-island);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  color: var(--site-ink-soft);
+  cursor: pointer;
+}
+
+.site-more.is-open {
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
+}
+
+/* --- the full menu panel (mobile) --- */
+
+.site-menu-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: var(--cocoso-gutter);
+  right: var(--cocoso-gutter);
+  z-index: 1002;
+  padding: 10px;
+  border: 1px solid var(--cocoso-linje);
+  border-radius: var(--cocoso-radius-meny);
+  background: color-mix(in srgb, var(--cocoso-papper) 97%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--cocoso-skugga-meny);
+  animation: site-menu-in 0.18s ease-out;
+}
+
+@keyframes site-menu-in {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.site-menu-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.site-menu-grid .site-chip {
+  margin: 0;
+}
+
+.site-menu-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--cocoso-linje);
+}
+
+.site-menu-foot .site-footer-langs {
+  margin: 0;
+}
+
+.site-menu-login {
+  padding: 0 13px;
+}
+
+/* --- the compact pill (mobile, folded header) --- */
+
+.site-compact {
+  display: none;
 }
 
 /* --- account --- */
@@ -2685,8 +2786,118 @@ body {
     display: none;
   }
 
-  .site-chips {
+  .site-chips-row {
     display: flex;
+  }
+
+  .site-header-main {
+    transition: opacity 0.18s ease, visibility 0.18s;
+  }
+
+  /* Folded: the header's own box collapses to nothing but keeps its
+     footprint as a margin, so the page does not move; the full header
+     fades out and the pill fades in over the page. */
+  .site-header.is-compact {
+    height: 0;
+    margin-bottom: var(--site-header-h, 94px);
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .site-header.is-compact .site-header-main {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .site-compact {
+    position: absolute;
+    top: 6px;
+    left: var(--cocoso-gutter);
+    right: var(--cocoso-gutter);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 42px;
+    padding: 0 4px 0 3px;
+    border: 1px solid var(--cocoso-linje);
+    border-radius: 999px;
+    background: var(--cocoso-panel-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--cocoso-skugga-meny);
+    opacity: 0;
+    translate: 0 -10px;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s ease, translate 0.18s ease, visibility 0.18s;
+  }
+
+  .site-header.is-compact .site-compact {
+    opacity: 1;
+    translate: 0 0;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .site-compact-main {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    height: 34px;
+    padding: 0 8px 0 0;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--site-ink);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .site-compact-main .site-brand-mark-trana {
+    width: 34px;
+    height: 34px;
+  }
+
+  .site-compact-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .site-compact-sep {
+    color: var(--site-ink-soft);
+    opacity: 0.6;
+  }
+
+  .site-compact-section {
+    color: var(--cocoso-season-accent);
+  }
+
+  .site-compact-button {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--site-ink-soft);
+    cursor: pointer;
+  }
+
+  .site-compact-button:hover {
+    background: var(--cocoso-colors-theme-100);
   }
 
   .site-brand {

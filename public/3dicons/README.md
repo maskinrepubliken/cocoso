@@ -10,3 +10,8 @@ is at https://3dicons.co. Add more by dropping `<name>.webp` here and using
 `trana.webp` is not from 3dicons.co: it is our own crane (Tranemo's trana),
 modelled and rendered in Blender to match the set. Source, script and
 render pipeline are in `docs/design/trana/`.
+
+`clay/` holds the same icons in the set's "clay" style (matte off-white),
+200 px WebP straight from 3dicons.co. They are the small section marks in
+the mobile menu, where the colour style would shout: use
+`<ThreeDIcon variant="clay" … />`.

@@ -187,6 +187,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Menu
+  allSections: All sections
   home: Home
   guest:
     login: Login

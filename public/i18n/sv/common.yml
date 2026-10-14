@@ -185,6 +185,7 @@ modals:
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
   label: Meny
+  allSections: Alla sektioner
   home: Hem
   guest:
     login: Logga in

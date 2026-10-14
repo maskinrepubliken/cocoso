@@ -5,16 +5,72 @@ import React from 'react';
 // carries meaning on its own. `size` sets the width/height attributes, so
 // CSS can still resize the icon per breakpoint.
 export type ThreeDIconName =
-  | 'at' | 'bag' | 'bell' | 'bookmark' | 'brush' | 'bulb' | 'boy' | 'calendar'
-  | 'camera' | 'can' | 'card' | 'chat' | 'chess' | 'circle' | 'clock'
-  | 'colour-palette' | 'computer' | 'crown' | 'cube' | 'cup' | 'file-text'
-  | 'fire' | 'flag' | 'gift' | 'girl' | 'gym' | 'hash' | 'headphone'
-  | 'heart' | 'key' | 'lab' | 'location' | 'lock' | 'magic-trick' | 'mail'
-  | 'map-pin' | 'medal' | 'megaphone' | 'mic' | 'mobile' | 'money-bag'
-  | 'music' | 'notebook' | 'paint-brush' | 'pencil' | 'picture' | 'pin'
-  | 'plus' | 'puzzle' | 'rocket' | 'setting' | 'sphere' | 'star' | 'sun'
-  | 'target' | 'tea-cup' | 'text' | 'tick' | 'tool' | 'trana' | 'travel'
-  | 'trophy' | 'umbrella' | 'video-camera' | 'wallet' | 'zoom';
+  | 'at'
+  | 'bag'
+  | 'bell'
+  | 'bookmark'
+  | 'brush'
+  | 'bulb'
+  | 'boy'
+  | 'calendar'
+  | 'camera'
+  | 'can'
+  | 'card'
+  | 'chat'
+  | 'chess'
+  | 'circle'
+  | 'clock'
+  | 'colour-palette'
+  | 'computer'
+  | 'crown'
+  | 'cube'
+  | 'cup'
+  | 'file-text'
+  | 'fire'
+  | 'flag'
+  | 'gift'
+  | 'girl'
+  | 'gym'
+  | 'hash'
+  | 'headphone'
+  | 'heart'
+  | 'key'
+  | 'lab'
+  | 'location'
+  | 'lock'
+  | 'magic-trick'
+  | 'mail'
+  | 'map-pin'
+  | 'medal'
+  | 'megaphone'
+  | 'mic'
+  | 'mobile'
+  | 'money-bag'
+  | 'music'
+  | 'notebook'
+  | 'paint-brush'
+  | 'pencil'
+  | 'picture'
+  | 'pin'
+  | 'plus'
+  | 'puzzle'
+  | 'rocket'
+  | 'setting'
+  | 'sphere'
+  | 'star'
+  | 'sun'
+  | 'target'
+  | 'tea-cup'
+  | 'text'
+  | 'tick'
+  | 'tool'
+  | 'trana'
+  | 'travel'
+  | 'trophy'
+  | 'umbrella'
+  | 'video-camera'
+  | 'wallet'
+  | 'zoom';
 
 // One icon per section of the site, keyed by the menu item's name.
 export const sectionIcons: Record<string, ThreeDIconName> = {
@@ -29,11 +85,16 @@ export const sectionIcons: Record<string, ThreeDIconName> = {
   members: 'boy',
 };
 
+// 'color' is the warm default set; 'clay' the matte off-white style used
+// for small marks on coloured or busy grounds (public/3dicons/clay).
+export type ThreeDIconVariant = 'color' | 'clay';
+
 export interface ThreeDIconProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   name: ThreeDIconName | string;
   size?: number;
   alt?: string;
+  variant?: ThreeDIconVariant;
 }
 
 export default function ThreeDIcon({
@@ -42,8 +103,10 @@ export default function ThreeDIcon({
   alt = '',
   className = '',
   style,
+  variant = 'color',
   ...rest
 }: ThreeDIconProps) {
+  const folder = variant === 'clay' ? '/3dicons/clay/' : '/3dicons/';
   return (
     <img
       alt={alt}
@@ -53,7 +116,7 @@ export default function ThreeDIcon({
       draggable={false}
       height={size}
       loading="lazy"
-      src={`/3dicons/${name}.webp`}
+      src={`${folder}${name}.webp`}
       style={style}
       width={size}
       {...rest}
