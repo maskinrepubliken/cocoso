@@ -15,17 +15,27 @@ import dayjs from 'dayjs';
 import { attachMembershipsToUsers } from '../memberships/membership.helpers';
 import Activities from '../activities/activity';
 
-function getUsersRandomlyWithAvatarsFirst(users) {
+// The name as the listing shows it: first and last name, else username.
+const displayName = (user) =>
+  [user.firstName, user.lastName].filter(Boolean).join(' ') ||
+  user.username ||
+  '';
+
+// Organizers with something ahead first, then the rest; alphabetical
+// within each group, so the listing is stable and the active ones lead.
+function sortOrganizers(users) {
   if (!users || users.length === 0) {
     return [];
   }
-  const usersWithImage = users.filter((u) => u.avatar && u.avatar.src);
-  const usersWithoutImage = users.filter((u) => !u.avatar || !u.avatar.src);
-
-  return [
-    ...usersWithImage.sort(() => Math.random() - 0.5),
-    ...usersWithoutImage.sort(() => Math.random() - 0.5),
-  ];
+  const collator = new Intl.Collator('sv', { sensitivity: 'base' });
+  return [...users].sort((a, b) => {
+    const aActive = (a.upcomingCount || 0) > 0 ? 0 : 1;
+    const bActive = (b.upcomingCount || 0) > 0 ? 0 : 1;
+    if (aActive !== bActive) {
+      return aActive - bActive;
+    }
+    return collator.compare(displayName(a), displayName(b));
+  });
 }
 
 const publicUserFields = {
@@ -176,7 +186,7 @@ Meteor.methods({
     const usersWithMemberships = await attachMembershipsToUsers(users);
     const withCounts = await attachUpcomingCounts(usersWithMemberships);
 
-    return getUsersRandomlyWithAvatarsFirst(withCounts);
+    return sortOrganizers(withCounts);
   },
 
   async updateSiteSettings(newSettings) {
