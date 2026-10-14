@@ -2236,28 +2236,6 @@ body {
   color: #fff;
 }
 
-/* Chips: the menu panel's section links */
-.site-chip {
-  display: inline-flex;
-  align-items: center;
-  flex: 0 0 auto;
-  height: 32px;
-  padding: 0 13px;
-  border-radius: 999px;
-  background: var(--site-island);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-  color: var(--site-ink-soft);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.site-chip.is-active {
-  background: var(--cocoso-colors-theme-700);
-  color: #fff;
-}
-
 /* --- the full menu panel (mobile) --- */
 
 .site-menu-panel {
@@ -2266,7 +2244,9 @@ body {
   left: var(--cocoso-gutter);
   right: var(--cocoso-gutter);
   z-index: 1002;
-  padding: 10px;
+  padding: 6px;
+  max-height: calc(100vh - 72px);
+  overflow-y: auto;
   border: 1px solid var(--cocoso-linje);
   border-radius: var(--cocoso-radius-meny);
   background: color-mix(in srgb, var(--cocoso-papper) 97%, transparent);
@@ -2287,32 +2267,34 @@ body {
   }
 }
 
-.site-menu-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.site-menu-grid .site-chip {
-  margin: 0;
-}
-
-.site-menu-foot {
+/* One row per page: the page's own 3D icon and its name, as a search hit */
+.site-menu-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--cocoso-linje);
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: var(--cocoso-radius-falt);
+  color: var(--site-ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.site-menu-foot .site-footer-langs {
-  margin: 0;
+.site-menu-row .threed-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 2px 2px rgba(30, 50, 25, 0.18));
 }
 
-.site-menu-login {
-  padding: 0 13px;
+.site-menu-row:hover {
+  background: var(--cocoso-colors-theme-100);
+  color: var(--site-ink);
+}
+
+.site-menu-row.is-active {
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
 }
 
 /* --- account --- */

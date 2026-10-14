@@ -8,6 +8,7 @@ import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
+import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { parseTitle } from '/imports/api/_utils/shared';
 import { currentUserAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
@@ -214,10 +215,10 @@ interface MenuPanelProps {
   loginLabel: string;
 }
 
-// The phone's menu, opened from the grid button in the bar: every section
-// as a chip, wrapped onto as many rows as needed, the info pages as chips
-// of their own, and below that language and login. Nothing is left to a
-// sideways scroll.
+// The phone's menu, opened from the grid button in the bar: one row per
+// section with the section's own 3D icon, the info pages as rows of their
+// own, and below that language and login, in the same panel style as the
+// account menu and the search results.
 function MenuPanel({
   items,
   section,
@@ -234,42 +235,51 @@ function MenuPanel({
 
   return (
     <div className="site-menu-panel" id="site-menu-panel">
-      <div className="site-menu-grid">
-        {items.map((item, index) =>
-          item.name === 'info' ? (
-            pageTitles?.map((page) => {
-              const to = `${prefix}/info/${parseTitle(page.title)}`;
-              return (
-                <Link
-                  key={page._id}
-                  className={`site-chip ${pathname === to ? 'is-active' : ''}`}
-                  to={to}
-                >
-                  {page.title}
-                </Link>
-              );
-            })
-          ) : (
-            <Link
-              key={item.name}
-              className={`site-chip ${
-                isActive(item, index) ? 'is-active' : ''
-              }`}
-              to={item.route}
-            >
-              {item.label}
-            </Link>
-          )
-        )}
-      </div>
-      <div className="site-menu-foot">
-        <LanguageSwitch variant="row" />
-        {!currentUser && (
-          <Link className="site-chip site-menu-login" to="/login">
-            {loginLabel}
+      {items.map((item, index) =>
+        item.name === 'info' ? (
+          pageTitles?.map((page) => {
+            const to = `${prefix}/info/${parseTitle(page.title)}`;
+            return (
+              <Link
+                key={page._id}
+                className={`site-menu-row ${
+                  pathname === to ? 'is-active' : ''
+                }`}
+                to={to}
+              >
+                <ThreeDIcon name={sectionIcons.info} size={32} />
+                <span>{page.title}</span>
+              </Link>
+            );
+          })
+        ) : (
+          <Link
+            key={item.name}
+            className={`site-menu-row ${
+              isActive(item, index) ? 'is-active' : ''
+            }`}
+            to={item.route}
+          >
+            <ThreeDIcon
+              name={
+                item.name === 'home'
+                  ? 'trana'
+                  : sectionIcons[item.name] || 'star'
+              }
+              size={32}
+            />
+            <span>{item.label}</span>
           </Link>
-        )}
+        )
+      )}
+      <div className="site-account-langs">
+        <LanguageSwitch variant="row" />
       </div>
+      {!currentUser && (
+        <Link className="site-info-menu-link" to="/login">
+          {loginLabel}
+        </Link>
+      )}
     </div>
   );
 }
