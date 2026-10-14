@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
@@ -272,14 +273,14 @@ function MenuPanel({
           </Link>
         )
       )}
-      <div className="site-account-langs">
-        <LanguageSwitch variant="row" />
-      </div>
       {!currentUser && (
         <Link className="site-info-menu-link" to="/login">
           {loginLabel}
         </Link>
       )}
+      <div className="site-menu-langs">
+        <LanguageSwitch variant="row" />
+      </div>
     </div>
   );
 }
@@ -406,6 +407,15 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         </div>
       </div>
 
+      {menuOpen &&
+        isClient &&
+        createPortal(
+          <div
+            className="site-menu-scrim"
+            onPointerDown={() => setMenuOpen(false)}
+          />,
+          document.body
+        )}
       {menuOpen && (
         <MenuPanel
           items={items}

@@ -2297,6 +2297,19 @@ body {
   color: #fff;
 }
 
+.site-menu-langs {
+  margin-top: 10px;
+  padding: 6px 10px 4px;
+}
+
+/* Catches a tap outside the panel and dims the page a touch */
+.site-menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(20, 30, 15, 0.12);
+}
+
 /* --- account --- */
 
 .site-login {
