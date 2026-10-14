@@ -34,7 +34,7 @@ export function UserThumb({ notificationsCounter = 0 }: UserThumbProps) {
     <span className="site-user" title={getFullName(currentUser)}>
       {notificationsCounter > 0 && (
         <span className="site-user-bell">
-          <BellIcon width={18} height={18} />
+          <BellIcon width={16} height={16} />
           <span className="site-user-count">{notificationsCounter}</span>
         </span>
       )}

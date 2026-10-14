@@ -112,7 +112,7 @@ export default function NewButton({ site }: NewButtonProps) {
         }
       >
         <span className="site-new site-plus" aria-hidden>
-          <PlusIcon width={20} height={20} />
+          <PlusIcon width={16} height={16} />
         </span>
       </button>
     </div>

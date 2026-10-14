@@ -382,12 +382,12 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           aria-controls="site-menu-panel"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          {menuOpen ? (
-            <XIcon width={20} height={20} />
-          ) : (
-            <LayoutGridIcon width={20} height={20} />
-          )}
           <span className="site-more-label">{current?.label}</span>
+          {menuOpen ? (
+            <XIcon width={16} height={16} />
+          ) : (
+            <LayoutGridIcon width={16} height={16} />
+          )}
         </button>
 
         <Nav

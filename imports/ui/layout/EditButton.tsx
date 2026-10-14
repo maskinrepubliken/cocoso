@@ -132,7 +132,7 @@ export default function EditButton() {
           title={label}
         >
           <span className="site-new" aria-hidden>
-            <PenIcon width={18} height={18} />
+            <PenIcon width={16} height={16} />
           </span>
         </Link>
       </div>
@@ -157,7 +157,7 @@ export default function EditButton() {
         }
       >
         <span className="site-new site-edit" aria-hidden>
-          <PenIcon width={18} height={18} />
+          <PenIcon width={16} height={16} />
         </span>
       </button>
     </div>

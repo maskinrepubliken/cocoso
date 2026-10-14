@@ -246,9 +246,9 @@ export default function SiteSearch({ site }: SiteSearchProps) {
         onClick={() => (isOpen ? close() : open())}
       >
         {isOpen ? (
-          <XIcon width={18} height={18} />
+          <XIcon width={16} height={16} />
         ) : (
-          <SearchIcon width={18} height={18} />
+          <SearchIcon width={16} height={16} />
         )}
       </button>
 
