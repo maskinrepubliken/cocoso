@@ -92,6 +92,9 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
   }
 
   const isAdmin = role === 'admin';
+  // Only organizers (admins and contributors) have a public profile page
+  // of their own to go to.
+  const isOrganizer = isAdmin || role === 'contributor';
 
   // The account menu, as plain as the Info menu: a name line, a few links,
   // and logout.
@@ -129,14 +132,16 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
             </MenuItem>
           ))}
 
-        <MenuItem style={{ padding: 0 }}>
-          <Link
-            className="site-info-menu-link"
-            to={`/@${currentUser.username}`}
-          >
-            <Trans i18nKey="common:menu.member.profile">My Profile</Trans>
-          </Link>
-        </MenuItem>
+        {isOrganizer && (
+          <MenuItem style={{ padding: 0 }}>
+            <Link
+              className="site-info-menu-link"
+              to={`/@${currentUser.username}`}
+            >
+              <Trans i18nKey="common:menu.member.profile">My Profile</Trans>
+            </Link>
+          </MenuItem>
+        )}
 
         <MenuItem style={{ padding: 0 }}>
           <Link className="site-info-menu-link" to="/admin/my-profile">
