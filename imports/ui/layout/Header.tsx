@@ -346,7 +346,9 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // The menu panel closes on Escape and on a tap outside the header.
+  // The menu panel closes on Escape and on a tap anywhere but the panel
+  // and its button, so opening the search or another menu puts it away:
+  // never two popups at once.
   useEffect(() => {
     if (!isClient || !menuOpen) {
       return undefined;
@@ -357,7 +359,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
       }
     };
     const onPointerDown = (event: PointerEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) {
+      const target = event.target as Element | null;
+      if (!target?.closest?.('.site-menu-panel, .site-more')) {
         setMenuOpen(false);
       }
     };
