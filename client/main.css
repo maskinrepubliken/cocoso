@@ -2298,6 +2298,54 @@ body {
   color: #fff;
 }
 
+.site-menu-row-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.site-menu-row-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-menu-row-detail {
+  overflow: hidden;
+  color: var(--site-ink-soft);
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-menu-row.is-active .site-menu-row-detail {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Hem: a small centred line above the sections, no icon */
+.site-menu-home {
+  display: block;
+  margin-bottom: 2px;
+  padding: 8px 10px;
+  border-radius: var(--cocoso-radius-falt);
+  color: var(--site-ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.site-menu-home:hover {
+  background: var(--cocoso-colors-theme-100);
+  color: var(--site-ink);
+}
+
+.site-menu-home.is-active {
+  color: var(--cocoso-colors-theme-700);
+}
+
 .site-menu-langs {
   margin-top: 10px;
   padding: 6px 10px 4px;

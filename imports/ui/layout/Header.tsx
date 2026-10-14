@@ -11,6 +11,7 @@ import { useAtomValue } from 'jotai';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { parseTitle } from '/imports/api/_utils/shared';
+import sectionDescription from '/imports/ui/utils/sectionDescription';
 import { currentUserAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import EditButton from './EditButton';
@@ -32,6 +33,7 @@ if (isClient) {
 export interface HeaderMenuItem {
   name: string;
   label: string;
+  description?: string;
   isComposablePage?: boolean;
   route: string;
 }
@@ -51,6 +53,7 @@ export function getMenuItems(
       .map((item: any) => ({
         name: item.name,
         label: item.label,
+        description: item.description,
         isComposablePage: item.isComposablePage,
         route: item.isComposablePage
           ? `${prefix}/cp/${item.name}`
@@ -229,6 +232,7 @@ function MenuPanel({
   loginLabel,
 }: MenuPanelProps) {
   const currentUser = useAtomValue(currentUserAtom);
+  const [tc] = useTranslation('common');
   const isActive = (item: HeaderMenuItem, index: number) =>
     section === ''
       ? item.name === 'home' || index === 0
@@ -237,7 +241,17 @@ function MenuPanel({
   return (
     <div className="site-menu-panel" id="site-menu-panel">
       {items.map((item, index) =>
-        item.name === 'info' ? (
+        item.name === 'home' ? (
+          <Link
+            key="home"
+            className={`site-menu-home ${
+              isActive(item, index) ? 'is-active' : ''
+            }`}
+            to={item.route}
+          >
+            {item.label}
+          </Link>
+        ) : item.name === 'info' ? (
           pageTitles?.map((page) => {
             const to = `${prefix}/info/${parseTitle(page.title)}`;
             return (
@@ -261,15 +275,15 @@ function MenuPanel({
             }`}
             to={item.route}
           >
-            <ThreeDIcon
-              name={
-                item.name === 'home'
-                  ? 'trana'
-                  : sectionIcons[item.name] || 'star'
-              }
-              size={32}
-            />
-            <span>{item.label}</span>
+            <ThreeDIcon name={sectionIcons[item.name] || 'star'} size={32} />
+            <span className="site-menu-row-text">
+              <span className="site-menu-row-title">{item.label}</span>
+              {sectionDescription(item, tc) && (
+                <span className="site-menu-row-detail">
+                  {sectionDescription(item, tc)}
+                </span>
+              )}
+            </span>
           </Link>
         )
       )}
