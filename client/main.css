@@ -3282,9 +3282,12 @@ body {
 }
 
 @media (max-width: 719px) {
-  /* Narrow: a small row of icons sharing the line with "Välkommen till",
-     at the right; the text keeps the whole width below. The title is
-     held to two lines so it never runs under the icons. */
+  /* Narrow (phones): a miniature of the desktop scene, tucked into the
+     top-right corner beside "Välkommen till" and the short first line of
+     the title. The crane stands at the right edge with its feet on the
+     baseline of "Tranemo"; the seasonal icons float around it at
+     different sizes. The title is held to two lines so the first line
+     stays short and the second gets the whole width below the scene. */
   .home-hero-text {
     max-width: 440px;
   }
@@ -3292,51 +3295,80 @@ body {
   .home-hero-icons {
     position: absolute;
     right: var(--cocoso-gutter);
-    top: -8px;
-    width: auto;
-    height: 20px;
-    display: flex;
-    gap: 2px;
-    align-items: center;
-  }
-
-  .home-hero-icon {
-    position: static;
-    width: 52px;
-    height: 52px;
-    transform: none;
-    filter: drop-shadow(0 6px 8px rgba(30, 50, 25, 0.2));
+    top: -58px;
+    width: 196px;
+    height: 132px;
   }
 
   .home-hero-crane {
-    position: static;
-    width: 80px;
-    height: 80px;
-    margin-right: -6px;
-    filter: drop-shadow(0 6px 8px rgba(30, 50, 25, 0.2));
+    left: auto;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: 120px;
+    height: 120px;
+    filter: drop-shadow(0 8px 10px rgba(30, 50, 25, 0.22));
   }
 
+  .home-hero-icon {
+    filter: drop-shadow(0 6px 8px rgba(30, 50, 25, 0.2));
+  }
   .home-hero-icon.is-1 {
-    width: 62px;
-    height: 62px;
+    width: 66px;
+    height: 66px;
+    left: 0;
+    top: 18px;
+    transform: rotate(-6deg);
   }
   .home-hero-icon.is-2 {
-    width: 54px;
-    height: 54px;
-  }
-  .home-hero-icon.is-3 {
     width: 50px;
     height: 50px;
+    left: 80px;
+    top: -2px;
+    transform: rotate(6deg);
+  }
+  .home-hero-icon.is-3 {
+    width: 46px;
+    height: 46px;
+    left: 30px;
+    top: 82px;
+    transform: rotate(-4deg);
   }
   .home-hero-icon.is-4 {
-    display: none;
+    width: 38px;
+    height: 38px;
+    left: 156px;
+    top: 84px;
+    transform: rotate(10deg);
   }
 }
 
-@media (max-width: 480px) {
-  /* A phone has room for the crane and two icons beside the eyebrow */
+@media (max-width: 400px) {
+  /* The smallest phones: pull the scene in a touch so it clears the
+     first line of the title. */
+  .home-hero-icons {
+    width: 180px;
+    height: 124px;
+    top: -54px;
+  }
+  .home-hero-crane {
+    width: 112px;
+    height: 112px;
+  }
+  .home-hero-icon.is-1 {
+    width: 60px;
+    height: 60px;
+  }
+  .home-hero-icon.is-2 {
+    left: 70px;
+  }
   .home-hero-icon.is-3 {
-    display: none;
+    left: 24px;
+    top: 76px;
+  }
+  .home-hero-icon.is-4 {
+    left: 142px;
+    top: 80px;
   }
 }
 
