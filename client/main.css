@@ -2198,21 +2198,37 @@ body {
 
 /* --- the menu button (mobile) --- */
 
-/* The four squares beside the search that open the menu panel. Only on
-   phones; the desktop has the menu pill in the bar. */
+/* The four squares right after the crane, carrying the name of the page
+   one is on; a little taller than the other buttons and taking the free
+   width of the row. Opens the menu panel. Only on phones; the desktop has
+   the menu pill in the bar. */
 .site-more {
   display: none;
-  place-items: center;
-  flex: none;
-  width: 36px;
-  height: 36px;
-  padding: 0;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 14px 0 12px;
   border: 0;
   border-radius: 999px;
   background: var(--site-island);
   box-shadow: var(--site-island-shadow);
   color: var(--site-ink-soft);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
   cursor: pointer;
+}
+
+.site-more svg {
+  flex: none;
+}
+
+.site-more-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .site-more.is-open {
@@ -2655,6 +2671,7 @@ body {
 
   .site-header-bar:has(.site-search.is-open) > .site-brand,
   .site-header-bar:has(.site-search.is-open) > .site-nav,
+  .site-header-bar:has(.site-search.is-open) > .site-more,
   .site-header-bar:has(.site-search.is-open) .new-button-wrapper {
     display: none;
   }
@@ -2704,7 +2721,8 @@ body {
   /* The menu pill is gone from the bar, so two columns: brand, account.
      Otherwise the right side would land in the empty middle column. */
   .site-header-bar {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
     height: 52px;
     padding: 0 10px;
   }
@@ -2717,24 +2735,9 @@ body {
     display: none;
   }
 
-  /* One row: the brand pill takes all the room, the buttons the rest */
-  .site-header-bar > .site-brand {
-    justify-self: stretch;
-    min-width: 0;
-  }
-
-  .site-brand-home {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .site-brand-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
+  /* One row: crane pill, the menu button with the free width, buttons */
   .site-more {
-    display: grid;
+    display: flex;
   }
 
   .site-brand {

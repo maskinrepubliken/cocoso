@@ -349,6 +349,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
 
   const items = getMenuItems(site, prefix, tc('menu.home'));
   const section = getCurrentSection(location.pathname, prefix);
+  const current = items.find((item) => item.name === section) || items[0];
 
   return (
     <header
@@ -360,6 +361,23 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     >
       <div className="site-header-bar">
         <LocationSwitcher site={site} items={items} section={section} />
+
+        {/* Phone only: the menu button, carrying the page one is on */}
+        <button
+          type="button"
+          className={`site-more ${menuOpen ? 'is-open' : ''}`}
+          aria-label={tc('menu.allSections')}
+          aria-expanded={menuOpen}
+          aria-controls="site-menu-panel"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? (
+            <XIcon width={20} height={20} />
+          ) : (
+            <LayoutGridIcon width={20} height={20} />
+          )}
+          <span className="site-more-label">{current?.label}</span>
+        </button>
 
         <Nav
           className="site-nav"
@@ -374,20 +392,6 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           <SiteSearch site={site} />
           <NewButton site={site} />
           <EditButton />
-          <button
-            type="button"
-            className={`site-more ${menuOpen ? 'is-open' : ''}`}
-            aria-label={tc('menu.allSections')}
-            aria-expanded={menuOpen}
-            aria-controls="site-menu-panel"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? (
-              <XIcon width={18} height={18} />
-            ) : (
-              <LayoutGridIcon width={18} height={18} />
-            )}
-          </button>
           <UserPopup site={site} />
         </div>
       </div>
