@@ -92,9 +92,9 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
   }
 
   const isAdmin = role === 'admin';
-  // Only organizers (admins and contributors) have a public profile page
-  // of their own to go to.
-  const isOrganizer = isAdmin || role === 'contributor';
+  // Only organizers (contributors) have a public profile page of their
+  // own to go to; admins and plain members do not.
+  const isOrganizer = role === 'contributor';
 
   // The account menu, as plain as the Info menu: a name line, a few links,
   // and logout.
