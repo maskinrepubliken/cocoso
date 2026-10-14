@@ -2324,29 +2324,17 @@ body {
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Hem: a small centred line above the sections, no icon */
+/* Hem: a small chip in the language row's style, left of the globe */
 .site-menu-home {
-  display: block;
-  margin-bottom: 2px;
-  padding: 8px 10px;
-  border-radius: var(--cocoso-radius-falt);
-  color: var(--site-ink-soft);
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
 }
 
-.site-menu-home:hover {
-  background: var(--cocoso-colors-theme-100);
-  color: var(--site-ink);
-}
-
-.site-menu-home.is-active {
-  color: var(--cocoso-colors-theme-700);
-}
-
 .site-menu-langs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: 10px;
   padding: 6px 10px 4px;
 }

@@ -233,6 +233,7 @@ function MenuPanel({
 }: MenuPanelProps) {
   const currentUser = useAtomValue(currentUserAtom);
   const [tc] = useTranslation('common');
+  const home = items.find((item) => item.name === 'home');
   const isActive = (item: HeaderMenuItem, index: number) =>
     section === ''
       ? item.name === 'home' || index === 0
@@ -241,17 +242,7 @@ function MenuPanel({
   return (
     <div className="site-menu-panel" id="site-menu-panel">
       {items.map((item, index) =>
-        item.name === 'home' ? (
-          <Link
-            key="home"
-            className={`site-menu-home ${
-              isActive(item, index) ? 'is-active' : ''
-            }`}
-            to={item.route}
-          >
-            {item.label}
-          </Link>
-        ) : item.name === 'info' ? (
+        item.name === 'home' ? null : item.name === 'info' ? (
           pageTitles?.map((page) => {
             const to = `${prefix}/info/${parseTitle(page.title)}`;
             return (
@@ -293,6 +284,16 @@ function MenuPanel({
         </Link>
       )}
       <div className="site-menu-langs">
+        {home && (
+          <Link
+            className={`site-footer-lang site-menu-home ${
+              section === '' ? 'is-active' : ''
+            }`}
+            to={home.route}
+          >
+            {home.label}
+          </Link>
+        )}
         <LanguageSwitch variant="row" />
       </div>
     </div>
