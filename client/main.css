@@ -2736,19 +2736,35 @@ body {
     display: flex;
   }
 
+  /* Everything in the bar is 32px tall, like the round buttons */
   .site-brand {
-    height: 38px;
+    height: 32px;
+    padding: 2px 3px 2px 2px;
   }
 
   .site-brand-mark {
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
   }
 
   .site-brand-mark-trana {
-    width: 34px;
-    height: 34px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .site-brand-mark-trana .threed-icon {
+    top: -6px;
+    translate: calc(-50% + 4px) 0;
+    width: 27px;
+    height: 40px;
+    clip-path: circle(26px at 9px 8px);
+  }
+
+  .site-more {
+    height: 32px;
+    padding: 0 10px 0 12px;
+    font-size: 14px;
   }
 
   .site-brand-name {
@@ -2756,7 +2772,7 @@ body {
   }
 
   .site-brand-loc {
-    height: 30px;
+    height: 26px;
     padding: 0 8px;
     font-size: 13px;
   }
