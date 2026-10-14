@@ -4,18 +4,13 @@ import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import LayoutGridIcon from 'lucide-react/dist/esm/icons/layout-grid';
-import SearchIcon from 'lucide-react/dist/esm/icons/search';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
-import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { parseTitle } from '/imports/api/_utils/shared';
 import { currentUserAtom } from '/imports/state';
-import {
-  useCurrentLocation,
-  useLocationPrefix,
-} from '/imports/ui/utils/useLocation';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import EditButton from './EditButton';
 import LanguageSwitch from './LanguageSwitch';
 import LocationSwitcher from './LocationSwitcher';
@@ -121,19 +116,6 @@ export function InfoPagesMenu({
   );
 }
 
-// The small matte mark in front of a section's name on a phone: the same
-// motif as the section's button on the start page, in the clay style.
-function SectionMark({ name }: { name: string }) {
-  return (
-    <ThreeDIcon
-      className="site-chip-icon"
-      name={sectionIcons[name] || 'star'}
-      size={22}
-      variant="clay"
-    />
-  );
-}
-
 interface NavProps {
   items: HeaderMenuItem[];
   section: string;
@@ -141,7 +123,6 @@ interface NavProps {
   prefix: string;
   className: string;
   itemClassName: string;
-  withIcons?: boolean;
 }
 
 // One list of links, styled as a white pill on desktop and as a scrolling
@@ -153,7 +134,6 @@ function Nav({
   prefix,
   className,
   itemClassName,
-  withIcons = false,
 }: NavProps) {
   const activeRef = useRef<HTMLAnchorElement>(null);
   const navRef = useRef<HTMLElement>(null);
@@ -217,7 +197,6 @@ function Nav({
             }`}
             to={item.route}
           >
-            {withIcons && <SectionMark name={item.name} />}
             {item.label}
           </Link>
         )
@@ -235,11 +214,10 @@ interface MenuPanelProps {
   loginLabel: string;
 }
 
-// The phone's "all of the menu" panel, opened from the grid button at the
-// end of the chip row or from the compact pill: every section as a chip
-// with its mark, wrapped onto as many rows as needed, the info pages as
-// chips of their own, and below that language and login. Nothing is left
-// to a sideways scroll.
+// The phone's menu, opened from the grid button in the bar: every section
+// as a chip, wrapped onto as many rows as needed, the info pages as chips
+// of their own, and below that language and login. Nothing is left to a
+// sideways scroll.
 function MenuPanel({
   items,
   section,
@@ -267,7 +245,6 @@ function MenuPanel({
                   className={`site-chip ${pathname === to ? 'is-active' : ''}`}
                   to={to}
                 >
-                  <SectionMark name="info" />
                   {page.title}
                 </Link>
               );
@@ -280,7 +257,6 @@ function MenuPanel({
               }`}
               to={item.route}
             >
-              <SectionMark name={item.name} />
               {item.label}
             </Link>
           )
@@ -310,26 +286,21 @@ export interface HeaderProps {
 // Below 960px the menu moves to a chip row under the bar. The bar is
 // transparent at the top of the page and gains a blurred backdrop once the
 // page scrolls.
-// On a phone the header also folds away while one reads: scrolling down
-// past the top packs it into one floating pill (place · section, search,
-// menu) and scrolling up a little brings the full header back. The
-// header's box keeps its height while folded (margin instead of height) so
-// the page never jumps.
-const COMPACT_AFTER = 160;
-const EXPAND_NEAR_TOP = 80;
-
+// The site header: one 56px row with the brand/location pill on the left,
+// the menu as a floating pill in the middle and, on the right, the search,
+// the plus for those who may create content, the pen on a page one may
+// edit, and the account.
+// Below 960px the menu pill is gone: the brand pill stretches across the
+// row and a grid button beside the search opens the menu panel. The bar
+// is transparent at the top of the page and gains a blurred backdrop once
+// the page scrolls.
 export default function Header({ site, pageTitles }: HeaderProps) {
   const location = useLocation();
   const prefix = useLocationPrefix();
-  const place = useCurrentLocation();
   const [tc] = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
-  const [compact, setCompact] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [mainHeight, setMainHeight] = useState(0);
   const headerRef = useRef<HTMLElement>(null);
-  const mainRef = useRef<HTMLDivElement>(null);
-  const lastY = useRef(0);
 
   // Close the menu panel when the route changes (state during render, so
   // the panel never flashes on the new page).
@@ -343,30 +314,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     if (!isClient) {
       return undefined;
     }
-    const onScroll = () => {
-      const y = window.scrollY;
-      const dy = y - lastY.current;
-      lastY.current = y;
-      setScrolled(y > 8);
-
-      const isPhone = window.matchMedia('(max-width: 959px)').matches;
-      const searchOpen = !!headerRef.current?.querySelector(
-        '.site-search.is-open'
-      );
-      if (!isPhone || searchOpen) {
-        setCompact(false);
-        return;
-      }
-      if (y < EXPAND_NEAR_TOP || dy < -6) {
-        setCompact(false);
-      } else if (dy > 4 && y > COMPACT_AFTER) {
-        const h = mainRef.current?.offsetHeight || 0;
-        if (h) {
-          setMainHeight(h);
-        }
-        setCompact(true);
-      }
-    };
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -401,59 +349,31 @@ export default function Header({ site, pageTitles }: HeaderProps) {
 
   const items = getMenuItems(site, prefix, tc('menu.home'));
   const section = getCurrentSection(location.pathname, prefix);
-  const current = items.find((item) => item.name === section) || items[0];
-  const isCompact = compact && !menuOpen;
-
-  const openSearch = () => {
-    setCompact(false);
-    setMenuOpen(false);
-    window.setTimeout(() => {
-      headerRef.current
-        ?.querySelector<HTMLButtonElement>('.site-search-toggle')
-        ?.click();
-    }, 60);
-  };
 
   return (
     <header
       id="header"
       ref={headerRef}
       className={`site-header ${scrolled ? 'is-scrolled' : ''} ${
-        isCompact ? 'is-compact' : ''
-      } ${menuOpen ? 'is-menu-open' : ''}`}
-      style={{ '--site-header-h': `${mainHeight}px` } as React.CSSProperties}
+        menuOpen ? 'is-menu-open' : ''
+      }`}
     >
-      <div className="site-header-main" ref={mainRef}>
-        <div className="site-header-bar">
-          <LocationSwitcher site={site} items={items} section={section} />
+      <div className="site-header-bar">
+        <LocationSwitcher site={site} items={items} section={section} />
 
-          <Nav
-            className="site-nav"
-            itemClassName="site-nav-item"
-            items={items}
-            pageTitles={pageTitles}
-            prefix={prefix}
-            section={section}
-          />
+        <Nav
+          className="site-nav"
+          itemClassName="site-nav-item"
+          items={items}
+          pageTitles={pageTitles}
+          prefix={prefix}
+          section={section}
+        />
 
-          <div className="site-header-right">
-            <SiteSearch site={site} />
-            <NewButton site={site} />
-            <EditButton />
-            <UserPopup site={site} />
-          </div>
-        </div>
-
-        <div className="site-chips-row">
-          <Nav
-            className="site-chips"
-            itemClassName="site-chip"
-            items={items}
-            pageTitles={pageTitles}
-            prefix={prefix}
-            section={section}
-            withIcons
-          />
+        <div className="site-header-right">
+          <SiteSearch site={site} />
+          <NewButton site={site} />
+          <EditButton />
           <button
             type="button"
             className={`site-more ${menuOpen ? 'is-open' : ''}`}
@@ -468,49 +388,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
               <LayoutGridIcon width={18} height={18} />
             )}
           </button>
+          <UserPopup site={site} />
         </div>
-      </div>
-
-      <div className="site-compact" aria-hidden={!isCompact}>
-        <button
-          type="button"
-          className="site-compact-main"
-          tabIndex={isCompact ? 0 : -1}
-          onClick={() => {
-            setCompact(false);
-            setMenuOpen(true);
-          }}
-        >
-          <span className="site-brand-mark site-brand-mark-trana">
-            <ThreeDIcon name="trana-hals" size={40} />
-          </span>
-          <span className="site-compact-text">
-            {place?.name || site.settings?.shortName || site.settings?.name}
-            <span className="site-compact-sep"> · </span>
-            <span className="site-compact-section">{current?.label}</span>
-          </span>
-        </button>
-        <button
-          type="button"
-          className="site-compact-button"
-          aria-label={tc('search.open')}
-          tabIndex={isCompact ? 0 : -1}
-          onClick={openSearch}
-        >
-          <SearchIcon width={18} height={18} />
-        </button>
-        <button
-          type="button"
-          className="site-compact-button"
-          aria-label={tc('menu.allSections')}
-          tabIndex={isCompact ? 0 : -1}
-          onClick={() => {
-            setCompact(false);
-            setMenuOpen(true);
-          }}
-        >
-          <ChevronDownIcon width={18} height={18} />
-        </button>
       </div>
 
       {menuOpen && (

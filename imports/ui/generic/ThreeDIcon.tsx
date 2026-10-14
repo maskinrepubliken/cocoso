@@ -85,16 +85,11 @@ export const sectionIcons: Record<string, ThreeDIconName> = {
   members: 'boy',
 };
 
-// 'color' is the warm default set; 'clay' the matte off-white style used
-// for small marks on coloured or busy grounds (public/3dicons/clay).
-export type ThreeDIconVariant = 'color' | 'clay';
-
 export interface ThreeDIconProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   name: ThreeDIconName | string;
   size?: number;
   alt?: string;
-  variant?: ThreeDIconVariant;
 }
 
 export default function ThreeDIcon({
@@ -103,10 +98,8 @@ export default function ThreeDIcon({
   alt = '',
   className = '',
   style,
-  variant = 'color',
   ...rest
 }: ThreeDIconProps) {
-  const folder = variant === 'clay' ? '/3dicons/clay/' : '/3dicons/';
   return (
     <img
       alt={alt}
@@ -116,7 +109,7 @@ export default function ThreeDIcon({
       draggable={false}
       height={size}
       loading="lazy"
-      src={`${folder}${name}.webp`}
+      src={`/3dicons/${name}.webp`}
       style={style}
       width={size}
       {...rest}
