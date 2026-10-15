@@ -1,100 +1,25 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useLoaderData, useNavigate, useSearchParams } from 'react-router';
 import dayjs from 'dayjs';
 import loadable from '@loadable/component';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { Box, Center, Flex, Loader, Skeleton } from '/imports/ui/core';
-import {
-  getNonComboResourcesWithColor,
-  getComboResourcesWithColor,
-  parseAllBookingsWithResources,
-} from '/imports/api/_utils/shared';
+import { parseAllBookingsWithResources } from '/imports/api/_utils/shared';
 import { canCreateContentAtom, locationsAtom } from '/imports/state';
 import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
 import Tag from '/imports/ui/generic/Tag';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
-import { worldForLocation } from '/imports/ui/utils/locationPalette';
+import { colorsForKind } from '/imports/ui/utils/kindPalette';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
 });
 
-const maxResourceLabelsToShow = 13;
-
-// The place picker as one of the site's pills: a paper island with the
-// chevron, and a menu in the same panel style as the header's menus. Each
-// option carries its place's colour at the left edge.
-const calendarSelectStyles = (inkFor: (resource: any) => string) => ({
-  control: (base: any, state: any) => ({
-    ...base,
-    minHeight: 38,
-    borderRadius: 999,
-    border: 'none',
-    background: 'var(--cocoso-papper)',
-    boxShadow: state.isFocused
-      ? '0 0 0 2px var(--cocoso-colors-theme-500)'
-      : 'var(--cocoso-skugga)',
-    cursor: 'pointer',
-    paddingLeft: 8,
-    fontFamily: 'var(--cocoso-font-ui)',
-    fontSize: 14,
-    fontWeight: 600,
-    ':hover': { background: 'var(--cocoso-colors-theme-50)' },
-  }),
-  placeholder: (base: any) => ({
-    ...base,
-    color: 'var(--cocoso-colors-theme-700)',
-  }),
-  singleValue: (base: any) => ({
-    ...base,
-    color: 'var(--cocoso-colors-theme-700)',
-  }),
-  indicatorSeparator: () => ({ display: 'none' }),
-  dropdownIndicator: (base: any) => ({
-    ...base,
-    color: 'var(--cocoso-colors-theme-700)',
-    padding: '0 10px 0 4px',
-  }),
-  clearIndicator: (base: any) => ({
-    ...base,
-    color: 'var(--cocoso-colors-theme-700)',
-    padding: 4,
-  }),
-  menu: (base: any) => ({
-    ...base,
-    padding: 6,
-    border: '1px solid var(--cocoso-linje)',
-    borderRadius: 'var(--cocoso-radius-meny)',
-    background: 'var(--cocoso-panel-bg)',
-    backdropFilter: 'blur(12px)',
-    boxShadow: 'var(--cocoso-skugga-meny)',
-    overflow: 'hidden',
-    zIndex: 20,
-  }),
-  menuList: (base: any) => ({ ...base, padding: 0 }),
-  option: (base: any, { data, isFocused, isSelected }: any) => ({
-    ...base,
-    borderRadius: 'var(--cocoso-radius-falt)',
-    borderLeft: `4px solid ${inkFor(data)}`,
-    paddingLeft: 10,
-    background: isSelected
-      ? 'var(--cocoso-colors-theme-700)'
-      : isFocused
-      ? 'var(--cocoso-colors-theme-100)'
-      : 'transparent',
-    color: isSelected ? '#fff' : 'var(--cocoso-mylla)',
-    fontFamily: 'var(--cocoso-font-ui)',
-    fontSize: 14,
-    fontWeight: data.isCombo ? 700 : 600,
-    cursor: 'pointer',
-  }),
-});
-
-// The place and resource filters are pill-shaped, like the event cards'
-// chips; the tags and buttons take their corners from this variable.
+// The place filter is pill-shaped, like the event cards' chips; the tags
+// take their corners from this variable.
 const pillShapes = {
   '--cocoso-border-radius': '999px',
   fontFamily: 'Raleway, var(--cocoso-body-font-family, sans-serif)',
@@ -262,16 +187,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       calendarFilter._id === activity.comboResourceId
   );
 
-  const nonComboResources = resources.filter((resource) => !resource.isCombo);
-  const nonComboResourcesWithColor =
-    getNonComboResourcesWithColor(nonComboResources);
-
-  const comboResources = resources.filter((resource) => resource.isCombo);
-  const comboResourcesWithColor = getComboResourcesWithColor(
-    comboResources,
-    nonComboResourcesWithColor
-  );
-
   // Weekly activities are drawn lighter so one-off events stand out.
   const recurringIds = useMemo(
     () =>
@@ -283,49 +198,18 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     [activities]
   );
 
-  // Every event is drawn in its place's colour world; content for the
-  // whole municipality takes the site's green. Weekly activities are
-  // marked recurring and drawn lighter, so one-off events stand out.
+  // Every event is drawn in its kind's colour (kultur, idrott, …); events
+  // without a kind take the site's green. Weekly activities are marked
+  // recurring and drawn lighter, so one-off events stand out.
   const allFilteredActsWithColors = filteredActivities.map((act: any) => {
-    const world = worldForLocation(publishedLocations, act.locationId);
+    const colors = colorsForKind(act.kind);
     return {
       ...act,
       isRecurring: recurringIds.has(act.activityId),
-      ink: world?.ink || 'var(--cocoso-colors-theme-700)',
-      tint: world?.tint || 'var(--cocoso-colors-theme-100)',
+      ink: colors.ink,
+      tint: colors.tint,
     };
   });
-
-  // The resource filter: a place's venues share its colour, so the chips
-  // and the select options read as belonging together.
-  const inkForResource = (resource: Resource) =>
-    worldForLocation(publishedLocations, resource.locationId)?.ink ||
-    'var(--cocoso-colors-theme-700)';
-
-  const selectFilterView =
-    nonComboResourcesWithColor.filter((r: any) => r.isBookable)?.length >=
-    maxResourceLabelsToShow;
-
-  const allResourcesForSelect = [
-    ...comboResourcesWithColor,
-    ...nonComboResourcesWithColor,
-  ]?.filter((r: any) => r.isBookable);
-
-  // Lazy load react-select components when selectFilterView is true
-  const [SelectComponent, setSelectComponent] = useState<any>(null);
-  const [AnimatedComponents, setAnimatedComponents] = useState<any>(null);
-
-  useEffect(() => {
-    if (selectFilterView && !SelectComponent) {
-      Promise.all([
-        import('react-select'),
-        import('react-select/animated'),
-      ]).then(([selectMod, animatedMod]) => {
-        setSelectComponent(() => selectMod.default);
-        setAnimatedComponents(animatedMod.default());
-      });
-    }
-  }, [selectFilterView, SelectComponent]);
 
   if (!site) {
     return <Loader />;
@@ -371,78 +255,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
             </Flex>
           </Center>
         )}
-
-        <Center mb="2" css={pillShapes}>
-          {!selectFilterView ? (
-            <Box>
-              <Flex justify="center" px="1" pb="1" mb="3" wrap="wrap">
-                <Box>
-                  <Tag
-                    key="All"
-                    checkable
-                    label={<Trans i18nKey="common:labels.all">All</Trans>}
-                    filterColor="#484848"
-                    checked={!calendarFilter}
-                    css={{ alignSelf: 'center' }}
-                    onClick={() => setCalendarFilter(null)}
-                  />
-                </Box>
-
-                {nonComboResourcesWithColor
-                  .filter((r: any) => r.isBookable)
-                  .map((resource: any) => (
-                    <Box key={resource._id}>
-                      <Tag
-                        checkable
-                        label={resource.label}
-                        filterColor="#484848"
-                        checked={calendarFilter?._id === resource._id}
-                        onClick={() => setCalendarFilter(resource)}
-                      />
-                    </Box>
-                  ))}
-              </Flex>
-              <Flex justify="center" mb="2" px="1" wrap="wrap">
-                {comboResourcesWithColor
-                  .filter((r: any) => r.isBookable)
-                  .map((resource: any) => (
-                    <Box key={resource._id}>
-                      <Tag
-                        checkable
-                        label={resource.label}
-                        filterColor="#484848"
-                        checked={calendarFilter?._id === resource._id}
-                        onClick={() => setCalendarFilter(resource)}
-                      />
-                    </Box>
-                  ))}
-              </Flex>
-            </Box>
-          ) : (
-            <Box
-              className="cal-resource-select"
-              w="100%"
-              css={{ maxWidth: '30rem' }}
-            >
-              {SelectComponent ? (
-                <SelectComponent
-                  aria-label={tc('calendarFilter.pickResource')}
-                  components={AnimatedComponents || undefined}
-                  isClearable
-                  options={allResourcesForSelect}
-                  placeholder={tc('calendarFilter.anyResource')}
-                  styles={calendarSelectStyles(inkForResource)}
-                  value={calendarFilter}
-                  getOptionLabel={(option: any) => option.label}
-                  getOptionValue={(option: any) => option._id}
-                  onChange={(value) => setCalendarFilter(value)}
-                />
-              ) : (
-                <Box h="2.5rem" w="100%" />
-              )}
-            </Box>
-          )}
-        </Center>
       </Box>
 
       {/* The calendar itself spans the whole viewport, gutter to gutter */}

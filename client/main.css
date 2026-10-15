@@ -1260,7 +1260,7 @@ body {
 .cal-full {
   box-sizing: border-box;
   width: 100%;
-  padding: 0 var(--cocoso-gutter) 1.5rem;
+  padding: 0 8px 1.5rem;
 }
 
 /* The grid sits on the season's board colour, the one the start page's
@@ -1272,12 +1272,12 @@ body {
   background-color: var(--cocoso-season-tavla, var(--cocoso-colors-theme-100));
   background-image: repeating-linear-gradient(
       0deg,
-      rgba(30, 79, 27, 0.07) 0 1px,
+      rgba(30, 79, 27, 0.03) 0 1px,
       transparent 1px 7px
     ),
     repeating-linear-gradient(
       90deg,
-      rgba(30, 79, 27, 0.07) 0 1px,
+      rgba(30, 79, 27, 0.03) 0 1px,
       transparent 1px 7px
     );
   border: none;
@@ -1286,14 +1286,21 @@ body {
   overflow: hidden;
 }
 
+/* The weekdays as a line of their own: the display face, normal case, in
+   ink on a light paper band across the top of the board. */
 .rbc-calendar .rbc-month-view .rbc-header,
 .rbc-calendar .rbc-time-header .rbc-header {
-  background-color: transparent;
-  color: var(--cocoso-mylla-soft);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  padding: 0.55rem 0 0.4rem;
+  background-color: rgba(255, 253, 247, 0.45);
+  color: var(--cocoso-colors-theme-700);
+  font-family: var(--cocoso-font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 0.5rem 0 0.4rem;
+  text-transform: none;
+}
+
+.rbc-calendar .rbc-header::first-letter {
   text-transform: uppercase;
 }
 
@@ -1309,7 +1316,7 @@ body {
 .rbc-calendar .rbc-timeslot-group,
 .rbc-calendar .rbc-day-slot .rbc-time-slot {
   /* a warm line that sits in the board's own colour, not the paper's */
-  border-color: rgba(60, 50, 30, 0.14);
+  border-color: rgba(60, 50, 30, 0.09);
 }
 
 .rbc-calendar .rbc-month-row {
