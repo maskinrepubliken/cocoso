@@ -85,6 +85,37 @@ User accounts are global. A person has one account and at most one
 `admin`; role checks live in `imports/api/users/user.roles.js` and take a
 user id only. Location-scoped roles are not implemented yet.
 
+## Addresses and contact details
+
+Two shapes are shared across the data model, each with one module that
+cleans and validates it on the server and one pair of UI components:
+
+| Shape   | Fields                                                  | Module                         | Form / view                                         |
+| ------- | ------------------------------------------------------- | ------------------------------ | --------------------------------------------------- |
+| Address | `street`, `postalCode`, `city`, `coordinates {lat,lng}` | `imports/api/_utils/address.ts` | `forms/AddressFields`, `generic/ContactDetails` (`AddressDetails`) |
+| Contact | `name`, `email`, `phone`, `website`                     | `imports/api/_utils/contact.ts` | `forms/ContactFields`, `generic/ContactDetails`     |
+
+An address is complete with a town and either a street or coordinates (a
+beach has no street address). Contact details count when they hold an
+email or a phone.
+
+| Document               | Address                                   | Contact                                            |
+| ---------------------- | ----------------------------------------- | -------------------------------------------------- |
+| Resource (place)       | **always** (`address`)                    | optional (`contact`)                               |
+| Activity (event)       | from its place; its own only without one  | optional (`contact`), next to the organizers'      |
+| Group (förening)       | –                                         | **always** (`contact`)                             |
+| User                   | –                                         | optional (`publicContact`)                         |
+| Organizer              | –                                         | **always** (`publicContact`)                       |
+
+A place is a bookmark for an address: an activity held at a resource has
+no address of its own, and `activity.place.js` looks the resource's
+address up whenever the event is read (`placeAddress`), so correcting a
+place's address corrects every event held there. An organizer is a
+contributor or anyone named as author or co-organizer of an event
+(`isOrganizer` in `activity.organizers.js`); creating an event, being
+named co-organizer and saving an organizer's profile all require contact
+details.
+
 ## Request flow
 
 1. **SSR.** `server-render`'s `onPageLoad` calls `serverRenderer.js`. It loads
@@ -151,6 +182,10 @@ One-off scripts live in `scripts/migrations/` and are run by hand with
 database to this model: it renamed `hosts` to `site`, removed the `host`
 fields, dropped the platform and SSO collections and rebuilt the
 memberships indexes.
+`2026-10-addresses-and-contacts.mongosh.js` gave every resource a structured
+address (read from its description where possible), turned activities'
+free-text addresses into address objects and gave every group its
+author's contact details.
 
 ## Security model in brief
 
