@@ -139,24 +139,44 @@ export const Chips = styled('div', {
   gap: '0.4rem',
 });
 
+// The small labels at the top of an entry, in the orttag's shape: a paper
+// island with a soft shadow and, when there is an icon, the icon in a
+// small round mark on the left. The accent kind ("Plats", "Förening") has
+// its mark and text in tegel.
 export const Chip = styled('span', {
   alignItems: 'center',
-  border: '1px solid currentColor',
+  backgroundColor: 'var(--cocoso-papper)',
   borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
+  boxShadow: 'var(--cocoso-skugga)',
+  color: 'var(--cocoso-colors-theme-700)',
   display: 'inline-flex',
-  fontSize: '0.78rem',
-  fontWeight: 700,
-  gap: '0.3rem',
-  letterSpacing: '0.04em',
-  padding: '0.15rem 0.65rem',
-  '& svg': { height: '0.9rem', width: '0.9rem' },
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '12px',
+  fontWeight: 600,
+  gap: '6px',
+  height: '26px',
+  lineHeight: 1,
+  padding: '0 10px',
+  whiteSpace: 'nowrap',
+  '&:has(> svg)': { paddingLeft: '4px' },
+  '& > svg': {
+    backgroundColor: 'var(--cocoso-colors-theme-100)',
+    borderRadius: '999px',
+    boxSizing: 'border-box',
+    color: 'var(--cocoso-colors-theme-700)',
+    flex: 'none',
+    height: '18px',
+    padding: '3px',
+    width: '18px',
+  },
   variants: {
     accent: {
       true: {
-        backgroundColor: 'var(--cocoso-tegel)',
-        borderColor: 'var(--cocoso-tegel)',
-        color: 'white',
+        color: 'var(--cocoso-tegel)',
+        '& > svg': {
+          backgroundColor: 'var(--cocoso-tegel)',
+          color: 'white',
+        },
       },
     },
   },
