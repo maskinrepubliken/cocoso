@@ -25,6 +25,7 @@ interface EditableUser {
   contactInfo?: string;
   publicContact?: { email?: string; phone?: string; website?: string };
   avatar?: { src?: string };
+  isOrganizer?: boolean;
 }
 
 // An admin editing an organizer's profile, reached from the pen on the
@@ -137,6 +138,7 @@ export default function EditUserProfile() {
         <Box mb="4">
           <ProfileForm
             key={user._id}
+            contactRequired={Boolean(user.isOrganizer)}
             defaultValues={user}
             onSubmit={handleSubmitInfo}
           />

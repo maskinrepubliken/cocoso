@@ -69,6 +69,7 @@ profile:
       email: E-post
       phone: Telefon
       website: Webbplats
+      required: "Som arrangör måste du ange en e-postadress eller ett telefonnummer."
   message:
     role: Du som {{username}} är en del av denna organisation med rollen {{role}}
     membership: '{{ role }} i {{ host }}'

@@ -3,6 +3,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button, Flex, Heading, Input, Text } from '/imports/ui/core';
+import { isReachable } from '/imports/api/_utils/contact';
+import { message } from '/imports/ui/generic/message';
 
 import FormField from '../../forms/FormField';
 import Quill from '../../forms/Quill';
@@ -21,10 +23,16 @@ interface ProfileFormValues {
 
 interface ProfileFormProps {
   defaultValues: Partial<ProfileFormValues>;
+  // Organizers must give an email or a phone (see _utils/contact.ts).
+  contactRequired?: boolean;
   onSubmit: (data: Partial<ProfileFormValues>) => void;
 }
 
-function ProfileForm({ defaultValues, onSubmit }: ProfileFormProps) {
+function ProfileForm({
+  contactRequired = false,
+  defaultValues,
+  onSubmit,
+}: ProfileFormProps) {
   const { control, formState, handleSubmit, register } = useForm({
     defaultValues,
   });
@@ -35,7 +43,15 @@ function ProfileForm({ defaultValues, onSubmit }: ProfileFormProps) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+      <form
+        onSubmit={handleSubmit((data) => {
+          if (contactRequired && !isReachable(data.publicContact)) {
+            message.error(tc('contact.errors.required'));
+            return;
+          }
+          onSubmit(data);
+        })}
+      >
         <Flex direction="column" gap="6">
           <FormField label={t('profile.form.firstname.label')}>
             <Input {...register('firstName')} placeholder="" />
@@ -67,6 +83,11 @@ function ProfileForm({ defaultValues, onSubmit }: ProfileFormProps) {
           <Text size="sm" css={{ color: 'var(--cocoso-mylla-soft)' }}>
             {t('profile.form.publicContact.helper')}
           </Text>
+          {contactRequired && (
+            <Text size="sm" css={{ fontWeight: 600 }}>
+              {t('profile.form.publicContact.required')}
+            </Text>
+          )}
 
           <FormField label={t('profile.form.publicContact.email')}>
             <Input

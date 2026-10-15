@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
@@ -22,8 +22,15 @@ export default function EditProfileGeneral() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadableAvatarLocal, setUploadableAvatarLocal] = useState(null);
   const [uploadableAvatar, setUploadableAvatar] = useState(null);
+  const [contactRequired, setContactRequired] = useState(false);
   const [t] = useTranslation('accounts');
   const [tc] = useTranslation('common');
+
+  useEffect(() => {
+    call('isCurrentUserOrganizer')
+      .then((required) => setContactRequired(Boolean(required)))
+      .catch(() => setContactRequired(false));
+  }, [currentUser?._id]);
 
   const handleSubmitInfo = async (values) => {
     const formValues = {
@@ -133,6 +140,7 @@ export default function EditProfileGeneral() {
         </Heading>
         <Box mb="4">
           <ProfileForm
+            contactRequired={contactRequired}
             defaultValues={currentUser}
             onSubmit={handleSubmitInfo}
           />

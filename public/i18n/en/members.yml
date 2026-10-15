@@ -69,6 +69,7 @@ profile:
       email: Email
       phone: Phone
       website: Website
+      required: "As an organizer you must give an email address or a phone number."
   message:
     role: You as {{username}} are part of this organisation with the {{role}} role
     membership: '{{ role }} in {{ host }}'

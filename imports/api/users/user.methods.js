@@ -12,7 +12,9 @@ import { getUserMemberships } from '../memberships/membership.helpers';
 import {
   ContactPattern,
   cleanContact,
+  isOrganizer,
 } from '../activities/activity.organizers';
+import { requireContact } from '../_utils/contact';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
 
 const userModel = async (user) => ({
@@ -114,7 +116,10 @@ async function writeProfile(userId, values) {
   const { publicContact, ...rest } = values;
   const set = { ...rest };
   if ('publicContact' in values) {
-    set.publicContact = cleanContact(publicContact);
+    // Anyone may share contact details; organizers must.
+    set.publicContact = (await isOrganizer(userId))
+      ? requireContact(publicContact)
+      : cleanContact(publicContact);
   }
   try {
     await Meteor.users.updateAsync(userId, { $set: set });
@@ -304,7 +309,13 @@ Meteor.methods({
     if (!user) {
       throw new Meteor.Error('not-found', 'No such user');
     }
-    return user;
+    return { ...user, isOrganizer: await isOrganizer(user._id) };
+  },
+
+  // Whether the profile form must insist on an email or a phone.
+  async isCurrentUserOrganizer() {
+    const user = await Meteor.userAsync();
+    return Boolean(user && (await isOrganizer(user._id)));
   },
 
   async saveUserInfoAsAdmin(userId, values) {

@@ -17,6 +17,7 @@ import {
   attachOrganizerProfiles,
   cleanContact,
   isOrganizerOf,
+  requireOrganizerContact,
   resolveOrganizers,
 } from './activity.organizers';
 import {
@@ -535,6 +536,8 @@ Meteor.methods({
     if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
+    // Whoever creates an event organizes it, and organizers can be reached.
+    await requireOrganizerContact([user._id]);
 
     const images = values.images;
 

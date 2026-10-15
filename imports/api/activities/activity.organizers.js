@@ -1,13 +1,51 @@
 import { Meteor } from 'meteor/meteor';
 import { Match, check } from 'meteor/check';
 
-import { isContributorOrAdmin } from '../users/user.roles';
+import { isContributor, isContributorOrAdmin } from '../users/user.roles';
+import { isReachable } from '../_utils/contact';
+import Activities from './activity';
 
 // The people behind an event: the author plus any co-organizers. All of
 // them may manage the event, and their public contact details are shown
 // on its page.
 
 export { ContactPattern, cleanContact } from '../_utils/contact';
+
+// An organizer is a contributor, or anyone named as author or co-organizer
+// of an event. Organizers always have public contact details: an email or
+// a phone visitors can use.
+export const isOrganizer = async (userId) =>
+  Boolean(
+    userId &&
+      ((await isContributor(userId)) ||
+        (await Activities.findOneAsync(
+          { $or: [{ authorId: userId }, { 'organizers.userId': userId }] },
+          { fields: { _id: 1 } }
+        )))
+  );
+
+// Throws unless every one of these users has an email or a phone in their
+// public contact details, naming those who do not.
+export const requireOrganizerContact = async (userIds) => {
+  if (!userIds || userIds.length === 0) {
+    return;
+  }
+  const users = await Meteor.users
+    .find(
+      { _id: { $in: userIds } },
+      { fields: { username: 1, publicContact: 1 } }
+    )
+    .fetchAsync();
+  const missing = users.filter((u) => !isReachable(u.publicContact));
+  if (missing.length > 0) {
+    throw new Meteor.Error(
+      'organizer-contact-required',
+      `Organizers need an email or a phone in their profile: ${missing
+        .map((u) => u.username)
+        .join(', ')}`
+    );
+  }
+};
 
 export const isOrganizerOf = (activity, userId) =>
   Boolean(
@@ -34,9 +72,12 @@ export const resolveOrganizers = async (organizers, authorId) => {
   const users = await Meteor.users
     .find({ _id: { $in: ids } }, { fields: { username: 1 } })
     .fetchAsync();
-  const allowed = await Promise.all(
-    users.map(async (u) => (await isContributorOrAdmin(u._id)) && u)
-  );
+  const allowed = (
+    await Promise.all(
+      users.map(async (u) => (await isContributorOrAdmin(u._id)) && u)
+    )
+  ).filter(Boolean);
+  await requireOrganizerContact(allowed.map((u) => u._id));
   return allowed
     .filter(Boolean)
     .map((u) => ({ userId: u._id, username: u.username }));
