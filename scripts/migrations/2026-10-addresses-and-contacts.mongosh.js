@@ -1,4 +1,4 @@
-/* global db, print */
+/* global db */
 // One-off migration to structured addresses and contact details.
 //
 //   mongosh "mongodb://mongo:27017/cocoso" --file scripts/migrations/2026-10-addresses-and-contacts.mongosh.js
