@@ -9,6 +9,7 @@ import { styled } from '/stitches.config';
 import { Button } from '/imports/ui/core';
 import { publicUrl } from '/imports/api/_utils/shared';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
+import { LightboxTrigger } from '/imports/ui/generic/Lightbox';
 import { getImageUrl, getImageUrlBest } from '/imports/ui/utils/imageHelper';
 
 import BackLink, { BackLinkData } from './BackLink';
@@ -399,10 +400,14 @@ interface PictureProps {
   seed?: string;
 }
 
+// The entry's main picture; inside a LightboxProvider it opens large on a
+// click, marked with the count when the page has more than one.
 const pictureOf = ({ src, alt, seed }: PictureProps) => {
   const url = src ? getImageUrl(src, 'medium') || src : null;
   return url ? (
-    <img alt={alt || ''} src={url} />
+    <LightboxTrigger showCount src={src}>
+      <img alt={alt || ''} src={url} />
+    </LightboxTrigger>
   ) : (
     <PlaceholderImage seed={seed || alt || 'entry'} />
   );
@@ -450,12 +455,13 @@ export function MorePictures({
   return (
     <Gallery>
       {rest.map((src) => (
-        <img
-          key={src}
-          alt={alt || ''}
-          loading="lazy"
-          src={getImageUrl(src, 'medium') || src}
-        />
+        <LightboxTrigger key={src} src={src}>
+          <img
+            alt={alt || ''}
+            loading="lazy"
+            src={getImageUrl(src, 'medium') || src}
+          />
+        </LightboxTrigger>
       ))}
     </Gallery>
   );

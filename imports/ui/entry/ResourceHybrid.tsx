@@ -4,6 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
 import CalendarCheckIcon from 'lucide-react/dist/esm/icons/calendar-check';
 import LayersIcon from 'lucide-react/dist/esm/icons/layers';
+import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
@@ -137,120 +138,124 @@ export default function ResourceHybrid({
   const withContact = hasContact(resource.contact);
 
   return (
-    <EntryPage>
-      <EntryMeta
-        description={plainText(resource.description)}
-        image={images[0]}
-        path={`/resources/${resource._id}`}
-        title={resource.label}
-      />
+    <LightboxProvider alt={resource.label} images={images}>
+      <EntryPage>
+        <EntryMeta
+          description={plainText(resource.description)}
+          image={images[0]}
+          path={`/resources/${resource._id}`}
+          title={resource.label}
+        />
 
-      <EntryTopBar
-        backLink={{ value: '/resources', label: resourcesInMenu?.label }}
-      />
+        <EntryTopBar
+          backLink={{ value: '/resources', label: resourcesInMenu?.label }}
+        />
 
-      <Layout>
-        <CardArea>
-          <EntryHero
-            chips={
-              <>
-                <LocationTag locationId={resource.locationId} />
-                {resource.isCombo && (
-                  <Chip>
-                    <LayersIcon aria-hidden />
-                    {tc('entry.combo')}
-                  </Chip>
-                )}
-                {resource.isBookable && (
-                  <Chip>
-                    <CalendarCheckIcon aria-hidden />
-                    <Trans i18nKey="common:labels.bookable">Bookable</Trans>
-                  </Chip>
-                )}
-              </>
-            }
-            html={resource.description}
-            meta={
-              resource.capacity ? (
-                <span>
-                  <UsersIcon aria-hidden />
-                  {tc('entry.capacity', { count: resource.capacity })}
-                </span>
-              ) : null
-            }
-            picture={
-              <FilledPicture
-                alt={resource.label}
-                seed={resource._id}
-                src={images[0]}
-              />
-            }
-            title={resource.label}
-          />
-        </CardArea>
+        <Layout>
+          <CardArea>
+            <EntryHero
+              chips={
+                <>
+                  <LocationTag locationId={resource.locationId} />
+                  {resource.isCombo && (
+                    <Chip>
+                      <LayersIcon aria-hidden />
+                      {tc('entry.combo')}
+                    </Chip>
+                  )}
+                  {resource.isBookable && (
+                    <Chip>
+                      <CalendarCheckIcon aria-hidden />
+                      <Trans i18nKey="common:labels.bookable">Bookable</Trans>
+                    </Chip>
+                  )}
+                </>
+              }
+              html={resource.description}
+              meta={
+                resource.capacity ? (
+                  <span>
+                    <UsersIcon aria-hidden />
+                    {tc('entry.capacity', { count: resource.capacity })}
+                  </span>
+                ) : null
+              }
+              picture={
+                <FilledPicture
+                  alt={resource.label}
+                  seed={resource._id}
+                  src={images[0]}
+                />
+              }
+              title={resource.label}
+            />
+          </CardArea>
 
-        {hasAddress(resource.address) || withContact ? (
-          <Sidebar>
-            <Panel css={{ overflow: 'hidden' }}>
-              <AddressBlock
-                address={resource.address}
-                contact={resource.contact}
-                edge="top"
-                heading={
-                  <SideTitle>
-                    {tc(
-                      withContact ? 'address.titleWithContact' : 'address.title'
-                    )}
-                  </SideTitle>
-                }
-                label={resource.label}
-              />
-            </Panel>
-          </Sidebar>
-        ) : null}
-
-        <RestArea>
-          {resource.isCombo && resource.resourcesForCombo?.length ? (
-            <EntryColumn>
-              <SectionHead>
-                <h2>{tc('entry.comboParts')}</h2>
-              </SectionHead>
-              <Parts>
-                {resource.resourcesForCombo.map((part) => (
-                  <Link key={part._id} to={`${prefix}/resources/${part._id}`}>
-                    {part.label}
-                  </Link>
-                ))}
-              </Parts>
-            </EntryColumn>
-          ) : null}
-
-          {images.length > 1 && (
-            <EntryColumn>
-              <SectionHead>
-                <h2>{tc('entry.pictures')}</h2>
-              </SectionHead>
-              <MorePictures alt={resource.label} images={images} />
-            </EntryColumn>
-          )}
-
-          {documents && documents[0] && (
-            <EntryColumn>
-              <SectionHead>
-                <h2>
-                  <Trans i18nKey="common:documents.label">Documents</Trans>
-                </h2>
-              </SectionHead>
-              <Panel>
-                <DocumentsField
-                  contextType="resources"
-                  contextId={resource._id}
+          {hasAddress(resource.address) || withContact ? (
+            <Sidebar>
+              <Panel css={{ overflow: 'hidden' }}>
+                <AddressBlock
+                  address={resource.address}
+                  contact={resource.contact}
+                  edge="top"
+                  heading={
+                    <SideTitle>
+                      {tc(
+                        withContact
+                          ? 'address.titleWithContact'
+                          : 'address.title'
+                      )}
+                    </SideTitle>
+                  }
+                  label={resource.label}
                 />
               </Panel>
-            </EntryColumn>
-          )}
-        </RestArea>
-      </Layout>
-    </EntryPage>
+            </Sidebar>
+          ) : null}
+
+          <RestArea>
+            {resource.isCombo && resource.resourcesForCombo?.length ? (
+              <EntryColumn>
+                <SectionHead>
+                  <h2>{tc('entry.comboParts')}</h2>
+                </SectionHead>
+                <Parts>
+                  {resource.resourcesForCombo.map((part) => (
+                    <Link key={part._id} to={`${prefix}/resources/${part._id}`}>
+                      {part.label}
+                    </Link>
+                  ))}
+                </Parts>
+              </EntryColumn>
+            ) : null}
+
+            {images.length > 1 && (
+              <EntryColumn>
+                <SectionHead>
+                  <h2>{tc('entry.pictures')}</h2>
+                </SectionHead>
+                <MorePictures alt={resource.label} images={images} />
+              </EntryColumn>
+            )}
+
+            {documents && documents[0] && (
+              <EntryColumn>
+                <SectionHead>
+                  <h2>
+                    <Trans i18nKey="common:documents.label">Documents</Trans>
+                  </h2>
+                </SectionHead>
+                <Panel>
+                  <DocumentsField
+                    contextType="resources"
+                    contextId={resource._id}
+                  />
+                </Panel>
+              </EntryColumn>
+            )}
+          </RestArea>
+        </Layout>
+      </EntryPage>
+    </LightboxProvider>
   );
 }

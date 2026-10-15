@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import CalendarIcon from 'lucide-react/dist/esm/icons/calendar';
 import UserIcon from 'lucide-react/dist/esm/icons/user';
 import MessageIcon from 'lucide-react/dist/esm/icons/message-circle';
+import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
@@ -94,7 +95,11 @@ const ContactNote = styled('p', {
 
 // A request's page: the card with its kind, what is asked or offered and
 // who to ask, then any extra details, pictures and documents.
-export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps) {
+export default function WorkHybrid({
+  documents,
+  work,
+  siteDoc,
+}: WorkHybridProps) {
   const [tc] = useTranslation('common');
   if (!work) {
     return null;
@@ -111,114 +116,118 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
   const author = work.showAvatar !== false ? work.authorUsername : null;
 
   return (
-    <EntryPage>
-      <EntryMeta
-        description={work.shortDescription}
-        image={images[0]}
-        path={`/@${work.authorUsername}/works/${work._id}`}
-        title={work.title}
-      />
+    <LightboxProvider alt={work.title} images={images}>
+      <EntryPage>
+        <EntryMeta
+          description={work.shortDescription}
+          image={images[0]}
+          path={`/@${work.authorUsername}/works/${work._id}`}
+          title={work.title}
+        />
 
-      <EntryTopBar backLink={{ value: '/works', label: worksInMenu?.label }} />
+        <EntryTopBar
+          backLink={{ value: '/works', label: worksInMenu?.label }}
+        />
 
-      <EntryHero
-        chips={
-          <>
-            {(kind || work.category?.label) && (
-              <Chip accent>
-                {KindIcon && <KindIcon aria-hidden />}
-                {kind
-                  ? tc(`requests.kinds.${kind.key}.name`)
-                  : work.category?.label}
-              </Chip>
-            )}
-            <LocationTag
-              isMunicipalityOnly={(work as any).isMunicipalityOnly}
-              locationId={(work as any).locationId}
-            />
-          </>
-        }
-        html={work.longDescription}
-        meta={
-          <>
-            {work.creationDate && (
-              <span>
-                <CalendarIcon aria-hidden />
-                {dayjs(work.creationDate).format('D MMMM YYYY')}
-              </span>
-            )}
-            {author && (
-              <span>
-                <UserIcon aria-hidden />
-                {tc('entry.postedBy', { name: author })}
-              </span>
-            )}
-          </>
-        }
-        picture={
-          images.length > 0 ? (
-            <FramedPicture alt={work.title} seed={work._id} src={images[0]} />
-          ) : KindIcon ? (
-            <IconPicture color={kind?.color} icon={KindIcon} />
-          ) : (
-            <FramedPicture alt={work.title} seed={work._id} />
-          )
-        }
-        subtitle={work.shortDescription}
-        title={work.title}
-      >
-        {work.contactInfo && (
-          <ContactNote>
-            <MessageIcon aria-hidden />
-            {work.contactInfo}
-          </ContactNote>
-        )}
-        {author && (
-          <Actions>
-            <ProfileLink to={`/@${work.authorUsername}`}>
-              {work.authorAvatar ? (
-                <img alt="" src={work.authorAvatar} />
-              ) : (
-                <UserIcon aria-hidden />
+        <EntryHero
+          chips={
+            <>
+              {(kind || work.category?.label) && (
+                <Chip accent>
+                  {KindIcon && <KindIcon aria-hidden />}
+                  {kind
+                    ? tc(`requests.kinds.${kind.key}.name`)
+                    : work.category?.label}
+                </Chip>
               )}
-              {tc('entry.seeProfile', { name: author })}
-            </ProfileLink>
-          </Actions>
+              <LocationTag
+                isMunicipalityOnly={(work as any).isMunicipalityOnly}
+                locationId={(work as any).locationId}
+              />
+            </>
+          }
+          html={work.longDescription}
+          meta={
+            <>
+              {work.creationDate && (
+                <span>
+                  <CalendarIcon aria-hidden />
+                  {dayjs(work.creationDate).format('D MMMM YYYY')}
+                </span>
+              )}
+              {author && (
+                <span>
+                  <UserIcon aria-hidden />
+                  {tc('entry.postedBy', { name: author })}
+                </span>
+              )}
+            </>
+          }
+          picture={
+            images.length > 0 ? (
+              <FramedPicture alt={work.title} seed={work._id} src={images[0]} />
+            ) : KindIcon ? (
+              <IconPicture color={kind?.color} icon={KindIcon} />
+            ) : (
+              <FramedPicture alt={work.title} seed={work._id} />
+            )
+          }
+          subtitle={work.shortDescription}
+          title={work.title}
+        >
+          {work.contactInfo && (
+            <ContactNote>
+              <MessageIcon aria-hidden />
+              {work.contactInfo}
+            </ContactNote>
+          )}
+          {author && (
+            <Actions>
+              <ProfileLink to={`/@${work.authorUsername}`}>
+                {work.authorAvatar ? (
+                  <img alt="" src={work.authorAvatar} />
+                ) : (
+                  <UserIcon aria-hidden />
+                )}
+                {tc('entry.seeProfile', { name: author })}
+              </ProfileLink>
+            </Actions>
+          )}
+        </EntryHero>
+
+        {work.additionalInfo && work.additionalInfo.length > 2 && (
+          <EntryColumn>
+            <SectionHead>
+              <h2>
+                <Trans i18nKey="common:labels.extra">Extra</Trans>
+              </h2>
+            </SectionHead>
+            <Panel>{work.additionalInfo}</Panel>
+          </EntryColumn>
         )}
-      </EntryHero>
 
-      {work.additionalInfo && work.additionalInfo.length > 2 && (
-        <EntryColumn>
-          <SectionHead>
-            <h2>
-              <Trans i18nKey="common:labels.extra">Extra</Trans>
-            </h2>
-          </SectionHead>
-          <Panel>{work.additionalInfo}</Panel>
-        </EntryColumn>
-      )}
+        {images.length > 1 && (
+          <EntryColumn>
+            <SectionHead>
+              <h2>{tc('entry.pictures')}</h2>
+            </SectionHead>
+            <MorePictures alt={work.title} images={images} />
+          </EntryColumn>
+        )}
 
-      {images.length > 1 && (
-        <EntryColumn>
-          <SectionHead>
-            <h2>{tc('entry.pictures')}</h2>
-          </SectionHead>
-          <MorePictures alt={work.title} images={images} />
-        </EntryColumn>
-      )}
-
-      {documents && documents[0] && (
-        <EntryColumn>
-          <SectionHead>
-            <h2>
-              <Trans i18nKey="common:documents.label">Documents</Trans>
-            </h2>
-          </SectionHead>
-          <Panel>
-            <DocumentsField contextType="works" contextId={work._id} />
-          </Panel>
-        </EntryColumn>
-      )}
-    </EntryPage>
+        {documents && documents[0] && (
+          <EntryColumn>
+            <SectionHead>
+              <h2>
+                <Trans i18nKey="common:documents.label">Documents</Trans>
+              </h2>
+            </SectionHead>
+            <Panel>
+              <DocumentsField contextType="works" contextId={work._id} />
+            </Panel>
+          </EntryColumn>
+        )}
+      </EntryPage>
+    </LightboxProvider>
   );
 }

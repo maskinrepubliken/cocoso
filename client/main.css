@@ -4588,3 +4588,179 @@ body {
     display: none !important;
   }
 }
+
+/* === Lightbox (generic/Lightbox.tsx) === */
+
+/* A picture that opens large: the whole picture is the button */
+.lightbox-trigger {
+  all: unset;
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: zoom-in;
+}
+
+.lightbox-trigger > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lightbox-trigger:focus-visible {
+  outline: 3px solid var(--cocoso-colors-theme-500);
+  outline-offset: -3px;
+}
+
+/* "1 / 4" on the main picture when the page has more */
+.lightbox-count-badge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--cocoso-panel-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-colors-theme-700);
+  font-family: var(--cocoso-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 64px 72px;
+  background: rgba(16, 28, 14, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  touch-action: pan-y;
+  animation: lightbox-in 0.18s ease-out;
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  object-fit: contain;
+  user-select: none;
+  animation: lightbox-image-in 0.2s ease-out;
+}
+
+@keyframes lightbox-image-in {
+  from {
+    opacity: 0;
+    scale: 0.98;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Paper islands on the dark, like the header's buttons */
+.lightbox-button {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-colors-theme-700);
+  cursor: pointer;
+}
+
+.lightbox-button:hover {
+  background: var(--cocoso-colors-theme-100);
+}
+
+.lightbox-button:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 2px;
+}
+
+.lightbox-close {
+  top: 14px;
+  right: 14px;
+}
+
+.lightbox-prev,
+.lightbox-next {
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.lightbox-prev {
+  left: 14px;
+}
+
+.lightbox-next {
+  right: 14px;
+}
+
+.lightbox-counter {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  translate: -50% 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-colors-theme-700);
+  font-family: var(--cocoso-font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .lightbox {
+    padding: 64px 12px 72px;
+  }
+
+  /* on a phone the arrows sit at the bottom beside the count */
+  .lightbox-prev,
+  .lightbox-next {
+    top: auto;
+    bottom: 12px;
+    translate: none;
+  }
+
+  .lightbox-prev {
+    left: 12px;
+  }
+
+  .lightbox-next {
+    right: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox-image {
+    animation: none;
+  }
+}

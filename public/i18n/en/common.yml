@@ -576,6 +576,13 @@ entry:
   contact: Contact
   seeProfile: 'Go to {{ name }}'
 
+lightbox:
+  label: Pictures
+  open: Show the picture larger
+  close: Close
+  previous: Previous picture
+  next: Next picture
+
 listing:
   showingIn: "Showing only {{what}} {{prep}} {{place}}"
   prep:

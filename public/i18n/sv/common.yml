@@ -573,6 +573,13 @@ entry:
   contact: Kontakt
   seeProfile: 'Till {{ name }}'
 
+lightbox:
+  label: Bilder
+  open: Visa bilden större
+  close: Stäng
+  previous: Föregående bild
+  next: Nästa bild
+
 listing:
   showingIn: "Visar bara {{what}} {{prep}} {{place}}"
   prep:

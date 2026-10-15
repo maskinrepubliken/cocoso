@@ -8,6 +8,10 @@ import { useAtomValue } from 'jotai';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
+import {
+  LightboxProvider,
+  LightboxTrigger,
+} from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
 import { Button, Tag } from '/imports/ui/core';
@@ -321,10 +325,14 @@ export default function ActivityHybrid({
         {isPublicActivity && (
           <ImageBox>
             {images.length > 0 ? (
-              <img
-                alt={activity.title}
-                src={getImageUrl(images[0], 'medium') || images[0]}
-              />
+              <LightboxProvider alt={activity.title} images={images}>
+                <LightboxTrigger showCount src={images[0]}>
+                  <img
+                    alt={activity.title}
+                    src={getImageUrl(images[0], 'medium') || images[0]}
+                  />
+                </LightboxTrigger>
+              </LightboxProvider>
             ) : (
               <PlaceholderImage
                 seed={activity._id}
