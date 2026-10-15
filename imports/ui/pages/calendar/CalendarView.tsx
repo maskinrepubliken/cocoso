@@ -162,6 +162,8 @@ export default function CalendarView({
     time: t('bigCal.time'),
     event: t('bigCal.event'),
     noEventsInRange: t('bigCal.noEventsInRange'),
+    // our own, read by DayView
+    noEventsThisDay: t('bigCal.noEventsThisDay'),
     showMore: (total: number) => t('bigCal.showMore', { total }),
   };
 
@@ -208,6 +210,7 @@ export default function CalendarView({
         selectable
         showMultiDayTimes
         step={60}
+        timeslots={1}
         view={shownView}
         views={
           Object.fromEntries(

@@ -1256,7 +1256,7 @@ body {
   }
   .rbc-toolbar .rbc-btn-group:first-child {
     grid-area: nav;
-    justify-self: start;
+    justify-self: end;
   }
   .rbc-toolbar .rbc-btn-group:last-child {
     grid-area: views;
@@ -1307,7 +1307,7 @@ body {
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0;
-  padding: 0.5rem 0 0.4rem;
+  padding: 0.7rem 0 0.6rem;
   text-transform: none;
 }
 
@@ -1394,8 +1394,19 @@ body {
   border-top: 1px solid var(--cocoso-linje);
 }
 
+/* No all-day row in the week: it only ever held multi-day events and
+   pushed the hours down. */
 .rbc-calendar .rbc-time-view .rbc-allday-cell {
-  background-color: transparent;
+  display: none;
+}
+
+.rbc-calendar .rbc-time-header-content > .rbc-row:not(:first-child) {
+  display: none;
+}
+
+/* Hour rows tall enough to read a title and a place */
+.rbc-calendar .rbc-time-view .rbc-timeslot-group {
+  min-height: 64px;
 }
 
 .rbc-calendar .rbc-time-gutter,
@@ -1492,6 +1503,10 @@ body {
   line-height: 1.3;
 }
 
+.rbc-calendar .rbc-day-slot .rbc-event {
+  padding: 4px 8px 4px 7px;
+}
+
 /* On a phone the month grid shows each event as a coloured bar: enough to
    see where the busy days are, the list carries the titles. */
 .rbc-calendar.is-narrow .rbc-month-row {
@@ -1547,8 +1562,25 @@ body {
   vertical-align: top;
 }
 
-.rbc-calendar .rbc-agenda-view table.rbc-agenda-table tbody > tr + tr {
+/* The events on paper, like the day view; the date stays on the floor */
+.rbc-calendar
+  .rbc-agenda-view
+  table.rbc-agenda-table
+  tbody
+  > tr
+  > td.rbc-agenda-time-cell,
+.rbc-calendar
+  .rbc-agenda-view
+  table.rbc-agenda-table
+  tbody
+  > tr
+  > td.rbc-agenda-event-cell {
+  background-color: var(--cocoso-papper);
   border-top: 1px solid var(--cocoso-linje);
+}
+
+.rbc-calendar .rbc-agenda-view table.rbc-agenda-table tbody > tr + tr {
+  border-top: none;
 }
 
 .rbc-calendar .rbc-agenda-view table.rbc-agenda-table tbody > tr > td + td {
@@ -1597,7 +1629,18 @@ body {
   width: 9px;
 }
 
-.rbc-calendar .rbc-agenda-view tbody > tr:hover > td {
+/* Hover lights the event's own cells only: resting on the date, which
+   spans the day's rows, must not light the first event. */
+.rbc-calendar
+  .rbc-agenda-view
+  tbody
+  > tr:has(> .rbc-agenda-time-cell:hover, > .rbc-agenda-event-cell:hover)
+  > td.rbc-agenda-time-cell,
+.rbc-calendar
+  .rbc-agenda-view
+  tbody
+  > tr:has(> .rbc-agenda-time-cell:hover, > .rbc-agenda-event-cell:hover)
+  > td.rbc-agenda-event-cell {
   background-color: var(--cocoso-colors-theme-50);
 }
 

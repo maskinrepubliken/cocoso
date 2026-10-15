@@ -22,7 +22,9 @@ interface DayViewProps {
   date: Date;
   events: DayEvent[];
   onSelectEvent?: (event: DayEvent, e: React.SyntheticEvent) => void;
-  localizer: { messages: { noEventsInRange: string } };
+  localizer: {
+    messages: { noEventsInRange: string; noEventsThisDay?: string };
+  };
 }
 
 function DayView({ date, events, onSelectEvent, localizer }: DayViewProps) {
@@ -31,12 +33,18 @@ function DayView({ date, events, onSelectEvent, localizer }: DayViewProps) {
   const todays = events
     .filter(
       (event) =>
-        dayjs(event.start).isBefore(dayEnd) && dayjs(event.end).isAfter(dayStart)
+        dayjs(event.start).isBefore(dayEnd) &&
+        dayjs(event.end).isAfter(dayStart)
     )
     .sort((a, b) => a.start.getTime() - b.start.getTime());
 
   if (todays.length === 0) {
-    return <p className="cal-day-empty">{localizer.messages.noEventsInRange}</p>;
+    return (
+      <p className="cal-day-empty">
+        {localizer.messages.noEventsThisDay ||
+          localizer.messages.noEventsInRange}
+      </p>
+    );
   }
 
   return (
@@ -44,7 +52,8 @@ function DayView({ date, events, onSelectEvent, localizer }: DayViewProps) {
       {todays.map((event, index) => {
         const allDay =
           event.isMultipleDay ||
-          (dayjs(event.start).isBefore(dayStart) && dayjs(event.end).isAfter(dayEnd));
+          (dayjs(event.start).isBefore(dayStart) &&
+            dayjs(event.end).isAfter(dayEnd));
         return (
           <li key={`${event.activityId || event._id}-${index}`}>
             <button
@@ -56,7 +65,9 @@ function DayView({ date, events, onSelectEvent, localizer }: DayViewProps) {
               <span className="cal-day-time">
                 {allDay
                   ? '•'
-                  : `${dayjs(event.start).format('HH:mm')}–${dayjs(event.end).format('HH:mm')}`}
+                  : `${dayjs(event.start).format('HH:mm')}–${dayjs(
+                      event.end
+                    ).format('HH:mm')}`}
               </span>
               <span className="cal-day-what">
                 <strong>

@@ -14,6 +14,7 @@ bigCal:
   today: Idag
   agenda: Lista
   noEventsInRange: Inget inplanerat under den här perioden.
+  noEventsThisDay: Inget planerat detta datum.
   showMore: '{{ total }} mer'
 
 datePicker:
