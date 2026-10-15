@@ -48,6 +48,12 @@ const Hero = styled('header', {
 
 const Band = styled('div', {
   alignItems: 'center',
+  // A filling picture (a place) covers the whole band, edge to edge, at
+  // every width: the band has no padding and the picture no frame.
+  '&:has(> [data-filled])': {
+    alignItems: 'stretch',
+    padding: '0 !important',
+  },
   // A framed picture on a narrow screen fills the top of the card instead
   // of sitting in a frame on a green band: one card, not a card in a card.
   [NARROW]: {
@@ -116,6 +122,19 @@ const Framed = styled('div', {
     height: '100%',
     objectFit: 'cover',
     overflow: 'hidden',
+    width: '100%',
+  },
+});
+
+const Filled = styled('div', {
+  aspectRatio: '16 / 10',
+  overflow: 'hidden',
+  width: '100%',
+  [WIDE]: { aspectRatio: 'auto', minHeight: '100%' },
+  '& > *': {
+    display: 'block',
+    height: '100%',
+    objectFit: 'cover',
     width: '100%',
   },
 });
@@ -395,6 +414,11 @@ export function RoundPicture(props: PictureProps) {
 
 export function FramedPicture(props: PictureProps) {
   return <Framed data-framed="">{pictureOf(props)}</Framed>;
+}
+
+// The picture filling the whole picture area of the card, no frame
+export function FilledPicture(props: PictureProps) {
+  return <Filled data-filled="">{pictureOf(props)}</Filled>;
 }
 
 export function IconPicture({

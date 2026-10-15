@@ -22,7 +22,7 @@ import EntryHero, {
   EntryMeta,
   EntryPage,
   EntryTopBar,
-  FramedPicture,
+  FilledPicture,
   MorePictures,
   Panel,
   SectionHead,
@@ -179,7 +179,7 @@ export default function ResourceHybrid({
               ) : null
             }
             picture={
-              <FramedPicture
+              <FilledPicture
                 alt={resource.label}
                 seed={resource._id}
                 src={images[0]}
