@@ -588,6 +588,7 @@ listing:
     works: förfrågningarna
 address:
   title: "Adress"
+  titleWithContact: "Adress och kontakt"
   showOnMap: "Visa på karta"
   map: "Karta"
   mapUnavailable: "Kartan kunde inte laddas."

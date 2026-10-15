@@ -20,11 +20,9 @@ import {
   requireOrganizerContact,
   resolveOrganizers,
 } from './activity.organizers';
-import {
-  attachPlaceAddress,
-  ownActivityAddress,
-} from './activity.place';
+import { attachPlaceAddress, ownActivityAddress } from './activity.place';
 import { formatAddress } from '../_utils/address';
+import { withCoordinates } from '../_utils/geocode';
 import {
   compareDatesForSortActivities,
   compareDatesForSortActivitiesReverse,
@@ -561,7 +559,7 @@ Meteor.methods({
     const organizers = await resolveOrganizers(values.organizers, user._id);
     const contact = cleanContact(values.contact);
     // Held at a place: the place has the address. Otherwise its own, if any.
-    const address = ownActivityAddress(values);
+    const address = await withCoordinates(ownActivityAddress(values));
     delete values.address;
 
     try {
@@ -631,14 +629,16 @@ Meteor.methods({
     const unset = {};
     // The event's own address only counts when it is not held at a place.
     if ('address' in safeValues || 'resourceId' in safeValues) {
-      const address = ownActivityAddress({
-        resourceId:
-          'resourceId' in safeValues
-            ? safeValues.resourceId
-            : theActivity.resourceId,
-        address:
-          'address' in safeValues ? safeValues.address : theActivity.address,
-      });
+      const address = await withCoordinates(
+        ownActivityAddress({
+          resourceId:
+            'resourceId' in safeValues
+              ? safeValues.resourceId
+              : theActivity.resourceId,
+          address:
+            'address' in safeValues ? safeValues.address : theActivity.address,
+        })
+      );
       delete safeValues.address;
       if (address) {
         safeValues.address = address;

@@ -18,6 +18,7 @@ import BackLink, { BackLinkData } from './BackLink';
 // what the entry is, then sections below in a column as wide as the card.
 
 export const WIDE = '@media (min-width: 760px)';
+const NARROW = '@media (max-width: 759px)';
 
 export const EntryPage = styled('div', {
   boxSizing: 'border-box',
@@ -47,6 +48,19 @@ const Hero = styled('header', {
 
 const Band = styled('div', {
   alignItems: 'center',
+  // A framed picture on a narrow screen fills the top of the card instead
+  // of sitting in a frame on a green band: one card, not a card in a card.
+  [NARROW]: {
+    '&:has(> [data-framed])': { padding: 0 },
+    '& > [data-framed]': {
+      aspectRatio: '16 / 10',
+      borderRadius: 0,
+      boxShadow: 'none',
+      maxWidth: 'none',
+      padding: 0,
+    },
+    '& > [data-framed] > *': { borderRadius: 0 },
+  },
   background:
     'linear-gradient(160deg, var(--cocoso-colors-theme-100), var(--cocoso-colors-theme-200))',
   display: 'flex',
@@ -360,7 +374,7 @@ export function RoundPicture(props: PictureProps) {
 }
 
 export function FramedPicture(props: PictureProps) {
-  return <Framed>{pictureOf(props)}</Framed>;
+  return <Framed data-framed="">{pictureOf(props)}</Framed>;
 }
 
 export function IconPicture({

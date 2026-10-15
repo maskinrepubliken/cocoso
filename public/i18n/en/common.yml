@@ -591,6 +591,7 @@ listing:
     works: the requests
 address:
   title: "Address"
+  titleWithContact: "Address and contact"
   showOnMap: "Show on map"
   map: "Map"
   mapUnavailable: "The map could not be loaded."

@@ -9,6 +9,8 @@ import {
   parseCoordinates,
 } from '/imports/api/_utils/address';
 
+import PlaceMap from '/imports/ui/generic/PlaceMap';
+
 import FormField from './FormField';
 
 export const emptyAddress: Partial<Address> = {
@@ -114,6 +116,9 @@ export default function AddressFields({
         <Text color="red.600" fontSize="sm">
           {tc('address.form.coordinates.invalid')}
         </Text>
+      )}
+      {address.coordinates && (
+        <PlaceMap coordinates={address.coordinates} height={180} />
       )}
     </div>
   );

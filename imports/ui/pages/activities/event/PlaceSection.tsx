@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { styled } from '/stitches.config';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
-import { AddressDetails } from '/imports/ui/generic/ContactDetails';
+import AddressBlock from '/imports/ui/generic/AddressBlock';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 
 import Section, { Muted, Strong } from './Section';
@@ -22,7 +22,7 @@ const ExternalLink = styled('a', {
   marginTop: '0.625rem',
 });
 
-const AddressBox = styled('div', { marginTop: '0.5rem' });
+const AddressBox = styled('div', { marginTop: '0.875rem' });
 
 interface PlaceSectionProps {
   activity: {
@@ -68,7 +68,11 @@ export default function PlaceSection({
       {locationName && <Muted>{locationName}</Muted>}
       {withAddress ? (
         <AddressBox>
-          <AddressDetails address={placeAddress} />
+          <AddressBlock
+            address={placeAddress}
+            edge="sides"
+            label={resource || place}
+          />
         </AddressBox>
       ) : (
         <ExternalLink

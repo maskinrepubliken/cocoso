@@ -14,7 +14,7 @@ import FormField from '/imports/ui/forms/FormField';
 import LocationSelect from '/imports/ui/forms/LocationSelect';
 import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
 import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
-import { AddressDetails } from '/imports/ui/generic/ContactDetails';
+import AddressBlock from '/imports/ui/generic/AddressBlock';
 import {
   Address,
   hasAddress,
@@ -442,9 +442,11 @@ export default function PublicActivityForm({
         />
         {state.selectedResource && selectedResourceFull?.address && (
           <Box mt="3">
-            <AddressDetails
+            <AddressBlock
               withoutMapLink
               address={selectedResourceFull.address}
+              label={selectedResourceFull.label}
+              mapHeight={180}
             />
           </Box>
         )}
