@@ -1,7 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { styled } from '/stitches.config';
-import { hasAddress, type Address } from '/imports/api/_utils/address';
+import {
+  hasAddress,
+  mapLinks,
+  type Address,
+} from '/imports/api/_utils/address';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
 
 import { AddressDetails, ContactDetails } from './ContactDetails';
@@ -58,6 +63,27 @@ const Root = styled('div', {
   },
 });
 
+// The map services, small, in the bottom right corner of the card.
+const MapLinks = styled('ul', {
+  display: 'flex',
+  flexWrap: 'wrap',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.78rem',
+  gap: '0.25rem 0.875rem',
+  gridColumn: '1 / -1',
+  justifyContent: 'flex-end',
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+  '& a': {
+    color: 'var(--cocoso-colors-theme-700)',
+    fontWeight: 600,
+    textDecoration: 'none',
+    whiteSpace: 'nowrap',
+  },
+  '& a:hover': { textDecoration: 'underline' },
+});
+
 const Details = styled('div', {
   display: 'flex',
   flexDirection: 'column',
@@ -73,6 +99,7 @@ interface AddressBlockProps {
   mapHeight?: number;
   // Let the map reach the panel's edges on narrow screens.
   edge?: 'top' | 'sides' | 'none';
+  // No links to map services, e.g. in a form's preview.
   withoutMapLink?: boolean;
 }
 
@@ -85,6 +112,7 @@ export default function AddressBlock({
   edge = 'none',
   withoutMapLink,
 }: AddressBlockProps) {
+  const [tc] = useTranslation('common');
   const withAddress = hasAddress(address);
   const withContact = hasContact(contact);
   if (!withAddress && !withContact) {
@@ -106,10 +134,21 @@ export default function AddressBlock({
       )}
       <Details>
         {withAddress && (
-          <AddressDetails address={address} withoutMapLink={withoutMapLink} />
+          <AddressDetails address={address} />
         )}
         {withContact && <ContactDetails contact={contact} />}
       </Details>
+      {withAddress && !withoutMapLink && (
+        <MapLinks aria-label={tc('address.openIn')}>
+          {mapLinks(address, label).map((link) => (
+            <li key={link.service}>
+              <a href={link.href} rel="noopener noreferrer" target="_blank">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </MapLinks>
+      )}
     </Root>
   );
 }

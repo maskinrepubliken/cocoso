@@ -589,7 +589,7 @@ listing:
 address:
   title: "Adress"
   titleWithContact: "Adress och kontakt"
-  showOnMap: "Visa på karta"
+  openIn: "Öppna i en karttjänst"
   map: "Karta"
   mapUnavailable: "Kartan kunde inte laddas."
   gestures:

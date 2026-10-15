@@ -150,18 +150,64 @@ export const addressLines = (address?: Partial<Address> | null): string[] => {
 export const formatAddress = (address?: Partial<Address> | null): string =>
   addressLines(address).join(', ');
 
-// A link that shows the address on OpenStreetMap: the exact point when
-// there is one, otherwise a search for the written address.
-export const mapUrl = (address?: Partial<Address> | null): string | null => {
+export interface MapLink {
+  service: 'openstreetmap' | 'google' | 'apple';
+  label: string;
+  href: string;
+}
+
+// The address in three map services: the exact point when there is one,
+// otherwise a search for the written address. `name` (a place's name) is
+// shown on the pin where the service supports it.
+export const mapLinks = (
+  address?: Partial<Address> | null,
+  name?: string
+): MapLink[] => {
   if (!address) {
-    return null;
-  }
-  if (validCoordinates(address.coordinates)) {
-    const { lat, lng } = address.coordinates;
-    return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`;
+    return [];
   }
   const text = formatAddress(address);
-  return text
-    ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(text)}`
-    : null;
+  const q = encodeURIComponent([name, text].filter(Boolean).join(', '));
+  if (validCoordinates(address.coordinates)) {
+    const { lat, lng } = address.coordinates;
+    return [
+      {
+        service: 'openstreetmap',
+        label: 'OpenStreetMap',
+        href: `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`,
+      },
+      {
+        service: 'google',
+        label: 'Google Maps',
+        href: `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`,
+      },
+      {
+        service: 'apple',
+        label: 'Apple Maps',
+        href: `https://maps.apple.com/?ll=${lat},${lng}&q=${q || 'Pin'}`,
+      },
+    ];
+  }
+  if (!text) {
+    return [];
+  }
+  // Without a point the name helps the services find the place itself.
+  const where = q;
+  return [
+    {
+      service: 'openstreetmap',
+      label: 'OpenStreetMap',
+      href: `https://www.openstreetmap.org/search?query=${where}`,
+    },
+    {
+      service: 'google',
+      label: 'Google Maps',
+      href: `https://www.google.com/maps/search/?api=1&query=${where}`,
+    },
+    {
+      service: 'apple',
+      label: 'Apple Maps',
+      href: `https://maps.apple.com/?q=${where}`,
+    },
+  ];
 };

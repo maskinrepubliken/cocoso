@@ -592,7 +592,7 @@ listing:
 address:
   title: "Address"
   titleWithContact: "Address and contact"
-  showOnMap: "Show on map"
+  openIn: "Open in a map service"
   map: "Map"
   mapUnavailable: "The map could not be loaded."
   gestures:

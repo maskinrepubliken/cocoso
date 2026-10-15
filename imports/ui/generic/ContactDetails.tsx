@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import MailIcon from 'lucide-react/dist/esm/icons/mail';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
@@ -17,7 +16,6 @@ import {
   Address,
   addressLines,
   hasAddress,
-  mapUrl,
 } from '/imports/api/_utils/address';
 
 // The read-only side of imports/ui/forms/ContactFields and AddressFields:
@@ -93,18 +91,15 @@ export function ContactDetails({ contact, subject }: ContactDetailsProps) {
 
 interface AddressDetailsProps {
   address?: Partial<Address> | null;
-  // Shown without a link to the map, e.g. inside a card.
-  withoutMapLink?: boolean;
 }
 
-// The address as on an envelope, and a link to it on the map.
-export function AddressDetails({ address, withoutMapLink }: AddressDetailsProps) {
-  const [tc] = useTranslation('common');
+// The address as on an envelope. Links to map services are added by
+// AddressBlock (MapLinks).
+export function AddressDetails({ address }: AddressDetailsProps) {
   if (!address || !hasAddress(address)) {
     return null;
   }
   const lines = addressLines(address);
-  const href = withoutMapLink ? null : mapUrl(address);
   return (
     <DetailList>
       <li>
@@ -116,14 +111,6 @@ export function AddressDetails({ address, withoutMapLink }: AddressDetailsProps)
               {line}
             </React.Fragment>
           ))}
-          {href && (
-            <>
-              {lines.length > 0 && <br />}
-              <a href={href} rel="noopener noreferrer" target="_blank">
-                {tc('address.showOnMap')}
-              </a>
-            </>
-          )}
         </span>
       </li>
     </DetailList>
