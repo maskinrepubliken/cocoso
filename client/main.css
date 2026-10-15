@@ -1540,6 +1540,9 @@ body {
 
 .rbc-calendar .rbc-agenda-view table.rbc-agenda-table {
   border: none;
+  /* separate cells, so each event can be its own rounded card */
+  border-collapse: separate;
+  border-spacing: 0 6px;
   font-family: var(--cocoso-font-ui);
 }
 
@@ -1562,13 +1565,8 @@ body {
   vertical-align: top;
 }
 
-/* The events on paper, like the day view; the date stays on the floor */
-.rbc-calendar
-  .rbc-agenda-view
-  table.rbc-agenda-table
-  tbody
-  > tr
-  > td.rbc-agenda-time-cell,
+/* Each event a rounded paper card, like the day view's rows; date and
+   time stay on the floor */
 .rbc-calendar
   .rbc-agenda-view
   table.rbc-agenda-table
@@ -1576,7 +1574,9 @@ body {
   > tr
   > td.rbc-agenda-event-cell {
   background-color: var(--cocoso-papper);
-  border-top: 1px solid var(--cocoso-linje);
+  border-radius: var(--cocoso-radius-falt);
+  box-shadow: var(--cocoso-skugga-kort);
+  padding: 0.7rem 0.9rem;
 }
 
 .rbc-calendar .rbc-agenda-view table.rbc-agenda-table tbody > tr + tr {
@@ -1604,7 +1604,12 @@ body {
   color: var(--cocoso-mylla-soft);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
+  padding-top: 0.75rem;
   white-space: nowrap;
+}
+
+.rbc-calendar .rbc-agenda-date-cell {
+  padding-top: 0.75rem;
 }
 
 .rbc-calendar .rbc-agenda-event-cell {
@@ -1631,11 +1636,6 @@ body {
 
 /* Hover lights the event's own cells only: resting on the date, which
    spans the day's rows, must not light the first event. */
-.rbc-calendar
-  .rbc-agenda-view
-  tbody
-  > tr:has(> .rbc-agenda-time-cell:hover, > .rbc-agenda-event-cell:hover)
-  > td.rbc-agenda-time-cell,
 .rbc-calendar
   .rbc-agenda-view
   tbody
