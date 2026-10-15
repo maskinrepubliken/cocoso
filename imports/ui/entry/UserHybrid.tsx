@@ -13,7 +13,8 @@ import { Alert, Box, Center, Flex, Text } from '/imports/ui/core';
 import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import { displayName } from '/imports/ui/listing/UsersHybrid';
-import Tabs from '/imports/ui/core/Tabs';
+import Notice from '/imports/ui/generic/Notice';
+import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { currentUserAtom, locationsAtom, roleAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
 
@@ -142,7 +143,9 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
   if (upcoming.length === 0 && past.length === 0 && archived.length === 0) {
     return (
       <Center p="4" mb="12">
-        <Text color="gray.600">{tc('people.noEvents', { username: name })}</Text>
+        <Text color="gray.600">
+          {tc('people.noEvents', { username: name })}
+        </Text>
       </Center>
     );
   }
@@ -151,46 +154,45 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
     locations.find((l) => l._id === item.locationId)?.name ||
     (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
 
-  const tabs = [
-    {
-      key: 'past',
-      title: tc('labels.past'),
-      onClick: () => setView('past'),
-    },
-    {
-      key: 'upcoming',
-      title: tc('labels.upcoming'),
-      onClick: () => setView('upcoming'),
-    },
+  // The same switch as the events listing: Tidigare, Kommande, and for
+  // the person themself and admins, Arkiverade.
+  const views: { key: EventsView; label: string }[] = [
+    { key: 'past', label: tc('labels.past') },
+    { key: 'upcoming', label: tc('labels.upcoming') },
     ...(archived.length > 0
-      ? [
-          {
-            key: 'archived',
-            title: tc('labels.archived'),
-            onClick: () => setView('archived'),
-          },
-        ]
+      ? [{ key: 'archived' as EventsView, label: tc('labels.archived') }]
       : []),
   ];
 
   const items =
     view === 'past' ? past : view === 'archived' ? archived : upcoming;
   const showPast = view !== 'upcoming';
-  const tabIndex = Math.max(
-    0,
-    tabs.findIndex((tab) => tab.key === view)
-  );
 
   return (
     <EntryColumn>
       <SectionHead>
-        <h2>{tc('people.events')}</h2>
-        <Tabs tabs={tabs} index={tabIndex} />
+        <h2 className="entry-section-title">
+          <ThreeDIcon name={sectionIcons.activities} size={40} />
+          {tc('people.events')}
+        </h2>
+        <div className="seg" role="group">
+          {views.map((option) => (
+            <button
+              key={option.key}
+              type="button"
+              className={`seg-button ${view === option.key ? 'is-active' : ''}`}
+              aria-pressed={view === option.key}
+              onClick={() => setView(option.key)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </SectionHead>
 
       {view === 'archived' && (
-        <Center mb="4" px="2">
-          <Alert message={tc('event.archived.onlyYou')} type="info" />
+        <Center mb="4">
+          <Notice>{tc('event.archived.onlyYou')}</Notice>
         </Center>
       )}
 

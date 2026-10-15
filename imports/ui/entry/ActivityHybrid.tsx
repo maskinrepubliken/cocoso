@@ -9,7 +9,8 @@ import DOMPurify from 'isomorphic-dompurify';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 
 import { styled } from '/stitches.config';
-import { Button, Tag, Alert } from '/imports/ui/core';
+import { Button, Tag } from '/imports/ui/core';
+import Notice from '/imports/ui/generic/Notice';
 import type { Site } from '/imports/ui/types';
 import { publicUrl } from '/imports/api/_utils/shared';
 import {
@@ -339,7 +340,7 @@ export default function ActivityHybrid({
             </Tags>
           )}
           {activity.isArchived && (
-            <Alert message={tc('event.archived.onlyYou')} type="info" />
+            <Notice>{tc('event.archived.onlyYou')}</Notice>
           )}
           {activity.longDescription && (
             <Description className="text-content">

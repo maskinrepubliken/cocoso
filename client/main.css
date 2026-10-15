@@ -3293,7 +3293,11 @@ body {
   margin: 0;
 }
 
-.page-heading-place {
+/* The site's notice bar (see also generic/Notice.tsx): a light green,
+   see-through pill with one line of text. The place notice is the link
+   kind with a cross; .site-notice the plain kind. */
+.page-heading-place,
+.site-notice {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -3314,6 +3318,25 @@ body {
   text-align: left;
   text-decoration: none;
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.site-notice {
+  margin: 0;
+  padding: 6px 14px;
+}
+
+/* A section heading on an entry page with the section's 3D icon */
+.entry-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.entry-section-title .threed-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 4px 6px rgba(30, 50, 25, 0.18));
 }
 
 .page-heading-place:hover {
