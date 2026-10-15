@@ -560,6 +560,7 @@ search:
 # The entry pages (förening, plats, förfrågan); in common because SSR only
 # loads common
 entry:
+  whereAndContact: "Adress och kontakt"
   group: Förening
   place: Plats
   meetings: Träffar

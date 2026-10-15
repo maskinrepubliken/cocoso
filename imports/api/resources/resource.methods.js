@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { locationSelector } from '../_utils/shared';
+import { requireAddress } from '../_utils/address';
+import { cleanContact } from '../_utils/contact';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
@@ -42,6 +44,7 @@ Meteor.methods({
       {
         fields: {
           _id: 1,
+          address: 1,
           label: 1,
           isBookable: 1,
           isCombo: 1,
@@ -103,9 +106,14 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     await validateLabel(values.label);
+    const address = requireAddress(values.address);
+    const contact = cleanContact(values.contact);
+    const { contact: _contact, ...rest } = values;
     try {
       const newResourceId = await Resources.insertAsync({
-        ...values,
+        ...rest,
+        address,
+        ...(contact ? { contact } : {}),
         locationId: values.locationId || undefined,
         userId: user._id,
         createdBy: user.username,
@@ -137,17 +145,33 @@ Meteor.methods({
       throw new Meteor.Error('not-found', 'Resource not found');
     }
 
-    const { _id, userId, createdBy, locationId, ...safeValues } = values;
+    const address = requireAddress(values.address);
+    const contact = cleanContact(values.contact);
+    const {
+      _id,
+      userId,
+      createdBy,
+      locationId,
+      contact: _contact,
+      ...safeValues
+    } = values;
+
+    const unset = {
+      ...(contact ? {} : { contact: 1 }),
+      ...(locationId ? {} : { locationId: 1 }),
+    };
 
     try {
       await Resources.updateAsync(resourceId, {
         $set: {
           ...safeValues,
+          address,
+          ...(contact ? { contact } : {}),
           ...(locationId ? { locationId } : {}),
           updatedBy: user.username,
           updatedAt: new Date(),
         },
-        ...(locationId ? {} : { $unset: { locationId: 1 } }),
+        ...(Object.keys(unset).length ? { $unset: unset } : {}),
       });
       // Activities held at this resource follow it.
       await Activities.updateAsync(

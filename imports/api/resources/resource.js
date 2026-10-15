@@ -13,6 +13,12 @@ Resources.schema = new SimpleSchema({
 
   label: { type: String },
   description: { type: String, optional: true },
+  // Where the place is. Every place has one: a resource is a bookmark for
+  // an address, and activities held here show it. The methods also insist
+  // on a complete one (requireAddress in _utils/address.ts).
+  address: { type: new SimpleSchema(Schemas.Address) },
+  // Who to ask about the place, e.g. bookings. Optional.
+  contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
   documents: { type: Array, optional: true, defaultValue: [] },
   'documents.$': {
     type: new SimpleSchema({
@@ -50,6 +56,8 @@ Resources.attachSchema(Resources.schema);
 
 Resources.publicFields = {
   _id: 1,
+  address: 1,
+  contact: 1,
   description: 1,
   images: 1,
   isBookable: 1,

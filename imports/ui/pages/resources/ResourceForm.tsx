@@ -9,6 +9,10 @@ import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
 import LocationSelect from '/imports/ui/forms/LocationSelect';
+import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
+import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
+import { Address, isCompleteAddress } from '/imports/api/_utils/address';
+import { Contact } from '/imports/api/_utils/contact';
 import { call } from '/imports/api/_utils/shared';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
@@ -23,6 +27,8 @@ interface ResourceFormValues {
 
 interface ResourceData extends ResourceFormValues {
   images?: string[];
+  address?: Partial<Address> | null;
+  contact?: Contact | null;
   locationId?: string | null;
   isCombo?: boolean;
   resourcesForCombo?: ResourceOption[];
@@ -52,6 +58,8 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
     formValues: resource || emptyFormValues,
     isBookable: resource ? resource.isBookable : true,
     isCombo: resource ? resource.isCombo : false,
+    address: resource?.address || emptyAddress,
+    contact: resource?.contact || emptyContact,
     locationId: resource?.locationId || null,
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
     resources: [],
@@ -87,6 +95,11 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
   }, [loaders?.isCreating]);
 
   const handleSubmit = (formValues: ResourceFormValues) => {
+    // A place is where something happens: no saving it without an address.
+    if (!isCompleteAddress(state.address)) {
+      message.error(tc('address.errors.required'));
+      return;
+    }
     setState((prevState) => ({
       ...prevState,
       formValues,
@@ -100,6 +113,8 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
   const parseResource = async (images: string[]) => {
     const newResource: ResourceData = {
       ...state.formValues,
+      address: state.address,
+      contact: state.contact,
       images,
       isBookable: state.isBookable,
       isCombo: state.isCombo,
@@ -148,6 +163,36 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
           ping={loaders?.isUploadingImages}
           preExistingImages={resource ? resource.images : []}
           onUploadedImages={handleUploadedImages}
+        />
+      </FormField>
+
+      <FormField
+        helper={t('form.address.helper')}
+        label={tc('address.title')}
+        mt="6"
+        mb="12"
+        required
+      >
+        <AddressFields
+          required
+          value={state.address}
+          onChange={(address) =>
+            setState((prevState: any) => ({ ...prevState, address }))
+          }
+        />
+      </FormField>
+
+      <FormField
+        helper={t('form.contact.helper')}
+        label={tc('contact.title')}
+        mt="6"
+        mb="12"
+      >
+        <ContactFields
+          value={state.contact}
+          onChange={(contact) =>
+            setState((prevState: any) => ({ ...prevState, contact }))
+          }
         />
       </FormField>
 

@@ -8,6 +8,10 @@ messages:
   comborequires:
 
 form:
+  address:
+    helper: "Var platsen ligger. Varje plats behöver en ort och en gatuadress eller koordinater."
+  contact:
+    helper: "Valfritt. Vem man frågar om platsen, till exempel om bokning."
   holder: skriv
   bookable:
     label: Bokningsbart

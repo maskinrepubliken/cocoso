@@ -563,6 +563,7 @@ search:
 # The entry pages (group, place, request); in common because SSR only
 # loads common
 entry:
+  whereAndContact: "Address and contact"
   group: Association
   place: Place
   meetings: Meetings

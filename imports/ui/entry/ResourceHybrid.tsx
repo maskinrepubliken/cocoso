@@ -10,6 +10,9 @@ import { styled } from '/stitches.config';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
 import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
 import { useLocationName, useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { AddressDetails, ContactDetails } from '/imports/ui/generic/ContactDetails';
+import type { Address } from '/imports/api/_utils/address';
+import { hasContact, type Contact } from '/imports/api/_utils/contact';
 
 import EntryHero, {
   Chip,
@@ -27,6 +30,8 @@ import EntryHero, {
 interface Resource {
   _id: string;
   label?: string;
+  address?: Partial<Address> | null;
+  contact?: Contact | null;
   description?: string;
   imageUrl?: string;
   images?: string[];
@@ -59,6 +64,13 @@ const Parts = styled('div', {
     backgroundColor: 'var(--cocoso-colors-theme-800)',
     color: 'white',
   },
+});
+
+// Address and contact side by side when there is room.
+const Facts = styled('div', {
+  display: 'grid',
+  gap: '1rem 2rem',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
 });
 
 // A place's page: the card with its picture and what it is, then what it
@@ -138,6 +150,20 @@ export default function ResourceHybrid({
         }
         title={resource.label}
       />
+
+      {resource.address || hasContact(resource.contact) ? (
+        <EntryColumn>
+          <SectionHead>
+            <h2>{tc('entry.whereAndContact')}</h2>
+          </SectionHead>
+          <Panel>
+            <Facts>
+              <AddressDetails address={resource.address} />
+              <ContactDetails contact={resource.contact} />
+            </Facts>
+          </Panel>
+        </EntryColumn>
+      ) : null}
 
       {resource.isCombo && resource.resourcesForCombo?.length ? (
         <EntryColumn>

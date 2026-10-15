@@ -8,6 +8,10 @@ messages:
   comborequires: Välj minst två objekt för att skapa ett kombinerat objekt. Eller vänligen stäng av "Kombo" för att komponera ett icke-komboobjekt
 
 form:
+  address:
+    helper: "Where the place is. Every place needs a town and a street address or coordinates."
+  contact:
+    helper: "Optional. Who to ask about the place, for example about booking it."
   holder: type
   bookable:
     label: Bookable

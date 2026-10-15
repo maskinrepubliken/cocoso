@@ -32,6 +32,8 @@ export default function EditResource() {
   }
 
   const resourceFields = (({
+    address,
+    contact,
     label,
     description,
     images,
@@ -41,6 +43,8 @@ export default function EditResource() {
     resourcesForCombo,
     title,
   }) => ({
+    address,
+    contact,
     label,
     description,
     images,
