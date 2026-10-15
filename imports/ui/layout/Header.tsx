@@ -320,13 +320,21 @@ export interface HeaderProps {
 // row and a grid button beside the search opens the menu panel. The bar
 // is transparent at the top of the page and gains a blurred backdrop once
 // the page scrolls.
+// The bar's groups shrink to at most this much before the menu pill
+// gives up its place on the row.
+const MIN_BAR_ZOOM = 0.72;
+
 export default function Header({ site, pageTitles }: HeaderProps) {
   const location = useLocation();
   const prefix = useLocationPrefix();
   const [tc] = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // How much the bar's three groups are shrunk to fit on one row (1 = not
+  // at all), and whether even the smallest size would not do.
+  const [barZoom, setBarZoom] = useState(1);
   const [stacked, setStacked] = useState(false);
+  const zoomRef = useRef(1);
   const headerRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
@@ -350,8 +358,9 @@ export default function Header({ site, pageTitles }: HeaderProps) {
 
   // On a desktop the menu pill sits between the brand and the buttons.
   // When the three no longer fit on one row (a place chosen, an admin's
-  // plus and pen, a long menu) the pill drops to a row of its own rather
-  // than slide under the buttons. Measured, so it happens only when needed.
+  // plus and pen, a long menu) all three shrink by the same factor until
+  // they do, down to MIN_BAR_ZOOM; only past that does the menu pill drop
+  // to a row of its own. Measured, so nothing changes while it fits.
   useEffect(() => {
     const bar = barRef.current;
     if (!isClient || !bar || typeof ResizeObserver === 'undefined') {
@@ -359,6 +368,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     }
     const measure = () => {
       if (!window.matchMedia('(min-width: 960px)').matches) {
+        zoomRef.current = 1;
+        setBarZoom(1);
         setStacked(false);
         return;
       }
@@ -373,9 +384,17 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         2 * parseFloat(style.columnGap || '0') +
         parseFloat(style.paddingLeft) +
         parseFloat(style.paddingRight);
-      const needed =
-        brand.offsetWidth + nav.scrollWidth + right.offsetWidth + gaps;
-      setStacked(needed > bar.clientWidth);
+      // Natural widths: scrollWidth is in each group's own (unzoomed)
+      // pixels and counts the content even when the grid squeezes the box
+      const natural = brand.scrollWidth + nav.scrollWidth + right.scrollWidth;
+      const room = bar.clientWidth - gaps;
+      const zoom = Math.min(1, room / natural);
+      const next = zoom < MIN_BAR_ZOOM ? 1 : Math.round(zoom * 100) / 100;
+      if (Math.abs(next - zoomRef.current) >= 0.01) {
+        zoomRef.current = next;
+        setBarZoom(next);
+      }
+      setStacked(zoom < MIN_BAR_ZOOM);
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -435,6 +454,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
       <div
         className={`site-header-bar ${stacked ? 'is-stacked' : ''}`}
         ref={barRef}
+        style={{ '--bar-zoom': barZoom } as React.CSSProperties}
       >
         <LocationSwitcher site={site} items={items} section={section} />
 

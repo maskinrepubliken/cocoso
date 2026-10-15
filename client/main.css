@@ -1905,8 +1905,15 @@ body {
 }
 
 /* When brand, menu and buttons do not fit on one row (Header.tsx measures
-   this), the menu pill takes a row of its own under the other two. */
+   this), all three shrink by the same factor; only when that is not
+   enough does the menu pill take a row of its own under the other two. */
 @media (min-width: 960px) {
+  .site-header-bar > .site-brand,
+  .site-header-bar > .site-nav,
+  .site-header-bar > .site-header-right {
+    zoom: var(--bar-zoom, 1);
+  }
+
   .site-header-bar.is-stacked {
     grid-template-columns: 1fr auto;
     grid-template-areas:
