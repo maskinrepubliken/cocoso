@@ -25,6 +25,51 @@ export interface PageHeadingProps {
   // Leave out the line under the heading (the events page has its kinds
   // there instead)
   hideDescription?: boolean;
+  // Leave out the "Visar bara … i <ort>" line; the page renders a
+  // PlaceNotice itself further down
+  hidePlace?: boolean;
+}
+
+export interface PlaceNoticeProps {
+  listing: string;
+  subject?: string;
+}
+
+// Inside a place, say so: the listing shows that place only. The whole
+// line is the button to the same listing for the whole municipality.
+export function PlaceNotice({ listing, subject }: PlaceNoticeProps) {
+  const currentLocation = useCurrentLocation();
+  const routerLocation = useLocation();
+  const [tc] = useTranslation('common');
+  if (!currentLocation) {
+    return null;
+  }
+  // Drop the place prefix, keep the kind and the past/upcoming choice.
+  const wholeMunicipalityPath =
+    routerLocation.pathname.replace(`/${currentLocation.slug}`, '') +
+    routerLocation.search;
+  return (
+    <Center>
+      <Link
+        className="page-heading-place"
+        to={wholeMunicipalityPath}
+        title={tc('listing.wholeMunicipality')}
+      >
+        <span>
+          {tc('listing.showingIn', {
+            what: subject || tc(`listing.subjects.${listing}`),
+            prep: tc(`listing.prep.${listing}`, {
+              defaultValue: tc('listing.prep.default'),
+            }),
+            place: currentLocation.name,
+          })}
+        </span>
+        <span className="page-heading-clear" aria-hidden>
+          <XIcon width={14} height={14} />
+        </span>
+      </Link>
+    </Center>
+  );
 }
 
 // The heading of a listing page: the section's icon, name and description
@@ -36,15 +81,8 @@ export default function PageHeading({
   title,
   subject,
   hideDescription = false,
+  hidePlace = false,
 }: PageHeadingProps) {
-  const currentLocation = useCurrentLocation();
-  const routerLocation = useLocation();
-  // The same listing for the whole municipality: drop the place prefix,
-  // keep the kind and the past/upcoming choice.
-  const wholeMunicipalityPath = currentLocation
-    ? routerLocation.pathname.replace(`/${currentLocation.slug}`, '') +
-      routerLocation.search
-    : '/';
   const listingInMenu = site?.settings?.menu?.find(
     (item) => item.name === listing
   );
@@ -114,30 +152,7 @@ export default function PageHeading({
                 </Text>
               </Center>
             )}
-            {/* Inside a place, say so: the listing shows that place only */}
-            {currentLocation && (
-              <Center>
-                {/* The whole line is the button to the whole municipality */}
-                <Link
-                  className="page-heading-place"
-                  to={wholeMunicipalityPath}
-                  title={tc('listing.wholeMunicipality')}
-                >
-                  <span>
-                    {tc('listing.showingIn', {
-                      what: subject || tc(`listing.subjects.${listing}`),
-                      prep: tc(`listing.prep.${listing}`, {
-                        defaultValue: tc('listing.prep.default'),
-                      }),
-                      place: currentLocation.name,
-                    })}
-                  </span>
-                  <span className="page-heading-clear" aria-hidden>
-                    <XIcon width={14} height={14} />
-                  </span>
-                </Link>
-              </Center>
-            )}
+            {!hidePlace && <PlaceNotice listing={listing} subject={subject} />}
           </Box>
         </Box>
       </Center>

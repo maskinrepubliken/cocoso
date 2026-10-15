@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 
 import InfiniteScroller from './InfiniteScroller';
-import PageHeading from './PageHeading';
+import PageHeading, { PlaceNotice } from './PageHeading';
 import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
 import ThreeDIcon from '../generic/ThreeDIcon';
@@ -73,6 +73,7 @@ export default function ActivitiesHybrid({
         site={site || siteDoc}
         listing="activities"
         hideDescription
+        hidePlace
         title={kindFilter ? tc(`eventKinds.headings.${kindFilter}`) : undefined}
         subject={
           kindFilter ? tc(`eventKinds.subjects.${kindFilter}`) : undefined
@@ -128,6 +129,16 @@ export default function ActivitiesHybrid({
           ))}
         </div>
       )}
+
+      {/* Under the kinds: inside a place, the line saying so */}
+      <div className="page-wrap place-notice-row">
+        <PlaceNotice
+          listing="activities"
+          subject={
+            kindFilter ? tc(`eventKinds.subjects.${kindFilter}`) : undefined
+          }
+        />
+      </div>
 
       <InfiniteScroller gridWide isGrid items={cardActivities}>
         {(item, index) => (

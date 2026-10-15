@@ -3189,6 +3189,15 @@ body {
 
 /* "Visar bara kulturevenemangen i Limmared" under the heading, with a
    small cross that widens to the whole municipality */
+/* The notice on its own row under the kind strip (events page) */
+.place-notice-row:not(:empty) {
+  margin: -0.5rem auto 1rem;
+}
+
+.place-notice-row .page-heading-place {
+  margin: 0;
+}
+
 .page-heading-place {
   display: inline-flex;
   align-items: center;
