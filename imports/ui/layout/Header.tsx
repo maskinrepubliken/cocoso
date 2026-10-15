@@ -326,7 +326,9 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   const [tc] = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [stacked, setStacked] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
 
   // Close the menu panel when the route changes (state during render, so
   // the panel never flashes on the new page).
@@ -345,6 +347,48 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // On a desktop the menu pill sits between the brand and the buttons.
+  // When the three no longer fit on one row (a place chosen, an admin's
+  // plus and pen, a long menu) the pill drops to a row of its own rather
+  // than slide under the buttons. Measured, so it happens only when needed.
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!isClient || !bar || typeof ResizeObserver === 'undefined') {
+      return undefined;
+    }
+    const measure = () => {
+      if (!window.matchMedia('(min-width: 960px)').matches) {
+        setStacked(false);
+        return;
+      }
+      const brand = bar.querySelector<HTMLElement>('.site-brand');
+      const nav = bar.querySelector<HTMLElement>('.site-nav');
+      const right = bar.querySelector<HTMLElement>('.site-header-right');
+      if (!brand || !nav || !right) {
+        return;
+      }
+      const style = getComputedStyle(bar);
+      const gaps =
+        2 * parseFloat(style.columnGap || '0') +
+        parseFloat(style.paddingLeft) +
+        parseFloat(style.paddingRight);
+      const needed =
+        brand.offsetWidth + nav.scrollWidth + right.offsetWidth + gaps;
+      setStacked(needed > bar.clientWidth);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(bar);
+    bar
+      .querySelectorAll('.site-brand, .site-nav, .site-header-right')
+      .forEach((el) => observer.observe(el));
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [location.pathname]);
 
   // The menu panel closes on Escape and on a tap anywhere but the panel
   // and its button, so opening the search or another menu puts it away:
@@ -388,7 +432,10 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         menuOpen ? 'is-menu-open' : ''
       }`}
     >
-      <div className="site-header-bar">
+      <div
+        className={`site-header-bar ${stacked ? 'is-stacked' : ''}`}
+        ref={barRef}
+      >
         <LocationSwitcher site={site} items={items} section={section} />
 
         {/* Phone only: the menu button, carrying the page one is on */}

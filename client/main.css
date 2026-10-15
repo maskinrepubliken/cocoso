@@ -1904,6 +1904,38 @@ body {
   justify-self: start;
 }
 
+/* When brand, menu and buttons do not fit on one row (Header.tsx measures
+   this), the menu pill takes a row of its own under the other two. */
+@media (min-width: 960px) {
+  .site-header-bar.is-stacked {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'brand right'
+      'nav nav';
+    row-gap: 4px;
+    height: auto;
+    padding: 10px 14px 8px;
+  }
+
+  .site-header-bar.is-stacked > .site-brand {
+    grid-area: brand;
+  }
+
+  .site-header-bar.is-stacked > .site-nav {
+    grid-area: nav;
+    justify-self: center;
+  }
+
+  .site-header-bar.is-stacked > .site-header-right {
+    grid-area: right;
+  }
+
+  .site-header-bar.is-stacked:has(.site-search.is-open) {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'right';
+  }
+}
+
 .site-header-right {
   display: flex;
   align-items: center;
