@@ -1,47 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { Match, check } from 'meteor/check';
 
-import { emailIsValid } from '../_utils/shared';
 import { isContributorOrAdmin } from '../users/user.roles';
 
 // The people behind an event: the author plus any co-organizers. All of
 // them may manage the event, and their public contact details are shown
 // on its page.
 
-export const ContactPattern = Match.Maybe(
-  Match.OneOf(null, {
-    email: Match.Maybe(String),
-    phone: Match.Maybe(String),
-    website: Match.Maybe(String),
-  })
-);
-
-const trimmed = (value) => (typeof value === 'string' ? value.trim() : '');
-
-// A contact object with only the filled-in fields, or null when empty.
-// Throws on an email that cannot be an address, so a typo does not end up
-// on the public page.
-export const cleanContact = (contact) => {
-  if (!contact) {
-    return null;
-  }
-  check(contact, ContactPattern);
-  const email = trimmed(contact.email);
-  const phone = trimmed(contact.phone);
-  let website = trimmed(contact.website);
-  if (email && !emailIsValid(email)) {
-    throw new Meteor.Error('invalid-email', 'The contact email is not valid');
-  }
-  if (website && !/^https?:\/\//i.test(website)) {
-    website = `https://${website}`;
-  }
-  const cleaned = {
-    ...(email ? { email } : {}),
-    ...(phone ? { phone } : {}),
-    ...(website ? { website } : {}),
-  };
-  return Object.keys(cleaned).length > 0 ? cleaned : null;
-};
+export { ContactPattern, cleanContact } from '../_utils/contact';
 
 export const isOrganizerOf = (activity, userId) =>
   Boolean(

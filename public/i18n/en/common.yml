@@ -589,3 +589,34 @@ listing:
     people: the organizers
     resources: the places
     works: the requests
+address:
+  title: "Address"
+  showOnMap: "Show on map"
+  missing: "No address yet"
+  form:
+    street:
+      label: "Street address"
+      helper: "Street and number. For a beach or a field without one, describe where, e.g. \"North shore\", and add coordinates."
+      holder: "Willéns väg 5"
+    postalCode:
+      label: "Postal code"
+    city:
+      label: "Town"
+    coordinates:
+      label: "Coordinates"
+      helper: "Optional. Latitude and longitude, as copied from a map, e.g. 57.485668, 13.351021."
+      invalid: "That does not look like coordinates (latitude, longitude)."
+  errors:
+    required: "Enter a town and a street address or coordinates."
+contact:
+  title: "Contact"
+  missing: "No contact details yet"
+  form:
+    name:
+      label: "Contact person"
+      holder: "A name or a function, e.g. Bookings"
+    email: "Email"
+    phone: "Phone"
+    website: "Website"
+  errors:
+    required: "Enter an email address or a phone number."

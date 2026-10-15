@@ -13,9 +13,19 @@ interface AvatarSchema {
 }
 
 interface PublicContactSchema {
+  name: SchemaField;
   email: SchemaField;
   phone: SchemaField;
   website: SchemaField;
+}
+
+interface AddressSchema {
+  street: SchemaField;
+  postalCode: SchemaField;
+  city: SchemaField;
+  coordinates: { type: ObjectConstructor; optional: boolean };
+  'coordinates.lat': { type: NumberConstructor };
+  'coordinates.lng': { type: NumberConstructor };
 }
 
 interface SchemasType {
@@ -24,6 +34,7 @@ interface SchemasType {
   Src: SchemaField;
   Avatar: AvatarSchema;
   PublicContact: PublicContactSchema;
+  Address: AddressSchema;
 }
 
 const Schemas: SchemasType = {
@@ -46,12 +57,23 @@ const Schemas: SchemasType = {
     },
     date: { type: Date },
   },
-  // Contact details meant to be shown to everyone: an organizer's, or an
-  // event's own. All optional, all plain text.
+  // Contact details meant to be shown to everyone: a user's, a resource's,
+  // a group's or an event's own. All optional, all plain text; who must
+  // have an email or a phone is decided in imports/api/_utils/contact.ts.
   PublicContact: {
+    name: { type: String, optional: true },
     email: { type: String, optional: true },
     phone: { type: String, optional: true },
     website: { type: String, optional: true },
+  },
+  // A street address, see imports/api/_utils/address.ts.
+  Address: {
+    street: { type: String, optional: true },
+    postalCode: { type: String, optional: true },
+    city: { type: String },
+    coordinates: { type: Object, optional: true },
+    'coordinates.lat': { type: Number },
+    'coordinates.lng': { type: Number },
   },
 };
 
