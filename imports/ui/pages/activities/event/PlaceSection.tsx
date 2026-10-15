@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { styled } from '/stitches.config';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import AddressBlock from '/imports/ui/generic/AddressBlock';
-import LocationTag from '/imports/ui/generic/LocationTag';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 
 import Section, { Muted, SectionTitle, Strong } from './Section';
@@ -23,8 +22,6 @@ const ExternalLink = styled('a', {
   marginTop: '0.625rem',
 });
 
-const TagRow = styled('div', { marginTop: '0.25rem' });
-
 interface PlaceSectionProps {
   activity: {
     resource?: string;
@@ -32,8 +29,6 @@ interface PlaceSectionProps {
     place?: string;
     // The place's address, or the event's own (activity.place.js).
     placeAddress?: Partial<Address> | null;
-    locationId?: string;
-    isMunicipalityOnly?: boolean;
   };
   locationName?: string | null;
 }
@@ -46,14 +41,7 @@ export default function PlaceSection({
 }: PlaceSectionProps) {
   const [tc] = useTranslation('common');
   const prefix = useLocationPrefix();
-  const {
-    resource,
-    resourceId,
-    place,
-    placeAddress,
-    locationId,
-    isMunicipalityOnly,
-  } = activity;
+  const { resource, resourceId, place, placeAddress } = activity;
   const withAddress = hasAddress(placeAddress);
 
   if (!resource && !place && !withAddress) {
@@ -63,7 +51,7 @@ export default function PlaceSection({
   // Without an address, a search for the name is the best the map can do.
   const mapQuery = [resource || place, locationName].filter(Boolean).join(', ');
 
-  // Title, place and ort; under the map when there is one.
+  // Title and place; under the map when there is one.
   const heading = (
     <>
       <SectionTitle css={{ marginBottom: '0.875rem' }}>
@@ -79,15 +67,6 @@ export default function PlaceSection({
         (resource || place) && <Strong>{resource || place}</Strong>
       )}
       {resource && place && place !== resource && <Muted>{place}</Muted>}
-      {(locationId || isMunicipalityOnly) && (
-        <TagRow>
-          <LocationTag
-            bare
-            isMunicipalityOnly={isMunicipalityOnly}
-            locationId={locationId}
-          />
-        </TagRow>
-      )}
     </>
   );
 
