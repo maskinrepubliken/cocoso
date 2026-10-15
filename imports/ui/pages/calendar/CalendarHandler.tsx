@@ -1,30 +1,20 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useLoaderData, useNavigate, useSearchParams } from 'react-router';
 import dayjs from 'dayjs';
 import loadable from '@loadable/component';
-import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import { Box, Center, Flex, Loader, Skeleton } from '/imports/ui/core';
+import { Loader, Skeleton } from '/imports/ui/core';
 import { parseAllBookingsWithResources } from '/imports/api/_utils/shared';
-import { canCreateContentAtom, locationsAtom } from '/imports/state';
+import { canCreateContentAtom } from '/imports/state';
 import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
-import Tag from '/imports/ui/generic/Tag';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import { colorsForKind } from '/imports/ui/utils/kindPalette';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
 });
-
-// The place filter is pill-shaped, like the event cards' chips; the tags
-// take their corners from this variable.
-const pillShapes = {
-  '--cocoso-border-radius': '999px',
-  fontFamily: 'Raleway, var(--cocoso-body-font-family, sans-serif)',
-  '& *': { fontFamily: 'inherit' },
-};
 
 interface SlotInfo {
   start: Date;
@@ -88,38 +78,11 @@ const parseNewEntryParams = (
 export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const site = siteDoc;
-  const [locationFilter, setLocationFilter] = useState<string>('');
-  const publishedLocations = useAtomValue(locationsAtom);
-  const [tc] = useTranslation('common');
-  const { activities: allActivities, resources: allResources } =
-    useLoaderData() as {
-      activities: Activity[];
-      resources: Resource[];
-    };
-  const activities = useMemo(
-    () =>
-      locationFilter
-        ? allActivities.filter(
-            (a: any) => !a.locationId || a.locationId === locationFilter
-          )
-        : allActivities,
-    [allActivities, locationFilter]
-  );
+  const { activities, resources } = useLoaderData() as {
+    activities: Activity[];
+    resources: Resource[];
+  };
 
-  const [calendarFilter, setCalendarFilter] = useState<Resource | null>(null);
-
-  // A place narrows the calendar to its resources and to activities filed
-  // under it. Content without a place belongs to the whole municipality and
-  // stays visible.
-  const resources = useMemo(
-    () =>
-      locationFilter
-        ? allResources.filter(
-            (r) => !r.locationId || r.locationId === locationFilter
-          )
-        : allResources,
-    [allResources, locationFilter]
-  );
   const navigate = useNavigate();
   const prefix = useLocationPrefix();
   const [, setSearchParams] = useSearchParams();
@@ -149,10 +112,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       return;
     }
 
-    const selectedResource = resources.find(
-      (resource) => calendarFilter && resource._id === calendarFilter._id
-    );
-
     let type = 'other';
 
     if (slotInfo?.slots && slotInfo.slots.length === 1) {
@@ -167,11 +126,8 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       type = 'month-multipledays';
     }
 
-    const dateParams = parseNewEntryParams(
-      slotInfo,
-      selectedResource || null,
-      type
-    );
+    // No venue is preselected; the form asks for the place.
+    const dateParams = parseNewEntryParams(slotInfo, null, type);
 
     setSearchParams((params) => ({
       ...params,
@@ -180,12 +136,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     }));
   };
 
-  const filteredActivities = activitiesParsed.filter(
-    (activity: any) =>
-      !calendarFilter ||
-      calendarFilter._id === activity.resourceId ||
-      calendarFilter._id === activity.comboResourceId
-  );
+  const filteredActivities = activitiesParsed || [];
 
   // Weekly activities are drawn lighter so one-off events stand out.
   const recurringIds = useMemo(
@@ -223,39 +174,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       {loading && <Loader />}
 
       <PageHeading site={site || siteDoc} listing="calendar" />
-
-      <Box className="page-wrap">
-        {publishedLocations.length > 0 && !prefix && (
-          <Center mb="2" css={pillShapes}>
-            <Flex justify="center" px="1" wrap="wrap">
-              <Tag
-                key="all-locations"
-                checkable
-                label={tc('locations.wholeMunicipality')}
-                filterColor="#484848"
-                checked={!locationFilter}
-                onClick={() => {
-                  setLocationFilter('');
-                  setCalendarFilter(null);
-                }}
-              />
-              {publishedLocations.map((location) => (
-                <Tag
-                  key={location._id}
-                  checkable
-                  label={location.name}
-                  filterColor="#484848"
-                  checked={locationFilter === location._id}
-                  onClick={() => {
-                    setLocationFilter(location._id);
-                    setCalendarFilter(null);
-                  }}
-                />
-              ))}
-            </Flex>
-          </Center>
-        )}
-      </Box>
 
       {/* The calendar itself spans the whole viewport, gutter to gutter */}
       <div className="cal-full">

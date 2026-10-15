@@ -1263,13 +1263,12 @@ body {
   padding: 0 8px 1.5rem;
 }
 
-/* The grid sits on the season's board colour, the one the start page's
-   Idag board has, woven; the paper events and the white weekly ones read
-   against it. */
+/* The grid is the page's own floor, woven, so the paper events and the
+   white weekly ones read against it without a colour of its own. */
 .rbc-calendar .rbc-month-view,
 .rbc-calendar .rbc-time-view,
 .rbc-calendar .rbc-agenda-view {
-  background-color: var(--cocoso-season-tavla, var(--cocoso-colors-theme-100));
+  background-color: var(--cocoso-colors-gray-100);
   background-image: repeating-linear-gradient(
       0deg,
       rgba(30, 79, 27, 0.03) 0 1px,
@@ -1290,7 +1289,7 @@ body {
    ink on a light paper band across the top of the board. */
 .rbc-calendar .rbc-month-view .rbc-header,
 .rbc-calendar .rbc-time-header .rbc-header {
-  background-color: rgba(255, 253, 247, 0.45);
+  background-color: var(--cocoso-papper);
   color: var(--cocoso-colors-theme-700);
   font-family: var(--cocoso-font-display);
   font-size: 0.95rem;
