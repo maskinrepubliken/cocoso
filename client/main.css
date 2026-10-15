@@ -1175,6 +1175,9 @@ body {
 /* --- Toolbar --- */
 
 .rbc-calendar .rbc-toolbar {
+  /* above the grid, so the pills' shadows fall onto it uncut */
+  position: relative;
+  z-index: 1;
   align-items: center;
   gap: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
