@@ -226,7 +226,10 @@ people:
   upcoming_other: '{{ count }} upcoming events'
   email: Send an email
   website: Website
-  noEvents: '{{ username }} has no events yet'
+  noEvents: '{{ username }} has no events yet.'
+  noUpcoming: No upcoming events.
+  noPast: No past events.
+  noArchived: No archived events.
   noOrganizers: There are no organizers yet
 
 locations:

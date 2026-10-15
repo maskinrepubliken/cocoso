@@ -9,7 +9,7 @@ import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
 import { styled } from '/stitches.config';
-import { Alert, Box, Center, Flex, Text } from '/imports/ui/core';
+import { Alert, Box, Center, Flex } from '/imports/ui/core';
 import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import { displayName } from '/imports/ui/listing/UsersHybrid';
@@ -142,11 +142,11 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
 
   if (upcoming.length === 0 && past.length === 0 && archived.length === 0) {
     return (
-      <Center p="4" mb="12">
-        <Text color="gray.600">
+      <EntryColumn>
+        <p className="empty-note">
           {tc('people.noEvents', { username: name })}
-        </Text>
-      </Center>
+        </p>
+      </EntryColumn>
     );
   }
 
@@ -194,6 +194,18 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
         <Center mb="4">
           <Notice>{tc('event.archived.onlyYou')}</Notice>
         </Center>
+      )}
+
+      {items.length === 0 && (
+        <p className="empty-note">
+          {tc(
+            view === 'past'
+              ? 'people.noPast'
+              : view === 'archived'
+              ? 'people.noArchived'
+              : 'people.noUpcoming'
+          )}
+        </p>
       )}
 
       <EventCards>

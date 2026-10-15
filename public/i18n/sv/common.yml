@@ -223,7 +223,10 @@ people:
   upcoming_other: '{{ count }} kommande evenemang'
   email: Skicka e-post
   website: Webbplats
-  noEvents: '{{ username }} har inga evenemang ännu'
+  noEvents: '{{ username }} har inga evenemang ännu.'
+  noUpcoming: Inga kommande evenemang.
+  noPast: Inga tidigare evenemang.
+  noArchived: Inga arkiverade evenemang.
   noOrganizers: Det finns inga arrangörer ännu
 
 locations:

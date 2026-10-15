@@ -1746,13 +1746,20 @@ body {
   padding-left: 18px;
 }
 
-.cal-day-empty {
+/* "Nothing here" lines: grey italic display face, centred. The calendar's
+   empty day and the entry pages' empty lists share it. */
+.cal-day-empty,
+.empty-note {
   color: var(--cocoso-mylla-soft);
   font-family: var(--cocoso-font-display);
   font-size: 1.05rem;
   font-style: italic;
   padding: 2rem 1rem;
   text-align: center;
+}
+
+.empty-note {
+  margin: 0;
 }
 
 @media (max-width: 720px) {
