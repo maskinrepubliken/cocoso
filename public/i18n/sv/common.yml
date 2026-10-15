@@ -560,7 +560,6 @@ search:
 # The entry pages (förening, plats, förfrågan); in common because SSR only
 # loads common
 entry:
-  whereAndContact: "Adress och kontakt"
   group: Förening
   place: Plats
   meetings: Träffar
@@ -590,6 +589,12 @@ listing:
 address:
   title: "Adress"
   showOnMap: "Visa på karta"
+  map: "Karta"
+  mapUnavailable: "Kartan kunde inte laddas."
+  gestures:
+    windows: "Håll in Ctrl och scrolla för att zooma kartan"
+    mac: "Håll in ⌘ och scrolla för att zooma kartan"
+    mobile: "Använd två fingrar för att flytta kartan"
   missing: "Ingen adress än"
   form:
     street:

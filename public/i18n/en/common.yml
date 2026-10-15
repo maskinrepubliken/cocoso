@@ -563,7 +563,6 @@ search:
 # The entry pages (group, place, request); in common because SSR only
 # loads common
 entry:
-  whereAndContact: "Address and contact"
   group: Association
   place: Place
   meetings: Meetings
@@ -593,6 +592,12 @@ listing:
 address:
   title: "Address"
   showOnMap: "Show on map"
+  map: "Map"
+  mapUnavailable: "The map could not be loaded."
+  gestures:
+    windows: "Use Ctrl + scroll to zoom the map"
+    mac: "Use ⌘ + scroll to zoom the map"
+    mobile: "Use two fingers to move the map"
   missing: "No address yet"
   form:
     street:

@@ -116,6 +116,14 @@ contributor or anyone named as author or co-organizer of an event
 named co-organizer and saving an organizer's profile all require contact
 details.
 
+Maps are MapLibre GL JS with OpenFreeMap's OpenStreetMap tiles
+(`generic/PlaceMap`). MapLibre is loaded from jsDelivr, pinned by version
+and integrity hash, the first time a map is shown
+(`ui/utils/loadMaplibre.ts`). A place saved with a street but no
+coordinates is looked up in Nominatim on the server
+(`_utils/geocode.js`); one with only a town gets no map until it is given
+a street or coordinates.
+
 ## Request flow
 
 1. **SSR.** `server-render`'s `onPageLoad` calls `serverRenderer.js`. It loads

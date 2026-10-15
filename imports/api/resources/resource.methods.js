@@ -3,6 +3,7 @@ import { check, Match } from 'meteor/check';
 import { locationSelector } from '../_utils/shared';
 import { requireAddress } from '../_utils/address';
 import { cleanContact } from '../_utils/contact';
+import { withCoordinates } from '../_utils/geocode';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
@@ -106,7 +107,7 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     await validateLabel(values.label);
-    const address = requireAddress(values.address);
+    const address = await withCoordinates(requireAddress(values.address));
     const contact = cleanContact(values.contact);
     const { contact: _contact, ...rest } = values;
     try {
@@ -145,7 +146,7 @@ Meteor.methods({
       throw new Meteor.Error('not-found', 'Resource not found');
     }
 
-    const address = requireAddress(values.address);
+    const address = await withCoordinates(requireAddress(values.address));
     const contact = cleanContact(values.contact);
     const {
       _id,
