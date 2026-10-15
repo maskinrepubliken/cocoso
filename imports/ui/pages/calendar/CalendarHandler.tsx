@@ -15,7 +15,6 @@ import { canCreateContentAtom, locationsAtom } from '/imports/state';
 import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
 import Tag from '/imports/ui/generic/Tag';
-import { cocosoReactSelectAdapter } from '/imports/ui/utils/globalStylesManager';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
@@ -24,6 +23,75 @@ const CalendarView = loadable(() => import('./CalendarView'), {
 });
 
 const maxResourceLabelsToShow = 13;
+
+// The place picker as one of the site's pills: a paper island with the
+// chevron, and a menu in the same panel style as the header's menus. Each
+// option carries its place's colour at the left edge.
+const calendarSelectStyles = (inkFor: (resource: any) => string) => ({
+  control: (base: any, state: any) => ({
+    ...base,
+    minHeight: 38,
+    borderRadius: 999,
+    border: 'none',
+    background: 'var(--cocoso-papper)',
+    boxShadow: state.isFocused
+      ? '0 0 0 2px var(--cocoso-colors-theme-500)'
+      : 'var(--cocoso-skugga)',
+    cursor: 'pointer',
+    paddingLeft: 8,
+    fontFamily: 'var(--cocoso-font-ui)',
+    fontSize: 14,
+    fontWeight: 600,
+    ':hover': { background: 'var(--cocoso-colors-theme-50)' },
+  }),
+  placeholder: (base: any) => ({
+    ...base,
+    color: 'var(--cocoso-colors-theme-700)',
+  }),
+  singleValue: (base: any) => ({
+    ...base,
+    color: 'var(--cocoso-colors-theme-700)',
+  }),
+  indicatorSeparator: () => ({ display: 'none' }),
+  dropdownIndicator: (base: any) => ({
+    ...base,
+    color: 'var(--cocoso-colors-theme-700)',
+    padding: '0 10px 0 4px',
+  }),
+  clearIndicator: (base: any) => ({
+    ...base,
+    color: 'var(--cocoso-colors-theme-700)',
+    padding: 4,
+  }),
+  menu: (base: any) => ({
+    ...base,
+    padding: 6,
+    border: '1px solid var(--cocoso-linje)',
+    borderRadius: 'var(--cocoso-radius-meny)',
+    background: 'var(--cocoso-panel-bg)',
+    backdropFilter: 'blur(12px)',
+    boxShadow: 'var(--cocoso-skugga-meny)',
+    overflow: 'hidden',
+    zIndex: 20,
+  }),
+  menuList: (base: any) => ({ ...base, padding: 0 }),
+  option: (base: any, { data, isFocused, isSelected }: any) => ({
+    ...base,
+    borderRadius: 'var(--cocoso-radius-falt)',
+    borderLeft: `4px solid ${inkFor(data)}`,
+    paddingLeft: 10,
+    background: isSelected
+      ? 'var(--cocoso-colors-theme-700)'
+      : isFocused
+      ? 'var(--cocoso-colors-theme-100)'
+      : 'transparent',
+    color: isSelected ? '#fff' : 'var(--cocoso-mylla)',
+    fontFamily: 'var(--cocoso-font-ui)',
+    fontSize: 14,
+    fontWeight: data.isCombo ? 700 : 600,
+    cursor: 'pointer',
+  }),
+});
 
 // The place and resource filters are pill-shaped, like the event cards'
 // chips; the tags and buttons take their corners from this variable.
@@ -351,7 +419,11 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
               </Flex>
             </Box>
           ) : (
-            <Box className="cal-resource-select" w="100%" css={{ maxWidth: '30rem' }}>
+            <Box
+              className="cal-resource-select"
+              w="100%"
+              css={{ maxWidth: '30rem' }}
+            >
               {SelectComponent ? (
                 <SelectComponent
                   aria-label={tc('calendarFilter.pickResource')}
@@ -359,15 +431,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
                   isClearable
                   options={allResourcesForSelect}
                   placeholder={tc('calendarFilter.anyResource')}
-                  styles={{
-                    control: cocosoReactSelectAdapter,
-                    option: (styles, { data }) => ({
-                      ...styles,
-                      borderLeft: `4px solid ${inkForResource(data)}`,
-                      paddingLeft: 10,
-                      fontWeight: data.isCombo ? 'bold' : 'normal',
-                    }),
-                  }}
+                  styles={calendarSelectStyles(inkForResource)}
                   value={calendarFilter}
                   getOptionLabel={(option: any) => option.label}
                   getOptionValue={(option: any) => option._id}
@@ -379,16 +443,17 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
             </Box>
           )}
         </Center>
-
-        <Box mb="4">
-          <CalendarView
-            activities={allFilteredActsWithColors}
-            resources={resources}
-            onSelect={handleSelectActivity}
-            onSelectSlot={handleSelectSlot}
-          />
-        </Box>
       </Box>
+
+      {/* The calendar itself spans the whole viewport, gutter to gutter */}
+      <div className="cal-full">
+        <CalendarView
+          activities={allFilteredActsWithColors}
+          resources={resources}
+          onSelect={handleSelectActivity}
+          onSelectSlot={handleSelectSlot}
+        />
+      </div>
     </>
   );
 }

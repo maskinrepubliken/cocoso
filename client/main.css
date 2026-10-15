@@ -1255,13 +1255,34 @@ body {
 
 /* --- Panels --- */
 
+/* The calendar spans the viewport, gutter to gutter, outside the page's
+   column: a month needs the width. */
+.cal-full {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 var(--cocoso-gutter) 1.5rem;
+}
+
+/* The grid sits on the season's board colour, the one the start page's
+   Idag board has, woven; the paper events and the white weekly ones read
+   against it. */
 .rbc-calendar .rbc-month-view,
 .rbc-calendar .rbc-time-view,
 .rbc-calendar .rbc-agenda-view {
-  background-color: var(--cocoso-papper);
+  background-color: var(--cocoso-season-tavla, var(--cocoso-colors-theme-100));
+  background-image: repeating-linear-gradient(
+      0deg,
+      rgba(30, 79, 27, 0.07) 0 1px,
+      transparent 1px 7px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(30, 79, 27, 0.07) 0 1px,
+      transparent 1px 7px
+    );
   border: none;
-  border-radius: var(--cocoso-radius-kort);
-  box-shadow: var(--cocoso-skugga-kort);
+  border-radius: var(--cocoso-radius-meny);
+  box-shadow: var(--cocoso-skugga);
   overflow: hidden;
 }
 
@@ -1287,7 +1308,8 @@ body {
 .rbc-calendar .rbc-time-content > * + * > *,
 .rbc-calendar .rbc-timeslot-group,
 .rbc-calendar .rbc-day-slot .rbc-time-slot {
-  border-color: var(--cocoso-linje);
+  /* a warm line that sits in the board's own colour, not the paper's */
+  border-color: rgba(60, 50, 30, 0.14);
 }
 
 .rbc-calendar .rbc-month-row {
@@ -1311,7 +1333,7 @@ body {
 }
 
 .rbc-day-bg.rbc-off-range-bg {
-  background-color: rgba(60, 50, 30, 0.035);
+  background-color: rgba(60, 50, 30, 0.08);
 }
 
 .rbc-calendar .rbc-off-range {
@@ -1330,7 +1352,7 @@ body {
 /* Today: a soft green day with its date in a green circle */
 .rbc-calendar .rbc-row-bg .rbc-day-bg.rbc-today,
 .rbc-calendar .rbc-today {
-  background-color: var(--cocoso-colors-theme-50);
+  background-color: rgba(255, 253, 247, 0.5);
   border: none;
 }
 
@@ -3164,7 +3186,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin: 0 0 4px;
+  margin: 10px 0 0;
   padding: 4px 5px 4px 14px;
   border-radius: 999px;
   /* a light green wash, see-through onto the floor */

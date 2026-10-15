@@ -570,7 +570,10 @@ entry:
   seeProfile: 'Till {{ name }}'
 
 listing:
-  showingIn: "Visar bara {{what}} i {{place}}"
+  showingIn: "Visar bara {{what}} {{prep}} {{place}}"
+  prep:
+    default: i
+    calendar: för
   wholeMunicipality: Visa hela kommunen
   subjects:
     activities: evenemangen

@@ -98,27 +98,6 @@ export default function PageHeading({
             {aside && <div className="page-heading-aside">{aside}</div>}
           </div>
           <Box py="2">
-            {/* Inside a place, say so: the listing shows that place only */}
-            {currentLocation && (
-              <Center>
-                {/* The whole line is the button to the whole municipality */}
-                <Link
-                  className="page-heading-place"
-                  to={wholeMunicipalityPath}
-                  title={tc('listing.wholeMunicipality')}
-                >
-                  <span>
-                    {tc('listing.showingIn', {
-                      what: subject || tc(`listing.subjects.${listing}`),
-                      place: currentLocation.name,
-                    })}
-                  </span>
-                  <span className="page-heading-clear" aria-hidden>
-                    <XIcon width={14} height={14} />
-                  </span>
-                </Link>
-              </Center>
-            )}
             {description && (
               <Center>
                 <Text
@@ -133,6 +112,30 @@ export default function PageHeading({
                 >
                   {description}
                 </Text>
+              </Center>
+            )}
+            {/* Inside a place, say so: the listing shows that place only */}
+            {currentLocation && (
+              <Center>
+                {/* The whole line is the button to the whole municipality */}
+                <Link
+                  className="page-heading-place"
+                  to={wholeMunicipalityPath}
+                  title={tc('listing.wholeMunicipality')}
+                >
+                  <span>
+                    {tc('listing.showingIn', {
+                      what: subject || tc(`listing.subjects.${listing}`),
+                      prep: tc(`listing.prep.${listing}`, {
+                        defaultValue: tc('listing.prep.default'),
+                      }),
+                      place: currentLocation.name,
+                    })}
+                  </span>
+                  <span className="page-heading-clear" aria-hidden>
+                    <XIcon width={14} height={14} />
+                  </span>
+                </Link>
               </Center>
             )}
           </Box>
