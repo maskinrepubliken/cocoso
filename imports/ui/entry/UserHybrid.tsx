@@ -154,14 +154,14 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
     locations.find((l) => l._id === item.locationId)?.name ||
     (item.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
 
-  // The same switch as the events listing: Tidigare, Kommande, and for
-  // the person themself and admins, Arkiverade.
+  // The same switch as the events listing, Tidigare and Kommande, with
+  // Arkiverade first for the person themself and admins.
   const views: { key: EventsView; label: string }[] = [
-    { key: 'past', label: tc('labels.past') },
-    { key: 'upcoming', label: tc('labels.upcoming') },
     ...(archived.length > 0
       ? [{ key: 'archived' as EventsView, label: tc('labels.archived') }]
       : []),
+    { key: 'past', label: tc('labels.past') },
+    { key: 'upcoming', label: tc('labels.upcoming') },
   ];
 
   const items =
