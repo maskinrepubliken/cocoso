@@ -58,7 +58,7 @@ form:
     holder: Församlingshemmet
   address:
     label: Adress
-    helper: Adressen dit man ska
+    helper: "Bara när evenemanget inte hålls på någon av platserna ovan. Platserna har sin egen adress, så välj hellre en plats om det går."
     holder: Storgatan 1, Tranemo
   rsvp:
     label: Bokning aktiverad

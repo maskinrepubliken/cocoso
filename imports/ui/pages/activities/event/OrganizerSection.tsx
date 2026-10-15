@@ -72,6 +72,7 @@ const Actions = styled('div', {
 });
 
 export interface PublicContact {
+  name?: string;
   email?: string;
   phone?: string;
   website?: string;
@@ -200,6 +201,7 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
       {hasAny(activity.contact) && (
         <EventContact>
           <Muted>{tc('event.organizer.eventContact')}</Muted>
+          {activity.contact?.name && <Name>{activity.contact.name}</Name>}
           <ContactRows contact={activity.contact!} subject={subject} />
         </EventContact>
       )}

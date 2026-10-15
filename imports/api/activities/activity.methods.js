@@ -21,6 +21,11 @@ import {
   resolveOrganizers,
 } from './activity.organizers';
 import {
+  attachPlaceAddress,
+  ownActivityAddress,
+} from './activity.place';
+import { formatAddress } from '../_utils/address';
+import {
   compareDatesForSortActivities,
   compareDatesForSortActivitiesReverse,
   parseGroupActivities,
@@ -239,8 +244,8 @@ Meteor.methods({
       if (activity?.isArchived && !(await canManage(activity, user))) {
         return null;
       }
-      return await attachOrganizerProfiles(
-        await redactAttendees(activity, user)
+      return await attachPlaceAddress(
+        await attachOrganizerProfiles(await redactAttendees(activity, user))
       );
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch data");
@@ -301,7 +306,10 @@ Meteor.methods({
           upcoming.push({
             activityId: activity._id,
             title: activity.title,
-            place: activity.resource || activity.place || activity.address,
+            place:
+              activity.resource ||
+              activity.place ||
+              formatAddress(activity.address),
             startDate: occurrence.startDate,
             startTime: occurrence.startTime,
             endTime: occurrence.endTime,
@@ -552,12 +560,16 @@ Meteor.methods({
     const locationId = await resolveActivityLocation(values);
     const organizers = await resolveOrganizers(values.organizers, user._id);
     const contact = cleanContact(values.contact);
+    // Held at a place: the place has the address. Otherwise its own, if any.
+    const address = ownActivityAddress(values);
+    delete values.address;
 
     try {
       const activityId = await Activities.insertAsync({
         ...values,
         organizers,
         contact,
+        ...(address ? { address } : {}),
         locationId,
         isMunicipalityOnly: !locationId && Boolean(values.isMunicipalityOnly),
         authorId: user._id,
@@ -617,6 +629,23 @@ Meteor.methods({
     }
     // A place chosen away is removed, not kept from before.
     const unset = {};
+    // The event's own address only counts when it is not held at a place.
+    if ('address' in safeValues || 'resourceId' in safeValues) {
+      const address = ownActivityAddress({
+        resourceId:
+          'resourceId' in safeValues
+            ? safeValues.resourceId
+            : theActivity.resourceId,
+        address:
+          'address' in safeValues ? safeValues.address : theActivity.address,
+      });
+      delete safeValues.address;
+      if (address) {
+        safeValues.address = address;
+      } else {
+        unset.address = 1;
+      }
+    }
     if ('resourceId' in safeValues && !safeValues.resourceId) {
       delete safeValues.resourceId;
       delete safeValues.resource;
@@ -769,7 +798,7 @@ Meteor.methods({
     const occurence = theActivity.datesAndTimes[occurenceIndex];
     const currentUser = await Meteor.userAsync();
     const emailBody = getRegistrationEmailBody(
-      theActivity,
+      await attachPlaceAddress(theActivity),
       values,
       occurence,
       site,
@@ -855,7 +884,7 @@ Meteor.methods({
 
     const site = await getSite();
     const emailBody = getRegistrationEmailBody(
-      theActivity,
+      await attachPlaceAddress(theActivity),
       rsvpValues,
       theOccurence,
       site,

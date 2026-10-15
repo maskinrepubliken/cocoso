@@ -4,7 +4,7 @@ import AutoCompleteSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { useAtom } from 'jotai';
 
-import { Checkbox, Input, NumberInput, Select, Text } from '/imports/ui/core';
+import { Box, Checkbox, NumberInput, Select, Text } from '/imports/ui/core';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
 import { EVENT_KINDS } from './eventKinds';
@@ -12,6 +12,15 @@ import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
 import LocationSelect from '/imports/ui/forms/LocationSelect';
+import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
+import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
+import { AddressDetails } from '/imports/ui/generic/ContactDetails';
+import {
+  Address,
+  hasAddress,
+  isCompleteAddress,
+} from '/imports/api/_utils/address';
+import type { Contact } from '/imports/api/_utils/contact';
 import { useLocationName } from '/imports/ui/utils/useLocation';
 import DatesAndTimes, {
   emptyDateAndTime,
@@ -26,7 +35,6 @@ const defaultCapacity = 40;
 const maxAttendees = 1000;
 
 interface ActivityFormValues {
-  address: string;
   longDescription: string;
   place: string;
   subTitle: string;
@@ -35,6 +43,7 @@ interface ActivityFormValues {
 
 interface ActivityData extends ActivityFormValues {
   _id?: string;
+  address?: Partial<Address> | null;
   capacity?: number;
   datesAndTimes?: DateAndTime[];
   images?: string[];
@@ -47,7 +56,7 @@ interface ActivityData extends ActivityFormValues {
   isRegistrationDisabled?: boolean;
   category?: { key?: string } | null;
   organizers?: OrganizerRef[];
-  contact?: ContactValues | null;
+  contact?: Contact | null;
 }
 
 interface OrganizerRef {
@@ -62,18 +71,10 @@ interface OrganizerOption {
   lastName?: string;
 }
 
-interface ContactValues {
-  email?: string;
-  phone?: string;
-  website?: string;
-}
-
 const organizerLabel = (o: OrganizerOption) => {
   const name = [o.firstName, o.lastName].filter(Boolean).join(' ');
   return name ? `${name} (@${o.username})` : `@${o.username}`;
 };
-
-const emptyContact: ContactValues = { email: '', phone: '', website: '' };
 
 interface PublicActivityFormProps {
   activity?: ActivityData;
@@ -81,7 +82,6 @@ interface PublicActivityFormProps {
 }
 
 export const emptyFormValues: ActivityFormValues = {
-  address: '',
   longDescription: '',
   place: '',
   subTitle: '',
@@ -106,6 +106,8 @@ export default function PublicActivityForm({
     categoryKey: activity?.category?.key || '',
     organizers: activity?.organizers || [],
     contact: { ...emptyContact, ...(activity?.contact || {}) },
+    // Only used when no place is chosen; a place brings its own address.
+    address: activity?.address || emptyAddress,
     resources: [],
   });
   const [organizerOptions, setOrganizerOptions] = useState<OrganizerOption[]>(
@@ -163,16 +165,6 @@ export default function PublicActivityForm({
     }));
   };
 
-  const handleContactChange =
-    (field: keyof ContactValues) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-      setState((prevState: any) => ({
-        ...prevState,
-        contact: { ...prevState.contact, [field]: value },
-      }));
-    };
-
   const isFormValid = () => {
     const { datesAndTimes } = state;
     const isConflictHard = datesAndTimes?.some((occurrence) => {
@@ -203,6 +195,15 @@ export default function PublicActivityForm({
   }, [loaders?.isCreating]);
 
   const handleSubmit = (formValues: ActivityFormValues) => {
+    // An address of its own must be complete if one is given at all.
+    if (
+      !state.selectedResource &&
+      hasAddress(state.address) &&
+      !isCompleteAddress(state.address)
+    ) {
+      message.error(tc('address.errors.required'));
+      return;
+    }
     setState((prevState) => ({
       ...prevState,
       formValues,
@@ -278,6 +279,7 @@ export default function PublicActivityForm({
       category: state.categoryKey ? { key: state.categoryKey } : null,
       organizers: state.organizers,
       contact: state.contact,
+      address: state.selectedResource ? null : state.address,
       locationId: state.selectedResource ? null : state.locationId,
       isMunicipalityOnly: state.selectedResource
         ? false
@@ -289,9 +291,8 @@ export default function PublicActivityForm({
     if (selectedResource) {
       newActivity.resourceId = selectedResource._id;
       newActivity.resource = selectedResource.label;
-      // The place says where; a typed name or address would only compete
+      // The place says where; a typed name would only compete
       newActivity.place = '';
-      newActivity.address = '';
     } else {
       // No place chosen: the server drops any earlier one
       newActivity.resourceId = null;
@@ -315,9 +316,8 @@ export default function PublicActivityForm({
       childrenIndex={2}
       defaultValues={activity || emptyFormValues}
       formFields={publicActivityFormFields(t).filter(
-        // With a place chosen, its name and address are known
-        (field) =>
-          !state.selectedResource || !['place', 'address'].includes(field.value)
+        // With a place chosen, its name is known
+        (field) => !state.selectedResource || field.value !== 'place'
       )}
       isSubmitButtonDisabled={isSubmitButtonDisabled}
       onSubmit={handleSubmit}
@@ -387,28 +387,11 @@ export default function PublicActivityForm({
         label={t('form.contact.label')}
         my="8"
       >
-        <Input
-          aria-label={t('form.contact.email')}
-          placeholder={t('form.contact.email')}
-          type="email"
-          value={state.contact.email || ''}
-          onChange={handleContactChange('email')}
-        />
-        <Input
-          aria-label={t('form.contact.phone')}
-          placeholder={t('form.contact.phone')}
-          style={{ marginTop: '0.5rem' }}
-          type="tel"
-          value={state.contact.phone || ''}
-          onChange={handleContactChange('phone')}
-        />
-        <Input
-          aria-label={t('form.contact.website')}
-          placeholder={t('form.contact.website')}
-          style={{ marginTop: '0.5rem' }}
-          type="url"
-          value={state.contact.website || ''}
-          onChange={handleContactChange('website')}
+        <ContactFields
+          value={state.contact}
+          onChange={(contact) =>
+            setState((prevState: any) => ({ ...prevState, contact }))
+          }
         />
       </FormField>
 
@@ -457,7 +440,30 @@ export default function PublicActivityForm({
           getOptionValue={(option) => option._id}
           onChange={handleSelectResource}
         />
+        {state.selectedResource && selectedResourceFull?.address && (
+          <Box mt="3">
+            <AddressDetails
+              withoutMapLink
+              address={selectedResourceFull.address}
+            />
+          </Box>
+        )}
       </FormField>
+
+      {!state.selectedResource && (
+        <FormField
+          helper={t('form.address.helper')}
+          label={t('form.address.label')}
+          my="8"
+        >
+          <AddressFields
+            value={state.address}
+            onChange={(address) =>
+              setState((prevState: any) => ({ ...prevState, address }))
+            }
+          />
+        </FormField>
+      )}
 
       <FormField
         helper={

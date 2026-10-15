@@ -3,6 +3,7 @@ import loadable from '@loadable/component';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
+import type { Address } from '/imports/api/_utils/address';
 import { useAtomValue } from 'jotai';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
@@ -173,7 +174,9 @@ interface Activity {
   place?: string;
   resource?: string;
   resourceId?: string;
-  address?: string;
+  address?: Partial<Address> | null;
+  // The address to show: the place's, or the event's own (activity.place.js).
+  placeAddress?: Partial<Address> | null;
   locationId?: string;
   datesAndTimes?: Occurrence[];
   organizers?: { userId: string; username: string }[];

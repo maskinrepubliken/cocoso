@@ -36,14 +36,6 @@ const publicActivityFormFields = (t) => [
     placeholder: t('form.place.holder'),
     value: 'place',
   },
-
-  {
-    helper: t('form.address.helper'),
-    label: t('form.address.label'),
-    type: 'textarea',
-    placeholder: t('form.address.holder'),
-    value: 'address',
-  },
 ];
 
 export default publicActivityFormFields;

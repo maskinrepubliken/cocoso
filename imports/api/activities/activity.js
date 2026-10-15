@@ -41,7 +41,9 @@ Activities.schema = new SimpleSchema({
   // Contact details for this event in particular, next to the organizers'.
   contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
 
-  address: { type: String, optional: true },
+  // Only for an event that is not held at a place (resourceId): a place
+  // brings its own address. See activity.place.js.
+  address: { type: new SimpleSchema(Schemas.Address), optional: true },
   capacity: { type: SimpleSchema.Integer, defaultValue: 40 },
   place: { type: String, optional: true },
 

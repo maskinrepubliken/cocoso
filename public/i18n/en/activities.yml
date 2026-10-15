@@ -59,7 +59,7 @@ form:
   address:
     label: Address
     holder: Storgatan 1, Tranemo
-    helper: The address to go to
+    helper: "Only when the event is not held at one of the places above. Places carry their own address, so choose one if you can."
   rsvp:
     label: Registration (RSVP) Enabled
     helper: If selected, people can register/RSVP to attend the occurrence(s) of the event

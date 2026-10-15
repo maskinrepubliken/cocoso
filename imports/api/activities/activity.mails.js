@@ -1,6 +1,7 @@
 import mailtranslations from './mailtranslations';
 import escapeHtml from '../_utils/escapeHtml';
 import { publicUrl } from '../_utils/shared';
+import { formatAddress } from '../_utils/address';
 
 const getRegistrationEmailBody = (
   activity,
@@ -20,7 +21,9 @@ const getRegistrationEmailBody = (
     hostName = site.settings.name,
     hostLogo = site.logo,
     hostAddress = site.settings.address,
-    resource = activity.resource;
+    // Where the event is: its place's address or its own (attachPlaceAddress).
+    placeAddress = escapeHtml(formatAddress(activity.placeAddress)),
+    resource = escapeHtml(activity.resource || activity.place || '');
 
   const lang = currentUser?.lang || site?.settings?.lang || 'en';
   const tr = mailtranslations[lang];
@@ -344,7 +347,7 @@ const getRegistrationEmailBody = (
             </tr>
             <tr>
               <td style="padding: 0 15px 0 0; width: 100px;">${address}:</td>
-              <td style="padding: 0 15px;"><b>${hostAddress}</b></td>
+              <td style="padding: 0 15px;"><b>${placeAddress}</b></td>
             </tr>
             <tr>
               <td style="padding: 0 15px 0 0; width: 100px;"></td>
