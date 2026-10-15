@@ -25,12 +25,17 @@ type Context =
   | 'resources'
   | 'works'
   | 'info'
-  | 'profile';
+  | 'profile'
+  | 'userProfile';
 
 // What the page under the header shows, taken from its route's loader data,
 // and whether this visitor may edit it. Mirrors the server's own checks so
 // the pen only appears where the form would be allowed to save.
-function useEditable(): { context: Context; id: string } | null {
+function useEditable(): {
+  context: Context;
+  id: string;
+  username?: string;
+} | null {
   const matches = useMatches();
   const { pageTitle } = useParams();
   const { pathname } = useLocation();
@@ -45,11 +50,22 @@ function useEditable(): { context: Context; id: string } | null {
   if (pathname.replace(/\/$/, '') === `/@${currentUser.username}`) {
     return { context: 'profile', id: currentUser._id };
   }
+  const isAdmin = role === 'admin';
+  // Someone else's organizer page: an admin may edit their profile.
+  const profileSlug = pathname.match(/^\/@([^/]+)\/?$/);
+  if (profileSlug) {
+    return isAdmin
+      ? {
+          context: 'userProfile',
+          id: profileSlug[1],
+          username: decodeURIComponent(profileSlug[1]),
+        }
+      : null;
+  }
   if (!canCreateContent) {
     return null;
   }
   const userId = currentUser._id;
-  const isAdmin = role === 'admin';
   const data = [...matches].reverse().find((match) => match.data)?.data as
     | any
     | undefined;
@@ -132,6 +148,28 @@ export default function EditButton() {
           title={label}
         >
           <span className="site-new" aria-hidden>
+            <PenIcon width={16} height={16} />
+          </span>
+        </Link>
+      </div>
+    );
+  }
+
+  // An admin on an organizer's page: the white pen, to that profile's
+  // admin form.
+  if (editable.context === 'userProfile') {
+    const label = tc('people.editProfile');
+    return (
+      <div className={`new-button-wrapper new-button-${animState}`}>
+        <Link
+          className="site-new-button"
+          to={`/admin/users/${encodeURIComponent(
+            editable.username || ''
+          )}/profile`}
+          aria-label={label}
+          title={label}
+        >
+          <span className="site-new site-edit" aria-hidden>
             <PenIcon width={16} height={16} />
           </span>
         </Link>

@@ -216,6 +216,7 @@ plugins:
     helperMultiple: Släpp eller välj bild(er)
 
 people:
+  editProfile: Redigera profilen
   organizer: Arrangör
   events: Evenemang
   upcoming_one: '{{ count }} kommande evenemang'

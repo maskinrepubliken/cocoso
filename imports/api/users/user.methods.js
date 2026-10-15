@@ -13,7 +13,7 @@ import {
   ContactPattern,
   cleanContact,
 } from '../activities/activity.organizers';
-import { isContributorOrAdmin } from './user.roles';
+import { isAdmin, isContributorOrAdmin } from './user.roles';
 
 const userModel = async (user) => ({
   _id: user._id,
@@ -27,6 +27,101 @@ const userModel = async (user) => ({
   username: user.username,
   memberships: await getUserMemberships(user._id),
 });
+
+// Writes a user's avatar and the copies of it kept on their works and
+// groups. Callers check who may do this.
+async function applyAvatar(userId, avatar) {
+  const newAvatar = {
+    src: avatar,
+    date: new Date(),
+  };
+
+  try {
+    await Meteor.users.updateAsync(userId, {
+      $set: {
+        avatar: newAvatar,
+      },
+    });
+
+    await Works.updateAsync(
+      {
+        authorId: userId,
+      },
+      {
+        $set: {
+          authorAvatar: avatar,
+        },
+      },
+      {
+        multi: true,
+      }
+    );
+
+    await Groups.updateAsync(
+      {
+        members: {
+          $elemMatch: {
+            memberId: userId,
+          },
+        },
+      },
+      {
+        $set: {
+          'members.$.avatar': avatar,
+        },
+      },
+      {
+        multi: true,
+      }
+    );
+
+    await Groups.updateAsync(
+      {
+        authorId: userId,
+      },
+      {
+        $set: {
+          authorAvatar: avatar,
+        },
+      },
+      {
+        multi: true,
+      }
+    );
+  } catch (error) {
+    throw new Meteor.Error(error);
+  }
+}
+
+// The profile fields one may write, for oneself or (an admin) for anyone.
+const ProfilePattern = {
+  firstName: Match.Maybe(String),
+  lastName: Match.Maybe(String),
+  bio: Match.Maybe(String),
+  contactInfo: Match.Maybe(String),
+  publicContact: ContactPattern,
+};
+
+async function requireAdminUser() {
+  const user = await Meteor.userAsync();
+  if (!user || !(await isAdmin(user._id))) {
+    throw new Meteor.Error('not-allowed', 'You are not allowed');
+  }
+  return user;
+}
+
+async function writeProfile(userId, values) {
+  const { publicContact, ...rest } = values;
+  const set = { ...rest };
+  if ('publicContact' in values) {
+    set.publicContact = cleanContact(publicContact);
+  }
+  try {
+    await Meteor.users.updateAsync(userId, { $set: set });
+  } catch (error) {
+    throw new Meteor.Error(error);
+  }
+}
 
 Meteor.methods({
   async getCurrentUserLang() {
@@ -148,31 +243,12 @@ Meteor.methods({
     // Only these profile fields may be written by the user themself. Never
     // spread client input straight into $set on the users collection: the
     // schema also contains isSuperAdmin, encryption keys and block lists.
-    check(values, {
-      firstName: Match.Maybe(String),
-      lastName: Match.Maybe(String),
-      bio: Match.Maybe(String),
-      contactInfo: Match.Maybe(String),
-      publicContact: ContactPattern,
-    });
+    check(values, ProfilePattern);
     const user = await Meteor.userAsync();
     if (!user) {
       throw new Meteor.Error('not-authorized', 'You must be logged in');
     }
-
-    const { publicContact, ...rest } = values;
-    const set = { ...rest };
-    if ('publicContact' in values) {
-      set.publicContact = cleanContact(publicContact);
-    }
-
-    try {
-      await Meteor.users.updateAsync(user._id, {
-        $set: set,
-      });
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
+    await writeProfile(user._id, values);
   },
 
   async setPreferredLanguage(lang) {
@@ -203,69 +279,46 @@ Meteor.methods({
       throw new Meteor.Error('Not valid file');
     }
 
-    const userId = user._id;
+    await applyAvatar(user._id, avatar);
+  },
 
-    const newAvatar = {
-      src: avatar,
-      date: new Date(),
-    };
-
-    try {
-      await Meteor.users.updateAsync(userId, {
-        $set: {
-          avatar: newAvatar,
+  // An admin editing an organizer's profile from the organizer's page:
+  // the same fields the person can edit themself, nothing else.
+  async getUserProfileForAdmin(username) {
+    check(username, String);
+    await requireAdminUser();
+    const user = await Meteor.users.findOneAsync(
+      { username },
+      {
+        fields: {
+          username: 1,
+          firstName: 1,
+          lastName: 1,
+          bio: 1,
+          contactInfo: 1,
+          publicContact: 1,
+          avatar: 1,
         },
-      });
-
-      await Works.updateAsync(
-        {
-          authorId: userId,
-        },
-        {
-          $set: {
-            authorAvatar: avatar,
-          },
-        },
-        {
-          multi: true,
-        }
-      );
-
-      await Groups.updateAsync(
-        {
-          members: {
-            $elemMatch: {
-              memberId: userId,
-            },
-          },
-        },
-        {
-          $set: {
-            'members.$.avatar': avatar,
-          },
-        },
-        {
-          multi: true,
-        }
-      );
-
-      await Groups.updateAsync(
-        {
-          authorId: userId,
-        },
-        {
-          $set: {
-            authorAvatar: avatar,
-          },
-        },
-        {
-          multi: true,
-        }
-      );
-
-    } catch (error) {
-      throw new Meteor.Error(error);
+      }
+    );
+    if (!user) {
+      throw new Meteor.Error('not-found', 'No such user');
     }
+    return user;
+  },
+
+  async saveUserInfoAsAdmin(userId, values) {
+    check(userId, String);
+    check(values, ProfilePattern);
+    await requireAdminUser();
+    await writeProfile(userId, values);
+  },
+
+  async setAvatarAsAdmin(userId, avatar) {
+    check(userId, String);
+    check(avatar, String);
+    await requireAdminUser();
+    await applyAvatar(userId, avatar);
   },
 
   // Whom a contributor can name as co-organizer of an event: everyone who
@@ -279,7 +332,9 @@ Meteor.methods({
       { role: { $in: ['contributor', 'admin'] } },
       { fields: { userId: 1 } }
     ).fetchAsync();
-    const ids = memberships.map((m) => m.userId).filter((id) => id !== user._id);
+    const ids = memberships
+      .map((m) => m.userId)
+      .filter((id) => id !== user._id);
     const users = await Meteor.users
       .find(
         { _id: { $in: ids } },
@@ -405,5 +460,4 @@ Meteor.methods({
       throw new Meteor.Error(error);
     }
   },
-
 });

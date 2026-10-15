@@ -614,7 +614,6 @@
   "imports/ui/pages/pages/PageItemHandler.tsx | TS7006 | Parameter 'page' implicitly has an 'any' type.": 2,
   "imports/ui/pages/pages/PageItemHandler.tsx | TS7031 | Binding element 'pageTitles' implicitly has an 'any' type.": 1,
   "imports/ui/pages/pages/PageItemHandler.tsx | TS7031 | Binding element 'siteDoc' implicitly has an 'any' type.": 1,
-  "imports/ui/pages/profile/components/UserInteractionHandler.tsx | TS7031 | Binding element 'user' implicitly has an 'any' type.": 1,
   "imports/ui/pages/profile/ContactInfo.tsx | TS18046 | 'error' is of type 'unknown'.": 2,
   "imports/ui/pages/profile/ContactInfo.tsx | TS2345 | Argument of type 'string' is not assignable to parameter of type 'SetStateAction<null>'.": 1,
   "imports/ui/pages/profile/ContactInfo.tsx | TS2345 | Argument of type 'unknown' is not assignable to parameter of type 'SetStateAction<null>'.": 1,

@@ -219,6 +219,7 @@ plugins:
     helperMultiple: Drop or pick image(s)
 
 people:
+  editProfile: Edit profile
   organizer: Organizer
   events: Events
   upcoming_one: '{{ count }} upcoming event'

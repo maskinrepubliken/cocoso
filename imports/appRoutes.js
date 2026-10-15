@@ -22,7 +22,9 @@ import GroupItemHandler from '/imports/ui/pages/groups/GroupItemHandler';
 import ResourceItemHandler from '/imports/ui/pages/resources/ResourceItemHandler';
 import WorkItemHandler from '/imports/ui/pages/works/WorkItemHandler';
 import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
-import SlugHandler, { SlugChild } from '/imports/ui/pages/locations/SlugHandler';
+import SlugHandler, {
+  SlugChild,
+} from '/imports/ui/pages/locations/SlugHandler';
 import LocationLanding from '/imports/ui/pages/locations/LocationLanding';
 import ComposablePageHandler from '/imports/ui/pages/composablepages/ComposablePageHandler';
 import CalendarHandler from '/imports/ui/pages/calendar/CalendarHandler';
@@ -98,6 +100,9 @@ const MenuDesign = loadable(() =>
   import('/imports/ui/pages/admin/design/MenuDesign')
 );
 const Members = loadable(() => import('/imports/ui/pages/admin/Members'));
+const EditUserProfile = loadable(() =>
+  import('/imports/ui/pages/admin/EditUserProfile')
+);
 const Locations = loadable(() => import('/imports/ui/pages/admin/Locations'));
 const Emails = loadable(() => import('/imports/ui/pages/admin/Emails'));
 const EmailNewsletter = loadable(() =>
@@ -177,6 +182,7 @@ import {
   getWork,
   getLocationLanding,
   getHostMembersForAdmin,
+  getUserProfileForAdmin,
   getLocationsForAdmin,
   getEmails,
   getComposablePageTitles,
@@ -389,6 +395,11 @@ const getAdminRoutes = (props) => [
     loader: async () => await getHostMembersForAdmin(),
   },
   {
+    path: 'users/:username/profile',
+    element: createRouteElement(EditUserProfile, props),
+    loader: async ({ params }) => await getUserProfileForAdmin(params.username),
+  },
+  {
     path: 'emails',
     element: createRouteElement(Emails, props),
     loader: async () => await getEmails(),
@@ -463,7 +474,8 @@ export default function appRoutes(props) {
             index: true,
             element: el(ActivityListHandler, MemberActivities),
             loader: ld(
-              ({ request, locationId }) => getActivities({ request, locationId }),
+              ({ request, locationId }) =>
+                getActivities({ request, locationId }),
               ({ params }) => getActivitiesByUser({ params })
             ),
             shouldRevalidate: revalidateOn(['showPast']),
@@ -671,8 +683,7 @@ export default function appRoutes(props) {
             {
               path: ':newsletterId',
               element: createRouteElement(Newsletter, props),
-              loader: async ({ params }) =>
-                await getNewsletterById({ params }),
+              loader: async ({ params }) => await getNewsletterById({ params }),
             },
           ],
         },

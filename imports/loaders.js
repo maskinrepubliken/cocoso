@@ -203,6 +203,16 @@ export async function getComposablePage({ params, siteDoc }) {
   };
 }
 
+// An organizer's editable profile, for an admin (server checks the role)
+export async function getUserProfileForAdmin(username) {
+  try {
+    const user = await call('getUserProfileForAdmin', username);
+    return { user };
+  } catch {
+    return { user: null };
+  }
+}
+
 export async function getHostMembersForAdmin() {
   try {
     const members = await call('getSiteMembersForAdmin');
