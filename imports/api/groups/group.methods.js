@@ -9,6 +9,7 @@ import {
 
 import { isAdmin, isContributorOrAdmin, isMember } from '../users/user.roles';
 import { getSite } from '../site/site';
+import { requireContact } from '../_utils/contact';
 import Groups from './group';
 import Activities from '../activities/activity';
 import {
@@ -211,11 +212,14 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
+    const contact = requireContact(formValues.contact);
+
     const userAvatar = user.avatar ? user.avatar.src : null;
 
     try {
       const newGroupId = await Groups.insertAsync({
         ...formValues,
+        contact,
         locationId: formValues.locationId || undefined,
         isMunicipalityOnly:
           !formValues.locationId && Boolean(formValues.isMunicipalityOnly),
@@ -271,12 +275,14 @@ Meteor.methods({
       throw new Meteor.Error('You are not allowed!');
     }
 
+    const contact = requireContact(values.contact);
     const { locationId, ...safeValues } = values;
 
     try {
       await Groups.updateAsync(groupId, {
         $set: {
           ...safeValues,
+          contact,
           ...(locationId ? { locationId } : {}),
           isMunicipalityOnly:
             !locationId && Boolean(safeValues.isMunicipalityOnly),

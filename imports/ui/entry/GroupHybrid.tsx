@@ -8,6 +8,8 @@ import GroupDocuments from '../generic/Documents';
 import GroupMembers from '/imports/ui/pages/groups/components/GroupMembers';
 import type { Document, Site } from '/imports/ui/types';
 import { useLocationTag } from '/imports/ui/utils/useLocation';
+import { ContactDetails } from '/imports/ui/generic/ContactDetails';
+import { hasContact, type Contact } from '/imports/api/_utils/contact';
 
 import ActionDates, { DateOccurrence } from './ActionDates';
 import EntryHero, {
@@ -27,6 +29,7 @@ interface Group {
   _id: string;
   title?: string;
   description?: string;
+  contact?: Contact | null;
   readingMaterial?: string;
   imageUrl?: string;
   isPrivate?: boolean;
@@ -116,6 +119,17 @@ export default function GroupHybrid({
           </Actions>
         )}
       </EntryHero>
+
+      {hasContact(group.contact) && (
+        <EntryColumn>
+          <SectionHead>
+            <h2>{tc('contact.title')}</h2>
+          </SectionHead>
+          <Panel>
+            <ContactDetails contact={group.contact} subject={group.title} />
+          </Panel>
+        </EntryColumn>
+      )}
 
       {hasMeetings && (
         <EntryColumn>

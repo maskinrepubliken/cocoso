@@ -18,6 +18,8 @@ tabs:
     discuss: Discussion
 
 form:
+  contact:
+    helper: "How the public reaches the group. An email address or a phone number is required."
   private:
     label: Private (invite-only)
     helper: Private groups are only visible by their members, and participation is possible only via invites by their admins. You can not change it to public after you've created it. You will be able to manage the invites after you create the group.
