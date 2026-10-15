@@ -1,17 +1,17 @@
 import { Trans, useTranslation } from 'react-i18next';
 import React from 'react';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
-import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import LockIcon from 'lucide-react/dist/esm/icons/lock';
 
 import GroupDocuments from '../generic/Documents';
 import GroupMembers from '/imports/ui/pages/groups/components/GroupMembers';
 import type { Document, Site } from '/imports/ui/types';
-import { useLocationTag } from '/imports/ui/utils/useLocation';
 import { ContactDetails } from '/imports/ui/generic/ContactDetails';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
 
 import ActionDates, { DateOccurrence } from './ActionDates';
+import LocationTag from '/imports/ui/generic/LocationTag';
+
 import EntryHero, {
   Actions,
   Chip,
@@ -51,7 +51,6 @@ export default function GroupHybrid({
   siteDoc,
 }: GroupHybridProps) {
   const [tc] = useTranslation('common');
-  const locationName = useLocationTag(group as any);
   if (!group) {
     return null;
   }
@@ -80,12 +79,10 @@ export default function GroupHybrid({
         chips={
           <>
             <Chip accent>{tc('entry.group')}</Chip>
-            {locationName && (
-              <Chip>
-                <MapPinIcon aria-hidden />
-                {locationName}
-              </Chip>
-            )}
+            <LocationTag
+              isMunicipalityOnly={(group as any).isMunicipalityOnly}
+              locationId={(group as any).locationId}
+            />
             {group.isPrivate && (
               <Chip>
                 <LockIcon aria-hidden />

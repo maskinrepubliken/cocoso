@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { styled } from '/stitches.config';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import AddressBlock from '/imports/ui/generic/AddressBlock';
+import LocationTag from '/imports/ui/generic/LocationTag';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 
 import Section, { Muted, Strong } from './Section';
@@ -24,6 +25,8 @@ const ExternalLink = styled('a', {
 
 const AddressBox = styled('div', { marginTop: '0.875rem' });
 
+const TagRow = styled('div', { marginTop: '0.25rem' });
+
 interface PlaceSectionProps {
   activity: {
     resource?: string;
@@ -31,6 +34,8 @@ interface PlaceSectionProps {
     place?: string;
     // The place's address, or the event's own (activity.place.js).
     placeAddress?: Partial<Address> | null;
+    locationId?: string;
+    isMunicipalityOnly?: boolean;
   };
   locationName?: string | null;
 }
@@ -43,7 +48,14 @@ export default function PlaceSection({
 }: PlaceSectionProps) {
   const [tc] = useTranslation('common');
   const prefix = useLocationPrefix();
-  const { resource, resourceId, place, placeAddress } = activity;
+  const {
+    resource,
+    resourceId,
+    place,
+    placeAddress,
+    locationId,
+    isMunicipalityOnly,
+  } = activity;
   const withAddress = hasAddress(placeAddress);
 
   if (!resource && !place && !withAddress) {
@@ -65,7 +77,15 @@ export default function PlaceSection({
         (resource || place) && <Strong>{resource || place}</Strong>
       )}
       {resource && place && place !== resource && <Muted>{place}</Muted>}
-      {locationName && <Muted>{locationName}</Muted>}
+      {(locationId || isMunicipalityOnly) && (
+        <TagRow>
+          <LocationTag
+            bare
+            isMunicipalityOnly={isMunicipalityOnly}
+            locationId={locationId}
+          />
+        </TagRow>
+      )}
       {withAddress ? (
         <AddressBox>
           <AddressBlock

@@ -2,7 +2,6 @@ import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import React from 'react';
 import dayjs from 'dayjs';
-import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import CalendarIcon from 'lucide-react/dist/esm/icons/calendar';
 import UserIcon from 'lucide-react/dist/esm/icons/user';
 import MessageIcon from 'lucide-react/dist/esm/icons/message-circle';
@@ -11,7 +10,8 @@ import { styled } from '/stitches.config';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
 import { findRequestKind } from '/imports/ui/pages/works/requestKinds';
 import type { Document, Site } from '/imports/ui/types';
-import { useLocationTag } from '/imports/ui/utils/useLocation';
+
+import LocationTag from '/imports/ui/generic/LocationTag';
 
 import EntryHero, {
   Actions,
@@ -96,7 +96,6 @@ const ContactNote = styled('p', {
 // who to ask, then any extra details, pictures and documents.
 export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps) {
   const [tc] = useTranslation('common');
-  const locationName = useLocationTag(work as any);
   if (!work) {
     return null;
   }
@@ -133,12 +132,10 @@ export default function WorkHybrid({ documents, work, siteDoc }: WorkHybridProps
                   : work.category?.label}
               </Chip>
             )}
-            {locationName && (
-              <Chip>
-                <MapPinIcon aria-hidden />
-                {locationName}
-              </Chip>
-            )}
+            <LocationTag
+              isMunicipalityOnly={(work as any).isMunicipalityOnly}
+              locationId={(work as any).locationId}
+            />
           </>
         }
         html={work.longDescription}

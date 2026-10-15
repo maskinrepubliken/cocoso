@@ -29,6 +29,7 @@ import BackLink from './BackLink';
 import Section, { NARROW, WIDE } from '../pages/activities/event/Section';
 import WhenSection from '../pages/activities/event/WhenSection';
 import PlaceSection from '../pages/activities/event/PlaceSection';
+import LocationTag from '/imports/ui/generic/LocationTag';
 import OrganizerSection, {
   OrganizerProfile,
   PublicContact,
@@ -178,6 +179,7 @@ interface Activity {
   // The address to show: the place's, or the event's own (activity.place.js).
   placeAddress?: Partial<Address> | null;
   locationId?: string;
+  isMunicipalityOnly?: boolean;
   datesAndTimes?: Occurrence[];
   organizers?: { userId: string; username: string }[];
   contact?: PublicContact | null;
@@ -336,7 +338,10 @@ export default function ActivityHybrid({
           {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
           {(locationName || activity.isArchived) && (
             <Tags>
-              {locationName && <Tag colorScheme="gray">{locationName}</Tag>}
+              <LocationTag
+                isMunicipalityOnly={activity.isMunicipalityOnly}
+                locationId={activity.locationId}
+              />
               {activity.isArchived && (
                 <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
               )}
