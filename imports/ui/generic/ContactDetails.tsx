@@ -12,11 +12,7 @@ import {
   telHref,
   websiteLabel,
 } from '/imports/api/_utils/contact';
-import {
-  Address,
-  addressLines,
-  hasAddress,
-} from '/imports/api/_utils/address';
+import { Address, addressLines, hasAddress } from '/imports/api/_utils/address';
 
 // The read-only side of imports/ui/forms/ContactFields and AddressFields:
 // one icon per line, links where a line can be acted on.
@@ -28,14 +24,15 @@ export const DetailList = styled('ul', {
   listStyle: 'none',
   margin: 0,
   padding: 0,
-  fontSize: '0.9rem',
+  fontSize: '1rem',
+  lineHeight: 1.45,
   '& li': { alignItems: 'flex-start', display: 'flex', gap: '0.5rem' },
   '& svg': {
     color: 'var(--cocoso-tegel)',
     flexShrink: 0,
-    height: '1rem',
-    marginTop: '0.15rem',
-    width: '1rem',
+    height: '1.05rem',
+    marginTop: '0.2rem',
+    width: '1.05rem',
   },
   '& a': {
     color: 'var(--cocoso-colors-theme-700)',

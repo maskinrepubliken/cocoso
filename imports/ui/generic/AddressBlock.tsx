@@ -23,17 +23,16 @@ import PlaceMap from './PlaceMap';
 const SPLIT = '@media (min-width: 700px)';
 const NARROW = '@media (max-width: 699px)';
 
-// On a narrow screen the map can reach the edges of the panel it is in,
-// like the picture on top of an entry card. The offsets match the padding
-// of Panel (entry pages) and Section (the event page).
+// The map can reach the edges of the card it is in, like the picture on
+// top of an entry card. The offsets match the padding of Panel (entry
+// pages) and Section (the event page); with `top` the card must clip its
+// corners (overflow: hidden).
 const MapEdge = styled('div', {
   variants: {
     edge: {
       top: {
-        [NARROW]: {
-          margin: '-1.25rem -1.5rem 0',
-          '& > div': { borderRadius: '16px 16px 0 0' },
-        },
+        margin: '-1.25rem -1.5rem 0',
+        '& > div': { borderRadius: 0 },
       },
       sides: {
         [NARROW]: {
@@ -68,7 +67,7 @@ const MapLinks = styled('ul', {
   display: 'flex',
   flexWrap: 'wrap',
   fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '0.78rem',
+  fontSize: '0.85rem',
   gap: '0.25rem 0.875rem',
   gridColumn: '1 / -1',
   justifyContent: 'flex-end',
@@ -97,8 +96,11 @@ interface AddressBlockProps {
   // Read out instead of the map, e.g. the place's name.
   label?: string;
   mapHeight?: number;
-  // Let the map reach the panel's edges on narrow screens.
+  // Let the map reach the card's edges: its top (always) or its sides (on
+  // narrow screens).
   edge?: 'top' | 'sides' | 'none';
+  // The card's title and the like, shown under the map.
+  heading?: React.ReactNode;
   // No links to map services, e.g. in a form's preview.
   withoutMapLink?: boolean;
 }
@@ -110,6 +112,7 @@ export default function AddressBlock({
   label,
   mapHeight,
   edge = 'none',
+  heading,
   withoutMapLink,
 }: AddressBlockProps) {
   const [tc] = useTranslation('common');
@@ -133,9 +136,8 @@ export default function AddressBlock({
         </MapEdge>
       )}
       <Details>
-        {withAddress && (
-          <AddressDetails address={address} />
-        )}
+        {heading && <div>{heading}</div>}
+        {withAddress && <AddressDetails address={address} />}
         {withContact && <ContactDetails contact={contact} />}
       </Details>
       {withAddress && !withoutMapLink && (

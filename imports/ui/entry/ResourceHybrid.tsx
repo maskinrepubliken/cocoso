@@ -108,7 +108,7 @@ const SideTitle = styled('h2', {
   fontSize: '0.72rem',
   fontWeight: 700,
   letterSpacing: '0.1em',
-  margin: '0 0 0.875rem',
+  margin: 0,
   textTransform: 'uppercase',
 });
 
@@ -192,14 +192,18 @@ export default function ResourceHybrid({
 
         {hasAddress(resource.address) || withContact ? (
           <Sidebar>
-            <Panel>
-              <SideTitle>
-                {tc(withContact ? 'address.titleWithContact' : 'address.title')}
-              </SideTitle>
+            <Panel css={{ overflow: 'hidden' }}>
               <AddressBlock
                 address={resource.address}
                 contact={resource.contact}
-                edge="sides"
+                edge="top"
+                heading={
+                  <SideTitle>
+                    {tc(
+                      withContact ? 'address.titleWithContact' : 'address.title'
+                    )}
+                  </SideTitle>
+                }
                 label={resource.label}
               />
             </Panel>

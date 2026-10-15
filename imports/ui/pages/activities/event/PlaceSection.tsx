@@ -8,7 +8,7 @@ import AddressBlock from '/imports/ui/generic/AddressBlock';
 import LocationTag from '/imports/ui/generic/LocationTag';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 
-import Section, { Muted, Strong } from './Section';
+import Section, { Muted, SectionTitle, Strong } from './Section';
 
 const PlaceLink = styled(Link, {
   color: 'var(--cocoso-colors-theme-800)',
@@ -22,8 +22,6 @@ const ExternalLink = styled('a', {
   fontSize: '0.85rem',
   marginTop: '0.625rem',
 });
-
-const AddressBox = styled('div', { marginTop: '0.875rem' });
 
 const TagRow = styled('div', { marginTop: '0.25rem' });
 
@@ -65,8 +63,12 @@ export default function PlaceSection({
   // Without an address, a search for the name is the best the map can do.
   const mapQuery = [resource || place, locationName].filter(Boolean).join(', ');
 
-  return (
-    <Section order={5} title={tc('event.sections.where')}>
+  // Title, place and ort; under the map when there is one.
+  const heading = (
+    <>
+      <SectionTitle css={{ marginBottom: '0.875rem' }}>
+        {tc('event.sections.where')}
+      </SectionTitle>
       {resource && resourceId ? (
         <Strong>
           <PlaceLink to={`${prefix}/resources/${resourceId}`}>
@@ -86,24 +88,31 @@ export default function PlaceSection({
           />
         </TagRow>
       )}
+    </>
+  );
+
+  return (
+    <Section bleed order={5}>
       {withAddress ? (
-        <AddressBox>
-          <AddressBlock
-            address={placeAddress}
-            edge="sides"
-            label={resource || place}
-          />
-        </AddressBox>
+        <AddressBlock
+          address={placeAddress}
+          edge="top"
+          heading={heading}
+          label={resource || place}
+        />
       ) : (
-        <ExternalLink
-          href={`https://www.openstreetmap.org/search?query=${encodeURIComponent(
-            mapQuery
-          )}`}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          {tc('event.place.map')}
-        </ExternalLink>
+        <>
+          {heading}
+          <ExternalLink
+            href={`https://www.openstreetmap.org/search?query=${encodeURIComponent(
+              mapQuery
+            )}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {tc('event.place.map')}
+          </ExternalLink>
+        </>
       )}
     </Section>
   );

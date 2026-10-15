@@ -13,6 +13,10 @@ const SectionBox = styled('section', {
   boxShadow: 'var(--cocoso-skugga)',
   padding: '1.25rem 1.5rem',
   wordBreak: 'break-word',
+  variants: {
+    // Something inside reaches the card's edges, e.g. a map on top.
+    bleed: { true: { overflow: 'hidden' } },
+  },
 });
 
 const SectionHeader = styled('div', {
@@ -23,7 +27,7 @@ const SectionHeader = styled('div', {
   marginBottom: '0.875rem',
 });
 
-const SectionTitle = styled('h2', {
+export const SectionTitle = styled('h2', {
   color: 'var(--cocoso-tegel)',
   fontFamily: 'var(--cocoso-font-ui)',
   fontSize: '0.72rem',
@@ -39,8 +43,10 @@ const SectionAside = styled('span', {
 });
 
 interface SectionProps {
-  title: React.ReactNode;
+  // Leave out to place the title yourself, e.g. under a map.
+  title?: React.ReactNode;
   aside?: React.ReactNode;
+  bleed?: boolean;
   // Position in the single-column layout on narrow screens.
   order: number;
   id?: string;
@@ -52,14 +58,17 @@ export default function Section({
   aside,
   order,
   id,
+  bleed,
   children,
 }: SectionProps) {
   return (
-    <SectionBox id={id} css={{ [NARROW]: { order } }}>
-      <SectionHeader>
-        <SectionTitle>{title}</SectionTitle>
-        {aside && <SectionAside>{aside}</SectionAside>}
-      </SectionHeader>
+    <SectionBox bleed={bleed} id={id} css={{ [NARROW]: { order } }}>
+      {(title || aside) && (
+        <SectionHeader>
+          <SectionTitle>{title}</SectionTitle>
+          {aside && <SectionAside>{aside}</SectionAside>}
+        </SectionHeader>
+      )}
       {children}
     </SectionBox>
   );
