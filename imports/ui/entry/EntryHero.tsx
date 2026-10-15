@@ -63,17 +63,21 @@ const About = styled('div', {
   [WIDE]: { padding: '2rem 2.25rem 2.25rem' },
 });
 
+// A person's portrait: the same plain dark green ring as on the organizer
+// listing, a border on the circle itself, so no pale hairline shows
+// between ring and picture.
 const Round = styled('div', {
   aspectRatio: '1 / 1',
   background: 'var(--cocoso-colors-theme-700)',
+  border: '5px solid var(--cocoso-colors-theme-700)',
   borderRadius: '50%',
-  boxShadow: '0 14px 30px -18px rgba(20, 50, 20, 0.7)',
+  boxShadow: 'var(--cocoso-skugga)',
+  boxSizing: 'border-box',
   overflow: 'hidden',
-  padding: '5px',
+  padding: 0,
   width: '160px',
   [WIDE]: { width: '220px' },
   '& > *': {
-    borderRadius: '50%',
     display: 'block',
     height: '100%',
     objectFit: 'cover',
@@ -374,7 +378,13 @@ export function IconPicture({
 }
 
 // Every picture after the first, which the card already shows.
-export function MorePictures({ images, alt }: { images?: string[]; alt?: string }) {
+export function MorePictures({
+  images,
+  alt,
+}: {
+  images?: string[];
+  alt?: string;
+}) {
   const rest = (images || []).slice(1).filter(Boolean);
   if (rest.length === 0) {
     return null;
