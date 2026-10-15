@@ -4,7 +4,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
 import CalendarCheckIcon from 'lucide-react/dist/esm/icons/calendar-check';
 import LayersIcon from 'lucide-react/dist/esm/icons/layers';
-import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 
 import { styled } from '/stitches.config';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
@@ -155,10 +154,6 @@ export default function ResourceHybrid({
           <EntryHero
             chips={
               <>
-                <Chip accent>
-                  <MapPinIcon aria-hidden />
-                  {tc('entry.place')}
-                </Chip>
                 <LocationTag locationId={resource.locationId} />
                 {resource.isCombo && (
                   <Chip>

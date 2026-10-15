@@ -139,9 +139,9 @@ export const Chips = styled('div', {
   gap: '0.4rem',
 });
 
-// The small labels at the top of an entry, in the orttag's shape: a paper
+// The small labels under an entry's title, in the orttag's shape: a paper
 // island with a soft shadow and, when there is an icon, the icon in a
-// small round mark on the left. The accent kind ("Plats", "Förening") has
+// small round mark on the left. The accent kind ("Förening", "Arrangör") has
 // its mark and text in tegel.
 export const Chip = styled('span', {
   alignItems: 'center',
@@ -461,8 +461,8 @@ export default function EntryHero({
     <Hero>
       <Band>{picture}</Band>
       <About>
-        {chips && <Chips>{chips}</Chips>}
         <Title>{title}</Title>
+        {chips && <Chips>{chips}</Chips>}
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
         {meta && <Meta>{meta}</Meta>}
         {html && (
