@@ -1140,8 +1140,15 @@ body {
 
 /* Each view sets its own height: the grids need one to lay out their rows,
    the list grows with its content. */
+/* The month grows with its rows: a six-week month must not lose its last
+   row to the panel's hidden overflow. */
 .rbc-calendar .rbc-month-view {
+  flex: 1 1 auto;
+  height: auto;
   min-height: 640px;
+}
+.rbc-calendar .rbc-month-row {
+  flex: 1 1 auto;
 }
 .rbc-calendar.is-narrow .rbc-month-view {
   min-height: 460px;
@@ -1290,7 +1297,8 @@ body {
    ink on a light paper band across the top of the board. */
 .rbc-calendar .rbc-month-view .rbc-header,
 .rbc-calendar .rbc-time-header .rbc-header {
-  background-color: transparent;
+  /* flat floor behind the names, no weave */
+  background-color: var(--cocoso-season-golv, var(--cocoso-colors-gray-100));
   color: var(--cocoso-colors-theme-700);
   font-family: var(--cocoso-font-display);
   font-size: 0.95rem;
@@ -1339,8 +1347,10 @@ body {
   text-align: center;
 }
 
+/* Days outside the month: flat floor, no weave, so the month reads as the
+   woven area */
 .rbc-day-bg.rbc-off-range-bg {
-  background-color: rgba(60, 50, 30, 0.08);
+  background-color: var(--cocoso-season-golv, var(--cocoso-colors-gray-100));
 }
 
 .rbc-calendar .rbc-off-range {
