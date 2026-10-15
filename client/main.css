@@ -1289,7 +1289,7 @@ body {
     );
   border: none;
   border-radius: var(--cocoso-radius-meny);
-  box-shadow: var(--cocoso-skugga);
+  box-shadow: none;
   overflow: hidden;
 }
 
