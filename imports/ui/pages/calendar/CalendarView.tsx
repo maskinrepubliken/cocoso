@@ -61,6 +61,46 @@ function EventContent({ event }: { event: CalendarActivity }) {
 }
 
 const DESKTOP_VIEWS: View[] = ['month', 'week', 'day', 'agenda'];
+
+// The visitor's last view and date, so coming back to the calendar (the
+// browser's back button, or a new visit in the same tab) lands where they
+// left. The view is kept across visits, the date only for the tab.
+const VIEW_KEY = 'cocoso.calendar.view';
+const DATE_KEY = 'cocoso.calendar.date';
+
+function rememberedView(): View | null {
+  if (!Meteor.isClient) {
+    return null;
+  }
+  try {
+    const stored = window.localStorage.getItem(VIEW_KEY) as View | null;
+    return stored && DESKTOP_VIEWS.includes(stored) ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
+function rememberedDate(): Date {
+  if (Meteor.isClient) {
+    try {
+      const stored = window.sessionStorage.getItem(DATE_KEY);
+      if (stored && dayjs(stored).isValid()) {
+        return dayjs(stored).toDate();
+      }
+    } catch {
+      // storage blocked: start at today
+    }
+  }
+  return dayjs().toDate();
+}
+
+function remember(key: string, value: string, session = false) {
+  try {
+    (session ? window.sessionStorage : window.localStorage).setItem(key, value);
+  } catch {
+    // storage blocked: the choice lasts for this page only
+  }
+}
 // On a phone the month grid can't hold text, so the list comes first, the
 // day on paper next, and the grid is kept as an overview of busy days.
 const MOBILE_VIEWS: View[] = ['agenda', 'day', 'month'];
@@ -83,10 +123,19 @@ export default function CalendarView({
   const rendered = useAtomValue(renderedAtom);
   const localizer = useMemo(() => dayjsLocalizer(dayjs), []);
   const isNarrow = useMediaQuery('(max-width: 720px)');
-  // null until the visitor picks a view: the list on a phone, the month
-  // otherwise.
-  const [view, setView] = useState<View | null>(null);
-  const [date, setDate] = useState<Date>(() => dayjs().toDate());
+  // null until the visitor picks a view (now or on an earlier visit): the
+  // list on a phone, the month otherwise.
+  const [view, setView] = useState<View | null>(rememberedView);
+  const [date, setDate] = useState<Date>(rememberedDate);
+
+  const changeView = (next: View) => {
+    setView(next);
+    remember(VIEW_KEY, next);
+  };
+  const navigateTo = (next: Date) => {
+    setDate(next);
+    remember(DATE_KEY, dayjs(next).format('YYYY-MM-DD'), true);
+  };
 
   // The list when the screen is narrow, the month when it is wide, unless
   // the visitor has picked a view that fits the current width.
@@ -160,9 +209,11 @@ export default function CalendarView({
         showMultiDayTimes
         step={60}
         view={shownView}
-        views={Object.fromEntries(
-          views.map((view) => [view, VIEW_COMPONENTS[view]])
-        ) as any}
+        views={
+          Object.fromEntries(
+            views.map((view) => [view, VIEW_COMPONENTS[view]])
+          ) as any
+        }
         eventPropGetter={(event) => ({
           className: `cal-event ${event.isRecurring ? 'is-recurring' : ''}`,
           style: {
@@ -170,10 +221,10 @@ export default function CalendarView({
             ['--ev-tint' as any]: event.tint,
           },
         })}
-        onNavigate={setDate}
+        onNavigate={navigateTo}
         onSelectEvent={onSelect}
         onSelectSlot={onSelectSlot}
-        onView={setView}
+        onView={changeView}
       />
 
       {rendered && canCreateContent ? (
