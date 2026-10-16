@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm, Control, UseFormRegister } from 'react-hook-form';
 import { Trans } from 'react-i18next';
 import { useAtomValue } from 'jotai';
@@ -17,6 +17,7 @@ import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 
 import Quill from './Quill';
 import FormField from './FormField';
+import { useEntryFormSheet } from './EntryFormSheet.context';
 
 interface Option {
   value: string;
@@ -118,10 +119,16 @@ export default function GenericEntryForm({
     defaultValues: defaultValues || undefined,
   });
   const loaders = useAtomValue(loaderAtom);
+  const sheet = useEntryFormSheet();
+
+  // Inside the entry sheet, Save sits in the sheet's footer.
+  useEffect(() => {
+    sheet?.setSubmitDisabled(isSubmitButtonDisabled);
+  }, [sheet, isSubmitButtonDisabled]);
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form id={sheet?.formId} onSubmit={handleSubmit(onSubmit)}>
         <Flex direction="column" gap="0">
           {formFields.map((item, index) => (
             <Box key={item.value} w="100%">
@@ -141,15 +148,17 @@ export default function GenericEntryForm({
           ))}
         </Flex>
 
-        <Flex justify="flex-end" mt="8" mb="12">
-          <Button
-            disabled={isSubmitButtonDisabled}
-            loading={loaders?.isCreating}
-            type="submit"
-          >
-            <Trans i18nKey="common:actions.submit">Submit</Trans>
-          </Button>
-        </Flex>
+        {!sheet && (
+          <Flex justify="flex-end" mt="8" mb="12">
+            <Button
+              disabled={isSubmitButtonDisabled}
+              loading={loaders?.isCreating}
+              type="submit"
+            >
+              <Trans i18nKey="common:actions.submit">Submit</Trans>
+            </Button>
+          </Flex>
+        )}
       </form>
     </>
   );

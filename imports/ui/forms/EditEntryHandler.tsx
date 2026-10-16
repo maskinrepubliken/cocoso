@@ -1,14 +1,10 @@
-import React, { useEffect } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import React from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { canCreateContentAtom } from '/imports/state';
-import {
-  initialLoader,
-  loaderAtom,
-  renderToasts,
-} from '/imports/ui/utils/loaderHandler';
+import { initialLoader, loaderAtom } from '/imports/ui/utils/loaderHandler';
 
 import EntryFormHandler from './EntryFormHandler';
 
@@ -20,15 +16,8 @@ export interface EditEntryHandlerProps {
 export default function EditEntryHandler({ context, children }: EditEntryHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [loaders, setLoaders] = useAtom(loaderAtom);
+  const setLoaders = useSetAtom(loaderAtom);
   const [tc] = useTranslation('common');
-
-  useEffect(() => {
-    if (!loaders || !loaders.isCreating) {
-      return;
-    }
-    renderToasts(loaders, tc, true);
-  }, [loaders]);
 
   const handleClose = () => {
     setLoaders({ ...initialLoader });
@@ -45,6 +34,7 @@ export default function EditEntryHandler({ context, children }: EditEntryHandler
   const props = {
     open,
     title,
+    forEdit: true,
     onClose: handleClose,
     children,
   };

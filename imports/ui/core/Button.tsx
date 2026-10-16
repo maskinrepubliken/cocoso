@@ -11,6 +11,7 @@ interface ButtonProps {
   color?: string;
   colorScheme?: string;
   disabled?: boolean;
+  form?: string;
   isDisabled?: boolean; // backwards compatibility
   leftIcon?: ReactNode;
   loading?: boolean;

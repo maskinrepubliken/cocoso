@@ -15,6 +15,7 @@ actions:
   remove: Radera
   submit: Bekräfta
   send: Skicka
+  save: Spara
   cancel: Avbryt
   close: Stäng
   reset: Återställa
@@ -150,6 +151,10 @@ message:
     emptylisting:
       title: Inget här än
       description: Bli först. Det tar ett par minuter att lägga till något.
+
+# PANELEN SOM NYA OCH REDIGERADE INLÄGG ÖPPNAS I
+entrySheet:
+  blocked: Något i formuläret behöver ses över innan det kan sparas
 
 # MODAL POP-UPS
 modals:

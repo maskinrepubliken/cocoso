@@ -4764,3 +4764,257 @@ body {
     animation: none;
   }
 }
+
+/* --- the entry form sheet ---
+   Every "new" and "edit" form opens in one pane of glass over the page, as
+   large as the screen allows: the page blurs through it, a thin light rim
+   and a soft shadow lift it, like the header's islands when scrolled. Save
+   and Cancel live in the sticky footer, beside what saving is up to. */
+
+.entry-sheet-root {
+  --entry-sheet-inset: 16px;
+  --entry-sheet-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  padding: var(--entry-sheet-inset);
+  visibility: visible;
+}
+
+.entry-sheet-root[data-state='closed'] {
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 0.26s;
+}
+
+.entry-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(34, 48, 42, 0.28);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  transition: opacity 0.4s ease;
+}
+
+.entry-sheet-root[data-state='closed'] .entry-sheet-backdrop {
+  opacity: 0;
+  transition-duration: 0.26s;
+}
+
+.entry-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: calc(var(--cocoso-radius-meny) + 6px);
+  background: color-mix(in srgb, var(--cocoso-papper) 80%, transparent);
+  backdrop-filter: blur(28px) saturate(1.5);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 1px 2px rgba(30, 50, 25, 0.08), 0 24px 64px -12px rgba(30, 50, 25, 0.35);
+  color: var(--cocoso-mylla);
+  outline: none;
+  transform-origin: 50% 70%;
+  transition: opacity 0.45s var(--entry-sheet-ease),
+    transform 0.55s var(--entry-sheet-ease);
+}
+
+.entry-sheet-root[data-state='closed'] .entry-sheet {
+  opacity: 0;
+  transform: translateY(32px) scale(0.97);
+  transition: opacity 0.22s ease-in, transform 0.26s ease-in;
+}
+
+/* the three parts follow the pane in, one after the other */
+.entry-sheet-head,
+.entry-sheet-inner,
+.entry-sheet-foot {
+  transition: opacity 0.5s var(--entry-sheet-ease),
+    translate 0.6s var(--entry-sheet-ease);
+}
+.entry-sheet-head {
+  transition-delay: 0.08s;
+}
+.entry-sheet-inner {
+  transition-delay: 0.14s;
+}
+.entry-sheet-foot {
+  transition-delay: 0.2s;
+}
+.entry-sheet-root[data-state='closed'] .entry-sheet-head,
+.entry-sheet-root[data-state='closed'] .entry-sheet-inner {
+  opacity: 0;
+  translate: 0 14px;
+}
+.entry-sheet-root[data-state='closed'] .entry-sheet-foot {
+  opacity: 0;
+  translate: 0 100%;
+}
+/* leaving, they stay put while the pane fades, and reset once it is gone */
+.entry-sheet-root[data-state='closed']
+  :is(.entry-sheet-head, .entry-sheet-inner, .entry-sheet-foot) {
+  transition: opacity 0s linear 0.26s, translate 0s linear 0.26s;
+}
+
+.entry-sheet-head {
+  flex: none;
+  padding: 22px 28px 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--cocoso-linje) 70%, transparent);
+}
+
+.entry-sheet-title {
+  max-width: var(--cocoso-page);
+  margin: 0 auto;
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 60;
+  font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.entry-sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 24px 28px 40px;
+}
+
+.entry-sheet-inner {
+  max-width: var(--cocoso-page);
+  margin: 0 auto;
+}
+
+.entry-sheet-foot {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 28px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+  border-top: 1px solid color-mix(in srgb, var(--cocoso-linje) 70%, transparent);
+  background: color-mix(in srgb, var(--cocoso-papper) 55%, transparent);
+}
+
+.entry-sheet-progress {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  overflow: hidden;
+}
+.entry-sheet-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: 0 3px 3px 0;
+  background: var(--cocoso-colors-theme-500);
+  transition: width 0.5s var(--entry-sheet-ease);
+}
+
+.entry-sheet-status {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cocoso-mylla-soft);
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.92rem;
+  font-weight: 600;
+  animation: entry-sheet-status-in 0.3s ease-out;
+}
+
+.entry-sheet-status-mark {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cocoso-colors-theme-500);
+}
+.entry-sheet-status[data-status='creating'] .entry-sheet-status-mark,
+.entry-sheet-status[data-status='uploading'] .entry-sheet-status-mark,
+.entry-sheet-status[data-status='sending'] .entry-sheet-status-mark {
+  animation: entry-sheet-pulse 1s ease-in-out infinite;
+}
+.entry-sheet-status[data-status='success'] {
+  color: var(--cocoso-colors-theme-700);
+}
+.entry-sheet-status[data-status='blocked'] {
+  color: var(--cocoso-lingon);
+}
+.entry-sheet-status[data-status='blocked'] .entry-sheet-status-mark {
+  background: var(--cocoso-lingon);
+}
+
+.entry-sheet-actions {
+  flex: none;
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+@keyframes entry-sheet-pulse {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.75);
+  }
+}
+
+@keyframes entry-sheet-status-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}
+
+/* on a phone the pane fills the screen, edge to edge */
+@media (max-width: 720px) {
+  .entry-sheet-root {
+    --entry-sheet-inset: 0px;
+  }
+  .entry-sheet {
+    border-radius: 0;
+  }
+  .entry-sheet-head {
+    padding: 16px 16px 12px;
+  }
+  .entry-sheet-body {
+    padding: 16px 16px 32px;
+  }
+  .entry-sheet-foot {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 16px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  .entry-sheet-status:empty {
+    display: none;
+  }
+  .entry-sheet-actions {
+    flex: 1 1 100%;
+  }
+  .entry-sheet-actions > * {
+    flex: 1 1 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-sheet,
+  .entry-sheet-head,
+  .entry-sheet-inner,
+  .entry-sheet-foot,
+  .entry-sheet-backdrop {
+    transition-duration: 0.01s !important;
+    transition-delay: 0s !important;
+  }
+  .entry-sheet-root[data-state='closed'] .entry-sheet {
+    transform: none;
+  }
+}

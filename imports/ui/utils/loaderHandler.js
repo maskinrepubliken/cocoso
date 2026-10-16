@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast';
 import { atom } from 'jotai';
 
 export const initialLoader = {
@@ -27,31 +26,4 @@ export const getLoaderProgress = (loaders) => {
     return 20;
   }
   return 0;
-};
-
-export const renderToasts = (loaders, tc, forEdit = false) => {
-  if (!loaders) {
-    return;
-  }
-
-  const options = { id: 'loader' };
-
-  if (loaders.isSuccess) {
-    toast.success(tc(`message.success.${forEdit ? 'update' : 'create'}`), {
-      ...options,
-      duration: 3000,
-    });
-    return;
-  }
-  if (loaders.isSendingForm) {
-    toast.loading(tc('message.loading.sending'), options);
-    return;
-  }
-  if (loaders.isUploadingImages) {
-    toast.loading(tc('message.loading.uploading'), options);
-    return;
-  }
-  if (loaders.isCreating) {
-    toast.loading(tc('message.loading.creating'), options);
-  }
 };
