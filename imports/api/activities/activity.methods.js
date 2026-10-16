@@ -575,7 +575,10 @@ Meteor.methods({
     const images = values.images;
 
     if (values.isPublicActivity && (!images || images.length === 0)) {
-      throw new Meteor.Error('Image is required for public activities');
+      throw new Meteor.Error(
+        'image-required',
+        'Image is required for public activities'
+      );
     }
 
     if (!values.resourceId) {

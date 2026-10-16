@@ -5254,10 +5254,38 @@ body {
 }
 
 .entry-sheet-head {
+  position: relative;
   flex: none;
-  padding: 22px 28px 16px;
+  padding: 22px 72px 16px 28px;
   border-bottom: 1px solid
     color-mix(in srgb, var(--cocoso-linje) 70%, transparent);
+}
+
+.entry-sheet-close {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
+  color: var(--cocoso-mylla);
+  cursor: pointer;
+  translate: 0 -50%;
+}
+
+.entry-sheet-close:hover:not(:disabled) {
+  background: var(--cocoso-colors-theme-100);
+}
+
+.entry-sheet-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 
 .entry-sheet-title {
@@ -5378,7 +5406,10 @@ body {
     border-radius: 0;
   }
   .entry-sheet-head {
-    padding: 16px 16px 12px;
+    padding: 16px 60px 12px 16px;
+  }
+  .entry-sheet-close {
+    right: 12px;
   }
   .entry-sheet-body {
     padding: 16px 16px 32px;

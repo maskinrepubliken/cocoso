@@ -71,6 +71,9 @@ form:
   description:
     label: Description
     helper: Add a longer description of the event
+  errors:
+    imageRequired: Add at least one picture to the event.
+    organizerContact: Every organizer needs an email address or a phone number in their profile.
   image:
     label: Images
     helper: To represent the event, please choose an image or a set of images from the gallery in your device or a photo you will take now. At least one is required.

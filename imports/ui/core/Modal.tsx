@@ -82,24 +82,23 @@ const CloseButton = styled('button', {
   },
 });
 
+// No lines between the parts: the spacing alone keeps them apart
 const Footer = styled('div', {
   alignItems: 'center',
-  borderTop: '1px solid var(--cocoso-linje)',
   display: 'flex',
   gap: '0.75rem',
   justifyContent: 'flex-end',
   padding: '1.5rem',
-  paddingTop: '1rem',
+  paddingTop: '0.75rem',
 });
 
 const Header = styled('div', {
   alignItems: 'center',
-  borderBottom: '1px solid var(--cocoso-linje)',
   display: 'flex',
   justifyContent: 'space-between',
   minHeight: '1rem',
   padding: '1.5rem',
-  paddingBottom: '1rem',
+  paddingBottom: '0.5rem',
 });
 
 const Title = styled('h2', {

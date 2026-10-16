@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
+import activityErrorText from './form/activityError';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
 
 import PublicActivityForm from './PublicActivityForm';
@@ -14,7 +15,7 @@ export default function NewPublicActivity() {
       const respond = await call('createActivity', newActivity);
       setNewEntryId(respond);
     } catch (error: any) {
-      message.error(error.reason || error.error);
+      message.error(activityErrorText(error));
     }
   };
 

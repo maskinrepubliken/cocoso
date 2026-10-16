@@ -2,6 +2,7 @@ import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
 import { Trans, useTranslation } from 'react-i18next';
+import XIcon from 'lucide-react/dist/esm/icons/x';
 
 import { Button, Modal } from '/imports/ui/core';
 import {
@@ -134,6 +135,16 @@ export default function EntryFormHandler({
           <h2 className="entry-sheet-title" id={titleId}>
             <Trans i18nKey={title} />
           </h2>
+          {/* Closes as Cancel does: asks first, so nothing is lost */}
+          <button
+            type="button"
+            aria-label={tc('actions.close')}
+            className="entry-sheet-close"
+            disabled={busy}
+            onClick={requestClose}
+          >
+            <XIcon aria-hidden width={20} height={20} />
+          </button>
         </header>
 
         <div className="entry-sheet-body">
