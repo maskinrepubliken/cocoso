@@ -67,10 +67,10 @@ form:
   subtitle:
     label: Subtitle
     holder: Write something catchy
-    helper: i.e. artist, or some subtitle...
+    helper: What is the event about?
   description:
     label: Description
-    helper: Please provide a detailed description that will be helpful for others to know
+    helper: Add a longer description of the event
   image:
     label: Images
     helper: To represent the event, please choose an image or a set of images from the gallery in your device or a photo you will take now. At least one is required.
