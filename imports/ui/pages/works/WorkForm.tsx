@@ -169,6 +169,7 @@ export default function WorkForm({ work, onFinalize }: WorkFormProps) {
       onSubmit={handleSubmit}
     >
       <FormField
+        area="main"
         helper={t('works.image.helper')}
         label={t('works.image.label')}
         my="4"

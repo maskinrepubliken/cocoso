@@ -323,6 +323,7 @@ export default function PublicActivityForm({
       onSubmit={handleSubmit}
     >
       <FormField
+        area="main"
         helper={t('form.image.helper')}
         label={t('form.image.label')}
         mt="4"
@@ -493,6 +494,7 @@ export default function PublicActivityForm({
       </FormField>
 
       <FormField
+        area="main"
         helper={t('form.occurrences.helper')}
         label={t('form.occurrences.label')}
         my="8"

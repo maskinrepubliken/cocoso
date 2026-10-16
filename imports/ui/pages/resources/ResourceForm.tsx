@@ -155,6 +155,7 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
       onSubmit={handleSubmit}
     >
       <FormField
+        area="main"
         helper={t('form.image.helper')}
         label={t('form.image.label')}
         mb="12"

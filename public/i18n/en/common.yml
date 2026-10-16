@@ -15,6 +15,7 @@ actions:
   remove: Delete
   submit: Confirm
   send: Send
+  save: Save
   cancel: Cancel
   close: Close
   reset: Reset
@@ -152,6 +153,10 @@ message:
     emptylisting:
       title: No entry posted so far
       description: You haven't posted any entry yet. Create your first entry and publish here in this listing
+
+# THE SHEET NEW AND EDIT FORMS OPEN IN
+entrySheet:
+  blocked: Something in the form needs another look before it can be saved
 
 # MODAL POP-UPS
 modals:

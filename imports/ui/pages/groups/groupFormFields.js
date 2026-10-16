@@ -21,6 +21,7 @@ const groupFormFields = (t) => [
     label: t('form.subtitle.label'),
     placeholder: t('form.subtitle.holder'),
     type: 'input',
+    area: 'side',
     value: 'readingMaterial',
     props: {
       required: true,
