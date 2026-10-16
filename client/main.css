@@ -2204,6 +2204,27 @@ body {
   box-shadow: var(--site-island-shadow);
 }
 
+/* The start page's hint at the end of the menu pill. Kept in the layout
+   only when it fits (Header.tsx); otherwise it is measured but not shown. */
+.site-nav {
+  position: relative;
+}
+
+.site-nav-hint {
+  padding: 0 12px 0 6px;
+  color: var(--cocoso-mylla-soft);
+  font-family: var(--cocoso-font-display);
+  font-size: 13px;
+  font-style: italic;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.site-nav-hint.is-off {
+  position: absolute;
+  visibility: hidden;
+}
+
 .site-nav .szh-menu-button {
   all: unset;
   display: inline-flex;
@@ -4864,7 +4885,8 @@ body {
 .entry-sheet-head {
   flex: none;
   padding: 22px 28px 16px;
-  border-bottom: 1px solid color-mix(in srgb, var(--cocoso-linje) 70%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--cocoso-linje) 70%, transparent);
 }
 
 .entry-sheet-title {

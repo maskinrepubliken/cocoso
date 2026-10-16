@@ -122,6 +122,8 @@ export function InfoPagesMenu({
 }
 
 interface NavProps {
+  // A small line after the items (the start page's "← navigera här")
+  hint?: React.ReactNode;
   items: HeaderMenuItem[];
   section: string;
   pageTitles: any[];
@@ -133,6 +135,7 @@ interface NavProps {
 // One list of links, styled as a white pill on desktop and as a scrolling
 // chip row on narrower screens (see client/main.css).
 function Nav({
+  hint,
   items,
   section,
   pageTitles,
@@ -206,6 +209,7 @@ function Nav({
           </Link>
         )
       )}
+      {hint}
     </nav>
   );
 }
@@ -334,6 +338,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   // at all), and whether even the smallest size would not do.
   const [barZoom, setBarZoom] = useState(1);
   const [stacked, setStacked] = useState(false);
+  // The start page's hint in the menu pill, shown only when it fits
+  const [hintFits, setHintFits] = useState(false);
   const zoomRef = useRef(1);
   const headerRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -386,8 +392,16 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         parseFloat(style.paddingRight);
       // Natural widths: scrollWidth is in each group's own (unzoomed)
       // pixels and counts the content even when the grid squeezes the box
-      const natural = brand.scrollWidth + nav.scrollWidth + right.scrollWidth;
+      // The hint never makes the row shrink: it is left out of what must
+      // fit and shown only when there is room for it as well.
+      const hint = nav.querySelector<HTMLElement>('.site-nav-hint');
+      const hintOn = Boolean(hint && !hint.classList.contains('is-off'));
+      const navGap = parseFloat(getComputedStyle(nav).columnGap || '0') || 0;
+      const hintWidth = hint ? hint.offsetWidth + navGap : 0;
+      const navWidth = nav.scrollWidth - (hintOn ? hintWidth : 0);
+      const natural = brand.scrollWidth + navWidth + right.scrollWidth;
       const room = bar.clientWidth - gaps;
+      setHintFits(Boolean(hint) && natural + hintWidth <= room);
       const zoom = Math.min(1, room / natural);
       const next = zoom < MIN_BAR_ZOOM ? 1 : Math.round(zoom * 100) / 100;
       if (Math.abs(next - zoomRef.current) >= 0.01) {
@@ -477,6 +491,16 @@ export default function Header({ site, pageTitles }: HeaderProps) {
 
         <Nav
           className="site-nav"
+          hint={
+            section === '' ? (
+              <span
+                aria-hidden
+                className={`site-nav-hint ${hintFits ? '' : 'is-off'}`}
+              >
+                {tc('menu.hint')}
+              </span>
+            ) : undefined
+          }
           itemClassName="site-nav-item"
           items={items}
           pageTitles={pageTitles}

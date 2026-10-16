@@ -189,6 +189,7 @@ modals:
 
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
+  hint: "← navigera här"
   label: Meny
   allSections: Alla sektioner
   home: Hem
