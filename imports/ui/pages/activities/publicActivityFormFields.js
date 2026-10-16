@@ -34,6 +34,7 @@ const publicActivityFormFields = (t) => [
     label: t('form.place.label'),
     type: 'input',
     placeholder: t('form.place.holder'),
+    area: 'side',
     value: 'place',
   },
 ];

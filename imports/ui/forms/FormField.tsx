@@ -7,6 +7,8 @@ import { Box, Input, Select, Text, Textarea } from '/imports/ui/core';
 const LABELABLE = new Set<unknown>([Input, Select, Textarea, 'input', 'select', 'textarea']);
 
 export interface FormFieldProps extends React.ComponentProps<typeof Box> {
+  // Read by GenericEntryForm to place the field in a column.
+  area?: 'main' | 'side';
   children?: React.ReactNode;
   errorMessage?: string | null;
   helper?: string | React.ReactNode;
@@ -16,6 +18,7 @@ export interface FormFieldProps extends React.ComponentProps<typeof Box> {
 
 export default function FormField(props: FormFieldProps) {
   const {
+    area: _area,
     children,
     errorMessage = null,
     helper,

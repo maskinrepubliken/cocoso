@@ -4773,6 +4773,7 @@ body {
 
 .entry-sheet-root {
   --entry-sheet-inset: 16px;
+  --entry-sheet-measure: 1600px;
   --entry-sheet-ease: cubic-bezier(0.22, 1, 0.36, 1);
   position: fixed;
   inset: 0;
@@ -4867,7 +4868,7 @@ body {
 }
 
 .entry-sheet-title {
-  max-width: var(--cocoso-page);
+  max-width: var(--entry-sheet-measure);
   margin: 0 auto;
   color: var(--cocoso-mylla);
   font-family: var(--cocoso-font-display);
@@ -4883,10 +4884,11 @@ body {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 24px 28px 40px;
+  container: entry-sheet / inline-size;
 }
 
 .entry-sheet-inner {
-  max-width: var(--cocoso-page);
+  max-width: var(--entry-sheet-measure);
   margin: 0 auto;
 }
 
@@ -5017,4 +5019,64 @@ body {
   .entry-sheet-root[data-state='closed'] .entry-sheet {
     transform: none;
   }
+}
+
+/* --- the entry form's columns ---
+   With room for it, what matters most (the name, the text, the pictures,
+   the dates) takes the wide main column, and the details sit beside it on
+   a pane of their own. On a wide screen the details flow in two columns.
+   Narrow, it is one column: the main fields first, then the details. */
+
+.entry-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px 48px;
+  align-items: start;
+}
+
+.entry-form-side {
+  padding: 8px 22px;
+  border-radius: var(--cocoso-radius-kort);
+  background: color-mix(in srgb, var(--cocoso-papper) 50%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 1px color-mix(in srgb, var(--cocoso-linje) 55%, transparent);
+}
+
+/* spacing as padding, so both columns of details start level */
+.entry-form-side > * {
+  break-inside: avoid;
+  margin-block: 0 !important;
+  padding-block: 14px;
+}
+
+/* the name, set large like the title it becomes */
+.entry-form-lead .cocoso-input {
+  height: auto;
+  padding-block: 0.6rem;
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 60;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+@container entry-sheet (min-width: 900px) {
+  .entry-form-grid[data-columns='two'] {
+    grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr);
+  }
+}
+
+@container entry-sheet (min-width: 1360px) {
+  .entry-form-grid[data-columns='two'] {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.25fr);
+  }
+  .entry-form-side {
+    columns: 2;
+    column-gap: 36px;
+  }
+}
+
+/* one column of content still reads best at a measure */
+.entry-form-grid[data-columns='one'] {
+  max-width: 960px;
+  margin-inline: auto;
 }

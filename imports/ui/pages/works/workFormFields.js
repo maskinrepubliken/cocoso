@@ -31,6 +31,7 @@ const workFormFields = (t, tc) => [
     label: t('works.extra.label'),
     placeholder: t('works.extra.holder'),
     type: 'input',
+    area: 'side',
     value: 'additionalInfo',
   },
   {
@@ -38,6 +39,7 @@ const workFormFields = (t, tc) => [
     label: t('works.contact.label'),
     placeholder: t('works.contact.holder'),
     type: 'textarea',
+    area: 'side',
     value: 'contactInfo',
   },
   {

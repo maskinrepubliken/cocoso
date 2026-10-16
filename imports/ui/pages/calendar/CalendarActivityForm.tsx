@@ -252,6 +252,7 @@ export default function CalendarActivityForm({
       </FormField>
 
       <FormField
+        area="main"
         helper={t('form.occurrences.helper')}
         label={t('form.occurrences.label')}
         mb="14"

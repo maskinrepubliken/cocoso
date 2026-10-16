@@ -82,6 +82,7 @@ export default function PageForm({ page, onFinalize }: PageFormProps) {
       onSubmit={handleSubmit}
     >
       <FormField
+        area="main"
         helper={t('pages.form.images.helper')}
         label={t('pages.form.images.label')}
         my="4"
