@@ -59,7 +59,6 @@ form:
     pick: "Välj en plats"
     search: "Sök bland platserna…"
     empty: "Ingen plats matchar."
-    placeHelper: "En av kommunens platser, med adress och ort."
     ownHelper: "Någon annanstans: skriv adressen och välj plats i kommunen."
   title:
     label: Titel

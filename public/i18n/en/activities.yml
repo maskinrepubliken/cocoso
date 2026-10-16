@@ -59,7 +59,6 @@ form:
     pick: "Choose a place"
     search: "Search the places…"
     empty: "No place matches."
-    placeHelper: "One of the municipality's places, with its address and place."
     ownHelper: "Somewhere else: give the address and choose the place in the municipality."
   title:
     label: Title

@@ -126,7 +126,6 @@ export default function WhereFields({
             value: 'place',
             label: t('form.where.place'),
             icon: <MapPinIcon aria-hidden />,
-            description: t('form.where.placeHelper'),
             content:
               resourceFull && !picking ? (
                 <>
