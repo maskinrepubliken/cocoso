@@ -3753,6 +3753,12 @@ body {
   font-weight: 700;
 }
 
+/* "(valfritt)" after an optional field's label; required ones carry no mark */
+.form-field-optional {
+  color: var(--cocoso-mylla-soft);
+  font-weight: 400;
+}
+
 /* === Skip link === */
 
 .skip-link {
@@ -5176,6 +5182,7 @@ body {
 /* --- Settings cards: organizers, place, booking --- */
 
 .form-card {
+  position: relative;
   margin: 0 0 16px;
   padding: 16px 16px 6px;
   border-radius: var(--cocoso-radius-kort);
@@ -5210,6 +5217,65 @@ body {
 
 .toggle-row + .toggle-row {
   border-top: 1px solid var(--cocoso-linje);
+}
+
+/* a number with − and + on either side, in the chips' pill */
+.stepper {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 36px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-50);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+}
+
+.stepper button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--cocoso-colors-theme-700);
+  cursor: pointer;
+}
+
+.stepper button:hover:not(:disabled) {
+  background: var(--cocoso-colors-theme-100);
+}
+
+.stepper button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.stepper input {
+  width: 3.2em;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.stepper input::-webkit-inner-spin-button,
+.stepper input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.stepper input:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-700);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .toggle-text {
@@ -5301,6 +5367,32 @@ body {
   color: var(--cocoso-colors-theme-700);
   font-family: var(--cocoso-font-display);
   font-weight: 700;
+}
+
+/* a contact person's details under their name, as the place's address */
+.contact-card-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  color: var(--cocoso-mylla-soft);
+  font-size: 13px;
+}
+
+.contact-card-lines > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contact-card-lines svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  color: var(--cocoso-tegel);
 }
 
 .person-card,
@@ -5492,6 +5584,26 @@ body {
   background: none;
   text-align: left;
   cursor: pointer;
+}
+
+/* the picker in place, as part of the form: a framed search and list */
+.picker-inline {
+  padding: 6px;
+  border-radius: var(--cocoso-radius-falt);
+  background: var(--cocoso-papper);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+}
+
+.picker-inline .picker-list {
+  max-height: 240px;
+}
+
+.picker-row.is-selected {
+  box-shadow: inset 0 0 0 2px var(--cocoso-colors-theme-700);
+}
+
+.picker-row:hover {
+  background: var(--cocoso-colors-theme-50);
 }
 
 .picker-row.is-active {
@@ -5720,10 +5832,24 @@ body {
   margin: 10px 0 14px;
 }
 
+.organizer-contact {
+  margin: 18px 0 10px;
+}
+
+.organizer-contact > .form-card-title {
+  margin-bottom: 10px;
+}
+
 .organizer-foot {
-  display: flex;
-  justify-content: flex-end;
-  margin: 4px -6px 10px 0;
+  position: absolute;
+  top: 14px;
+  right: 12px;
+}
+
+.organizer-foot > .picker-popover {
+  left: auto;
+  right: 0;
+  width: min(320px, calc(100vw - 56px));
 }
 
 .form-preview-link {

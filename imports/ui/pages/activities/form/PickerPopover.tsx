@@ -11,6 +11,12 @@ interface PickerPopoverProps<T> {
   emptyText: string;
   onPick: (item: T) => void;
   onClose: () => void;
+  // Shown in place, as part of the form, instead of opened over it: it
+  // stays until something is picked, and only takes focus when asked.
+  inline?: boolean;
+  autoFocus?: boolean;
+  // The item already chosen, marked in the list
+  selectedKey?: string;
 }
 
 // A searchable list in the site's menu-panel style, opened under the
@@ -25,9 +31,13 @@ export default function PickerPopover<T>({
   emptyText,
   onPick,
   onClose,
+  inline = false,
+  autoFocus = !inline,
+  selectedKey,
 }: PickerPopoverProps<T>) {
   const [query, setQuery] = useState('');
-  const [active, setActive] = useState(0);
+  // In place, no row is marked until the arrows or a search pick one
+  const [active, setActive] = useState(inline ? -1 : 0);
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -46,7 +56,12 @@ export default function PickerPopover<T>({
   const activeIndex = Math.min(active, Math.max(shown.length - 1, 0));
 
   useEffect(() => {
-    inputRef.current?.focus();
+    if (autoFocus) {
+      inputRef.current?.focus();
+    }
+    if (inline) {
+      return;
+    }
     const onPointerDown = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
         onClose();
@@ -54,7 +69,7 @@ export default function PickerPopover<T>({
     };
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [onClose]);
+  }, [onClose, inline, autoFocus]);
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -76,7 +91,11 @@ export default function PickerPopover<T>({
   };
 
   return (
-    <div className="picker-popover" ref={rootRef} onKeyDown={onKeyDown}>
+    <div
+      className={inline ? 'picker-inline' : 'picker-popover'}
+      ref={rootRef}
+      onKeyDown={onKeyDown}
+    >
       <label className="picker-search">
         <SearchIcon aria-hidden width={16} height={16} />
         <input
@@ -99,13 +118,17 @@ export default function PickerPopover<T>({
             <li
               key={getKey(item)}
               role="option"
-              aria-selected={index === activeIndex}
+              aria-selected={
+                selectedKey
+                  ? getKey(item) === selectedKey
+                  : index === activeIndex
+              }
             >
               <button
                 type="button"
                 className={`picker-row ${
                   index === activeIndex ? 'is-active' : ''
-                }`}
+                } ${getKey(item) === selectedKey ? 'is-selected' : ''}`}
                 onClick={() => onPick(item)}
                 onMouseEnter={() => setActive(index)}
               >

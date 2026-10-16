@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
 
-import { NumberInput } from '/imports/ui/core';
+import MinusIcon from 'lucide-react/dist/esm/icons/minus';
+import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import { currentUserAtom, roleAtom } from '/imports/state';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
@@ -241,22 +242,6 @@ export default function PublicActivityForm({
     };
   }, [contactChoice, author]);
 
-  // Where a person edits the details the form starts from: one's own
-  // profile, or as admin anyone's.
-  const profileLinkFor = (
-    person?: { _id?: string; username?: string } | null
-  ) => {
-    if (!person?._id) {
-      return null;
-    }
-    if (person._id === currentUser?._id) {
-      return '/admin/my-profile/general';
-    }
-    return isAdmin && person.username
-      ? `/admin/users/${encodeURIComponent(person.username)}/profile`
-      : null;
-  };
-
   const isFormValid = () => {
     const { datesAndTimes } = state;
     const isConflictHard = datesAndTimes?.some((occurrence) => {
@@ -335,6 +320,15 @@ export default function PublicActivityForm({
       capacity: value,
     }));
   };
+
+  const stepCapacity = (by: number) =>
+    setState((prevState: any) => ({
+      ...prevState,
+      capacity: Math.min(
+        maxAttendees,
+        Math.max(1, (Number(prevState.capacity) || 0) + by)
+      ),
+    }));
 
   const parseActivity = async (images: string[]) => {
     const sortedDatesAndTimes = state.datesAndTimes.sort((a, b) => {
@@ -461,7 +455,6 @@ export default function PublicActivityForm({
           isAdmin={isAdmin}
           options={organizerOptions}
           organizers={state.organizers}
-          profileLinkFor={profileLinkFor}
           onAuthorChange={(authorId) =>
             setState((prevState: any) => ({
               ...prevState,
@@ -496,7 +489,6 @@ export default function PublicActivityForm({
           organizerAddress={author?.address || null}
           organizerLocationId={author?.locationId || null}
           placeName={state.placeName}
-          profileLink={profileLinkFor(author)}
           resources={state.resources}
           selectedResource={state.selectedResource}
           onAddressChange={(address) =>
@@ -563,19 +555,45 @@ export default function PublicActivityForm({
             }))
           }
         />
+        {/* Laid out as the switches above: label, helper, control */}
         {state.isRegistrationEnabled && (
-          <FormField
-            helper={t('form.booking.capacityHelper')}
-            label={t('form.capacity.label')}
-          >
-            <NumberInput
-              min={1}
-              max={maxAttendees}
-              placeholder={t('form.capacity.label')}
-              value={state.capacity}
-              onChange={handleCapacityChange}
-            />
-          </FormField>
+          <div className="toggle-row">
+            <span className="toggle-text">
+              <label className="toggle-label" htmlFor="activity-capacity">
+                {t('form.capacity.label')}
+              </label>
+              <span className="toggle-helper">
+                {t('form.booking.capacityHelper')}
+              </span>
+            </span>
+            <span className="stepper">
+              <button
+                type="button"
+                aria-label={t('form.capacity.less')}
+                disabled={Number(state.capacity) <= 1}
+                onClick={() => stepCapacity(-1)}
+              >
+                <MinusIcon aria-hidden width={16} height={16} />
+              </button>
+              <input
+                id="activity-capacity"
+                inputMode="numeric"
+                max={maxAttendees}
+                min={1}
+                type="number"
+                value={state.capacity}
+                onChange={handleCapacityChange}
+              />
+              <button
+                type="button"
+                aria-label={t('form.capacity.more')}
+                disabled={Number(state.capacity) >= maxAttendees}
+                onClick={() => stepCapacity(1)}
+              >
+                <PlusIcon aria-hidden width={16} height={16} />
+              </button>
+            </span>
+          </div>
         )}
       </FormCard>
     </GenericEntryForm>

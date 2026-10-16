@@ -37,20 +37,17 @@ form:
     label: "Kontaktuppgifter"
     standard: "Standard"
     own: "Andra uppgifter"
-    fromProfileHelper: "Hämtas från profilen för {{name}} och visas på evenemangssidan."
     none: "Inga publika kontaktuppgifter i profilen än."
-    ownHelper: "Uppgifter bara för det här evenemanget, i stället för en profils."
     email: "E-post"
     phone: "Telefon"
     website: "Webbplats"
-  editProfile: "Ändra i profilen"
   where:
     label: "Var"
     helper: "Välj en av kommunens platser, arrangörens adress eller en egen adress. Orten följer av valet."
     place: "Välj en plats"
     organizer: "Arrangörens adress"
     own: "Annan adress"
-    placeName: "Platsens namn (valfritt)"
+    placeName: "Platsens namn"
     location: "Plats i kommunen"
     locationPick: "Välj…"
     locationOther: "Annan plats i kommunen"
@@ -96,6 +93,8 @@ form:
     start: Starttid
     finish: Sluttid
   capacity:
+    less: "Färre"
+    more: "Fler"
     label: Kapacitet
     helper: Hur många personer kan delta i ditt evenemang?
   details:

@@ -51,6 +51,7 @@ export default function ContactFields({
           css={{ gridColumn: '1 / -1' }}
           label={tc('contact.form.name.label')}
           my="2"
+          optional
         >
           <Input
             placeholder={tc('contact.form.name.holder')}
@@ -81,6 +82,7 @@ export default function ContactFields({
         css={{ gridColumn: '1 / -1' }}
         label={tc('contact.form.website')}
         my="2"
+        optional
       >
         <Input
           autoComplete="url"

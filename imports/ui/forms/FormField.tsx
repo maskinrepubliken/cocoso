@@ -1,10 +1,18 @@
 import React, { useId } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Box, Input, Select, Text, Textarea } from '/imports/ui/core';
 
 // Controls the label can point at by id. Richer children (editors, groups
 // of checkboxes) keep their own labelling.
-const LABELABLE = new Set<unknown>([Input, Select, Textarea, 'input', 'select', 'textarea']);
+const LABELABLE = new Set<unknown>([
+  Input,
+  Select,
+  Textarea,
+  'input',
+  'select',
+  'textarea',
+]);
 
 export interface FormFieldProps extends React.ComponentProps<typeof Box> {
   // Read by GenericEntryForm to place the field in a column.
@@ -13,7 +21,9 @@ export interface FormFieldProps extends React.ComponentProps<typeof Box> {
   errorMessage?: string | null;
   helper?: string | React.ReactNode;
   label?: string | React.ReactNode;
+  // Required fields are not marked; optional ones say so after the label.
   required?: boolean;
+  optional?: boolean;
 }
 
 export default function FormField(props: FormFieldProps) {
@@ -23,12 +33,17 @@ export default function FormField(props: FormFieldProps) {
     errorMessage = null,
     helper,
     label,
-    required = false,
+    required: _required,
+    optional = false,
     ...otherProps
   } = props;
   // A single input, select or textarea child gets an id so the label
   // points at it.
   const generatedId = useId();
+  const [tc] = useTranslation('common');
+  const optionalNote = optional && (
+    <span className="form-field-optional"> ({tc('forms.optional')})</span>
+  );
   const child =
     React.Children.count(children) === 1 && React.isValidElement(children)
       ? (children as React.ReactElement<any>)
@@ -46,12 +61,12 @@ export default function FormField(props: FormFieldProps) {
         {controlId ? (
           <label className="form-field-label" htmlFor={controlId}>
             {label}
-            {required && ' *'}
+            {optionalNote}
           </label>
         ) : (
           <Text color="gray.800" fontWeight="bold">
             {label}
-            {required && ' *'}
+            {optionalNote}
           </Text>
         )}
       </Box>

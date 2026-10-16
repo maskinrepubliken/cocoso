@@ -76,7 +76,6 @@ interface WhereFieldsProps {
   // Whether a place in the municipality was chosen for an address of its
   // own; one must be.
   locationPicked: boolean;
-  profileLink: string | null;
   onModeChange: (mode: WhereMode) => void;
   onSelectResource: (resource: SelectedResource | null) => void;
   onAddressChange: (address: Partial<Address>) => void;
@@ -94,7 +93,6 @@ export default function WhereFields({
   placeName,
   locationId,
   locationPicked,
-  profileLink,
   onModeChange,
   onSelectResource,
   onAddressChange,
@@ -129,77 +127,66 @@ export default function WhereFields({
             label: t('form.where.place'),
             icon: <MapPinIcon aria-hidden />,
             description: t('form.where.placeHelper'),
-            content: (
-              <>
-                <div className="picker-anchor">
-                  {resourceFull ? (
-                    <div className="place-card">
-                      <PlaceThumb place={resourceFull} />
-                      <span className="person-card-text">
-                        <span className="person-card-name">
-                          {resourceFull.label}
+            content:
+              resourceFull && !picking ? (
+                <>
+                  <div className="place-card">
+                    <PlaceThumb place={resourceFull} />
+                    <span className="person-card-text">
+                      <span className="person-card-name">
+                        {resourceFull.label}
+                      </span>
+                      {formatAddress(resourceFull.address) && (
+                        <span className="person-card-note">
+                          {formatAddress(resourceFull.address)}
                         </span>
-                        {formatAddress(resourceFull.address) && (
-                          <span className="person-card-note">
-                            {formatAddress(resourceFull.address)}
-                          </span>
-                        )}
-                      </span>
-                      <span className="person-card-action">
-                        <button
-                          type="button"
-                          className="person-card-button"
-                          aria-expanded={picking}
-                          onClick={() => setPicking(!picking)}
-                        >
-                          {t('form.where.change')}
-                        </button>
-                      </span>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="person-add"
-                      aria-expanded={picking}
-                      onClick={() => setPicking(!picking)}
-                    >
-                      <MapPinIcon aria-hidden width={16} height={16} />
-                      {t('form.where.pick')}
-                    </button>
-                  )}
-                  {picking && (
-                    <PickerPopover
-                      emptyText={t('form.where.empty')}
-                      getKey={(place) => place._id}
-                      getSearchText={(place) =>
-                        [place.label, formatAddress(place.address)].join(' ')
-                      }
-                      items={resources}
-                      placeholder={t('form.where.search')}
-                      renderItem={(place) => <PlaceRow place={place} />}
-                      onClose={() => setPicking(false)}
-                      onPick={(place) => {
-                        onSelectResource({
-                          _id: place._id,
-                          label: place.label,
-                          isCombo: place.isCombo,
-                          isBookable: place.isBookable,
-                        });
-                        setPicking(false);
-                      }}
+                      )}
+                    </span>
+                    <span className="person-card-action">
+                      <button
+                        type="button"
+                        className="person-card-button"
+                        onClick={() => setPicking(true)}
+                      >
+                        {t('form.where.change')}
+                      </button>
+                    </span>
+                  </div>
+                  {resourceFull.address && (
+                    <AddressBlock
+                      withoutMapLink
+                      address={resourceFull.address}
+                      mapHeight={120}
                     />
                   )}
-                </div>
-                {resourceFull?.address && (
-                  <AddressBlock
-                    withoutMapLink
-                    address={resourceFull.address}
-                    mapHeight={120}
-                  />
-                )}
-                {selectedResource && ortLine(resourceLocationName)}
-              </>
-            ),
+                  {ortLine(resourceLocationName)}
+                </>
+              ) : (
+                // The places right here, to search and scroll; no dropdown
+                <PickerPopover
+                  inline
+                  autoFocus={picking}
+                  emptyText={t('form.where.empty')}
+                  getKey={(place) => place._id}
+                  getSearchText={(place) =>
+                    [place.label, formatAddress(place.address)].join(' ')
+                  }
+                  items={resources}
+                  placeholder={t('form.where.search')}
+                  renderItem={(place) => <PlaceRow place={place} />}
+                  selectedKey={selectedResource?._id}
+                  onClose={() => setPicking(false)}
+                  onPick={(place) => {
+                    onSelectResource({
+                      _id: place._id,
+                      label: place.label,
+                      isCombo: place.isCombo,
+                      isBookable: place.isBookable,
+                    });
+                    setPicking(false);
+                  }}
+                />
+              ),
           },
           {
             value: 'organizer',
@@ -217,16 +204,6 @@ export default function WhereFields({
                   mapHeight={120}
                 />
                 {ortLine(organizerLocationName)}
-                {profileLink && (
-                  <a
-                    className="form-preview-link"
-                    href={profileLink}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {t('form.editProfile')}
-                  </a>
-                )}
               </>
             ) : null,
           },
@@ -237,15 +214,8 @@ export default function WhereFields({
             description: t('form.where.ownHelper'),
             content: (
               <>
-                <FormField label={t('form.where.placeName')}>
-                  <Input
-                    placeholder={t('form.place.holder')}
-                    value={placeName}
-                    onChange={(event) => onPlaceNameChange(event.target.value)}
-                  />
-                </FormField>
-                <AddressFields value={address} onChange={onAddressChange} />
-                <FormField label={t('form.where.location')} required>
+                {/* Where in the municipality first: it is the one must */}
+                <FormField label={t('form.where.location')}>
                   <LocationSelect
                     unchosenLabel={
                       locationPicked ? undefined : t('form.where.locationPick')
@@ -255,6 +225,14 @@ export default function WhereFields({
                     onChange={onLocationChange}
                   />
                 </FormField>
+                <FormField label={t('form.where.placeName')} optional>
+                  <Input
+                    placeholder={t('form.place.holder')}
+                    value={placeName}
+                    onChange={(event) => onPlaceNameChange(event.target.value)}
+                  />
+                </FormField>
+                <AddressFields value={address} onChange={onAddressChange} />
               </>
             ),
           },

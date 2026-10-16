@@ -602,6 +602,8 @@ listing:
     people: the organizers
     resources: the places
     works: the requests
+forms:
+  optional: optional
 address:
   title: "Address"
   titleWithContact: "Address and contact"
@@ -624,7 +626,7 @@ address:
       label: "Town"
     coordinates:
       label: "Coordinates"
-      helper: "Optional. Latitude and longitude, as copied from a map, e.g. 57.485668, 13.351021."
+      helper: "Latitude and longitude, as copied from a map, e.g. 57.485668, 13.351021."
       invalid: "That does not look like coordinates (latitude, longitude)."
   errors:
     required: "Enter a town and a street address or coordinates."

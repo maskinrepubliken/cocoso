@@ -599,6 +599,8 @@ listing:
     people: arrangörerna
     resources: platserna
     works: förfrågningarna
+forms:
+  optional: valfritt
 address:
   title: "Adress"
   titleWithContact: "Adress och kontakt"
@@ -621,7 +623,7 @@ address:
       label: "Ort"
     coordinates:
       label: "Koordinater"
-      helper: "Valfritt. Latitud och longitud, som du kopierar från en karta, t.ex. 57.485668, 13.351021."
+      helper: "Latitud och longitud, som du kopierar från en karta, t.ex. 57.485668, 13.351021."
       invalid: "Det ser inte ut som koordinater (latitud, longitud)."
   errors:
     required: "Fyll i ort och en gatuadress eller koordinater."

@@ -37,20 +37,17 @@ form:
     label: "Contact details"
     standard: "Standard"
     own: "Other details"
-    fromProfileHelper: "Taken from the profile of {{name}} and shown on the event page."
     none: "No public contact details in the profile yet."
-    ownHelper: "Details for this event only, instead of a profile's."
     email: "Email"
     phone: "Phone"
     website: "Website"
-  editProfile: "Change in the profile"
   where:
     label: "Where"
     helper: "Choose one of the municipality's places, the organizer's address or an address of its own. The place (ort) follows from the choice."
     place: "Choose a place"
     organizer: "Organizer's address"
     own: "Another address"
-    placeName: "Name of the place (optional)"
+    placeName: "Name of the place"
     location: "Place in the municipality"
     locationPick: "Choose…"
     locationOther: "Elsewhere in the municipality"
@@ -96,6 +93,8 @@ form:
     start: Start time
     finish: Finish time
   capacity:
+    less: "Fewer"
+    more: "More"
     label: Capacity
     helper: How many people can attend the event?
   details:

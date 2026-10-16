@@ -77,7 +77,7 @@ export default function AddressFields({
         />
       </FormField>
       <Row>
-        <FormField label={tc('address.form.postalCode.label')} my="2">
+        <FormField label={tc('address.form.postalCode.label')} my="2" optional>
           <Input
             autoComplete="postal-code"
             inputMode="numeric"
@@ -104,6 +104,7 @@ export default function AddressFields({
         helper={tc('address.form.coordinates.helper')}
         label={tc('address.form.coordinates.label')}
         my="2"
+        optional
       >
         <Input
           invalid={coordinatesInvalid}
