@@ -191,7 +191,7 @@ modals:
 
 # GUEST | MEMBER | ADMIN MENU LABELS
 menu:
-  hint: "← find your way here"
+  hint: "find your way here"
   label: Menu
   allSections: All sections
   home: Home

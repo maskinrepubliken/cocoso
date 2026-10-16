@@ -2204,27 +2204,6 @@ body {
   box-shadow: var(--site-island-shadow);
 }
 
-/* The start page's hint at the end of the menu pill. Kept in the layout
-   only when it fits (Header.tsx); otherwise it is measured but not shown. */
-.site-nav {
-  position: relative;
-}
-
-.site-nav-hint {
-  padding: 0 12px 0 6px;
-  color: var(--cocoso-mylla-soft);
-  font-family: var(--cocoso-font-display);
-  font-size: 13px;
-  font-style: italic;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.site-nav-hint.is-off {
-  position: absolute;
-  visibility: hidden;
-}
-
 .site-nav .szh-menu-button {
   all: unset;
   display: inline-flex;
@@ -2385,6 +2364,30 @@ body {
 
 .site-more svg {
   flex: none;
+}
+
+/* The button measures itself, so the start page's hint can step out of
+   the label when the button is narrow. */
+.site-more {
+  container-type: inline-size;
+}
+
+.site-more-hint {
+  color: var(--cocoso-mylla-soft);
+  font-family: var(--cocoso-font-display);
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.site-more.is-open .site-more-hint {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@container (max-width: 145px) {
+  .site-more-hint {
+    display: none;
+  }
 }
 
 .site-more-label {
