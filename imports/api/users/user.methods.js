@@ -15,6 +15,8 @@ import {
   isOrganizer,
 } from '../activities/activity.organizers';
 import { requireContact } from '../_utils/contact';
+import { AddressPattern, cleanAddress } from '../_utils/address';
+import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
 
 const userModel = async (user) => ({
@@ -102,6 +104,8 @@ const ProfilePattern = {
   bio: Match.Maybe(String),
   contactInfo: Match.Maybe(String),
   publicContact: ContactPattern,
+  address: AddressPattern,
+  locationId: Match.Maybe(Match.OneOf(String, null)),
 };
 
 async function requireAdminUser() {
@@ -113,8 +117,25 @@ async function requireAdminUser() {
 }
 
 async function writeProfile(userId, values) {
-  const { publicContact, ...rest } = values;
+  const { publicContact, address, locationId, ...rest } = values;
   const set = { ...rest };
+  const unset = {};
+  // The address and place new events start from; empty clears them.
+  if ('address' in values) {
+    const cleaned = await withCoordinates(cleanAddress(address));
+    if (cleaned) {
+      set.address = cleaned;
+    } else {
+      unset.address = 1;
+    }
+  }
+  if ('locationId' in values) {
+    if (locationId) {
+      set.locationId = locationId;
+    } else {
+      unset.locationId = 1;
+    }
+  }
   if ('publicContact' in values) {
     // Anyone may share contact details; organizers must.
     set.publicContact = (await isOrganizer(userId))
@@ -122,7 +143,10 @@ async function writeProfile(userId, values) {
       : cleanContact(publicContact);
   }
   try {
-    await Meteor.users.updateAsync(userId, { $set: set });
+    await Meteor.users.updateAsync(userId, {
+      $set: set,
+      ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
+    });
   } catch (error) {
     throw new Meteor.Error(error);
   }
@@ -302,6 +326,8 @@ Meteor.methods({
           bio: 1,
           contactInfo: 1,
           publicContact: 1,
+          address: 1,
+          locationId: 1,
           avatar: 1,
         },
       }
@@ -334,7 +360,8 @@ Meteor.methods({
 
   // Whom a contributor can name as co-organizer of an event: everyone who
   // may publish content. Only name and username leave the server.
-  async getOrganizerOptions() {
+  async getOrganizerOptions(includeSelf = false) {
+    check(includeSelf, Boolean);
     const user = await Meteor.userAsync();
     if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('not-allowed', 'Not allowed');
@@ -345,7 +372,7 @@ Meteor.methods({
     ).fetchAsync();
     const ids = memberships
       .map((m) => m.userId)
-      .filter((id) => id !== user._id);
+      .filter((id) => includeSelf || id !== user._id);
     const users = await Meteor.users
       .find(
         { _id: { $in: ids } },
@@ -360,6 +387,42 @@ Meteor.methods({
         lastName: u.lastName,
       }))
       .sort((a, b) => a.username.localeCompare(b.username));
+  },
+
+  // What a new event starts from when this person organizes it: their
+  // public contact, address and place. For the event form; any organizer
+  // may read another's, these are the details shown on public pages.
+  async getOrganizerDefaults(userId) {
+    check(userId, String);
+    const user = await Meteor.userAsync();
+    if (!user || !(await isContributorOrAdmin(user._id))) {
+      throw new Meteor.Error('not-allowed', 'Not allowed');
+    }
+    if (userId !== user._id && !(await isContributorOrAdmin(userId))) {
+      throw new Meteor.Error('not-found', 'No such organizer');
+    }
+    const organizer = await Meteor.users.findOneAsync(userId, {
+      fields: {
+        username: 1,
+        firstName: 1,
+        lastName: 1,
+        publicContact: 1,
+        address: 1,
+        locationId: 1,
+      },
+    });
+    if (!organizer) {
+      throw new Meteor.Error('not-found', 'No such organizer');
+    }
+    return {
+      _id: organizer._id,
+      username: organizer.username,
+      firstName: organizer.firstName || '',
+      lastName: organizer.lastName || '',
+      publicContact: organizer.publicContact || null,
+      address: organizer.address || null,
+      locationId: organizer.locationId || null,
+    };
   },
 
   async getUserContactInfo(username) {

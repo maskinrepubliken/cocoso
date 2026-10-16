@@ -159,6 +159,28 @@ async function resolveActivityLocation(values) {
 // Archived events stay out of every listing except their organizer's own.
 const notArchived = { isArchived: { $ne: true } };
 
+// The organizer an admin names in the form: an existing contributor or
+// admin, returned as the author fields. Anyone else gets the caller.
+async function chooseAuthor(user, requestedId) {
+  if (!requestedId || requestedId === user._id) {
+    return { authorId: user._id, authorName: user.username };
+  }
+  if (!(await isAdmin(user._id))) {
+    throw new Meteor.Error(
+      'not-allowed',
+      'Only an admin may name the organizer'
+    );
+  }
+  check(requestedId, String);
+  const author = await Meteor.users.findOneAsync(requestedId, {
+    fields: { username: 1 },
+  });
+  if (!author || !(await isContributorOrAdmin(author._id))) {
+    throw new Meteor.Error('not-found', 'The organizer must be an organizer');
+  }
+  return { authorId: author._id, authorName: author.username };
+}
+
 const canManage = async (activity, user) =>
   Boolean(
     user && (isOrganizerOf(activity, user._id) || (await isAdmin(user._id)))
@@ -542,8 +564,12 @@ Meteor.methods({
     if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('Not allowed!');
     }
-    // Whoever creates an event organizes it, and organizers can be reached.
-    await requireOrganizerContact([user._id]);
+    // Whoever creates an event organizes it, unless an admin names someone
+    // else; organizers can be reached.
+    const author = await chooseAuthor(user, values.authorId);
+    delete values.authorId;
+    delete values.authorName;
+    await requireOrganizerContact([author.authorId]);
 
     const images = values.images;
 
@@ -556,7 +582,10 @@ Meteor.methods({
       delete values.resource;
     }
     const locationId = await resolveActivityLocation(values);
-    const organizers = await resolveOrganizers(values.organizers, user._id);
+    const organizers = await resolveOrganizers(
+      values.organizers,
+      author.authorId
+    );
     const contact = cleanContact(values.contact);
     // Held at a place: the place has the address. Otherwise its own, if any.
     const address = await withCoordinates(ownActivityAddress(values));
@@ -570,8 +599,7 @@ Meteor.methods({
         ...(address ? { address } : {}),
         locationId,
         isMunicipalityOnly: !locationId && Boolean(values.isMunicipalityOnly),
-        authorId: user._id,
-        authorName: user.username,
+        ...author,
         isSentForReview: false,
         isPublished: true,
         creationDate: new Date(),
@@ -609,9 +637,16 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
-    // Ownership fields are never client-writable.
+    // Ownership fields are not client-writable, except that an admin may
+    // hand the event to another organizer.
     const { _id, authorId, authorName, isArchived, archivedAt, ...safeValues } =
       values;
+    let newAuthor = null;
+    if (authorId && authorId !== theActivity.authorId) {
+      newAuthor = await chooseAuthor(user, authorId);
+      await requireOrganizerContact([newAuthor.authorId]);
+    }
+    const effectiveAuthorId = newAuthor?.authorId || theActivity.authorId;
     const locationId = await resolveActivityLocation({
       ...theActivity,
       ...safeValues,
@@ -619,7 +654,7 @@ Meteor.methods({
     if ('organizers' in safeValues) {
       safeValues.organizers = await resolveOrganizers(
         safeValues.organizers,
-        theActivity.authorId
+        effectiveAuthorId
       );
     }
     if ('contact' in safeValues) {
@@ -660,6 +695,7 @@ Meteor.methods({
       return await Activities.updateAsync(activityId, {
         $set: {
           ...safeValues,
+          ...(newAuthor || {}),
           ...(locationId ? { locationId } : {}),
           isMunicipalityOnly:
             !locationId && Boolean(safeValues.isMunicipalityOnly),

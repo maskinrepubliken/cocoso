@@ -70,6 +70,10 @@ profile:
       phone: Phone
       website: Website
       required: "As an organizer you must give an email address or a phone number."
+    address:
+      title: "Address and place"
+      helper: "Where you or your group usually are. New events you create start from this address and place; you can always choose something else for a single event."
+      location: "Place"
   message:
     role: You as {{username}} are part of this organisation with the {{role}} role
     membership: '{{ role }} in {{ host }}'

@@ -43,6 +43,13 @@ export default function EditProfileGeneral() {
         phone: values.publicContact?.phone || '',
         website: values.publicContact?.website || '',
       },
+      // Only organizers have an address and place on their profile
+      ...(contactRequired
+        ? {
+            address: values.address || null,
+            locationId: values.locationId || null,
+          }
+        : {}),
     };
     try {
       await call('saveUserInfo', formValues);

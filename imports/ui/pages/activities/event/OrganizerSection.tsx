@@ -143,9 +143,9 @@ function ContactRows({
   );
 }
 
-// Who runs the event and how to reach them: every organizer with their
-// public contact details, the event's own contact if it has one, and a
-// way to write to the organizer about this event in particular.
+// Who runs the event and how to reach them: every organizer, and either
+// their public contact details or, when the event has contact details of
+// its own, those instead; and a way to write about this event.
 export default function OrganizerSection({ activity }: OrganizerSectionProps) {
   const [tc] = useTranslation('common');
 
@@ -154,6 +154,9 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
       ? activity.organizerProfiles
       : [{ userId: '', username: activity.authorName }];
   const several = organizers.length > 1;
+  // The organizer chose contact details for this event: they replace the
+  // ones from the profiles.
+  const ownContact = hasAny(activity.contact);
   const subject = encodeURIComponent(activity.title || '');
 
   // Where "write to the organizer" goes: the event's own address first,
@@ -165,7 +168,9 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
   return (
     <Section
       order={6}
-      title={tc(several ? 'event.sections.organizers' : 'event.sections.organizer')}
+      title={tc(
+        several ? 'event.sections.organizers' : 'event.sections.organizer'
+      )}
     >
       <List>
         {organizers.map((organizer) => {
@@ -186,7 +191,7 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
                   <Muted>@{organizer.username}</Muted>
                 </span>
               </Row>
-              {hasAny(organizer.publicContact) && (
+              {!ownContact && hasAny(organizer.publicContact) && (
                 <ContactRows
                   contact={organizer.publicContact!}
                   indented

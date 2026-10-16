@@ -70,6 +70,10 @@ profile:
       phone: Telefon
       website: Webbplats
       required: "Som arrangör måste du ange en e-postadress eller ett telefonnummer."
+    address:
+      title: "Adress och ort"
+      helper: "Där du eller föreningen brukar hålla till. Nya evenemang du skapar utgår från den här adressen och orten, och du kan alltid välja något annat för ett enskilt evenemang."
+      location: "Ort"
   message:
     role: Du som {{username}} är en del av denna organisation med rollen {{role}}
     membership: '{{ role }} i {{ host }}'

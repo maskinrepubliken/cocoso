@@ -27,6 +27,9 @@ Users.schema.UserProfile = {
     type: new SimpleSchema(Schemas.PublicContact),
     optional: true,
   },
+  // An organizer's address and place (ort): new events start from them.
+  address: { type: new SimpleSchema(Schemas.Address), optional: true },
+  locationId: { type: String, optional: true },
   lang: { type: String, optional: true },
   avatar: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   avatarLegacy: { type: new SimpleSchema(Schemas.Avatar), optional: true },

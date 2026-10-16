@@ -64,6 +64,12 @@ export default function EditUserProfile() {
           phone: values.publicContact?.phone || '',
           website: values.publicContact?.website || '',
         },
+        ...(user.isOrganizer
+          ? {
+              address: values.address || null,
+              locationId: values.locationId || null,
+            }
+          : {}),
       });
       savedMessage();
       revalidator.revalidate();
