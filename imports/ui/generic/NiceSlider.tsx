@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
-import FsLightbox from 'fslightbox-react';
 import { Fade, Slide } from 'react-slideshow-image';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
@@ -8,6 +7,7 @@ import { Box, Center, Flex, Image } from '/imports/ui/core';
 import type { DotsProps } from '/imports/ui/types';
 
 import { getImageUrl } from '../utils/imageHelper';
+import { Lightbox } from './Lightbox';
 
 if (Meteor.isClient) {
   import('react-slideshow-image/dist/styles.css');
@@ -143,7 +143,8 @@ export default function NiceSlider({
   width = '100%',
   isPopup = false,
 }: NiceSliderProps) {
-  const [toggler, setToggler] = useState(false);
+  // The picture shown large, or null: the site's own lightbox
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (!images || images.length === 0) {
     return null;
@@ -162,24 +163,18 @@ export default function NiceSlider({
               loading="lazy"
               src={getImageUrl(resolvedImages[0], isPopup ? 'medium' : 'full')}
               style={imageStyle}
-              onClick={() => setToggler(!toggler)}
+              onClick={() => setLightboxIndex(0)}
             />
           </Center>
         </Flex>
 
-        {Meteor.isClient && (
-          <FsLightbox
-            toggler={toggler}
-            sources={resolvedImages.map((img) => (
-              <img
-                key={img}
-                alt={`${alt} ${img}`}
-                loading="lazy"
-                src={getImageUrl(img, isPopup ? 'medium' : 'full') || img}
-              />
-            ))}
-          />
-        )}
+        <Lightbox
+          alt={alt}
+          images={images}
+          index={lightboxIndex}
+          onChange={setLightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
       </>
     );
   }
@@ -194,26 +189,20 @@ export default function NiceSlider({
                 alt={`${alt} ${image}`}
                 src={getImageUrl(image, isPopup ? 'medium' : 'full') || image}
                 style={{ ...imageStyle, height }}
-                onClick={() => setToggler(!toggler)}
+                onClick={() => setLightboxIndex(index)}
               />
             </Flex>
           </Center>
         )}
       </ImageHandler>
 
-      {Meteor.isClient && (
-        <FsLightbox
-          toggler={toggler}
-          sources={resolvedImages.map((img) => (
-            <img
-              key={img}
-              alt={img}
-              loading="lazy"
-              src={getImageUrl(img, 'full') || img}
-            />
-          ))}
-        />
-      )}
+      <Lightbox
+        alt={alt}
+        images={images}
+        index={lightboxIndex}
+        onChange={setLightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+      />
     </>
   );
 }

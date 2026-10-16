@@ -112,6 +112,42 @@ export function LightboxTrigger({
   );
 }
 
+// The modal on its own, for a component that already knows which picture
+// is showing (the older slideshows): open it by setting an index, close it
+// by setting null.
+export interface LightboxProps {
+  images?: (string | null | undefined)[];
+  index: number | null;
+  alt?: string;
+  onChange: (index: number) => void;
+  onClose: () => void;
+}
+
+export function Lightbox({
+  images,
+  index,
+  alt,
+  onChange,
+  onClose,
+}: LightboxProps) {
+  const list = useMemo(
+    () => (images || []).filter((src): src is string => Boolean(src)),
+    [images]
+  );
+  if (index === null || list.length === 0) {
+    return null;
+  }
+  return (
+    <LightboxModal
+      alt={alt}
+      images={list}
+      index={Math.min(index, list.length - 1)}
+      onChange={onChange}
+      onClose={onClose}
+    />
+  );
+}
+
 interface LightboxModalProps {
   images: string[];
   index: number;

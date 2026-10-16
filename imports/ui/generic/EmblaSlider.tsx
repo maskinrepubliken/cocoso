@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import React, {
   useCallback,
   useEffect,
@@ -8,11 +7,11 @@ import React, {
 } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Fade from 'embla-carousel-fade';
-import FsLightbox from 'fslightbox-react';
 
 import { Center, Flex } from '/imports/ui/core';
 import type { DotsProps } from '/imports/ui/types';
 import { getImageUrl } from '../utils/imageHelper';
+import { Lightbox } from './Lightbox';
 
 const imageStyle: React.CSSProperties = {
   borderRadius: 'var(--cocoso-border-radius)',
@@ -134,8 +133,9 @@ export default function EmblaSlider({
 
   const [state, setState] = useState({
     currentSlideIndex: 0,
-    lightboxToggle: false,
   });
+  // The picture shown large, or null: the site's own lightbox
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     emblaOptions,
     emblaPluginOptions
@@ -200,26 +200,20 @@ export default function EmblaSlider({
     };
   }, [emblaApi, resolvedImages.length]);
 
-  const toggleLightbox = () =>
-    setState((prev) => ({ ...prev, lightboxToggle: !prev.lightboxToggle }));
+  const openLightbox = () => setLightboxIndex(state.currentSlideIndex);
 
   if (resolvedImages.length === 0) {
     return null;
   }
 
-  const lightBoxProps = {
-    toggler: state.lightboxToggle,
-    sources: resolvedImages.map((img) => (
-      <img
-        key={img}
-        alt={img}
-        loading="lazy"
-        src={img}
-        style={{ ...imageStyle, height }}
-      />
-    )),
-    sourceIndex: state.currentSlideIndex,
-  };
+  const lightbox = (
+    <Lightbox
+      images={images}
+      index={lightboxIndex}
+      onChange={setLightboxIndex}
+      onClose={() => setLightboxIndex(null)}
+    />
+  );
 
   if (resolvedImages.length === 1) {
     return (
@@ -231,12 +225,12 @@ export default function EmblaSlider({
               loading="lazy"
               src={resolvedImages[0]}
               style={{ ...imageStyle, height }}
-              onClick={toggleLightbox}
+              onClick={openLightbox}
             />
           </Center>
         </Flex>
 
-        {Meteor.isClient && <FsLightbox {...lightBoxProps} />}
+        {lightbox}
       </>
     );
   }
@@ -251,7 +245,7 @@ export default function EmblaSlider({
                 alt={img}
                 src={loadedIndices.has(index) ? img : undefined}
                 style={{ ...imageStyle, height }}
-                onClick={toggleLightbox}
+                onClick={openLightbox}
               />
             </div>
           ))}
@@ -287,7 +281,7 @@ export default function EmblaSlider({
         </button>
       </Flex>
 
-      {Meteor.isClient && <FsLightbox {...lightBoxProps} />}
+      {lightbox}
     </div>
   );
 }
