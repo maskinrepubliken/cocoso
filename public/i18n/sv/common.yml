@@ -631,7 +631,7 @@ address:
       label: "Ort"
     coordinates:
       label: "Koordinater"
-      helper: "Latitud och longitud, som du kopierar från en karta, t.ex. 57.485668, 13.351021."
+      helper: "Latitud och longitud, som du kopierar från en karta."
       invalid: "Det ser inte ut som koordinater (latitud, longitud)."
   errors:
     required: "Fyll i ort och en gatuadress eller koordinater."

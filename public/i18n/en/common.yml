@@ -634,7 +634,7 @@ address:
       label: "Town"
     coordinates:
       label: "Coordinates"
-      helper: "Latitude and longitude, as copied from a map, e.g. 57.485668, 13.351021."
+      helper: "Latitude and longitude, as copied from a map."
       invalid: "That does not look like coordinates (latitude, longitude)."
   errors:
     required: "Enter a town and a street address or coordinates."

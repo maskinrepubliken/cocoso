@@ -69,7 +69,11 @@ export default function FormField(props: FormFieldProps) {
                 {optionalNote}
               </label>
             ) : (
-              <Text color="gray.800" fontWeight="bold">
+              <Text
+                className="form-field-label"
+                color="gray.800"
+                fontWeight="bold"
+              >
                 {label}
                 {optionalNote}
               </Text>
@@ -92,7 +96,11 @@ export default function FormField(props: FormFieldProps) {
                 {optionalNote}
               </label>
             ) : (
-              <Text color="gray.800" fontWeight="bold">
+              <Text
+                className="form-field-label"
+                color="gray.800"
+                fontWeight="bold"
+              >
                 {label}
                 {optionalNote}
               </Text>

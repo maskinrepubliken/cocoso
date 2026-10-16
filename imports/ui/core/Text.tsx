@@ -66,6 +66,7 @@ interface TextProps {
   textAlign?: string;
   size?: string;
   truncated?: boolean;
+  className?: string;
   children: React.ReactNode;
   _hover?: any;
   _active?: any;

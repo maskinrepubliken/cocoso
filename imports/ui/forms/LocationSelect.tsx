@@ -74,9 +74,11 @@ export default function LocationSelect({
           {unchosenLabel}
         </option>
       )}
-      <option value="">
-        {wholeLabel || tc('locations.wholeMunicipality')}
-      </option>
+      {/* Named for the form it is in, the "no place in particular" choice
+          comes last, after the places */}
+      {!wholeLabel && (
+        <option value="">{tc('locations.wholeMunicipality')}</option>
+      )}
       {allowMunicipalityOnly && (
         <option value={MUNICIPALITY_ONLY}>
           {tc('locations.municipalityOnly')}
@@ -90,6 +92,7 @@ export default function LocationSelect({
             : ''}
         </option>
       ))}
+      {wholeLabel && <option value="">{wholeLabel}</option>}
     </Select>
   );
 }

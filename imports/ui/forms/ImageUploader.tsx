@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Dropzone from 'react-dropzone';
 import XIcon from 'lucide-react/dist/esm/icons/x';
-import ImagePlusIcon from 'lucide-react/dist/esm/icons/image-plus';
 import MoveIcon from 'lucide-react/dist/esm/icons/move';
 import SortableList, { SortableItem } from 'react-easy-sort';
 import { arrayMoveImmutable } from 'array-move';
@@ -21,6 +20,30 @@ import {
 } from '../../api/_utils/services/clientUpload';
 import DocumentUploadHelper from './UploadHelpers';
 import { message } from '../generic/message';
+
+// A little line drawing of a framed landscape, sun and hills, with a plus:
+// pictures to come.
+function PictureArt() {
+  return (
+    <svg
+      aria-hidden
+      className="image-drop-art"
+      fill="none"
+      viewBox="0 0 48 40"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.6"
+    >
+      <rect height="28" rx="4" width="36" x="2" y="6" />
+      <circle cx="13" cy="15" r="3" />
+      <path d="M3 30l9-9 6 6 6-8 13 13" />
+      <path d="M3 34h34" opacity=".35" />
+      <circle cx="40" cy="8" fill="currentColor" r="7" stroke="none" />
+      <path d="M40 5v6M37 8h6" stroke="var(--cocoso-papper)" />
+    </svg>
+  );
+}
 
 const acceptImages = {
   'image/*': acceptedImageFormatsForUploads,
@@ -47,7 +70,7 @@ function ImageDrop({
           })}
         >
           <input {...getInputProps()} />
-          <ImagePlusIcon aria-hidden />
+          <PictureArt />
           {compact ? (
             <span className="image-drop-text">{tc('plugins.images.add')}</span>
           ) : (

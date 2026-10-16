@@ -67,7 +67,7 @@ form:
   subtitle:
     label: Undertitel
     helper: Exempelvis artistnamn, eller en undertitel…
-    holder: Ange en undertitel
+    holder: Skriv någonting catchy
   description:
     label: Beskrivning
     helper: Lägg till en beskrivning av din aktivitet eller bokning
@@ -79,8 +79,18 @@ form:
     helper: Välj en av platserna i kommunen. Är platsen bokningsbar bokas den samtidigt i kalendern. Hålls evenemanget någon annanstans lämnar du rutan tom och skriver namn och adress nedan.
     holder: Välj plats
   occurrences:
-    label: Datum och tid
-    helper: Lägg in start och sluttid för ditt publika evenemang. Vill du skapa flera identiska bokningar eller evenemang som sker vid upprepade tillfällen klickar du på + tecknet.
+    label: Tillfällen
+    helper: När evenemanget äger rum. Lägg till fler tillfällen om det upprepas.
+  occurrence:
+    title: "Tillfälle {{n}}"
+    severalDays: Flera dagar
+    date: Datum
+    from: Från
+    to: Till
+    starts: Börjar
+    ends: Slutar
+    add: Lägg till tillfälle
+    remove: "Ta bort tillfälle {{n}}"
   days:
     single: Dag
     multiple: Samma aktivitet pågår under flera dagar

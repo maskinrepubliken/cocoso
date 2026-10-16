@@ -66,7 +66,7 @@ form:
     helper: This is typically the title of your booking to appear publicly
   subtitle:
     label: Subtitle
-    holder: Give it a subtitle (artist name etc.)
+    holder: Write something catchy
     helper: i.e. artist, or some subtitle...
   description:
     label: Description
@@ -79,8 +79,18 @@ form:
     holder: Choose a place
     helper: Choose one of the municipality's places. A bookable place is booked in the calendar at the same time. If the event is somewhere else, leave this empty and write the name and address below.
   occurrences:
-    label: Date & time of occurrences
-    helper: Select the date and time of the occurrences of the event. Click + to add more occurrence
+    label: Occasions
+    helper: When the event takes place. Add more occasions if it repeats.
+  occurrence:
+    title: "Occasion {{n}}"
+    severalDays: Several days
+    date: Date
+    from: From
+    to: To
+    starts: Starts
+    ends: Ends
+    add: Add an occasion
+    remove: "Remove occasion {{n}}"
   days:
     single: Day
     multiple: Multiple Days

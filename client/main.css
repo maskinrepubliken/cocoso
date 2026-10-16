@@ -192,6 +192,172 @@ img {
   cursor: grab;
 }
 
+/* --- When an event happens (DatesAndTimes.tsx) --- */
+
+.occurrences {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.occurrence {
+  padding: 10px 12px 12px;
+  min-width: 0;
+  border-radius: var(--cocoso-radius-falt);
+  background: var(--cocoso-colors-theme-50);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+}
+
+.occurrence.is-warning {
+  box-shadow: inset 0 0 0 2px #d9922e;
+}
+
+.occurrence.is-conflict {
+  box-shadow: inset 0 0 0 2px var(--cocoso-colors-red-600, #c53030);
+}
+
+.occurrence-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.occurrence-title {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+  min-width: 0;
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* the date in words, since the picker shows it as numbers */
+.occurrence-day {
+  color: var(--cocoso-mylla-soft);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.occurrence-day::first-letter {
+  text-transform: uppercase;
+}
+
+/* "Flera dagar": a small chip that is on or off */
+.occurrence-days {
+  flex: none;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.occurrence-days.is-on {
+  background: var(--cocoso-colors-theme-700);
+  box-shadow: none;
+  color: var(--cocoso-papper);
+}
+
+/* narrow: the date (or dates) on a row, the times side by side under it;
+   wide: all on one row */
+.occurrence {
+  container-type: inline-size;
+}
+
+.occurrence-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.occurrence-fields:not(.is-range) > .is-date {
+  grid-column: 1 / -1;
+}
+
+@container (min-width: 440px) {
+  .occurrence-fields {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+
+  .occurrence-fields:not(.is-range) > .is-date {
+    grid-column: auto;
+  }
+
+  .occurrence-fields.is-range {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.occurrence-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.occurrence-field > span {
+  color: var(--cocoso-mylla-soft);
+  font-family: var(--cocoso-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.occurrence-field input {
+  width: 100%;
+  height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--cocoso-papper);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.occurrence-field input:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-700);
+  outline-offset: 1px;
+}
+
+.occurrence-conflict {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0 0;
+  color: var(--cocoso-colors-red-600, #c53030);
+  font-family: var(--cocoso-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.occurrence.is-warning .occurrence-conflict {
+  color: #9a5b12;
+}
+
+.occurrence-conflict svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.occurrence-add {
+  align-self: flex-start;
+  margin-left: -6px;
+}
+
 /* --- Pictures for an entry (ImageUploader.tsx) --- */
 
 /* where pictures are dropped or chosen: a slim dashed row */
@@ -216,10 +382,15 @@ img {
   background: var(--cocoso-colors-theme-100);
 }
 
-.image-drop > svg {
+.image-drop-art {
   flex: none;
-  width: 22px;
-  height: 22px;
+  width: 44px;
+  height: 37px;
+}
+
+.image-drop.is-tile .image-drop-art {
+  width: 40px;
+  height: 33px;
 }
 
 .image-drop-text {
@@ -5901,7 +6072,7 @@ body {
 
 /* fields under a choice sit close: FormField's own margins
    (my="4", my="2") are for fields on the page */
-.choice-body :has(> div > label.form-field-label) {
+.choice-body :has(> div > .form-field-label) {
   margin-block: 2px !important;
 }
 
@@ -5910,12 +6081,12 @@ body {
 }
 
 .choice-body .form-field-label,
-.choice-body :has(> div > label.form-field-label) > div:first-child p {
+.choice-body :has(> div > .form-field-label) > div:first-child p {
   font-size: 13px;
   line-height: 1.3;
 }
 
-.choice-body :has(> div > label.form-field-label) > div:not(:first-child) {
+.choice-body :has(> div > .form-field-label) > div:not(:first-child) {
   padding-top: 4px !important;
 }
 
