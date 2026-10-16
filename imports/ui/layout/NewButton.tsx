@@ -44,7 +44,16 @@ export default function NewButton({ site }: NewButtonProps) {
       (item: any) => isAdmin || !['info', 'resources'].includes(item.name)
     );
   const current = creatable.find((item: any) => item.name === section);
-  const isVisible = Boolean(site) && canCreateContent && Boolean(current);
+  // On the listing itself, not on a page inside it (an event, a place)
+  const rest = (
+    prefix ? location.pathname.slice(prefix.length) : location.pathname
+  )
+    .split('/')
+    .filter(Boolean);
+  const isListing =
+    rest.length === 1 || (rest[0] === 'cp' && rest.length === 2);
+  const isVisible =
+    Boolean(site) && canCreateContent && Boolean(current) && isListing;
 
   const [animState, setAnimState] = useState<NewButtonAnimState>('idle');
 
