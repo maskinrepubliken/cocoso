@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import SmallCloseIcon from 'lucide-react/dist/esm/icons/x-circle';
+import { useTranslation } from 'react-i18next';
+import Dropzone from 'react-dropzone';
+import XIcon from 'lucide-react/dist/esm/icons/x';
+import ImagePlusIcon from 'lucide-react/dist/esm/icons/image-plus';
+import MoveIcon from 'lucide-react/dist/esm/icons/move';
 import SortableList, { SortableItem } from 'react-easy-sort';
 import { arrayMoveImmutable } from 'array-move';
 import toast from 'react-hot-toast';
 
-import { Box, Center, IconButton } from '/imports/ui/core';
+import { Center } from '/imports/ui/core';
+import {
+  acceptedImageFormatsForUploads,
+  maximumDocumentSizeForUploads,
+} from '/imports/ui/utils/constants/general';
 
 import FileDropper from './FileDropper';
 import {
@@ -14,9 +22,54 @@ import {
 import DocumentUploadHelper from './UploadHelpers';
 import { message } from '../generic/message';
 
-const thumbStyle = (backgroundImage?: string): React.CSSProperties => ({
-  backgroundImage: backgroundImage ? `url('${backgroundImage}')` : undefined,
-});
+const acceptImages = {
+  'image/*': acceptedImageFormatsForUploads,
+};
+
+// Where pictures are dropped or chosen: a tile in the grid once there are
+// some, a slim dashed row before.
+function ImageDrop({
+  onFiles,
+  compact,
+}: {
+  onFiles: (files: File[]) => void;
+  compact?: boolean;
+}) {
+  const [tc] = useTranslation('common');
+  return (
+    <Dropzone accept={acceptImages} multiple onDrop={onFiles}>
+      {({ getRootProps, getInputProps, isDragActive }) => (
+        <div
+          {...getRootProps({
+            className: `image-drop ${compact ? 'is-tile' : ''} ${
+              isDragActive ? 'is-over' : ''
+            }`,
+          })}
+        >
+          <input {...getInputProps()} />
+          <ImagePlusIcon aria-hidden />
+          {compact ? (
+            <span className="image-drop-text">{tc('plugins.images.add')}</span>
+          ) : (
+            <span className="image-drop-text">
+              <strong>{tc('plugins.images.choose')}</strong>{' '}
+              {tc('plugins.images.orDrop')}
+              <span className="image-drop-formats">
+                {acceptedImageFormatsForUploads
+                  .map((format) => format.replace('.', '').toUpperCase())
+                  .join(', ')}{' '}
+                ·{' '}
+                {tc('plugins.images.maxSize', {
+                  size: maximumDocumentSizeForUploads,
+                })}
+              </span>
+            </span>
+          )}
+        </div>
+      )}
+    </Dropzone>
+  );
+}
 
 export interface ImageUploaderProps {
   preExistingImages?: string[];
@@ -33,6 +86,7 @@ export default function ImageUploader({
   uploadParam = 'entry',
   onUploadedImages,
 }: ImageUploaderProps) {
+  const [tc] = useTranslation('common');
   const [localImages, setLocalImages] = useState(
     preExistingImages
       ? preExistingImages.map((image) => ({
@@ -130,13 +184,14 @@ export default function ImageUploader({
     );
   };
 
-  if (!localImages || localImages.length === 0) {
+  // One picture (an avatar, a logo): the dropper shows it
+  if (!isMultiple && localImages.length === 0) {
     return (
       <>
         <Center>
           <FileDropper
             setUploadableImage={setUploadableImages}
-            isMultiple={isMultiple}
+            isMultiple={false}
           />
         </Center>
         <DocumentUploadHelper />
@@ -159,47 +214,47 @@ export default function ImageUploader({
     );
   }
 
+  if (localImages.length === 0) {
+    return <ImageDrop onFiles={setUploadableImages} />;
+  }
+
+  // The pictures in the order they are shown, the first as the main one;
+  // dragged to reorder, with a tile to add more at the end.
   return (
-    <>
-      <Center>
-        <Box w="100%">
-          <SortableList
-            draggedItemClassName="sortable-thumb--dragged"
-            style={{
-              display: 'flex',
-              flexBasis: '130px',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-            }}
-            onSortEnd={handleSortImages}
-          >
-            {localImages.map((image, index) => (
-              <SortableItem key={image.src}>
-                <div>
-                  <Box className="sortable-thumb" style={thumbStyle(image.src)}>
-                    <IconButton
-                      className="sortable-thumb-icon"
-                      icon={
-                        <SmallCloseIcon style={{ pointerEvents: 'none' }} />
-                      }
-                      size="xs"
-                      css={{
-                        color: 'white',
-                        '&:hover': {
-                          color: 'var(--cocoso-colors-gray-100)',
-                        },
-                      }}
-                      onClick={() => handleRemoveImage(index)}
-                    />
-                  </Box>
-                </div>
-              </SortableItem>
-            ))}
-          </SortableList>
-        </Box>
-      </Center>
-      <FileDropper setUploadableImage={setUploadableImages} isMultiple />
-    </>
+    <div className="image-uploader">
+      <SortableList
+        className="image-grid"
+        draggedItemClassName="image-thumb--dragged"
+        onSortEnd={handleSortImages}
+      >
+        {localImages.map((image, index) => (
+          <SortableItem key={String(image.src)}>
+            <div
+              className="image-thumb"
+              style={{ backgroundImage: `url('${image.src}')` }}
+            >
+              <span className="image-thumb-badge">
+                {index === 0 ? tc('plugins.images.main') : index + 1}
+              </span>
+              <button
+                type="button"
+                className="image-thumb-remove"
+                aria-label={tc('plugins.images.remove', { n: index + 1 })}
+                onClick={() => handleRemoveImage(index)}
+              >
+                <XIcon aria-hidden width={14} height={14} />
+              </button>
+            </div>
+          </SortableItem>
+        ))}
+        <ImageDrop compact onFiles={setUploadableImages} />
+      </SortableList>
+      {localImages.length > 1 && (
+        <p className="image-uploader-hint">
+          <MoveIcon aria-hidden width={14} height={14} />
+          {tc('plugins.images.reorder')}
+        </p>
+      )}
+    </div>
   );
 }

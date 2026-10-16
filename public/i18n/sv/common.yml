@@ -215,6 +215,14 @@ menu:
   notifications:
     label: Aviseringar
 plugins:
+  images:
+    choose: Välj bilder
+    orDrop: eller släpp dem här
+    maxSize: "högst {{size}} per bild"
+    add: Lägg till
+    main: Huvudbild
+    remove: "Ta bort bild {{n}}"
+    reorder: Dra bilderna för att ändra ordningen. Den första visas som huvudbild.
   fileDropper:
     replace: Om du vill ersätta bilden med en annan så klickar du på bilden för att öppna filväljaren
     single: Släpp bara en fil åt gången.

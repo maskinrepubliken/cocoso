@@ -218,6 +218,14 @@ menu:
     label: Notifications
 
 plugins:
+  images:
+    choose: Choose pictures
+    orDrop: or drop them here
+    maxSize: "at most {{size}} each"
+    add: Add
+    main: Main picture
+    remove: "Remove picture {{n}}"
+    reorder: Drag the pictures to change their order. The first is shown as the main picture.
   fileDropper:
     replace: If you want to replace it with another one, click on the image to reopen the file picker
     single: Please drop only one file at a time.
