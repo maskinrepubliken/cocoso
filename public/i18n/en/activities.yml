@@ -86,8 +86,8 @@ form:
     helper: When the event takes place. Add more occasions if it repeats.
   occurrence:
     title: "Occasion {{n}}"
-    severalDays: An occasion over several days
-    oneDay: Just one day
+    severalDays: Change to several days
+    oneDay: Change to one day
     date: Date
     from: From
     to: To

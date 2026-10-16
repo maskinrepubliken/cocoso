@@ -254,7 +254,7 @@ img {
   text-transform: uppercase;
 }
 
-/* "Flera dagar långt tillfälle" / "Bara en dag": a link that switches */
+/* "Ändra till flera dagar" / "Ändra till en dag": a link that switches */
 .occurrence-days {
   flex: none;
   padding: 0;
