@@ -40,6 +40,9 @@ Activities.schema = new SimpleSchema({
   }),
   // Contact details for this event in particular, next to the organizers'.
   contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
+  // Without contact details of its own: the one organizer whose profile
+  // details the page shows. Empty shows every organizer's.
+  contactUserId: { type: String, optional: true },
 
   // Only for an event that is not held at a place (resourceId): a place
   // brings its own address. See activity.place.js.

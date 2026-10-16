@@ -187,6 +187,7 @@ interface Activity {
   datesAndTimes?: Occurrence[];
   organizers?: { userId: string; username: string }[];
   contact?: PublicContact | null;
+  contactUserId?: string | null;
   organizerProfiles?: OrganizerProfile[];
 }
 

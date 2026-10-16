@@ -25,7 +25,7 @@ import type { SelectedResource, DateAndTime } from '/imports/ui/types';
 
 import publicActivityFormFields from './publicActivityFormFields';
 import OrganizerFields, {
-  type ContactMode,
+  OWN_CONTACT,
   type OrganizerDefaults,
   type OrganizerOption,
   type OrganizerRef,
@@ -61,6 +61,7 @@ interface ActivityData extends ActivityFormValues {
   category?: { key?: string } | null;
   organizers?: OrganizerRef[];
   contact?: Contact | null;
+  contactUserId?: string | null;
   authorId?: string;
 }
 
@@ -119,10 +120,10 @@ export default function PublicActivityForm({
     // The organizer: the person creating the event; an admin may name
     // someone else, also later.
     authorId: activity?.authorId || currentUser?._id || '',
-    // Contact details from the organizer's profile, or the event's own
-    contactMode: (hasContact(activity?.contact)
-      ? 'own'
-      : 'organizer') as ContactMode,
+    // Contact details from an organizer's profile, or the event's own
+    contactChoice: hasContact(activity?.contact)
+      ? OWN_CONTACT
+      : activity?.contactUserId || '',
     contact: { ...emptyContact, ...(activity?.contact || {}) },
     // Decided once the organizer's profile is known (see below)
     whereMode: (activity?.resourceId ? 'place' : null) as WhereMode | null,
@@ -135,6 +136,9 @@ export default function PublicActivityForm({
     []
   );
   const [author, setAuthor] = useState<OrganizerDefaults | null>(null);
+  const [contactPerson, setContactPerson] = useState<OrganizerDefaults | null>(
+    null
+  );
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('activities');
   const [tc] = useTranslation('common');
@@ -209,10 +213,47 @@ export default function PublicActivityForm({
   }, [author, state.whereMode]);
 
   const whereMode: WhereMode = state.whereMode || 'place';
-  const isOwnEvent = state.authorId === currentUser?._id;
-  const profileLink = isOwnEvent
-    ? '/admin/my-profile/general'
-    : `/admin/users/${encodeURIComponent(author?.username || '')}/profile`;
+
+  // Whose contact details the event shows: the chosen organizer while they
+  // are one of its organizers, otherwise the organizer.
+  const contactChoice: string =
+    state.contactChoice === OWN_CONTACT ||
+    state.organizers.some((o: OrganizerRef) => o.userId === state.contactChoice)
+      ? state.contactChoice
+      : state.authorId;
+
+  useEffect(() => {
+    if (contactChoice === OWN_CONTACT || !contactChoice) {
+      return;
+    }
+    if (contactChoice === state.authorId) {
+      setContactPerson(author);
+      return;
+    }
+    let cancelled = false;
+    call<OrganizerDefaults>('getOrganizerDefaults', contactChoice)
+      .then((defaults) => !cancelled && setContactPerson(defaults))
+      .catch(() => !cancelled && setContactPerson(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [contactChoice, author]);
+
+  // Where a person edits the details the form starts from: one's own
+  // profile, or as admin anyone's.
+  const profileLinkFor = (
+    person?: { _id?: string; username?: string } | null
+  ) => {
+    if (!person?._id) {
+      return null;
+    }
+    if (person._id === currentUser?._id) {
+      return '/admin/my-profile/general';
+    }
+    return isAdmin && person.username
+      ? `/admin/users/${encodeURIComponent(person.username)}/profile`
+      : null;
+  };
 
   const isFormValid = () => {
     const { datesAndTimes } = state;
@@ -322,7 +363,8 @@ export default function PublicActivityForm({
       organizers: state.organizers.filter(
         (o: OrganizerRef) => o.userId !== state.authorId
       ),
-      contact: state.contactMode === 'own' ? state.contact : null,
+      contact: contactChoice === OWN_CONTACT ? state.contact : null,
+      contactUserId: contactChoice === OWN_CONTACT ? null : contactChoice,
       address: atOrganizer ? author.address : own ? state.address : null,
       locationId: atOrganizer
         ? author.locationId || null
@@ -399,12 +441,13 @@ export default function PublicActivityForm({
           author={author}
           authorId={state.authorId}
           contact={state.contact}
-          contactMode={state.contactMode}
+          contactChoice={contactChoice}
+          contactPerson={contactPerson}
+          currentUserId={currentUser?._id}
           isAdmin={isAdmin}
-          isOwnEvent={isOwnEvent}
           options={organizerOptions}
           organizers={state.organizers}
-          profileLink={profileLink}
+          profileLinkFor={profileLinkFor}
           onAuthorChange={(authorId) =>
             setState((prevState: any) => ({
               ...prevState,
@@ -418,8 +461,11 @@ export default function PublicActivityForm({
           onContactChange={(contact) =>
             setState((prevState: any) => ({ ...prevState, contact }))
           }
-          onContactModeChange={(contactMode) =>
-            setState((prevState: any) => ({ ...prevState, contactMode }))
+          onContactChoiceChange={(choice) =>
+            setState((prevState: any) => ({
+              ...prevState,
+              contactChoice: choice,
+            }))
           }
           onOrganizersChange={(organizers) =>
             setState((prevState: any) => ({ ...prevState, organizers }))
@@ -436,7 +482,7 @@ export default function PublicActivityForm({
           organizerAddress={author?.address || null}
           organizerLocationId={author?.locationId || null}
           placeName={state.placeName}
-          profileLink={profileLink}
+          profileLink={profileLinkFor(author)}
           resources={state.resources}
           selectedResource={state.selectedResource}
           onAddressChange={(address) =>

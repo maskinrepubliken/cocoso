@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import HouseIcon from 'lucide-react/dist/esm/icons/house';
+import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 
 import { Input } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
@@ -14,7 +16,7 @@ import { formatAddress, type Address } from '/imports/api/_utils/address';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import type { SelectedResource } from '/imports/ui/types';
 
-import OptionCards from './OptionCards';
+import ChoiceChips from './ChoiceChips';
 import PickerPopover from './PickerPopover';
 
 // Where the event is: at one of the municipality's places, at the
@@ -72,7 +74,7 @@ interface WhereFieldsProps {
   placeName: string;
   locationId: string | null;
   isMunicipalityOnly: boolean;
-  profileLink: string;
+  profileLink: string | null;
   onModeChange: (mode: WhereMode) => void;
   onSelectResource: (resource: SelectedResource | null) => void;
   onAddressChange: (address: Partial<Address>) => void;
@@ -116,14 +118,15 @@ export default function WhereFields({
 
   return (
     <div className="where-fields">
-      <OptionCards
-        label={tc('locations.form.label')}
+      <ChoiceChips
+        label={t('form.cards.place')}
         value={mode}
         onChange={onModeChange}
-        options={[
+        choices={[
           {
             value: 'place',
-            title: t('form.where.place'),
+            label: t('form.where.place'),
+            icon: <MapPinIcon aria-hidden />,
             description: t('form.where.placeHelper'),
             content: (
               <>
@@ -199,7 +202,8 @@ export default function WhereFields({
           },
           {
             value: 'organizer',
-            title: t('form.where.organizer'),
+            label: t('form.where.organizer'),
+            icon: <HouseIcon aria-hidden />,
             description: organizerAddress
               ? t('form.where.organizerHelper')
               : t('form.where.organizerNone'),
@@ -212,20 +216,23 @@ export default function WhereFields({
                   mapHeight={120}
                 />
                 {ortLine(organizerLocationName)}
-                <a
-                  className="form-preview-link"
-                  href={profileLink}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {t('form.editProfile')}
-                </a>
+                {profileLink && (
+                  <a
+                    className="form-preview-link"
+                    href={profileLink}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    {t('form.editProfile')}
+                  </a>
+                )}
               </>
             ) : null,
           },
           {
             value: 'own',
-            title: t('form.where.own'),
+            label: t('form.where.own'),
+            icon: <PencilLineIcon aria-hidden />,
             description: t('form.where.ownHelper'),
             content: (
               <>

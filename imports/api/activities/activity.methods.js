@@ -19,6 +19,7 @@ import {
   isOrganizerOf,
   requireOrganizerContact,
   resolveOrganizers,
+  resolveContactUserId,
 } from './activity.organizers';
 import { attachPlaceAddress, ownActivityAddress } from './activity.place';
 import { formatAddress } from '../_utils/address';
@@ -587,6 +588,13 @@ Meteor.methods({
       author.authorId
     );
     const contact = cleanContact(values.contact);
+    const contactUserId = resolveContactUserId(
+      values.contactUserId,
+      contact,
+      author.authorId,
+      organizers
+    );
+    delete values.contactUserId;
     // Held at a place: the place has the address. Otherwise its own, if any.
     const address = await withCoordinates(ownActivityAddress(values));
     delete values.address;
@@ -596,6 +604,7 @@ Meteor.methods({
         ...values,
         organizers,
         contact,
+        ...(contactUserId ? { contactUserId } : {}),
         ...(address ? { address } : {}),
         locationId,
         isMunicipalityOnly: !locationId && Boolean(values.isMunicipalityOnly),
@@ -670,6 +679,29 @@ Meteor.methods({
     }
     // A place chosen away is removed, not kept from before.
     const unset = {};
+    if (
+      'contact' in safeValues ||
+      'contactUserId' in safeValues ||
+      'organizers' in safeValues ||
+      newAuthor
+    ) {
+      const contactUserId = resolveContactUserId(
+        'contactUserId' in safeValues
+          ? safeValues.contactUserId
+          : theActivity.contactUserId,
+        'contact' in safeValues ? safeValues.contact : theActivity.contact,
+        effectiveAuthorId,
+        'organizers' in safeValues
+          ? safeValues.organizers
+          : theActivity.organizers
+      );
+      delete safeValues.contactUserId;
+      if (contactUserId) {
+        safeValues.contactUserId = contactUserId;
+      } else {
+        unset.contactUserId = 1;
+      }
+    }
     // The event's own address only counts when it is not held at a place.
     if ('address' in safeValues || 'resourceId' in safeValues) {
       const address = await withCoordinates(

@@ -83,6 +83,21 @@ export const resolveOrganizers = async (organizers, authorId) => {
     .map((u) => ({ userId: u._id, username: u.username }));
 };
 
+// Whose profile contact details the event shows: the author or one of
+// its co-organizers, and only when it has no contact details of its own.
+export const resolveContactUserId = (
+  contactUserId,
+  contact,
+  authorId,
+  organizers
+) => {
+  if (contact || typeof contactUserId !== 'string' || !contactUserId) {
+    return null;
+  }
+  const ids = [authorId, ...(organizers || []).map((o) => o.userId)];
+  return ids.includes(contactUserId) ? contactUserId : null;
+};
+
 // What the event page shows about each organizer: name, picture and the
 // contact details they chose to make public. The author comes first.
 export const attachOrganizerProfiles = async (activity) => {

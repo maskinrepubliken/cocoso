@@ -5,18 +5,19 @@ import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
+import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 
 import FormField from '/imports/ui/forms/FormField';
 import ContactFields from '/imports/ui/forms/ContactFields';
 import type { Contact } from '/imports/api/_utils/contact';
 import type { Address } from '/imports/api/_utils/address';
 
-import OptionCards from './OptionCards';
+import ChoiceChips, { type Choice } from './ChoiceChips';
 import PersonCard, { PersonAvatar, personName } from './PersonCard';
 import PickerPopover from './PickerPopover';
 
 // What the form knows about an organizer: from getOrganizerOptions, and
-// for the one chosen as organizer, from getOrganizerDefaults.
+// for the organizer and the contact person, from getOrganizerDefaults.
 export interface OrganizerOption {
   _id: string;
   username: string;
@@ -36,12 +37,16 @@ export interface OrganizerRef {
   username: string;
 }
 
-export type ContactMode = 'organizer' | 'own';
+// Whose contact details the event shows: an organizer's (their user id),
+// or details of its own.
+export const OWN_CONTACT = 'own';
 
 export const organizerName = personName;
 
 const searchText = (o: OrganizerOption) =>
   [o.firstName, o.lastName, o.username].filter(Boolean).join(' ');
+
+const firstName = (o: Partial<OrganizerOption>) => o.firstName || personName(o);
 
 // A row in the organizer picker: picture, name, @username
 function OrganizerRow({ organizer }: { organizer: OrganizerOption }) {
@@ -58,49 +63,91 @@ function OrganizerRow({ organizer }: { organizer: OrganizerOption }) {
   );
 }
 
+// A person's public contact details, as the event page will show them
+function ContactPreview({
+  contact,
+  empty,
+}: {
+  contact?: Contact | null;
+  empty: string;
+}) {
+  if (!contact || !(contact.email || contact.phone || contact.website)) {
+    return <p className="form-preview-empty">{empty}</p>;
+  }
+  return (
+    <ul className="form-preview-lines">
+      {contact.email && (
+        <li>
+          <MailIcon aria-hidden />
+          {contact.email}
+        </li>
+      )}
+      {contact.phone && (
+        <li>
+          <PhoneIcon aria-hidden />
+          {contact.phone}
+        </li>
+      )}
+      {contact.website && (
+        <li>
+          <GlobeIcon aria-hidden />
+          {contact.website.replace(/^https?:\/\//i, '')}
+        </li>
+      )}
+    </ul>
+  );
+}
+
 interface OrganizerFieldsProps {
   isAdmin: boolean;
-  isOwnEvent: boolean;
+  currentUserId?: string;
   authorId: string;
   author: OrganizerDefaults | null;
   options: OrganizerOption[];
   organizers: OrganizerRef[];
-  contactMode: ContactMode;
+  // OWN_CONTACT, or the user id of the organizer whose details are shown
+  contactChoice: string;
+  // That organizer's profile, once fetched
+  contactPerson: OrganizerDefaults | null;
   contact: Contact;
-  // Where the organizer edits the details the form starts from
-  profileLink: string;
+  // Where to edit a person's profile, if this user may
+  profileLinkFor: (person: Partial<OrganizerOption>) => string | null;
   onAuthorChange: (authorId: string) => void;
   onOrganizersChange: (organizers: OrganizerRef[]) => void;
-  onContactModeChange: (mode: ContactMode) => void;
+  onContactChoiceChange: (choice: string) => void;
   onContactChange: (contact: Contact) => void;
 }
 
 // Who runs the event and how to reach them. The organizer is the person
 // creating it (an admin may name anyone); co-organizers are added from the
-// other organizers. Contact details come from the organizer's profile
-// unless the event gets details of its own.
+// other organizers. The page shows one organizer's contact details from
+// their profile, or details the event has of its own.
 export default function OrganizerFields({
   isAdmin,
-  isOwnEvent,
+  currentUserId,
   authorId,
   author,
   options,
   organizers,
-  contactMode,
+  contactChoice,
+  contactPerson,
   contact,
-  profileLink,
+  profileLinkFor,
   onAuthorChange,
   onOrganizersChange,
-  onContactModeChange,
+  onContactChoiceChange,
   onContactChange,
 }: OrganizerFieldsProps) {
   const [t] = useTranslation('activities');
 
   const [picking, setPicking] = useState<'author' | 'co' | null>(null);
 
-  const authorPerson = options.find((o) => o._id === authorId) || author;
+  const authorPerson: Partial<OrganizerOption> = options.find(
+    (o) => o._id === authorId
+  ) ||
+    author || { _id: authorId, username: '' };
   const chosenIds = new Set(organizers.map((o) => o.userId));
-  const coPeople = organizers
+  const coPeople: Partial<OrganizerOption>[] = organizers
     .filter((o) => o.userId !== authorId)
     .map(
       (o) =>
@@ -132,49 +179,86 @@ export default function OrganizerFields({
     />
   );
 
-  const profileContact = author?.publicContact;
-  const hasProfileContact = Boolean(
-    profileContact &&
-      (profileContact.email || profileContact.phone || profileContact.website)
-  );
+  const contactChoices: Choice<string>[] = [
+    ...[authorPerson, ...coPeople].map((person) => {
+      const link = profileLinkFor(person);
+      return {
+        value: person._id || '',
+        label:
+          person._id === currentUserId
+            ? t('form.contact.mine')
+            : firstName(person),
+        icon: <PersonAvatar person={person} size={26} />,
+        description: t('form.contact.fromProfileHelper', {
+          name: personName(person),
+        }),
+        content: (
+          <>
+            <ContactPreview
+              contact={
+                contactPerson?._id === person._id
+                  ? contactPerson?.publicContact
+                  : null
+              }
+              empty={t('form.contact.none')}
+            />
+            {link && (
+              <a
+                className="form-preview-link"
+                href={link}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {t('form.editProfile')}
+              </a>
+            )}
+          </>
+        ),
+      };
+    }),
+    {
+      value: OWN_CONTACT,
+      label: t('form.contact.own'),
+      icon: <PencilLineIcon aria-hidden />,
+      description: t('form.contact.ownHelper'),
+      content: <ContactFields value={contact} onChange={onContactChange} />,
+    },
+  ];
 
   return (
     <>
-      <FormField
-        helper={isAdmin ? t('form.author.helperAdmin') : undefined}
-        label={t('form.author.label')}
-        my="3"
-      >
-        <div className="picker-anchor">
-          <PersonCard
-            action={
-              isAdmin ? (
-                <button
-                  type="button"
-                  className="person-card-button"
-                  aria-expanded={picking === 'author'}
-                  onClick={() =>
-                    setPicking(picking === 'author' ? null : 'author')
-                  }
-                >
-                  {t('form.author.change')}
-                </button>
-              ) : undefined
-            }
-            note={isOwnEvent ? t('form.author.youNote') : undefined}
-            person={authorPerson}
-          />
-          {picking === 'author' &&
-            picker(options, (o) => onAuthorChange(o._id))}
-        </div>
-      </FormField>
-
-      <FormField
-        helper={t('form.organizers.helper')}
-        label={t('form.organizers.label')}
-        my="3"
-      >
+      {/* The card is titled "Arrangörer": the people need no label of their own */}
+      <div className="organizer-people">
+        {isAdmin && (
+          <p className="form-preview-note">{t('form.author.helperAdmin')}</p>
+        )}
         <div className="person-list">
+          <div className="picker-anchor">
+            <PersonCard
+              action={
+                isAdmin ? (
+                  <button
+                    type="button"
+                    className="person-card-button"
+                    aria-expanded={picking === 'author'}
+                    onClick={() =>
+                      setPicking(picking === 'author' ? null : 'author')
+                    }
+                  >
+                    {t('form.author.change')}
+                  </button>
+                ) : undefined
+              }
+              note={
+                authorId === currentUserId
+                  ? t('form.author.youNote')
+                  : undefined
+              }
+              person={authorPerson}
+            />
+            {picking === 'author' &&
+              picker(options, (o) => onAuthorChange(o._id))}
+          </div>
           {coPeople.map((person) => (
             <PersonCard
               key={person._id}
@@ -194,92 +278,43 @@ export default function OrganizerFields({
                   <XIcon width={16} height={16} />
                 </button>
               }
+              note={t('form.organizers.note')}
               person={person}
-              size={34}
             />
           ))}
-          <div className="picker-anchor">
-            <button
-              type="button"
-              className="person-add"
-              aria-expanded={picking === 'co'}
-              disabled={coCandidates.length === 0}
-              onClick={() => setPicking(picking === 'co' ? null : 'co')}
-            >
-              <PlusIcon aria-hidden width={16} height={16} />
-              {t('form.organizers.add')}
-            </button>
-            {picking === 'co' &&
-              picker(coCandidates, (o) =>
-                onOrganizersChange([
-                  ...organizers,
-                  { userId: o._id, username: o.username },
-                ])
-              )}
-          </div>
         </div>
-      </FormField>
+      </div>
 
       <FormField label={t('form.contact.label')} my="3">
-        <OptionCards
+        <ChoiceChips
+          choices={contactChoices}
           label={t('form.contact.label')}
-          value={contactMode}
-          onChange={onContactModeChange}
-          options={[
-            {
-              value: 'organizer',
-              title: t('form.contact.fromOrganizer'),
-              description: t('form.contact.fromOrganizerHelper'),
-              content: (
-                <>
-                  {hasProfileContact ? (
-                    <ul className="form-preview-lines">
-                      {profileContact?.email && (
-                        <li>
-                          <MailIcon aria-hidden />
-                          {profileContact.email}
-                        </li>
-                      )}
-                      {profileContact?.phone && (
-                        <li>
-                          <PhoneIcon aria-hidden />
-                          {profileContact.phone}
-                        </li>
-                      )}
-                      {profileContact?.website && (
-                        <li>
-                          <GlobeIcon aria-hidden />
-                          {profileContact.website.replace(/^https?:\/\//i, '')}
-                        </li>
-                      )}
-                    </ul>
-                  ) : (
-                    <p className="form-preview-empty">
-                      {t('form.contact.none')}
-                    </p>
-                  )}
-                  <a
-                    className="form-preview-link"
-                    href={profileLink}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {t('form.editProfile')}
-                  </a>
-                </>
-              ),
-            },
-            {
-              value: 'own',
-              title: t('form.contact.own'),
-              description: t('form.contact.ownHelper'),
-              content: (
-                <ContactFields value={contact} onChange={onContactChange} />
-              ),
-            },
-          ]}
+          value={contactChoice}
+          onChange={onContactChoiceChange}
         />
       </FormField>
+
+      {/* Seldom needed: small, at the foot of the card */}
+      <div className="picker-anchor organizer-foot">
+        <button
+          type="button"
+          className="person-add-small"
+          aria-expanded={picking === 'co'}
+          disabled={coCandidates.length === 0}
+          title={t('form.organizers.helper')}
+          onClick={() => setPicking(picking === 'co' ? null : 'co')}
+        >
+          <PlusIcon aria-hidden width={14} height={14} />
+          {t('form.organizers.add')}
+        </button>
+        {picking === 'co' &&
+          picker(coCandidates, (o) =>
+            onOrganizersChange([
+              ...organizers,
+              { userId: o._id, username: o.username },
+            ])
+          )}
+      </div>
     </>
   );
 }

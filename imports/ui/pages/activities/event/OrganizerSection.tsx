@@ -93,6 +93,7 @@ interface OrganizerSectionProps {
     title?: string;
     authorName: string;
     contact?: PublicContact | null;
+    contactUserId?: string | null;
     organizerProfiles?: OrganizerProfile[];
   };
 }
@@ -157,12 +158,19 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
   // The organizer chose contact details for this event: they replace the
   // ones from the profiles.
   const ownContact = hasAny(activity.contact);
+  // Or one organizer was chosen as the contact: only theirs are shown.
+  const contactPerson = ownContact
+    ? undefined
+    : organizers.find((o) => o.userId && o.userId === activity.contactUserId);
+  const showsContact = (organizer: OrganizerProfile) =>
+    !ownContact && (!contactPerson || organizer === contactPerson);
   const subject = encodeURIComponent(activity.title || '');
 
   // Where "write to the organizer" goes: the event's own address first,
   // otherwise the first organizer who gave one.
   const mailTo =
     activity.contact?.email ||
+    contactPerson?.publicContact?.email ||
     organizers.find((o) => o.publicContact?.email)?.publicContact?.email;
 
   return (
@@ -191,7 +199,7 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
                   <Muted>@{organizer.username}</Muted>
                 </span>
               </Row>
-              {!ownContact && hasAny(organizer.publicContact) && (
+              {showsContact(organizer) && hasAny(organizer.publicContact) && (
                 <ContactRows
                   contact={organizer.publicContact!}
                   indented
