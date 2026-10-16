@@ -260,11 +260,13 @@ export default function DatesAndTimes({
               </span>
               <button
                 type="button"
-                className={`occurrence-days ${isRange ? 'is-on' : ''}`}
+                className="occurrence-days"
                 aria-pressed={isRange}
                 onClick={() => toggleRange(index)}
               >
-                {t('form.occurrence.severalDays')}
+                {isRange
+                  ? t('form.occurrence.oneDay')
+                  : t('form.occurrence.severalDays')}
               </button>
               {isDeletable && (
                 <button
@@ -361,10 +363,10 @@ export default function DatesAndTimes({
       })}
       <button
         type="button"
-        className="person-add-small occurrence-add"
+        className="person-add occurrence-add"
         onClick={addOccurrence}
       >
-        <PlusIcon aria-hidden width={14} height={14} />
+        <PlusIcon aria-hidden width={16} height={16} />
         {t('form.occurrence.add')}
       </button>
     </div>

@@ -42,6 +42,7 @@ interface FormFieldItem {
   label?: string;
   optional?: boolean;
   helperInline?: boolean;
+  asHeading?: boolean;
   children?: string | React.ReactNode;
 }
 
@@ -177,6 +178,7 @@ export default function GenericEntryForm({
         <FormField
           {...item.props}
           helper={item.helper}
+          asHeading={item.asHeading}
           helperInline={item.helperInline}
           label={item.label}
           optional={item.optional}

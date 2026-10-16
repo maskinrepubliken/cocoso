@@ -201,12 +201,18 @@ img {
   gap: 8px;
 }
 
+/* tegel, the warm accent the site uses for what is near in time, not
+   the theme's tint that is used all over the form */
 .occurrence {
   padding: 10px 12px 12px;
   min-width: 0;
   border-radius: var(--cocoso-radius-falt);
-  background: var(--cocoso-colors-theme-50);
-  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+  background: color-mix(
+    in srgb,
+    var(--cocoso-tegel-100) 45%,
+    var(--cocoso-papper)
+  );
+  box-shadow: inset 0 0 0 1px var(--cocoso-tegel-100);
 }
 
 .occurrence.is-warning {
@@ -248,26 +254,24 @@ img {
   text-transform: uppercase;
 }
 
-/* "Flera dagar": a small chip that is on or off */
+/* "Flera dagar långt tillfälle" / "Bara en dag": a link that switches */
 .occurrence-days {
   flex: none;
-  height: 26px;
-  padding: 0 10px;
+  padding: 0;
   border: 0;
-  border-radius: 999px;
-  background: var(--cocoso-papper);
-  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
-  color: var(--cocoso-mylla);
+  background: none;
+  color: var(--cocoso-tegel-600);
   font-family: var(--cocoso-font-ui);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
   cursor: pointer;
 }
 
-.occurrence-days.is-on {
-  background: var(--cocoso-colors-theme-700);
-  box-shadow: none;
-  color: var(--cocoso-papper);
+.occurrence-days:hover {
+  text-decoration-thickness: 2px;
 }
 
 /* narrow: the date (or dates) on a row, the times side by side under it;
@@ -321,7 +325,7 @@ img {
   border: 0;
   border-radius: 10px;
   background: var(--cocoso-papper);
-  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+  box-shadow: inset 0 0 0 1px var(--cocoso-tegel-100);
   color: var(--cocoso-mylla);
   font-family: var(--cocoso-font-ui);
   font-size: 15px;
@@ -329,7 +333,7 @@ img {
 }
 
 .occurrence-field input:focus-visible {
-  outline: 2px solid var(--cocoso-colors-theme-700);
+  outline: 2px solid var(--cocoso-tegel);
   outline-offset: 1px;
 }
 
@@ -353,9 +357,14 @@ img {
   margin-top: 2px;
 }
 
-.occurrence-add {
-  align-self: flex-start;
-  margin-left: -6px;
+.occurrences .occurrence-add {
+  justify-content: center;
+  border-color: color-mix(in srgb, var(--cocoso-tegel) 45%, transparent);
+  color: var(--cocoso-tegel-600);
+}
+
+.occurrences .occurrence-add:hover {
+  background: color-mix(in srgb, var(--cocoso-tegel-100) 45%, transparent);
 }
 
 /* --- Pictures for an entry (ImageUploader.tsx) --- */
@@ -2099,34 +2108,96 @@ body {
   }
 }
 
-.quill > .ql-toolbar.ql-snow {
-  border: none;
+/* The editor as one framed field: the toolbar a quiet bar along its top,
+   the text on paper under it, the whole frame ringed when writing */
+.quill-megacontainer {
+  overflow: hidden;
+  border-radius: var(--cocoso-radius-kort);
+  background: var(--cocoso-papper);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje), var(--cocoso-skugga);
+  transition: box-shadow 0.15s ease;
+}
+
+.quill-megacontainer:hover:not(.is-focused) {
+  box-shadow: inset 0 0 0 1px var(--cocoso-colors-theme-300, #b9c9a5),
+    var(--cocoso-skugga);
+}
+
+.quill-megacontainer:focus-within,
+.quill-megacontainer.is-focused {
+  box-shadow: inset 0 0 0 2px var(--cocoso-colors-theme-700),
+    var(--cocoso-skugga);
+}
+
+.quill-megacontainer .quill > .ql-toolbar.ql-snow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 6px 8px;
+  border: 0;
+  border-bottom: 1px solid var(--cocoso-linje);
+  background: color-mix(in srgb, var(--cocoso-linje) 18%, var(--cocoso-papper));
+  font-family: var(--cocoso-font-ui);
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow .ql-formats {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 2px;
+  padding-right: 4px;
+  border-right: 1px solid var(--cocoso-linje);
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow .ql-formats:last-child {
+  border-right: 0;
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow button,
+.quill-megacontainer .ql-toolbar.ql-snow .ql-picker-label {
+  border-radius: 6px;
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow button:hover,
+.quill-megacontainer .ql-toolbar.ql-snow .ql-picker-label:hover,
+.quill-megacontainer .ql-toolbar.ql-snow button.ql-active {
+  background: var(--cocoso-colors-theme-100);
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow .ql-stroke {
+  stroke: var(--cocoso-mylla);
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow .ql-fill {
+  fill: var(--cocoso-mylla);
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow .ql-picker {
+  color: var(--cocoso-mylla);
+}
+
+.quill-megacontainer .ql-toolbar.ql-snow .ql-picker-options {
+  border: 0;
+  border-radius: var(--cocoso-radius-meny);
+  box-shadow: var(--cocoso-skugga-meny);
 }
 
 .quill-megacontainer .ql-container.ql-snow {
-  border: none;
+  border: 0;
+  font-family: inherit;
 }
 
 .quill-megacontainer .ql-container.ql-snow .ql-editor {
-  background-color: #fff;
-  border-color: var(--cocoso-colors-theme-200);
-  border-radius: var(--cocoso-border-radius);
-  border-style: solid;
-  border-width: 2px;
+  min-height: 14em;
+  padding: 16px 18px;
+  border: 0;
+  background: none;
 }
 
-.quill-megacontainer .ql-container.ql-snow .ql-editor {
-  transition: all 0.2s;
-}
-
-.quill-megacontainer:not(.is-focused) .ql-container.ql-snow .ql-editor:hover {
-  background-color: #fff;
-  border-color: var(--cocoso-colors-theme-300);
-}
-
-.quill-megacontainer:focus-within .ql-container.ql-snow .ql-editor,
-.quill-megacontainer.is-focused .ql-container.ql-snow .ql-editor {
-  border-color: var(--cocoso-colors-theme-400);
+.quill-megacontainer .ql-editor.ql-blank::before {
+  left: 18px;
+  right: 18px;
+  color: var(--cocoso-mylla-soft);
+  font-style: normal;
 }
 
 .quill.ql-editor-text-align-center .ql-editor {

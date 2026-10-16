@@ -414,6 +414,7 @@ export default function PublicActivityForm({
       <FormField
         area="main"
         helper={t('form.image.helper')}
+        asHeading
         label={t('form.image.label')}
         mt="4"
         mb="8"
@@ -514,6 +515,7 @@ export default function PublicActivityForm({
       <FormField
         area="main"
         helper={t('form.occurrences.helper')}
+        asHeading
         label={t('form.occurrences.label')}
         my="8"
         required

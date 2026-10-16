@@ -25,6 +25,7 @@ const publicActivityFormFields = (t) => [
     placeholder: t('form.description.holder'),
     type: 'quill',
     value: 'longDescription',
+    asHeading: true,
     props: {
       required: true,
     },

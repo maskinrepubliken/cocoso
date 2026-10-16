@@ -26,6 +26,9 @@ export interface FormFieldProps extends React.ComponentProps<typeof Box> {
   optional?: boolean;
   // The helper on the label's line, when both are short
   helperInline?: boolean;
+  // A section of its own in the form: the label as a heading, like a
+  // card's (Bilder, Tillfällen beside Arrangör, Plats)
+  asHeading?: boolean;
 }
 
 export default function FormField(props: FormFieldProps) {
@@ -38,6 +41,7 @@ export default function FormField(props: FormFieldProps) {
     required: _required,
     optional = false,
     helperInline = false,
+    asHeading = false,
     ...otherProps
   } = props;
   // A single input, select or textarea child gets an id so the label
@@ -58,61 +62,41 @@ export default function FormField(props: FormFieldProps) {
       ? React.cloneElement(child!, { id: controlId })
       : children;
 
+  const labelNode = asHeading ? (
+    <h3 className="form-card-title form-field-heading">
+      {label}
+      {optionalNote}
+    </h3>
+  ) : controlId ? (
+    <label className="form-field-label" htmlFor={controlId}>
+      {label}
+      {optionalNote}
+    </label>
+  ) : (
+    <Text className="form-field-label" color="gray.800" fontWeight="bold">
+      {label}
+      {optionalNote}
+    </Text>
+  );
+  const helperNode = helper && (
+    <Box>
+      <Text color="gray.600" fontSize="sm">
+        {helper}
+      </Text>
+    </Box>
+  );
+
   return (
     <Box my="4" w="100%" {...otherProps}>
       {helperInline ? (
         <div className="form-field-head">
-          <Box>
-            {controlId ? (
-              <label className="form-field-label" htmlFor={controlId}>
-                {label}
-                {optionalNote}
-              </label>
-            ) : (
-              <Text
-                className="form-field-label"
-                color="gray.800"
-                fontWeight="bold"
-              >
-                {label}
-                {optionalNote}
-              </Text>
-            )}
-          </Box>
-          {helper && (
-            <Box>
-              <Text color="gray.600" fontSize="sm">
-                {helper}
-              </Text>
-            </Box>
-          )}
+          <Box>{labelNode}</Box>
+          {helperNode}
         </div>
       ) : (
         <>
-          <Box>
-            {controlId ? (
-              <label className="form-field-label" htmlFor={controlId}>
-                {label}
-                {optionalNote}
-              </label>
-            ) : (
-              <Text
-                className="form-field-label"
-                color="gray.800"
-                fontWeight="bold"
-              >
-                {label}
-                {optionalNote}
-              </Text>
-            )}
-          </Box>
-          {helper && (
-            <Box>
-              <Text color="gray.600" fontSize="sm">
-                {helper}
-              </Text>
-            </Box>
-          )}
+          <Box>{labelNode}</Box>
+          {helperNode}
         </>
       )}
 

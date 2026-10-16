@@ -83,7 +83,8 @@ form:
     helper: När evenemanget äger rum. Lägg till fler tillfällen om det upprepas.
   occurrence:
     title: "Tillfälle {{n}}"
-    severalDays: Flera dagar
+    severalDays: Flera dagar långt tillfälle
+    oneDay: Bara en dag
     date: Datum
     from: Från
     to: Till
