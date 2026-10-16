@@ -120,7 +120,7 @@
   "imports/ui/pages/activities/PublicActivityForm.tsx | TS7006 | Parameter 'b' implicitly has an 'any' type.": 1,
   "imports/ui/pages/activities/PublicActivityForm.tsx | TS7006 | Parameter 'dateTime' implicitly has an 'any' type.": 1,
   "imports/ui/pages/activities/PublicActivityForm.tsx | TS7006 | Parameter 'occurrence' implicitly has an 'any' type.": 1,
-  "imports/ui/pages/activities/PublicActivityForm.tsx | TS7006 | Parameter 'prevState' implicitly has an 'any' type.": 7,
+  "imports/ui/pages/activities/PublicActivityForm.tsx | TS7006 | Parameter 'prevState' implicitly has an 'any' type.": 5,
   "imports/ui/pages/activities/PublicActivityForm.tsx | TS7031 | Binding element 'attendees' implicitly has an 'any' type.": 1,
   "imports/ui/pages/activities/PublicActivityForm.tsx | TS7031 | Binding element 'endDate' implicitly has an 'any' type.": 1,
   "imports/ui/pages/activities/PublicActivityForm.tsx | TS7031 | Binding element 'endTime' implicitly has an 'any' type.": 1,

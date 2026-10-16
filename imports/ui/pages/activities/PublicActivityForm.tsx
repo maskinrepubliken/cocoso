@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
 
-import { Checkbox, NumberInput, Select } from '/imports/ui/core';
+import { NumberInput } from '/imports/ui/core';
 import { currentUserAtom, roleAtom } from '/imports/state';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
-import { EVENT_KINDS } from './eventKinds';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
@@ -32,6 +31,9 @@ import OrganizerFields, {
   type OrganizerRef,
 } from './form/OrganizerFields';
 import WhereFields, { type WhereMode } from './form/WhereFields';
+import FormCard from './form/FormCard';
+import KindPicker from './form/KindPicker';
+import ToggleSwitch from './form/ToggleSwitch';
 
 const defaultCapacity = 40;
 const maxAttendees = 1000;
@@ -279,21 +281,6 @@ export default function PublicActivityForm({
     }));
   };
 
-  const handleExclusiveSwitch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState((prevState) => ({
-      ...prevState,
-      isExclusiveActivity: e.target.checked,
-    }));
-  };
-
-  const handleRsvpSwitch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
-    setState((prevState) => ({
-      ...prevState,
-      isRegistrationEnabled: checked,
-    }));
-  };
-
   const handleCapacityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setState((prevState) => ({
@@ -397,100 +384,76 @@ export default function PublicActivityForm({
         />
       </FormField>
 
-      <FormField
-        helper={tc('eventKinds.form.helper')}
-        label={tc('eventKinds.form.label')}
-        my="8"
-      >
-        <Select
+      <FormCard title={tc('eventKinds.form.label')}>
+        <p className="form-preview-note">{tc('eventKinds.form.helper')}</p>
+        <KindPicker
           value={state.categoryKey}
-          onChange={(event) =>
+          onChange={(categoryKey) =>
+            setState((prevState: any) => ({ ...prevState, categoryKey }))
+          }
+        />
+      </FormCard>
+
+      <FormCard title={t('form.cards.organizer')}>
+        <OrganizerFields
+          author={author}
+          authorId={state.authorId}
+          contact={state.contact}
+          contactMode={state.contactMode}
+          isAdmin={isAdmin}
+          isOwnEvent={isOwnEvent}
+          options={organizerOptions}
+          organizers={state.organizers}
+          profileLink={profileLink}
+          onAuthorChange={(authorId) =>
             setState((prevState: any) => ({
               ...prevState,
-              categoryKey: event.target.value,
+              authorId,
+              // the new organizer is not also a co-organizer
+              organizers: prevState.organizers.filter(
+                (o: OrganizerRef) => o.userId !== authorId
+              ),
             }))
           }
-        >
-          <option value="">{tc('eventKinds.form.none')}</option>
-          {EVENT_KINDS.map((kind) => (
-            <option key={kind.key} value={kind.key}>
-              {tc(`eventKinds.${kind.key}`)}
-            </option>
-          ))}
-        </Select>
-      </FormField>
+          onContactChange={(contact) =>
+            setState((prevState: any) => ({ ...prevState, contact }))
+          }
+          onContactModeChange={(contactMode) =>
+            setState((prevState: any) => ({ ...prevState, contactMode }))
+          }
+          onOrganizersChange={(organizers) =>
+            setState((prevState: any) => ({ ...prevState, organizers }))
+          }
+        />
+      </FormCard>
 
-      <OrganizerFields
-        author={author}
-        authorId={state.authorId}
-        contact={state.contact}
-        contactMode={state.contactMode}
-        isAdmin={isAdmin}
-        isOwnEvent={isOwnEvent}
-        options={organizerOptions}
-        organizers={state.organizers}
-        profileLink={profileLink}
-        onAuthorChange={(authorId) =>
-          setState((prevState: any) => ({
-            ...prevState,
-            authorId,
-            // the new organizer is not also a co-organizer
-            organizers: prevState.organizers.filter(
-              (o: OrganizerRef) => o.userId !== authorId
-            ),
-          }))
-        }
-        onContactChange={(contact) =>
-          setState((prevState: any) => ({ ...prevState, contact }))
-        }
-        onContactModeChange={(contactMode) =>
-          setState((prevState: any) => ({ ...prevState, contactMode }))
-        }
-        onOrganizersChange={(organizers) =>
-          setState((prevState: any) => ({ ...prevState, organizers }))
-        }
-      />
-
-      <WhereFields
-        address={state.address}
-        isMunicipalityOnly={state.isMunicipalityOnly}
-        locationId={state.locationId}
-        mode={whereMode}
-        organizerAddress={author?.address || null}
-        organizerLocationId={author?.locationId || null}
-        placeName={state.placeName}
-        profileLink={profileLink}
-        resources={state.resources}
-        selectedResource={state.selectedResource}
-        onAddressChange={(address) =>
-          setState((prevState: any) => ({ ...prevState, address }))
-        }
-        onLocationChange={(choice) =>
-          setState((prevState: any) => ({ ...prevState, ...choice }))
-        }
-        onModeChange={(mode) =>
-          setState((prevState: any) => ({ ...prevState, whereMode: mode }))
-        }
-        onPlaceNameChange={(placeName) =>
-          setState((prevState: any) => ({ ...prevState, placeName }))
-        }
-        onSelectResource={handleSelectResource}
-      />
-
-      <FormField
-        helper={t('form.exclusive.helper')}
-        label={t('form.exclusive.label')}
-        my="8"
-      >
-        <Checkbox
-          checked={state.isExclusiveActivity}
-          id="is-exclusive"
-          size="lg"
-          onChange={handleExclusiveSwitch}
-        >
-          {t('form.exclusive.holder')}
-        </Checkbox>
-      </FormField>
+      <FormCard title={t('form.cards.place')}>
+        <WhereFields
+          address={state.address}
+          isMunicipalityOnly={state.isMunicipalityOnly}
+          locationId={state.locationId}
+          mode={whereMode}
+          organizerAddress={author?.address || null}
+          organizerLocationId={author?.locationId || null}
+          placeName={state.placeName}
+          profileLink={profileLink}
+          resources={state.resources}
+          selectedResource={state.selectedResource}
+          onAddressChange={(address) =>
+            setState((prevState: any) => ({ ...prevState, address }))
+          }
+          onLocationChange={(choice) =>
+            setState((prevState: any) => ({ ...prevState, ...choice }))
+          }
+          onModeChange={(mode) =>
+            setState((prevState: any) => ({ ...prevState, whereMode: mode }))
+          }
+          onPlaceNameChange={(placeName) =>
+            setState((prevState: any) => ({ ...prevState, placeName }))
+          }
+          onSelectResource={handleSelectResource}
+        />
+      </FormCard>
 
       <FormField
         area="main"
@@ -510,36 +473,47 @@ export default function PublicActivityForm({
         />
       </FormField>
 
-      <FormField
-        helper={t('form.rsvp.helper')}
-        label={t('form.rsvp.label')}
-        my="8"
-      >
-        <Checkbox
-          checked={state.isRegistrationEnabled}
-          id="is-registration-disabled"
-          size="lg"
-          onChange={handleRsvpSwitch}
-        >
-          {t('form.rsvp.holder')}
-        </Checkbox>
-      </FormField>
-
-      {(!state.isRegistrationDisabled || state.isRegistrationEnabled) && (
-        <FormField
-          helper={t('form.capacity.helper')}
-          label={t('form.capacity.label')}
-          my="8"
-        >
-          <NumberInput
-            min={1}
-            max={maxAttendees}
-            placeholder={t('form.capacity.label')}
-            value={state.capacity}
-            onChange={handleCapacityChange}
+      <FormCard title={t('form.cards.booking')}>
+        {/* Blocking the place only means something at a place */}
+        {whereMode === 'place' && state.selectedResource && (
+          <ToggleSwitch
+            checked={Boolean(state.isExclusiveActivity)}
+            helper={t('form.booking.exclusiveHelper')}
+            label={t('form.booking.exclusive')}
+            onChange={(isExclusiveActivity) =>
+              setState((prevState: any) => ({
+                ...prevState,
+                isExclusiveActivity,
+              }))
+            }
           />
-        </FormField>
-      )}
+        )}
+        <ToggleSwitch
+          checked={Boolean(state.isRegistrationEnabled)}
+          helper={t('form.booking.rsvpHelper')}
+          label={t('form.booking.rsvp')}
+          onChange={(isRegistrationEnabled) =>
+            setState((prevState: any) => ({
+              ...prevState,
+              isRegistrationEnabled,
+            }))
+          }
+        />
+        {state.isRegistrationEnabled && (
+          <FormField
+            helper={t('form.booking.capacityHelper')}
+            label={t('form.capacity.label')}
+          >
+            <NumberInput
+              min={1}
+              max={maxAttendees}
+              placeholder={t('form.capacity.label')}
+              value={state.capacity}
+              onChange={handleCapacityChange}
+            />
+          </FormField>
+        )}
+      </FormCard>
     </GenericEntryForm>
   );
 }

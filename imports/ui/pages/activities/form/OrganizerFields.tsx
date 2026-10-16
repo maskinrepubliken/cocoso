@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AutoCompleteSelect from 'react-select';
-import makeAnimated from 'react-select/animated';
 import MailIcon from 'lucide-react/dist/esm/icons/mail';
+import PlusIcon from 'lucide-react/dist/esm/icons/plus';
+import XIcon from 'lucide-react/dist/esm/icons/x';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
@@ -12,8 +12,8 @@ import type { Contact } from '/imports/api/_utils/contact';
 import type { Address } from '/imports/api/_utils/address';
 
 import ChoiceSwitch from './ChoiceSwitch';
-
-const animatedComponents = makeAnimated();
+import PersonCard, { PersonAvatar, personName } from './PersonCard';
+import PickerPopover from './PickerPopover';
 
 // What the form knows about an organizer: from getOrganizerOptions, and
 // for the one chosen as organizer, from getOrganizerDefaults.
@@ -22,6 +22,7 @@ export interface OrganizerOption {
   username: string;
   firstName?: string;
   lastName?: string;
+  avatar?: string | null;
 }
 
 export interface OrganizerDefaults extends OrganizerOption {
@@ -37,21 +38,25 @@ export interface OrganizerRef {
 
 export type ContactMode = 'organizer' | 'own';
 
-export const organizerName = (o?: Partial<OrganizerOption> | null) =>
-  (o && [o.firstName, o.lastName].filter(Boolean).join(' ')) ||
-  (o?.username ? `@${o.username}` : '');
+export const organizerName = personName;
 
-const optionLabel = (o: OrganizerOption) => {
-  const name = [o.firstName, o.lastName].filter(Boolean).join(' ');
-  return name ? `${name} (@${o.username})` : `@${o.username}`;
-};
+const searchText = (o: OrganizerOption) =>
+  [o.firstName, o.lastName, o.username].filter(Boolean).join(' ');
 
-const selectStyles = {
-  control: (base: any) => ({
-    ...base,
-    borderRadius: 'var(--cocoso-radius-falt)',
-  }),
-};
+// A row in the organizer picker: picture, name, @username
+function OrganizerRow({ organizer }: { organizer: OrganizerOption }) {
+  return (
+    <>
+      <PersonAvatar person={organizer} size={32} />
+      <span className="picker-row-text">
+        <span className="picker-row-title">{personName(organizer)}</span>
+        {(organizer.firstName || organizer.lastName) && (
+          <span className="picker-row-detail">@{organizer.username}</span>
+        )}
+      </span>
+    </>
+  );
+}
 
 interface OrganizerFieldsProps {
   isAdmin: boolean;
@@ -91,10 +96,11 @@ export default function OrganizerFields({
 }: OrganizerFieldsProps) {
   const [t] = useTranslation('activities');
 
-  const authorOption =
-    options.find((o) => o._id === authorId) || author || null;
-  const coOptions = options.filter((o) => o._id !== authorId);
-  const selectedCo = organizers
+  const [picking, setPicking] = useState<'author' | 'co' | null>(null);
+
+  const authorPerson = options.find((o) => o._id === authorId) || author;
+  const chosenIds = new Set(organizers.map((o) => o.userId));
+  const coPeople = organizers
     .filter((o) => o.userId !== authorId)
     .map(
       (o) =>
@@ -103,6 +109,28 @@ export default function OrganizerFields({
           username: o.username,
         }
     );
+  const coCandidates = options.filter(
+    (o) => o._id !== authorId && !chosenIds.has(o._id)
+  );
+
+  const picker = (
+    items: OrganizerOption[],
+    onPick: (o: OrganizerOption) => void
+  ) => (
+    <PickerPopover
+      emptyText={t('form.organizers.empty')}
+      getKey={(o) => o._id}
+      getSearchText={searchText}
+      items={items}
+      placeholder={t('form.organizers.search')}
+      renderItem={(o) => <OrganizerRow organizer={o} />}
+      onClose={() => setPicking(null)}
+      onPick={(o) => {
+        onPick(o);
+        setPicking(null);
+      }}
+    />
+  );
 
   const profileContact = author?.publicContact;
   const hasProfileContact = Boolean(
@@ -115,56 +143,84 @@ export default function OrganizerFields({
       <FormField
         helper={isAdmin ? t('form.author.helperAdmin') : undefined}
         label={t('form.author.label')}
-        my="6"
+        my="3"
       >
-        {isAdmin ? (
-          <AutoCompleteSelect
-            components={animatedComponents}
-            options={options}
-            placeholder={t('form.author.holder')}
-            styles={selectStyles}
-            value={authorOption as OrganizerOption | null}
-            getOptionLabel={optionLabel}
-            getOptionValue={(option) => option._id}
-            onChange={(option) =>
-              option && onAuthorChange((option as OrganizerOption)._id)
+        <div className="picker-anchor">
+          <PersonCard
+            action={
+              isAdmin ? (
+                <button
+                  type="button"
+                  className="person-card-button"
+                  aria-expanded={picking === 'author'}
+                  onClick={() =>
+                    setPicking(picking === 'author' ? null : 'author')
+                  }
+                >
+                  {t('form.author.change')}
+                </button>
+              ) : undefined
             }
+            note={isOwnEvent ? t('form.author.youNote') : undefined}
+            person={authorPerson}
           />
-        ) : (
-          <p className="form-static">
-            {isOwnEvent
-              ? t('form.author.you', { name: organizerName(author) })
-              : organizerName(author)}
-          </p>
-        )}
+          {picking === 'author' &&
+            picker(options, (o) => onAuthorChange(o._id))}
+        </div>
       </FormField>
 
       <FormField
         helper={t('form.organizers.helper')}
         label={t('form.organizers.label')}
-        my="6"
+        my="3"
       >
-        <AutoCompleteSelect
-          isMulti
-          components={animatedComponents}
-          options={coOptions}
-          placeholder={t('form.organizers.holder')}
-          styles={selectStyles}
-          value={selectedCo}
-          getOptionLabel={optionLabel}
-          getOptionValue={(option) => option._id}
-          onChange={(chosen) =>
-            onOrganizersChange(
-              (chosen || []).map((o) => ({
-                userId: o._id,
-                username: o.username,
-              }))
-            )
-          }
-        />
+        <div className="person-list">
+          {coPeople.map((person) => (
+            <PersonCard
+              key={person._id}
+              action={
+                <button
+                  type="button"
+                  className="person-card-remove"
+                  aria-label={t('form.organizers.remove', {
+                    name: personName(person),
+                  })}
+                  onClick={() =>
+                    onOrganizersChange(
+                      organizers.filter((o) => o.userId !== person._id)
+                    )
+                  }
+                >
+                  <XIcon width={16} height={16} />
+                </button>
+              }
+              person={person}
+              size={34}
+            />
+          ))}
+          <div className="picker-anchor">
+            <button
+              type="button"
+              className="person-add"
+              aria-expanded={picking === 'co'}
+              disabled={coCandidates.length === 0}
+              onClick={() => setPicking(picking === 'co' ? null : 'co')}
+            >
+              <PlusIcon aria-hidden width={16} height={16} />
+              {t('form.organizers.add')}
+            </button>
+            {picking === 'co' &&
+              picker(coCandidates, (o) =>
+                onOrganizersChange([
+                  ...organizers,
+                  { userId: o._id, username: o.username },
+                ])
+              )}
+          </div>
+        </div>
       </FormField>
 
-      <FormField label={t('form.contact.label')} my="6">
+      <FormField label={t('form.contact.label')} my="3">
         <ChoiceSwitch
           choices={[
             { value: 'organizer', label: t('form.contact.fromOrganizer') },

@@ -6,15 +6,31 @@ label:
   next: Next Event
 
 form:
+  cards:
+    organizer: "Organizers"
+    place: "Place"
+    booking: "Booking and registration"
+  booking:
+    exclusive: "Block the place"
+    exclusiveHelper: "The place shows as taken in the calendar during the event, so nobody else books it at the same time."
+    rsvp: "Registration"
+    rsvpHelper: "Visitors register and book a spot on the event page."
+    capacityHelper: "How many can register for each occasion."
   author:
     label: "Organizer"
     helperAdmin: "As an admin you choose which organizer the event belongs to. Contact details and address come from that organizer's profile."
     holder: "Choose organizer…"
     you: "You ({{name}})"
+    change: "Change"
+    youNote: "That's you"
   organizers:
     label: "Co-organizers"
     helper: "Other organizers behind the event. They can edit it too and see the registrations."
     holder: "Choose co-organizers…"
+    add: "Add co-organizer"
+    remove: "Remove {{name}}"
+    search: "Search the organizers…"
+    empty: "No organizer matches."
   contact:
     label: "Contact details"
     fromOrganizer: "The organizer's"
@@ -35,6 +51,10 @@ form:
     organizerNone: "The organizer has no address in their profile."
     organizerHelper: "The address and place come from the organizer's profile."
     placeRequired: "Choose a place, or switch to an address."
+    change: "Change"
+    pick: "Choose a place"
+    search: "Search the places…"
+    empty: "No place matches."
   title:
     label: Title
     holder: Give it a title

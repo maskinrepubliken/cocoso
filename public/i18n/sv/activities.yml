@@ -6,15 +6,31 @@ label:
   next: Nästa aktivitet
 
 form:
+  cards:
+    organizer: "Arrangörer"
+    place: "Plats"
+    booking: "Bokning och anmälan"
+  booking:
+    exclusive: "Blockera platsen"
+    exclusiveHelper: "Platsen visas som upptagen i kalendern under evenemanget, så att ingen annan bokar den samtidigt."
+    rsvp: "Anmälan"
+    rsvpHelper: "Besökare anmäler sig och bokar plats på evenemangssidan."
+    capacityHelper: "Hur många som kan anmäla sig till varje tillfälle."
   author:
     label: "Arrangör"
     helperAdmin: "Som administratör kan du välja vilken arrangör evenemanget hör till. Kontaktuppgifter och adress hämtas från den arrangörens profil."
     holder: "Välj arrangör…"
     you: "Du ({{name}})"
+    change: "Byt"
+    youNote: "Det är du"
   organizers:
     label: "Medarrangörer"
     helper: "Andra arrangörer som står bakom evenemanget. De kan också redigera det och se anmälningarna."
     holder: "Välj medarrangörer…"
+    add: "Lägg till medarrangör"
+    remove: "Ta bort {{name}}"
+    search: "Sök bland arrangörerna…"
+    empty: "Ingen arrangör matchar."
   contact:
     label: "Kontaktuppgifter"
     fromOrganizer: "Arrangörens"
@@ -35,6 +51,10 @@ form:
     organizerNone: "Arrangören har ingen adress i sin profil."
     organizerHelper: "Adressen och orten hämtas från arrangörens profil."
     placeRequired: "Välj en plats, eller byt till en adress."
+    change: "Byt"
+    pick: "Välj en plats"
+    search: "Sök bland platserna…"
+    empty: "Ingen plats matchar."
   title:
     label: Titel
     helper: Ange ett namn på din aktivitet eller bokning

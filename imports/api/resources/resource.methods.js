@@ -51,6 +51,9 @@ Meteor.methods({
           isCombo: 1,
           locationId: 1,
           resourcesForCombo: 1,
+          // a picture for the place picker in the event form
+          images: { $slice: 1 },
+          imageUrl: 1,
         },
         sort: { createdAt: -1 },
       }

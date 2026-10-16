@@ -376,7 +376,7 @@ Meteor.methods({
     const users = await Meteor.users
       .find(
         { _id: { $in: ids } },
-        { fields: { username: 1, firstName: 1, lastName: 1 } }
+        { fields: { username: 1, firstName: 1, lastName: 1, avatar: 1 } }
       )
       .fetchAsync();
     return users
@@ -385,6 +385,7 @@ Meteor.methods({
         username: u.username,
         firstName: u.firstName,
         lastName: u.lastName,
+        avatar: u.avatar?.src || null,
       }))
       .sort((a, b) => a.username.localeCompare(b.username));
   },
@@ -409,6 +410,7 @@ Meteor.methods({
         publicContact: 1,
         address: 1,
         locationId: 1,
+        avatar: 1,
       },
     });
     if (!organizer) {
@@ -422,6 +424,7 @@ Meteor.methods({
       publicContact: organizer.publicContact || null,
       address: organizer.address || null,
       locationId: organizer.locationId || null,
+      avatar: organizer.avatar?.src || null,
     };
   },
 
