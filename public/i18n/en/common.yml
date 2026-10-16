@@ -49,7 +49,7 @@ labels:
   contact: Contact
   content: Content
   create:
-    activities: New Event
+    activities: Create a new event
     calendar: New Booking
     groups: New Process/Group
     info: New Info Page

@@ -63,7 +63,7 @@ form:
     ownHelper: "Somewhere else: give the address and choose the place in the municipality."
   title:
     label: Title
-    holder: Give it a title
+    holder: Name of the event
     helper: This is typically the title of your booking to appear publicly
   subtitle:
     label: Subtitle

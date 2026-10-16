@@ -24,6 +24,8 @@ export interface FormFieldProps extends React.ComponentProps<typeof Box> {
   // Required fields are not marked; optional ones say so after the label.
   required?: boolean;
   optional?: boolean;
+  // The helper on the label's line, when both are short
+  helperInline?: boolean;
 }
 
 export default function FormField(props: FormFieldProps) {
@@ -35,6 +37,7 @@ export default function FormField(props: FormFieldProps) {
     label,
     required: _required,
     optional = false,
+    helperInline = false,
     ...otherProps
   } = props;
   // A single input, select or textarea child gets an id so the label
@@ -57,25 +60,52 @@ export default function FormField(props: FormFieldProps) {
 
   return (
     <Box my="4" w="100%" {...otherProps}>
-      <Box>
-        {controlId ? (
-          <label className="form-field-label" htmlFor={controlId}>
-            {label}
-            {optionalNote}
-          </label>
-        ) : (
-          <Text color="gray.800" fontWeight="bold">
-            {label}
-            {optionalNote}
-          </Text>
-        )}
-      </Box>
-      {helper && (
-        <Box>
-          <Text color="gray.600" fontSize="sm">
-            {helper}
-          </Text>
-        </Box>
+      {helperInline ? (
+        <div className="form-field-head">
+          <Box>
+            {controlId ? (
+              <label className="form-field-label" htmlFor={controlId}>
+                {label}
+                {optionalNote}
+              </label>
+            ) : (
+              <Text color="gray.800" fontWeight="bold">
+                {label}
+                {optionalNote}
+              </Text>
+            )}
+          </Box>
+          {helper && (
+            <Box>
+              <Text color="gray.600" fontSize="sm">
+                {helper}
+              </Text>
+            </Box>
+          )}
+        </div>
+      ) : (
+        <>
+          <Box>
+            {controlId ? (
+              <label className="form-field-label" htmlFor={controlId}>
+                {label}
+                {optionalNote}
+              </label>
+            ) : (
+              <Text color="gray.800" fontWeight="bold">
+                {label}
+                {optionalNote}
+              </Text>
+            )}
+          </Box>
+          {helper && (
+            <Box>
+              <Text color="gray.600" fontSize="sm">
+                {helper}
+              </Text>
+            </Box>
+          )}
+        </>
       )}
 
       <Box pt="2">{control}</Box>

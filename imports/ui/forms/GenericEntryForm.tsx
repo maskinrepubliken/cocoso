@@ -40,6 +40,8 @@ interface FormFieldItem {
   options?: Option[];
   helper?: string;
   label?: string;
+  optional?: boolean;
+  helperInline?: boolean;
   children?: string | React.ReactNode;
 }
 
@@ -172,7 +174,13 @@ export default function GenericEntryForm({
         }
         w="100%"
       >
-        <FormField {...item.props} helper={item.helper} label={item.label}>
+        <FormField
+          {...item.props}
+          helper={item.helper}
+          helperInline={item.helperInline}
+          label={item.label}
+          optional={item.optional}
+        >
           <FieldItemHandler control={control} item={item} register={register} />
         </FormField>
       </Box>

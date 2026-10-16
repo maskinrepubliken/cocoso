@@ -5,6 +5,7 @@ const publicActivityFormFields = (t) => [
     placeholder: t('form.title.holder'),
     type: 'input',
     value: 'title',
+    helperInline: true,
     props: {
       required: true,
     },
@@ -15,9 +16,8 @@ const publicActivityFormFields = (t) => [
     placeholder: t('form.subtitle.holder'),
     type: 'input',
     value: 'subTitle',
-    props: {
-      required: true,
-    },
+    helperInline: true,
+    optional: true,
   },
   {
     helper: t('form.description.helper'),

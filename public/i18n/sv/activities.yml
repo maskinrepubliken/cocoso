@@ -64,7 +64,7 @@ form:
   title:
     label: Titel
     helper: Ange ett namn på din aktivitet eller bokning
-    holder: Ange en titel
+    holder: Ange evenemangets namn
   subtitle:
     label: Undertitel
     helper: Exempelvis artistnamn, eller en undertitel…

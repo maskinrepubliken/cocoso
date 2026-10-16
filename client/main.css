@@ -3753,6 +3753,14 @@ body {
   font-weight: 700;
 }
 
+/* label and helper on one line (FormField helperInline) */
+.form-field-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 10px;
+}
+
 /* "(valfritt)" after an optional field's label; required ones carry no mark */
 .form-field-optional {
   color: var(--cocoso-mylla-soft);
