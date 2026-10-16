@@ -57,7 +57,6 @@ form:
     empty: "No place matches."
     placeHelper: "One of the municipality's places, with its address and place."
     ownHelper: "Somewhere else: give the name, address and place."
-    addAddress: "Add an address to the profile"
   title:
     label: Title
     holder: Give it a title

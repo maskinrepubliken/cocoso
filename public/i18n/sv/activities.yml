@@ -57,7 +57,6 @@ form:
     empty: "Ingen plats matchar."
     placeHelper: "En av kommunens platser, med adress och ort."
     ownHelper: "Någon annanstans: skriv namn, adress och ort."
-    addAddress: "Lägg till en adress i profilen"
   title:
     label: Titel
     helper: Ange ett namn på din aktivitet eller bokning

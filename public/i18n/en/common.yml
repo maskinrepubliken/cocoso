@@ -546,8 +546,8 @@ eventKinds:
     larande: the learning events
     social: the social events
   form:
-    label: Kind of event
-    helper: Shown as a chip on the card, and visitors can filter the listing by it.
+    label: Type of event
+    helper: Helps people find your event.
     none: No particular kind
 search:
   open: Search

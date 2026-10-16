@@ -543,8 +543,8 @@ eventKinds:
     larande: lärandeevenemangen
     social: umgängesevenemangen
   form:
-    label: Slags evenemang
-    helper: Visas som ett chip på kortet, och besökare kan filtrera listan på det.
+    label: Typ av evenemang
+    helper: Hjälper användare hitta ditt evenemang.
     none: Inget särskilt slag
 search:
   open: Sök

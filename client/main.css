@@ -5611,9 +5611,9 @@ body {
 .option-card-head {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border: 0;
   background: none;
   text-align: left;
@@ -5674,14 +5674,28 @@ body {
 .option-card-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0 14px 14px 46px;
+  gap: 8px;
+  padding: 2px 12px 12px;
 }
 
-@media (max-width: 480px) {
-  .option-card-body {
-    padding-left: 14px;
-  }
+/* fields inside a chosen card sit close: FormField's own margins
+   (my="4", my="2") are for fields on the page */
+.option-card-body :has(> div > label.form-field-label) {
+  margin-block: 4px !important;
+}
+
+.option-card-body > * {
+  margin-block: 0 !important;
+}
+
+.option-card-body .form-field-label,
+.option-card-body :has(> div > label.form-field-label) > div:first-child p {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.option-card-body :has(> div > label.form-field-label) > div:not(:first-child) {
+  padding-top: 4px !important;
 }
 
 .option-card-body .form-preview-lines {
@@ -5697,8 +5711,5 @@ body {
 }
 
 .where-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 6px 0 10px;
+  padding: 8px 0 12px;
 }

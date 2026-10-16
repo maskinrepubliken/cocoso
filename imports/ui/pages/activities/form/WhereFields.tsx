@@ -190,7 +190,7 @@ export default function WhereFields({
                   <AddressBlock
                     withoutMapLink
                     address={resourceFull.address}
-                    mapHeight={160}
+                    mapHeight={120}
                   />
                 )}
                 {selectedResource && ortLine(resourceLocationName)}
@@ -209,7 +209,7 @@ export default function WhereFields({
                 <AddressBlock
                   withoutMapLink
                   address={organizerAddress}
-                  mapHeight={160}
+                  mapHeight={120}
                 />
                 {ortLine(organizerLocationName)}
                 <a
@@ -250,16 +250,6 @@ export default function WhereFields({
           },
         ]}
       />
-      {!organizerAddress && (
-        <a
-          className="form-preview-link"
-          href={profileLink}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {t('form.where.addAddress')}
-        </a>
-      )}
     </div>
   );
 }
