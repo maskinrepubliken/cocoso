@@ -616,7 +616,7 @@ address:
   form:
     street:
       label: "Street address"
-      helper: "Street and number. For a beach or a field without one, describe where, e.g. \"North shore\", and add coordinates."
+      helper: "Street and number. For a field without one, use coordinates."
       holder: "Willéns väg 5"
     postalCode:
       label: "Postal code"
@@ -634,7 +634,7 @@ contact:
   form:
     name:
       label: "Contact person"
-      holder: "A name or a function, e.g. Bookings"
+      holder: "Contact person"
     email: "Email"
     phone: "Phone"
     website: "Website"

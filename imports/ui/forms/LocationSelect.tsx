@@ -8,6 +8,7 @@ import { locationsAtom } from '/imports/state';
 import type { Location } from '/imports/ui/types';
 
 const MUNICIPALITY_ONLY = '__municipality_only__';
+const UNCHOSEN = '__unchosen__';
 
 export interface LocationChoice {
   locationId: string | null;
@@ -21,6 +22,11 @@ export interface LocationSelectProps {
   // which are physical places.
   allowMunicipalityOnly?: boolean;
   disabled?: boolean;
+  // Nothing chosen yet: shows this prompt until a choice is made, also
+  // the whole municipality.
+  unchosenLabel?: string;
+  // The name of the "no particular place" choice
+  wholeLabel?: string;
   onChange: (choice: LocationChoice) => void;
 }
 
@@ -31,6 +37,8 @@ export default function LocationSelect({
   isMunicipalityOnly = false,
   allowMunicipalityOnly = false,
   disabled = false,
+  unchosenLabel,
+  wholeLabel,
   onChange,
 }: LocationSelectProps) {
   const publishedLocations = useAtomValue(locationsAtom);
@@ -43,7 +51,9 @@ export default function LocationSelect({
       .catch(() => setLocations(publishedLocations));
   }, []);
 
-  const selected = value || (isMunicipalityOnly ? MUNICIPALITY_ONLY : '');
+  const selected =
+    value ||
+    (isMunicipalityOnly ? MUNICIPALITY_ONLY : unchosenLabel ? UNCHOSEN : '');
 
   const handleChange = (raw: string) => {
     if (raw === MUNICIPALITY_ONLY) {
@@ -59,7 +69,14 @@ export default function LocationSelect({
       value={selected}
       onChange={(event) => handleChange(event.target.value)}
     >
-      <option value="">{tc('locations.wholeMunicipality')}</option>
+      {unchosenLabel && (
+        <option disabled value={UNCHOSEN}>
+          {unchosenLabel}
+        </option>
+      )}
+      <option value="">
+        {wholeLabel || tc('locations.wholeMunicipality')}
+      </option>
       {allowMunicipalityOnly && (
         <option value={MUNICIPALITY_ONLY}>
           {tc('locations.municipalityOnly')}

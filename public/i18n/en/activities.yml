@@ -7,13 +7,14 @@ label:
 
 form:
   cards:
-    organizer: "Organizers"
+    organizer: "Organizer"
+    organizers: "Organizers"
     place: "Place"
     booking: "Booking and registration"
   booking:
     exclusive: "The place is taken"
     exclusiveHelper: "Nobody else can book the place in the calendar while the event is on."
-    rsvp: "Registration"
+    rsvp: "Registration is open"
     rsvpHelper: "Visitors register and book a spot on the event page."
     capacityHelper: "How many can register for each occasion."
   author:
@@ -34,8 +35,8 @@ form:
     note: "Co-organizer"
   contact:
     label: "Contact details"
-    mine: "Mine"
-    own: "Own details"
+    standard: "Standard"
+    own: "Other details"
     fromProfileHelper: "Taken from the profile of {{name}} and shown on the event page."
     none: "No public contact details in the profile yet."
     ownHelper: "Details for this event only, instead of a profile's."
@@ -46,9 +47,14 @@ form:
   where:
     label: "Where"
     helper: "Choose one of the municipality's places, the organizer's address or an address of its own. The place (ort) follows from the choice."
-    place: "A place"
+    place: "Choose a place"
     organizer: "Organizer's address"
-    own: "Own address"
+    own: "Another address"
+    placeName: "Name of the place (optional)"
+    location: "Place in the municipality"
+    locationPick: "Choose…"
+    locationOther: "Elsewhere in the municipality"
+    locationRequired: "Choose a place in the municipality."
     organizerNone: "The organizer has no address in their profile."
     organizerHelper: "The address and place come from the organizer's profile."
     placeRequired: "Choose a place, or switch to an address."
@@ -57,7 +63,7 @@ form:
     search: "Search the places…"
     empty: "No place matches."
     placeHelper: "One of the municipality's places, with its address and place."
-    ownHelper: "Somewhere else: give the name, address and place."
+    ownHelper: "Somewhere else: give the address and choose the place in the municipality."
   title:
     label: Title
     holder: Give it a title

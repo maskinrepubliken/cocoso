@@ -5653,10 +5653,18 @@ body {
   line-height: 1.4;
 }
 
+/* its parts sit in the choice's column, so the line about the choice
+   comes right under a preview, before any link to change it */
 .choice-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: contents;
+}
+
+.choice-description {
+  order: 1;
+}
+
+.choice-body > .form-preview-link {
+  order: 2;
 }
 
 /* fields under a choice sit close: FormField's own margins
@@ -5713,7 +5721,9 @@ body {
 }
 
 .organizer-foot {
-  margin: 4px 0 10px -6px;
+  display: flex;
+  justify-content: flex-end;
+  margin: 4px -6px 10px 0;
 }
 
 .form-preview-link {

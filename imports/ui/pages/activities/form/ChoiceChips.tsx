@@ -5,7 +5,7 @@ export interface Choice<T extends string> {
   label: string;
   // A picture or icon before the label
   icon?: React.ReactNode;
-  // A line under the row about the chosen one
+  // A line about the chosen one, under what it brings
   description?: string;
   disabled?: boolean;
   // What the chosen one brings in, under the row
@@ -20,7 +20,7 @@ interface ChoiceChipsProps<T extends string> {
 }
 
 // A choice between a few ways of filling something in: a row of chips,
-// the chosen one filled, and what it brings shown underneath.
+// the chosen one filled, what it brings underneath and a line about it.
 export default function ChoiceChips<T extends string>({
   label,
   value,
@@ -49,10 +49,10 @@ export default function ChoiceChips<T extends string>({
           </button>
         ))}
       </div>
+      {chosen?.content && <div className="choice-body">{chosen.content}</div>}
       {chosen?.description && (
         <p className="choice-description">{chosen.description}</p>
       )}
-      {chosen?.content && <div className="choice-body">{chosen.content}</div>}
     </div>
   );
 }

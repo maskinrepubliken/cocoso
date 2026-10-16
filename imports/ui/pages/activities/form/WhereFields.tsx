@@ -73,7 +73,9 @@ interface WhereFieldsProps {
   address: Partial<Address>;
   placeName: string;
   locationId: string | null;
-  isMunicipalityOnly: boolean;
+  // Whether a place in the municipality was chosen for an address of its
+  // own; one must be.
+  locationPicked: boolean;
   profileLink: string | null;
   onModeChange: (mode: WhereMode) => void;
   onSelectResource: (resource: SelectedResource | null) => void;
@@ -91,7 +93,7 @@ export default function WhereFields({
   address,
   placeName,
   locationId,
-  isMunicipalityOnly,
+  locationPicked,
   profileLink,
   onModeChange,
   onSelectResource,
@@ -100,7 +102,6 @@ export default function WhereFields({
   onLocationChange,
 }: WhereFieldsProps) {
   const [t] = useTranslation('activities');
-  const [tc] = useTranslation('common');
   const [picking, setPicking] = useState(false);
 
   const resourceFull = resources.find((r) => r._id === selectedResource?._id);
@@ -111,8 +112,8 @@ export default function WhereFields({
   // asks for it.
   const ortLine = (name: string | null) => (
     <p className="form-preview-note">
-      {tc('locations.form.label')}:{' '}
-      <strong>{name || tc('locations.wholeMunicipality')}</strong>
+      {t('form.where.location')}:{' '}
+      <strong>{name || t('form.where.locationOther')}</strong>
     </p>
   );
 
@@ -236,7 +237,7 @@ export default function WhereFields({
             description: t('form.where.ownHelper'),
             content: (
               <>
-                <FormField label={t('form.place.label')}>
+                <FormField label={t('form.where.placeName')}>
                   <Input
                     placeholder={t('form.place.holder')}
                     value={placeName}
@@ -244,11 +245,13 @@ export default function WhereFields({
                   />
                 </FormField>
                 <AddressFields value={address} onChange={onAddressChange} />
-                <FormField label={tc('locations.form.label')}>
+                <FormField label={t('form.where.location')} required>
                   <LocationSelect
-                    allowMunicipalityOnly
-                    isMunicipalityOnly={isMunicipalityOnly}
+                    unchosenLabel={
+                      locationPicked ? undefined : t('form.where.locationPick')
+                    }
                     value={locationId}
+                    wholeLabel={t('form.where.locationOther')}
                     onChange={onLocationChange}
                   />
                 </FormField>

@@ -613,7 +613,7 @@ address:
   form:
     street:
       label: "Gatuadress"
-      helper: "Gata och nummer. För en badplats eller en plan utan gatuadress, beskriv var, t.ex. \"Norra stranden\", och fyll i koordinater."
+      helper: "Gata och nummer. För en plan utan gatuadress, använd koordinater."
       holder: "Willéns väg 5"
     postalCode:
       label: "Postnummer"
@@ -631,7 +631,7 @@ contact:
   form:
     name:
       label: "Kontaktperson"
-      holder: "Ett namn eller en funktion, t.ex. Bokningen"
+      holder: "Kontaktperson"
     email: "E-post"
     phone: "Telefon"
     website: "Webbplats"

@@ -7,13 +7,14 @@ label:
 
 form:
   cards:
-    organizer: "Arrangörer"
+    organizer: "Arrangör"
+    organizers: "Arrangörer"
     place: "Plats"
     booking: "Bokning och anmälan"
   booking:
     exclusive: "Platsen är upptagen"
     exclusiveHelper: "Ingen annan kan boka platsen i kalendern medan evenemanget pågår."
-    rsvp: "Anmälan"
+    rsvp: "Anmälan är möjlig"
     rsvpHelper: "Besökare anmäler sig och bokar plats på evenemangssidan."
     capacityHelper: "Hur många som kan anmäla sig till varje tillfälle."
   author:
@@ -34,8 +35,8 @@ form:
     note: "Medarrangör"
   contact:
     label: "Kontaktuppgifter"
-    mine: "Mina"
-    own: "Egna uppgifter"
+    standard: "Standard"
+    own: "Andra uppgifter"
     fromProfileHelper: "Hämtas från profilen för {{name}} och visas på evenemangssidan."
     none: "Inga publika kontaktuppgifter i profilen än."
     ownHelper: "Uppgifter bara för det här evenemanget, i stället för en profils."
@@ -46,9 +47,14 @@ form:
   where:
     label: "Var"
     helper: "Välj en av kommunens platser, arrangörens adress eller en egen adress. Orten följer av valet."
-    place: "En plats"
+    place: "Välj en plats"
     organizer: "Arrangörens adress"
-    own: "Egen adress"
+    own: "Annan adress"
+    placeName: "Platsens namn (valfritt)"
+    location: "Plats i kommunen"
+    locationPick: "Välj…"
+    locationOther: "Annan plats i kommunen"
+    locationRequired: "Välj en plats i kommunen."
     organizerNone: "Arrangören har ingen adress i sin profil."
     organizerHelper: "Adressen och orten hämtas från arrangörens profil."
     placeRequired: "Välj en plats, eller byt till en adress."
@@ -57,7 +63,7 @@ form:
     search: "Sök bland platserna…"
     empty: "Ingen plats matchar."
     placeHelper: "En av kommunens platser, med adress och ort."
-    ownHelper: "Någon annanstans: skriv namn, adress och ort."
+    ownHelper: "Någon annanstans: skriv adressen och välj plats i kommunen."
   title:
     label: Titel
     helper: Ange ett namn på din aktivitet eller bokning

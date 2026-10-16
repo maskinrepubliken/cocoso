@@ -186,7 +186,7 @@ export default function OrganizerFields({
         value: person._id || '',
         label:
           person._id === currentUserId
-            ? t('form.contact.mine')
+            ? t('form.contact.standard')
             : firstName(person),
         icon: <PersonAvatar person={person} size={26} />,
         description: t('form.contact.fromProfileHelper', {

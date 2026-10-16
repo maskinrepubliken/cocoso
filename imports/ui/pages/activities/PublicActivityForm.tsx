@@ -114,7 +114,8 @@ export default function PublicActivityForm({
     isExclusiveActivity: activity ? activity.isExclusiveActivity : true,
     isRegistrationEnabled: activity ? activity.isRegistrationEnabled : false,
     locationId: activity?.locationId || null,
-    isMunicipalityOnly: Boolean(activity?.isMunicipalityOnly),
+    // An event being edited has its place in the municipality already
+    locationPicked: Boolean(activity),
     categoryKey: activity?.category?.key || '',
     organizers: activity?.organizers || [],
     // The organizer: the person creating the event; an admin may name
@@ -209,6 +210,7 @@ export default function PublicActivityForm({
       whereMode,
       // An address of its own starts in the organizer's place
       locationId: prevState.locationId || author.locationId || null,
+      locationPicked: prevState.locationPicked || Boolean(author.locationId),
     }));
   }, [author, state.whereMode]);
 
@@ -288,6 +290,10 @@ export default function PublicActivityForm({
     // An address of its own must be complete if one is given at all.
     if (whereMode === 'place' && !state.selectedResource) {
       message.error(t('form.where.placeRequired'));
+      return;
+    }
+    if (whereMode === 'own' && !state.locationPicked) {
+      message.error(t('form.where.locationRequired'));
       return;
     }
     if (
@@ -371,7 +377,7 @@ export default function PublicActivityForm({
         : own
         ? state.locationId
         : null,
-      isMunicipalityOnly: own ? state.isMunicipalityOnly : false,
+      isMunicipalityOnly: false,
     };
 
     const selectedResource =
@@ -436,7 +442,15 @@ export default function PublicActivityForm({
         />
       </FormCard>
 
-      <FormCard title={t('form.cards.organizer')}>
+      <FormCard
+        title={t(
+          state.organizers.some(
+            (o: OrganizerRef) => o.userId !== state.authorId
+          )
+            ? 'form.cards.organizers'
+            : 'form.cards.organizer'
+        )}
+      >
         <OrganizerFields
           author={author}
           authorId={state.authorId}
@@ -476,7 +490,7 @@ export default function PublicActivityForm({
       <FormCard title={t('form.cards.place')}>
         <WhereFields
           address={state.address}
-          isMunicipalityOnly={state.isMunicipalityOnly}
+          locationPicked={state.locationPicked}
           locationId={state.locationId}
           mode={whereMode}
           organizerAddress={author?.address || null}
@@ -488,8 +502,12 @@ export default function PublicActivityForm({
           onAddressChange={(address) =>
             setState((prevState: any) => ({ ...prevState, address }))
           }
-          onLocationChange={(choice) =>
-            setState((prevState: any) => ({ ...prevState, ...choice }))
+          onLocationChange={({ locationId }) =>
+            setState((prevState: any) => ({
+              ...prevState,
+              locationId,
+              locationPicked: true,
+            }))
           }
           onModeChange={(mode) =>
             setState((prevState: any) => ({ ...prevState, whereMode: mode }))
