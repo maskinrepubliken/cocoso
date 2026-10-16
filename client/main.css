@@ -5105,3 +5105,82 @@ body {
   max-width: 960px;
   margin-inline: auto;
 }
+
+/* === Event form: organizer and where (pages/activities/form) === */
+
+/* A read-only line in a form, e.g. "Du (Anna)" as organizer */
+.form-static {
+  margin: 0;
+  font-family: var(--cocoso-font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cocoso-mylla);
+}
+
+.choice-switch {
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  background: var(--cocoso-colors-theme-50);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+}
+
+.choice-switch .seg-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* What the choice brings in: the profile's details, or the fields */
+.form-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-preview-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--cocoso-radius-falt);
+  background: var(--cocoso-colors-theme-50);
+  list-style: none;
+  font-family: var(--cocoso-font-ui);
+  font-size: 14px;
+  color: var(--cocoso-mylla);
+}
+
+.form-preview-lines li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  word-break: break-word;
+}
+
+.form-preview-lines svg {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  color: var(--cocoso-colors-theme-700);
+}
+
+.form-preview-empty {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--cocoso-radius-falt);
+  background: color-mix(in srgb, var(--cocoso-tegel) 10%, transparent);
+  color: var(--cocoso-mylla);
+  font-size: 14px;
+}
+
+.form-preview-note {
+  margin: 0;
+  color: var(--cocoso-mylla-soft);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.form-preview-note a {
+  color: var(--cocoso-colors-theme-700);
+  font-weight: 600;
+}

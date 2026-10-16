@@ -6,16 +6,35 @@ label:
   next: Next Event
 
 form:
+  author:
+    label: "Organizer"
+    helperAdmin: "As an admin you choose which organizer the event belongs to. Contact details and address come from that organizer's profile."
+    holder: "Choose organizer…"
+    you: "You ({{name}})"
   organizers:
     label: "Co-organizers"
-    helper: "Other people organizing this event with you. They can edit it and see the sign-ups, and their public contact details are shown on the page."
-    holder: "Choose people…"
+    helper: "Other organizers behind the event. They can edit it too and see the registrations."
+    holder: "Choose co-organizers…"
   contact:
-    label: "Contact for this event"
-    helper: "Optional: an email, phone or website for questions about this event in particular. The organizers’ own public contact details are shown as well."
+    label: "Contact details"
+    fromOrganizer: "The organizer's"
+    own: "The event's own"
+    fromOrganizerHelper: "Taken from the organizer's profile and shown on the event page."
+    none: "The organizer has no public contact details in their profile yet."
+    ownHelper: "Shown on the event page instead of the organizer's details."
     email: "Email"
     phone: "Phone"
     website: "Website"
+  editProfile: "Change in the profile"
+  where:
+    label: "Where"
+    helper: "Choose one of the municipality's places, the organizer's address or an address of its own. The place (ort) follows from the choice."
+    place: "A place"
+    organizer: "Organizer's address"
+    own: "Own address"
+    organizerNone: "The organizer has no address in their profile."
+    organizerHelper: "The address and place come from the organizer's profile."
+    placeRequired: "Choose a place, or switch to an address."
   title:
     label: Title
     holder: Give it a title

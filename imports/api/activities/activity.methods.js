@@ -643,6 +643,14 @@ Meteor.methods({
       values;
     let newAuthor = null;
     if (authorId && authorId !== theActivity.authorId) {
+      // Only an admin hands an event over, also to themself: a
+      // co-organizer must not make themself the organizer.
+      if (!(await isAdmin(user._id))) {
+        throw new Meteor.Error(
+          'not-allowed',
+          'Only an admin may change the organizer'
+        );
+      }
       newAuthor = await chooseAuthor(user, authorId);
       await requireOrganizerContact([newAuthor.authorId]);
     }

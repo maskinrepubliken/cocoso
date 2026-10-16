@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AutoCompleteSelect from 'react-select';
-import makeAnimated from 'react-select/animated';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
-import { Box, Checkbox, NumberInput, Select, Text } from '/imports/ui/core';
+import { Checkbox, NumberInput, Select } from '/imports/ui/core';
+import { currentUserAtom, roleAtom } from '/imports/state';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
 import { EVENT_KINDS } from './eventKinds';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
-import LocationSelect from '/imports/ui/forms/LocationSelect';
-import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
-import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
-import AddressBlock from '/imports/ui/generic/AddressBlock';
+import { emptyAddress } from '/imports/ui/forms/AddressFields';
+import { emptyContact } from '/imports/ui/forms/ContactFields';
 import {
   Address,
   hasAddress,
   isCompleteAddress,
 } from '/imports/api/_utils/address';
 import type { Contact } from '/imports/api/_utils/contact';
-import { useLocationName } from '/imports/ui/utils/useLocation';
 import DatesAndTimes, {
   emptyDateAndTime,
 } from '/imports/ui/forms/DatesAndTimes';
@@ -29,8 +25,14 @@ import { message } from '/imports/ui/generic/message';
 import type { SelectedResource, DateAndTime } from '/imports/ui/types';
 
 import publicActivityFormFields from './publicActivityFormFields';
+import OrganizerFields, {
+  type ContactMode,
+  type OrganizerDefaults,
+  type OrganizerOption,
+  type OrganizerRef,
+} from './form/OrganizerFields';
+import WhereFields, { type WhereMode } from './form/WhereFields';
 
-const animatedComponents = makeAnimated();
 const defaultCapacity = 40;
 const maxAttendees = 1000;
 
@@ -57,23 +59,27 @@ interface ActivityData extends ActivityFormValues {
   category?: { key?: string } | null;
   organizers?: OrganizerRef[];
   contact?: Contact | null;
+  authorId?: string;
 }
 
-interface OrganizerRef {
-  userId: string;
-  username: string;
-}
+const hasContact = (contact?: Contact | null) =>
+  Boolean(contact && (contact.email || contact.phone || contact.website));
 
-interface OrganizerOption {
-  _id: string;
-  username: string;
-  firstName?: string;
-  lastName?: string;
-}
-
-const organizerLabel = (o: OrganizerOption) => {
-  const name = [o.firstName, o.lastName].filter(Boolean).join(' ');
-  return name ? `${name} (@${o.username})` : `@${o.username}`;
+// The same address, ignoring case and spacing: an event at the organizer's
+// address is shown as such when it is edited.
+const sameAddress = (
+  a?: Partial<Address> | null,
+  b?: Partial<Address> | null
+) => {
+  const key = (x?: Partial<Address> | null) =>
+    [x?.street, x?.postalCode, x?.city]
+      .map((part) =>
+        String(part || '')
+          .replace(/\s+/g, '')
+          .toLowerCase()
+      )
+      .join('|');
+  return Boolean(a && b) && key(a) === key(b);
 };
 
 interface PublicActivityFormProps {
@@ -92,6 +98,9 @@ export default function PublicActivityForm({
   activity,
   onFinalize,
 }: PublicActivityFormProps) {
+  const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
+  const isAdmin = role === 'admin';
   const [state, setState] = useState<any>({
     capacity: activity ? activity.capacity : defaultCapacity,
     datesAndTimes: activity ? activity.datesAndTimes : [emptyDateAndTime],
@@ -105,7 +114,17 @@ export default function PublicActivityForm({
     isMunicipalityOnly: Boolean(activity?.isMunicipalityOnly),
     categoryKey: activity?.category?.key || '',
     organizers: activity?.organizers || [],
+    // The organizer: the person creating the event; an admin may name
+    // someone else, also later.
+    authorId: activity?.authorId || currentUser?._id || '',
+    // Contact details from the organizer's profile, or the event's own
+    contactMode: (hasContact(activity?.contact)
+      ? 'own'
+      : 'organizer') as ContactMode,
     contact: { ...emptyContact, ...(activity?.contact || {}) },
+    // Decided once the organizer's profile is known (see below)
+    whereMode: (activity?.resourceId ? 'place' : null) as WhereMode | null,
+    placeName: activity?.place || '',
     // Only used when no place is chosen; a place brings its own address.
     address: activity?.address || emptyAddress,
     resources: [],
@@ -113,17 +132,11 @@ export default function PublicActivityForm({
   const [organizerOptions, setOrganizerOptions] = useState<OrganizerOption[]>(
     []
   );
+  const [author, setAuthor] = useState<OrganizerDefaults | null>(null);
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('activities');
   const [tc] = useTranslation('common');
   const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
-
-  const selectedResourceFull: any = state.resources.find(
-    (r: any) => r._id === state.selectedResource?._id
-  );
-  const resourceLocationName = useLocationName(
-    selectedResourceFull?.locationId
-  );
 
   const getResources = async () => {
     try {
@@ -140,30 +153,64 @@ export default function PublicActivityForm({
 
   useEffect(() => {
     getResources();
-    call<OrganizerOption[]>('getOrganizerOptions')
+    call<OrganizerOption[]>('getOrganizerOptions', true)
       .then((options) => setOrganizerOptions(options || []))
       .catch(() => setOrganizerOptions([]));
   }, []);
 
-  const selectedOrganizers = state.organizers
-    .map(
-      (o: OrganizerRef) =>
-        organizerOptions.find((option) => option._id === o.userId) || {
-          _id: o.userId,
-          username: o.username,
+  // The organizer's profile: contact, address and place the event starts
+  // from. Fetched again when an admin names another organizer.
+  useEffect(() => {
+    if (!state.authorId) {
+      return;
+    }
+    let cancelled = false;
+    call<OrganizerDefaults>('getOrganizerDefaults', state.authorId)
+      .then((defaults) => {
+        if (!cancelled) {
+          setAuthor(defaults);
         }
-    )
-    .filter(Boolean);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAuthor(null);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [state.authorId]);
 
-  const handleOrganizersChange = (options: readonly OrganizerOption[]) => {
+  // Where the event is, once the organizer's address is known: a new event
+  // starts at it (or at a place when there is none); an event being edited
+  // shows the organizer's address when it is the same one.
+  useEffect(() => {
+    if (state.whereMode || !author) {
+      return;
+    }
+    let whereMode: WhereMode;
+    if (activity?.address) {
+      whereMode = sameAddress(activity.address, author.address)
+        ? 'organizer'
+        : 'own';
+    } else if (activity) {
+      whereMode = activity.place || activity.locationId ? 'own' : 'place';
+    } else {
+      whereMode = author.address ? 'organizer' : 'place';
+    }
     setState((prevState: any) => ({
       ...prevState,
-      organizers: (options || []).map((o) => ({
-        userId: o._id,
-        username: o.username,
-      })),
+      whereMode,
+      // An address of its own starts in the organizer's place
+      locationId: prevState.locationId || author.locationId || null,
     }));
-  };
+  }, [author, state.whereMode]);
+
+  const whereMode: WhereMode = state.whereMode || 'place';
+  const isOwnEvent = state.authorId === currentUser?._id;
+  const profileLink = isOwnEvent
+    ? '/admin/my-profile/general'
+    : `/admin/users/${encodeURIComponent(author?.username || '')}/profile`;
 
   const isFormValid = () => {
     const { datesAndTimes } = state;
@@ -196,8 +243,12 @@ export default function PublicActivityForm({
 
   const handleSubmit = (formValues: ActivityFormValues) => {
     // An address of its own must be complete if one is given at all.
+    if (whereMode === 'place' && !state.selectedResource) {
+      message.error(t('form.where.placeRequired'));
+      return;
+    }
     if (
-      !state.selectedResource &&
+      whereMode === 'own' &&
       hasAddress(state.address) &&
       !isCompleteAddress(state.address)
     ) {
@@ -268,8 +319,11 @@ export default function PublicActivityForm({
       })
     );
 
-    const newActivity = {
+    const atOrganizer = whereMode === 'organizer' && author?.address;
+    const own = whereMode === 'own';
+    const newActivity: any = {
       ...state.formValues,
+      place: own ? state.placeName : '',
       capacity: state.capacity,
       datesAndTimes: cleanDatesAndTimes,
       images,
@@ -277,16 +331,22 @@ export default function PublicActivityForm({
       isRegistrationEnabled: state.isRegistrationEnabled,
       isExclusiveActivity: state.isExclusiveActivity,
       category: state.categoryKey ? { key: state.categoryKey } : null,
-      organizers: state.organizers,
-      contact: state.contact,
-      address: state.selectedResource ? null : state.address,
-      locationId: state.selectedResource ? null : state.locationId,
-      isMunicipalityOnly: state.selectedResource
-        ? false
-        : state.isMunicipalityOnly,
+      ...(isAdmin && state.authorId ? { authorId: state.authorId } : {}),
+      organizers: state.organizers.filter(
+        (o: OrganizerRef) => o.userId !== state.authorId
+      ),
+      contact: state.contactMode === 'own' ? state.contact : null,
+      address: atOrganizer ? author.address : own ? state.address : null,
+      locationId: atOrganizer
+        ? author.locationId || null
+        : own
+        ? state.locationId
+        : null,
+      isMunicipalityOnly: own ? state.isMunicipalityOnly : false,
     };
 
-    const { selectedResource } = state;
+    const selectedResource =
+      whereMode === 'place' ? state.selectedResource : null;
 
     if (selectedResource) {
       newActivity.resourceId = selectedResource._id;
@@ -316,8 +376,8 @@ export default function PublicActivityForm({
       childrenIndex={2}
       defaultValues={activity || emptyFormValues}
       formFields={publicActivityFormFields(t).filter(
-        // With a place chosen, its name is known
-        (field) => !state.selectedResource || field.value !== 'place'
+        // The place's name is part of "Var" below
+        (field) => field.value !== 'place'
       )}
       isSubmitButtonDisabled={isSubmitButtonDisabled}
       onSubmit={handleSubmit}
@@ -360,41 +420,62 @@ export default function PublicActivityForm({
         </Select>
       </FormField>
 
-      <FormField
-        helper={t('form.organizers.helper')}
-        label={t('form.organizers.label')}
-        my="8"
-      >
-        <AutoCompleteSelect
-          isMulti
-          components={animatedComponents}
-          options={organizerOptions}
-          placeholder={t('form.organizers.holder')}
-          styles={{
-            control: (base) => ({
-              ...base,
-              borderRadius: 'var(--cocoso-border-radius)',
-            }),
-          }}
-          value={selectedOrganizers}
-          getOptionLabel={organizerLabel}
-          getOptionValue={(option) => option._id}
-          onChange={handleOrganizersChange}
-        />
-      </FormField>
+      <OrganizerFields
+        author={author}
+        authorId={state.authorId}
+        contact={state.contact}
+        contactMode={state.contactMode}
+        isAdmin={isAdmin}
+        isOwnEvent={isOwnEvent}
+        options={organizerOptions}
+        organizers={state.organizers}
+        profileLink={profileLink}
+        onAuthorChange={(authorId) =>
+          setState((prevState: any) => ({
+            ...prevState,
+            authorId,
+            // the new organizer is not also a co-organizer
+            organizers: prevState.organizers.filter(
+              (o: OrganizerRef) => o.userId !== authorId
+            ),
+          }))
+        }
+        onContactChange={(contact) =>
+          setState((prevState: any) => ({ ...prevState, contact }))
+        }
+        onContactModeChange={(contactMode) =>
+          setState((prevState: any) => ({ ...prevState, contactMode }))
+        }
+        onOrganizersChange={(organizers) =>
+          setState((prevState: any) => ({ ...prevState, organizers }))
+        }
+      />
 
-      <FormField
-        helper={t('form.contact.helper')}
-        label={t('form.contact.label')}
-        my="8"
-      >
-        <ContactFields
-          value={state.contact}
-          onChange={(contact) =>
-            setState((prevState: any) => ({ ...prevState, contact }))
-          }
-        />
-      </FormField>
+      <WhereFields
+        address={state.address}
+        isMunicipalityOnly={state.isMunicipalityOnly}
+        locationId={state.locationId}
+        mode={whereMode}
+        organizerAddress={author?.address || null}
+        organizerLocationId={author?.locationId || null}
+        placeName={state.placeName}
+        profileLink={profileLink}
+        resources={state.resources}
+        selectedResource={state.selectedResource}
+        onAddressChange={(address) =>
+          setState((prevState: any) => ({ ...prevState, address }))
+        }
+        onLocationChange={(choice) =>
+          setState((prevState: any) => ({ ...prevState, ...choice }))
+        }
+        onModeChange={(mode) =>
+          setState((prevState: any) => ({ ...prevState, whereMode: mode }))
+        }
+        onPlaceNameChange={(placeName) =>
+          setState((prevState: any) => ({ ...prevState, placeName }))
+        }
+        onSelectResource={handleSelectResource}
+      />
 
       <FormField
         helper={t('form.exclusive.helper')}
@@ -412,88 +493,6 @@ export default function PublicActivityForm({
       </FormField>
 
       <FormField
-        helper={t('form.resource.helper')}
-        label={t('form.resource.label')}
-        my="8"
-      >
-        <AutoCompleteSelect
-          isClearable
-          components={animatedComponents}
-          options={state.resources}
-          placeholder={t('form.resource.holder')}
-          style={{
-            borderRadius: 'var(--cocoso-border-radius)',
-            marginTop: '1rem',
-            width: '100%',
-          }}
-          styles={{
-            control: (base) => ({
-              ...base,
-              borderRadius: 'var(--cocoso-border-radius)',
-            }),
-            option: (styles, { data }) => ({
-              ...styles,
-              fontWeight: data.isCombo ? 'bold' : 'normal',
-              'content:after': data.isCombo ? ' (combo)' : '',
-            }),
-          }}
-          value={state.selectedResource}
-          getOptionValue={(option) => option._id}
-          onChange={handleSelectResource}
-        />
-        {state.selectedResource && selectedResourceFull?.address && (
-          <Box mt="3">
-            <AddressBlock
-              withoutMapLink
-              address={selectedResourceFull.address}
-              label={selectedResourceFull.label}
-              mapHeight={180}
-            />
-          </Box>
-        )}
-      </FormField>
-
-      {!state.selectedResource && (
-        <FormField
-          helper={t('form.address.helper')}
-          label={t('form.address.label')}
-          my="8"
-        >
-          <AddressFields
-            value={state.address}
-            onChange={(address) =>
-              setState((prevState: any) => ({ ...prevState, address }))
-            }
-          />
-        </FormField>
-      )}
-
-      <FormField
-        helper={
-          state.selectedResource
-            ? tc('locations.form.helperFromResource')
-            : tc('locations.form.helperActivity')
-        }
-        label={tc('locations.form.label')}
-        my="8"
-      >
-        {state.selectedResource ? (
-          <Text>
-            {resourceLocationName || tc('locations.wholeMunicipality')}
-          </Text>
-        ) : (
-          <LocationSelect
-            allowMunicipalityOnly
-            isMunicipalityOnly={state.isMunicipalityOnly}
-            value={state.locationId}
-            onChange={(choice) =>
-              setState((prevState) => ({ ...prevState, ...choice }))
-            }
-          />
-        )}
-      </FormField>
-
-      <FormField
         area="main"
         helper={t('form.occurrences.helper')}
         label={t('form.occurrences.label')}
@@ -504,7 +503,9 @@ export default function PublicActivityForm({
           activityId={activity?._id}
           datesAndTimes={state.datesAndTimes}
           isExclusiveActivity={state.isExclusiveActivity}
-          resourceId={state.selectedResource?._id}
+          resourceId={
+            whereMode === 'place' ? state.selectedResource?._id : undefined
+          }
           onDatesAndTimesChange={handleDatesAndTimesChange}
         />
       </FormField>

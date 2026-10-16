@@ -31,9 +31,12 @@ export default function EditPublicActivity() {
     return null;
   }
 
+  // authorId: the form shows who organizes the event, and an admin who
+  // edits it must not take it over by leaving it out.
   const activityFields = (({
     _id,
     address,
+    authorId,
     capacity,
     category,
     contact,
@@ -53,6 +56,7 @@ export default function EditPublicActivity() {
   }) => ({
     _id,
     address,
+    authorId,
     capacity,
     category,
     contact,
