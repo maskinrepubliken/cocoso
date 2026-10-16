@@ -11,8 +11,8 @@ form:
     place: "Place"
     booking: "Booking and registration"
   booking:
-    exclusive: "Block the place"
-    exclusiveHelper: "The place shows as taken in the calendar during the event, so nobody else books it at the same time."
+    exclusive: "The place is taken"
+    exclusiveHelper: "Nobody else can book the place in the calendar while the event is on."
     rsvp: "Registration"
     rsvpHelper: "Visitors register and book a spot on the event page."
     capacityHelper: "How many can register for each occasion."
@@ -55,6 +55,9 @@ form:
     pick: "Choose a place"
     search: "Search the places…"
     empty: "No place matches."
+    placeHelper: "One of the municipality's places, with its address and place."
+    ownHelper: "Somewhere else: give the name, address and place."
+    addAddress: "Add an address to the profile"
   title:
     label: Title
     holder: Give it a title

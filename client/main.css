@@ -5117,18 +5117,6 @@ body {
   color: var(--cocoso-mylla);
 }
 
-.choice-switch {
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-  background: var(--cocoso-colors-theme-50);
-  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
-}
-
-.choice-switch .seg-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
 /* What the choice brings in: the profile's details, or the fields */
 .form-preview {
   display: flex;
@@ -5214,7 +5202,7 @@ body {
 
 .toggle-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 14px;
   padding: 10px 0 12px;
@@ -5248,10 +5236,13 @@ body {
 .toggle-switch {
   position: relative;
   flex: none;
+  display: block;
   width: 46px;
+  min-width: 46px;
   height: 28px;
-  margin-top: 2px;
+  margin: 0;
   padding: 0;
+  line-height: 0;
   border: 0;
   border-radius: 999px;
   background: var(--cocoso-colors-theme-200, #d9e3cc);
@@ -5580,4 +5571,134 @@ body {
 .kind-picker-tile.is-active {
   background: var(--cocoso-colors-theme-700);
   color: #fff;
+}
+
+/* The entry form's side column holds the event form's cards on its own:
+   no glass frame around them (a card in a card), and room between them
+   (the column's own rule zeroes margins on its children). */
+.entry-form-side:has(> .form-card) {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.entry-form-side > .form-card {
+  margin-block: 0 18px !important;
+  padding: 18px 18px 8px;
+}
+
+/* --- A choice as a stack of cards (OptionCards.tsx) --- */
+
+.option-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-card {
+  overflow: hidden;
+  border-radius: var(--cocoso-radius-falt);
+  background: var(--cocoso-colors-theme-50);
+  box-shadow: inset 0 0 0 1px var(--cocoso-linje);
+  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.option-card.is-chosen {
+  background: var(--cocoso-papper);
+  box-shadow: inset 0 0 0 2px var(--cocoso-colors-theme-700);
+}
+
+.option-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option-card.is-disabled .option-card-head {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.option-card-dot {
+  position: relative;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border: 2px solid var(--cocoso-colors-theme-300, #b9c9a5);
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-sizing: border-box;
+}
+
+.option-card.is-chosen .option-card-dot {
+  border-color: var(--cocoso-colors-theme-700);
+}
+
+.option-card.is-chosen .option-card-dot::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-700);
+}
+
+.option-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.option-card-title {
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.option-card-description {
+  color: var(--cocoso-mylla-soft);
+  font-family: var(--cocoso-font-ui);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* what the chosen card brings in, under its heading */
+.option-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 14px 14px 46px;
+}
+
+@media (max-width: 480px) {
+  .option-card-body {
+    padding-left: 14px;
+  }
+}
+
+.option-card-body .form-preview-lines {
+  background: var(--cocoso-colors-theme-50);
+}
+
+.form-preview-link {
+  align-self: flex-start;
+  color: var(--cocoso-colors-theme-700);
+  font-family: var(--cocoso-font-ui);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.where-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 6px 0 10px;
 }

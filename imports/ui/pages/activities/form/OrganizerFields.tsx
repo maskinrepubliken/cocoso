@@ -11,7 +11,7 @@ import ContactFields from '/imports/ui/forms/ContactFields';
 import type { Contact } from '/imports/api/_utils/contact';
 import type { Address } from '/imports/api/_utils/address';
 
-import ChoiceSwitch from './ChoiceSwitch';
+import OptionCards from './OptionCards';
 import PersonCard, { PersonAvatar, personName } from './PersonCard';
 import PickerPopover from './PickerPopover';
 
@@ -221,55 +221,64 @@ export default function OrganizerFields({
       </FormField>
 
       <FormField label={t('form.contact.label')} my="3">
-        <ChoiceSwitch
-          choices={[
-            { value: 'organizer', label: t('form.contact.fromOrganizer') },
-            { value: 'own', label: t('form.contact.own') },
-          ]}
+        <OptionCards
           label={t('form.contact.label')}
           value={contactMode}
           onChange={onContactModeChange}
+          options={[
+            {
+              value: 'organizer',
+              title: t('form.contact.fromOrganizer'),
+              description: t('form.contact.fromOrganizerHelper'),
+              content: (
+                <>
+                  {hasProfileContact ? (
+                    <ul className="form-preview-lines">
+                      {profileContact?.email && (
+                        <li>
+                          <MailIcon aria-hidden />
+                          {profileContact.email}
+                        </li>
+                      )}
+                      {profileContact?.phone && (
+                        <li>
+                          <PhoneIcon aria-hidden />
+                          {profileContact.phone}
+                        </li>
+                      )}
+                      {profileContact?.website && (
+                        <li>
+                          <GlobeIcon aria-hidden />
+                          {profileContact.website.replace(/^https?:\/\//i, '')}
+                        </li>
+                      )}
+                    </ul>
+                  ) : (
+                    <p className="form-preview-empty">
+                      {t('form.contact.none')}
+                    </p>
+                  )}
+                  <a
+                    className="form-preview-link"
+                    href={profileLink}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    {t('form.editProfile')}
+                  </a>
+                </>
+              ),
+            },
+            {
+              value: 'own',
+              title: t('form.contact.own'),
+              description: t('form.contact.ownHelper'),
+              content: (
+                <ContactFields value={contact} onChange={onContactChange} />
+              ),
+            },
+          ]}
         />
-
-        {contactMode === 'organizer' ? (
-          <div className="form-preview">
-            {hasProfileContact ? (
-              <ul className="form-preview-lines">
-                {profileContact?.email && (
-                  <li>
-                    <MailIcon aria-hidden />
-                    {profileContact.email}
-                  </li>
-                )}
-                {profileContact?.phone && (
-                  <li>
-                    <PhoneIcon aria-hidden />
-                    {profileContact.phone}
-                  </li>
-                )}
-                {profileContact?.website && (
-                  <li>
-                    <GlobeIcon aria-hidden />
-                    {profileContact.website.replace(/^https?:\/\//i, '')}
-                  </li>
-                )}
-              </ul>
-            ) : (
-              <p className="form-preview-empty">{t('form.contact.none')}</p>
-            )}
-            <p className="form-preview-note">
-              {t('form.contact.fromOrganizerHelper')}{' '}
-              <a href={profileLink} rel="noreferrer" target="_blank">
-                {t('form.editProfile')}
-              </a>
-            </p>
-          </div>
-        ) : (
-          <div className="form-preview">
-            <p className="form-preview-note">{t('form.contact.ownHelper')}</p>
-            <ContactFields value={contact} onChange={onContactChange} />
-          </div>
-        )}
       </FormField>
     </>
   );

@@ -11,8 +11,8 @@ form:
     place: "Plats"
     booking: "Bokning och anmälan"
   booking:
-    exclusive: "Blockera platsen"
-    exclusiveHelper: "Platsen visas som upptagen i kalendern under evenemanget, så att ingen annan bokar den samtidigt."
+    exclusive: "Platsen är upptagen"
+    exclusiveHelper: "Ingen annan kan boka platsen i kalendern medan evenemanget pågår."
     rsvp: "Anmälan"
     rsvpHelper: "Besökare anmäler sig och bokar plats på evenemangssidan."
     capacityHelper: "Hur många som kan anmäla sig till varje tillfälle."
@@ -55,6 +55,9 @@ form:
     pick: "Välj en plats"
     search: "Sök bland platserna…"
     empty: "Ingen plats matchar."
+    placeHelper: "En av kommunens platser, med adress och ort."
+    ownHelper: "Någon annanstans: skriv namn, adress och ort."
+    addAddress: "Lägg till en adress i profilen"
   title:
     label: Titel
     helper: Ange ett namn på din aktivitet eller bokning
