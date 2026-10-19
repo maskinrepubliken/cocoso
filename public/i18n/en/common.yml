@@ -564,7 +564,6 @@ eventView:
     kinds: Categories
     places: Places
     when: When
-    more: More
   anytime:
     title: Any date
     detail: Everything coming up
@@ -577,9 +576,6 @@ eventView:
   week:
     title: Next 7 days
     detail: From today and a week on
-  rsvp:
-    title: With sign-up
-    detail: Only events you sign up for
   empty: No events match the choices.
   reset: Show all
 

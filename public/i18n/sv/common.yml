@@ -561,7 +561,6 @@ eventView:
     kinds: Kategorier
     places: Orter
     when: När
-    more: Mer
   anytime:
     title: Alla datum
     detail: Allt som är på gång
@@ -574,9 +573,6 @@ eventView:
   week:
     title: Kommande 7 dagar
     detail: Från idag och en vecka framåt
-  rsvp:
-    title: Med anmälan
-    detail: Bara evenemang man anmäler sig till
   empty: Inga evenemang matchar valen.
   reset: Visa alla
 
