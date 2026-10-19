@@ -3572,6 +3572,8 @@ body {
   max-width: 620px;
   position: relative;
   z-index: 2;
+  /* the title is sized by this column, so it keeps its desktop shape */
+  container-type: inline-size;
 }
 
 .home-hero-eyebrow {
@@ -3589,11 +3591,21 @@ body {
   color: var(--cocoso-colors-theme-800);
   font-family: var(--cocoso-font-display);
   font-variation-settings: 'SOFT' 60;
-  font-size: clamp(38px, 5.4vw, 62px);
+  /* As on a desktop at every width: the long second line
+     ("Evenemangskalender") filling the column, never wider */
+  font-size: min(62px, 10cqi);
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.02;
   text-wrap: balance;
+}
+
+/* Beside the desktop scene the column is wider than the room left
+   by it: the title also follows the screen there, as it always has */
+@media (min-width: 960px) {
+  .home-hero-title {
+    font-size: min(62px, 10cqi, 5.4vw);
+  }
 }
 
 .home-hero-tagline {
