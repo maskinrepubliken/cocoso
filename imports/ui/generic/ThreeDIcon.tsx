@@ -6,6 +6,7 @@ import React from 'react';
 // CSS can still resize the icon per breakpoint.
 export type ThreeDIconName =
   | 'at'
+  | 'backward'
   | 'bag'
   | 'bell'
   | 'bookmark'
@@ -28,6 +29,7 @@ export type ThreeDIconName =
   | 'file-text'
   | 'fire'
   | 'flag'
+  | 'forward'
   | 'gift'
   | 'girl'
   | 'gym'

@@ -6,8 +6,6 @@ import i18n from 'i18next';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import RepeatIcon from 'lucide-react/dist/esm/icons/repeat';
-import RewindIcon from 'lucide-react/dist/esm/icons/rewind';
-import FastForwardIcon from 'lucide-react/dist/esm/icons/fast-forward';
 
 if (Meteor.isClient) {
   import('react-big-calendar/lib/css/react-big-calendar.css');
@@ -15,6 +13,7 @@ if (Meteor.isClient) {
 import useMediaQuery from '/imports/api/_utils/useMediaQuery';
 import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import NewEntryHandler from '/imports/ui/forms/NewEntryHandler';
+import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 
 import NewCalendarActivity from './NewCalendarActivity';
 import DayView from './DayView';
@@ -86,16 +85,28 @@ function CalendarToolbar({
       <div className="rbc-toolbar">
         {/* As a player: back, today, forward */}
         <span className="rbc-btn-group cal-nav">
-          <button type="button" onClick={() => onNavigate('PREV')}>
-            <RewindIcon aria-hidden />
-            {messages.previous}
+          <button
+            type="button"
+            className="cal-nav-prev"
+            onClick={() => onNavigate('PREV')}
+          >
+            <ThreeDIcon name="backward" size={22} />
+            <span className="cal-nav-text">{messages.previous}</span>
           </button>
-          <button type="button" onClick={() => onNavigate('TODAY')}>
+          <button
+            type="button"
+            className="cal-nav-today"
+            onClick={() => onNavigate('TODAY')}
+          >
             {messages.today}
           </button>
-          <button type="button" onClick={() => onNavigate('NEXT')}>
-            {messages.next}
-            <FastForwardIcon aria-hidden />
+          <button
+            type="button"
+            className="cal-nav-next"
+            onClick={() => onNavigate('NEXT')}
+          >
+            <span className="cal-nav-text">{messages.next}</span>
+            <ThreeDIcon name="forward" size={22} />
           </button>
         </span>
         <span className="rbc-toolbar-label">{label}</span>
