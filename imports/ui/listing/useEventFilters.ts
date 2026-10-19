@@ -105,6 +105,11 @@ export default function useEventFilters(listing: 'activities' | 'calendar') {
   const resetAll = () =>
     setParams({ kind: null, filter: null, ort: null, when: null });
 
+  // A kind (or "Alla", with no key) picked in the strip: it, the strip's
+  // "Alla" and the Filter are one choice, so the menu's narrowing goes.
+  const pickFromStrip = (key: string) =>
+    setParams({ kind: key || null, filter: null, ort: null, when: null });
+
   return {
     locations,
     currentLocation,
@@ -121,5 +126,6 @@ export default function useEventFilters(listing: 'activities' | 'calendar') {
     setView,
     isNarrowed,
     resetAll,
+    pickFromStrip,
   };
 }

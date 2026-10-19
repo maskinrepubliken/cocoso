@@ -29,7 +29,6 @@ export default function ActivitiesHybrid({
     locations,
     kinds,
     oneKind,
-    setKinds,
     toggleKind,
     placeSlugs,
     togglePlace,
@@ -39,6 +38,7 @@ export default function ActivitiesHybrid({
     setView,
     isNarrowed,
     resetAll,
+    pickFromStrip,
   } = useEventFilters('activities');
 
   // Only kinds that some upcoming event has, so no chip is a dead end.
@@ -78,20 +78,23 @@ export default function ActivitiesHybrid({
         subject={oneKind ? tc(`eventKinds.subjects.${oneKind}`) : undefined}
       />
 
-      {/* The kinds as a strip of icons with small labels, the chosen ones
+      {/* The kinds as a strip of icons with small labels, the chosen one
           underlined in green; nothing boxed, so it is not another pill.
           A tap picks that one kind; the filter menu, at the right end and
           outside the strip (which scrolls sideways on a phone), picks
-          several, and places and days. */}
+          several, and places and days. "Alla", one kind and the Filter are
+          one choice: only one of them is underlined. */}
       <div className="kind-bar page-wrap">
         <div className="kind-strip">
           {presentKinds.length > 1 && (
             <>
               <button
                 type="button"
-                className={`kind-tile ${kinds.length ? '' : 'is-active'}`}
-                aria-pressed={!kinds.length}
-                onClick={() => setKinds([])}
+                className={`kind-tile ${
+                  !kinds.length && !isNarrowed ? 'is-active' : ''
+                }`}
+                aria-pressed={!kinds.length && !isNarrowed}
+                onClick={() => pickFromStrip('')}
               >
                 <ThreeDIcon name="star" size={36} />
                 <span>{tc('eventKinds.all')}</span>
@@ -100,12 +103,14 @@ export default function ActivitiesHybrid({
                 <button
                   key={kind.key}
                   type="button"
-                  aria-pressed={kinds.includes(kind.key)}
+                  aria-pressed={!isNarrowed && oneKind === kind.key}
                   className={`kind-tile ${
-                    kinds.includes(kind.key) ? 'is-active' : ''
+                    !isNarrowed && oneKind === kind.key ? 'is-active' : ''
                   }`}
                   onClick={() =>
-                    setKinds(oneKind === kind.key ? [] : [kind.key])
+                    pickFromStrip(
+                      !isNarrowed && oneKind === kind.key ? '' : kind.key
+                    )
                   }
                 >
                   <ThreeDIcon name={kind.icon} size={36} />
