@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { Calendar, dayjsLocalizer, type View } from 'react-big-calendar';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -43,6 +43,8 @@ interface Resource {
 interface CalendarViewProps {
   activities: CalendarActivity[];
   resources: Resource[];
+  // Shown at the end of the toolbar, after the views (the Filter)
+  toolbarEnd?: React.ReactNode;
   onSelect: (activity: CalendarActivity, e: React.SyntheticEvent) => void;
   onSelectSlot: (slotInfo: any) => void;
 }
@@ -57,6 +59,58 @@ function EventContent({ event }: { event: CalendarActivity }) {
       )}
       <span className="cal-event-text">{event.title}</span>
     </span>
+  );
+}
+
+// What goes at the end of the toolbar, handed down past react-big-calendar
+// (a context, so the toolbar stays one component and keeps its state).
+const ToolbarEndContext = createContext<React.ReactNode>(null);
+
+// react-big-calendar's toolbar as it was (same markup and classes, so the
+// same look), with something of our own beside it at the end. Beside, not
+// inside: the library styles every button in .rbc-toolbar.
+function CalendarToolbar({
+  label,
+  localizer,
+  onNavigate,
+  onView,
+  view,
+  views,
+}: any) {
+  const end = useContext(ToolbarEndContext);
+  const { messages } = localizer;
+  return (
+    <div className="cal-toolbar-row">
+      <div className="rbc-toolbar">
+        <span className="rbc-btn-group">
+          <button type="button" onClick={() => onNavigate('TODAY')}>
+            {messages.today}
+          </button>
+          <button type="button" onClick={() => onNavigate('PREV')}>
+            {messages.previous}
+          </button>
+          <button type="button" onClick={() => onNavigate('NEXT')}>
+            {messages.next}
+          </button>
+        </span>
+        <span className="rbc-toolbar-label">{label}</span>
+        {views.length > 1 && (
+          <span className="rbc-btn-group">
+            {views.map((name: View) => (
+              <button
+                key={name}
+                type="button"
+                className={view === name ? 'rbc-active' : ''}
+                onClick={() => onView(name)}
+              >
+                {messages[name]}
+              </button>
+            ))}
+          </span>
+        )}
+      </div>
+      {end && <div className="cal-toolbar-end">{end}</div>}
+    </div>
   );
 }
 
@@ -115,6 +169,7 @@ const VIEW_COMPONENTS = {
 export default function CalendarView({
   activities,
   resources,
+  toolbarEnd,
   onSelect,
   onSelectSlot,
 }: CalendarViewProps) {
@@ -190,11 +245,11 @@ export default function CalendarView({
   );
 
   return (
-    <>
+    <ToolbarEndContext.Provider value={toolbarEnd}>
       <Calendar
         allDayAccessor="isMultipleDay"
         className={`cal ${isNarrow ? 'is-narrow' : ''}`}
-        components={{ event: EventContent }}
+        components={{ event: EventContent, toolbar: CalendarToolbar }}
         culture={culture}
         date={date}
         dayLayoutAlgorithm="no-overlap"
@@ -235,6 +290,6 @@ export default function CalendarView({
           <NewCalendarActivity resources={resources} />
         </NewEntryHandler>
       ) : null}
-    </>
+    </ToolbarEndContext.Provider>
   );
 }
