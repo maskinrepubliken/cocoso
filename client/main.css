@@ -1566,54 +1566,11 @@ body {
   order: 3;
 }
 
-/* The back / today / forward buttons with their player icons */
-.rbc-toolbar .cal-nav button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.rbc-toolbar .cal-nav svg {
-  width: 15px;
-  height: 15px;
-  flex: none;
-}
-
-/* Too narrow for one line: centred, the month above, the buttons under it
-   (back and forth, the Filter and the views in a row) */
-@media (min-width: 721px) and (max-width: 1000px) {
-  .cal-toolbar-row {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-template-areas:
-      'label label label'
-      'nav filter views';
-    justify-content: center;
-    gap: 0.6rem 0.75rem;
-    align-items: center;
-  }
-  .rbc-calendar .cal-toolbar-row > .rbc-toolbar {
-    display: contents;
-  }
-  .cal-toolbar-row .rbc-toolbar-label {
-    grid-area: label;
-    text-align: center;
-  }
-  .cal-toolbar-row .rbc-btn-group:first-child {
-    grid-area: nav;
-  }
-  .cal-toolbar-row .rbc-btn-group:not(:first-child) {
-    grid-area: views;
-  }
-  .cal-toolbar-end {
-    grid-area: filter;
-  }
-}
-
+/* The Filter beside the toolbar: a pill like the button groups */
 .view-menu-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   height: 100%;
   min-height: 38px;
   padding: 3px 16px 3px 10px;
@@ -1638,54 +1595,147 @@ body {
   outline-offset: 2px;
 }
 
-.view-menu-pill {
-  gap: 8px;
+/* The back / today / forward buttons with their player icons */
+.rbc-toolbar .cal-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* The narrowest phones: the Filter pill and the gap a little slimmer so
-   the Filter and the views still share a line */
-@media (max-width: 359px) {
-  .cal-toolbar-row {
-    column-gap: 0.4rem !important;
-  }
-  .view-menu-pill {
-    gap: 6px;
-    padding: 3px 12px 3px 8px;
-  }
+/* the 3dicons backward and forward, in the switch's red to orange */
+.rbc-toolbar .cal-nav .threed-icon {
+  width: auto;
+  height: 14px;
+  flex: none;
 }
 
-/* A phone: all centred, the month on its own line, back and forth on the
-   next, the Filter and the views on the last */
-@media (max-width: 720px) {
+/* Smaller screens: all the tools on one paper card, as the text editor's
+   toolbar. The month between back and forward on top; under a line, on a
+   tinted strip, today, the views and the Filter. The toolbar and the back /
+   today / forward group give their parts to the card (display: contents),
+   so the buttons lose their own pills and share its paper. */
+@media (max-width: 1000px) {
   .cal-toolbar-row {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr auto 1fr auto;
     grid-template-areas:
-      'label label'
-      'nav nav'
-      'filter views';
-    justify-content: center;
-    gap: 0.5rem 0.6rem;
+      'prev label label label next'
+      'today . views . filter';
     align-items: center;
-    justify-items: center;
+    gap: 0;
+    border-radius: var(--cocoso-radius-kort);
+    background: var(--cocoso-papper);
+    box-shadow: inset 0 0 0 1px var(--cocoso-linje), var(--cocoso-skugga);
   }
-  .rbc-calendar .cal-toolbar-row > .rbc-toolbar {
+
+  /* the tinted strip under a line, as the editor's toolbar */
+  .cal-toolbar-row::before {
+    content: '';
+    grid-row: 2;
+    grid-column: 1 / -1;
+    align-self: stretch;
+    border-top: 1px solid var(--cocoso-linje);
+    border-radius: 0 0 var(--cocoso-radius-kort) var(--cocoso-radius-kort);
+    background: color-mix(
+      in srgb,
+      var(--cocoso-linje) 22%,
+      var(--cocoso-papper)
+    );
+  }
+
+  .rbc-calendar .cal-toolbar-row > .rbc-toolbar,
+  .cal-toolbar-row .rbc-btn-group.cal-nav {
     display: contents;
   }
-  .cal-toolbar-row .rbc-toolbar-label {
+
+  .rbc-calendar .cal-toolbar-row .rbc-toolbar-label {
     grid-area: label;
-    padding: 0;
+    padding: 12px 4px 11px;
     font-size: 1.2rem;
     text-align: center;
   }
-  .cal-toolbar-row .rbc-btn-group:first-child {
-    grid-area: nav;
+
+  /* the buttons on the card's paper, no pills of their own */
+  .cal-toolbar-row .rbc-btn-group {
+    padding: 0;
+    background: none;
+    box-shadow: none;
   }
-  .cal-toolbar-row .rbc-btn-group:not(:first-child) {
+
+  .cal-toolbar-row .cal-nav-prev {
+    grid-area: prev;
+    margin-left: 6px !important;
+  }
+
+  .cal-toolbar-row .cal-nav-next {
+    grid-area: next;
+    margin-right: 6px !important;
+  }
+
+  .cal-toolbar-row .cal-nav-today {
+    grid-area: today;
+    margin: 5px 0 5px 6px !important;
+  }
+
+  .cal-toolbar-row .rbc-btn-group:not(.cal-nav) {
     grid-area: views;
+    margin: 5px 0;
   }
+
   .cal-toolbar-end {
     grid-area: filter;
+    margin: 5px 6px 5px 0;
+  }
+
+  .cal-toolbar-row .view-menu-pill {
+    min-height: 34px;
+    background: none;
+    box-shadow: none;
+  }
+
+  .cal-toolbar-row .view-menu-pill:hover,
+  .cal-toolbar-row .view-menu-pill.is-open {
+    background: var(--cocoso-colors-theme-100);
+  }
+}
+
+/* A phone: back and forward as their icons only, the views a little
+   tighter, so the strip holds today, the views and the Filter */
+@media (max-width: 560px) {
+  .cal-toolbar-row .cal-nav-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .cal-toolbar-row .rbc-toolbar-label {
+    font-size: 1.1rem;
+  }
+
+  .rbc-toolbar .rbc-btn-group button,
+  .rbc-toolbar .rbc-btn-group > button:first-child:not(:last-child),
+  .rbc-toolbar .rbc-btn-group > button:last-child:not(:first-child),
+  .rbc-toolbar .rbc-btn-group > button:not(:first-child):not(:last-child) {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .cal-toolbar-row .view-menu-pill {
+    padding: 3px 10px 3px 6px;
+  }
+}
+
+/* The narrowest: the Filter as its switch alone */
+@media (max-width: 359px) {
+  .cal-toolbar-row .view-menu-pill > :not(.filter-switch) {
+    display: none;
+  }
+
+  .cal-toolbar-row .view-menu-pill {
+    font-size: 0;
+    padding: 3px 6px;
   }
 }
 
