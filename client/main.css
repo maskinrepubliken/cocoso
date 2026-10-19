@@ -4720,6 +4720,11 @@ body {
   display: none;
 }
 
+/* a little lower still, nearer its label */
+.view-menu-button .filter-switch {
+  translate: 0 5px;
+}
+
 /* The switch sits at the foot of the icon's box, close to its label,
    which stays on the line of the kinds' labels */
 .view-menu-icon {
