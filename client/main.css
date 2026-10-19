@@ -4787,7 +4787,7 @@ body {
 
 /* a little lower still, nearer its label */
 .view-menu-button .filter-switch {
-  translate: 0 5px;
+  translate: 0 3px;
 }
 
 /* The switch sits at the foot of the icon's box, close to its label,
