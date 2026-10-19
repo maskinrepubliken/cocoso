@@ -4443,12 +4443,20 @@ body {
 /* The kinds on the events page: a strip of 3D icons with small
    uppercase labels, centred, nothing boxed. The chosen one carries a
    green bar under its label. */
+/* The kinds and, at the end, the view menu */
+.kind-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* auto at the sides keeps .page-wrap centred on a wide screen */
+  margin: 4px auto 1.25rem;
+}
+
 .kind-strip {
   display: flex;
   justify-content: center;
   gap: 4px;
-  /* auto at the sides keeps .page-wrap centred on a wide screen */
-  margin: 4px auto 1.25rem;
+  min-width: 0;
 }
 
 .kind-tile {
@@ -4522,6 +4530,110 @@ body {
   outline-offset: 2px;
 }
 
+/* The view menu at the end of the kinds (EventViewMenu.tsx): a tile like
+   them, a little apart, opening a panel in the header's menu style */
+.view-menu {
+  position: relative;
+  flex: none;
+  margin-left: 14px;
+  padding-left: 14px;
+  border-left: 1px solid var(--cocoso-linje);
+}
+
+@media (max-width: 599px) {
+  .view-menu {
+    margin-left: 4px;
+    padding-left: 4px;
+  }
+}
+
+.view-menu-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 40px;
+}
+
+.view-menu-button.is-open {
+  color: var(--cocoso-colors-theme-800);
+}
+
+/* on while anything narrows the list */
+.view-menu-dot {
+  position: absolute;
+  top: 2px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--cocoso-season-golv, var(--cocoso-papper));
+  border-radius: 999px;
+  background: var(--cocoso-tegel);
+}
+
+.view-menu-panel {
+  --site-ink: var(--cocoso-colors-theme-800);
+  --site-ink-soft: var(--cocoso-colors-theme-700);
+  top: calc(100% + 6px);
+  right: 0;
+  left: auto;
+  width: min(320px, calc(100vw - 2 * var(--cocoso-gutter)));
+  font-family: var(--cocoso-font-ui);
+  text-align: left;
+}
+
+.view-menu-heading {
+  margin: 8px 10px 4px;
+  color: var(--cocoso-mylla-soft);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.view-menu-heading:first-child {
+  margin-top: 4px;
+}
+
+.view-menu-row {
+  width: 100%;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.view-menu-row .site-menu-row-text {
+  flex: 1;
+}
+
+.view-menu-check {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.view-empty {
+  margin-top: 8px;
+  margin-bottom: 24px;
+  color: var(--cocoso-mylla-soft);
+  font-style: italic;
+  text-align: center;
+}
+
+.view-empty button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cocoso-colors-theme-700);
+  font: inherit;
+  font-style: normal;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
 @media (max-width: 720px) {
   /* Narrow: the switch under the heading instead of beside it */
   .page-heading-row {
@@ -4541,6 +4653,7 @@ body {
 @media (max-width: 599px) {
   /* Phone: the strip scrolls sideways, starting at the gutter */
   .kind-strip {
+    flex: 1 1 auto;
     justify-content: flex-start;
     overflow-x: auto;
     padding-bottom: 4px;

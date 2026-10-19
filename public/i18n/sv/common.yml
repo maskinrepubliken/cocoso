@@ -554,6 +554,37 @@ eventKinds:
     label: Typ av evenemang
     helper: Hjälper användare hitta ditt evenemang.
     none: Inget särskilt slag
+# The view menu at the end of the kinds on the events page
+eventView:
+  button: Visa
+  headings:
+    show: Visa
+    when: När
+    more: Mer
+  upcoming:
+    title: Kommande
+    detail: Från idag och framåt
+  past:
+    title: Tidigare
+    detail: Det som redan har varit
+  anytime:
+    title: Alla datum
+    detail: Allt som är på gång
+  today:
+    title: Idag
+    detail: Det som händer idag
+  weekend:
+    title: I helgen
+    detail: Lördag och söndag
+  week:
+    title: Kommande 7 dagar
+    detail: Från idag och en vecka framåt
+  rsvp:
+    title: Med anmälan
+    detail: Bara evenemang man anmäler sig till
+  empty: Inga evenemang matchar valen.
+  reset: Visa alla
+
 search:
   open: Sök
   past: Avslutat
