@@ -558,6 +558,8 @@ eventKinds:
 eventView:
   button: Filter
   headings:
+    kinds: Kategorier
+    places: Orter
     when: När
     more: Mer
   anytime:

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
+import { useAtomValue } from 'jotai';
 
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +9,8 @@ import PageHeading, { PlaceNotice } from './PageHeading';
 import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
 import ThreeDIcon from '../generic/ThreeDIcon';
+import { locationsAtom } from '/imports/state';
+import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { EVENT_KINDS } from '../pages/activities/eventKinds';
 import EventViewMenu, {
   type EventView,
@@ -29,15 +32,58 @@ export default function ActivitiesHybrid({
   const site = { ...siteDoc };
   const [tc] = useTranslation('common');
   const openEntry = useOpenEntry('activities');
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const kindFilter = searchParams.get('kind') || '';
-  const setKind = (key: string) =>
+  const locations = useAtomValue(locationsAtom);
+  const currentLocation = useCurrentLocation();
+
+  const listParam = (name: string) =>
+    (searchParams.get(name) || '').split(',').filter(Boolean);
+  const setParams = (change: Record<string, string | null>) =>
     setSearchParams((params) => {
       const next = new URLSearchParams(params);
-      if (key) next.set('kind', key);
-      else next.delete('kind');
+      Object.entries(change).forEach(([key, value]) => {
+        if (value) next.set(key, value);
+        else next.delete(key);
+      });
       return next;
     });
+
+  // The chosen kinds: one from the strip, any number from the filter menu
+  const kinds = listParam('kind');
+  const oneKind = kinds.length === 1 ? kinds[0] : '';
+  const setKinds = (keys: string[]) => setParams({ kind: keys.join(',') });
+  const toggleKind = (key: string) =>
+    setKinds(
+      kinds.includes(key) ? kinds.filter((k) => k !== key) : [...kinds, key]
+    );
+
+  // The chosen places (orter). Inside a place it is that one, and the list
+  // only holds its events; choosing more goes to the whole municipality
+  // with all of them chosen.
+  const placeSlugs = currentLocation
+    ? [currentLocation.slug]
+    : listParam('ort');
+  const togglePlace = (slug: string) => {
+    const next = placeSlugs.includes(slug)
+      ? placeSlugs.filter((s) => s !== slug)
+      : [...placeSlugs, slug];
+    if (!currentLocation) {
+      setParams({ ort: next.join(',') });
+      return;
+    }
+    const params = new URLSearchParams(searchParams);
+    if (next.length) params.set('ort', next.join(','));
+    else params.delete('ort');
+    const query = params.toString();
+    navigate(`/activities${query ? `?${query}` : ''}`);
+  };
+  const placeIds = new Set(
+    locations
+      .filter((location: any) => placeSlugs.includes(location.slug))
+      .map((location: any) => location._id)
+  );
+
   // Only kinds that some upcoming event has, so no chip is a dead end.
   const presentKinds = useMemo(() => {
     const keys = new Set(
@@ -46,9 +92,8 @@ export default function ActivitiesHybrid({
     return EVENT_KINDS.filter((kind) => keys.has(kind.key));
   }, [activities]);
 
-  // Upcoming or past, a stretch of days and only those with sign-up,
-  // from the menu at the end of the kinds; all in the address, keeping
-  // the chosen kind.
+  // Past or upcoming, a stretch of days and only those with sign-up, from
+  // the filter menu; all in the address, as the kinds and places.
   const when = (searchParams.get('when') || '') as EventWhen;
   const view: EventView = {
     showPast: Boolean(showPast),
@@ -56,20 +101,12 @@ export default function ActivitiesHybrid({
     rsvp: searchParams.get('rsvp') === '1',
   };
   const setView = (change: Partial<EventView>) =>
-    setSearchParams((params) => {
-      const next = new URLSearchParams(params);
-      if (change.showPast !== undefined) {
-        next.set('showPast', change.showPast ? 'true' : 'false');
-      }
-      if (change.when !== undefined) {
-        if (change.when) next.set('when', change.when);
-        else next.delete('when');
-      }
-      if (change.rsvp !== undefined) {
-        if (change.rsvp) next.set('rsvp', '1');
-        else next.delete('rsvp');
-      }
-      return next;
+    setParams({
+      ...(change.showPast !== undefined
+        ? { showPast: change.showPast ? 'true' : 'false' }
+        : {}),
+      ...(change.when !== undefined ? { when: change.when || null } : {}),
+      ...(change.rsvp !== undefined ? { rsvp: change.rsvp ? '1' : null } : {}),
     });
 
   const groupsInMenu = site?.settings?.menu?.find(
@@ -79,17 +116,27 @@ export default function ActivitiesHybrid({
   const groupsLabel = groupsInMenu?.label;
 
   // Every event as a card, weekly ones too; the start page has the day and
-  // week overviews.
+  // week overviews. Chosen places keep the events for the whole
+  // municipality too, as a place's own page does.
+  const kindsKey = kinds.join(',');
+  const placesKey = [...placeIds].join(',');
   const cardActivities = useMemo(
     () =>
       activities.filter(
         (activity: any) =>
-          (!kindFilter || activity.category?.key === kindFilter) &&
+          (!kinds.length || kinds.includes(activity.category?.key)) &&
+          (currentLocation ||
+            !placeIds.size ||
+            placeIds.has(activity.locationId) ||
+            (!activity.locationId && !activity.isMunicipalityOnly)) &&
           happensWithin(activity, view.when) &&
           (!view.rsvp || activity.isRegistrationEnabled)
       ),
-    [activities, kindFilter, view.when, view.rsvp]
+    [activities, kindsKey, placesKey, view.when, view.rsvp]
   );
+
+  const resetAll = () =>
+    setParams({ kind: null, ort: null, when: null, rsvp: null });
 
   return (
     <>
@@ -98,25 +145,24 @@ export default function ActivitiesHybrid({
         listing="activities"
         hideDescription
         hidePlace
-        title={kindFilter ? tc(`eventKinds.headings.${kindFilter}`) : undefined}
-        subject={
-          kindFilter ? tc(`eventKinds.subjects.${kindFilter}`) : undefined
-        }
+        title={oneKind ? tc(`eventKinds.headings.${oneKind}`) : undefined}
+        subject={oneKind ? tc(`eventKinds.subjects.${oneKind}`) : undefined}
       />
 
-      {/* The kinds as a strip of icons with small labels, the chosen one
+      {/* The kinds as a strip of icons with small labels, the chosen ones
           underlined in green; nothing boxed, so it is not another pill.
-          The view menu ends the row, a little apart and outside the
-          strip, which scrolls sideways on a phone. */}
+          A tap picks that one kind; the filter menu, at the right end and
+          outside the strip (which scrolls sideways on a phone), picks
+          several, and places, days and sign-up. */}
       <div className="kind-bar page-wrap">
         <div className="kind-strip">
           {presentKinds.length > 1 && (
             <>
               <button
                 type="button"
-                className={`kind-tile ${kindFilter ? '' : 'is-active'}`}
-                aria-pressed={!kindFilter}
-                onClick={() => setKind('')}
+                className={`kind-tile ${kinds.length ? '' : 'is-active'}`}
+                aria-pressed={!kinds.length}
+                onClick={() => setKinds([])}
               >
                 <ThreeDIcon name="star" size={36} />
                 <span>{tc('eventKinds.all')}</span>
@@ -125,12 +171,12 @@ export default function ActivitiesHybrid({
                 <button
                   key={kind.key}
                   type="button"
-                  aria-pressed={kindFilter === kind.key}
+                  aria-pressed={kinds.includes(kind.key)}
                   className={`kind-tile ${
-                    kindFilter === kind.key ? 'is-active' : ''
+                    kinds.includes(kind.key) ? 'is-active' : ''
                   }`}
                   onClick={() =>
-                    setKind(kindFilter === kind.key ? '' : kind.key)
+                    setKinds(oneKind === kind.key ? [] : [kind.key])
                   }
                 >
                   <ThreeDIcon name={kind.icon} size={36} />
@@ -140,16 +186,29 @@ export default function ActivitiesHybrid({
             </>
           )}
         </div>
-        <EventViewMenu view={view} onChange={setView} />
+        <EventViewMenu
+          isNarrowed={
+            Boolean(view.when) ||
+            view.rsvp ||
+            kinds.length > 1 ||
+            (!currentLocation && placeSlugs.length > 0)
+          }
+          kinds={presentKinds}
+          locations={locations}
+          places={placeSlugs}
+          selectedKinds={kinds}
+          view={view}
+          onChange={setView}
+          onToggleKind={toggleKind}
+          onTogglePlace={togglePlace}
+        />
       </div>
 
       {/* Under the kinds: inside a place, the line saying so */}
       <div className="page-wrap place-notice-row">
         <PlaceNotice
           listing="activities"
-          subject={
-            kindFilter ? tc(`eventKinds.subjects.${kindFilter}`) : undefined
-          }
+          subject={oneKind ? tc(`eventKinds.subjects.${oneKind}`) : undefined}
         />
       </div>
 
@@ -157,13 +216,7 @@ export default function ActivitiesHybrid({
       {cardActivities.length === 0 && activities.length > 0 && (
         <p className="view-empty page-wrap">
           {tc('eventView.empty')}{' '}
-          <button
-            type="button"
-            onClick={() => {
-              setKind('');
-              setView({ when: '', rsvp: false });
-            }}
-          >
+          <button type="button" onClick={resetAll}>
             {tc('eventView.reset')}
           </button>
         </p>
