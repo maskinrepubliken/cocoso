@@ -1532,6 +1532,89 @@ body {
   font-weight: 700;
 }
 
+/* The toolbar and, beside it at the end, the Filter (CalendarView.tsx):
+   a pill like the button groups, with the toggle icon */
+.cal-toolbar-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.rbc-calendar .cal-toolbar-row > .rbc-toolbar {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.cal-toolbar-end {
+  flex: none;
+}
+
+/* Too narrow for one line, wide enough for two: back, month and Filter on
+   the first, the views centred under them */
+@media (min-width: 721px) and (max-width: 1000px) {
+  .cal-toolbar-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'nav label filter'
+      'views views views';
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+  }
+  .rbc-calendar .cal-toolbar-row > .rbc-toolbar {
+    display: contents;
+  }
+  .cal-toolbar-row .rbc-btn-group:first-child {
+    grid-area: nav;
+  }
+  .cal-toolbar-row .rbc-toolbar-label {
+    grid-area: label;
+  }
+  .cal-toolbar-row .rbc-btn-group:not(:first-child) {
+    grid-area: views;
+    justify-self: center;
+  }
+  .cal-toolbar-end {
+    grid-area: filter;
+  }
+}
+
+.view-menu-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  min-height: 38px;
+  padding: 3px 16px 3px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga-kort);
+  color: var(--cocoso-mylla);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-menu-pill:hover,
+.view-menu-pill.is-open {
+  background: var(--cocoso-colors-theme-100);
+}
+
+.view-menu-pill:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 2px;
+}
+
+.view-menu-pill {
+  gap: 8px;
+}
+
 @media (max-width: 720px) {
   .rbc-calendar .rbc-toolbar {
     display: grid;
@@ -1539,6 +1622,29 @@ body {
     grid-template-areas:
       'label views'
       'nav nav';
+  }
+  /* One grid for the toolbar's parts and the Filter: the month and the
+     views on the first line, the day and week buttons and the Filter on
+     the second */
+  .cal-toolbar-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'label views'
+      'nav nav';
+    gap: 0.5rem 0.75rem;
+    align-items: center;
+  }
+  .rbc-calendar .cal-toolbar-row > .rbc-toolbar {
+    display: contents;
+  }
+  /* the second line across: back and forth on the left, Filter right */
+  .cal-toolbar-row .rbc-toolbar .rbc-btn-group:first-child {
+    justify-self: start;
+  }
+  .cal-toolbar-end {
+    grid-area: 2 / 1 / 3 / 3;
+    justify-self: end;
   }
   .rbc-toolbar .rbc-toolbar-label {
     font-size: 1.2rem;
@@ -1550,7 +1656,7 @@ body {
     grid-area: nav;
     justify-self: end;
   }
-  .rbc-toolbar .rbc-btn-group:last-child {
+  .rbc-toolbar .rbc-btn-group:not(:first-child) {
     grid-area: views;
   }
 }
@@ -4607,16 +4713,63 @@ body {
   color: var(--cocoso-colors-theme-800);
 }
 
-/* on while anything narrows the list */
-.view-menu-dot {
-  position: absolute;
-  top: 2px;
-  right: -4px;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--cocoso-season-golv, var(--cocoso-papper));
+/* The Filter's switch (FilterSwitch in EventViewMenu.tsx): the toggle
+   icon's red to orange track and silver knob, in CSS. Off: a quiet track,
+   knob left. On, while anything is filtered: the colour, knob right. */
+.filter-switch {
+  --switch-w: 46px;
+  --switch-h: 26px;
+  --switch-pad: 3px;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: var(--switch-w);
+  height: var(--switch-h);
   border-radius: 999px;
-  background: var(--cocoso-tegel);
+  background: linear-gradient(180deg, #e4ddcf 0%, #d6cebd 100%);
+  box-shadow: inset 0 2px 3px rgba(60, 40, 20, 0.18),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.6);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.filter-switch.is-small {
+  --switch-w: 34px;
+  --switch-h: 20px;
+  --switch-pad: 2px;
+}
+
+.filter-switch.is-on {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      transparent 45%
+    ),
+    linear-gradient(90deg, #b3233a 0%, #d63d3c 50%, #ee7b33 100%);
+  box-shadow: inset 0 -3px 4px rgba(110, 15, 25, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 3px 7px -3px rgba(150, 40, 25, 0.55);
+}
+
+.filter-switch-knob {
+  position: absolute;
+  top: var(--switch-pad);
+  left: var(--switch-pad);
+  width: calc(var(--switch-h) - 2 * var(--switch-pad));
+  height: calc(var(--switch-h) - 2 * var(--switch-pad));
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #ffffff 0%,
+    #eef0f1 40%,
+    #c5cacd 100%
+  );
+  box-shadow: 0 2px 3px rgba(40, 20, 10, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.12);
+  transition: translate 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.filter-switch.is-on .filter-switch-knob {
+  translate: calc(var(--switch-w) - var(--switch-h)) 0;
 }
 
 .view-menu-panel {
@@ -5333,6 +5486,7 @@ body {
   #filtrer-sorter,
   .szh-accordion__item-btn,
   .rbc-toolbar .rbc-btn-group,
+  .cal-toolbar-end,
   main form {
     display: none !important;
   }

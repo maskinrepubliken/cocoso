@@ -190,30 +190,30 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
 
       <PageHeading site={site || siteDoc} listing="calendar" />
 
-      {/* The filter tile at the right edge, as at the end of the kinds on
-          the events page */}
-      <div className="kind-bar page-wrap">
-        <EventViewMenu
-          isNarrowed={
-            filters.kinds.length > 0 ||
-            (!filters.currentLocation && filters.placeSlugs.length > 0)
-          }
-          kinds={presentKinds}
-          locations={filters.locations}
-          places={filters.placeSlugs}
-          selectedKinds={filters.kinds}
-          view={filters.view}
-          withTime={false}
-          onChange={filters.setView}
-          onToggleKind={filters.toggleKind}
-          onTogglePlace={filters.togglePlace}
-        />
-      </div>
-
       {/* The calendar itself spans the whole viewport, gutter to gutter */}
       <div className="cal-full">
         <CalendarView
           activities={allFilteredActsWithColors}
+          toolbarEnd={
+            /* The same Filter as on the events page, as a pill at the end
+               of the toolbar, after the views */
+            <EventViewMenu
+              isNarrowed={
+                filters.kinds.length > 0 ||
+                (!filters.currentLocation && filters.placeSlugs.length > 0)
+              }
+              kinds={presentKinds}
+              locations={filters.locations}
+              places={filters.placeSlugs}
+              selectedKinds={filters.kinds}
+              view={filters.view}
+              variant="pill"
+              withTime={false}
+              onChange={filters.setView}
+              onToggleKind={filters.toggleKind}
+              onTogglePlace={filters.togglePlace}
+            />
+          }
           resources={resources}
           onSelect={handleSelectActivity}
           onSelectSlot={handleSelectSlot}

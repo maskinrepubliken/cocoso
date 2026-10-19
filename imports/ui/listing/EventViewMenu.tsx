@@ -50,6 +50,25 @@ export const happensWithin = (activity: any, when: EventWhen) => {
   );
 };
 
+// A real switch, drawn in CSS in the toggle icon's red to orange with a
+// silver knob: on (knob right, in colour) while anything is filtered
+function FilterSwitch({
+  isOn,
+  size = 'large',
+}: {
+  isOn: boolean;
+  size?: 'large' | 'small';
+}) {
+  return (
+    <span
+      aria-hidden
+      className={`filter-switch is-${size} ${isOn ? 'is-on' : ''}`}
+    >
+      <span className="filter-switch-knob" />
+    </span>
+  );
+}
+
 interface EventViewMenuProps {
   view: EventView;
   // The kinds there are events of, and those chosen
@@ -63,13 +82,16 @@ interface EventViewMenuProps {
   // Past or upcoming and the stretch of days; not in the calendar, where
   // one moves between days and weeks instead
   withTime?: boolean;
+  // A tile like the kinds (events page) or a pill like the calendar's
+  // toolbar buttons
+  variant?: 'tile' | 'pill';
   onChange: (view: Partial<EventView>) => void;
   onToggleKind: (key: string) => void;
   onTogglePlace: (slug: string) => void;
 }
 
 // The toggle at the end of the kinds: a menu in the header's popup style
-// with the ways to narrow the events; a dot on the button while any is on.
+// with the ways to narrow the events; its switch is on while any is.
 export default function EventViewMenu({
   view,
   kinds,
@@ -78,6 +100,7 @@ export default function EventViewMenu({
   places,
   isNarrowed,
   withTime = true,
+  variant = 'tile',
   onChange,
   onToggleKind,
   onTogglePlace,
@@ -160,19 +183,31 @@ export default function EventViewMenu({
 
   return (
     <div className="view-menu" ref={rootRef}>
-      <button
-        type="button"
-        className={`kind-tile view-menu-button ${open ? 'is-open' : ''}`}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        onClick={() => setOpen(!open)}
-      >
-        <span className="view-menu-icon">
-          <ThreeDIcon name="toggle" size={36} />
-          {isNarrowed && <span className="view-menu-dot" aria-hidden />}
-        </span>
-        <span>{tc('eventView.button')}</span>
-      </button>
+      {variant === 'pill' ? (
+        <button
+          type="button"
+          className={`view-menu-pill ${open ? 'is-open' : ''}`}
+          aria-expanded={open}
+          aria-haspopup="menu"
+          onClick={() => setOpen(!open)}
+        >
+          <FilterSwitch isOn={isNarrowed} size="small" />
+          {tc('eventView.button')}
+        </button>
+      ) : (
+        <button
+          type="button"
+          className={`kind-tile view-menu-button ${open ? 'is-open' : ''}`}
+          aria-expanded={open}
+          aria-haspopup="menu"
+          onClick={() => setOpen(!open)}
+        >
+          <span className="view-menu-icon">
+            <FilterSwitch isOn={isNarrowed} />
+          </span>
+          <span>{tc('eventView.button')}</span>
+        </button>
+      )}
 
       {open && (
         <div className="site-menu-panel view-menu-panel" role="menu">
