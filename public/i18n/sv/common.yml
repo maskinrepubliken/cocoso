@@ -556,17 +556,10 @@ eventKinds:
     none: Inget särskilt slag
 # The view menu at the end of the kinds on the events page
 eventView:
-  button: Visa
+  button: Filter
   headings:
-    show: Visa
     when: När
     more: Mer
-  upcoming:
-    title: Kommande
-    detail: Från idag och framåt
-  past:
-    title: Tidigare
-    detail: Det som redan har varit
   anytime:
     title: Alla datum
     detail: Allt som är på gång

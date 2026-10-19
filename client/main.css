@@ -4581,6 +4581,16 @@ body {
   text-align: left;
 }
 
+/* Tidigare | Kommande at the top of the panel, across its width */
+.view-menu-seg {
+  display: flex;
+  margin: 4px 4px 2px;
+}
+
+.view-menu-seg .seg-button {
+  flex: 1;
+}
+
 .view-menu-heading {
   margin: 8px 10px 4px;
   color: var(--cocoso-mylla-soft);
