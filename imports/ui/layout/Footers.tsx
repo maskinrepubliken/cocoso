@@ -8,6 +8,7 @@ import InfoIcon from 'lucide-react/dist/esm/icons/info';
 import LogInIcon from 'lucide-react/dist/esm/icons/log-in';
 
 import { currentUserAtom, pageTitlesAtom } from '/imports/state';
+import { isMenuItemShown } from '/imports/api/_utils/features';
 import { parseTitle } from '/imports/api/_utils/shared';
 
 import FeedbackForm from './FeedbackForm';
@@ -35,7 +36,7 @@ export function Footer({ site }: FooterProps) {
   }
 
   const { settings } = site;
-  const activeMenu = settings?.menu?.filter((item: any) => item.isVisible);
+  const activeMenu = settings?.menu?.filter(isMenuItemShown);
   const aboutPage = pageTitles?.[0];
 
   const routeFor = (item: any) =>

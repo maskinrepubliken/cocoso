@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import { useAtomValue } from 'jotai';
 
+import { isMenuItemShown } from '/imports/api/_utils/features';
 import { canCreateContentAtom, roleAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
@@ -38,7 +39,7 @@ export default function NewButton({ site }: NewButtonProps) {
   // The sections one can create in, as the menu lists them. Info pages and
   // places are the admins' to add.
   const creatable = (site?.settings?.menu || [])
-    .filter((item: any) => item.isVisible && !item.isComposablePage)
+    .filter((item: any) => isMenuItemShown(item) && !item.isComposablePage)
     .filter((item: any) => item.name !== 'people')
     .filter(
       (item: any) => isAdmin || !['info', 'resources'].includes(item.name)

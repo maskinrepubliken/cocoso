@@ -1,6 +1,7 @@
 import { Trans } from 'react-i18next';
 import React from 'react';
 
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { Code } from '/imports/ui/core';
 
 const getMenuLabel = (menuItems, key) => (
@@ -93,7 +94,7 @@ const getAdminRoutes = (menuItems) => [
         value: '/admin/listing/works',
         description: <Trans i18nKey="admin:menu.info.works" />,
       },
-    ],
+    ].filter((item) => isFeatureEnabled(item.value.split('/').pop())),
   },
   {
     label: <Trans i18nKey="admin:users.title" />,

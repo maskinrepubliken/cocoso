@@ -15,6 +15,7 @@ import {
   Tabs,
   Text,
 } from '/imports/ui/core';
+import { isMenuItemShown } from '/imports/api/_utils/features';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import FormField from '/imports/ui/forms/FormField';
@@ -107,6 +108,7 @@ export default function ContentInserter({ onSelect }) {
   const menu = site?.settings?.menu;
   const activitiesInMenu = menu?.find((item) => item.name === 'activities');
   const worksInMenu = menu?.find((item) => item.name === 'works');
+  const showWorks = isMenuItemShown(worksInMenu);
 
   const getActivities = async () => {
     setActivitiesLoading(true);
@@ -203,7 +205,7 @@ export default function ContentInserter({ onSelect }) {
 
   const activitiesFiltered =
     activitiesInMenu?.isVisible && getActivitiesFiltered();
-  const worksFiltered = worksInMenu?.isVisible && getWorksFiltered();
+  const worksFiltered = showWorks && getWorksFiltered();
 
   const tabs = [];
 
@@ -215,9 +217,9 @@ export default function ContentInserter({ onSelect }) {
     });
   }
 
-  if (worksInMenu?.isVisible) {
+  if (showWorks) {
     tabs.push({
-      title: worksInMenu.label,
+      title: worksInMenu?.label,
       items: worksFiltered,
       onClick: () => setActiveTab(1),
     });
@@ -270,7 +272,7 @@ export default function ContentInserter({ onSelect }) {
           </Box>
         )}
 
-        {activeTab === 1 && worksInMenu?.isVisible && (
+        {activeTab === 1 && showWorks && (
           <Box>
             {!worksLoading ? (
               <List bg="papper">

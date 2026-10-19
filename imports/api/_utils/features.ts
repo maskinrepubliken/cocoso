@@ -19,21 +19,22 @@ export function isFeatureEnabled(name: string): boolean {
 }
 
 // A menu item shows when an admin made it visible and its feature is on.
-export function isMenuItemShown(item: {
-  name: string;
-  isVisible?: boolean;
-}): boolean {
-  return Boolean(item?.isVisible) && isFeatureEnabled(item.name);
+export function isMenuItemShown(
+  item?: { name: string; isVisible?: boolean } | null
+): boolean {
+  return Boolean(item?.isVisible) && isFeatureEnabled(item!.name);
 }
+
+type Method = (this: unknown, ...args: unknown[]) => unknown;
 
 // Wraps a module's methods so that, with the feature off, the listing
 // methods named in `lists` return [] and every other method throws.
-export function featureMethods<T extends Record<string, Function>>(
+export function featureMethods<T extends Record<string, Method>>(
   feature: Feature,
   lists: (keyof T)[],
   methods: T
 ): T {
-  const wrapped = {} as Record<string, Function>;
+  const wrapped = {} as Record<string, Method>;
   Object.entries(methods).forEach(([name, method]) => {
     wrapped[name] = function featureGuarded(this: unknown, ...args: unknown[]) {
       if (isFeatureEnabled(feature)) {

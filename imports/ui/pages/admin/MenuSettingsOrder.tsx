@@ -10,6 +10,7 @@ import { useAtom } from 'jotai';
 import { siteAtom } from '/imports/state';
 import { updateSiteSettings } from '/imports/actions';
 import { Box, Button, Flex, Heading, IconButton, Text } from '/imports/ui/core';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { call } from '/imports/api/_utils/shared';
 import { MenuItem } from '/imports/ui/types';
 
@@ -121,7 +122,8 @@ export default function MenuSettingsOrder() {
   };
 
   const listingPageOptions = localMenu?.filter(
-    (item) => !item.isComposablePage && !item.isVisible
+    (item) =>
+      !item.isComposablePage && !item.isVisible && isFeatureEnabled(item.name)
   );
 
   const isButtonDisabled =

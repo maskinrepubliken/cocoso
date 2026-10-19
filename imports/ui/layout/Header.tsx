@@ -8,6 +8,7 @@ import LayoutGridIcon from 'lucide-react/dist/esm/icons/layout-grid';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
+import { isMenuItemShown } from '/imports/api/_utils/features';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { parseTitle } from '/imports/api/_utils/shared';
@@ -48,17 +49,15 @@ export function getMenuItems(
     ? [{ name: 'home', label: homeLabel, route: prefix || '/' }]
     : [];
   return home.concat(
-    menu
-      .filter((item: any) => item.isVisible)
-      .map((item: any) => ({
-        name: item.name,
-        label: item.label,
-        description: item.description,
-        isComposablePage: item.isComposablePage,
-        route: item.isComposablePage
-          ? `${prefix}/cp/${item.name}`
-          : `${prefix}/${item.name}`,
-      }))
+    menu.filter(isMenuItemShown).map((item: any) => ({
+      name: item.name,
+      label: item.label,
+      description: item.description,
+      isComposablePage: item.isComposablePage,
+      route: item.isComposablePage
+        ? `${prefix}/cp/${item.name}`
+        : `${prefix}/${item.name}`,
+    }))
   );
 }
 

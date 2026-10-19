@@ -17,6 +17,7 @@ import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { locationsAtom } from '/imports/state';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { isMenuItemShown } from '/imports/api/_utils/features';
 import { publicUrl } from '/imports/api/_utils/shared';
 
 import type { SlugData } from './SlugHandler';
@@ -69,7 +70,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
 
   const menu = siteDoc?.settings?.menu || [];
   const isVisible = (name: string) =>
-    menu.find((item: any) => item.name === name)?.isVisible;
+    isMenuItemShown(menu.find((item: any) => item.name === name));
   const prefix = `/${location.slug}`;
   const heroImage = getImageUrl(location.images?.[0], 'full');
   const world = worldForLocation(locations, location._id);
