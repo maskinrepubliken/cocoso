@@ -654,3 +654,27 @@ contact:
     website: "Webbplats"
   errors:
     required: "Fyll i en e-postadress eller ett telefonnummer."
+
+# Äta/handla/bo; in common because SSR only loads common
+businesses:
+  all: Alla
+  kinds:
+    eat: Äta
+    shop: Handla
+    stay: Bo
+  hours: Öppettider
+  today: Idag
+  closed: Stängt
+  closedToday: Stängt idag
+  todayHours: 'Idag {{ hours }}'
+  openNow: Öppet nu
+  closesAt: 'stänger {{ time }}'
+  closedNow: Stängt nu
+  opensAt: 'öppnar {{ day }} {{ time }}'
+  menu:
+    eat: Meny
+    shop: Sortiment
+    stay: Rum och priser
+  example: Exempel. Öppettider, meny och priser är påhittade och stämmer inte med verkligheten.
+  exampleShort: Exempeldata
+  empty: Inget här än.

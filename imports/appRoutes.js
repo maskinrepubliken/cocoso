@@ -21,6 +21,8 @@ import SearchPage from '/imports/ui/pages/search/SearchPage';
 import ActivityItemHandler from '/imports/ui/pages/activities/ActivityItemHandler';
 import GroupItemHandler from '/imports/ui/pages/groups/GroupItemHandler';
 import ResourceItemHandler from '/imports/ui/pages/resources/ResourceItemHandler';
+import BusinessListHandler from '/imports/ui/pages/businesses/BusinessListHandler';
+import BusinessItemHandler from '/imports/ui/pages/businesses/BusinessItemHandler';
 import WorkItemHandler from '/imports/ui/pages/works/WorkItemHandler';
 import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
 import SlugHandler, {
@@ -178,6 +180,8 @@ import {
   getPeople,
   getResources,
   getResource,
+  getBusinesses,
+  getBusiness,
   getUser,
   getWorks,
   getWork,
@@ -566,6 +570,23 @@ export default function appRoutes(props) {
             element: el(ResourceItemHandler),
             loader: ld(({ params }) => getResource({ params })),
             shouldRevalidate: revalidateOn(['edit']),
+          },
+        ],
+      },
+      {
+        path: 'businesses',
+        children: [
+          {
+            index: true,
+            element: el(BusinessListHandler),
+            loader: ld(({ locationId }) => getBusinesses({ locationId })),
+            shouldRevalidate: revalidateOn(),
+          },
+          {
+            path: ':businessId',
+            element: el(BusinessItemHandler),
+            loader: ld(({ params }) => getBusiness({ params })),
+            shouldRevalidate: revalidateOn(),
           },
         ],
       },

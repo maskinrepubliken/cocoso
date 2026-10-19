@@ -80,6 +80,7 @@ export const sectionIcons: Record<string, ThreeDIconName> = {
   works: 'picture',
   people: 'puzzle',
   resources: 'pin',
+  businesses: 'bag',
   info: 'notebook',
   requests: 'chat',
   members: 'boy',

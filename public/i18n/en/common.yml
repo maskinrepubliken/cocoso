@@ -657,3 +657,27 @@ contact:
     website: "Website"
   errors:
     required: "Enter an email address or a phone number."
+
+# Eat/shop/stay; in common because SSR only loads common
+businesses:
+  all: All
+  kinds:
+    eat: Eat
+    shop: Shop
+    stay: Stay
+  hours: Opening hours
+  today: Today
+  closed: Closed
+  closedToday: Closed today
+  todayHours: 'Today {{ hours }}'
+  openNow: Open now
+  closesAt: 'closes {{ time }}'
+  closedNow: Closed now
+  opensAt: 'opens {{ day }} {{ time }}'
+  menu:
+    eat: Menu
+    shop: Range
+    stay: Rooms and prices
+  example: Example. The opening hours, menu and prices are made up and are not the real ones.
+  exampleShort: Example data
+  empty: Nothing here yet.

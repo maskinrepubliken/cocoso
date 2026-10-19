@@ -38,6 +38,9 @@ import '../../api/documents/document.methods';
 import '../../api/resources/resource';
 import '../../api/resources/resource.methods';
 
+import '../../api/businesses/business';
+import '../../api/businesses/business.methods';
+
 import '../../api/locations/location';
 import '../../api/locations/location.methods';
 

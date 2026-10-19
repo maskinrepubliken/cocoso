@@ -120,6 +120,25 @@ export async function getResource({ params }) {
   };
 }
 
+// Äta/handla/bo: cafés, restaurants, shops and inns.
+export async function getBusinesses({ locationId } = {}) {
+  const businesses = await call('getBusinesses', locationId || undefined);
+
+  return {
+    businesses: localFirst(businesses, locationId),
+  };
+}
+
+export async function getBusiness({ params }) {
+  if (!params) {
+    return null;
+  }
+
+  const business = await call('getBusinessById', params.businessId);
+
+  return { business };
+}
+
 export async function getUser({ params }) {
   if (!params) {
     return null;

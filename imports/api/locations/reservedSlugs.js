@@ -3,6 +3,7 @@
 // safe because profile URLs always start with '@'.
 export const RESERVED_SLUGS = [
   'activities',
+  'businesses',
   'admin',
   'calendar',
   'cp',
