@@ -27,13 +27,21 @@ export default function useEventFilters(listing: 'activities' | 'calendar') {
       return next;
     });
 
-  // The chosen kinds: one from a strip, any number from the menu
+  // The chosen kinds: one from a strip, any number from the menu. Kinds
+  // checked in the menu are marked (?filter=1) and turn the Filter on; a
+  // kind or "Alla" picked in the strip clears the mark and turns it off.
   const kinds = listParam('kind');
   const oneKind = kinds.length === 1 ? kinds[0] : '';
-  const setKinds = (keys: string[]) => setParams({ kind: keys.join(',') });
+  const kindsFromMenu = searchParams.get('filter') === '1';
+  const setKinds = (keys: string[], fromMenu = false) =>
+    setParams({
+      kind: keys.join(','),
+      filter: fromMenu && keys.length ? '1' : null,
+    });
   const toggleKind = (key: string) =>
     setKinds(
-      kinds.includes(key) ? kinds.filter((k) => k !== key) : [...kinds, key]
+      kinds.includes(key) ? kinds.filter((k) => k !== key) : [...kinds, key],
+      true
     );
 
   // The chosen places (orter). Inside a place it is that one, and the page
@@ -91,10 +99,11 @@ export default function useEventFilters(listing: 'activities' | 'calendar') {
   // Anything chosen in the menu, a single kind too
   const isNarrowed =
     Boolean(view.when) ||
-    kinds.length > 0 ||
+    (kinds.length > 0 && (kindsFromMenu || listing === 'calendar')) ||
     (!currentLocation && placeSlugs.length > 0);
 
-  const resetAll = () => setParams({ kind: null, ort: null, when: null });
+  const resetAll = () =>
+    setParams({ kind: null, filter: null, ort: null, when: null });
 
   return {
     locations,
