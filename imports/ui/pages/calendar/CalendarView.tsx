@@ -6,6 +6,8 @@ import i18n from 'i18next';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import RepeatIcon from 'lucide-react/dist/esm/icons/repeat';
+import RewindIcon from 'lucide-react/dist/esm/icons/rewind';
+import FastForwardIcon from 'lucide-react/dist/esm/icons/fast-forward';
 
 if (Meteor.isClient) {
   import('react-big-calendar/lib/css/react-big-calendar.css');
@@ -82,15 +84,18 @@ function CalendarToolbar({
   return (
     <div className="cal-toolbar-row">
       <div className="rbc-toolbar">
-        <span className="rbc-btn-group">
+        {/* As a player: back, today, forward */}
+        <span className="rbc-btn-group cal-nav">
+          <button type="button" onClick={() => onNavigate('PREV')}>
+            <RewindIcon aria-hidden />
+            {messages.previous}
+          </button>
           <button type="button" onClick={() => onNavigate('TODAY')}>
             {messages.today}
           </button>
-          <button type="button" onClick={() => onNavigate('PREV')}>
-            {messages.previous}
-          </button>
           <button type="button" onClick={() => onNavigate('NEXT')}>
             {messages.next}
+            <FastForwardIcon aria-hidden />
           </button>
         </span>
         <span className="rbc-toolbar-label">{label}</span>

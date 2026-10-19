@@ -1566,33 +1566,47 @@ body {
   order: 3;
 }
 
-/* Too narrow for one line, wide enough for two: back and the month on the
-   first, the Filter and the views under them at the right */
+/* The back / today / forward buttons with their player icons */
+.rbc-toolbar .cal-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rbc-toolbar .cal-nav svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+/* Too narrow for one line: centred, the month above, the buttons under it
+   (back and forth, the Filter and the views in a row) */
 @media (min-width: 721px) and (max-width: 1000px) {
   .cal-toolbar-row {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto auto auto;
     grid-template-areas:
-      'nav label label'
-      'filter filter views';
-    gap: 0.5rem 0.75rem;
+      'label label label'
+      'nav filter views';
+    justify-content: center;
+    gap: 0.6rem 0.75rem;
     align-items: center;
   }
   .rbc-calendar .cal-toolbar-row > .rbc-toolbar {
     display: contents;
   }
-  .cal-toolbar-row .rbc-btn-group:first-child {
-    grid-area: nav;
-  }
   .cal-toolbar-row .rbc-toolbar-label {
     grid-area: label;
+    text-align: center;
+  }
+  .cal-toolbar-row .rbc-btn-group:first-child {
+    grid-area: nav;
   }
   .cal-toolbar-row .rbc-btn-group:not(:first-child) {
     grid-area: views;
   }
   .cal-toolbar-end {
     grid-area: filter;
-    justify-self: end;
   }
 }
 
@@ -1628,49 +1642,50 @@ body {
   gap: 8px;
 }
 
-@media (max-width: 720px) {
-  .rbc-calendar .rbc-toolbar {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      'label views'
-      'nav nav';
+/* The narrowest phones: the Filter pill and the gap a little slimmer so
+   the Filter and the views still share a line */
+@media (max-width: 359px) {
+  .cal-toolbar-row {
+    column-gap: 0.4rem !important;
   }
-  /* One grid for the toolbar's parts and the Filter: the month and the
-     views on the first line, the day and week buttons and the Filter on
-     the second */
+  .view-menu-pill {
+    gap: 6px;
+    padding: 3px 12px 3px 8px;
+  }
+}
+
+/* A phone: all centred, the month on its own line, back and forth on the
+   next, the Filter and the views on the last */
+@media (max-width: 720px) {
   .cal-toolbar-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto auto;
     grid-template-areas:
-      'label views'
-      'nav nav';
-    gap: 0.5rem 0.75rem;
+      'label label'
+      'nav nav'
+      'filter views';
+    justify-content: center;
+    gap: 0.5rem 0.6rem;
     align-items: center;
+    justify-items: center;
   }
   .rbc-calendar .cal-toolbar-row > .rbc-toolbar {
     display: contents;
   }
-  /* the second line across: back and forth on the left, Filter right */
-  .cal-toolbar-row .rbc-toolbar .rbc-btn-group:first-child {
-    justify-self: start;
-  }
-  .cal-toolbar-end {
-    grid-area: 2 / 1 / 3 / 3;
-    justify-self: end;
-  }
-  .rbc-toolbar .rbc-toolbar-label {
-    font-size: 1.2rem;
+  .cal-toolbar-row .rbc-toolbar-label {
     grid-area: label;
     padding: 0;
-    text-align: left;
+    font-size: 1.2rem;
+    text-align: center;
   }
-  .rbc-toolbar .rbc-btn-group:first-child {
+  .cal-toolbar-row .rbc-btn-group:first-child {
     grid-area: nav;
-    justify-self: end;
   }
-  .rbc-toolbar .rbc-btn-group:not(:first-child) {
+  .cal-toolbar-row .rbc-btn-group:not(:first-child) {
     grid-area: views;
+  }
+  .cal-toolbar-end {
+    grid-area: filter;
   }
 }
 
