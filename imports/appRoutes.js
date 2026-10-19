@@ -15,6 +15,7 @@ import GroupListHandler from '/imports/ui/pages/groups/GroupListHandler';
 import ResourceListHandler from '/imports/ui/pages/resources/ResourceListHandler';
 import WorkListHandler from '/imports/ui/pages/works/WorkListHandler';
 import UserListHandler from '/imports/ui/pages/profile/UserListHandler';
+import SearchPage from '/imports/ui/pages/search/SearchPage';
 
 // Entry/detail pages - keep eager for SSR
 import ActivityItemHandler from '/imports/ui/pages/activities/ActivityItemHandler';
@@ -602,6 +603,11 @@ export default function appRoutes(props) {
                 },
               ]),
         ],
+      },
+      {
+        // All the results for ?q=, from the header's search
+        path: 'search',
+        element: el(SearchPage),
       },
       {
         path: 'cp/:composablePageId',

@@ -14,7 +14,9 @@ import Works from '../works/work';
 // The site-wide search behind the box in the header. One call, a short
 // list per kind of content, only what a visitor could open anyway.
 
+// Per section: a few in the header's results, more on the results page
 const PER_KIND = 5;
+const MAX_PER_KIND = 40;
 const PAST_EVENTS = 3;
 const MIN_LENGTH = 2;
 const MAX_LENGTH = 80;
@@ -58,7 +60,7 @@ const canSeeGroup = (group, user) => {
   );
 };
 
-async function searchActivities(words, locationId, user) {
+async function searchActivities(words, locationId, user, limit = PER_KIND) {
   const today = dayjs().format('YYYY-MM-DD');
   const found = await Activities.find(
     {
@@ -79,7 +81,7 @@ async function searchActivities(words, locationId, user) {
         groupId: 1,
         locationId: 1,
       },
-      limit: 40,
+      limit: Math.max(40, limit * 3),
     }
   ).fetchAsync();
 
@@ -118,15 +120,15 @@ async function searchActivities(words, locationId, user) {
   const upcoming = visible
     .filter((activity) => activity.isUpcoming)
     .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
-    .slice(0, PER_KIND);
+    .slice(0, limit);
   const past = visible
     .filter((activity) => !activity.isUpcoming)
     .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-    .slice(0, PAST_EVENTS);
+    .slice(0, limit > PER_KIND ? limit : PAST_EVENTS);
   return [...upcoming, ...past];
 }
 
-async function searchGroups(words, locationId, user) {
+async function searchGroups(words, locationId, user, limit = PER_KIND) {
   const found = await Groups.find(
     {
       $and: [
@@ -146,13 +148,13 @@ async function searchGroups(words, locationId, user) {
         locationId: 1,
       },
       sort: { creationDate: -1 },
-      limit: 40,
+      limit: Math.max(40, limit * 3),
     }
   ).fetchAsync();
 
   return found
     .filter((group) => canSeeGroup(group, user))
-    .slice(0, PER_KIND)
+    .slice(0, limit)
     .map((group) => ({
       kind: 'groups',
       _id: group._id,
@@ -162,7 +164,7 @@ async function searchGroups(words, locationId, user) {
     }));
 }
 
-async function searchResources(words, locationId) {
+async function searchResources(words, locationId, limit = PER_KIND) {
   const found = await Resources.find(
     {
       $and: [
@@ -173,7 +175,7 @@ async function searchResources(words, locationId) {
     {
       fields: { label: 1, description: 1, locationId: 1 },
       sort: { createdAt: -1 },
-      limit: PER_KIND,
+      limit,
     }
   ).fetchAsync();
 
@@ -186,7 +188,7 @@ async function searchResources(words, locationId) {
   }));
 }
 
-async function searchWorks(words, locationId) {
+async function searchWorks(words, locationId, limit = PER_KIND) {
   const found = await Works.find(
     {
       $and: [
@@ -208,7 +210,7 @@ async function searchWorks(words, locationId) {
         locationId: 1,
       },
       sort: { creationDate: -1 },
-      limit: PER_KIND,
+      limit,
     }
   ).fetchAsync();
 
@@ -222,7 +224,7 @@ async function searchWorks(words, locationId) {
   }));
 }
 
-async function searchPages(words) {
+async function searchPages(words, limit = PER_KIND) {
   const found = await Pages.find(
     {
       $and: [
@@ -233,7 +235,7 @@ async function searchPages(words) {
     {
       fields: { title: 1, longDescription: 1 },
       sort: { order: 1 },
-      limit: PER_KIND,
+      limit,
     }
   ).fetchAsync();
 
@@ -246,7 +248,7 @@ async function searchPages(words) {
 }
 
 // Only the organizers listed on /people, matched on name and username.
-async function searchPeople(words) {
+async function searchPeople(words, limit = PER_KIND) {
   const memberships = await Memberships.find(
     { isPublic: true, isOrganizer: true },
     { fields: { userId: 1 } }
@@ -266,7 +268,7 @@ async function searchPeople(words) {
       },
       {
         fields: { username: 1, firstName: 1, lastName: 1, avatar: 1 },
-        limit: PER_KIND,
+        limit,
       }
     )
     .fetchAsync();
@@ -284,15 +286,18 @@ async function searchPeople(words) {
 }
 
 // The places of the municipality, each with pages of its own.
-async function searchLocations(words) {
+async function searchLocations(words, limit = PER_KIND) {
   const found = await Locations.find(
     {
-      $and: [{ isPublished: true }, wordsSelector(words, ['name', 'description'])],
+      $and: [
+        { isPublished: true },
+        wordsSelector(words, ['name', 'description']),
+      ],
     },
     {
       fields: { name: 1, slug: 1, description: 1 },
       sort: { name: 1 },
-      limit: PER_KIND,
+      limit,
     }
   ).fetchAsync();
 
@@ -306,9 +311,11 @@ async function searchLocations(words) {
 }
 
 Meteor.methods({
-  async searchSite(query, locationId) {
+  async searchSite(query, locationId, perKind) {
     check(query, String);
     check(locationId, Match.Maybe(String));
+    check(perKind, Match.Maybe(Match.Integer));
+    const limit = Math.max(1, Math.min(perKind || PER_KIND, MAX_PER_KIND));
 
     const trimmed = query.trim().slice(0, MAX_LENGTH);
     const words = trimmed.split(/\s+/).filter(Boolean);
@@ -321,13 +328,13 @@ Meteor.methods({
     try {
       const [activities, groups, resources, works, pages, people, locations] =
         await Promise.all([
-          searchActivities(words, locationId, user),
-          searchGroups(words, locationId, user),
-          searchResources(words, locationId),
-          searchWorks(words, locationId),
-          searchPages(words),
-          searchPeople(words),
-          searchLocations(words),
+          searchActivities(words, locationId, user, limit),
+          searchGroups(words, locationId, user, limit),
+          searchResources(words, locationId, limit),
+          searchWorks(words, locationId, limit),
+          searchPages(words, limit),
+          searchPeople(words, limit),
+          searchLocations(words, limit),
         ]);
       return [
         ...activities,

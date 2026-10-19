@@ -564,6 +564,12 @@ search:
   clear: Clear search
   searching: Searching…
   noResults: Nothing found for “{{query}}”
+  showAll: Show all results
+  page:
+    title: Search results
+    count_one: "{{count}} result for “{{query}}”"
+    count_other: "{{count}} results for “{{query}}”"
+    tooShort: Type at least two characters to search.
   kinds:
     activities: Events
     pastActivities: Past events
@@ -610,6 +616,7 @@ listing:
     people: the organizers
     resources: the places
     works: the requests
+    search: the search results
 forms:
   optional: optional
 address:

@@ -73,7 +73,7 @@ const kindLabel = (site: any, kind: string, fallback: string) =>
   site?.settings?.menu?.find((item: any) => item.name === kind)?.label ||
   fallback;
 
-const formatDate = (date?: string | null, lang?: string) => {
+export const formatDate = (date?: string | null, lang?: string) => {
   if (!date) {
     return '';
   }
@@ -87,16 +87,74 @@ const formatDate = (date?: string | null, lang?: string) => {
   }
 };
 
+// Where all the results for a query are listed
+export const searchPath = (query: string, prefix: string) =>
+  `${prefix}/search?q=${encodeURIComponent(query.trim())}`;
+
+export const isPastEvent = (hit: SearchHit) =>
+  hit.kind === 'activities' && hit.isUpcoming === false;
+
+// The hits under their headings, in the order the sections are shown
+export const groupHits = (
+  hits: SearchHit[],
+  site: any,
+  tc: (key: string) => string
+) =>
+  GROUP_ORDER.map((key) => ({
+    key,
+    label:
+      key === 'pastActivities'
+        ? tc('search.kinds.pastActivities')
+        : kindLabel(site, key, tc(`search.kinds.${key}`)),
+    hits: hits.filter(
+      (hit) => (isPastEvent(hit) ? 'pastActivities' : hit.kind) === key
+    ),
+  })).filter((group) => group.hits.length > 0);
+
+// A hit's picture (for a person), title, "Avslutat" for a past event, and
+// its line of detail: as the header lists it and the results page.
+export function HitContent({ hit }: { hit: SearchHit }) {
+  const [tc, i18n] = useTranslation('common');
+  const isPast = isPastEvent(hit);
+  return (
+    <>
+      {hit.kind === 'people' && (
+        <span className="site-search-avatar" aria-hidden>
+          {hit.avatar ? <img alt="" src={hit.avatar} /> : hit.title.charAt(0)}
+        </span>
+      )}
+      <span className="site-search-hit-text">
+        <span className="site-search-hit-title">
+          {hit.title}
+          {isPast && (
+            <span className="site-search-badge">{tc('search.past')}</span>
+          )}
+        </span>
+        {(hit.detail || hit.date) && (
+          <span className="site-search-hit-detail">
+            {hit.kind === 'activities' && hit.date
+              ? [formatDate(hit.date, i18n.language), hit.detail]
+                  .filter(Boolean)
+                  .join(' · ')
+              : hit.detail}
+          </span>
+        )}
+      </span>
+    </>
+  );
+}
+
 export interface SiteSearchProps {
   site: any;
 }
 
 // The search box in the header, left of the account: a pill on desktop, a
 // magnifier that opens a full-width field on a phone. Results arrive as
-// you type and are grouped by section; arrow keys move, Enter opens,
+// you type and are grouped by section; arrow keys move to one and Enter
+// opens it, Enter alone shows all the results on a page of their own,
 // Escape closes.
 export default function SiteSearch({ site }: SiteSearchProps) {
-  const [tc, i18n] = useTranslation('common');
+  const [tc] = useTranslation('common');
   const navigate = useNavigate();
   const location = useLocation();
   const prefix = useLocationPrefix();
@@ -196,10 +254,22 @@ export default function SiteSearch({ site }: SiteSearchProps) {
     close();
   };
 
+  const showAll = () => {
+    navigate(searchPath(trimmed, prefix));
+    close();
+  };
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       event.preventDefault();
       close();
+      return;
+    }
+    if (event.key === 'Enter' && activeIndex < 0) {
+      event.preventDefault();
+      if (trimmed.length >= MIN_LENGTH) {
+        showAll();
+      }
       return;
     }
     if (!showPanel || hits.length === 0) {
@@ -213,23 +283,11 @@ export default function SiteSearch({ site }: SiteSearchProps) {
       setActiveIndex((index) => (index <= 0 ? hits.length - 1 : index - 1));
     } else if (event.key === 'Enter') {
       event.preventDefault();
-      goTo(hits[activeIndex >= 0 ? activeIndex : 0]);
+      goTo(hits[activeIndex]);
     }
   };
 
-  const isPastEvent = (hit: SearchHit) =>
-    hit.kind === 'activities' && hit.isUpcoming === false;
-  const groupOf = (hit: SearchHit): GroupKey =>
-    isPastEvent(hit) ? 'pastActivities' : hit.kind;
-
-  const groups = GROUP_ORDER.map((key) => ({
-    key,
-    label:
-      key === 'pastActivities'
-        ? tc('search.kinds.pastActivities')
-        : kindLabel(site, key, tc(`search.kinds.${key}`)),
-    hits: hits.filter((hit) => groupOf(hit) === key),
-  })).filter((group) => group.hits.length > 0);
+  const groups = groupHits(hits, site, tc);
 
   const listId = 'site-search-results';
 
@@ -313,42 +371,24 @@ export default function SiteSearch({ site }: SiteSearchProps) {
                       role="option"
                       aria-selected={index === activeIndex}
                       to={hitPath(hit, prefix)}
-                      onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => close()}
                     >
-                      {hit.kind === 'people' && (
-                        <span className="site-search-avatar" aria-hidden>
-                          {hit.avatar ? (
-                            <img alt="" src={hit.avatar} />
-                          ) : (
-                            hit.title.charAt(0)
-                          )}
-                        </span>
-                      )}
-                      <span className="site-search-hit-text">
-                        <span className="site-search-hit-title">
-                          {hit.title}
-                          {isPast && (
-                            <span className="site-search-badge">
-                              {tc('search.past')}
-                            </span>
-                          )}
-                        </span>
-                        {(hit.detail || hit.date) && (
-                          <span className="site-search-hit-detail">
-                            {hit.kind === 'activities' && hit.date
-                              ? [formatDate(hit.date, i18n.language), hit.detail]
-                                  .filter(Boolean)
-                                  .join(' · ')
-                              : hit.detail}
-                          </span>
-                        )}
-                      </span>
+                      <HitContent hit={hit} />
                     </Link>
                   );
                 })}
               </div>
             ))
+          )}
+          {hasSearched && hits.length > 0 && (
+            <Link
+              className="site-search-all"
+              to={searchPath(trimmed, prefix)}
+              onClick={() => close()}
+            >
+              {tc('search.showAll')}
+              <kbd aria-hidden>↵</kbd>
+            </Link>
           )}
         </div>
       )}

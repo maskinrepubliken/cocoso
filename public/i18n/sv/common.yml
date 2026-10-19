@@ -561,6 +561,12 @@ search:
   clear: Rensa sökningen
   searching: Söker…
   noResults: Inget hittades för ”{{query}}”
+  showAll: Visa alla resultat
+  page:
+    title: Sökresultat
+    count_one: "{{count}} träff för ”{{query}}”"
+    count_other: "{{count}} träffar för ”{{query}}”"
+    tooShort: Skriv minst två tecken för att söka.
   kinds:
     activities: Evenemang
     pastActivities: Tidigare evenemang
@@ -607,6 +613,7 @@ listing:
     people: arrangörerna
     resources: platserna
     works: förfrågningarna
+    search: sökresultaten
 forms:
   optional: valfritt
 address:
