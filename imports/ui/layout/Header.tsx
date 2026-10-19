@@ -373,6 +373,12 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         setStacked(false);
         return;
       }
+      // While the search is open it takes the bar (brand and menu step
+      // aside, the buttons stretch): nothing to fit, and measuring that
+      // would shrink the field, which resizes it, which measures again.
+      if (bar.querySelector('.site-search.is-open')) {
+        return;
+      }
       const brand = bar.querySelector<HTMLElement>('.site-brand');
       const nav = bar.querySelector<HTMLElement>('.site-nav');
       const right = bar.querySelector<HTMLElement>('.site-header-right');
