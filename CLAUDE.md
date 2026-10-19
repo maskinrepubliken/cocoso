@@ -19,6 +19,9 @@ The short version:
 - Uploads live on local disk (`imports/api/_utils/services/mediaStorage.ts`),
   served under `/media`. There is no S3 any more.
 - Translations: `public/i18n/<lang>/<ns>.yml`; add English first, then sv.
+- Feature flags live in `imports/api/_utils/features.ts`; groups and works
+  are switched off. New code touching a section checks `isFeatureEnabled`
+  (or `isMenuItemShown` for menu items), not just the menu's `isVisible`.
 - Escape user input with `imports/api/_utils/escapeHtml.js` inside email HTML.
 
 Before finishing any change run:
