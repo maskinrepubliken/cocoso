@@ -6,7 +6,7 @@ import type { ThreeDIconName } from '/imports/ui/generic/ThreeDIcon';
 export const EVENT_KINDS: { key: string; icon: ThreeDIconName }[] = [
   { key: 'kultur', icon: 'music' },
   { key: 'idrott', icon: 'gym' },
-  { key: 'barn', icon: 'puzzle' },
+  { key: 'barn', icon: 'girl' },
   { key: 'marknad', icon: 'bag' },
   { key: 'mat', icon: 'cup' },
   { key: 'natur', icon: 'sun' },
