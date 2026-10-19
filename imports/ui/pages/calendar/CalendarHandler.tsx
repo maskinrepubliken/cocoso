@@ -198,10 +198,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
             /* The same Filter as on the events page, as a pill at the end
                of the toolbar, after the views */
             <EventViewMenu
-              isNarrowed={
-                filters.kinds.length > 0 ||
-                (!filters.currentLocation && filters.placeSlugs.length > 0)
-              }
+              isNarrowed={filters.isNarrowed}
               kinds={presentKinds}
               locations={filters.locations}
               places={filters.placeSlugs}

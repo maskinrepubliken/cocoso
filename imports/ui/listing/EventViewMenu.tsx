@@ -197,7 +197,9 @@ export default function EventViewMenu({
       ) : (
         <button
           type="button"
-          className={`kind-tile view-menu-button ${open ? 'is-open' : ''}`}
+          className={`kind-tile view-menu-button ${open ? 'is-open' : ''} ${
+            isNarrowed ? 'is-active' : ''
+          }`}
           aria-expanded={open}
           aria-haspopup="menu"
           onClick={() => setOpen(!open)}

@@ -88,9 +88,10 @@ export default function useEventFilters(listing: 'activities' | 'calendar') {
       ...(change.when !== undefined ? { when: change.when || null } : {}),
     });
 
+  // Anything chosen in the menu, a single kind too
   const isNarrowed =
     Boolean(view.when) ||
-    kinds.length > 1 ||
+    kinds.length > 0 ||
     (!currentLocation && placeSlugs.length > 0);
 
   const resetAll = () => setParams({ kind: null, ort: null, when: null });
