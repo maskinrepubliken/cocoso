@@ -60,6 +60,9 @@ interface EventViewMenuProps {
   places: string[];
   // Something narrows the list beyond what the page shows anyway
   isNarrowed: boolean;
+  // Past or upcoming and the stretch of days; not in the calendar, where
+  // one moves between days and weeks instead
+  withTime?: boolean;
   onChange: (view: Partial<EventView>) => void;
   onToggleKind: (key: string) => void;
   onTogglePlace: (slug: string) => void;
@@ -74,6 +77,7 @@ export default function EventViewMenu({
   locations,
   places,
   isNarrowed,
+  withTime = true,
   onChange,
   onToggleKind,
   onTogglePlace,
@@ -173,24 +177,26 @@ export default function EventViewMenu({
       {open && (
         <div className="site-menu-panel view-menu-panel" role="menu">
           {/* Past or upcoming as the switch beside the heading was */}
-          <div className="seg view-menu-seg" role="group">
-            <button
-              type="button"
-              className={`seg-button ${view.showPast ? 'is-active' : ''}`}
-              aria-pressed={view.showPast}
-              onClick={() => onChange({ showPast: true, when: '' })}
-            >
-              {tc('labels.past')}
-            </button>
-            <button
-              type="button"
-              className={`seg-button ${view.showPast ? '' : 'is-active'}`}
-              aria-pressed={!view.showPast}
-              onClick={() => onChange({ showPast: false })}
-            >
-              {tc('labels.upcoming')}
-            </button>
-          </div>
+          {withTime && (
+            <div className="seg view-menu-seg" role="group">
+              <button
+                type="button"
+                className={`seg-button ${view.showPast ? 'is-active' : ''}`}
+                aria-pressed={view.showPast}
+                onClick={() => onChange({ showPast: true, when: '' })}
+              >
+                {tc('labels.past')}
+              </button>
+              <button
+                type="button"
+                className={`seg-button ${view.showPast ? '' : 'is-active'}`}
+                aria-pressed={!view.showPast}
+                onClick={() => onChange({ showPast: false })}
+              >
+                {tc('labels.upcoming')}
+              </button>
+            </div>
+          )}
 
           {kinds.length > 1 && (
             <>
@@ -239,7 +245,7 @@ export default function EventViewMenu({
             </>
           )}
 
-          {!view.showPast && (
+          {withTime && !view.showPast && (
             <>
               <p className="view-menu-heading">
                 {tc('eventView.headings.when')}
