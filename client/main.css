@@ -1707,6 +1707,26 @@ body {
   font-size: 0.75rem;
 }
 
+/* The column of hours is a margin, not part of the board: the flat floor
+   behind it (as behind the weekdays), and no hour lines */
+.rbc-calendar .rbc-time-gutter,
+.rbc-calendar .rbc-time-header-gutter {
+  background-color: var(--cocoso-season-golv, var(--cocoso-colors-gray-100));
+}
+
+.rbc-calendar .rbc-time-gutter .rbc-timeslot-group {
+  border-bottom: 0;
+}
+
+/* The line under the weekdays runs over the days only, not the hours */
+.rbc-calendar .rbc-time-content {
+  border-top: 0;
+}
+
+.rbc-calendar .rbc-time-header-content {
+  border-bottom: 1px solid var(--cocoso-linje);
+}
+
 .rbc-calendar .rbc-current-time-indicator {
   background-color: var(--cocoso-tegel);
   height: 2px;
