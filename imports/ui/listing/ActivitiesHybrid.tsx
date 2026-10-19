@@ -98,7 +98,6 @@ export default function ActivitiesHybrid({
   const view: EventView = {
     showPast: Boolean(showPast),
     when: showPast ? '' : when,
-    rsvp: searchParams.get('rsvp') === '1',
   };
   const setView = (change: Partial<EventView>) =>
     setParams({
@@ -106,7 +105,6 @@ export default function ActivitiesHybrid({
         ? { showPast: change.showPast ? 'true' : 'false' }
         : {}),
       ...(change.when !== undefined ? { when: change.when || null } : {}),
-      ...(change.rsvp !== undefined ? { rsvp: change.rsvp ? '1' : null } : {}),
     });
 
   const groupsInMenu = site?.settings?.menu?.find(
@@ -129,14 +127,12 @@ export default function ActivitiesHybrid({
             !placeIds.size ||
             placeIds.has(activity.locationId) ||
             (!activity.locationId && !activity.isMunicipalityOnly)) &&
-          happensWithin(activity, view.when) &&
-          (!view.rsvp || activity.isRegistrationEnabled)
+          happensWithin(activity, view.when)
       ),
-    [activities, kindsKey, placesKey, view.when, view.rsvp]
+    [activities, kindsKey, placesKey, view.when]
   );
 
-  const resetAll = () =>
-    setParams({ kind: null, ort: null, when: null, rsvp: null });
+  const resetAll = () => setParams({ kind: null, ort: null, when: null });
 
   return (
     <>
@@ -189,7 +185,6 @@ export default function ActivitiesHybrid({
         <EventViewMenu
           isNarrowed={
             Boolean(view.when) ||
-            view.rsvp ||
             kinds.length > 1 ||
             (!currentLocation && placeSlugs.length > 0)
           }

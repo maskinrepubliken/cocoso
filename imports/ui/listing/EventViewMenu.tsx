@@ -3,16 +3,17 @@ import { useTranslation } from 'react-i18next';
 import CheckIcon from 'lucide-react/dist/esm/icons/check';
 
 import ThreeDIcon from '../generic/ThreeDIcon';
+import PlaceTag from '../generic/PlaceTag';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 // How the events page is narrowed besides the kind: past or upcoming, a
 // stretch of days, and only those one signs up for. Kept in the address
-// (showPast, when, rsvp) so a view can be linked and Back undoes it.
+// (showPast, when) so a view can be linked and Back undoes it.
 export type EventWhen = '' | 'today' | 'weekend' | 'week';
 
 export interface EventView {
   showPast: boolean;
   when: EventWhen;
-  rsvp: boolean;
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -104,23 +105,16 @@ export default function EventViewMenu({
     };
   }, [open]);
 
-  const row = (
-    key: string,
-    icon: string,
-    isActive: boolean,
-    onClick: () => void,
-    disabled = false
-  ) => (
+  // A stretch of days: title and grey detail, no icon, a check when chosen
+  const row = (key: string, isActive: boolean, onClick: () => void) => (
     <button
       key={key}
       type="button"
       role="menuitemradio"
       aria-checked={isActive}
       className={`site-menu-row view-menu-row ${isActive ? 'is-active' : ''}`}
-      disabled={disabled}
       onClick={onClick}
     >
-      <ThreeDIcon name={icon} size={32} />
       <span className="site-menu-row-text">
         <span className="site-menu-row-title">
           {tc(`eventView.${key}.title`)}
@@ -133,11 +127,11 @@ export default function EventViewMenu({
     </button>
   );
 
-  // A small row with a check, two to a line: one kind or one place
+  // A small row with a check, two to a line: one kind (its icon and name)
+  // or one place (its orttag, as in the place menu in the header)
   const check = (
     key: string,
-    icon: string,
-    label: string,
+    content: React.ReactNode,
     isChecked: boolean,
     onClick: () => void
   ) => (
@@ -149,8 +143,7 @@ export default function EventViewMenu({
       className={`view-menu-check-row ${isChecked ? 'is-checked' : ''}`}
       onClick={onClick}
     >
-      <ThreeDIcon name={icon} size={24} />
-      <span>{label}</span>
+      {content}
       <span aria-hidden className="view-menu-box">
         {isChecked && <CheckIcon />}
       </span>
@@ -208,8 +201,12 @@ export default function EventViewMenu({
                 {kinds.map((kind) =>
                   check(
                     kind.key,
-                    kind.icon,
-                    tc(`eventKinds.${kind.key}`),
+                    <>
+                      <ThreeDIcon name={kind.icon} size={24} />
+                      <span className="view-menu-label">
+                        {tc(`eventKinds.${kind.key}`)}
+                      </span>
+                    </>,
                     selectedKinds.includes(kind.key),
                     () => onToggleKind(kind.key)
                   )
@@ -227,8 +224,13 @@ export default function EventViewMenu({
                 {sortedLocations.map((location) =>
                   check(
                     location.slug,
-                    'map-pin',
-                    location.name,
+                    <span className="view-menu-label">
+                      <PlaceTag
+                        className="bare"
+                        name={location.name}
+                        world={worldForLocation(locations, location._id)}
+                      />
+                    </span>,
                     places.includes(location.slug),
                     () => onTogglePlace(location.slug)
                   )
@@ -242,21 +244,18 @@ export default function EventViewMenu({
               <p className="view-menu-heading">
                 {tc('eventView.headings.when')}
               </p>
-              {row('anytime', 'star', !view.when, () => onChange({ when: '' }))}
-              {row('today', 'sun', view.when === 'today', () =>
+              {row('anytime', !view.when, () => onChange({ when: '' }))}
+              {row('today', view.when === 'today', () =>
                 onChange({ when: 'today' })
               )}
-              {row('weekend', 'tea-cup', view.when === 'weekend', () =>
+              {row('weekend', view.when === 'weekend', () =>
                 onChange({ when: 'weekend' })
               )}
-              {row('week', 'travel', view.when === 'week', () =>
+              {row('week', view.when === 'week', () =>
                 onChange({ when: 'week' })
               )}
             </>
           )}
-
-          <p className="view-menu-heading">{tc('eventView.headings.more')}</p>
-          {row('rsvp', 'tick', view.rsvp, () => onChange({ rsvp: !view.rsvp }))}
         </div>
       )}
     </div>
