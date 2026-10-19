@@ -63,6 +63,7 @@ export type ThreeDIconName =
   | 'tea-cup'
   | 'text'
   | 'tick'
+  | 'toggle'
   | 'tool'
   | 'trana'
   | 'travel'

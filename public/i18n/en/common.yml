@@ -557,6 +557,37 @@ eventKinds:
     label: Type of event
     helper: Helps people find your event.
     none: No particular kind
+# The view menu at the end of the kinds on the events page
+eventView:
+  button: Show
+  headings:
+    show: Show
+    when: When
+    more: More
+  upcoming:
+    title: Upcoming
+    detail: From today on
+  past:
+    title: Past
+    detail: What has already been
+  anytime:
+    title: Any date
+    detail: Everything coming up
+  today:
+    title: Today
+    detail: What is on today
+  weekend:
+    title: This weekend
+    detail: Saturday and Sunday
+  week:
+    title: Next 7 days
+    detail: From today and a week on
+  rsvp:
+    title: With sign-up
+    detail: Only events you sign up for
+  empty: No events match the choices.
+  reset: Show all
+
 search:
   open: Search
   past: Past
