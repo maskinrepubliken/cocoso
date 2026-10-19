@@ -4443,13 +4443,43 @@ body {
 /* The kinds on the events page: a strip of 3D icons with small
    uppercase labels, centred, nothing boxed. The chosen one carries a
    green bar under its label. */
-/* The kinds and, at the end, the view menu */
+/* The kinds centred on the page, the filter tile at the right edge: three
+   columns, the outer two equal, so the middle one stays centred while
+   there is room, and gives way rather than run into the filter */
 .kind-bar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr);
+  align-items: start;
+  column-gap: 32px;
   /* auto at the sides keeps .page-wrap centred on a wide screen */
   margin: 4px auto 1.25rem;
+}
+
+/* Centred while it fits, scrolling sideways from its start when it does
+   not: auto margins instead of justify-content, which would cut off the
+   first kinds once the row is too wide */
+.kind-bar > .kind-strip {
+  grid-column: 2;
+  justify-content: flex-start;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.kind-bar > .kind-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.kind-bar > .kind-strip > :first-child {
+  margin-left: auto;
+}
+
+.kind-bar > .kind-strip > :last-child {
+  margin-right: auto;
+}
+
+.kind-bar > .view-menu {
+  grid-column: 3;
+  justify-self: end;
 }
 
 .kind-strip {
@@ -4535,15 +4565,13 @@ body {
 .view-menu {
   position: relative;
   flex: none;
-  margin-left: 14px;
-  padding-left: 14px;
-  border-left: 1px solid var(--cocoso-linje);
 }
 
+/* Phone: the strip scrolls and the filter stays put at its right */
 @media (max-width: 599px) {
-  .view-menu {
-    margin-left: 4px;
-    padding-left: 4px;
+  .kind-bar {
+    display: flex;
+    column-gap: 12px;
   }
 }
 
@@ -4576,7 +4604,7 @@ body {
   top: calc(100% + 6px);
   right: 0;
   left: auto;
-  width: min(320px, calc(100vw - 2 * var(--cocoso-gutter)));
+  width: min(380px, calc(100vw - 2 * var(--cocoso-gutter)));
   font-family: var(--cocoso-font-ui);
   text-align: left;
 }
@@ -4589,6 +4617,70 @@ body {
 
 .view-menu-seg .seg-button {
   flex: 1;
+}
+
+/* Kinds and places: small rows with a check, two to a line */
+.view-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 0 2px;
+}
+
+.view-menu-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: var(--cocoso-radius-falt);
+  background: none;
+  color: var(--site-ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.view-menu-check-row:hover {
+  background: var(--cocoso-colors-theme-100);
+}
+
+.view-menu-check-row .threed-icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.view-menu-check-row > span:not(.view-menu-box) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.view-menu-box {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1.5px var(--cocoso-colors-theme-300, #b9c9a5);
+  color: var(--cocoso-papper);
+}
+
+.view-menu-check-row.is-checked .view-menu-box {
+  background: var(--cocoso-colors-theme-700);
+  box-shadow: none;
+}
+
+.view-menu-box svg {
+  width: 13px;
+  height: 13px;
 }
 
 .view-menu-heading {

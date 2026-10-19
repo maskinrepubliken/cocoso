@@ -51,16 +51,35 @@ export const happensWithin = (activity: any, when: EventWhen) => {
 
 interface EventViewMenuProps {
   view: EventView;
+  // The kinds there are events of, and those chosen
+  kinds: { key: string; icon: string }[];
+  selectedKinds: string[];
+  // The places (orter) and the slugs of those chosen
+  locations: { _id: string; name: string; slug: string }[];
+  places: string[];
+  // Something narrows the list beyond what the page shows anyway
+  isNarrowed: boolean;
   onChange: (view: Partial<EventView>) => void;
+  onToggleKind: (key: string) => void;
+  onTogglePlace: (slug: string) => void;
 }
 
 // The toggle at the end of the kinds: a menu in the header's popup style
 // with the ways to narrow the events; a dot on the button while any is on.
-export default function EventViewMenu({ view, onChange }: EventViewMenuProps) {
+export default function EventViewMenu({
+  view,
+  kinds,
+  selectedKinds,
+  locations,
+  places,
+  isNarrowed,
+  onChange,
+  onToggleKind,
+  onTogglePlace,
+}: EventViewMenuProps) {
   const [tc] = useTranslation('common');
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const isNarrowed = view.showPast || Boolean(view.when) || view.rsvp;
 
   // Escape or a tap elsewhere closes it, as the header's menus
   useEffect(() => {
@@ -114,6 +133,34 @@ export default function EventViewMenu({ view, onChange }: EventViewMenuProps) {
     </button>
   );
 
+  // A small row with a check, two to a line: one kind or one place
+  const check = (
+    key: string,
+    icon: string,
+    label: string,
+    isChecked: boolean,
+    onClick: () => void
+  ) => (
+    <button
+      key={key}
+      type="button"
+      role="menuitemcheckbox"
+      aria-checked={isChecked}
+      className={`view-menu-check-row ${isChecked ? 'is-checked' : ''}`}
+      onClick={onClick}
+    >
+      <ThreeDIcon name={icon} size={24} />
+      <span>{label}</span>
+      <span aria-hidden className="view-menu-box">
+        {isChecked && <CheckIcon />}
+      </span>
+    </button>
+  );
+
+  const sortedLocations = [...locations].sort((a, b) =>
+    a.name.localeCompare(b.name, 'sv')
+  );
+
   return (
     <div className="view-menu" ref={rootRef}>
       <button
@@ -151,6 +198,44 @@ export default function EventViewMenu({ view, onChange }: EventViewMenuProps) {
               {tc('labels.upcoming')}
             </button>
           </div>
+
+          {kinds.length > 1 && (
+            <>
+              <p className="view-menu-heading">
+                {tc('eventView.headings.kinds')}
+              </p>
+              <div className="view-menu-grid">
+                {kinds.map((kind) =>
+                  check(
+                    kind.key,
+                    kind.icon,
+                    tc(`eventKinds.${kind.key}`),
+                    selectedKinds.includes(kind.key),
+                    () => onToggleKind(kind.key)
+                  )
+                )}
+              </div>
+            </>
+          )}
+
+          {sortedLocations.length > 1 && (
+            <>
+              <p className="view-menu-heading">
+                {tc('eventView.headings.places')}
+              </p>
+              <div className="view-menu-grid">
+                {sortedLocations.map((location) =>
+                  check(
+                    location.slug,
+                    'map-pin',
+                    location.name,
+                    places.includes(location.slug),
+                    () => onTogglePlace(location.slug)
+                  )
+                )}
+              </div>
+            </>
+          )}
 
           {!view.showPast && (
             <>

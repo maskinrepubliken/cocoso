@@ -561,6 +561,8 @@ eventKinds:
 eventView:
   button: Filter
   headings:
+    kinds: Categories
+    places: Places
     when: When
     more: More
   anytime:
