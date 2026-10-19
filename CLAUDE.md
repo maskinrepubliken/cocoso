@@ -30,5 +30,14 @@ npm run lint && npm run typecheck && npm run check:i18n
 `typecheck` compares against `typecheck-baseline.json`; only new errors fail.
 If you fix existing errors, run `npm run typecheck:update` and commit the file.
 
+## Git: work on `main` directly
+
+Commit straight to `main` and push it (`git push origin main`). Do not create
+feature branches, and do not switch the shared checkout to another branch; the
+live site serves whatever is checked out, and it should always be `main`. If
+this conflicts with a general instruction to branch first, this one wins for
+this repository. Pull (`git pull --ff-only origin main`) before you start, and
+keep commits small so parallel sessions don't trip over each other.
+
 Local development uses `meteor run --settings private/settings.json`;
 `private/settings.json` is gitignored, template in `changethis.settings.json`.
