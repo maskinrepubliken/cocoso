@@ -4,7 +4,7 @@ import CheckIcon from 'lucide-react/dist/esm/icons/check';
 
 import ThreeDIcon from '../generic/ThreeDIcon';
 
-// How the events page is narrowed besides the kind: upcoming or past, a
+// How the events page is narrowed besides the kind: past or upcoming, a
 // stretch of days, and only those one signs up for. Kept in the address
 // (showPast, when, rsvp) so a view can be linked and Back undoes it.
 export type EventWhen = '' | 'today' | 'weekend' | 'week';
@@ -132,13 +132,25 @@ export default function EventViewMenu({ view, onChange }: EventViewMenuProps) {
 
       {open && (
         <div className="site-menu-panel view-menu-panel" role="menu">
-          <p className="view-menu-heading">{tc('eventView.headings.show')}</p>
-          {row('upcoming', 'calendar', !view.showPast, () =>
-            onChange({ showPast: false })
-          )}
-          {row('past', 'clock', view.showPast, () =>
-            onChange({ showPast: true, when: '' })
-          )}
+          {/* Past or upcoming as the switch beside the heading was */}
+          <div className="seg view-menu-seg" role="group">
+            <button
+              type="button"
+              className={`seg-button ${view.showPast ? 'is-active' : ''}`}
+              aria-pressed={view.showPast}
+              onClick={() => onChange({ showPast: true, when: '' })}
+            >
+              {tc('labels.past')}
+            </button>
+            <button
+              type="button"
+              className={`seg-button ${view.showPast ? '' : 'is-active'}`}
+              aria-pressed={!view.showPast}
+              onClick={() => onChange({ showPast: false })}
+            >
+              {tc('labels.upcoming')}
+            </button>
+          </div>
 
           {!view.showPast && (
             <>

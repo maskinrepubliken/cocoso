@@ -559,17 +559,10 @@ eventKinds:
     none: No particular kind
 # The view menu at the end of the kinds on the events page
 eventView:
-  button: Show
+  button: Filter
   headings:
-    show: Show
     when: When
     more: More
-  upcoming:
-    title: Upcoming
-    detail: From today on
-  past:
-    title: Past
-    detail: What has already been
   anytime:
     title: Any date
     detail: Everything coming up
