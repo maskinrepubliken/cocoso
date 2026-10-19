@@ -1543,25 +1543,38 @@ body {
   margin-bottom: 0.75rem;
 }
 
+/* The toolbar's parts and the Filter on one line, the Filter just left of
+   the views: the toolbar gives its parts to the row (display: contents),
+   and the Filter itself stays outside it, out of reach of the library's
+   button styles */
 .rbc-calendar .cal-toolbar-row > .rbc-toolbar {
+  display: contents;
+}
+
+.cal-toolbar-row .rbc-toolbar-label {
   flex: 1 1 auto;
   min-width: 0;
-  margin-bottom: 0;
+  order: 1;
 }
 
 .cal-toolbar-end {
   flex: none;
+  order: 2;
 }
 
-/* Too narrow for one line, wide enough for two: back, month and Filter on
-   the first, the views centred under them */
+.cal-toolbar-row .rbc-btn-group:not(:first-child) {
+  order: 3;
+}
+
+/* Too narrow for one line, wide enough for two: back and the month on the
+   first, the Filter and the views under them at the right */
 @media (min-width: 721px) and (max-width: 1000px) {
   .cal-toolbar-row {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      'nav label filter'
-      'views views views';
+      'nav label label'
+      'filter filter views';
     gap: 0.5rem 0.75rem;
     align-items: center;
   }
@@ -1576,10 +1589,10 @@ body {
   }
   .cal-toolbar-row .rbc-btn-group:not(:first-child) {
     grid-area: views;
-    justify-self: center;
   }
   .cal-toolbar-end {
     grid-area: filter;
+    justify-self: end;
   }
 }
 
@@ -4702,10 +4715,17 @@ body {
   }
 }
 
+/* the kinds' underline is for the label only, not the switch's box */
+.view-menu-button > .view-menu-icon::after {
+  display: none;
+}
+
+/* The switch sits at the foot of the icon's box, close to its label,
+   which stays on the line of the kinds' labels */
 .view-menu-icon {
   position: relative;
   display: grid;
-  place-items: center;
+  place-items: end center;
   height: 40px;
 }
 
