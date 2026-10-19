@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { redirect, useNavigation } from 'react-router';
 
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { parseTitle } from '/imports/api/_utils/shared';
 import loadable from '@loadable/component';
 
@@ -37,6 +38,10 @@ import CalendarHandler from '/imports/ui/pages/calendar/CalendarHandler';
 // these loaders don't read the URL at all, so that's a wasted refetch on every modal
 // open/close. `revalidateOn` skips revalidation when only the search params change,
 // unless one of the given `relevantParams` (params the loader actually reads) changed.
+// Routes of a switched-off feature are left out, so their URLs are a 404.
+const ifFeature = (feature, routes) =>
+  isFeatureEnabled(feature) ? routes : [];
+
 function revalidateOn(relevantParams = []) {
   return function shouldRevalidate({
     currentUrl,
@@ -367,10 +372,12 @@ const getAdminRoutes = (props) => [
         path: 'calendar/*',
         element: createRouteElement(CalendarAdmin, props),
       },
-      {
-        path: 'groups/*',
-        element: createRouteElement(GroupsAdmin, props),
-      },
+      ...ifFeature('groups', [
+        {
+          path: 'groups/*',
+          element: createRouteElement(GroupsAdmin, props),
+        },
+      ]),
       {
         path: 'info/*',
         element: createRouteElement(PagesAdmin, props),
@@ -383,10 +390,12 @@ const getAdminRoutes = (props) => [
         path: 'resources/*',
         element: createRouteElement(ResourcesAdmin, props),
       },
-      {
-        path: 'works/*',
-        element: createRouteElement(WorksAdmin, props),
-      },
+      ...ifFeature('works', [
+        {
+          path: 'works/*',
+          element: createRouteElement(WorksAdmin, props),
+        },
+      ]),
     ],
   },
   {
@@ -493,26 +502,28 @@ export default function appRoutes(props) {
           },
         ],
       },
-      {
-        path: 'groups',
-        children: [
-          {
-            index: true,
-            element: el(GroupListHandler, MemberGroups),
-            loader: ld(
-              ({ locationId }) => getGroups({ locationId }),
-              ({ params }) => getGroupsByUser({ params })
-            ),
-            shouldRevalidate: revalidateOn(),
-          },
-          {
-            path: ':groupId/*',
-            element: el(GroupItemHandler),
-            loader: ld(({ params }) => getGroup({ params })),
-            shouldRevalidate: revalidateOn(['edit']),
-          },
-        ],
-      },
+      ...ifFeature('groups', [
+        {
+          path: 'groups',
+          children: [
+            {
+              index: true,
+              element: el(GroupListHandler, MemberGroups),
+              loader: ld(
+                ({ locationId }) => getGroups({ locationId }),
+                ({ params }) => getGroupsByUser({ params })
+              ),
+              shouldRevalidate: revalidateOn(),
+            },
+            {
+              path: ':groupId/*',
+              element: el(GroupItemHandler),
+              loader: ld(({ params }) => getGroup({ params })),
+              shouldRevalidate: revalidateOn(['edit']),
+            },
+          ],
+        },
+      ]),
       {
         path: 'calendar',
         children: [
@@ -590,41 +601,43 @@ export default function appRoutes(props) {
           },
         ],
       },
-      {
-        path: 'works',
-        children: [
-          {
-            index: true,
-            element: el(WorkListHandler, MemberWorks),
-            loader: ld(
-              ({ locationId }) => getWorks({ locationId }),
-              ({ params }) => getWorksByUser({ params })
-            ),
-            shouldRevalidate: revalidateOn(),
-          },
-          // A request's page lives under its author (/@user/works/:id). A
-          // shared or guessed /works/:id goes there instead of a 404. Not
-          // under a slug: there the author's own route handles it.
-          ...(forSlug
-            ? []
-            : [
-                {
-                  path: ':workId',
-                  element: el(NotFoundPage),
-                  loader: async ({ params }) => {
-                    const { works } = await getWorks({});
-                    const work = works?.find((w) => w._id === params.workId);
-                    if (!work?.authorUsername) {
-                      return null;
-                    }
-                    return redirect(
-                      `/@${work.authorUsername}/works/${work._id}`
-                    );
+      ...ifFeature('works', [
+        {
+          path: 'works',
+          children: [
+            {
+              index: true,
+              element: el(WorkListHandler, MemberWorks),
+              loader: ld(
+                ({ locationId }) => getWorks({ locationId }),
+                ({ params }) => getWorksByUser({ params })
+              ),
+              shouldRevalidate: revalidateOn(),
+            },
+            // A request's page lives under its author (/@user/works/:id). A
+            // shared or guessed /works/:id goes there instead of a 404. Not
+            // under a slug: there the author's own route handles it.
+            ...(forSlug
+              ? []
+              : [
+                  {
+                    path: ':workId',
+                    element: el(NotFoundPage),
+                    loader: async ({ params }) => {
+                      const { works } = await getWorks({});
+                      const work = works?.find((w) => w._id === params.workId);
+                      if (!work?.authorUsername) {
+                        return null;
+                      }
+                      return redirect(
+                        `/@${work.authorUsername}/works/${work._id}`
+                      );
+                    },
                   },
-                },
-              ]),
-        ],
-      },
+                ]),
+          ],
+        },
+      ]),
       {
         // All the results for ?q=, from the header's search
         path: 'search',
@@ -670,16 +683,18 @@ export default function appRoutes(props) {
               shouldRevalidate: revalidateOn(),
             },
             ...publicRoutes({ props, forSlug: true }),
-            {
-              path: 'works/:workId/*',
-              element: createRouteElement(SlugChild, {
-                ...props,
-                user: WorkItemHandler,
-              }),
-              loader: async ({ params }) =>
-                params.slug.startsWith('@') ? await getWork({ params }) : {},
-              shouldRevalidate: revalidateOn(['edit']),
-            },
+            ...ifFeature('works', [
+              {
+                path: 'works/:workId/*',
+                element: createRouteElement(SlugChild, {
+                  ...props,
+                  user: WorkItemHandler,
+                }),
+                loader: async ({ params }) =>
+                  params.slug.startsWith('@') ? await getWork({ params }) : {},
+                shouldRevalidate: revalidateOn(['edit']),
+              },
+            ]),
           ],
         },
         {

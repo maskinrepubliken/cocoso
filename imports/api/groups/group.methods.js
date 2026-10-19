@@ -10,6 +10,7 @@ import {
 import { isAdmin, isContributorOrAdmin, isMember } from '../users/user.roles';
 import { getSite } from '../site/site';
 import { requireContact } from '../_utils/contact';
+import { featureMethods } from '../_utils/features';
 import Groups from './group';
 import Activities from '../activities/activity';
 import {
@@ -28,7 +29,7 @@ const isUserGroupAdmin = (group, userId) => {
   );
 };
 
-Meteor.methods({
+const groupMethods = {
   async getGroup(groupId) {
     check(groupId, String);
 
@@ -661,4 +662,18 @@ Meteor.methods({
       throw new Meteor.Error(error, 'Could not remove the invite');
     }
   },
-});
+};
+
+Meteor.methods(
+  featureMethods(
+    'groups',
+    [
+      'getGroupsWithMeetings',
+      'getGroups',
+      'getAllGroupMeetingsFuture',
+      'getGroupMeetingsFuture',
+      'getGroupsByUser',
+    ],
+    groupMethods
+  )
+);

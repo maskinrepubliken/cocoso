@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 
 import { locationSelector } from '../_utils/shared';
+import { featureMethods } from '../_utils/features';
 
 import Works from './work';
 import { isContributorOrAdmin } from '../users/user.roles';
@@ -25,7 +26,7 @@ async function withAuthorNames(works) {
   }));
 }
 
-Meteor.methods({
+const workMethods = {
   async getAllWorks(locationId) {
     check(locationId, Match.Maybe(String));
     try {
@@ -156,4 +157,12 @@ Meteor.methods({
       throw new Meteor.Error(error, "Couldn't remove from collection");
     }
   },
-});
+};
+
+Meteor.methods(
+  featureMethods(
+    'works',
+    ['getAllWorks', 'getWorksByUser', 'getMyWorks'],
+    workMethods
+  )
+);

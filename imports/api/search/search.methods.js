@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import dayjs from 'dayjs';
 
+import { isFeatureEnabled } from '../_utils/features';
 import { locationSelector } from '../_utils/shared';
 import Activities from '../activities/activity';
 import Groups from '../groups/group';
@@ -65,7 +66,9 @@ async function searchActivities(words, locationId, user, limit = PER_KIND) {
   const found = await Activities.find(
     {
       $and: [
-        { $or: [{ isPublicActivity: true }, { isGroupMeeting: true }] },
+        isFeatureEnabled('groups')
+          ? { $or: [{ isPublicActivity: true }, { isGroupMeeting: true }] }
+          : { isPublicActivity: true, isGroupMeeting: { $ne: true } },
         locationSelector(locationId),
         { isArchived: { $ne: true } },
         wordsSelector(words, ['title', 'subTitle', 'longDescription']),
@@ -329,9 +332,13 @@ Meteor.methods({
       const [activities, groups, resources, works, pages, people, locations] =
         await Promise.all([
           searchActivities(words, locationId, user, limit),
-          searchGroups(words, locationId, user, limit),
+          isFeatureEnabled('groups')
+            ? searchGroups(words, locationId, user, limit)
+            : [],
           searchResources(words, locationId, limit),
-          searchWorks(words, locationId, limit),
+          isFeatureEnabled('works')
+            ? searchWorks(words, locationId, limit)
+            : [],
           searchPages(words, limit),
           searchPeople(words, limit),
           searchLocations(words, limit),
