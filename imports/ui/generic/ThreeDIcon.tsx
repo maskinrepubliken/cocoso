@@ -76,9 +76,9 @@ export type ThreeDIconName =
 export const sectionIcons: Record<string, ThreeDIconName> = {
   activities: 'megaphone',
   calendar: 'calendar',
-  groups: 'puzzle',
+  groups: 'heart',
   works: 'picture',
-  people: 'heart',
+  people: 'puzzle',
   resources: 'pin',
   info: 'notebook',
   requests: 'chat',
