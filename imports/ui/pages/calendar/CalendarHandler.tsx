@@ -11,6 +11,9 @@ import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import { colorsForKind } from '/imports/ui/utils/kindPalette';
+import EventViewMenu from '/imports/ui/listing/EventViewMenu';
+import useEventFilters from '/imports/ui/listing/useEventFilters';
+import { EVENT_KINDS } from '/imports/ui/pages/activities/eventKinds';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
@@ -136,7 +139,19 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
     }));
   };
 
-  const filteredActivities = activitiesParsed || [];
+  // The same Filter as on the events page: kinds and places; one moves
+  // between days and weeks here, so not past/upcoming or a stretch of days.
+  const filters = useEventFilters('calendar');
+  const presentKinds = useMemo(() => {
+    const keys = new Set(
+      (activities as any[]).map((a) => a.category?.key).filter(Boolean)
+    );
+    return EVENT_KINDS.filter((kind) => keys.has(kind.key));
+  }, [activities]);
+  const filteredActivities = useMemo(
+    () => (activitiesParsed || []).filter((act: any) => filters.matches(act)),
+    [activitiesParsed, filters.filterKey]
+  );
 
   // Weekly activities are drawn lighter so one-off events stand out.
   const recurringIds = useMemo(
@@ -174,6 +189,26 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       {loading && <Loader />}
 
       <PageHeading site={site || siteDoc} listing="calendar" />
+
+      {/* The filter tile at the right edge, as at the end of the kinds on
+          the events page */}
+      <div className="kind-bar page-wrap">
+        <EventViewMenu
+          isNarrowed={
+            filters.kinds.length > 0 ||
+            (!filters.currentLocation && filters.placeSlugs.length > 0)
+          }
+          kinds={presentKinds}
+          locations={filters.locations}
+          places={filters.placeSlugs}
+          selectedKinds={filters.kinds}
+          view={filters.view}
+          withTime={false}
+          onChange={filters.setView}
+          onToggleKind={filters.toggleKind}
+          onTogglePlace={filters.togglePlace}
+        />
+      </div>
 
       {/* The calendar itself spans the whole viewport, gutter to gutter */}
       <div className="cal-full">

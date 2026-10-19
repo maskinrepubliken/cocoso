@@ -1,6 +1,4 @@
 import React, { useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
-import { useAtomValue } from 'jotai';
 
 import { useTranslation } from 'react-i18next';
 
@@ -9,14 +7,9 @@ import PageHeading, { PlaceNotice } from './PageHeading';
 import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
 import ThreeDIcon from '../generic/ThreeDIcon';
-import { locationsAtom } from '/imports/state';
-import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { EVENT_KINDS } from '../pages/activities/eventKinds';
-import EventViewMenu, {
-  type EventView,
-  type EventWhen,
-  happensWithin,
-} from './EventViewMenu';
+import EventViewMenu, { happensWithin } from './EventViewMenu';
+import useEventFilters from './useEventFilters';
 
 export interface ActivitiesHybridProps {
   siteDoc: any;
@@ -32,57 +25,21 @@ export default function ActivitiesHybrid({
   const site = { ...siteDoc };
   const [tc] = useTranslation('common');
   const openEntry = useOpenEntry('activities');
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const locations = useAtomValue(locationsAtom);
-  const currentLocation = useCurrentLocation();
-
-  const listParam = (name: string) =>
-    (searchParams.get(name) || '').split(',').filter(Boolean);
-  const setParams = (change: Record<string, string | null>) =>
-    setSearchParams((params) => {
-      const next = new URLSearchParams(params);
-      Object.entries(change).forEach(([key, value]) => {
-        if (value) next.set(key, value);
-        else next.delete(key);
-      });
-      return next;
-    });
-
-  // The chosen kinds: one from the strip, any number from the filter menu
-  const kinds = listParam('kind');
-  const oneKind = kinds.length === 1 ? kinds[0] : '';
-  const setKinds = (keys: string[]) => setParams({ kind: keys.join(',') });
-  const toggleKind = (key: string) =>
-    setKinds(
-      kinds.includes(key) ? kinds.filter((k) => k !== key) : [...kinds, key]
-    );
-
-  // The chosen places (orter). Inside a place it is that one, and the list
-  // only holds its events; choosing more goes to the whole municipality
-  // with all of them chosen.
-  const placeSlugs = currentLocation
-    ? [currentLocation.slug]
-    : listParam('ort');
-  const togglePlace = (slug: string) => {
-    const next = placeSlugs.includes(slug)
-      ? placeSlugs.filter((s) => s !== slug)
-      : [...placeSlugs, slug];
-    if (!currentLocation) {
-      setParams({ ort: next.join(',') });
-      return;
-    }
-    const params = new URLSearchParams(searchParams);
-    if (next.length) params.set('ort', next.join(','));
-    else params.delete('ort');
-    const query = params.toString();
-    navigate(`/activities${query ? `?${query}` : ''}`);
-  };
-  const placeIds = new Set(
-    locations
-      .filter((location: any) => placeSlugs.includes(location.slug))
-      .map((location: any) => location._id)
-  );
+  const {
+    locations,
+    kinds,
+    oneKind,
+    setKinds,
+    toggleKind,
+    placeSlugs,
+    togglePlace,
+    filterKey,
+    matches,
+    view,
+    setView,
+    isNarrowed,
+    resetAll,
+  } = useEventFilters('activities');
 
   // Only kinds that some upcoming event has, so no chip is a dead end.
   const presentKinds = useMemo(() => {
@@ -91,21 +48,6 @@ export default function ActivitiesHybrid({
     );
     return EVENT_KINDS.filter((kind) => keys.has(kind.key));
   }, [activities]);
-
-  // Past or upcoming, a stretch of days and only those with sign-up, from
-  // the filter menu; all in the address, as the kinds and places.
-  const when = (searchParams.get('when') || '') as EventWhen;
-  const view: EventView = {
-    showPast: Boolean(showPast),
-    when: showPast ? '' : when,
-  };
-  const setView = (change: Partial<EventView>) =>
-    setParams({
-      ...(change.showPast !== undefined
-        ? { showPast: change.showPast ? 'true' : 'false' }
-        : {}),
-      ...(change.when !== undefined ? { when: change.when || null } : {}),
-    });
 
   const groupsInMenu = site?.settings?.menu?.find(
     (item: any) => item.name === 'groups'
@@ -116,23 +58,14 @@ export default function ActivitiesHybrid({
   // Every event as a card, weekly ones too; the start page has the day and
   // week overviews. Chosen places keep the events for the whole
   // municipality too, as a place's own page does.
-  const kindsKey = kinds.join(',');
-  const placesKey = [...placeIds].join(',');
   const cardActivities = useMemo(
     () =>
       activities.filter(
         (activity: any) =>
-          (!kinds.length || kinds.includes(activity.category?.key)) &&
-          (currentLocation ||
-            !placeIds.size ||
-            placeIds.has(activity.locationId) ||
-            (!activity.locationId && !activity.isMunicipalityOnly)) &&
-          happensWithin(activity, view.when)
+          matches(activity) && happensWithin(activity, view.when)
       ),
-    [activities, kindsKey, placesKey, view.when]
+    [activities, filterKey]
   );
-
-  const resetAll = () => setParams({ kind: null, ort: null, when: null });
 
   return (
     <>
@@ -149,7 +82,7 @@ export default function ActivitiesHybrid({
           underlined in green; nothing boxed, so it is not another pill.
           A tap picks that one kind; the filter menu, at the right end and
           outside the strip (which scrolls sideways on a phone), picks
-          several, and places, days and sign-up. */}
+          several, and places and days. */}
       <div className="kind-bar page-wrap">
         <div className="kind-strip">
           {presentKinds.length > 1 && (
@@ -183,11 +116,7 @@ export default function ActivitiesHybrid({
           )}
         </div>
         <EventViewMenu
-          isNarrowed={
-            Boolean(view.when) ||
-            kinds.length > 1 ||
-            (!currentLocation && placeSlugs.length > 0)
-          }
+          isNarrowed={isNarrowed}
           kinds={presentKinds}
           locations={locations}
           places={placeSlugs}
