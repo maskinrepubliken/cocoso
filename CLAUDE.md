@@ -33,14 +33,37 @@ npm run lint && npm run typecheck && npm run check:i18n
 `typecheck` compares against `typecheck-baseline.json`; only new errors fail.
 If you fix existing errors, run `npm run typecheck:update` and commit the file.
 
-## Git: work on `main` directly
+## Git: two branches — work on `dev`, release to `main`
 
-Commit straight to `main` and push it (`git push origin main`). Do not create
-feature branches, and do not switch the shared checkout to another branch; the
-live site serves whatever is checked out, and it should always be `main`. If
-this conflicts with a general instruction to branch first, this one wins for
-this repository. Pull (`git pull --ff-only origin main`) before you start, and
-keep commits small so parallel sessions don't trip over each other.
+Day-to-day work happens on the shared **`dev`** branch; **`main`** is only
+ever moved by a release. Nothing on GitHub runs when `dev` is pushed; merging
+to `main` is what triggers CI and the image build, so it happens once per
+release instead of on every commit.
+
+- Commit straight to `dev` and push it (`git push origin dev`). Do not create
+  other branches, and do not switch the shared checkout — the live dev site
+  serves whatever is checked out, and that should always be `dev`. If this
+  conflicts with a general instruction to branch first, this one wins here.
+- Pull (`git pull --ff-only origin dev`) before you start, and keep commits
+  small so parallel sessions don't trip over each other.
+- **Never push to `main` on your own.** It moves only when the person you are
+  working with says the work is done and asks for it to be merged/released.
+
+**Release (only when told "it's done" / "merge to main"):** the merge *is* the
+release, and the changelog is generated at that moment from the Conventional
+Commits on `dev` since the last tag — which is why every commit must follow
+the format in the next section.
+
+```bash
+git pull --ff-only origin dev
+npm run release                 # bumps the version from the commit types,
+                                # regenerates CHANGELOG.md, commits, tags
+git push --follow-tags origin dev
+git push origin dev:main        # fast-forward main to the release — no checkout switch
+```
+
+If the last push is rejected, `main` has commits that are not on `dev`; stop
+and tell the person rather than forcing or merging by hand.
 
 ## Commit messages: write them for the changelog
 
