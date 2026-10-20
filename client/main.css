@@ -3411,6 +3411,14 @@ body {
   margin-top: 14px;
 }
 
+/* Organizers start at the left, under their heading, as the other
+   sections do (centred on the organizers page itself) */
+.search-section .search-people {
+  justify-content: flex-start;
+  padding-right: 0;
+  padding-left: 0;
+}
+
 /* the cards are links: no underline, the card's own hover */
 .search-card {
   display: block;

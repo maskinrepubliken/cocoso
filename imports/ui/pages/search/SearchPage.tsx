@@ -150,7 +150,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
     }
     if (key === 'people') {
       return (
-        <People>
+        <People className="search-people">
           {list.map((hit: any) => (
             <PersonTile key={hit._id} user={{ ...hit, firstName: hit.title }} />
           ))}
