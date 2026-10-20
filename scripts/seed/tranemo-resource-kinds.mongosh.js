@@ -1,4 +1,4 @@
-/* global db, ALL */
+/* global ALL */
 // Files the platser under kinds (`kinds`, see
 // imports/ui/pages/resources/resourceKinds.ts) by what their names say.
 // A place gets every kind whose rule matches, e.g. the sim- och

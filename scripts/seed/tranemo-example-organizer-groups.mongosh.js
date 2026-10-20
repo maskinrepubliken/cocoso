@@ -1,4 +1,3 @@
-/* global db */
 // Seeds example organizers that are föreningar and groups rather than
 // single people, each with a photo of a group doing what the association
 // does.

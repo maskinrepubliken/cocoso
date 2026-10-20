@@ -1,4 +1,3 @@
-/* global db */
 // Events and places can be several kinds at once: the single kind in
 // category.key becomes the list `kinds` (see imports/api/_utils/kinds.ts).
 //

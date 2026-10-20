@@ -1,4 +1,3 @@
-/* global db */
 // Seeds Äta/handla/bo: ten cafés, restaurants, shops and inns in Tranemo
 // kommun with opening hours and menus, and the menu entry for the section.
 //

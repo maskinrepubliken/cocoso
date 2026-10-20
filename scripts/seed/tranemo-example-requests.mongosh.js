@@ -1,4 +1,3 @@
-/* global db */
 // Seeds the förfrågningar: the request kinds as work categories, example
 // requests from the example organizers, and the menu label.
 //

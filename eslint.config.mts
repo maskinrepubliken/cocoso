@@ -97,4 +97,22 @@ export default defineConfig([
     files: ['scripts/**'],
     rules: { 'no-console': 'off' },
   },
+  // Seed and migration scripts run inside mongosh, which provides these.
+  {
+    files: ['scripts/**/*.mongosh.js'],
+    languageOptions: {
+      globals: {
+        db: 'readonly',
+        rs: 'readonly',
+        ObjectId: 'readonly',
+        ISODate: 'readonly',
+        UUID: 'readonly',
+        NumberLong: 'readonly',
+        NumberInt: 'readonly',
+        print: 'readonly',
+        printjson: 'readonly',
+        quit: 'readonly',
+      },
+    },
+  },
 ]);

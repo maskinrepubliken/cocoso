@@ -1,4 +1,3 @@
-/* global db */
 // Gives every förening and place that has no picture yet a photo from
 // Wikimedia Commons.
 //

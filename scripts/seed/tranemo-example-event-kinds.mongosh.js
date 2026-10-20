@@ -1,4 +1,4 @@
-/* global db, ALL */
+/* global ALL */
 // Files the example events under kinds (`kinds`, see
 // imports/ui/pages/activities/eventKinds.ts) by what their titles say.
 // An event gets every kind whose rule matches, e.g. a family swim is both
