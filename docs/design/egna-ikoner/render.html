@@ -176,7 +176,7 @@ function buildBadring() {
   const geometry = new THREE.TorusGeometry(R, tube, 96, 256);
   const pos = geometry.attributes.position;
   const colors = new Float32Array(pos.count * 3);
-  const red = new THREE.Color(params.get('red') || '#e5413a').convertSRGBToLinear();
+  const red = new THREE.Color(params.get('red') || '#d9604a').convertSRGBToLinear();
   const white = new THREE.Color('#f7f3ea').convertSRGBToLinear();
   const v = new THREE.Vector3();
   for (let i = 0; i < pos.count; i++) {
@@ -187,7 +187,7 @@ function buildBadring() {
   }
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   const material = new THREE.MeshPhysicalMaterial({
-    vertexColors: true, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.2,
+    vertexColors: true, roughness: Number(params.get('rough') || 0.42), clearcoat: Number(params.get('coat') || 0.5), clearcoatRoughness: 0.2,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.rotation.set(-0.75, 0.45, 0.2);
