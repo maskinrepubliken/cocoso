@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 
 import { siteAtom, locationsAtom } from '/imports/state';
+import { kindsOf } from '/imports/api/_utils/kinds';
 import { Box } from '/imports/ui/core';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import { RESOURCE_KINDS } from '/imports/ui/pages/resources/resourceKinds';
@@ -36,7 +37,7 @@ export default function ResourcesHybrid({
   // Only kinds that some place has, so no tile is a dead end.
   const presentKinds = useMemo(() => {
     const keys = new Set(
-      resources.map((r: any) => r.category?.key).filter(Boolean)
+      resources.flatMap((r: any) => kindsOf(r))
     );
     return RESOURCE_KINDS.filter((kind) => keys.has(kind.key));
   }, [resources]);
@@ -55,7 +56,7 @@ export default function ResourcesHybrid({
   const shownResources = useMemo(
     () =>
       kind
-        ? resources.filter((r: any) => r.category?.key === kind)
+        ? resources.filter((r: any) => kindsOf(r).includes(kind))
         : resources,
     [resources, kind]
   );

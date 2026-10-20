@@ -8,6 +8,7 @@ import useOpenEntry from './useOpenEntry';
 import SexyThumb from './SexyThumb';
 import ThreeDIcon from '../generic/ThreeDIcon';
 import { EVENT_KINDS } from '../pages/activities/eventKinds';
+import { kindsOf } from '/imports/api/_utils/kinds';
 import EventViewMenu, { happensWithin } from './EventViewMenu';
 import useEventFilters from './useEventFilters';
 
@@ -44,7 +45,7 @@ export default function ActivitiesHybrid({
   // Only kinds that some upcoming event has, so no chip is a dead end.
   const presentKinds = useMemo(() => {
     const keys = new Set(
-      activities.map((a: any) => a.category?.key).filter(Boolean)
+      activities.flatMap((a: any) => kindsOf(a))
     );
     return EVENT_KINDS.filter((kind) => keys.has(kind.key));
   }, [activities]);

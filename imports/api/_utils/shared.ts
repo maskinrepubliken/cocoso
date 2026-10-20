@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import Resizer from 'react-image-file-resizer';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
+import { kindsOf } from './kinds';
 
 dayjs.extend(isBetween);
 
@@ -32,6 +33,7 @@ interface Activity {
   title: string;
   locationId?: string;
   isMunicipalityOnly?: boolean;
+  kinds?: string[];
   category?: { key?: string };
   datesAndTimes?: DateTimeOccurrence[];
   resourceId?: string;
@@ -66,6 +68,7 @@ interface Booking {
   locationId?: string;
   isMunicipalityOnly?: boolean;
   kind?: string;
+  kinds?: string[];
   start: Date;
   end: Date;
   startDate: string;
@@ -233,7 +236,9 @@ function helper_parseAllBookingsWithResources(
     title: activity.title,
     locationId: activity.locationId,
     isMunicipalityOnly: activity.isMunicipalityOnly,
-    kind: activity.category?.key,
+    // the first kind gives the colour in the calendar
+    kind: kindsOf(activity)[0],
+    kinds: kindsOf(activity),
     start: dayjs(startDate + startTime, 'YYYY-MM-DDHH:mm').toDate(),
     end: dayjs(endDate + endTime, 'YYYY-MM-DDHH:mm').toDate(),
     startDate,

@@ -2,6 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { useAtomValue } from 'jotai';
 
 import { locationsAtom } from '/imports/state';
+import { kindsOf } from '/imports/api/_utils/kinds';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 
 import type { EventView, EventWhen } from './EventViewMenu';
@@ -73,12 +74,12 @@ export default function useEventFilters(listing: 'activities' | 'calendar') {
   // Chosen places keep the events for the whole municipality too, as a
   // place's own page does.
   const matches = (item: {
-    kind?: string;
+    kinds?: string[] | null;
     category?: { key?: string } | null;
     locationId?: string | null;
     isMunicipalityOnly?: boolean;
   }) =>
-    (!kinds.length || kinds.includes(item.kind || item.category?.key || '')) &&
+    (!kinds.length || kindsOf(item).some((key) => kinds.includes(key))) &&
     (Boolean(currentLocation) ||
       !placeIds.size ||
       placeIds.has(item.locationId || '') ||

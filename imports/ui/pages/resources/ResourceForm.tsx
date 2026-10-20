@@ -14,6 +14,7 @@ import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
 import { Address, isCompleteAddress } from '/imports/api/_utils/address';
 import { Contact } from '/imports/api/_utils/contact';
 import { call } from '/imports/api/_utils/shared';
+import { kindsOf } from '/imports/api/_utils/kinds';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
@@ -29,6 +30,7 @@ interface ResourceFormValues {
 
 interface ResourceData extends ResourceFormValues {
   images?: string[];
+  kinds?: string[] | null;
   category?: { key?: string } | null;
   address?: Partial<Address> | null;
   contact?: Contact | null;
@@ -61,7 +63,7 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
     formValues: resource || emptyFormValues,
     isBookable: resource ? resource.isBookable : true,
     isCombo: resource ? resource.isCombo : false,
-    categoryKey: resource?.category?.key || '',
+    kinds: kindsOf(resource),
     address: resource?.address || emptyAddress,
     contact: resource?.contact || emptyContact,
     locationId: resource?.locationId || null,
@@ -118,7 +120,7 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
     const newResource: ResourceData = {
       ...state.formValues,
       address: state.address,
-      category: state.categoryKey ? { key: state.categoryKey } : null,
+      kinds: state.kinds,
       contact: state.contact,
       images,
       isBookable: state.isBookable,
@@ -181,9 +183,9 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
         <KindPicker
           kinds={RESOURCE_KINDS}
           namespace="resourceKinds"
-          value={state.categoryKey}
-          onChange={(categoryKey) =>
-            setState((prevState: any) => ({ ...prevState, categoryKey }))
+          value={state.kinds}
+          onChange={(kinds) =>
+            setState((prevState: any) => ({ ...prevState, kinds }))
           }
         />
       </FormField>

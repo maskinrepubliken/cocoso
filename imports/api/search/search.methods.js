@@ -11,6 +11,7 @@ import Memberships from '../memberships/membership';
 import Pages from '../pages/page';
 import Resources from '../resources/resource';
 import Works from '../works/work';
+import { kindsOf } from '../_utils/kinds';
 
 // The site-wide search behind the box in the header. One call, a short
 // list per kind of content, only what a visitor could open anyway.
@@ -88,6 +89,7 @@ async function searchActivities(words, locationId, user, limit = PER_KIND) {
         resource: 1,
         place: 1,
         category: 1,
+        kinds: 1,
       },
       limit: Math.max(40, limit * 3),
     }
@@ -126,7 +128,7 @@ async function searchActivities(words, locationId, user, limit = PER_KIND) {
       resource: activity.resource,
       place: activity.place,
       isMunicipalityOnly: activity.isMunicipalityOnly,
-      category: activity.category || null,
+      kinds: kindsOf(activity),
     });
   }
 

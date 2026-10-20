@@ -34,6 +34,7 @@ export default function EditResource() {
   const resourceFields = (({
     address,
     category,
+    kinds,
     contact,
     label,
     description,
@@ -46,6 +47,7 @@ export default function EditResource() {
   }) => ({
     address,
     category,
+    kinds,
     contact,
     label,
     description,

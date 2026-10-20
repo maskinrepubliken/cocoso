@@ -24,6 +24,8 @@ import {
 import { attachPlaceAddress, ownActivityAddress } from './activity.place';
 import { formatAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
+import { cleanKinds } from '../_utils/kinds';
+import { EVENT_KIND_KEYS } from '../../ui/pages/activities/eventKinds';
 import {
   compareDatesForSortActivities,
   compareDatesForSortActivitiesReverse,
@@ -585,6 +587,10 @@ Meteor.methods({
       delete values.resourceId;
       delete values.resource;
     }
+    // Only the known kinds; the single category is from before kinds.
+    check(values.kinds, Match.Maybe([String]));
+    values.kinds = cleanKinds(values.kinds, EVENT_KIND_KEYS);
+    delete values.category;
     const locationId = await resolveActivityLocation(values);
     const organizers = await resolveOrganizers(
       values.organizers,
@@ -682,6 +688,13 @@ Meteor.methods({
     }
     // A place chosen away is removed, not kept from before.
     const unset = {};
+    // Only the known kinds; they replace the single category from before.
+    delete safeValues.category;
+    if ('kinds' in safeValues) {
+      check(safeValues.kinds, Match.Maybe([String]));
+      safeValues.kinds = cleanKinds(safeValues.kinds, EVENT_KIND_KEYS);
+      unset.category = 1;
+    }
     if (
       'contact' in safeValues ||
       'contactUserId' in safeValues ||

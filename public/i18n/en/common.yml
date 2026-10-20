@@ -555,7 +555,7 @@ eventKinds:
     social: the social events
   form:
     label: Type of event
-    helper: Helps people find your event.
+    helper: Choose one or more. Helps people find your event.
     none: No particular kind
 # The kinds of platser, like eventKinds (imports/ui/pages/resources/resourceKinds.ts)
 resourceKinds:
@@ -582,7 +582,7 @@ resourceKinds:
     friluft: the outdoor places
   form:
     label: Type of place
-    helper: Helps people find the place.
+    helper: Choose one or more. Helps people find the place.
 # The view menu at the end of the kinds on the events page
 eventView:
   button: Filter

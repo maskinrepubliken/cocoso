@@ -552,7 +552,7 @@ eventKinds:
     social: umgängesevenemangen
   form:
     label: Typ av evenemang
-    helper: Hjälper användare hitta ditt evenemang.
+    helper: Välj en eller flera. Hjälper användare hitta ditt evenemang.
     none: Inget särskilt slag
 # The kinds of platser, like eventKinds (imports/ui/pages/resources/resourceKinds.ts)
 resourceKinds:
@@ -579,7 +579,7 @@ resourceKinds:
     friluft: friluftsområdena
   form:
     label: Typ av plats
-    helper: Hjälper användare hitta platsen.
+    helper: Välj en eller flera. Hjälper användare hitta platsen.
 # The view menu at the end of the kinds on the events page
 eventView:
   button: Filter

@@ -289,7 +289,7 @@ interface Activity {
   imageUrl?: string;
   locationId?: string | null;
   isMunicipalityOnly?: boolean;
-  category?: { key?: string } | null;
+  kinds?: string[] | null;
   resource?: string;
   place?: string;
 }

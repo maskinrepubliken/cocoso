@@ -12,8 +12,12 @@ Resources.schema = new SimpleSchema({
   locationId: { type: String, optional: true },
 
   label: { type: String },
-  // The kind of place, one of the keys in
-  // imports/ui/pages/resources/resourceKinds.ts
+  // The kinds of place, keys from imports/ui/pages/resources/resourceKinds.ts;
+  // a place can be several (read with kindsOf in _utils/kinds.ts)
+  kinds: { type: Array, optional: true },
+  'kinds.$': { type: String },
+  // Before kinds: the one kind, as category.key. Moved to kinds by
+  // scripts/migrations/2026-10-kinds.mongosh.js
   category: { type: Object, optional: true },
   'category.key': { type: String },
   description: { type: String, optional: true },
@@ -62,6 +66,7 @@ Resources.publicFields = {
   _id: 1,
   address: 1,
   category: 1,
+  kinds: 1,
   contact: 1,
   description: 1,
   images: 1,

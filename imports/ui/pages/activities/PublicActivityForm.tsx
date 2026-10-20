@@ -7,6 +7,7 @@ import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import { currentUserAtom, roleAtom } from '/imports/state';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
+import { kindsOf } from '/imports/api/_utils/kinds';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
@@ -59,6 +60,7 @@ interface ActivityData extends ActivityFormValues {
   isExclusiveActivity?: boolean;
   isRegistrationEnabled?: boolean;
   isRegistrationDisabled?: boolean;
+  kinds?: string[] | null;
   category?: { key?: string } | null;
   organizers?: OrganizerRef[];
   contact?: Contact | null;
@@ -117,7 +119,7 @@ export default function PublicActivityForm({
     locationId: activity?.locationId || null,
     // An event being edited has its place in the municipality already
     locationPicked: Boolean(activity),
-    categoryKey: activity?.category?.key || '',
+    kinds: kindsOf(activity),
     organizers: activity?.organizers || [],
     // The organizer: the person creating the event; an admin may name
     // someone else, also later.
@@ -358,7 +360,7 @@ export default function PublicActivityForm({
       isPublicActivity: true,
       isRegistrationEnabled: state.isRegistrationEnabled,
       isExclusiveActivity: state.isExclusiveActivity,
-      category: state.categoryKey ? { key: state.categoryKey } : null,
+      kinds: state.kinds,
       ...(isAdmin && state.authorId ? { authorId: state.authorId } : {}),
       organizers: state.organizers.filter(
         (o: OrganizerRef) => o.userId !== state.authorId
@@ -430,9 +432,9 @@ export default function PublicActivityForm({
       <FormCard title={tc('eventKinds.form.label')}>
         <p className="form-preview-note">{tc('eventKinds.form.helper')}</p>
         <KindPicker
-          value={state.categoryKey}
-          onChange={(categoryKey) =>
-            setState((prevState: any) => ({ ...prevState, categoryKey }))
+          value={state.kinds}
+          onChange={(kinds) =>
+            setState((prevState: any) => ({ ...prevState, kinds }))
           }
         />
       </FormCard>

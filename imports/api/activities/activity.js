@@ -25,7 +25,12 @@ Activities.schema = new SimpleSchema({
   // Copied from the resource when one is set, otherwise chosen by the
   // author. Empty means the whole municipality.
   locationId: { type: String, optional: true },
-  // The kind of event, one of the keys in imports/ui/pages/activities/eventKinds.ts
+  // The kinds of event, keys from imports/ui/pages/activities/eventKinds.ts;
+  // an event can be several (read with kindsOf in _utils/kinds.ts)
+  kinds: { type: Array, optional: true },
+  'kinds.$': { type: String },
+  // Before kinds: the one kind, as category.key. Moved to kinds by
+  // scripts/migrations/2026-10-kinds.mongosh.js
   category: { type: Object, optional: true },
   'category.key': { type: String },
   // Shown only when no place is selected (the municipality pages).

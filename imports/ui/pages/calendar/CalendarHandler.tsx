@@ -14,6 +14,7 @@ import { colorsForKind } from '/imports/ui/utils/kindPalette';
 import EventViewMenu from '/imports/ui/listing/EventViewMenu';
 import useEventFilters from '/imports/ui/listing/useEventFilters';
 import { EVENT_KINDS } from '/imports/ui/pages/activities/eventKinds';
+import { kindsOf } from '/imports/api/_utils/kinds';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
@@ -144,7 +145,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   const filters = useEventFilters('calendar');
   const presentKinds = useMemo(() => {
     const keys = new Set(
-      (activities as any[]).map((a) => a.category?.key).filter(Boolean)
+      (activities as any[]).flatMap((a) => kindsOf(a))
     );
     return EVENT_KINDS.filter((kind) => keys.has(kind.key));
   }, [activities]);
