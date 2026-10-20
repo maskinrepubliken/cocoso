@@ -1,28 +1,31 @@
-# Our own 3D icons: sevärdhet, fotboll, badring and känga
+# Our own 3D icons: sevärdhet, fotboll, badring and tält
 
-`public/3dicons/sevardhet.webp` (⌘, the Swedish road sign for a
-sevärdhet), `public/3dicons/fotboll.webp` and `public/3dicons/badring.webp`
-(a swim ring, for Bad) and `public/3dicons/kanga.webp` (a hiking boot,
-for Friluftsliv) are not from 3dicons.co. They
-are modelled and rendered with three.js to sit next to that set: the
-dynamic camera angle, soft studio light, a diagonal colour gradient on the
-⌘ like the set's glyphs (`hash`, `at`), trimmed and scaled to 320 px WebP.
-The ⌘ is brown, the colour of Swedish tourist signs.
+Four icons in `public/3dicons/` are not from 3dicons.co: `sevardhet.webp` (⌘,
+the Swedish road sign for a sevärdhet), `fotboll.webp` (Idrottsplatser),
+`badring.webp` (Bad) and `talt.webp` (Friluftsliv). They are modelled
+and rendered with three.js to sit next to that set: the dynamic camera
+angle, soft studio light, diagonal colour gradients like the set's glyphs
+(`hash`, `at`), trimmed and scaled to 320 px WebP. The ⌘ is brown, the
+colour of Swedish tourist signs; the reds match the set's (`gym`, `flag`).
 
-- `render.html`: builds and lights the model (`buildSevardhet`,
-  `buildFotboll`, `buildBadring`, `buildKanga`) and renders it with a transparent background. The ⌘ is
-  its outline with holes (`commandShape`), extruded with a deep round
-  bevel; the ball is a sphere painted with the 12 pentagons and 20 hexagons
-  of a truncated icosahedron, with the seams pressed in by a bump map; the
-  swim ring is a torus in eight red and white fields (`parts`, `tube`);
-  the boot is its side profile extruded with a round bevel, with a
-  tongue, a padded collar (a tube), a toe cap, a midsole, a lugged sole
-  and capsule laces (`from`/`to`, `lace`, `tongue`, `collar`, `rx`/`ry`).
+- `render.html`: builds and lights the model and renders it with a
+  transparent background, one builder per icon:
+  - `buildSevardhet`: the ⌘ outline with holes (`commandShape`),
+    extruded with a deep round bevel (`s`, `r`, `w`, `from`/`to`).
+  - `buildFotboll`: a sphere painted with the 12 pentagons and 20 hexagons
+    of a truncated icosahedron, the seams pressed in by a bump map.
+  - `buildBadring`: a torus in eight red and white fields (`parts`,
+    `tube`, `red`, `rough`, `coat`).
+  - `buildTalt`: an A-frame face with a door, extruded, on a rounded
+    groundsheet (`from`/`to`, `ground`, `len`).
+  - Tried for Friluftsliv and not used: `buildKanga`, a hiking boot (too
+    boxy as an extruded side profile), and `buildGran`, a spruce of
+    lathe-turned tiers.
 - `render.js`: serves the page, renders it in headless Chromium
   (Playwright, software WebGL), writes `<name>-1024.png` (the full
   render, 1536 px despite the name) and `<name>.webp` (trimmed, 320 px).
-- `*-preview.png`, `comparison.png`: the current renders, and the two next
-  to icons from the set.
+- `*-preview.png`, `comparison.png`: the renders, and ours next to an
+  icon from the set (the boot and the spruce are the unused tries).
 
 To re-render (Playwright installed, `require('playwright')` resolvable):
 
@@ -31,8 +34,8 @@ To re-render (Playwright installed, `require('playwright')` resolvable):
     node render.js sevardhet sevardhet
     node render.js fotboll fotboll
     node render.js badring badring
-    node render.js kanga kanga
-    cp sevardhet.webp fotboll.webp badring.webp kanga.webp ../../../public/3dicons/
+    node render.js talt talt
+    cp sevardhet.webp fotboll.webp badring.webp talt.webp ../../../public/3dicons/
 
 Shape and colour can be tried from the command line without editing:
 `node render.js sevardhet test "&s=0.72&r=0.56&w=0.18&from=%235a2a12&to=%23e8a050&env=0.45"`
