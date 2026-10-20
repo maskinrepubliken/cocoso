@@ -85,6 +85,9 @@ interface EventViewMenuProps {
   // A tile like the kinds (events page) or a pill like the calendar's
   // toolbar buttons
   variant?: 'tile' | 'pill';
+  // Where the kinds' names live in common.yml (the kinds of platser on the
+  // Platser page)
+  kindNamespace?: string;
   onChange: (view: Partial<EventView>) => void;
   onToggleKind: (key: string) => void;
   onTogglePlace: (slug: string) => void;
@@ -101,6 +104,7 @@ export default function EventViewMenu({
   isNarrowed,
   withTime = true,
   variant = 'tile',
+  kindNamespace = 'eventKinds',
   onChange,
   onToggleKind,
   onTogglePlace,
@@ -247,7 +251,7 @@ export default function EventViewMenu({
                     <>
                       <ThreeDIcon name={kind.icon} size={24} />
                       <span className="view-menu-label">
-                        {tc(`eventKinds.${kind.key}`)}
+                        {tc(`${kindNamespace}.${kind.key}`)}
                       </span>
                     </>,
                     selectedKinds.includes(kind.key),

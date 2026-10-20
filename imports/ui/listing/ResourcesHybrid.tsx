@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router';
 
-import { siteAtom, locationsAtom } from '/imports/state';
+import { siteAtom } from '/imports/state';
 import { kindsOf } from '/imports/api/_utils/kinds';
 import { Box } from '/imports/ui/core';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
@@ -11,10 +10,12 @@ import { RESOURCE_KINDS } from '/imports/ui/pages/resources/resourceKinds';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
-import PageHeading from './PageHeading';
+import PageHeading, { PlaceNotice } from './PageHeading';
 import useOpenEntry from './useOpenEntry';
 import InfiniteScroller from './InfiniteScroller';
 import NewGridThumb from './NewGridThumb';
+import EventViewMenu from './EventViewMenu';
+import useEventFilters from './useEventFilters';
 
 export interface ResourcesHybridProps {
   siteDoc: object;
@@ -26,39 +27,38 @@ export default function ResourcesHybrid({
   resources,
 }: ResourcesHybridProps) {
   const site = useAtomValue(siteAtom);
-  const locations = useAtomValue(locationsAtom);
   const openEntry = useOpenEntry('resources');
   const [tc] = useTranslation('common');
-  const [searchParams, setSearchParams] = useSearchParams();
+  // The same filters as on the events page, kinds and places (orter), in
+  // the address; places have no dates, so no past/upcoming or days.
+  const {
+    locations,
+    kinds,
+    oneKind,
+    toggleKind,
+    placeSlugs,
+    togglePlace,
+    filterKey,
+    matches,
+    view,
+    setView,
+    isNarrowed,
+    resetAll,
+    pickFromStrip,
+  } = useEventFilters('resources');
 
   const locationNameOf = (item: any) =>
-    locations.find((l) => l._id === item.locationId)?.name;
+    locations.find((l: any) => l._id === item.locationId)?.name;
 
   // Only kinds that some place has, so no tile is a dead end.
   const presentKinds = useMemo(() => {
-    const keys = new Set(
-      resources.flatMap((r: any) => kindsOf(r))
-    );
+    const keys = new Set(resources.flatMap((r: any) => kindsOf(r)));
     return RESOURCE_KINDS.filter((kind) => keys.has(kind.key));
   }, [resources]);
 
-  // The chosen kind, in the address (?kind=) like on the events page
-  const kindParam = searchParams.get('kind') || '';
-  const kind = presentKinds.some((k) => k.key === kindParam) ? kindParam : '';
-  const pickKind = (key: string) =>
-    setSearchParams((params) => {
-      const next = new URLSearchParams(params);
-      if (key) next.set('kind', key);
-      else next.delete('kind');
-      return next;
-    });
-
   const shownResources = useMemo(
-    () =>
-      kind
-        ? resources.filter((r: any) => kindsOf(r).includes(kind))
-        : resources,
-    [resources, kind]
+    () => resources.filter((resource: any) => matches(resource)),
+    [resources, filterKey]
   );
 
   return (
@@ -66,37 +66,83 @@ export default function ResourcesHybrid({
       <PageHeading
         site={site || siteDoc}
         listing="resources"
-        title={kind ? tc(`resourceKinds.headings.${kind}`) : undefined}
-        subject={kind ? tc(`resourceKinds.subjects.${kind}`) : undefined}
+        hidePlace
+        title={oneKind ? tc(`resourceKinds.headings.${oneKind}`) : undefined}
+        subject={oneKind ? tc(`resourceKinds.subjects.${oneKind}`) : undefined}
       />
 
-      {/* The kinds as on the events page: a tap picks that one kind */}
-      {presentKinds.length > 1 && (
-        <div className="kind-bar page-wrap">
-          <div className="kind-strip">
-            <button
-              type="button"
-              className={`kind-tile ${!kind ? 'is-active' : ''}`}
-              aria-pressed={!kind}
-              onClick={() => pickKind('')}
-            >
-              <ThreeDIcon name="star" size={36} />
-              <span>{tc('resourceKinds.all')}</span>
-            </button>
-            {presentKinds.map((k) => (
+      {/* The kinds as on the events page: a tap picks that one kind; the
+          Filter at the right end picks several, and places. "Alla", one
+          kind and the Filter are one choice: only one is underlined. */}
+      <div className="kind-bar page-wrap">
+        <div className="kind-strip">
+          {presentKinds.length > 1 && (
+            <>
               <button
-                key={k.key}
                 type="button"
-                aria-pressed={kind === k.key}
-                className={`kind-tile ${kind === k.key ? 'is-active' : ''}`}
-                onClick={() => pickKind(kind === k.key ? '' : k.key)}
+                className={`kind-tile ${
+                  !kinds.length && !isNarrowed ? 'is-active' : ''
+                }`}
+                aria-pressed={!kinds.length && !isNarrowed}
+                onClick={() => pickFromStrip('')}
               >
-                <ThreeDIcon name={k.icon} size={36} />
-                <span>{tc(`resourceKinds.${k.key}`)}</span>
+                <ThreeDIcon name="star" size={36} />
+                <span>{tc('resourceKinds.all')}</span>
               </button>
-            ))}
-          </div>
+              {presentKinds.map((kind) => (
+                <button
+                  key={kind.key}
+                  type="button"
+                  aria-pressed={!isNarrowed && oneKind === kind.key}
+                  className={`kind-tile ${
+                    !isNarrowed && oneKind === kind.key ? 'is-active' : ''
+                  }`}
+                  onClick={() =>
+                    pickFromStrip(
+                      !isNarrowed && oneKind === kind.key ? '' : kind.key
+                    )
+                  }
+                >
+                  <ThreeDIcon name={kind.icon} size={36} />
+                  <span>{tc(`resourceKinds.${kind.key}`)}</span>
+                </button>
+              ))}
+            </>
+          )}
         </div>
+        <EventViewMenu
+          isNarrowed={isNarrowed}
+          kindNamespace="resourceKinds"
+          kinds={presentKinds}
+          locations={locations}
+          places={placeSlugs}
+          selectedKinds={kinds}
+          view={view}
+          withTime={false}
+          onChange={setView}
+          onToggleKind={toggleKind}
+          onTogglePlace={togglePlace}
+        />
+      </div>
+
+      {/* Under the kinds: inside a place, the line saying so */}
+      <div className="page-wrap place-notice-row">
+        <PlaceNotice
+          listing="resources"
+          subject={
+            oneKind ? tc(`resourceKinds.subjects.${oneKind}`) : undefined
+          }
+        />
+      </div>
+
+      {/* Narrowed to nothing: say so, and how to widen it again */}
+      {shownResources.length === 0 && resources.length > 0 && (
+        <p className="view-empty page-wrap">
+          {tc('resourceKinds.empty')}{' '}
+          <button type="button" onClick={resetAll}>
+            {tc('eventView.reset')}
+          </button>
+        </p>
       )}
 
       <Box pb="8">

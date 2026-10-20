@@ -557,6 +557,7 @@ eventKinds:
 # The kinds of platser, like eventKinds (imports/ui/pages/resources/resourceKinds.ts)
 resourceKinds:
   all: Alla
+  empty: Inga platser matchar valen.
   kultur: Kultur & mötesplatser
   sevardhet: Sevärdheter
   idrottshall: Idrottshallar

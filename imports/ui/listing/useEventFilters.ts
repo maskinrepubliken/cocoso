@@ -9,8 +9,10 @@ import type { EventView, EventWhen } from './EventViewMenu';
 
 // What the Filter menu narrows events to, read from and written to the
 // address: ?kind= and ?ort= (lists), ?showPast= and ?when=. Shared by the
-// events page and the calendar, so the two filter alike.
-export default function useEventFilters(listing: 'activities' | 'calendar') {
+// events page, the calendar and the Platser page, so they filter alike.
+export default function useEventFilters(
+  listing: 'activities' | 'calendar' | 'resources'
+) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const locations = useAtomValue(locationsAtom);

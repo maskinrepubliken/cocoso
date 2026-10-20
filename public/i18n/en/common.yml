@@ -560,6 +560,7 @@ eventKinds:
 # The kinds of platser, like eventKinds (imports/ui/pages/resources/resourceKinds.ts)
 resourceKinds:
   all: All
+  empty: No places match the choices.
   kultur: Culture & meeting places
   sevardhet: Sights
   idrottshall: Sports halls
