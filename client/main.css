@@ -5534,27 +5534,24 @@ body {
   width: auto;
 }
 
-/* The makers' card: the square mark above, the wordmark under a line */
+/* The makers' card: the square mark above, the wordmark under it */
 .site-footer-mark-makers {
   flex-direction: column;
   align-items: center;
   gap: 12px;
 }
 
-.site-footer-mark-makers > img {
-  height: 84px;
-}
-
 .site-footer-mark-makers > a {
   display: block;
-  align-self: stretch;
-  padding-top: 12px;
-  border-top: 1px solid var(--cocoso-linje);
-  text-align: center;
+  line-height: 0;
 }
 
-.site-footer-mark-makers > a img {
-  display: inline-block;
+.site-footer-mark-makers > a:first-child img {
+  height: 84px;
+  width: auto;
+}
+
+.site-footer-mark-makers > a:last-child img {
   width: 128px;
   height: auto;
 }
@@ -5576,7 +5573,7 @@ body {
     align-items: center;
   }
 
-  .site-footer-mark-makers > img {
+  .site-footer-mark-makers > a:first-child img {
     height: 64px;
   }
 }

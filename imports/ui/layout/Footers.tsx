@@ -125,9 +125,19 @@ export function Footer({ site }: FooterProps) {
             <img alt="Tranemo kommun" src="/images/tranemo-kommun.svg" />
           </a>
           {/* The two who build it, on one card: Uddebo Makerspace's mark
-              and under it Maskinrepubliken's wordmark, a link to its site */}
+              and under it Maskinrepubliken's wordmark, each a link (Uddebo
+              Makerspace to its part of Maskinrepubliken's site) */}
           <div className="site-footer-mark site-footer-mark-makers">
-            <img alt="Uddebo Makerspace" src="/images/uddebo-makerspace.png" />
+            <a
+              href="https://maskinrepubliken.se/#uddebomakerspace"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img
+                alt="Uddebo Makerspace"
+                src="/images/uddebo-makerspace.png"
+              />
+            </a>
             <a
               href="https://maskinrepubliken.se/"
               rel="noopener noreferrer"
