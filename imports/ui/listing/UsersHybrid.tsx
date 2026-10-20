@@ -74,30 +74,40 @@ const Portrait = styled('div', {
   },
 });
 
-// "3" on the ring's lower right: that many events ahead
+// "3" on the ring's lower right: that many events ahead. Drawn as one of
+// the 3dicons: a glossy ball in their red to orange (as the Filter's
+// switch), lit from the upper left, a soft shade below and a drop shadow.
 const Upcoming = styled('span', {
   position: 'absolute',
-  right: '6%',
-  bottom: '6%',
+  right: '4%',
+  bottom: '4%',
   display: 'grid',
   placeItems: 'center',
-  minWidth: '2rem',
-  height: '2rem',
-  padding: '0 0.5rem',
+  minWidth: '2.3rem',
+  height: '2.3rem',
+  padding: '0 0.55rem',
   borderRadius: '999px',
-  background: 'var(--cocoso-tegel)',
-  border: '3px solid var(--cocoso-papper)',
+  background: [
+    // the shine
+    'radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.75) 0, rgba(255, 255, 255, 0.25) 18%, rgba(255, 255, 255, 0) 38%)',
+    // the body, light from the upper left into deep red below
+    'radial-gradient(circle at 35% 30%, #f59a4a 0%, #e5603a 38%, #c8323a 72%, #9c1f33 100%)',
+  ].join(', '),
+  boxShadow: [
+    'inset 0 -3px 5px rgba(90, 10, 25, 0.35)',
+    'inset 0 2px 2px rgba(255, 255, 255, 0.35)',
+    '0 4px 8px -2px rgba(140, 35, 25, 0.5)',
+  ].join(', '),
   color: '#fff',
   fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '0.9rem',
-  fontWeight: 700,
-  boxShadow: 'var(--cocoso-skugga)',
+  fontSize: '0.95rem',
+  fontWeight: 800,
+  textShadow: '0 1px 1px rgba(110, 20, 20, 0.45)',
   '@media (max-width: 720px)': {
-    minWidth: '1.5rem',
-    height: '1.5rem',
-    padding: '0 0.35rem',
-    fontSize: '0.75rem',
-    border: '2px solid var(--cocoso-papper)',
+    minWidth: '1.7rem',
+    height: '1.7rem',
+    padding: '0 0.4rem',
+    fontSize: '0.78rem',
   },
 });
 
