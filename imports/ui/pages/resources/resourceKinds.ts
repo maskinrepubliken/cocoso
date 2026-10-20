@@ -8,7 +8,7 @@ export const RESOURCE_KINDS: { key: string; icon: ThreeDIconName }[] = [
   { key: 'sevardhet', icon: 'sevardhet' },
   { key: 'idrottshall', icon: 'gym' },
   { key: 'idrottsplats', icon: 'fotboll' },
-  { key: 'bad', icon: 'umbrella' },
+  { key: 'bad', icon: 'badring' },
   { key: 'friluft', icon: 'sun' },
 ];
 

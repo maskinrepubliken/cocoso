@@ -12,6 +12,7 @@ export type ThreeDIconName =
   | 'bookmark'
   | 'brush'
   | 'bulb'
+  | 'badring'
   | 'boy'
   | 'calendar'
   | 'camera'

@@ -168,7 +168,34 @@ function buildFotboll() {
   return mesh;
 }
 
-const object = ICON === 'fotboll' ? buildFotboll() : buildSevardhet();
+
+// A swim ring for Bad: a fat torus in alternating red and white, with
+// thin bands of rope-white light at the joins pressed in a little.
+function buildBadring() {
+  const R = 1.25, tube = Number(params.get('tube') || 0.52), parts = Number(params.get('parts') || 8);
+  const geometry = new THREE.TorusGeometry(R, tube, 96, 256);
+  const pos = geometry.attributes.position;
+  const colors = new Float32Array(pos.count * 3);
+  const red = new THREE.Color(params.get('red') || '#e5413a').convertSRGBToLinear();
+  const white = new THREE.Color('#f7f3ea').convertSRGBToLinear();
+  const v = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const a = (Math.atan2(v.y, v.x) + Math.PI * 2) % (Math.PI * 2);
+    const c = Math.floor(a / (Math.PI * 2 / parts)) % 2 ? white : red;
+    colors.set([c.r, c.g, c.b], i * 3);
+  }
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const material = new THREE.MeshPhysicalMaterial({
+    vertexColors: true, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.2,
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.rotation.set(-0.75, 0.45, 0.2);
+  return mesh;
+}
+
+const builders = { sevardhet: buildSevardhet, fotboll: buildFotboll, badring: buildBadring };
+const object = (builders[ICON] || buildSevardhet)();
 scene.add(object);
 
 // Frame the object: fit its bounding sphere in the view
