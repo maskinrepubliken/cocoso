@@ -24,3 +24,4 @@ tsconfig.tsbuildinfo
 # Logs
 *.log
 npm-debug.log*
+docs/design/egna-ikoner/node_modules/

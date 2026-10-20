@@ -10,3 +10,6 @@ is at https://3dicons.co. Add more by dropping `<name>.webp` here and using
 `trana.webp` is not from 3dicons.co: it is our own crane (Tranemo's trana),
 modelled and rendered in Blender to match the set. Source, script and
 render pipeline are in `docs/design/trana/`.
+
+`sevardhet.webp` (⌘) and `fotboll.webp` are not from 3dicons.co either: they are
+rendered with three.js to match the set; see `docs/design/egna-ikoner/`.

@@ -5,9 +5,9 @@ import type { ThreeDIconName } from '/imports/ui/generic/ThreeDIcon';
 // resourceKinds.<key>. Each has one of the soft 3D icons for its chip.
 export const RESOURCE_KINDS: { key: string; icon: ThreeDIconName }[] = [
   { key: 'kultur', icon: 'colour-palette' },
-  { key: 'sevardhet', icon: 'crown' },
+  { key: 'sevardhet', icon: 'sevardhet' },
   { key: 'idrottshall', icon: 'gym' },
-  { key: 'idrottsplats', icon: 'trophy' },
+  { key: 'idrottsplats', icon: 'fotboll' },
   { key: 'bad', icon: 'umbrella' },
   { key: 'friluft', icon: 'sun' },
 ];
