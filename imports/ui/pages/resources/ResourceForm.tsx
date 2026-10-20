@@ -16,8 +16,10 @@ import { Contact } from '/imports/api/_utils/contact';
 import { call } from '/imports/api/_utils/shared';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
+import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
 
 import resourceFormFields from './resourceFormFields';
+import { RESOURCE_KINDS } from './resourceKinds';
 
 interface ResourceFormValues {
   label: string;
@@ -27,6 +29,7 @@ interface ResourceFormValues {
 
 interface ResourceData extends ResourceFormValues {
   images?: string[];
+  category?: { key?: string } | null;
   address?: Partial<Address> | null;
   contact?: Contact | null;
   locationId?: string | null;
@@ -58,6 +61,7 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
     formValues: resource || emptyFormValues,
     isBookable: resource ? resource.isBookable : true,
     isCombo: resource ? resource.isCombo : false,
+    categoryKey: resource?.category?.key || '',
     address: resource?.address || emptyAddress,
     contact: resource?.contact || emptyContact,
     locationId: resource?.locationId || null,
@@ -114,6 +118,7 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
     const newResource: ResourceData = {
       ...state.formValues,
       address: state.address,
+      category: state.categoryKey ? { key: state.categoryKey } : null,
       contact: state.contact,
       images,
       isBookable: state.isBookable,
@@ -164,6 +169,22 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
           ping={loaders?.isUploadingImages}
           preExistingImages={resource ? resource.images : []}
           onUploadedImages={handleUploadedImages}
+        />
+      </FormField>
+
+      <FormField
+        helper={tc('resourceKinds.form.helper')}
+        label={tc('resourceKinds.form.label')}
+        mt="6"
+        mb="12"
+      >
+        <KindPicker
+          kinds={RESOURCE_KINDS}
+          namespace="resourceKinds"
+          value={state.categoryKey}
+          onChange={(categoryKey) =>
+            setState((prevState: any) => ({ ...prevState, categoryKey }))
+          }
         />
       </FormField>
 

@@ -557,6 +557,32 @@ eventKinds:
     label: Type of event
     helper: Helps people find your event.
     none: No particular kind
+# The kinds of platser, like eventKinds (imports/ui/pages/resources/resourceKinds.ts)
+resourceKinds:
+  all: All
+  kultur: Culture & meeting places
+  sevardhet: Sights
+  idrottshall: Sports halls
+  idrottsplats: Sports grounds
+  bad: Swimming
+  friluft: Outdoors
+  headings:
+    kultur: Culture & meeting places
+    sevardhet: Sights
+    idrottshall: Sports halls
+    idrottsplats: Sports grounds
+    bad: Swimming spots
+    friluft: Outdoor places
+  subjects:
+    kultur: the culture and meeting places
+    sevardhet: the sights
+    idrottshall: the sports halls
+    idrottsplats: the sports grounds
+    bad: the swimming spots
+    friluft: the outdoor places
+  form:
+    label: Type of place
+    helper: Helps people find the place.
 # The view menu at the end of the kinds on the events page
 eventView:
   button: Filter

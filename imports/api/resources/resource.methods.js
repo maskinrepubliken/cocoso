@@ -8,6 +8,7 @@ import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
 import Activities from '../activities/activity';
+import { RESOURCE_KIND_KEYS } from '../../ui/pages/resources/resourceKinds';
 
 async function validateLabel(label, resourceId) {
   // set resource query
@@ -22,6 +23,16 @@ async function validateLabel(label, resourceId) {
     throw new Meteor.Error('There already is a resource with this name');
   }
   return true;
+}
+
+// Only the known kinds are stored; anything else means no kind.
+function cleanCategory(category) {
+  check(
+    category,
+    Match.Maybe(Match.ObjectIncluding({ key: Match.Maybe(String) }))
+  );
+  const key = category?.key;
+  return key && RESOURCE_KIND_KEYS.includes(key) ? { key } : null;
 }
 
 // RESOURCE METHODS
@@ -46,6 +57,7 @@ Meteor.methods({
         fields: {
           _id: 1,
           address: 1,
+          category: 1,
           label: 1,
           isBookable: 1,
           isCombo: 1,
@@ -112,12 +124,14 @@ Meteor.methods({
     await validateLabel(values.label);
     const address = await withCoordinates(requireAddress(values.address));
     const contact = cleanContact(values.contact);
-    const { contact: _contact, ...rest } = values;
+    const category = cleanCategory(values.category);
+    const { contact: _contact, category: _category, ...rest } = values;
     try {
       const newResourceId = await Resources.insertAsync({
         ...rest,
         address,
         ...(contact ? { contact } : {}),
+        ...(category ? { category } : {}),
         locationId: values.locationId || undefined,
         userId: user._id,
         createdBy: user.username,
@@ -151,17 +165,20 @@ Meteor.methods({
 
     const address = await withCoordinates(requireAddress(values.address));
     const contact = cleanContact(values.contact);
+    const category = cleanCategory(values.category);
     const {
       _id,
       userId,
       createdBy,
       locationId,
       contact: _contact,
+      category: _category,
       ...safeValues
     } = values;
 
     const unset = {
       ...(contact ? {} : { contact: 1 }),
+      ...(category ? {} : { category: 1 }),
       ...(locationId ? {} : { locationId: 1 }),
     };
 
@@ -171,6 +188,7 @@ Meteor.methods({
           ...safeValues,
           address,
           ...(contact ? { contact } : {}),
+          ...(category ? { category } : {}),
           ...(locationId ? { locationId } : {}),
           updatedBy: user.username,
           updatedAt: new Date(),

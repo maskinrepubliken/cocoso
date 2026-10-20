@@ -12,6 +12,10 @@ Resources.schema = new SimpleSchema({
   locationId: { type: String, optional: true },
 
   label: { type: String },
+  // The kind of place, one of the keys in
+  // imports/ui/pages/resources/resourceKinds.ts
+  category: { type: Object, optional: true },
+  'category.key': { type: String },
   description: { type: String, optional: true },
   // Where the place is. Every place has one: a resource is a bookmark for
   // an address, and activities held here show it. The methods also insist
@@ -57,6 +61,7 @@ Resources.attachSchema(Resources.schema);
 Resources.publicFields = {
   _id: 1,
   address: 1,
+  category: 1,
   contact: 1,
   description: 1,
   images: 1,
