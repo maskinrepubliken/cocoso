@@ -21,7 +21,8 @@ export interface FooterProps {
 }
 
 // The foot of every page: the site's name and who made it on the left, the
-// marks of the municipality and of Maskinrepubliken on the right, on the
+// marks of the municipality, Uddebo Makerspace and Maskinrepubliken on the
+// right, on the
 // woven season floor. The only place the logos appear, so the kinship is
 // said once, plainly.
 export function Footer({ site }: FooterProps) {
@@ -123,13 +124,16 @@ export function Footer({ site }: FooterProps) {
           >
             <img alt="Tranemo kommun" src="/images/tranemo-kommun.svg" />
           </a>
+          <span className="site-footer-mark site-footer-mark-square">
+            <img alt="Uddebo Makerspace" src="/images/uddebo-makerspace.png" />
+          </span>
           <a
             className="site-footer-mark site-footer-mark-small"
             href="https://maskinrepubliken.se/"
             rel="noopener noreferrer"
             target="_blank"
           >
-            <img alt="Maskinrepubliken" src="/images/maskinrepubliken.svg" />
+            <img alt="Maskinrepubliken" src="/images/maskinrepubliken.png" />
           </a>
         </div>
       </div>

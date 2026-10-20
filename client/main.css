@@ -5500,8 +5500,9 @@ body {
   outline-offset: 1px;
 }
 
-/* The marks: the municipality's, and under it Maskinrepubliken's wordmark
-   in ink on paper, smaller. Both are plain links to their sites. */
+/* The marks: the municipality's, Uddebo Makerspace's and Maskinrepubliken's
+   wordmark, in ink on paper. The municipality and Maskinrepubliken link to
+   their sites. */
 .site-footer-marks {
   flex: 0 0 auto;
   display: flex;
@@ -5535,6 +5536,11 @@ body {
   height: auto;
 }
 
+/* Uddebo Makerspace's square mark */
+.site-footer-mark-square img {
+  height: 84px;
+}
+
 @media (max-width: 720px) {
   .site-footer-inner {
     flex-direction: column;
@@ -5548,7 +5554,12 @@ body {
 
   .site-footer-marks {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+  }
+
+  .site-footer-mark-square img {
+    height: 56px;
   }
 }
 
