@@ -19,6 +19,7 @@ import {
   type SearchHit,
   groupHits,
   hitPath,
+  visibleHits,
 } from '/imports/ui/layout/SiteSearch';
 import {
   useCurrentLocation,
@@ -64,7 +65,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
     Meteor.callAsync('searchSite', query, currentLocation?._id, PER_KIND)
       .then((result: SearchHit[]) => {
         if (latest.current === request) {
-          setHits(result || []);
+          setHits(visibleHits(result || [], site));
         }
       })
       .catch(() => {

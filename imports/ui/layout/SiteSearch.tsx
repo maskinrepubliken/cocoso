@@ -87,6 +87,15 @@ export const formatDate = (date?: string | null, lang?: string) => {
   }
 };
 
+// Only the sections the menu shows: one an admin has hidden from the menu
+// is not found either (past events go with events; places are always on).
+export const visibleHits = (hits: SearchHit[], site: any) =>
+  hits.filter(
+    (hit) =>
+      site?.settings?.menu?.find((item: any) => item.name === hit.kind)
+        ?.isVisible !== false
+  );
+
 // Where all the results for a query are listed
 export const searchPath = (query: string, prefix: string) =>
   `${prefix}/search?q=${encodeURIComponent(query.trim())}`;
@@ -197,7 +206,7 @@ export default function SiteSearch({ site }: SiteSearchProps) {
           currentLocation?._id
         );
         if (latestRequest.current === requestId) {
-          setHits(result || []);
+          setHits(visibleHits(result || [], site));
           setActiveIndex(-1);
           setHasSearched(true);
         }
