@@ -4599,12 +4599,16 @@ body {
   gap: 14px;
   padding: 14px 16px;
   text-decoration: none;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  /* lifted with top, not transform: a transform puts the card on a layer
+     of its own and its 3D icon's drop shadow can be cut square there */
+  position: relative;
+  top: 0;
+  transition: top 0.18s ease, box-shadow 0.18s ease;
 }
 
 .home-section:hover {
   box-shadow: 0 16px 28px -14px rgba(60, 40, 20, 0.5);
-  transform: translateY(-3px);
+  top: -3px;
 }
 
 .home-section:focus-visible {
@@ -4753,9 +4757,12 @@ body {
 /* A fixed box for every icon, whatever its proportions, so the labels
    line up */
 .kind-tile .threed-icon {
+  /* lifted with top, not transform (see .home-section) */
+  position: relative;
+  top: 0;
   width: 40px;
   height: 40px;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: top 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .kind-tile > span {
@@ -4782,7 +4789,7 @@ body {
 }
 
 .kind-tile:hover .threed-icon {
-  transform: translateY(-2px);
+  top: -2px;
 }
 
 .kind-tile.is-active {
@@ -6738,7 +6745,10 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  /* lifted with top, not transform (see .home-section) */
+  position: relative;
+  top: 0;
+  transition: background-color 0.15s ease, top 0.15s ease;
 }
 
 .kind-picker-tile .threed-icon {
@@ -6747,7 +6757,7 @@ body {
 }
 
 .kind-picker-tile:hover {
-  transform: translateY(-1px);
+  top: -1px;
 }
 
 .kind-picker-tile.is-active {
