@@ -69,7 +69,7 @@ export const hitPath = (hit: SearchHit, prefix: string): string => {
 
 // The section's label as the menu has it, so the groups read "Föreningar"
 // in the results when they do in the header.
-const kindLabel = (site: any, kind: string, fallback: string) =>
+export const kindLabel = (site: any, kind: string, fallback: string) =>
   site?.settings?.menu?.find((item: any) => item.name === kind)?.label ||
   fallback;
 

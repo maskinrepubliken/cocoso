@@ -19,6 +19,7 @@ import {
   type SearchHit,
   groupHits,
   hitPath,
+  kindLabel,
   visibleHits,
 } from '/imports/ui/layout/SiteSearch';
 import {
@@ -75,7 +76,35 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
       });
   }, [query, currentLocation?._id]);
 
-  const groups = groupHits(hits || [], site, tc);
+  // Upcoming and past events share one section with a switch between
+  // them: upcoming first, as one rarely looks for what has been
+  const allGroups = groupHits(hits || [], site, tc);
+  const upcomingHits =
+    allGroups.find((group) => group.key === 'activities')?.hits || [];
+  const pastHits =
+    allGroups.find((group) => group.key === 'pastActivities')?.hits || [];
+  const [pastChoice, setPastChoice] = useState<boolean | null>(null);
+  const [pastChoiceFor, setPastChoiceFor] = useState(query);
+  if (pastChoiceFor !== query) {
+    setPastChoiceFor(query);
+    setPastChoice(null);
+  }
+  // Until chosen: the past only when nothing is coming up
+  const showPast = pastChoice ?? upcomingHits.length === 0;
+  const groups = allGroups
+    .filter((group) => group.key !== 'pastActivities')
+    .map((group) =>
+      group.key === 'activities'
+        ? { ...group, hits: showPast ? pastHits : upcomingHits }
+        : group
+    );
+  if (pastHits.length > 0 && upcomingHits.length === 0) {
+    groups.unshift({
+      key: 'activities',
+      label: kindLabel(site, 'activities', tc('search.kinds.activities')),
+      hits: pastHits,
+    });
+  }
 
   // Sections opened in full; a new search closes them again
   const [opened, setOpened] = useState<string[]>([]);
@@ -89,7 +118,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
   // date, places and groups as on their pages, organizers as portraits;
   // the rest as rows.
   const renderGroup = (key: string, list: SearchHit[]) => {
-    if (key === 'activities' || key === 'pastActivities') {
+    if (key === 'activities') {
       return (
         <div className="card-grid card-grid-wide">
           {list.map((hit, index) => (
@@ -101,7 +130,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
               <SexyThumb
                 activity={hit as any}
                 index={index}
-                showPast={key === 'pastActivities'}
+                showPast={showPast}
               />
             </Link>
           ))}
@@ -222,16 +251,43 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
           <h2 className="search-section-head">
             <ThreeDIcon
               name={
-                group.key === 'pastActivities'
-                  ? 'clock'
-                  : group.key === 'locations'
+                group.key === 'locations'
                   ? 'location'
                   : sectionIcons[group.key] || 'star'
               }
               size={40}
             />
             {group.label}
-            <span className="search-page-group-count">{group.hits.length}</span>
+            {/* the events' counts are in their switch */}
+            {group.key !== 'activities' && (
+              <span className="search-page-group-count">
+                {group.hits.length}
+              </span>
+            )}
+            {group.key === 'activities' && (
+              <span className="seg search-section-seg" role="group">
+                <button
+                  type="button"
+                  className={`seg-button ${showPast ? '' : 'is-active'}`}
+                  aria-pressed={!showPast}
+                  onClick={() => setPastChoice(false)}
+                >
+                  {tc('labels.upcoming')}
+                  <span className="search-seg-count">
+                    {upcomingHits.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={`seg-button ${showPast ? 'is-active' : ''}`}
+                  aria-pressed={showPast}
+                  onClick={() => setPastChoice(true)}
+                >
+                  {tc('labels.past')}
+                  <span className="search-seg-count">{pastHits.length}</span>
+                </button>
+              </span>
+            )}
           </h2>
           {renderGroup(
             group.key,

@@ -3405,6 +3405,42 @@ body {
   margin-left: 0;
 }
 
+/* Kommande | Tidigare at the right of the events heading */
+.search-section-seg {
+  margin-left: auto;
+  background: var(--cocoso-colors-theme-100);
+}
+
+.search-section-seg .seg-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-seg-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+/* On a phone the switch takes its own line under the heading */
+@media (max-width: 560px) {
+  .search-section-head {
+    flex-wrap: wrap;
+  }
+
+  .search-section-seg {
+    display: flex;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .search-section-seg .seg-button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
 /* "Visa alla 18" under a section showing its first few */
 .search-section-more {
   justify-content: center;
