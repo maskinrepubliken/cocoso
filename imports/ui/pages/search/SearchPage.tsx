@@ -5,14 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import SearchIcon from 'lucide-react/dist/esm/icons/search';
 
-import { siteAtom } from '/imports/state';
+import { locationsAtom, siteAtom } from '/imports/state';
 import PageHeading from '/imports/ui/listing/PageHeading';
+import SexyThumb from '/imports/ui/listing/SexyThumb';
+import NewGridThumb from '/imports/ui/listing/NewGridThumb';
+import GroupCard from '/imports/ui/listing/GroupCard';
+import { People, PersonTile } from '/imports/ui/listing/UsersHybrid';
+import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
+import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import {
   HitContent,
   type SearchHit,
   groupHits,
   hitPath,
-  isPastEvent,
 } from '/imports/ui/layout/SiteSearch';
 import {
   useCurrentLocation,
@@ -21,6 +27,8 @@ import {
 
 const MIN_LENGTH = 2;
 const PER_KIND = 30;
+// A section shows this many until it is opened in full
+const FIRST = 8;
 
 // Everything the search finds for ?q=, grouped by section as in the
 // header's results but with more of each, and a field to search again.
@@ -28,6 +36,7 @@ const PER_KIND = 30;
 export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
   const [tc] = useTranslation('common');
   const site = useAtomValue(siteAtom) || siteDoc;
+  const locations = useAtomValue(locationsAtom);
   const prefix = useLocationPrefix();
   const currentLocation = useCurrentLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -66,6 +75,101 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
   }, [query, currentLocation?._id]);
 
   const groups = groupHits(hits || [], site, tc);
+
+  // Sections opened in full; a new search closes them again
+  const [opened, setOpened] = useState<string[]>([]);
+  const [openedFor, setOpenedFor] = useState(query);
+  if (openedFor !== query) {
+    setOpenedFor(query);
+    setOpened([]);
+  }
+
+  // Each kind in the cards its own listing uses: events with picture and
+  // date, places and groups as on their pages, organizers as portraits;
+  // the rest as rows.
+  const renderGroup = (key: string, list: SearchHit[]) => {
+    if (key === 'activities' || key === 'pastActivities') {
+      return (
+        <div className="card-grid card-grid-wide">
+          {list.map((hit, index) => (
+            <Link
+              key={hit._id}
+              className="search-card"
+              to={hitPath(hit, prefix)}
+            >
+              <SexyThumb
+                activity={hit as any}
+                index={index}
+                showPast={key === 'pastActivities'}
+              />
+            </Link>
+          ))}
+        </div>
+      );
+    }
+    if (key === 'resources') {
+      return (
+        <div className="card-grid">
+          {list.map((hit: any, index) => (
+            <Link
+              key={hit._id}
+              className="search-card"
+              to={hitPath(hit, prefix)}
+            >
+              <NewGridThumb
+                fixedImageHeight
+                imageUrl={getImageUrl(hit.images?.[0], 'small')}
+                index={index}
+                placeholderSeed={hit._id}
+                placeName={
+                  locations.find((l: any) => l._id === hit.locationId)?.name
+                }
+                title={hit.title}
+                world={worldForLocation(locations, hit.locationId)}
+              />
+            </Link>
+          ))}
+        </div>
+      );
+    }
+    if (key === 'groups') {
+      return (
+        <div className="card-grid">
+          {list.map((hit: any, index) => (
+            <Link
+              key={hit._id}
+              className="search-card"
+              to={hitPath(hit, prefix)}
+            >
+              <GroupCard group={hit} index={index} />
+            </Link>
+          ))}
+        </div>
+      );
+    }
+    if (key === 'people') {
+      return (
+        <People>
+          {list.map((hit: any) => (
+            <PersonTile key={hit._id} user={{ ...hit, firstName: hit.title }} />
+          ))}
+        </People>
+      );
+    }
+    return (
+      <div className="search-page-hits">
+        {list.map((hit) => (
+          <Link
+            key={`${hit.kind}-${hit._id}`}
+            className="site-search-hit search-page-hit"
+            to={hitPath(hit, prefix)}
+          >
+            <HitContent hit={hit} />
+          </Link>
+        ))}
+      </div>
+    );
+  };
 
   let status: string;
   if (query.length < MIN_LENGTH) {
@@ -112,24 +216,35 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
       </p>
 
       {groups.map((group) => (
-        <section className="search-page-group" key={group.key}>
-          <h2 className="search-page-group-label">
+        <section className={`search-section is-${group.key}`} key={group.key}>
+          {/* The section as its page heads itself: its 3D icon and name */}
+          <h2 className="search-section-head">
+            <ThreeDIcon
+              name={
+                group.key === 'pastActivities'
+                  ? 'clock'
+                  : group.key === 'locations'
+                  ? 'location'
+                  : sectionIcons[group.key] || 'star'
+              }
+              size={40}
+            />
             {group.label}
             <span className="search-page-group-count">{group.hits.length}</span>
           </h2>
-          <div className="search-page-hits">
-            {group.hits.map((hit) => (
-              <Link
-                key={`${hit.kind}-${hit._id}`}
-                className={`site-search-hit search-page-hit ${
-                  isPastEvent(hit) ? 'is-past' : ''
-                }`}
-                to={hitPath(hit, prefix)}
-              >
-                <HitContent hit={hit} />
-              </Link>
-            ))}
-          </div>
+          {renderGroup(
+            group.key,
+            opened.includes(group.key) ? group.hits : group.hits.slice(0, FIRST)
+          )}
+          {group.hits.length > FIRST && !opened.includes(group.key) && (
+            <button
+              type="button"
+              className="person-add search-section-more"
+              onClick={() => setOpened([...opened, group.key])}
+            >
+              {tc('search.page.showAll', { count: group.hits.length })}
+            </button>
+          )}
         </section>
       ))}
     </div>

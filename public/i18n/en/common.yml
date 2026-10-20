@@ -592,6 +592,7 @@ search:
     count_one: "{{count}} result for “{{query}}”"
     count_other: "{{count}} results for “{{query}}”"
     tooShort: Type at least two characters to search.
+    showAll: "Show all {{count}}"
   kinds:
     activities: Events
     pastActivities: Past events

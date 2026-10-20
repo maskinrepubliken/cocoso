@@ -589,6 +589,7 @@ search:
     count_one: "{{count}} träff för ”{{query}}”"
     count_other: "{{count}} träffar för ”{{query}}”"
     tooShort: Skriv minst två tecken för att söka.
+    showAll: "Visa alla {{count}}"
   kinds:
     activities: Evenemang
     pastActivities: Tidigare evenemang

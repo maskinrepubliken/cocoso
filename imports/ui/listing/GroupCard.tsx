@@ -129,6 +129,8 @@ interface Group {
   isMunicipalityOnly?: boolean;
   isPrivate?: boolean;
   members?: unknown[];
+  // when the members themselves are not sent (the search results)
+  memberCount?: number;
   datesAndTimes?: { startDate: string; startTime?: string }[];
 }
 
@@ -153,7 +155,7 @@ export default function GroupCard({
   const placeName =
     place?.name ||
     (group.isMunicipalityOnly ? tc('locations.municipalityOnlyShort') : null);
-  const memberCount = group.members?.length || 0;
+  const memberCount = group.memberCount ?? group.members?.length ?? 0;
   const next = group.datesAndTimes?.[0];
   const nextIsSoon =
     next && dayjs(next.startDate).diff(dayjs().startOf('day'), 'day') <= 7;

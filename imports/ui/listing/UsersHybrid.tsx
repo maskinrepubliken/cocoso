@@ -101,7 +101,7 @@ const Upcoming = styled('span', {
   },
 });
 
-const People = styled('div', {
+export const People = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '2rem 2.5rem',
@@ -115,6 +115,39 @@ const People = styled('div', {
 
 // The organizers as round portraits. A portrait goes straight to the
 // person's page, where their events are listed.
+// An organizer as on the organizers page: the portrait in its green ring,
+// the count of events ahead on its edge, the name below. Also used by the
+// search results page.
+export function PersonTile({ user }: { user: any }) {
+  const [tc] = useTranslation('common');
+  const avatar = getImageUrl(user.avatar?.src || user.avatar, 'small');
+  const name = displayName(user);
+  return (
+    <Person to={`/@${user.username}`}>
+      <Ring>
+        <Portrait className="portrait">
+          {avatar ? (
+            <img alt="" loading="lazy" src={avatar} />
+          ) : (
+            <PlaceholderImage seed={user._id || user.username} />
+          )}
+        </Portrait>
+        {user.upcomingCount > 0 && (
+          <Upcoming
+            title={tc('people.upcoming', { count: user.upcomingCount })}
+            aria-label={tc('people.upcoming', {
+              count: user.upcomingCount,
+            })}
+          >
+            {user.upcomingCount}
+          </Upcoming>
+        )}
+      </Ring>
+      <strong>{name}</strong>
+    </Person>
+  );
+}
+
 export default function UsersHybrid({
   siteDoc,
   users,
@@ -192,32 +225,7 @@ export default function UsersHybrid({
 
       <People>
         {filteredUsers?.map((user: any) => {
-          const avatar = getImageUrl(user.avatar?.src, 'small');
-          const name = displayName(user);
-          return (
-            <Person key={user.username} to={`/@${user.username}`}>
-              <Ring>
-                <Portrait className="portrait">
-                  {avatar ? (
-                    <img alt="" loading="lazy" src={avatar} />
-                  ) : (
-                    <PlaceholderImage seed={user._id || user.username} />
-                  )}
-                </Portrait>
-                {user.upcomingCount > 0 && (
-                  <Upcoming
-                    title={tc('people.upcoming', { count: user.upcomingCount })}
-                    aria-label={tc('people.upcoming', {
-                      count: user.upcomingCount,
-                    })}
-                  >
-                    {user.upcomingCount}
-                  </Upcoming>
-                )}
-              </Ring>
-              <strong>{name}</strong>
-            </Person>
-          );
+          return <PersonTile key={user.username} user={user} />;
         })}
       </People>
     </>

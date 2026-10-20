@@ -3362,10 +3362,60 @@ body {
   --site-ink: var(--cocoso-colors-theme-800);
   --site-ink-soft: var(--cocoso-colors-theme-700);
   width: 100%;
-  max-width: 760px;
+  max-width: calc(var(--cocoso-page) + 2 * var(--cocoso-gutter));
   margin: 0 auto;
   padding: 28px var(--cocoso-gutter) 48px;
   font-family: var(--cocoso-font-ui);
+}
+
+/* the field, the count and rows of text keep a reading width */
+.search-page .search-page-form,
+.search-page .search-page-status,
+.search-section .search-page-hits {
+  max-width: 720px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* A section as its page heads itself: the 3D icon, the name, the count */
+.search-section {
+  margin-bottom: 40px;
+}
+
+.search-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.search-section-head .threed-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.18));
+}
+
+.search-section .search-page-hits {
+  margin-left: 0;
+}
+
+/* "Visa alla 18" under a section showing its first few */
+.search-section-more {
+  justify-content: center;
+  margin-top: 14px;
+}
+
+/* the cards are links: no underline, the card's own hover */
+.search-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
 }
 
 .search-page-form {
@@ -3420,21 +3470,6 @@ body {
   color: var(--cocoso-mylla-soft);
   font-size: 14px;
   text-align: center;
-}
-
-.search-page-group {
-  margin-bottom: 22px;
-}
-
-.search-page-group-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 8px 4px;
-  color: var(--cocoso-mylla);
-  font-family: var(--cocoso-font-display);
-  font-size: 1.15rem;
-  font-weight: 600;
 }
 
 .search-page-group-count {

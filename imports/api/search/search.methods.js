@@ -83,6 +83,11 @@ async function searchActivities(words, locationId, user, limit = PER_KIND) {
         isGroupPrivate: 1,
         groupId: 1,
         locationId: 1,
+        isMunicipalityOnly: 1,
+        images: { $slice: 1 },
+        resource: 1,
+        place: 1,
+        category: 1,
       },
       limit: Math.max(40, limit * 3),
     }
@@ -115,6 +120,13 @@ async function searchActivities(words, locationId, user, limit = PER_KIND) {
       isGroupMeeting: Boolean(activity.isGroupMeeting),
       groupId: activity.groupId,
       locationId: activity.locationId,
+      // for the results page's event cards
+      images: activity.images || [],
+      datesAndTimes: activity.datesAndTimes || [],
+      resource: activity.resource,
+      place: activity.place,
+      isMunicipalityOnly: activity.isMunicipalityOnly,
+      category: activity.category || null,
     });
   }
 
@@ -149,6 +161,8 @@ async function searchGroups(words, locationId, user, limit = PER_KIND) {
         members: 1,
         peopleInvited: 1,
         locationId: 1,
+        imageUrl: 1,
+        isMunicipalityOnly: 1,
       },
       sort: { creationDate: -1 },
       limit: Math.max(40, limit * 3),
@@ -164,6 +178,12 @@ async function searchGroups(words, locationId, user, limit = PER_KIND) {
       title: group.title,
       detail: excerpt(group.readingMaterial),
       locationId: group.locationId,
+      // for the results page's group cards
+      imageUrl: group.imageUrl,
+      readingMaterial: excerpt(group.readingMaterial),
+      isPrivate: Boolean(group.isPrivate),
+      isMunicipalityOnly: group.isMunicipalityOnly,
+      memberCount: (group.members || []).length,
     }));
 }
 
@@ -176,7 +196,12 @@ async function searchResources(words, locationId, limit = PER_KIND) {
       ],
     },
     {
-      fields: { label: 1, description: 1, locationId: 1 },
+      fields: {
+        label: 1,
+        description: 1,
+        locationId: 1,
+        images: { $slice: 1 },
+      },
       sort: { createdAt: -1 },
       limit,
     }
@@ -188,6 +213,7 @@ async function searchResources(words, locationId, limit = PER_KIND) {
     title: resource.label,
     detail: excerpt(resource.description),
     locationId: resource.locationId,
+    images: resource.images || [],
   }));
 }
 
