@@ -194,7 +194,106 @@ function buildBadring() {
   return mesh;
 }
 
-const builders = { sevardhet: buildSevardhet, fotboll: buildFotboll, badring: buildBadring };
+// A hiking boot for Friluftsliv, seen from the side with the toe forward:
+// the upper is its side profile extruded with a deep round bevel, on a
+// dark lugged sole with a light midsole, a toe cap, a padded collar and
+// laces across the instep.
+function buildKanga() {
+  const P = (k, d) => Number(params.get(k) || d);
+  const W = P('width', 0.62); // the boot's width before the bevel
+  const group = new THREE.Group();
+  const extrude = (shape, depth, bevel, segs = 12) => {
+    const g = new THREE.ExtrudeGeometry(shape, {
+      depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel * 0.8,
+      bevelSegments: segs, curveSegments: 64,
+    });
+    g.translate(0, 0, -depth / 2);
+    return g;
+  };
+  const glossy = (opts) => new THREE.MeshPhysicalMaterial({ roughness: 0.42, clearcoat: 0.45, clearcoatRoughness: 0.3, ...opts });
+
+  // The upper, heel at the left, toe at the right
+  const upper = new THREE.Shape();
+  upper.moveTo(-1.05, 0.32);
+  upper.bezierCurveTo(-1.22, 0.75, -1.18, 1.35, -1.02, 1.78); // heel and back of the shaft
+  upper.quadraticCurveTo(-0.95, 1.95, -0.72, 1.93);            // round over the collar
+  upper.lineTo(-0.2, 1.86);                                   // top of the shaft
+  upper.quadraticCurveTo(-0.02, 1.84, 0.02, 1.62);             // the tongue's top
+  upper.bezierCurveTo(0.12, 1.12, 0.55, 0.86, 0.98, 0.74);     // down the laces to the instep
+  upper.quadraticCurveTo(1.38, 0.62, 1.4, 0.38);               // over the toe
+  upper.lineTo(1.36, 0.3);
+  upper.lineTo(-1.05, 0.3);
+  const upperGeo = extrude(upper, W, 0.2);
+  gradient(upperGeo, params.get('from') || '#5f8a3a', params.get('to') || '#a9c75a', new THREE.Vector3(0.6, 1, 0.2).normalize());
+  group.add(new THREE.Mesh(upperGeo, glossy({ vertexColors: true })));
+
+  // The tongue, standing a little above the shaft at the front
+  const tongue = new THREE.Shape();
+  tongue.moveTo(-0.32, 1.5);
+  tongue.quadraticCurveTo(-0.3, 2.06, 0.02, 2.02);
+  tongue.quadraticCurveTo(0.16, 1.98, 0.12, 1.5);
+  tongue.lineTo(-0.32, 1.5);
+  group.add(new THREE.Mesh(extrude(tongue, W - 0.3, 0.14), glossy({ color: params.get('tongue') || '#e9d6a0', roughness: 0.5 })));
+
+  // The padded collar: a soft roll round the top of the shaft
+  const collarCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.1, 1.9, W / 2 + 0.17),
+    new THREE.Vector3(-0.6, 2.02, W / 2 + 0.2),
+    new THREE.Vector3(-1.05, 1.95, W / 2 + 0.05),
+    new THREE.Vector3(-1.2, 1.88, 0),
+    new THREE.Vector3(-1.05, 1.95, -W / 2 - 0.05),
+    new THREE.Vector3(-0.6, 2.02, -W / 2 - 0.2),
+    new THREE.Vector3(-0.1, 1.9, -W / 2 - 0.17),
+  ]);
+  group.add(new THREE.Mesh(new THREE.TubeGeometry(collarCurve, 96, 0.11, 24, false), glossy({ color: params.get('collar') || '#5b3a26', roughness: 0.55 })));
+
+  // The toe cap
+  const cap = new THREE.Shape();
+  cap.moveTo(0.78, 0.3);
+  cap.quadraticCurveTo(0.82, 0.74, 1.05, 0.73);
+  cap.quadraticCurveTo(1.42, 0.64, 1.44, 0.38);
+  cap.lineTo(1.4, 0.3);
+  cap.lineTo(0.78, 0.3);
+  group.add(new THREE.Mesh(extrude(cap, W + 0.05, 0.2), glossy({ color: params.get('collar') || '#5b3a26', roughness: 0.55 })));
+
+  // The midsole, light, and the dark sole under it with a heel step
+  const mid = new THREE.Shape();
+  mid.moveTo(-1.12, 0.18); mid.lineTo(1.42, 0.18);
+  mid.quadraticCurveTo(1.56, 0.2, 1.52, 0.36);
+  mid.lineTo(-1.12, 0.36); mid.lineTo(-1.12, 0.18);
+  group.add(new THREE.Mesh(extrude(mid, W + 0.1, 0.14), glossy({ color: '#efe6d6', roughness: 0.5 })));
+  const sole = new THREE.Shape();
+  sole.moveTo(-1.15, -0.02); sole.lineTo(-0.3, -0.02); sole.lineTo(-0.26, 0.06);
+  sole.lineTo(1.2, 0.06);
+  sole.quadraticCurveTo(1.62, 0.05, 1.58, 0.26);
+  sole.lineTo(-1.15, 0.22); sole.lineTo(-1.15, -0.02);
+  const soleGeo = extrude(sole, W + 0.12, 0.12);
+  group.add(new THREE.Mesh(soleGeo, glossy({ color: '#2f2622', roughness: 0.7, clearcoat: 0.1 })));
+  // lugs under the sole
+  const lugMat = glossy({ color: '#2a211d', roughness: 0.75, clearcoat: 0 });
+  for (const x of [-1.0, -0.72, -0.48, 0.0, 0.32, 0.64, 0.96, 1.24]) {
+    const lug = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.12, W + 0.32, 2, 2, 2), lugMat);
+    lug.position.set(x, x < -0.3 ? -0.06 : 0.02, 0);
+    group.add(lug);
+  }
+
+  // Laces across the instep, sitting on the front of the upper
+  const laceMat = glossy({ color: params.get('lace') || '#d9604a', roughness: 0.4 });
+  const front = new THREE.CubicBezierCurve(new THREE.Vector2(0.02, 1.62), new THREE.Vector2(0.12, 1.12), new THREE.Vector2(0.55, 0.86), new THREE.Vector2(0.98, 0.74));
+  for (const t of [0.08, 0.26, 0.44, 0.62]) {
+    const p = front.getPoint(t), d = front.getTangent(t);
+    const n = new THREE.Vector2(-d.y, d.x); // outward, to the upper right
+    const lace = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, W + 0.12, 8, 24), laceMat);
+    lace.rotation.x = Math.PI / 2;
+    lace.position.set(p.x + n.x * P('laceOut', 0.2), p.y + n.y * P('laceOut', 0.2), 0);
+    group.add(lace);
+  }
+
+  group.rotation.set(P('rx', 0.3), P('ry', -0.62), P('rz', 0.04));
+  return group;
+}
+
+const builders = { sevardhet: buildSevardhet, fotboll: buildFotboll, badring: buildBadring, kanga: buildKanga };
 const object = (builders[ICON] || buildSevardhet)();
 scene.add(object);
 

@@ -38,6 +38,7 @@ export type ThreeDIconName =
   | 'hash'
   | 'headphone'
   | 'heart'
+  | 'kanga'
   | 'key'
   | 'lab'
   | 'location'

@@ -11,6 +11,6 @@ is at https://3dicons.co. Add more by dropping `<name>.webp` here and using
 modelled and rendered in Blender to match the set. Source, script and
 render pipeline are in `docs/design/trana/`.
 
-`sevardhet.webp` (⌘), `fotboll.webp` and `badring.webp` are not from 3dicons.co
-either: they are
+`sevardhet.webp` (⌘), `fotboll.webp`, `badring.webp` and `kanga.webp` are not from
+3dicons.co either: they are
 rendered with three.js to match the set; see `docs/design/egna-ikoner/`.

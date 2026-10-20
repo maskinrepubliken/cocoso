@@ -9,7 +9,7 @@ export const RESOURCE_KINDS: { key: string; icon: ThreeDIconName }[] = [
   { key: 'idrottshall', icon: 'gym' },
   { key: 'idrottsplats', icon: 'fotboll' },
   { key: 'bad', icon: 'badring' },
-  { key: 'friluft', icon: 'sun' },
+  { key: 'friluft', icon: 'kanga' },
 ];
 
 export const RESOURCE_KIND_KEYS = RESOURCE_KINDS.map((kind) => kind.key);

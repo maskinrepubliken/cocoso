@@ -1,19 +1,23 @@
-# Our own 3D icons: sevärdhet, fotboll and badring
+# Our own 3D icons: sevärdhet, fotboll, badring and känga
 
 `public/3dicons/sevardhet.webp` (⌘, the Swedish road sign for a
 sevärdhet), `public/3dicons/fotboll.webp` and `public/3dicons/badring.webp`
-(a swim ring, for Bad) are not from 3dicons.co. They
+(a swim ring, for Bad) and `public/3dicons/kanga.webp` (a hiking boot,
+for Friluftsliv) are not from 3dicons.co. They
 are modelled and rendered with three.js to sit next to that set: the
 dynamic camera angle, soft studio light, a diagonal colour gradient on the
 ⌘ like the set's glyphs (`hash`, `at`), trimmed and scaled to 320 px WebP.
 The ⌘ is brown, the colour of Swedish tourist signs.
 
 - `render.html`: builds and lights the model (`buildSevardhet`,
-  `buildFotboll`, `buildBadring`) and renders it with a transparent background. The ⌘ is
+  `buildFotboll`, `buildBadring`, `buildKanga`) and renders it with a transparent background. The ⌘ is
   its outline with holes (`commandShape`), extruded with a deep round
   bevel; the ball is a sphere painted with the 12 pentagons and 20 hexagons
   of a truncated icosahedron, with the seams pressed in by a bump map; the
-  swim ring is a torus in eight red and white fields (`parts`, `tube`).
+  swim ring is a torus in eight red and white fields (`parts`, `tube`);
+  the boot is its side profile extruded with a round bevel, with a
+  tongue, a padded collar (a tube), a toe cap, a midsole, a lugged sole
+  and capsule laces (`from`/`to`, `lace`, `tongue`, `collar`, `rx`/`ry`).
 - `render.js`: serves the page, renders it in headless Chromium
   (Playwright, software WebGL), writes `<name>-1024.png` (the full
   render, 1536 px despite the name) and `<name>.webp` (trimmed, 320 px).
@@ -27,7 +31,8 @@ To re-render (Playwright installed, `require('playwright')` resolvable):
     node render.js sevardhet sevardhet
     node render.js fotboll fotboll
     node render.js badring badring
-    cp sevardhet.webp fotboll.webp badring.webp ../../../public/3dicons/
+    node render.js kanga kanga
+    cp sevardhet.webp fotboll.webp badring.webp kanga.webp ../../../public/3dicons/
 
 Shape and colour can be tried from the command line without editing:
 `node render.js sevardhet test "&s=0.72&r=0.56&w=0.18&from=%235a2a12&to=%23e8a050&env=0.45"`
