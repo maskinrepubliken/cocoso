@@ -3405,7 +3405,7 @@ body {
   margin-left: 0;
 }
 
-/* Kommande | Tidigare at the right of the events heading */
+/* Tidigare | Kommande at the right of the events heading */
 .search-section-seg {
   margin-left: auto;
   background: var(--cocoso-colors-theme-100);

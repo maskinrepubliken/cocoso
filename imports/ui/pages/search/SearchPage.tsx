@@ -77,7 +77,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
   }, [query, currentLocation?._id]);
 
   // Upcoming and past events share one section with a switch between
-  // them: upcoming first, as one rarely looks for what has been
+  // them (Tidigare | Kommande, as on the events page): upcoming chosen, as one rarely looks for what has been
   const allGroups = groupHits(hits || [], site, tc);
   const upcomingHits =
     allGroups.find((group) => group.key === 'activities')?.hits || [];
@@ -268,6 +268,15 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
               <span className="seg search-section-seg" role="group">
                 <button
                   type="button"
+                  className={`seg-button ${showPast ? 'is-active' : ''}`}
+                  aria-pressed={showPast}
+                  onClick={() => setPastChoice(true)}
+                >
+                  {tc('labels.past')}
+                  <span className="search-seg-count">{pastHits.length}</span>
+                </button>
+                <button
+                  type="button"
                   className={`seg-button ${showPast ? '' : 'is-active'}`}
                   aria-pressed={!showPast}
                   onClick={() => setPastChoice(false)}
@@ -276,15 +285,6 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
                   <span className="search-seg-count">
                     {upcomingHits.length}
                   </span>
-                </button>
-                <button
-                  type="button"
-                  className={`seg-button ${showPast ? 'is-active' : ''}`}
-                  aria-pressed={showPast}
-                  onClick={() => setPastChoice(true)}
-                >
-                  {tc('labels.past')}
-                  <span className="search-seg-count">{pastHits.length}</span>
                 </button>
               </span>
             )}
