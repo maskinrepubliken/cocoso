@@ -8,6 +8,9 @@ import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
 import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
+import BookingInfo, {
+  type BookingWithPerson,
+} from '/imports/ui/pages/resources/components/BookingInfo';
 import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
@@ -41,6 +44,7 @@ interface Resource {
   images?: string[];
   capacity?: number;
   isBookable?: boolean;
+  booking?: BookingWithPerson | null;
   isCombo?: boolean;
   locationId?: string;
   resourcesForCombo?: ResourceForCombo[];
@@ -137,6 +141,11 @@ export default function ResourceHybrid({
   );
 
   const withContact = hasContact(resource.contact);
+  // Booked in the calendar (the `bookings` feature), or else a place that
+  // says how to book it
+  const isBookable = isFeatureEnabled('bookings')
+    ? resource.isBookable
+    : Boolean(resource.booking);
 
   return (
     <LightboxProvider alt={resource.label} images={images}>
@@ -164,7 +173,7 @@ export default function ResourceHybrid({
                       {tc('entry.combo')}
                     </Chip>
                   )}
-                  {isFeatureEnabled('bookings') && resource.isBookable && (
+                  {isBookable && (
                     <Chip>
                       <CalendarCheckIcon aria-hidden />
                       <Trans i18nKey="common:labels.bookable">Bookable</Trans>
@@ -192,8 +201,17 @@ export default function ResourceHybrid({
             />
           </CardArea>
 
-          {hasAddress(resource.address) || withContact ? (
+          {hasAddress(resource.address) || withContact || resource.booking ? (
             <Sidebar>
+              {resource.booking && (
+                <Panel css={{ marginBottom: '1.25rem' }}>
+                  <SideTitle>{tc('entry.booking')}</SideTitle>
+                  <BookingInfo
+                    booking={resource.booking}
+                    label={resource.label}
+                  />
+                </Panel>
+              )}
               <Panel css={{ overflow: 'hidden' }}>
                 <AddressBlock
                   address={resource.address}

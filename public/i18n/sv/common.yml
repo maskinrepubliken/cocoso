@@ -642,6 +642,8 @@ entry:
   postedBy: 'Upplagd av {{ name }}'
   contact: Kontakt
   seeProfile: 'Till {{ name }}'
+  booking: Boka platsen
+  bookingLink: Boka här
 
 lightbox:
   label: Bilder

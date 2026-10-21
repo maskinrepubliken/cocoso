@@ -7,6 +7,7 @@ import { withCoordinates } from '../_utils/geocode';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
+import { attachBookingPerson, cleanBooking } from './resource.booking';
 import Activities from '../activities/activity';
 import { cleanKinds } from '../_utils/kinds';
 import { RESOURCE_KIND_KEYS } from '../../ui/pages/resources/resourceKinds';
@@ -37,17 +38,13 @@ Meteor.methods({
   async getResources(locationId) {
     check(locationId, Match.Maybe(String));
     const fields = Resources.publicFields;
-    return await Resources.find(
-      locationSelector(locationId),
-      {
-        fields,
-        sort: { createdAt: -1 },
-      }
-    ).fetchAsync();
+    return await Resources.find(locationSelector(locationId), {
+      fields,
+      sort: { createdAt: -1 },
+    }).fetchAsync();
   },
 
   async getResourcesDry() {
-
     return await Resources.find(
       {},
       {
@@ -72,7 +69,9 @@ Meteor.methods({
 
   async getResourceById(resourceId) {
     const fields = Resources.publicFields;
-    return await Resources.findOneAsync(resourceId, { fields });
+    return await attachBookingPerson(
+      await Resources.findOneAsync(resourceId, { fields })
+    );
   },
 
   async getResourceBookingsForUser(resourceId) {
@@ -123,13 +122,20 @@ Meteor.methods({
     const address = await withCoordinates(requireAddress(values.address));
     const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
-    const { contact: _contact, category: _category, kinds: _kinds, ...rest } =
-      values;
+    const booking = await cleanBooking(values.booking);
+    const {
+      contact: _contact,
+      category: _category,
+      kinds: _kinds,
+      booking: _booking,
+      ...rest
+    } = values;
     try {
       const newResourceId = await Resources.insertAsync({
         ...rest,
         address,
         ...(contact ? { contact } : {}),
+        ...(booking ? { booking } : {}),
         kinds,
         locationId: values.locationId || undefined,
         userId: user._id,
@@ -165,6 +171,7 @@ Meteor.methods({
     const address = await withCoordinates(requireAddress(values.address));
     const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
+    const booking = await cleanBooking(values.booking);
     const {
       _id,
       userId,
@@ -173,11 +180,13 @@ Meteor.methods({
       contact: _contact,
       category: _category,
       kinds: _kinds,
+      booking: _booking,
       ...safeValues
     } = values;
 
     const unset = {
       ...(contact ? {} : { contact: 1 }),
+      ...(booking ? {} : { booking: 1 }),
       // the single kind from before kinds
       category: 1,
       ...(locationId ? {} : { locationId: 1 }),
@@ -189,6 +198,7 @@ Meteor.methods({
           ...safeValues,
           address,
           ...(contact ? { contact } : {}),
+          ...(booking ? { booking } : {}),
           kinds,
           ...(locationId ? { locationId } : {}),
           updatedBy: user.username,
@@ -199,9 +209,7 @@ Meteor.methods({
       // Activities held at this resource follow it.
       await Activities.updateAsync(
         { resourceId },
-        locationId
-          ? { $set: { locationId } }
-          : { $unset: { locationId: 1 } },
+        locationId ? { $set: { locationId } } : { $unset: { locationId: 1 } },
         { multi: true }
       );
       if (

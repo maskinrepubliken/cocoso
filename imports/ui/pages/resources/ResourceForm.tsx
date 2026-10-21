@@ -12,7 +12,7 @@ import LocationSelect from '/imports/ui/forms/LocationSelect';
 import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
 import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
 import { Address, isCompleteAddress } from '/imports/api/_utils/address';
-import { Contact } from '/imports/api/_utils/contact';
+import { Contact, isReachable } from '/imports/api/_utils/contact';
 import { call } from '/imports/api/_utils/shared';
 import { kindsOf } from '/imports/api/_utils/kinds';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
@@ -21,6 +21,11 @@ import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
 
 import resourceFormFields from './resourceFormFields';
+import BookingFields, {
+  type Booking,
+  bookingState,
+  bookingValue,
+} from './components/BookingFields';
 import { RESOURCE_KINDS } from './resourceKinds';
 
 interface ResourceFormValues {
@@ -38,6 +43,7 @@ interface ResourceData extends ResourceFormValues {
   locationId?: string | null;
   isCombo?: boolean;
   resourcesForCombo?: ResourceOption[];
+  booking?: Booking | null;
 }
 
 interface ResourceOption {
@@ -70,6 +76,7 @@ export default function ResourceForm({
     kinds: kindsOf(resource),
     address: resource?.address || emptyAddress,
     contact: resource?.contact || emptyContact,
+    booking: bookingState(resource?.booking),
     locationId: resource?.locationId || null,
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
     resources: [],
@@ -110,6 +117,17 @@ export default function ResourceForm({
       message.error(tc('address.errors.required'));
       return;
     }
+    // A bookable place says how: an organizer, an email or phone, or a link.
+    const { booking } = state;
+    if (
+      booking.isBookable &&
+      ((booking.via === 'organizer' && !booking.contactUserId) ||
+        (booking.via === 'own' && !isReachable(booking.contact)) ||
+        (booking.via === 'link' && !booking.url.trim()))
+    ) {
+      message.error(t(`form.booking.errors.${booking.via}`));
+      return;
+    }
     setState((prevState) => ({
       ...prevState,
       formValues,
@@ -126,6 +144,7 @@ export default function ResourceForm({
       address: state.address,
       kinds: state.kinds,
       contact: state.contact,
+      booking: bookingValue(state.booking),
       images,
       isBookable: state.isBookable,
       isCombo: state.isCombo,
@@ -220,6 +239,15 @@ export default function ResourceForm({
           value={state.contact}
           onChange={(contact) =>
             setState((prevState: any) => ({ ...prevState, contact }))
+          }
+        />
+      </FormField>
+
+      <FormField label={t('form.booking.label')} mt="6" mb="12">
+        <BookingFields
+          value={state.booking}
+          onChange={(booking) =>
+            setState((prevState: any) => ({ ...prevState, booking }))
           }
         />
       </FormField>

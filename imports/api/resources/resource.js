@@ -41,6 +41,22 @@ Resources.schema = new SimpleSchema({
   imagesLegacy: { type: Array, optional: true },
   'imagesLegacy.$': { type: String, optional: true },
 
+  // How to book the place: info and a link, an organizer or contact
+  // details of its own; see resource.booking.js. Absent: not bookable.
+  booking: {
+    type: new SimpleSchema({
+      info: { type: String, optional: true },
+      url: { type: String, optional: true },
+      contactUserId: { type: String, optional: true },
+      contact: {
+        type: new SimpleSchema(Schemas.PublicContact),
+        optional: true,
+      },
+    }),
+    optional: true,
+  },
+
+  // Bookable in the calendar; only read with the `bookings` feature on.
   isBookable: { type: Boolean, defaultValue: true },
   isCombo: { type: Boolean, defaultValue: false },
 
@@ -65,6 +81,7 @@ Resources.attachSchema(Resources.schema);
 Resources.publicFields = {
   _id: 1,
   address: 1,
+  booking: 1,
   category: 1,
   kinds: 1,
   contact: 1,

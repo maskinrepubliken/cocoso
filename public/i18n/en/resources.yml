@@ -12,6 +12,26 @@ form:
     helper: "Where the place is. Every place needs a town and a street address or coordinates."
   contact:
     helper: "Optional. Who to ask about the place, for example about booking it."
+  booking:
+    label: Booking
+    switch: The place can be booked
+    switchHelper: The place's page tells visitors how to book it.
+    info: About booking
+    infoHelper: "Optional. What to know before booking, for example prices, opening hours or who may book."
+    how: How to book
+    organizer: An organizer
+    organizerSearch: Search for an organizer
+    organizerEmpty: No organizer by that name
+    organizerChange: Change
+    organizerNoContact: This organizer has no public contact details in their profile yet.
+    own: Other details
+    link: Link
+    url: Link to the booking
+    urlHelper: Where the place is booked, for example a booking system.
+    errors:
+      organizer: Choose the organizer to book through.
+      own: Give an email address or a phone number for booking.
+      link: Give the link to where the place is booked.
   holder: type
   bookable:
     label: Bookable
