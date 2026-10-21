@@ -3,6 +3,7 @@ import Resizer from 'react-image-file-resizer';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import { kindsOf } from './kinds';
+import { isFeatureEnabled } from './features';
 
 dayjs.extend(isBetween);
 
@@ -257,6 +258,11 @@ function helper_parseAllBookingsWithResources(
   };
 }
 
+// With bookings on, only bookable places have a calendar; with them off,
+// every event is in it, wherever it is.
+const isInCalendar = (resource: Resource): boolean =>
+  !isFeatureEnabled('bookings') || Boolean(resource.isBookable);
+
 function parseAllBookingsWithResources(
   activities: Activity[] | undefined,
   resources: Resource[] | undefined
@@ -297,7 +303,7 @@ function parseAllBookingsWithResources(
           const resourceForComboReal = resources.find(
             (r) => r._id === resourceForCombo._id
           );
-          if (!resourceForComboReal?.isBookable) {
+          if (!resourceForComboReal || !isInCalendar(resourceForComboReal)) {
             return;
           }
           const parsed = helper_parseAllBookingsWithResources(
@@ -317,7 +323,7 @@ function parseAllBookingsWithResources(
           }
         });
       } else {
-        if (!resourceSelected.isBookable) {
+        if (!isInCalendar(resourceSelected)) {
           return;
         }
         const parsed = helper_parseAllBookingsWithResources(

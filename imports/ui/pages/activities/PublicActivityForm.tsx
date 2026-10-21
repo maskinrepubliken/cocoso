@@ -8,6 +8,7 @@ import { currentUserAtom, roleAtom } from '/imports/state';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
 import { kindsOf } from '/imports/api/_utils/kinds';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
@@ -527,7 +528,10 @@ export default function PublicActivityForm({
           datesAndTimes={state.datesAndTimes}
           isExclusiveActivity={state.isExclusiveActivity}
           resourceId={
-            whereMode === 'place' ? state.selectedResource?._id : undefined
+            // a clash with another booking only matters with bookings on
+            whereMode === 'place' && isFeatureEnabled('bookings')
+              ? state.selectedResource?._id
+              : undefined
           }
           onDatesAndTimesChange={handleDatesAndTimesChange}
         />
@@ -535,19 +539,21 @@ export default function PublicActivityForm({
 
       <FormCard title={t('form.cards.booking')}>
         {/* Blocking the place only means something at a place */}
-        {whereMode === 'place' && state.selectedResource && (
-          <ToggleSwitch
-            checked={Boolean(state.isExclusiveActivity)}
-            helper={t('form.booking.exclusiveHelper')}
-            label={t('form.booking.exclusive')}
-            onChange={(isExclusiveActivity) =>
-              setState((prevState: any) => ({
-                ...prevState,
-                isExclusiveActivity,
-              }))
-            }
-          />
-        )}
+        {isFeatureEnabled('bookings') &&
+          whereMode === 'place' &&
+          state.selectedResource && (
+            <ToggleSwitch
+              checked={Boolean(state.isExclusiveActivity)}
+              helper={t('form.booking.exclusiveHelper')}
+              label={t('form.booking.exclusive')}
+              onChange={(isExclusiveActivity) =>
+                setState((prevState: any) => ({
+                  ...prevState,
+                  isExclusiveActivity,
+                }))
+              }
+            />
+          )}
         <ToggleSwitch
           checked={Boolean(state.isRegistrationEnabled)}
           helper={t('form.booking.rsvpHelper')}

@@ -15,6 +15,7 @@ import { Address, isCompleteAddress } from '/imports/api/_utils/address';
 import { Contact } from '/imports/api/_utils/contact';
 import { call } from '/imports/api/_utils/shared';
 import { kindsOf } from '/imports/api/_utils/kinds';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
@@ -58,7 +59,10 @@ export const emptyFormValues: ResourceFormValues = {
 
 const animatedComponents = makeAnimated();
 
-export default function ResourceForm({ resource, onFinalize }: ResourceFormProps) {
+export default function ResourceForm({
+  resource,
+  onFinalize,
+}: ResourceFormProps) {
   const [state, setState] = useState<any>({
     formValues: resource || emptyFormValues,
     isBookable: resource ? resource.isBookable : true,
@@ -273,26 +277,29 @@ export default function ResourceForm({ resource, onFinalize }: ResourceFormProps
         )}
       </FormField>
 
-      <FormField
-        helper={t('form.bookable.helper')}
-        label={t('form.bookable.label')}
-        mt="6"
-        mb="12"
-      >
-        <Checkbox
-          checked={state.isBookable}
-          id="is-bookable"
-          size="lg"
-          onChange={(e) =>
-            setState((prevState) => ({
-              ...prevState,
-              isBookable: e.target.checked,
-            }))
-          }
+      {/* Booking in the calendar; the flag is kept as it is while off */}
+      {isFeatureEnabled('bookings') && (
+        <FormField
+          helper={t('form.bookable.helper')}
+          label={t('form.bookable.label')}
+          mt="6"
+          mb="12"
         >
-          {t('form.bookable.label')}
-        </Checkbox>
-      </FormField>
+          <Checkbox
+            checked={state.isBookable}
+            id="is-bookable"
+            size="lg"
+            onChange={(e) =>
+              setState((prevState) => ({
+                ...prevState,
+                isBookable: e.target.checked,
+              }))
+            }
+          >
+            {t('form.bookable.label')}
+          </Checkbox>
+        </FormField>
+      )}
     </GenericEntryForm>
   );
 }

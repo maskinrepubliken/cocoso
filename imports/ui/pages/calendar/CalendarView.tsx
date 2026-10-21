@@ -12,6 +12,7 @@ if (Meteor.isClient) {
 }
 import useMediaQuery from '/imports/api/_utils/useMediaQuery';
 import { canCreateContentAtom, renderedAtom } from '/imports/state';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import NewEntryHandler from '/imports/ui/forms/NewEntryHandler';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 
@@ -278,7 +279,7 @@ export default function CalendarView({
         min={dayBounds.min}
         popup
         popupOffset={30}
-        selectable
+        selectable={isFeatureEnabled('bookings')}
         showMultiDayTimes
         step={60}
         timeslots={1}
@@ -301,7 +302,7 @@ export default function CalendarView({
         onView={changeView}
       />
 
-      {rendered && canCreateContent ? (
+      {rendered && canCreateContent && isFeatureEnabled('bookings') ? (
         <NewEntryHandler context="calendar">
           <NewCalendarActivity resources={resources} />
         </NewEntryHandler>

@@ -9,6 +9,10 @@ import { Meteor } from 'meteor/meteor';
 export const FEATURES = {
   groups: false, // Föreningar
   works: false, // Förfrågningar
+  // Booking places in the calendar: the bookable flag on places, the book
+  // button, new bookings from the calendar, an event blocking its place and
+  // the clash checks. Places still say how to book them (`booking`).
+  bookings: false,
 };
 
 export type Feature = keyof typeof FEATURES;

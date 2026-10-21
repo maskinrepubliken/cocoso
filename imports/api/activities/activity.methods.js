@@ -25,6 +25,7 @@ import { attachPlaceAddress, ownActivityAddress } from './activity.place';
 import { formatAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { cleanKinds } from '../_utils/kinds';
+import { isFeatureEnabled } from '../_utils/features';
 import { EVENT_KIND_KEYS } from '../../ui/pages/activities/eventKinds';
 import {
   compareDatesForSortActivities,
@@ -467,7 +468,8 @@ Meteor.methods({
     { startDate, endDate, startTime, endTime, resourceId },
     currentActivityId = null
   ) {
-    if (!resourceId) {
+    // Without bookings a place is never taken.
+    if (!resourceId || !isFeatureEnabled('bookings')) {
       return null;
     }
 

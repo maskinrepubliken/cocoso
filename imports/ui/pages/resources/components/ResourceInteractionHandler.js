@@ -12,6 +12,7 @@ import {
   roleAtom,
 } from '/imports/state';
 import { ChatButton } from '/imports/ui/chattery/ChatHandler';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import SlideWidget from '/imports/ui/entry/SlideWidget';
 
 import ResourceAdminFunctions from './ResourceAdminFunctions';
@@ -50,7 +51,9 @@ export default function ResourceInteractionHandler() {
         <Box w="40px">
           <ResourceAdminFunctions />
         </Box>
-        {resource.isBookable ? <ReserveButton resource={resource} /> : null}
+        {isFeatureEnabled('bookings') && resource.isBookable ? (
+          <ReserveButton resource={resource} />
+        ) : null}
         <Box>
           <ChatButton
             context="resources"
@@ -67,7 +70,9 @@ export default function ResourceInteractionHandler() {
     return (
       <SlideWidget justify="space-between">
         <Box w="40px" />
-        {resource.isBookable ? <ReserveButton resource={resource} /> : null}
+        {isFeatureEnabled('bookings') && resource.isBookable ? (
+          <ReserveButton resource={resource} />
+        ) : null}
         <Box>
           <ChatButton
             context="resources"

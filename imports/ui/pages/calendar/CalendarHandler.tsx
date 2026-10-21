@@ -15,6 +15,7 @@ import EventViewMenu from '/imports/ui/listing/EventViewMenu';
 import useEventFilters from '/imports/ui/listing/useEventFilters';
 import { EVENT_KINDS } from '/imports/ui/pages/activities/eventKinds';
 import { kindsOf } from '/imports/api/_utils/kinds';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
@@ -112,7 +113,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   };
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
-    if (!canCreateContent || !slotInfo) {
+    if (!canCreateContent || !slotInfo || !isFeatureEnabled('bookings')) {
       return;
     }
 

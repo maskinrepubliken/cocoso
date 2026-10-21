@@ -14,6 +14,7 @@ import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import AddressBlock from '/imports/ui/generic/AddressBlock';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 import LocationTag from '/imports/ui/generic/LocationTag';
 
@@ -163,7 +164,7 @@ export default function ResourceHybrid({
                       {tc('entry.combo')}
                     </Chip>
                   )}
-                  {resource.isBookable && (
+                  {isFeatureEnabled('bookings') && resource.isBookable && (
                     <Chip>
                       <CalendarCheckIcon aria-hidden />
                       <Trans i18nKey="common:labels.bookable">Bookable</Trans>
