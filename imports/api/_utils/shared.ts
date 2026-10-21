@@ -295,7 +295,8 @@ function parseAllBookingsWithResources(
         }
         return;
       }
-      if (resourceSelected.isCombo) {
+      // A combo books its parts; without bookings it is one place
+      if (resourceSelected.isCombo && isFeatureEnabled('bookings')) {
         resourceSelected.resourcesForCombo?.forEach((resourceForCombo) => {
           if (!resourceForCombo) {
             return;

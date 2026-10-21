@@ -146,6 +146,8 @@ export default function ResourceHybrid({
   const isBookable = isFeatureEnabled('bookings')
     ? resource.isBookable
     : Boolean(resource.booking);
+  // Places made up of others are for booking in the calendar too
+  const isCombo = isFeatureEnabled('bookings') && resource.isCombo;
 
   return (
     <LightboxProvider alt={resource.label} images={images}>
@@ -167,7 +169,7 @@ export default function ResourceHybrid({
               chips={
                 <>
                   <LocationTag locationId={resource.locationId} />
-                  {resource.isCombo && (
+                  {isCombo && (
                     <Chip>
                       <LayersIcon aria-hidden />
                       {tc('entry.combo')}
@@ -233,7 +235,7 @@ export default function ResourceHybrid({
           ) : null}
 
           <RestArea>
-            {resource.isCombo && resource.resourcesForCombo?.length ? (
+            {isCombo && resource.resourcesForCombo?.length ? (
               <EntryColumn>
                 <SectionHead>
                   <h2>{tc('entry.comboParts')}</h2>

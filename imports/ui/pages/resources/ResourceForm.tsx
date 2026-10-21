@@ -266,46 +266,49 @@ export default function ResourceForm({
         />
       </FormField>
 
-      <FormField
-        helper={t('form.combo.switch.helper')}
-        label={t('form.combo.switch.label')}
-        mt="6"
-        mb="12"
-      >
-        <Checkbox
-          checked={state.isCombo}
-          id="is-combo"
-          size="lg"
-          onChange={(e) =>
-            setState((prevState) => ({
-              ...prevState,
-              isCombo: e.target.checked,
-            }))
-          }
+      {/* Combos and the bookable flag are for booking in the calendar;
+          while it is off they are kept as they are */}
+      {isFeatureEnabled('bookings') && (
+        <FormField
+          helper={t('form.combo.switch.helper')}
+          label={t('form.combo.switch.label')}
+          mt="6"
+          mb="12"
         >
-          {t('form.combo.switch.label')}
-        </Checkbox>
-        {state.isCombo && (
-          <Box w="100%" pt="2">
-            <Text fontSize="sm" mb="2">
-              {t('form.combo.select.helper')}
-            </Text>
-            <AutoCompleteSelect
-              isMulti
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              defaultValue={state.resourcesForCombo}
-              options={autoCompleteOptions}
-              placeholder={t('form.combo.select.holder')}
-              style={{ width: '100%', marginTop: '1rem' }}
-              getOptionValue={(option) => option._id}
-              onChange={handleAutoCompleteSelectChange}
-            />
-          </Box>
-        )}
-      </FormField>
+          <Checkbox
+            checked={state.isCombo}
+            id="is-combo"
+            size="lg"
+            onChange={(e) =>
+              setState((prevState) => ({
+                ...prevState,
+                isCombo: e.target.checked,
+              }))
+            }
+          >
+            {t('form.combo.switch.label')}
+          </Checkbox>
+          {state.isCombo && (
+            <Box w="100%" pt="2">
+              <Text fontSize="sm" mb="2">
+                {t('form.combo.select.helper')}
+              </Text>
+              <AutoCompleteSelect
+                isMulti
+                closeMenuOnSelect={false}
+                components={animatedComponents}
+                defaultValue={state.resourcesForCombo}
+                options={autoCompleteOptions}
+                placeholder={t('form.combo.select.holder')}
+                style={{ width: '100%', marginTop: '1rem' }}
+                getOptionValue={(option) => option._id}
+                onChange={handleAutoCompleteSelectChange}
+              />
+            </Box>
+          )}
+        </FormField>
+      )}
 
-      {/* Booking in the calendar; the flag is kept as it is while off */}
       {isFeatureEnabled('bookings') && (
         <FormField
           helper={t('form.bookable.helper')}
