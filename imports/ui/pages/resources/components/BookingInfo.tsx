@@ -43,11 +43,11 @@ const Info = styled('p', {
   whiteSpace: 'pre-line',
 });
 
-// The way to book: a plain button in tegel with "Boka här", where it leads
+// The way to book: a plain dark green button with "Boka här", where it leads
 // and an arrow.
 const BookLink = styled('a', {
   alignItems: 'center',
-  backgroundColor: 'var(--cocoso-tegel)',
+  backgroundColor: 'var(--cocoso-colors-theme-800)',
   borderRadius: '10px',
   color: 'white',
   display: 'flex',
@@ -62,7 +62,7 @@ const BookLink = styled('a', {
     width: '1.1rem',
   },
   '&:hover, &:focus-visible': {
-    backgroundColor: 'var(--cocoso-tegel-600)',
+    backgroundColor: 'var(--cocoso-colors-theme-700)',
   },
 });
 
