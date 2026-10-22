@@ -195,15 +195,6 @@ export default function ResourceHybrid({
 
           {hasAddress(resource.address) || withContact || resource.booking ? (
             <Sidebar>
-              {resource.booking && (
-                <Panel css={{ marginBottom: '1.25rem' }}>
-                  <SideTitle>{tc('entry.booking')}</SideTitle>
-                  <BookingInfo
-                    booking={resource.booking}
-                    label={resource.label}
-                  />
-                </Panel>
-              )}
               <Panel css={{ overflow: 'hidden' }}>
                 <AddressBlock
                   address={resource.address}
@@ -221,6 +212,16 @@ export default function ResourceHybrid({
                   label={resource.label}
                 />
               </Panel>
+              {/* How to book it, under where it is */}
+              {resource.booking && (
+                <Panel css={{ marginTop: '1.25rem' }}>
+                  <SideTitle>{tc('entry.booking')}</SideTitle>
+                  <BookingInfo
+                    booking={resource.booking}
+                    label={resource.label}
+                  />
+                </Panel>
+              )}
             </Sidebar>
           ) : null}
 
