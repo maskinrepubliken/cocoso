@@ -10,7 +10,6 @@ import {
   websiteLabel,
   type Contact,
 } from '/imports/api/_utils/contact';
-import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import {
   PersonAvatar,
   personName,
@@ -44,8 +43,8 @@ const Info = styled('p', {
   whiteSpace: 'pre-line',
 });
 
-// The way to book, as a card of its own in tegel: the calendar's 3D icon,
-// "Boka här" and where it leads, and an arrow that moves on hover.
+// The way to book, as a card of its own in tegel: "Boka här" and where it
+// leads, and an arrow that moves on hover.
 const BookLink = styled('a', {
   alignItems: 'center',
   background:
@@ -55,14 +54,9 @@ const BookLink = styled('a', {
   color: 'white',
   display: 'flex',
   gap: '0.85rem',
-  padding: '0.7rem 1rem 0.7rem 0.75rem',
+  padding: '0.7rem 1rem',
   textDecoration: 'none',
   transition: 'transform 0.18s ease, box-shadow 0.18s ease',
-  '& .threed-icon': {
-    filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25))',
-    flex: 'none',
-    transition: 'transform 0.18s ease',
-  },
   '& .book-arrow': {
     flex: 'none',
     height: '1.25rem',
@@ -74,7 +68,6 @@ const BookLink = styled('a', {
     boxShadow: '0 16px 28px -14px rgba(150, 60, 20, 0.8)',
     transform: 'translateY(-2px)',
   },
-  '&:hover .threed-icon': { transform: 'rotate(-6deg) scale(1.06)' },
   '&:hover .book-arrow': { transform: 'translateX(3px)' },
 });
 
@@ -126,7 +119,6 @@ export default function BookingInfo({
       {booking.info && <Info>{booking.info}</Info>}
       {booking.url && (
         <BookLink href={booking.url} rel="noopener noreferrer" target="_blank">
-          <ThreeDIcon name="calendar" size={44} />
           <BookText>
             <strong>{tc('entry.bookingLink')}</strong>
             <small>{websiteLabel(booking.url)}</small>
