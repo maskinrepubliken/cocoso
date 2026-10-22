@@ -43,44 +43,38 @@ const Info = styled('p', {
   whiteSpace: 'pre-line',
 });
 
-// The way to book, as a card of its own in tegel: "Boka här" and where it
-// leads, and an arrow that moves on hover.
+// The way to book: a plain button in tegel with "Boka här", where it leads
+// and an arrow.
 const BookLink = styled('a', {
   alignItems: 'center',
-  background:
-    'linear-gradient(135deg, var(--cocoso-tegel) 0%, var(--cocoso-tegel-600) 100%)',
-  borderRadius: '14px',
-  boxShadow: '0 10px 22px -12px rgba(150, 60, 20, 0.7)',
+  backgroundColor: 'var(--cocoso-tegel)',
+  borderRadius: '10px',
   color: 'white',
   display: 'flex',
-  gap: '0.85rem',
-  padding: '0.7rem 1rem',
+  gap: '0.75rem',
+  padding: '0.6rem 0.9rem',
   textDecoration: 'none',
-  transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+  transition: 'background-color 0.15s ease',
   '& .book-arrow': {
     flex: 'none',
-    height: '1.25rem',
+    height: '1.1rem',
     marginLeft: 'auto',
-    transition: 'transform 0.18s ease',
-    width: '1.25rem',
+    width: '1.1rem',
   },
   '&:hover, &:focus-visible': {
-    boxShadow: '0 16px 28px -14px rgba(150, 60, 20, 0.8)',
-    transform: 'translateY(-2px)',
+    backgroundColor: 'var(--cocoso-tegel-600)',
   },
-  '&:hover .book-arrow': { transform: 'translateX(3px)' },
 });
 
 const BookText = styled('span', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.15rem',
+  gap: '0.1rem',
   minWidth: 0,
   '& strong': {
-    fontFamily: 'var(--cocoso-font-display)',
-    fontSize: '1.2rem',
+    fontSize: '1rem',
     fontWeight: 600,
-    lineHeight: 1.1,
+    lineHeight: 1.2,
   },
   '& small': {
     fontSize: '0.8rem',
