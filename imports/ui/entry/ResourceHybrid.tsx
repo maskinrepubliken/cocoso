@@ -2,7 +2,6 @@ import { Link } from 'react-router';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
-import CalendarCheckIcon from 'lucide-react/dist/esm/icons/calendar-check';
 import LayersIcon from 'lucide-react/dist/esm/icons/layers';
 import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
@@ -20,6 +19,7 @@ import { hasContact, type Contact } from '/imports/api/_utils/contact';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 import LocationTag from '/imports/ui/generic/LocationTag';
+import BookableChip from '/imports/ui/generic/BookableChip';
 
 import EntryHero, {
   Chip,
@@ -141,11 +141,6 @@ export default function ResourceHybrid({
   );
 
   const withContact = hasContact(resource.contact);
-  // Booked in the calendar (the `bookings` feature), or else a place that
-  // says how to book it
-  const isBookable = isFeatureEnabled('bookings')
-    ? resource.isBookable
-    : Boolean(resource.booking);
   // Places made up of others are for booking in the calendar too
   const isCombo = isFeatureEnabled('bookings') && resource.isCombo;
 
@@ -175,12 +170,7 @@ export default function ResourceHybrid({
                       {tc('entry.combo')}
                     </Chip>
                   )}
-                  {isBookable && (
-                    <Chip>
-                      <CalendarCheckIcon aria-hidden />
-                      <Trans i18nKey="common:labels.bookable">Bookable</Trans>
-                    </Chip>
-                  )}
+                  <BookableChip place={resource} />
                 </>
               }
               html={resource.description}

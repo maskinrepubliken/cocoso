@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { siteAtom } from '/imports/state';
 import { kindsOf } from '/imports/api/_utils/kinds';
+import BookableChip from '/imports/ui/generic/BookableChip';
 import { Box } from '/imports/ui/core';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import { RESOURCE_KINDS } from '/imports/ui/pages/resources/resourceKinds';
@@ -154,6 +155,7 @@ export default function ResourcesHybrid({
               onClick={() => openEntry(resource)}
             >
               <NewGridThumb
+                badge={<BookableChip place={resource} />}
                 fixedImageHeight
                 imageUrl={getImageUrl(resource.images?.[0], 'small')}
                 index={index}

@@ -645,7 +645,7 @@ entry:
   postedBy: 'Posted by {{ name }}'
   contact: Contact
   seeProfile: 'Go to {{ name }}'
-  booking: Book the place
+  booking: Can be booked
   bookingLink: Book here
 
 lightbox:

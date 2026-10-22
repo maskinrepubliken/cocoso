@@ -642,7 +642,7 @@ entry:
   postedBy: 'Upplagd av {{ name }}'
   contact: Kontakt
   seeProfile: 'Till {{ name }}'
-  booking: Boka platsen
+  booking: Går att boka
   bookingLink: Boka här
 
 lightbox:

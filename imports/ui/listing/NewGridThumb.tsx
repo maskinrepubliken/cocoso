@@ -62,6 +62,8 @@ export interface NewGridThumbProps {
   /** The place the item belongs to: colours its shapes and its tag. */
   placeName?: string | null;
   world?: LocationWorld;
+  /** A chip beside the place's tag, e.g. "Bokningsbar". */
+  badge?: React.ReactNode;
 }
 
 function NewGridThumb({
@@ -78,6 +80,7 @@ function NewGridThumb({
   tag,
   placeName,
   world,
+  badge,
 }: NewGridThumbProps) {
   if (!title && !imageUrl) {
     return null;
@@ -131,7 +134,9 @@ function NewGridThumb({
                 effect="black-and-white"
                 src={imageUrl}
                 style={fixedImageHeight ? coverStyle : imageStyle}
-                wrapperProps={{ style: fixedImageHeight ? coverStyle : undefined }}
+                wrapperProps={{
+                  style: fixedImageHeight ? coverStyle : undefined,
+                }}
               />
             )
           ) : (
@@ -172,7 +177,8 @@ function NewGridThumb({
           px="4"
           css={{ backgroundColor: 'var(--cocoso-papper)' }}
         >
-          <Box pb="2" pr="3">
+          {/* The card's width, so the tags beside each other fit */}
+          <Box pb="2" pr="3" css={{ flex: 1, minWidth: 0 }}>
             <Heading
               className="text-link"
               truncated
@@ -199,7 +205,12 @@ function NewGridThumb({
                 {subTitle}
               </Heading>
             )}
-            {placeName && <PlaceTag name={placeName} world={world} />}
+            {(placeName || badge) && (
+              <Flex align="center" wrap="wrap" css={{ gap: '0.4rem' }}>
+                {placeName && <PlaceTag name={placeName} world={world} />}
+                {badge}
+              </Flex>
+            )}
             {tag && <Tag filterColor={color} label={tag} />}
           </Box>
 
