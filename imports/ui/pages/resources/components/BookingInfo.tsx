@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import ExternalLinkIcon from 'lucide-react/dist/esm/icons/external-link';
+import ArrowUpRightIcon from 'lucide-react/dist/esm/icons/arrow-up-right';
 
 import { styled } from '/stitches.config';
 import { ContactDetails } from '/imports/ui/generic/ContactDetails';
-import { hasContact, type Contact } from '/imports/api/_utils/contact';
+import {
+  hasContact,
+  websiteLabel,
+  type Contact,
+} from '/imports/api/_utils/contact';
+import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import {
   PersonAvatar,
   personName,
@@ -39,19 +44,58 @@ const Info = styled('p', {
   whiteSpace: 'pre-line',
 });
 
+// The way to book, as a card of its own in tegel: the calendar's 3D icon,
+// "Boka här" and where it leads, and an arrow that moves on hover.
 const BookLink = styled('a', {
   alignItems: 'center',
-  alignSelf: 'flex-start',
-  backgroundColor: 'var(--cocoso-colors-theme-800)',
-  borderRadius: '999px',
+  background:
+    'linear-gradient(135deg, var(--cocoso-tegel) 0%, var(--cocoso-tegel-600) 100%)',
+  borderRadius: '14px',
+  boxShadow: '0 10px 22px -12px rgba(150, 60, 20, 0.7)',
   color: 'white',
-  display: 'inline-flex',
-  fontWeight: 600,
-  gap: '0.45rem',
-  padding: '0.55rem 1.1rem',
+  display: 'flex',
+  gap: '0.85rem',
+  padding: '0.7rem 1rem 0.7rem 0.75rem',
   textDecoration: 'none',
-  '& svg': { height: '1rem', width: '1rem' },
-  '&:hover': { backgroundColor: 'var(--cocoso-colors-theme-700)' },
+  transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+  '& .threed-icon': {
+    filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25))',
+    flex: 'none',
+    transition: 'transform 0.18s ease',
+  },
+  '& .book-arrow': {
+    flex: 'none',
+    height: '1.25rem',
+    marginLeft: 'auto',
+    transition: 'transform 0.18s ease',
+    width: '1.25rem',
+  },
+  '&:hover, &:focus-visible': {
+    boxShadow: '0 16px 28px -14px rgba(150, 60, 20, 0.8)',
+    transform: 'translateY(-2px)',
+  },
+  '&:hover .threed-icon': { transform: 'rotate(-6deg) scale(1.06)' },
+  '&:hover .book-arrow': { transform: 'translateX(3px)' },
+});
+
+const BookText = styled('span', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.15rem',
+  minWidth: 0,
+  '& strong': {
+    fontFamily: 'var(--cocoso-font-display)',
+    fontSize: '1.2rem',
+    fontWeight: 600,
+    lineHeight: 1.1,
+  },
+  '& small': {
+    fontSize: '0.8rem',
+    opacity: 0.85,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
 });
 
 const Person = styled(Link, {
@@ -82,8 +126,12 @@ export default function BookingInfo({
       {booking.info && <Info>{booking.info}</Info>}
       {booking.url && (
         <BookLink href={booking.url} rel="noopener noreferrer" target="_blank">
-          {tc('entry.bookingLink')}
-          <ExternalLinkIcon aria-hidden />
+          <ThreeDIcon name="calendar" size={44} />
+          <BookText>
+            <strong>{tc('entry.bookingLink')}</strong>
+            <small>{websiteLabel(booking.url)}</small>
+          </BookText>
+          <ArrowUpRightIcon aria-hidden className="book-arrow" />
         </BookLink>
       )}
       {person && (
