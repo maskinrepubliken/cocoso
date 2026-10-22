@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/maskinrepubliken/cocoso/compare/v4.0.0...v4.1.0) (2026-10-22)
+
+
+### Features
+
+* **resources:** hide calendar booking of places behind a feature flag ([7839d1c](https://github.com/maskinrepubliken/cocoso/commit/7839d1ce688074922a6ee313b6982088c0710ce3))
+* **resources:** let a place say how it is booked ([4ef52ed](https://github.com/maskinrepubliken/cocoso/commit/4ef52edd45af39cc4b225978fa276a3596eb5013))
+* **resources:** put combo places behind the bookings flag too ([e1b9b0c](https://github.com/maskinrepubliken/cocoso/commit/e1b9b0cb62719bc5292d5947e5b08ce20d197032))
+* **resources:** show "Bokningsbar" in tegel, also in the place gallery ([43ff916](https://github.com/maskinrepubliken/cocoso/commit/43ff916f9124353cc25d247163ff3be72fd4cb96))
+
 ## 4.0.0 (2026-10-20)
 
 The first release of the Tranemo fork, written by hand from the 354 commits
