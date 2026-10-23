@@ -148,8 +148,18 @@ client detects the new bundle and reloads at the next idle navigation.
 
 ## Authentication
 
-Accounts use `accounts-password`; login, signup and password reset happen
-on the site itself.
+People log in by email only (`imports/api/users/emailLogin.js`): `/login`
+asks for an address, `requestLoginCode` mails a six-digit code and a
+one-click link (`/login?token=…`), and a custom `emailLogin` login handler
+checks either. Codes are stored hashed in `loginCodes`, last 15 minutes, work
+once and allow five wrong guesses. An address with no account gets one on its
+first login (generated username, participant membership, welcome email), so
+there is no separate sign-up; `/register`, `/forgot-password` and
+`/reset-password/:token` show the same form.
+
+`accounts-password` is still installed: it stores the accounts, the first-run
+`/setup` creates the admin with a password, and older accounts' passwords
+still work over DDP, but no page asks for one.
 
 ## Media storage
 

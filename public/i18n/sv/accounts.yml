@@ -132,3 +132,25 @@ delete:
   successTitle: Konto radering schemalagd
   successBody: Ditt konto är schemalagt att raderas om en minut. Tack för att du varit med oss. Vi är ledsna att se dig gå.
   successRedirect: Omdirigerar till startsidan...
+
+emailLogin:
+  title: Logga in eller skapa konto
+  lead: Skriv din e-postadress så skickar vi en kod. Inget lösenord behövs.
+  terms: Genom att fortsätta godkänner du
+  email:
+    label: E-postadress
+    placeholder: namn@exempel.se
+    submit: Fortsätt med e-post
+  code:
+    sentTo: Vi har skickat en sexsiffrig kod till
+    label: Koden från mejlet
+    helper: Du kan också klicka på knappen i mejlet. Koden gäller i 15 minuter.
+    otherEmail: Använd en annan adress
+    resend: Skicka ny kod
+    resent: Om adressen stämmer är ett nytt mejl på väg
+  errors:
+    invalidCode: Koden är fel eller har gått ut
+    invalidEmail: Det ser inte ut som en e-postadress
+    invalidLink: Inloggningslänken har gått ut eller redan använts. Be om en ny kod.
+    tooMany: För många försök. Vänta en minut och försök igen.
+    sendFailed: Vi kunde inte skicka mejlet. Försök igen om en stund.

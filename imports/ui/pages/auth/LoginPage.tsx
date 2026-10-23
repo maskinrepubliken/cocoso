@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
 
@@ -9,8 +9,8 @@ import { message } from '/imports/ui/generic/message';
 import { call } from '../../../api/_utils/shared';
 import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 
-import { loginWithPassword } from './functions';
-import { Login } from './index';
+import { loginWithEmail } from './functions';
+import EmailLogin from './EmailLogin';
 import AuthPanel from './AuthPanel';
 
 export default function LoginPage() {
@@ -18,9 +18,21 @@ export default function LoginPage() {
   const currentUser = useAtomValue(currentUserAtom);
   const [role, setRole] = useAtom(roleAtom);
   const [t] = useTranslation('accounts');
-  const [submitted, setSubmitted] = useState(false);
   const [joinModal, setJoinModal] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const linkToken = searchParams.get('token');
+
+  // The button in the login email lands here with ?token=…
+  useEffect(() => {
+    if (!linkToken || currentUser) {
+      return;
+    }
+    setSearchParams({}, { replace: true });
+    loginWithEmail({ token: linkToken })
+      .then(() => message.success(t('login.messages.success')))
+      .catch(() => message.error(t('emailLogin.errors.invalidLink')));
+  }, [linkToken]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -35,24 +47,9 @@ export default function LoginPage() {
     }
   }, [currentUser]);
 
-  const handleSubmit = async (values: any) => {
-    if (values?.username?.length < 4 || values?.password?.length < 8) {
-      return;
-    }
-    setSubmitted(true);
-    try {
-      await loginWithPassword(values.username, values.password);
-    } catch (error) {
-      message.error(error.reason);
-    } finally {
-      setSubmitted(false);
-    }
-  };
-
   const cancelJoin = () => {
     Meteor.logout();
     setJoinModal(false);
-    setSubmitted(false);
     message.info(t('logout.messages.success'));
   };
 
@@ -68,21 +65,9 @@ export default function LoginPage() {
   return (
     <Box pb="8">
       <AuthPanel
-        title={t('login.labels.title')}
-        lead={
-          <>
-            {t('login.labels.subtitle')}{' '}
-            <Link className="auth-panel-link" to="/register">
-              {t('actions.signup')}
-            </Link>
-          </>
-        }
-        links={[
-          { to: '/forgot-password', label: t('actions.reset') },
-          { to: '/register', label: t('actions.signup') },
-        ]}
+        title={t('emailLogin.title', { site: site?.settings?.name })}
       >
-        <Login isSubmitted={submitted} onSubmit={handleSubmit} />
+        <EmailLogin />
       </AuthPanel>
 
       <Modal

@@ -64,14 +64,6 @@ function revalidateOn(relevantParams = []) {
 }
 
 const LoginPage = loadable(() => import('/imports/ui/pages/auth/LoginPage'));
-const SignupPage = loadable(() => import('/imports/ui/pages/auth/SignupPage'));
-
-const ForgotPasswordPage = loadable(() =>
-  import('/imports/ui/pages/auth/ForgotPasswordPage')
-);
-const ResetPasswordPage = loadable(() =>
-  import('/imports/ui/pages/auth/ResetPasswordPage')
-);
 const Terms = loadable(() => import('/imports/ui/entry/Terms'));
 const NotFoundPage = loadable(() => import('/imports/ui/pages/NotFoundPage'));
 
@@ -701,18 +693,11 @@ export default function appRoutes(props) {
           path: 'login',
           element: createRouteElement(LoginPage, props),
         },
-        {
-          path: 'register',
-          element: createRouteElement(SignupPage, props),
-        },
-        {
-          path: 'forgot-password',
-          element: createRouteElement(ForgotPasswordPage, props),
-        },
-        {
-          path: 'reset-password/:token',
-          element: createRouteElement(ResetPasswordPage, props),
-        },
+        // Login is by email only; sign-up and password pages, and links to
+        // them in old emails, land on the same form.
+        ...['register', 'forgot-password', 'reset-password/:token'].map(
+          (path) => ({ path, element: createRouteElement(LoginPage, props) })
+        ),
         {
           path: 'terms-&-privacy-policy',
           element: createRouteElement(Terms, props),

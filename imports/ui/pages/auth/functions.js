@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base';
 import { check } from 'meteor/check';
 import i18next from 'i18next';
 
@@ -39,4 +40,15 @@ export async function createAccount(values) {
   } catch (error) {
     message.error(error.error ? error.error.reason : error.reason);
   }
+}
+
+// Email-only login (imports/api/users/emailLogin.js): either the address
+// and the six-digit code from the email, or the token from its link.
+export function loginWithEmail(credentials) {
+  return new Promise((resolve, reject) => {
+    Accounts.callLoginMethod({
+      methodArguments: [{ emailLogin: credentials }],
+      userCallback: (error) => (error ? reject(error) : resolve()),
+    });
+  });
 }

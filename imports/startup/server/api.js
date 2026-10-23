@@ -13,6 +13,7 @@ import '../../api/users/user';
 import '../../api/users/user.roles';
 import '../../api/users/user.admin';
 import '../../api/users/user.methods';
+import '../../api/users/emailLogin';
 import '../../api/users/user.publications';
 import '../../api/pages/page';
 import '../../api/pages/page.methods';

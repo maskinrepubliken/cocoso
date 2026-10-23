@@ -13,6 +13,7 @@ const RULES = [
       'sendEmail',
       'resetUserPassword',
       'forgotPassword',
+      'requestLoginCode',
       'registerAttendance',
       'updateAttendance',
       'removeAttendance',

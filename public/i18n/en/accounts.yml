@@ -132,3 +132,25 @@ delete:
   successTitle: Account Deletion Scheduled
   successBody: Your account is scheduled to be deleted in a minute. Thank you for being with us. We're sorry to see you go.
   successRedirect: Redirecting to homepage...
+
+emailLogin:
+  title: Log in or sign up
+  lead: Enter your email and we'll send you a code. No password needed.
+  terms: By continuing you accept
+  email:
+    label: Email address
+    placeholder: name@example.com
+    submit: Continue with email
+  code:
+    sentTo: We've sent a six-digit code to
+    label: Code from the email
+    helper: You can also click the button in the email. The code is valid for 15 minutes.
+    otherEmail: Use another email
+    resend: Send a new code
+    resent: If the address is right, a new email is on its way
+  errors:
+    invalidCode: The code is wrong or has expired
+    invalidEmail: That doesn't look like an email address
+    invalidLink: The login link has expired or has already been used. Ask for a new code.
+    tooMany: Too many attempts. Wait a minute and try again.
+    sendFailed: We couldn't send the email. Try again in a while.
