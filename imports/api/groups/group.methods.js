@@ -17,6 +17,7 @@ import {
   getGroupRegistrationEmailBody,
   getInviteToPrivateGroupEmailBody,
 } from './group.mails';
+import { sendEmail } from '../_utils/services/mails/mail.methods';
 
 const publicSettings = Meteor.settings.public;
 
@@ -378,8 +379,7 @@ const groupMethods = {
         },
       });
 
-      await Meteor.callAsync(
-        'sendEmail',
+      await sendEmail(
         user._id,
         `"${theGroup.title}", ${siteName}`,
         emailBody
@@ -420,8 +420,7 @@ const groupMethods = {
           },
         },
       });
-      await Meteor.callAsync(
-        'sendEmail',
+      await sendEmail(
         user._id,
         `"${theGroup.title}", ${siteName || publicSettings.name}`,
         emailBody
@@ -616,8 +615,7 @@ const groupMethods = {
         },
       });
 
-      await Meteor.callAsync(
-        'sendEmail',
+      await sendEmail(
         person.email,
         `"${theGroup.title}", ${siteName}`,
         emailBody

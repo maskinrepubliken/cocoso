@@ -18,6 +18,7 @@ import { requireContact } from '../_utils/contact';
 import { AddressPattern, cleanAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
+import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
 
 const userModel = async (user) => ({
   _id: user._id,
@@ -244,7 +245,7 @@ Meteor.methods({
         isPublic: true,
       });
 
-      await Meteor.callAsync('sendWelcomeEmail', user._id);
+      await sendWelcomeEmail(user._id);
     } catch (error) {
       throw new Meteor.Error(error);
     }

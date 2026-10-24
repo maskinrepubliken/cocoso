@@ -6,6 +6,7 @@ import { getSite } from '/imports/api/site/site';
 import Newsletters from './newsletter';
 import { isAdmin } from '../users/user.roles';
 import Memberships from '../memberships/membership';
+import { sendEmail } from '../_utils/services/mails/mail.methods';
 
 Meteor.methods({
   async getNewsletters() {
@@ -102,8 +103,7 @@ Meteor.methods({
             );
 
             try {
-              await Meteor.callAsync(
-                'sendEmail',
+              await sendEmail(
                 emailAddress,
                 email.subject,
                 emailHtmlWithUsername

@@ -32,6 +32,7 @@ import {
   compareDatesForSortActivitiesReverse,
   parseGroupActivities,
 } from './activity.helpers';
+import { sendEmail } from '../_utils/services/mails/mail.methods';
 
 const filterPrivateGroups = async (activities, user) => {
   if (!activities) {
@@ -135,7 +136,7 @@ const pickAttendeeValues = (values) => {
 // A registration stands even when its confirmation email cannot be sent.
 const sendConfirmation = async (to, subject, body) => {
   try {
-    await Meteor.callAsync('sendEmail', to, subject, body);
+    await sendEmail(to, subject, body);
   } catch (error) {
     console.error('Could not send registration email', error);
   }

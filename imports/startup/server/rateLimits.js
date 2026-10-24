@@ -10,7 +10,6 @@ const RULES = [
   // Anything that results in an outbound email.
   {
     methods: [
-      'sendEmail',
       'resetUserPassword',
       'forgotPassword',
       'requestLoginCode',

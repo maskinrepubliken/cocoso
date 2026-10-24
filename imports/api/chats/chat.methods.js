@@ -6,6 +6,7 @@ import mailtranslations from '/imports/api/activities/mailtranslations';
 import { isContributorOrAdmin } from '../users/user.roles';
 import Groups from '../groups/group';
 import Chats from './chat';
+import { sendEmail } from '../_utils/services/mails/mail.methods';
 
 /**
  * Bump the unread-notification counters of every member of the group a chat
@@ -68,8 +69,7 @@ async function createGroupNotification(user, values, unSeenIndex) {
         }
         const lang = member.lang || 'en';
         const tr = mailtranslations[lang];
-        await Meteor.callAsync(
-          'sendEmail',
+        await sendEmail(
           memberEmail,
           tr.newGroupMessage.subject(theGroup.title),
           tr.newGroupMessage.text(theGroup.title, theGroup._id)

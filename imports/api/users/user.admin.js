@@ -5,6 +5,10 @@ import { Accounts } from 'meteor/accounts-base';
 import { isAdmin, isContributorOrAdmin, isContributor } from './user.roles';
 import Activities from '../activities/activity';
 import Memberships from '../memberships/membership';
+import {
+  sendNewAdminEmail,
+  sendNewContributorEmail,
+} from '../_utils/services/mails/mail.methods';
 
 Meteor.methods({
   // Lets an admin see the site as another (non-admin) member: a fresh login
@@ -69,7 +73,7 @@ Meteor.methods({
           },
         },
       });
-      await Meteor.callAsync('sendNewAdminEmail', memberId);
+      await sendNewAdminEmail(memberId);
     } catch (error) {
       throw new Meteor.Error(error, 'Did not work! :/');
     }
@@ -106,7 +110,7 @@ Meteor.methods({
           },
         },
       });
-      await Meteor.callAsync('sendNewContributorEmail', memberId);
+      await sendNewContributorEmail(memberId);
     } catch (error) {
       throw new Meteor.Error(error, 'Did not work! :/');
     }

@@ -11,6 +11,7 @@ import escapeHtml from '../_utils/escapeHtml';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import Memberships from '../memberships/membership';
 import { generateUsernameFromEmail } from './username.helpers';
+import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
 
 /**
  * Email-only login: type your email, get a six-digit code and a one-click
@@ -138,7 +139,7 @@ async function findOrCreateUser(email) {
     });
     Meteor.defer(async () => {
       try {
-        await Meteor.callAsync('sendWelcomeEmail', userId);
+        await sendWelcomeEmail(userId);
       } catch (error) {
         console.error('[emailLogin] welcome email failed', error);
       }
