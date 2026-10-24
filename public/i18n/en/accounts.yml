@@ -154,3 +154,4 @@ emailLogin:
     invalidLink: The login link has expired or has already been used. Ask for a new code.
     tooMany: Too many attempts. Wait a minute and try again.
     sendFailed: We couldn't send the email. Try again in a while.
+    passwordDisabled: Passwords are only for administrators. Log in with your email address instead.

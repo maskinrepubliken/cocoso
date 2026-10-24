@@ -15,18 +15,19 @@ export async function loginWithPassword(
   password,
   isNewAccount = false
 ) {
-  console.log('[login] loginWithPassword called for', username);
   try {
     await loginWithPasswordAsync(username, password);
-    console.log('[login] loginWithPasswordAsync succeeded, userId:', Meteor.userId());
     if (isNewAccount) {
       await call('setSelfAsParticipant');
     }
     const translation = i18next.t('accounts:login.messages.success');
     message.success(translation);
   } catch (error) {
-    console.error('[login] error:', error);
-    message.error(error.reason);
+    message.error(
+      error.error === 'password-login-disabled'
+        ? i18next.t('accounts:emailLogin.errors.passwordDisabled')
+        : error.reason
+    );
   }
 }
 

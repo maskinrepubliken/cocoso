@@ -154,3 +154,4 @@ emailLogin:
     invalidLink: Inloggningslänken har gått ut eller redan använts. Be om en ny kod.
     tooMany: För många försök. Vänta en minut och försök igen.
     sendFailed: Vi kunde inte skicka mejlet. Försök igen om en stund.
+    passwordDisabled: Lösenord används bara av administratörer. Logga in med din e-postadress i stället.

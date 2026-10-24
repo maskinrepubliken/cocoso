@@ -19,6 +19,7 @@ import { requireContact } from '../_utils/contact';
 import { AddressPattern, cleanAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
+import { isFreshInstall } from './passwordLogin';
 import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
 
 const userModel = async (user) => ({
@@ -192,6 +193,12 @@ Meteor.methods({
     check(values.email, String);
     check(values.username, String);
     check(values.password, String);
+
+    // Only the first-run /setup makes password accounts; everyone else
+    // gets theirs from email login.
+    if (!(await isFreshInstall())) {
+      throw new Meteor.Error('not-allowed', 'Sign up by logging in with email');
+    }
 
     const userExists = await Accounts.findUserByUsername(values.username);
 

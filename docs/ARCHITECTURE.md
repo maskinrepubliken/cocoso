@@ -157,9 +157,13 @@ first login (generated username, participant membership, welcome email), so
 there is no separate sign-up; `/register`, `/forgot-password` and
 `/reset-password/:token` show the same form.
 
-`accounts-password` is still installed: it stores the accounts, the first-run
-`/setup` creates the admin with a password, and older accounts' passwords
-still work over DDP, but no page asks for one.
+Passwords are kept only for administrators, as a way in if mail stops
+working: `/login?losenord` (linked from nowhere) shows a username/password
+form, and `imports/api/users/passwordLogin.js` refuses password logins and
+resets for anyone who is not an admin. Accounts cannot be created from the
+browser (`forbidClientAccountCreation`), and `createAccount` only works on a
+fresh install with no admin yet — the first-run `/setup`, which still makes
+the first admin with a password.
 
 ## Media storage
 

@@ -9,8 +9,9 @@ import { message } from '/imports/ui/generic/message';
 import { call } from '../../../api/_utils/shared';
 import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 
-import { loginWithEmail } from './functions';
+import { loginWithEmail, loginWithPassword } from './functions';
 import EmailLogin from './EmailLogin';
+import { Login } from './index';
 import AuthPanel from './AuthPanel';
 
 export default function LoginPage() {
@@ -22,6 +23,16 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const linkToken = searchParams.get('token');
+  // Administrators' way in if mail is down — /login?losenord, linked from
+  // nowhere. The server refuses passwords for everyone else.
+  const passwordMode = searchParams.has('losenord');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handlePasswordLogin = async (values: any) => {
+    setSubmitted(true);
+    await loginWithPassword(values.username, values.password);
+    setSubmitted(false);
+  };
 
   // The button in the login email lands here with ?token=…
   useEffect(() => {
@@ -65,9 +76,17 @@ export default function LoginPage() {
   return (
     <Box pb="8">
       <AuthPanel
-        title={t('emailLogin.title', { site: site?.settings?.name })}
+        title={
+          passwordMode
+            ? t('actions.login')
+            : t('emailLogin.title', { site: site?.settings?.name })
+        }
       >
-        <EmailLogin />
+        {passwordMode ? (
+          <Login isSubmitted={submitted} onSubmit={handlePasswordLogin} />
+        ) : (
+          <EmailLogin />
+        )}
       </AuthPanel>
 
       <Modal
