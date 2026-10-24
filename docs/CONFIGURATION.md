@@ -36,12 +36,22 @@ Files are served by the app itself under `/media/…`. Details in
 | ----------- | -------- | ---------------------------------------------------------------------------------------------------- |
 | `fromEmail` | yes      | From header, e.g. `"Cocoso <noreply@example.org>"`. Also used as the sender for password-reset mail. |
 | `userName`  | yes      | SMTP login.                                                                                          |
-| `password`  | yes      | SMTP password.                                                                                       |
+| `password`  | no       | Last resort only — leave it out and set `SMTP_PASSWORD` instead (below).                             |
 | `host`      | yes      | SMTP host.                                                                                           |
-| `port`      | yes      | SMTP port, as a string. The connection uses SMTPS.                                                   |
+| `port`      | yes      | SMTP port, as a string. `465` uses SMTPS; any other port STARTTLS.                                   |
 
-At startup the server composes `MAIL_URL` from these values. If the block is
-missing, a warning is logged and no mail is sent.
+**The SMTP password is not kept in a settings file.** Set it as
+`SMTP_PASSWORD`: in the environment, or as a line in `.env` next to
+`docker-compose.yml` (gitignored; compose passes it to the app, and the
+server also reads it from the checkout's `.env` directly when started without
+it, as the dev container on the office Mac is).
+
+At startup the server composes `MAIL_URL` from these values (a `MAIL_URL`
+already in the environment wins). If the server was started with settings
+that lack the block, it reads `METEOR_SETTINGS_FILE` or the checkout's
+`docker/settings.json` instead. With no SMTP settings or no password, a
+warning is logged and sending mail fails with `mail-not-configured` — it is
+never silently printed to the log instead of sent.
 
 ### `cdnServer`
 

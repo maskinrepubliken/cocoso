@@ -59,6 +59,8 @@ services:
       MONGO_OPLOG_URL: mongodb://mongo:27017/local?replicaSet=rs0
       MEDIA_STORAGE_PATH: /var/lib/cocoso/media
       METEOR_SETTINGS_FILE: /run/cocoso/settings.json
+      # The SMTP password, from .env — never in settings.json, which is in git.
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     volumes:
       - ./docker/settings.json:/run/cocoso/settings.json:ro
       - media-data:/var/lib/cocoso/media

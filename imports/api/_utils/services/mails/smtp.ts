@@ -23,13 +23,43 @@ function fromFile(file: string): SmtpSettings | null {
   }
 }
 
+// The SMTP password is a secret and stays out of git: SMTP_PASSWORD in the
+// environment, else that line in the checkout's .env (gitignored; the dev
+// container does not get it as an environment variable). A password still
+// in the settings is only a last resort.
+function readSmtpPassword(): string | undefined {
+  if (process.env.SMTP_PASSWORD) {
+    return process.env.SMTP_PASSWORD;
+  }
+  if (!process.env.PWD) {
+    return undefined;
+  }
+  try {
+    const env = fs.readFileSync(path.join(process.env.PWD, '.env'), 'utf8');
+    const line = env.match(/^\s*SMTP_PASSWORD\s*=\s*(.*)\s*$/m)?.[1];
+    if (!line) {
+      return undefined;
+    }
+    const quoted = line.match(/^(["'])(.*)\1$/);
+    return quoted ? (quoted[1] === '"' ? JSON.parse(line) : quoted[2]) : line;
+  } catch {
+    return undefined;
+  }
+}
+
+const withPassword = (smtp: SmtpSettings): SmtpSettings => ({
+  ...smtp,
+  password: readSmtpPassword() || smtp.password,
+});
+
 /**
  * The SMTP account mail goes out through. Normally
  * `Meteor.settings.mailCredentials.smtp`; when the settings the server was
  * started with lack it (the dev container on the office Mac gets a
  * METEOR_SETTINGS without mail credentials), it is read from the settings
  * file instead — METEOR_SETTINGS_FILE, else docker/settings.json in the
- * checkout, the file docker-compose mounts.
+ * checkout, the file docker-compose mounts. The password comes from
+ * readSmtpPassword().
  */
 export function getSmtpSettings(): SmtpSettings | null {
   if (cached !== undefined) {
@@ -37,8 +67,8 @@ export function getSmtpSettings(): SmtpSettings | null {
   }
   const settings = (Meteor.settings as any)?.mailCredentials?.smtp;
   if (settings?.host) {
-    cached = settings;
-    return cached as SmtpSettings;
+    cached = withPassword(settings);
+    return cached;
   }
   const candidates = [
     process.env.METEOR_SETTINGS_FILE,
@@ -48,7 +78,7 @@ export function getSmtpSettings(): SmtpSettings | null {
     const smtp = fromFile(file);
     if (smtp) {
       console.info(`[mail] SMTP settings read from ${file}`);
-      cached = smtp;
+      cached = withPassword(smtp);
       return cached;
     }
   }

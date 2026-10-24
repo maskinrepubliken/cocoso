@@ -25,6 +25,12 @@ function setupSMTP() {
     );
     return;
   }
+  if (!smtp.password && !process.env.MAIL_URL) {
+    console.warn(
+      '[mail] no SMTP password — set SMTP_PASSWORD in the environment or .env; email will NOT be sent'
+    );
+    return;
+  }
 
   // A MAIL_URL given in the environment wins over the settings.
   process.env.MAIL_URL = process.env.MAIL_URL || mailUrlFor(smtp);
