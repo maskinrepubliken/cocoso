@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { Email } from 'meteor/email';
 import { check } from 'meteor/check';
 
 import { getSite } from '../../../site/site';
@@ -10,17 +9,8 @@ import {
   EmailTemplate,
 } from './mail.helpers';
 import { getWelcomeEmailBody } from './templates.mails';
+import { deliverEmail, getSmtpSettings } from './smtp';
 import type { MeteorUser } from '/imports/ui/types';
-
-interface MailCredentials {
-  smtp: {
-    fromEmail: string;
-  };
-}
-
-interface MeteorSettings {
-  mailCredentials: MailCredentials;
-}
 
 // Server-only helpers, not Meteor methods: as methods anyone could call them
 // from the browser and send any HTML to any address in the site's name.
@@ -36,8 +26,7 @@ async function sendEmail(
   if (!id) {
     return;
   }
-  const fromEmail = (Meteor.settings as MeteorSettings).mailCredentials.smtp
-    .fromEmail;
+  const fromEmail = getSmtpSettings()?.fromEmail || '';
 
   const isEmailValid = isValidEmail(id);
 
@@ -76,7 +65,7 @@ async function sendEmail(
   };
 
   try {
-    await Email.sendAsync(data);
+    await deliverEmail(data);
   } catch (error) {
     console.log('email error', error);
     throw new Meteor.Error(error as string);

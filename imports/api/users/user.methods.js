@@ -5,6 +5,7 @@ import { check, Match } from 'meteor/check';
 import { getSite } from '../site/site';
 import { publicUrl } from '../_utils/shared';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
+import { getSmtpSettings } from '../_utils/services/mails/smtp';
 import Works from '../works/work';
 import Groups from '../groups/group';
 import Memberships from '../memberships/membership';
@@ -502,7 +503,7 @@ Meteor.methods({
 
     const site = await getSite();
     const siteName = site?.settings?.name;
-    const smtp = Meteor.settings?.mailCredentials?.smtp;
+    const smtp = getSmtpSettings();
     if (siteName && smtp?.fromEmail) {
       const fromEmail = extractEmailAddress(smtp.fromEmail);
       Accounts.emailTemplates.resetPassword.from = () =>

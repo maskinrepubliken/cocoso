@@ -2,13 +2,16 @@ import crypto from 'crypto';
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Accounts } from 'meteor/accounts-base';
-import { Email } from 'meteor/email';
 import { check, Match } from 'meteor/check';
 
 import { getSite } from '../site/site';
 import { publicUrl } from '../_utils/shared';
 import escapeHtml from '../_utils/escapeHtml';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
+import {
+  deliverEmail,
+  getSmtpSettings,
+} from '../_utils/services/mails/smtp';
 import Memberships from '../memberships/membership';
 import { generateUsernameFromEmail } from './username.helpers';
 import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
@@ -89,13 +92,13 @@ async function sendLoginEmail({ email, code, token, lang }) {
   const s = STRINGS[lang] || STRINGS.sv;
   const url = publicUrl(`/login?token=${token}`);
 
-  const fromEmail = Meteor.settings?.mailCredentials?.smtp?.fromEmail;
+  const fromEmail = getSmtpSettings()?.fromEmail;
   const from =
     siteName && fromEmail
       ? `${siteName} <${extractEmailAddress(fromEmail)}>`
       : fromEmail;
 
-  await Email.sendAsync({
+  await deliverEmail({
     from,
     to: email,
     subject: s.subject(code, siteName),

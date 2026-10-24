@@ -1,7 +1,6 @@
 {
   "imports/api/_utils/services/clientUpload.ts | TS2558 | Expected 0 type arguments, but got 1.": 1,
   "imports/api/_utils/services/clientUpload.ts | TS7006 | Parameter 'uri' implicitly has an 'any' type.": 1,
-  "imports/api/_utils/services/mails/mail.methods.ts | TS2352 | Conversion of type 'Settings' to type 'MeteorSettings' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.": 1,
   "imports/api/_utils/shared.ts | TS6133 | 'a' is declared but its value is never read.": 1,
   "imports/api/_utils/shared.ts | TS7006 | Parameter 'uri' implicitly has an 'any' type.": 1,
   "imports/api/images/image.collection.ts | TS2339 | Property 'attachSchema' does not exist on type 'Collection<Document, Document>'.": 1,

@@ -4,6 +4,10 @@ import { onPageLoad } from 'meteor/server-render';
 import { WebAppInternals } from 'meteor/webapp';
 
 import serverRenderer from './serverRenderer';
+import {
+  getSmtpSettings,
+  mailUrlFor,
+} from '../../api/_utils/services/mails/smtp';
 import './api';
 import './media';
 import './rateLimits';
@@ -11,18 +15,19 @@ import './rateLimits';
 const { cdnServer } = Meteor.settings;
 
 function setupSMTP() {
-  const smtp = Meteor.settings?.mailCredentials?.smtp;
+  const smtp = getSmtpSettings();
 
   if (!smtp) {
     console.warn(
-      'SMTP settings not found in Meteor.settings.mailCredentials.smtp'
+      process.env.MAIL_URL
+        ? '[mail] using MAIL_URL from the environment'
+        : '[mail] no SMTP settings found — email will NOT be sent'
     );
     return;
   }
 
-  process.env.MAIL_URL = `smtps://${encodeURIComponent(smtp.userName)}:${
-    smtp.password
-  }@${smtp.host}:${smtp.port}`;
+  // A MAIL_URL given in the environment wins over the settings.
+  process.env.MAIL_URL = process.env.MAIL_URL || mailUrlFor(smtp);
   Accounts.emailTemplates.resetPassword.from = () => smtp.fromEmail;
   Accounts.emailTemplates.from = () => smtp.fromEmail;
   Accounts.emailTemplates.resetPassword.text = function (user, url) {
