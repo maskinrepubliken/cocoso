@@ -144,16 +144,28 @@ emailLogin:
     placeholder: namn@exempel.se
     submit: Fortsätt med e-post
   code:
-    sentTo: Vi har skickat en sexsiffrig kod till
+    title: Kolla din e-post
+    lead: Vi har skickat en sexsiffrig kod till <strong>{{email}}</strong>. Skriv in den här, eller klicka på knappen i mejlet.
     label: Koden från mejlet
-    helper: Du kan också klicka på knappen i mejlet. Koden gäller i 15 minuter.
-    otherEmail: Använd en annan adress
-    resend: Skicka ny kod
+    digit: Siffra {{n}} av 6
+    noMail: Inget mejl? Titta i skräpposten, eller
+    resend: skicka en ny kod
+    resendIn: du kan be om en ny kod om {{seconds}} s
     resent: Om adressen stämmer är ett nytt mejl på väg
+    otherEmail: Använd en annan e-postadress
+  link:
+    busy: Loggar in…
+    failedTitle: Länken fungerar inte längre
+    newCode: Få en ny kod
+  password:
+    title: Logga in med lösenord
+    lead: För administratörer, om inloggningen med e-post inte fungerar.
+    missing: Fyll i både användarnamn och lösenord.
+    wrong: Fel användarnamn eller lösenord.
   errors:
-    invalidCode: Koden är fel eller har gått ut
-    invalidEmail: Det ser inte ut som en e-postadress
-    invalidLink: Inloggningslänken har gått ut eller redan använts. Be om en ny kod.
+    invalidCode: Koden stämmer inte eller har gått ut. Försök igen, eller be om en ny.
+    invalidEmail: Det ser inte ut som en e-postadress.
+    invalidLink: Inloggningslänkar fungerar en gång och i 15 minuter. Be om en ny kod så är du inne.
     tooMany: För många försök. Vänta en minut och försök igen.
     sendFailed: Vi kunde inte skicka mejlet. Försök igen om en stund.
     passwordDisabled: Lösenord används bara av administratörer. Logga in med din e-postadress i stället.

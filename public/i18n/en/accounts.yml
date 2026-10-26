@@ -144,16 +144,28 @@ emailLogin:
     placeholder: name@example.com
     submit: Continue with email
   code:
-    sentTo: We've sent a six-digit code to
+    title: Check your email
+    lead: We've sent a six-digit code to <strong>{{email}}</strong>. Enter it below or use the button in the email.
     label: Code from the email
-    helper: You can also click the button in the email. The code is valid for 15 minutes.
-    otherEmail: Use another email
-    resend: Send a new code
+    digit: Digit {{n}} of 6
+    noMail: Nothing there? Check your spam folder, or
+    resend: send a new code
+    resendIn: you can ask for a new code in {{seconds}} s
     resent: If the address is right, a new email is on its way
+    otherEmail: Use another email address
+  link:
+    busy: Logging in…
+    failedTitle: That link no longer works
+    newCode: Get a new code
+  password:
+    title: Log in with password
+    lead: For administrators, in case the email login isn't working.
+    missing: Fill in both username and password.
+    wrong: Wrong username or password.
   errors:
-    invalidCode: The code is wrong or has expired
-    invalidEmail: That doesn't look like an email address
-    invalidLink: The login link has expired or has already been used. Ask for a new code.
+    invalidCode: That code is wrong or has expired. Try again, or ask for a new one.
+    invalidEmail: That doesn't look like an email address.
+    invalidLink: Login links work once and for 15 minutes. Ask for a new code and you're in.
     tooMany: Too many attempts. Wait a minute and try again.
     sendFailed: We couldn't send the email. Try again in a while.
     passwordDisabled: Passwords are only for administrators. Log in with your email address instead.

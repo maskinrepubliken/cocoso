@@ -1,61 +1,54 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { Box, Center, Heading, Text } from '/imports/ui/core';
-
 export interface AuthPanelProps {
   title: string;
-  // One line under the title; may hold a link
+  // One line under the title; may hold a link or bold text
   lead?: React.ReactNode;
-  children: React.ReactNode;
-  // Links under the panel: "Logga in", "Registrera", …
-  // `quiet` ones are small and grey — there for whoever looks for them
+  // A lucide icon shown in a round badge above the title
+  icon?: React.ReactNode;
+  // Tints the badge red, for "this didn't work"
+  tone?: 'default' | 'error';
+  children?: React.ReactNode;
+  // Small print at the bottom of the sheet (terms, "didn't get it?")
+  footer?: React.ReactNode;
+  // Links under the panel; `quiet` ones are small and grey — there for
+  // whoever looks for them
   links?: { to: string; label: string; quiet?: boolean }[];
 }
 
 // The account pages share one shape: a sheet of paper in the middle of the
-// page with a Fraunces title, a line of context, the form, and the other
-// account pages as links underneath. No modal over an empty page.
+// page with an optional icon, a Fraunces title, a line of context, the form,
+// small print, and the other ways in as links underneath. No modal over an
+// empty page. Styles: `.auth-*` in client/main.css.
 export default function AuthPanel({
   title,
   lead,
+  icon,
+  tone = 'default',
   children,
+  footer,
   links = [],
 }: AuthPanelProps) {
   return (
-    <Center px="4" py="8" css={{ minHeight: '60vh', alignItems: 'flex-start' }}>
-      <Box w="100%" css={{ maxWidth: '440px' }}>
-        <Box
-          className="auth-panel"
-          css={{
-            background: 'var(--cocoso-papper)',
-            borderRadius: 'var(--cocoso-radius-kort)',
-            boxShadow: 'var(--cocoso-skugga-kort)',
-            padding: '2rem 1.75rem 1.5rem',
-            '@media (max-width: 480px)': { padding: '1.5rem 1.15rem 1.25rem' },
-          }}
-        >
-          <Heading
-            as="h1"
-            size="lg"
-            textAlign="center"
-            css={{ marginBottom: '0.5rem' }}
-          >
-            {title}
-          </Heading>
-          {lead && (
-            <Text
-              textAlign="center"
-              css={{ color: 'var(--cocoso-mylla-soft)', marginBottom: '1rem' }}
-            >
-              {lead}
-            </Text>
+    <div className="auth-page">
+      <div className="auth-column">
+        <section className="auth-panel" aria-labelledby="auth-panel-title">
+          {icon && (
+            <div className={`auth-badge auth-badge--${tone}`} aria-hidden>
+              {icon}
+            </div>
           )}
+          <h1 className="auth-title" id="auth-panel-title">
+            {title}
+          </h1>
+          {lead && <p className="auth-lead">{lead}</p>}
           {children}
-        </Box>
+          {footer && <div className="auth-footer">{footer}</div>}
+        </section>
 
         {links.length > 0 && (
-          <Center gap="6" mt="5" css={{ flexWrap: 'wrap' }}>
+          <nav className="auth-links">
             {links.map((link) => (
               <Link
                 key={link.to}
@@ -67,9 +60,9 @@ export default function AuthPanel({
                 {link.label}
               </Link>
             ))}
-          </Center>
+          </nav>
         )}
-      </Box>
-    </Center>
+      </div>
+    </div>
   );
 }
