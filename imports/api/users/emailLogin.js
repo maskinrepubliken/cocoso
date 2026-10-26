@@ -6,7 +6,6 @@ import { check, Match } from 'meteor/check';
 
 import { getSite } from '../site/site';
 import { publicUrl } from '../_utils/shared';
-import escapeHtml from '../_utils/escapeHtml';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import {
   deliverEmail,
@@ -14,6 +13,7 @@ import {
 } from '../_utils/services/mails/smtp';
 import Memberships from '../memberships/membership';
 import { generateUsernameFromEmail } from './username.helpers';
+import { loginEmail } from './loginEmail';
 import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
 
 /**
@@ -43,53 +43,9 @@ const sameHash = (a, b) =>
   a.length === b.length &&
   crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
-const STRINGS = {
-  sv: {
-    subject: (code, site) => `${code} är din inloggningskod till ${site}`,
-    lead: (site) => `Här är din kod för att logga in på ${site}:`,
-    button: 'Logga in',
-    orLink: 'Eller klicka på knappen för att logga in direkt:',
-    footer:
-      'Koden och länken gäller i 15 minuter och kan bara användas en gång. Om du inte försökte logga in kan du bortse från det här mejlet.',
-  },
-  en: {
-    subject: (code, site) => `${code} is your login code for ${site}`,
-    lead: (site) => `Here is your code to log in to ${site}:`,
-    button: 'Log in',
-    orLink: 'Or use the button to log in directly:',
-    footer:
-      "The code and link are valid for 15 minutes and work once. If you didn't try to log in, you can ignore this email.",
-  },
-};
-
-function loginEmailHtml({ s, siteName, code, url }) {
-  const name = escapeHtml(siteName);
-  return `<!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f1ea;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#2b2a26;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ea;padding:32px 12px;">
-    <tr><td align="center">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:12px;padding:32px 28px;">
-        <tr><td style="font-size:16px;line-height:1.5;">
-          <p style="margin:0 0 16px;">${escapeHtml(s.lead(siteName))}</p>
-          <p style="margin:0 0 24px;font-size:32px;font-weight:700;letter-spacing:8px;font-family:Menlo,Consolas,monospace;">${escapeHtml(code)}</p>
-          <p style="margin:0 0 16px;">${escapeHtml(s.orLink)}</p>
-          <p style="margin:0 0 28px;">
-            <a href="${escapeHtml(url)}" style="display:inline-block;background:#2f5d3a;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:600;">${escapeHtml(s.button)}</a>
-          </p>
-          <p style="margin:0;font-size:13px;color:#6b6860;">${escapeHtml(s.footer)}</p>
-        </td></tr>
-      </table>
-      <p style="margin:16px 0 0;font-size:12px;color:#6b6860;">${name}</p>
-    </td></tr>
-  </table>
-</body></html>`;
-}
-
 async function sendLoginEmail({ email, code, token, lang }) {
   const site = await getSite();
   const siteName = site?.settings?.name || Meteor.settings.public?.name || '';
-  const s = STRINGS[lang] || STRINGS.sv;
   const url = publicUrl(`/login?token=${token}`);
 
   const fromEmail = getSmtpSettings()?.fromEmail;
@@ -98,13 +54,15 @@ async function sendLoginEmail({ email, code, token, lang }) {
       ? `${siteName} <${extractEmailAddress(fromEmail)}>`
       : fromEmail;
 
-  await deliverEmail({
-    from,
-    to: email,
-    subject: s.subject(code, siteName),
-    html: loginEmailHtml({ s, siteName, code, url }),
-    text: `${s.lead(siteName)}\n\n${code}\n\n${s.orLink}\n${url}\n\n${s.footer}`,
+  const { subject, html, text } = loginEmail({
+    lang,
+    siteName,
+    theme: site?.theme,
+    code,
+    url,
   });
+
+  await deliverEmail({ from, to: email, subject, html, text });
 }
 
 // The account behind an address, made on the spot the first time: a

@@ -4726,7 +4726,7 @@ body {
   color: var(--cocoso-mylla);
   font-family: var(--cocoso-font-ui);
   font-size: clamp(1.4rem, 6vw, 1.75rem);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
   font-weight: 700;
   min-width: 0;
   outline: none;
