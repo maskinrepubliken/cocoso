@@ -23,8 +23,8 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const linkToken = searchParams.get('token');
-  // Administrators' way in if mail is down — /login?losenord, linked from
-  // nowhere. The server refuses passwords for everyone else.
+  // Administrators' way in if mail is down — /login?losenord, behind a
+  // small grey link under the panel. The server refuses passwords for everyone else.
   const passwordMode = searchParams.has('losenord');
   const [submitted, setSubmitted] = useState(false);
 
@@ -81,6 +81,15 @@ export default function LoginPage() {
             ? t('actions.login')
             : t('emailLogin.title', { site: site?.settings?.name })
         }
+        links={[
+          passwordMode
+            ? { to: '/login', label: t('emailLogin.withEmail'), quiet: true }
+            : {
+                to: '/login?losenord',
+                label: t('emailLogin.withPassword'),
+                quiet: true,
+              },
+        ]}
       >
         {passwordMode ? (
           <Login isSubmitted={submitted} onSubmit={handlePasswordLogin} />

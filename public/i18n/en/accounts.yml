@@ -134,6 +134,8 @@ delete:
   successRedirect: Redirecting to homepage...
 
 emailLogin:
+  withPassword: Administrator? Log in with password
+  withEmail: Log in with email instead
   title: Log in or sign up
   lead: Enter your email and we'll send you a code. No password needed.
   terms: By continuing you accept

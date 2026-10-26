@@ -134,6 +134,8 @@ delete:
   successRedirect: Omdirigerar till startsidan...
 
 emailLogin:
+  withPassword: Administratör? Logga in med lösenord
+  withEmail: Logga in med e-post i stället
   title: Logga in eller skapa konto
   lead: Skriv din e-postadress så skickar vi en kod. Inget lösenord behövs.
   terms: Genom att fortsätta godkänner du

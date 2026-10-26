@@ -9,7 +9,8 @@ export interface AuthPanelProps {
   lead?: React.ReactNode;
   children: React.ReactNode;
   // Links under the panel: "Logga in", "Registrera", …
-  links?: { to: string; label: string }[];
+  // `quiet` ones are small and grey — there for whoever looks for them
+  links?: { to: string; label: string; quiet?: boolean }[];
 }
 
 // The account pages share one shape: a sheet of paper in the middle of the
@@ -56,7 +57,13 @@ export default function AuthPanel({
         {links.length > 0 && (
           <Center gap="6" mt="5" css={{ flexWrap: 'wrap' }}>
             {links.map((link) => (
-              <Link key={link.to} className="auth-panel-link" to={link.to}>
+              <Link
+                key={link.to}
+                className={`auth-panel-link${
+                  link.quiet ? ' auth-panel-link--quiet' : ''
+                }`}
+                to={link.to}
+              >
                 {link.label}
               </Link>
             ))}

@@ -4591,6 +4591,12 @@ body {
   text-decoration: underline;
 }
 
+.auth-panel-link--quiet {
+  color: var(--cocoso-mylla-soft);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
 /* === Start page: the places ===
    After the week's rhythm: one card per place, with the whole municipality
    first, in the same card style as everywhere else. */
