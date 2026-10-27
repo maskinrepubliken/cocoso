@@ -8,7 +8,9 @@ import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import { styled } from '/stitches.config';
 import { locationsAtom, siteAtom } from '/imports/state';
 import { formatAddress } from '/imports/api/_utils/address';
+import PlaceTag from '/imports/ui/generic/PlaceTag';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
+import ThreeDIcon, { type ThreeDIconName } from '/imports/ui/generic/ThreeDIcon';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
@@ -24,13 +26,32 @@ import {
 import PageHeading from './PageHeading';
 
 // Äta/handla/bo: cafés, restaurants, shops and inns. Where something is
-// matters more than what it is, so the page opens with a choice of place
-// and the cards come grouped by place. Each card tells enough to decide
+// matters most, so the page opens with a choice of place; below it the
+// cards come under Äta, Handla and Bo. Each card tells enough to decide
 // without opening it: what it is, whether it is open, today's hours and a
 // taste of the menu, range or rooms with prices.
 
 // Menu lines shown on a card.
 const TASTE = 3;
+
+const KINDS = ['eat', 'shop', 'stay'] as const;
+
+type Kind = (typeof KINDS)[number];
+
+// Each kind's icon, colour (from the logo's letters) and paper tint.
+const KIND_LOOK: Record<Kind, { icon: ThreeDIconName; ink: string; tint: string }> = {
+  eat: { icon: 'cup', ink: '#c4512f', tint: '#fdf3ed' },
+  shop: { icon: 'bag', ink: '#2f6fa3', tint: '#eef4fa' },
+  stay: { icon: 'key', ink: '#7a4f9a', tint: '#f5f0f8' },
+};
+
+const lookOf = (kind?: string) => KIND_LOOK[kind as Kind] || KIND_LOOK.eat;
+
+const kindVars = (kind?: string) =>
+  ({
+    '--kind': lookOf(kind).ink,
+    '--kind-tint': lookOf(kind).tint,
+  }) as React.CSSProperties;
 
 const Page = styled('div', {
   boxSizing: 'border-box',
@@ -58,45 +79,54 @@ const Section = styled('section', {
   marginBottom: '2.5rem',
 });
 
+// A quiet label over each kind's cards; the cards' colour does the work.
 const SectionHead = styled('div', {
-  alignItems: 'baseline',
-  borderBottom: '1px solid var(--cocoso-colors-theme-200, rgba(0,0,0,0.1))',
+  alignItems: 'center',
   display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.25rem 0.75rem',
-  marginBottom: '1rem',
-  paddingBottom: '0.5rem',
+  gap: '0.5rem',
+  marginBottom: '0.6rem',
   '& h2': {
-    fontFamily: 'var(--cocoso-font-display)',
-    fontSize: '1.6rem',
-    fontVariationSettings: '"SOFT" 60',
-    fontWeight: 600,
+    color: 'var(--kind)',
+    fontFamily: 'var(--cocoso-font-ui)',
+    fontSize: '0.8rem',
+    fontWeight: 700,
+    letterSpacing: '0.08em',
     margin: 0,
+    textTransform: 'uppercase',
   },
   '& .count': {
     color: 'var(--cocoso-mylla-soft)',
-    fontSize: '0.9rem',
+    fontSize: '0.8rem',
   },
-  '& a': {
-    color: 'var(--cocoso-colors-theme-800)',
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    marginLeft: 'auto',
+  '&::after': {
+    backgroundColor: 'var(--kind)',
+    content: '""',
+    flex: 1,
+    height: '1px',
+    opacity: 0.3,
   },
 });
 
-const Stamp = styled('span', {
+const KindIcon = styled('span', {
   alignItems: 'center',
+  backgroundColor: 'rgba(255, 253, 247, 0.94)',
   borderRadius: '999px',
+  bottom: '0.6rem',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
   display: 'inline-flex',
-  fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '0.9rem',
-  fontWeight: 700,
-  height: '1.8rem',
-  justifyContent: 'center',
-  marginRight: '0.5rem',
-  verticalAlign: '0.2em',
-  width: '1.8rem',
+  gap: '0.1rem',
+  padding: '0.2rem',
+  position: 'absolute',
+  right: '0.6rem',
+  zIndex: 1,
+  '& img': { height: '30px', width: '30px' },
+});
+
+const OnPicture = styled('div', {
+  left: '0.6rem',
+  position: 'absolute',
+  top: '0.6rem',
+  zIndex: 1,
 });
 
 const Cards = styled('div', {
@@ -105,9 +135,12 @@ const Cards = styled('div', {
   gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 480px), 1fr))',
 });
 
+// Each card takes its first kind's colour: a band along the top and a
+// faint tint on the paper, so Äta, Handla and Bo read apart at a glance.
 const Card = styled(Link, {
-  backgroundColor: 'var(--cocoso-papper)',
+  backgroundColor: 'var(--kind-tint)',
   borderRadius: 'var(--cocoso-radius-kort, 12px)',
+  borderTop: '5px solid var(--kind)',
   boxShadow: 'var(--cocoso-skugga-kort, var(--cocoso-skugga))',
   color: 'inherit',
   display: 'grid',
@@ -155,11 +188,19 @@ const Body = styled('div', {
 });
 
 const Kinds = styled('div', {
-  color: 'var(--cocoso-colors-theme-800)',
-  fontSize: '0.72rem',
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  textTransform: 'uppercase',
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.3rem',
+  '& span': {
+    backgroundColor: 'var(--k)',
+    borderRadius: '999px',
+    color: '#fff',
+    fontSize: '0.7rem',
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    padding: '0.15rem 0.55rem',
+    textTransform: 'uppercase',
+  },
 });
 
 const Tagline = styled('p', {
@@ -296,7 +337,14 @@ const tasteOf = (menu?: any[]) => {
   return (priced.length >= TASTE ? priced : items).slice(0, TASTE);
 };
 
-function BusinessCard({ business }: { business: any }) {
+function BusinessCard({
+  business,
+  showPlace,
+}: {
+  business: any;
+  // The place's tag on the picture, when the page is not already one place
+  showPlace: boolean;
+}) {
   const { t } = useTranslation('common');
   const locations = useAtomValue(locationsAtom);
   const image = business.images?.[0];
@@ -308,7 +356,10 @@ function BusinessCard({ business }: { business: any }) {
   const phone = business.contact?.phone;
 
   return (
-    <Card to={`${prefix}/businesses/${business._id}`}>
+    <Card
+      style={kindVars(business.kinds?.[0])}
+      to={`${prefix}/businesses/${business._id}`}
+    >
       <Picture>
         {image ? (
           <img
@@ -319,12 +370,31 @@ function BusinessCard({ business }: { business: any }) {
         ) : (
           <PlaceholderImage seed={business._id} />
         )}
+        {showPlace && place && (
+          <OnPicture>
+            <PlaceTag
+              name={place.name}
+              onImage
+              world={worldForLocation(locations, place._id)}
+            />
+          </OnPicture>
+        )}
+        <KindIcon>
+          {business.kinds?.map((k: string) => (
+            <ThreeDIcon key={k} name={lookOf(k).icon} size={30} />
+          ))}
+        </KindIcon>
       </Picture>
       <Body>
         <Kinds>
-          {business.kinds
-            ?.map((k: string) => t(`businesses.kinds.${k}`))
-            .join(' · ')}
+          {business.kinds?.map((k: string) => (
+            <span
+              key={k}
+              style={{ '--k': lookOf(k).ink } as React.CSSProperties}
+            >
+              {t(`businesses.kinds.${k}`)}
+            </span>
+          ))}
         </Kinds>
         <h3>{business.label}</h3>
         {business.tagline && <Tagline>{business.tagline}</Tagline>}
@@ -391,19 +461,15 @@ export default function BusinessesHybrid({
   const all = businesses || [];
   const hasExamples = all.some((b) => b.isExample);
   const inPlace = (id: string) => all.filter((b) => b.locationId === id);
-  const placed = new Set(locations.map((l: any) => l._id));
-  // Out in the countryside, or in a place that is not published.
-  const around = all.filter(
-    (b) => !b.locationId || !placed.has(b.locationId)
-  );
 
-  // At the root every place gets its section; inside a place, that place
-  // and what lies around it.
-  const sections = (current ? [current] : locations).map((location: any) => ({
-    key: location._id,
-    location,
-    items: inPlace(location._id),
-  }));
+  // The picker chooses the place; below it the cards come in Äta, Handla
+  // and Bo order. Something that is several kinds, like a manor with a
+  // restaurant and rooms, is shown once, under its first kind.
+  const shown = current ? inPlace(current._id) : all;
+  const sections = KINDS.map((kind) => ({
+    kind,
+    items: shown.filter((b) => (b.kinds?.[0] || 'eat') === kind),
+  })).filter(({ items }) => items.length > 0);
 
   return (
     <>
@@ -430,58 +496,34 @@ export default function BusinessesHybrid({
 
         {hasExamples && <Notice>{t('businesses.example')}</Notice>}
 
-        {sections.map(({ key, location, items }) =>
-          items.length === 0 && !current ? null : (
-            <Section key={key}>
-              <SectionHead>
-                <h2>
-                  <Stamp
-                    style={{
-                      background: worldForLocation(locations, location._id)
-                        ?.tint,
-                      color: worldForLocation(locations, location._id)?.ink,
-                    }}
-                  >
-                    {location.name.trim().charAt(0).toUpperCase()}
-                  </Stamp>
-                  {location.name}
-                </h2>
-                <span className="count">
-                  {t('businesses.count', { count: items.length })}
-                </span>
-              </SectionHead>
-              {items.length === 0 ? (
-                <Notice>
-                  {t('businesses.emptyIn', { name: location.name })}
-                </Notice>
-              ) : (
-                <Cards>
-                  {items.map((business) => (
-                    <BusinessCard key={business._id} business={business} />
-                  ))}
-                </Cards>
-              )}
-            </Section>
-          )
-        )}
-
-        {around.length > 0 && (
-          <Section>
+        {sections.map(({ kind, items }) => (
+          <Section key={kind} style={kindVars(kind)}>
             <SectionHead>
-              <h2>{t('businesses.around')}</h2>
+              <ThreeDIcon name={lookOf(kind).icon} size={22} />
+              <h2>{t(`businesses.kinds.${kind}`)}</h2>
               <span className="count">
-                {t('businesses.count', { count: around.length })}
+                {t('businesses.count', { count: items.length })}
               </span>
             </SectionHead>
             <Cards>
-              {around.map((business) => (
-                <BusinessCard key={business._id} business={business} />
+              {items.map((business) => (
+                <BusinessCard
+                  key={business._id}
+                  business={business}
+                  showPlace={!current}
+                />
               ))}
             </Cards>
           </Section>
-        )}
+        ))}
 
-        {all.length === 0 && <Notice>{t('businesses.empty')}</Notice>}
+        {shown.length === 0 && (
+          <Notice>
+            {current
+              ? t('businesses.emptyIn', { name: current.name })
+              : t('businesses.empty')}
+          </Notice>
+        )}
       </Page>
     </>
   );
