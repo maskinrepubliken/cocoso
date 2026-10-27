@@ -43,7 +43,7 @@ const sameHash = (a, b) =>
   a.length === b.length &&
   crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
-async function sendLoginEmail({ email, code, token, lang }) {
+async function sendLoginEmail({ email, code, token, lang, isNew }) {
   const site = await getSite();
   const siteName = site?.settings?.name || Meteor.settings.public?.name || '';
   const url = publicUrl(`/login?token=${token}`);
@@ -60,6 +60,7 @@ async function sendLoginEmail({ email, code, token, lang }) {
     theme: site?.theme,
     code,
     url,
+    isNew,
   });
 
   await deliverEmail({ from, to: email, subject, html, text });
@@ -144,7 +145,8 @@ Meteor.methods({
     });
 
     try {
-      await sendLoginEmail({ email, code, token, lang });
+      const isNew = !(await Accounts.findUserByEmail(email));
+      await sendLoginEmail({ email, code, token, lang, isNew });
     } catch (error) {
       console.error('[emailLogin] could not send login email', error);
       await LoginCodes.removeAsync({ email });

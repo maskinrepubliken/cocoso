@@ -21,12 +21,25 @@ const STRINGS = {
     lead: (site) =>
       `Skriv in koden på ${site} för att logga in, eller använd knappen.`,
     button: 'Logga in',
-    validity:
-      'Koden och knappen gäller i 15 minuter och fungerar en gång.',
+    validity: 'Koden och knappen gäller i 15 minuter och fungerar en gång.',
     ignore:
       'Försökte du inte logga in? Då kan du bortse från det här mejlet — ingen kommer åt ditt konto utan koden.',
     text: (site, code, url) =>
       `Din inloggningskod till ${site}: ${code}\n\nEller logga in direkt: ${url}\n\nKoden och länken gäller i 15 minuter och fungerar en gång. Försökte du inte logga in? Då kan du bortse från det här mejlet.`,
+    // An address without an account yet: the same code makes one
+    signup: {
+      subject: (code, site) =>
+        `${code} är din kod för att skapa konto på ${site}`,
+      // U+2011, a hyphen that never breaks: "e-" / "postadress" on phones
+      title: 'Bekräfta din e‑postadress',
+      lead: (site) =>
+        `Skriv in koden på ${site} för att skapa ditt konto, eller använd knappen.`,
+      button: 'Skapa konto',
+      ignore:
+        'Har du inte försökt skapa ett konto? Då kan du bortse från det här mejlet — inget konto skapas utan koden.',
+      text: (site, code, url) =>
+        `Din kod för att skapa konto på ${site}: ${code}\n\nEller skapa kontot direkt: ${url}\n\nKoden och länken gäller i 15 minuter och fungerar en gång. Har du inte försökt skapa ett konto? Då kan du bortse från det här mejlet.`,
+    },
   },
   en: {
     subject: (code, site) => `${code} is your login code for ${site}`,
@@ -39,6 +52,18 @@ const STRINGS = {
       "Didn't try to log in? You can ignore this email — nobody gets into your account without the code.",
     text: (site, code, url) =>
       `Your login code for ${site}: ${code}\n\nOr log in directly: ${url}\n\nThe code and link are valid for 15 minutes and work once. Didn't try to log in? You can ignore this email.`,
+    signup: {
+      subject: (code, site) =>
+        `${code} is your code to create an account on ${site}`,
+      title: 'Confirm your email address',
+      lead: (site) =>
+        `Enter the code on ${site} to create your account, or use the button.`,
+      button: 'Create account',
+      ignore:
+        "Didn't try to create an account? You can ignore this email — no account is made without the code.",
+      text: (site, code, url) =>
+        `Your code to create an account on ${site}: ${code}\n\nOr create it directly: ${url}\n\nThe code and link are valid for 15 minutes and work once. Didn't try to create an account? You can ignore this email.`,
+    },
   },
 };
 
@@ -90,12 +115,17 @@ function codeBoxes(code, color) {
           digit
         )}</td>`
     )
-    .join('<td width="8" style="width:8px;font-size:0;line-height:0;">&nbsp;</td>');
+    .join(
+      '<td width="8" style="width:8px;font-size:0;line-height:0;">&nbsp;</td>'
+    );
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;border-collapse:separate;"><tr>${cells}</tr></table>`;
 }
 
-export function loginEmail({ lang, siteName, theme, code, url }) {
-  const s = STRINGS[lang] || STRINGS.sv;
+// `isNew`: the address has no account yet, so the mail confirms it and the
+// code creates the account (see findOrCreateUser in emailLogin.js).
+export function loginEmail({ lang, siteName, theme, code, url, isNew }) {
+  const base = STRINGS[lang] || STRINGS.sv;
+  const s = isNew ? { ...base, ...base.signup } : base;
   const c = themeColors(theme);
   const name = escapeHtml(siteName);
   const site = publicUrl('/');
@@ -128,7 +158,9 @@ export function loginEmail({ lang, siteName, theme, code, url }) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:440px;">
 
       <tr><td align="center" style="padding:0 0 28px;">
-        <a href="${escapeHtml(site)}" style="text-decoration:none;color:${MYLLA};">
+        <a href="${escapeHtml(
+          site
+        )}" style="text-decoration:none;color:${MYLLA};">
           <span style="font-family:${UI};font-size:16px;font-weight:700;color:${MYLLA};">${name}</span>
         </a>
       </td></tr>
@@ -138,19 +170,21 @@ export function loginEmail({ lang, siteName, theme, code, url }) {
           publicUrl('/email/mail.png')
         )}" width="64" height="52" alt="" style="display:block;border:0;width:64px;height:52px;margin:0 auto 18px;">
         <h1 class="title" style="margin:0 0 8px;font-family:${DISPLAY};font-size:30px;font-weight:600;line-height:1.15;letter-spacing:-0.01em;color:${MYLLA};">${escapeHtml(
-          s.title
-        )}</h1>
+    s.title
+  )}</h1>
         <p style="margin:0 auto 24px;max-width:300px;font-family:${UI};font-size:16px;line-height:1.5;color:${MYLLA_SOFT};">${escapeHtml(
-          s.lead(siteName)
-        )}</p>
+    s.lead(siteName)
+  )}</p>
 
         ${codeBoxes(code, MYLLA)}
 
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0;">
-          <tr><td align="center" bgcolor="${c.button}" style="border-radius:999px;background:${c.button};">
+          <tr><td align="center" bgcolor="${
+            c.button
+          }" style="border-radius:999px;background:${c.button};">
             <a href="${href}" style="display:block;padding:14px 24px;font-family:${UI};font-size:17px;font-weight:700;line-height:1.2;color:#ffffff;text-decoration:none;border-radius:999px;">${escapeHtml(
-              s.button
-            )} &rarr;</a>
+    s.button
+  )} &rarr;</a>
           </td></tr>
         </table>
 
