@@ -8,7 +8,7 @@ export const EVENT_KINDS: { key: string; icon: ThreeDIconName }[] = [
   { key: 'idrott', icon: 'gym' },
   { key: 'barn', icon: 'girl' },
   { key: 'bio', icon: 'video-camera' },
-  { key: 'senior', icon: 'heart' },
+  { key: 'senior', icon: 'umbrella' },
   { key: 'natur', icon: 'sun' },
   { key: 'larande', icon: 'bulb' },
   { key: 'social', icon: 'tea-cup' },
