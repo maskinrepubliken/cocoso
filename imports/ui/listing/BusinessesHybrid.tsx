@@ -29,8 +29,8 @@ import PageHeading from './PageHeading';
 // picker; below it the places come under Äta, Handla and Bo. The cards
 // speak the same picture language as the place cards — a photo with the
 // name over a dark fade — and say enough to decide without opening them:
-// the kind, whether it is open, a few lines about it and a taste of the
-// menu, range or rooms.
+// whether it is open, a few lines about it and a taste of the menu, range
+// or rooms. The kind is said by the label over each group.
 
 // Menu lines shown on a card.
 const TASTE = 3;
@@ -102,8 +102,8 @@ const SectionHead = styled('h2', {
 
 const Cards = styled('div', {
   display: 'grid',
-  gap: '1.25rem',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+  gap: '1rem',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 230px), 1fr))',
 });
 
 const Card = styled(Link, {
@@ -126,7 +126,10 @@ const Card = styled(Link, {
 // The photo with the name over a dark fade, as on the place cards. Without
 // a photo, generated shapes on a gradient in the kind's colour.
 const Picture = styled('div', {
-  aspectRatio: '3 / 2',
+  aspectRatio: '4 / 3',
+  // One card per row on a phone: a lower picture keeps it from filling the
+  // screen.
+  '@media (max-width: 559px)': { aspectRatio: '16 / 9' },
   background:
     'linear-gradient(135deg, var(--kind-light), var(--kind)) center / cover',
   overflow: 'hidden',
@@ -155,79 +158,62 @@ const Overlay = styled('div', {
   bottom: 0,
   color: '#fff',
   left: 0,
-  padding: '2.5rem 1rem 0.85rem',
+  padding: '2rem 0.8rem 0.65rem',
   position: 'absolute',
   right: 0,
   textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
   '& h3': {
     fontFamily: 'var(--cocoso-font-display)',
-    fontSize: '1.45rem',
+    fontSize: '1.2rem',
     fontVariationSettings: '"SOFT" 60',
     fontWeight: 600,
     lineHeight: 1.15,
     margin: 0,
   },
   '& p': {
-    fontSize: '0.9rem',
+    fontSize: '0.8rem',
     margin: '0.15rem 0 0',
     opacity: 0.92,
   },
 });
 
-const Badges = styled('div', {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.3rem',
-  justifyContent: 'space-between',
-  left: '0.7rem',
+const OnPicture = styled('div', {
   position: 'absolute',
-  right: '0.7rem',
-  top: '0.7rem',
-  '& .kinds': { display: 'flex', gap: '0.3rem' },
-});
-
-const KindChip = styled('span', {
-  backgroundColor: 'var(--k)',
-  borderRadius: '999px',
-  boxShadow: '0 1px 4px rgba(0, 0, 0, 0.2)',
-  color: '#fff',
-  fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '0.72rem',
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  padding: '0.3rem 0.65rem',
-  textTransform: 'uppercase',
+  right: '0.6rem',
+  top: '0.6rem',
 });
 
 const Body = styled('div', {
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
-  gap: '0.55rem',
-  padding: '0.85rem 1rem 1rem',
+  gap: '0.4rem',
+  padding: '0.65rem 0.8rem 0.8rem',
 });
 
 const Excerpt = styled('p', {
   color: 'var(--cocoso-mylla-soft)',
   display: '-webkit-box',
-  fontSize: '0.9rem',
-  lineHeight: 1.45,
+  fontSize: '0.8rem',
+  lineHeight: 1.4,
   margin: 0,
   overflow: 'hidden',
   WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 3,
+  WebkitLineClamp: 2,
 });
 
 // A few lines from the menu on one line: "Lantbröd 65 kr · Rågbröd 70 kr".
 const Taste = styled('p', {
-  fontSize: '0.85rem',
-  lineHeight: 1.5,
+  fontSize: '0.78rem',
+  lineHeight: 1.45,
   margin: 0,
   '& .title': {
     color: 'var(--kind)',
     fontWeight: 700,
     marginRight: '0.4rem',
   },
+  // An item keeps its price on its own line.
+  '& .item': { whiteSpace: 'nowrap' },
   '& .price': { color: 'var(--cocoso-mylla-soft)' },
   '& .sep': { color: 'var(--cocoso-mylla-soft)', margin: '0 0.35rem' },
 });
@@ -237,10 +223,10 @@ const Facts = styled('div', {
   color: 'var(--cocoso-mylla-soft)',
   display: 'flex',
   flexWrap: 'wrap',
-  fontSize: '0.8rem',
-  gap: '0.25rem 0.9rem',
+  fontSize: '0.74rem',
+  gap: '0.2rem 0.75rem',
   marginTop: 'auto',
-  paddingTop: '0.6rem',
+  paddingTop: '0.5rem',
   '& span': { alignItems: 'center', display: 'inline-flex', gap: '0.3rem' },
 });
 
@@ -270,7 +256,7 @@ export const Status = styled('span', {
 });
 
 const StatusLine = styled('div', {
-  fontSize: '0.85rem',
+  fontSize: '0.78rem',
   '&:empty': { display: 'none' },
 });
 
@@ -347,25 +333,15 @@ function BusinessCard({
         ) : (
           <PlaceholderImage className="shapes" seed={business._id} />
         )}
-        <Badges>
-          <span className="kinds">
-            {business.kinds?.map((k: string) => (
-              <KindChip
-                key={k}
-                style={{ '--k': lookOf(k).ink } as React.CSSProperties}
-              >
-                {t(`businesses.kinds.${k}`)}
-              </KindChip>
-            ))}
-          </span>
-          {showPlace && place && (
+        {showPlace && place && (
+          <OnPicture>
             <PlaceTag
               name={place.name}
               onImage
               world={worldForLocation(locations, place._id)}
             />
-          )}
-        </Badges>
+          </OnPicture>
+        )}
         <Overlay>
           <h3>{business.label}</h3>
           {business.tagline && <p>{business.tagline}</p>}
@@ -384,8 +360,10 @@ function BusinessCard({
             {taste.map((item: any, i: number) => (
               <React.Fragment key={`${item.name}-${i}`}>
                 {i > 0 && <span className="sep">·</span>}
-                {item.name}
-                {item.price && <span className="price"> {item.price}</span>}
+                <span className="item">
+                  {item.name}
+                  {item.price && <span className="price"> {item.price}</span>}
+                </span>
               </React.Fragment>
             ))}
           </Taste>
