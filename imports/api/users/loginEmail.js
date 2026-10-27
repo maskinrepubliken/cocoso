@@ -2,10 +2,10 @@ import { publicUrl } from '../_utils/shared';
 import escapeHtml from '../_utils/escapeHtml';
 
 /**
- * The email with the login code, in the look of the login page: the
- * site's name on the season's floor, one sheet of paper with
- * a Fraunces title, the code in six boxes, a green pill button and the
- * small print under a hairline.
+ * The email with the login code, in the look of the login page but plain
+ * white like a transactional email: the site's name, an envelope, a
+ * Fraunces title, the code in six boxes, a green pill button and the small
+ * print under a hairline. No coloured background, no card, no footer.
  *
  * Email clients don't read CSS variables, so the materials are the hex
  * values from imports/ui/utils/globalStylesManager.ts, and the green comes
@@ -72,11 +72,9 @@ function themeColors(theme) {
   };
 }
 
-const PAPPER = '#fffdf7';
 const MYLLA = '#22302a';
 const MYLLA_SOFT = '#5c6b60';
 const LINJE = '#d5dfc2';
-const GOLV = '#edf3df';
 const DISPLAY = "Fraunces, Georgia, 'Times New Roman', serif";
 const UI = "Raleway, 'Helvetica Neue', Helvetica, Arial, sans-serif";
 // Raleway's digits are old-style (4, 9 and 3 drop below the line) and not
@@ -101,7 +99,6 @@ export function loginEmail({ lang, siteName, theme, code, url }) {
   const c = themeColors(theme);
   const name = escapeHtml(siteName);
   const site = publicUrl('/');
-  const host = site.replace(/^https?:\/\//, '').replace(/\/$/, '');
   const href = escapeHtml(url);
 
   const html = `<!doctype html>
@@ -117,26 +114,26 @@ export function loginEmail({ lang, siteName, theme, code, url }) {
   body { margin:0; padding:0; }
   a { color:${c.strong}; }
   @media (max-width: 480px) {
-    .sheet { padding:28px 20px 24px !important; }
+    .sheet { padding:8px 20px 24px !important; }
     .title { font-size:26px !important; }
   }
 </style>
 </head>
-<body style="margin:0;padding:0;background:${GOLV};font-variant-numeric:lining-nums;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${GOLV};">${escapeHtml(
+<body style="margin:0;padding:0;background:#ffffff;font-variant-numeric:lining-nums;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#ffffff;">${escapeHtml(
     `${code} — ${s.preheader}`
   )}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${GOLV};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;">
   <tr><td align="center" style="padding:32px 12px 40px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:440px;">
 
-      <tr><td align="center" style="padding:0 0 20px;">
+      <tr><td align="center" style="padding:0 0 28px;">
         <a href="${escapeHtml(site)}" style="text-decoration:none;color:${MYLLA};">
           <span style="font-family:${UI};font-size:16px;font-weight:700;color:${MYLLA};">${name}</span>
         </a>
       </td></tr>
 
-      <tr><td class="sheet" align="center" style="background:${PAPPER};border:1px solid ${LINJE};border-radius:16px;padding:36px 32px 28px;">
+      <tr><td class="sheet" align="center" style="padding:8px 32px 0;">
         <img src="${escapeHtml(
           publicUrl('/email/mail.png')
         )}" width="64" height="52" alt="" style="display:block;border:0;width:64px;height:52px;margin:0 auto 18px;">
@@ -165,11 +162,6 @@ export function loginEmail({ lang, siteName, theme, code, url }) {
         </table>
       </td></tr>
 
-      <tr><td align="center" style="padding:20px 0 0;font-family:${UI};font-size:13px;line-height:1.5;color:${MYLLA_SOFT};">
-        ${name} &middot; <a href="${escapeHtml(
-          site
-        )}" style="color:${MYLLA_SOFT};text-decoration:underline;">${escapeHtml(host)}</a>
-      </td></tr>
 
     </table>
   </td></tr>
