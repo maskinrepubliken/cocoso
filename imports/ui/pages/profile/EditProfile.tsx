@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import {
   Alert,
@@ -17,6 +17,7 @@ import {
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
 import { currentUserAtom, roleAtom } from '/imports/state';
+import { clearViewAsState } from '/imports/utils/viewAs';
 
 export const subSpanStyle: React.CSSProperties = {
   fontSize: '0.875rem',
@@ -27,9 +28,10 @@ export const subSpanStyle: React.CSSProperties = {
 export default function EditProfile() {
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
+  const setCurrentUser = useSetAtom(currentUserAtom);
+  const setRole = useSetAtom(roleAtom);
   const [isDeleteModalOn, setIsDeleteModalOn] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,32 +39,36 @@ export default function EditProfile() {
   const [tc] = useTranslation('common');
 
   useEffect(() => {
-    if (!currentUser) {
-      if (isDeleting) {
-        message.success(tc('message.success.remove'));
-        navigate('/');
-      } else {
-        navigate('/login');
-      }
+    // Logged out some other way: to the login page. After deleting the
+    // account, deleteAccount below takes them home instead.
+    if (!currentUser && !isDeleting) {
+      navigate('/login');
     }
   }, [currentUser]);
 
+  // Deleted, logged out and home, in that order, with a note that it's done
   const deleteAccount = async () => {
     setIsDeleting(true);
-
     try {
       await call('deleteAccount');
-      Meteor.logout();
-      localStorage.clear();
-      sessionStorage.clear();
-      setIsDeleted(true);
-      setTimeout(() => {
-        window.location.href = '/?deleted=' + Date.now();
-      }, 6000);
     } catch (error: any) {
-      message.error(error?.error || error?.reason);
+      message.error(error?.reason || error?.error);
       setIsDeleting(false);
+      return;
     }
+    setIsDeleteModalOn(false);
+    // Logged out on the server too; don't wait forever if the connection
+    // drops as the account is removed
+    await Promise.race([
+      new Promise<void>((resolve) => Meteor.logout(() => resolve())),
+      new Promise<void>((resolve) => setTimeout(resolve, 3000)),
+    ]);
+    // As useLogout does: the header keeps the user until told otherwise
+    clearViewAsState();
+    setCurrentUser(null);
+    setRole(null);
+    navigate('/', { replace: true });
+    message.success(t('delete.done'));
   };
 
   const tabs = [
@@ -144,21 +150,6 @@ export default function EditProfile() {
           onClose={() => setIsDeleteModalOn(false)}
         >
           <Text>{t('delete.body')}</Text>
-        </Modal>
-
-        <Modal
-          title={t('delete.successTitle')}
-          hideFooter
-          id="delete-success-modal"
-          open={isDeleted}
-        >
-          <Box pb="4">
-            <Text fontWeight="bold" size="lg">
-              {t('delete.successBody')}
-            </Text>
-          </Box>
-
-          <Text size="lg">{t('delete.successRedirect')}</Text>
         </Modal>
       </Box>
     </>

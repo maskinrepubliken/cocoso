@@ -19,6 +19,10 @@ const isFreshInstall = async () =>
 const PASSWORD_LOGINS = new Set(['password', 'resetPassword']);
 
 Accounts.validateLoginAttempt(async (attempt) => {
+  // A deleted account is gone, even in the moment before its document is
+  if (attempt.user?.deletionRequestedAt) {
+    throw new Meteor.Error('account-deleted', 'This account has been deleted');
+  }
   if (!attempt.allowed || !PASSWORD_LOGINS.has(attempt.type)) {
     return attempt.allowed;
   }

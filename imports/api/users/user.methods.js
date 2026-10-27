@@ -22,6 +22,19 @@ import { isAdmin, isContributorOrAdmin } from './user.roles';
 import { isFreshInstall } from './passwordLogin';
 import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
 
+// How long a deleted account's user document is kept after the answer
+const DELETE_AFTER_MS = 2000;
+
+// Accounts whose deletion a server restart interrupted
+Meteor.startup(async () => {
+  const removed = await Meteor.users.removeAsync({
+    deletionRequestedAt: { $exists: true },
+  });
+  if (removed) {
+    console.info(`[deleteAccount] removed ${removed} deleted account(s)`);
+  }
+});
+
 const userModel = async (user) => ({
   _id: user._id,
   avatar: user.avatar,
@@ -531,18 +544,24 @@ Meteor.methods({
     if (!userId) {
       throw new Meteor.Error('You are not a member anyways!');
     }
+    // Marked and left out of the site at once; the user document goes a
+    // moment later, after this answer has reached the browser — removing it
+    // ends the login and closes the connection, so doing it now would lose
+    // the reply. Marked accounts can't log in (passwordLogin.js), and any a
+    // restart interrupts are removed at startup (removeDeletedAccounts).
     try {
-      await Memberships.removeAsync({ userId });
-
-      Meteor.defer(async () => {
-        Meteor.setTimeout(async () => {
-          await Meteor.users.removeAsync(userId);
-        }, 60000);
+      await Meteor.users.updateAsync(userId, {
+        $set: { deletionRequestedAt: new Date() },
       });
-
+      await Memberships.removeAsync({ userId });
+      Meteor.setTimeout(() => {
+        Meteor.users.removeAsync(userId).catch((error) => {
+          console.error('[deleteAccount] could not remove user', error);
+        });
+      }, DELETE_AFTER_MS);
       return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Meteor.Error(error);
     }
   },

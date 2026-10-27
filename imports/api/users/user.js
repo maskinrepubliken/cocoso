@@ -34,6 +34,9 @@ Users.schema.UserProfile = {
   // When the person accepted the terms, confirming their new account
   // (imports/api/users/emailLogin.js). Missing on older accounts.
   termsAcceptedAt: { type: Date, optional: true },
+  // Set when the person deletes their account; the document is removed
+  // right after (deleteAccount in user.methods.js)
+  deletionRequestedAt: { type: Date, optional: true },
   avatar: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   avatarLegacy: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   isPublic: { type: Boolean, defaultValue: true, optional: true },
