@@ -47,7 +47,6 @@ export default function PasswordLogin({
   return (
     <AuthPanel
       icon={<KeyRound />}
-      tone="warning"
       title={t('emailLogin.password.title')}
       lead={
         <span className="auth-notice">{t('emailLogin.password.lead')}</span>
