@@ -430,7 +430,7 @@ if (site && !site.settings.menu.some((item) => item.name === 'businesses')) {
   const menu = site.settings.menu.slice();
   const after = menu.findIndex((item) => item.name === 'resources');
   menu.splice(after + 1, 0, {
-    label: 'Äta/handla/bo',
+    label: 'Äta, handla & bo',
     name: 'businesses',
     description: 'Kaféer, restauranger, butiker och ställen att bo på i hela kommunen.',
     isVisible: true,
@@ -438,7 +438,7 @@ if (site && !site.settings.menu.some((item) => item.name === 'businesses')) {
     isComposablePage: false,
   });
   db.site.updateOne({ _id: site._id }, { $set: { 'settings.menu': menu } });
-  print('menu: added Äta/handla/bo');
+  print('menu: added Äta, handla & bo');
 }
 
 print(`businesses: ${created} created, ${updated} updated`);
