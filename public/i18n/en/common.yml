@@ -733,3 +733,7 @@ businesses:
   example: Example. The opening hours, menu and prices are made up and are not the real ones.
   exampleShort: Example data
   empty: Nothing here yet.
+  emptyIn: 'Nothing in {{ name }} yet. Pick another place above.'
+  around: Around the municipality
+  count_one: '{{ count }} place'
+  count_other: '{{ count }} places'

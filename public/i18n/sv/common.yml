@@ -730,3 +730,7 @@ businesses:
   example: Exempel. Öppettider, meny och priser är påhittade och stämmer inte med verkligheten.
   exampleShort: Exempeldata
   empty: Inget här än.
+  emptyIn: 'Inget i {{ name }} än. Välj en annan ort ovan.'
+  around: Runt om i kommunen
+  count_one: '{{ count }} ställe'
+  count_other: '{{ count }} ställen'

@@ -582,7 +582,8 @@ export default function appRoutes(props) {
           {
             index: true,
             element: el(BusinessListHandler),
-            loader: ld(({ locationId }) => getBusinesses({ locationId })),
+            // Every place, so the place picker can count them all.
+            loader: ld(() => getBusinesses()),
             shouldRevalidate: revalidateOn(),
           },
           {
