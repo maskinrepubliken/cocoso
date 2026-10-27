@@ -258,9 +258,6 @@ export default function BusinessHybrid({
                     isMunicipalityOnly={business.isMunicipalityOnly}
                     locationId={business.locationId}
                   />
-                  {business.isExample && (
-                    <Chip>{t('businesses.exampleShort')}</Chip>
-                  )}
                 </>
               }
               html={business.description}

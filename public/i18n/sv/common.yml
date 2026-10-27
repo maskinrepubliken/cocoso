@@ -727,7 +727,6 @@ businesses:
     eat: Meny
     shop: Sortiment
     stay: Rum och priser
-  exampleShort: Exempeldata
   empty: Inget här än.
   emptyIn: 'Inget i {{ name }} än. Välj en annan ort ovan.'
   around: Runt om i kommunen
