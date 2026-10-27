@@ -724,6 +724,7 @@ businesses:
   todayHours: 'Today {{ hours }}'
   openNow: Open now
   closesAt: 'closes {{ time }}'
+  until: 'until {{ time }}'
   closedNow: Closed now
   opensAt: 'opens {{ day }} {{ time }}'
   menu:

@@ -183,6 +183,41 @@ const OnPicture = styled('div', {
   top: '0.6rem',
 });
 
+// "Öppet nu · till 16" on the photo, the first thing the eye finds.
+const OpenBadge = styled('span', {
+  alignItems: 'center',
+  backgroundColor: '#2f8a3e',
+  borderRadius: '999px',
+  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.25)',
+  color: '#fff',
+  display: 'inline-flex',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.75rem',
+  fontWeight: 700,
+  gap: '0.4rem',
+  left: '0.6rem',
+  padding: '0.3rem 0.65rem 0.3rem 0.55rem',
+  position: 'absolute',
+  top: '0.6rem',
+  zIndex: 1,
+  '&::before': {
+    animation: 'cocoso-open-pulse 2s ease-out infinite',
+    backgroundColor: '#b8f0c0',
+    borderRadius: '50%',
+    content: '""',
+    height: '0.5rem',
+    width: '0.5rem',
+  },
+  '@keyframes cocoso-open-pulse': {
+    '0%': { boxShadow: '0 0 0 0 rgba(184, 240, 192, 0.8)' },
+    '70%': { boxShadow: '0 0 0 6px rgba(184, 240, 192, 0)' },
+    '100%': { boxShadow: '0 0 0 0 rgba(184, 240, 192, 0)' },
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    '&::before': { animation: 'none' },
+  },
+});
+
 const Body = styled('div', {
   display: 'flex',
   flex: 1,
@@ -215,7 +250,7 @@ const Taste = styled('p', {
   // An item keeps its price on its own line.
   '& .item': { whiteSpace: 'nowrap' },
   '& .price': { color: 'var(--cocoso-mylla-soft)' },
-  '& .sep': { color: 'var(--cocoso-mylla-soft)', margin: '0 0.35rem' },
+  '& .sep': { color: 'var(--cocoso-mylla-soft)', margin: '0 0.1rem' },
 });
 
 const Facts = styled('div', {
@@ -260,21 +295,31 @@ const StatusLine = styled('div', {
   '&:empty': { display: 'none' },
 });
 
-function OpenStatus({ business }: { business: any }) {
-  const { t } = useTranslation('common');
+// Whether a business is open, worked out only in the browser (see useNow);
+// null on the server and for a place without opening hours.
+function useOpenState(business: any) {
   const now = useNow();
   if (!now || !business.openingHours?.length) {
     return null;
   }
-  const state = openState(business.openingHours, now);
-  const today = formatDay(business.openingHours, isoDay(now));
+  return {
+    state: openState(business.openingHours, now),
+    today: formatDay(business.openingHours, isoDay(now)),
+  };
+}
+
+// Under the photo: today's hours when open (the badge says the rest), or
+// that it is closed.
+function OpenStatus({ open }: { open: ReturnType<typeof useOpenState> }) {
+  const { t } = useTranslation('common');
+  if (!open) {
+    return null;
+  }
+  const { state, today } = open;
   if (state.open) {
-    return (
-      <Status open>
-        {t('businesses.openNow')} ·{' '}
-        {t('businesses.closesAt', { time: formatTime(state.closes) })}
-      </Status>
-    );
+    return today ? (
+      <Status open>{t('businesses.todayHours', { hours: today })}</Status>
+    ) : null;
   }
   return (
     <Status open={false}>
@@ -320,6 +365,7 @@ function BusinessCard({
   const taste = tasteOf(business.menu);
   const address = formatAddress(business.address);
   const phone = business.contact?.phone;
+  const open = useOpenState(business);
 
   return (
     <Card style={kindVars(kind)} to={`${prefix}/businesses/${business._id}`}>
@@ -332,6 +378,12 @@ function BusinessCard({
           />
         ) : (
           <PlaceholderImage className="shapes" seed={business._id} />
+        )}
+        {open?.state.open && (
+          <OpenBadge>
+            {t('businesses.openNow')} ·{' '}
+            {t('businesses.until', { time: formatTime(open.state.closes) })}
+          </OpenBadge>
         )}
         {showPlace && place && (
           <OnPicture>
@@ -349,7 +401,7 @@ function BusinessCard({
       </Picture>
       <Body>
         <StatusLine>
-          <OpenStatus business={business} />
+          <OpenStatus open={open} />
         </StatusLine>
         {excerpt && <Excerpt>{excerpt}</Excerpt>}
         {taste.length > 0 && (
@@ -359,7 +411,13 @@ function BusinessCard({
             </span>
             {taste.map((item: any, i: number) => (
               <React.Fragment key={`${item.name}-${i}`}>
-                {i > 0 && <span className="sep">·</span>}
+                {/* The dot keeps to the item before it; the line breaks after it */}
+                {i > 0 && (
+                  <>
+                    {'\u00a0'}
+                    <span className="sep">·</span>{' '}
+                  </>
+                )}
                 <span className="item">
                   {item.name}
                   {item.price && <span className="price"> {item.price}</span>}

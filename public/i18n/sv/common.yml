@@ -721,6 +721,7 @@ businesses:
   todayHours: 'Idag {{ hours }}'
   openNow: Öppet nu
   closesAt: 'stänger {{ time }}'
+  until: 'till {{ time }}'
   closedNow: Stängt nu
   opensAt: 'öppnar {{ day }} {{ time }}'
   menu:
