@@ -80,16 +80,10 @@ profile:
       label: Contact Info
 
   message:
-    role: You as <bold>{{ username }}</bold> are part of <bold>{{ host }}</bold> community with the <bold>{{ role }}</bold> role
     deny: You are not part of this community.
     notfound: User with this username within this organization not found, or chose to hide their profile
     platform: Information you enter here will be saved globally in the {{ platform }} platform and published in the communities you choose.
 
-  makePublic:
-    labelGlobal: Profile is public globally
-    label: Profile is public in this community
-    helper: If switched on, your profile will be publicly visible in this community
-    helperGlobal: If switched off, your profile will be publicly invisible in all communities
 
   menu:
     avatar: Profile image
@@ -191,3 +185,18 @@ welcome:
       text: Before you can post your own events, an administrator has to approve you as an organizer. Get in touch via Feedback at the bottom of the page.
   toProfile: Fill in your profile
   toHome: Go to the home page
+
+privacy:
+  saved: Your setting has been saved.
+  visibility:
+    title: Visibility
+    label: Show my profile to others
+    on: Visitors can see your profile page with your name, picture and description. If you are an organizer, you are also listed under Organizers.
+    off: Your profile is not shown to others – only to you and the site's administrators.
+  role:
+    title: Your role
+    current: 'Role: <strong>{{role}}</strong>'
+    means:
+      participant: You can have a profile and sign up for events. To post your own events, an administrator needs to verify you as an organizer.
+      contributor: You are a verified organizer and can post your own events.
+      admin: You are an administrator and can manage the whole site, its content and members.

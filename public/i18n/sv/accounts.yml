@@ -80,16 +80,10 @@ profile:
       label: Kontaktinformation
 
   message:
-    role: Du som <bold>{{ username }}</bold> är en del av <bold>{{ host }}</bold> community med rollen <bold>{{ role }}</bold>
     deny: Du är inte en del av denna organisation.
     notfound: Användare med detta användarnamn inom denna organisation hittades inte, eller valde att dölja sin profil
     platform: Informationen du anger här kommer att vara publik. Du kan välja att dölja ditt konto, men vi rekommenderar att du är publik för att underlätta kommunikationen med andra medlemmar. Håll din information uppdaterad!
 
-  makePublic:
-    labelGlobal: Din profil visas publikt
-    label: Din profil visas publikt i den har community
-    helper: Om reglaget är påslaget kommer din profil att vara synlig för allmänheten
-    helperGlobal: Om den stängs av kommer din profil att vara osynlig även internt
 
   menu:
     avatar: Profilbild
@@ -191,3 +185,18 @@ welcome:
       text: Innan du kan lägga upp egna evenemang måste en administratör godkänna dig som arrangör. Hör av dig via Ge feedback längst ner på sidan.
   toProfile: Fyll i din profil
   toHome: Till startsidan
+
+privacy:
+  saved: Din inställning är sparad.
+  visibility:
+    title: Synlighet
+    label: Visa min profil för andra
+    on: Besökare kan se din profilsida med namn, bild och beskrivning. Är du arrangör visas du också under Arrangörer.
+    off: Din profil visas inte för andra – bara för dig och sidans administratörer.
+  role:
+    title: Din roll
+    current: 'Roll: <strong>{{role}}</strong>'
+    means:
+      participant: Du kan ha en profil och anmäla dig till evenemang. För att lägga upp egna evenemang behöver en administratör verifiera dig som arrangör.
+      contributor: Du är verifierad arrangör och kan lägga upp egna evenemang.
+      admin: Du är administratör och kan hantera hela sidan, dess innehåll och medlemmar.
