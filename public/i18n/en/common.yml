@@ -530,27 +530,27 @@ eventKinds:
   kultur: Culture
   idrott: Sport
   barn: Children & family
-  marknad: Market
-  mat: Food
-  natur: Outdoors
+  bio: Cinema
+  senior: Seniors
+  natur: Nature
   larande: Learning
   social: Social
   headings:
     kultur: Culture events
     idrott: Sport events
     barn: Children & family events
-    marknad: Markets
-    mat: Food events
-    natur: Outdoor events
+    bio: Cinema & film
+    senior: Events for seniors
+    natur: Nature events
     larande: Learning events
     social: Social events
   subjects:
     kultur: the culture events
     idrott: the sport events
     barn: the children & family events
-    marknad: the markets
-    mat: the food events
-    natur: the outdoor events
+    bio: the film screenings
+    senior: the events for seniors
+    natur: the nature events
     larande: the learning events
     social: the social events
   form:

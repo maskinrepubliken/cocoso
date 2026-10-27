@@ -527,27 +527,27 @@ eventKinds:
   kultur: Kultur
   idrott: Idrott
   barn: Barn & familj
-  marknad: Marknad
-  mat: Mat
-  natur: Ute
+  bio: Bio
+  senior: Senior
+  natur: Natur
   larande: Lärande
   social: Umgänge
   headings:
     kultur: Kulturevenemang
     idrott: Idrottsevenemang
     barn: Barn- och familjeevenemang
-    marknad: Marknader
-    mat: Matevenemang
-    natur: Uteevenemang
+    bio: Bio och film
+    senior: Seniorevenemang
+    natur: Naturevenemang
     larande: Lärandeevenemang
     social: Umgängesevenemang
   subjects:
     kultur: kulturevenemangen
     idrott: idrottsevenemangen
     barn: barn- och familjeevenemangen
-    marknad: marknaderna
-    mat: matevenemangen
-    natur: uteevenemangen
+    bio: bio- och filmvisningarna
+    senior: seniorevenemangen
+    natur: naturevenemangen
     larande: lärandeevenemangen
     social: umgängesevenemangen
   form:
