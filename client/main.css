@@ -4973,16 +4973,22 @@ body {
   padding-top: 4px;
 }
 
+/* The name sits in the flow here, so a card grows to fit a long name
+   ("Hela kommunen" in a wide font) instead of cutting it off. */
 .location-cards.is-compact .location-card {
-  width: 156px;
+  display: flex;
+  align-items: flex-end;
+  width: auto;
+  min-width: 156px;
   height: 84px;
 }
 
 .location-cards.is-compact .location-card-name {
-  padding: 22px 10px 8px;
-  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 22px 12px 8px 10px;
   font-size: 16px;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -5006,7 +5012,7 @@ body {
   }
 
   .location-cards.is-compact .location-card {
-    width: clamp(132px, 38vw, 150px);
+    min-width: clamp(132px, 38vw, 150px);
     height: 76px;
   }
 
