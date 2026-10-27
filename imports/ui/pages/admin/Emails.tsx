@@ -68,6 +68,11 @@ function EmailForm({
   );
 }
 
+const EMAIL_TABS = [
+  { key: 'verified', index: 1 },
+  { key: 'admin', index: 2 },
+];
+
 export default function Emails() {
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
@@ -83,23 +88,16 @@ export default function Emails() {
     }
   }, [currentUser, role, emails, state]);
 
+  // site.emails: [0] the old welcome email (no longer sent — new accounts
+  // get the /welcome screen), [1] verified as organizer, [2] made admin
   const parsedEmails = useMemo(
     () =>
-      (emails || []).map((email: any, index: number) => {
-        let key = 'new';
-        if (index === 1) {
-          key = 'verified';
-        } else if (index === 2) {
-          key = 'admin';
-        }
-
-        return {
-          key,
-          title: t(`emails.${key}.title`),
-          onClick: () =>
-            setSearchParams((params) => ({ ...params, show: key })),
-        };
-      }),
+      EMAIL_TABS.filter((tab) => emails?.[tab.index]).map((tab) => ({
+        key: tab.key,
+        title: t(`emails.${tab.key}.title`),
+        onClick: () =>
+          setSearchParams((params) => ({ ...params, show: tab.key })),
+      })),
     [emails]
   );
 
@@ -117,14 +115,12 @@ export default function Emails() {
   };
 
   const show = searchParams.get('show');
-  const key = ['new', 'verified', 'admin'].includes(show) ? show : 'new';
-
-  const tabIndex = show
-    ? parsedEmails.findIndex((email: any) => email.key === show)
-    : 0;
-
-  const selectedEmail =
-    key === 'admin' ? emails[2] : key === 'verified' ? emails[1] : emails[0];
+  const tabIndex = Math.max(
+    0,
+    EMAIL_TABS.findIndex((tab) => tab.key === show)
+  );
+  const { key, index: emailIndex } = EMAIL_TABS[tabIndex];
+  const selectedEmail = emails[emailIndex];
 
   return (
     <>
@@ -132,7 +128,7 @@ export default function Emails() {
 
       <EmailForm
         key={key}
-        onSubmit={(values) => handleSubmit(values, tabIndex)}
+        onSubmit={(values) => handleSubmit(values, emailIndex)}
         defaultValues={selectedEmail}
       />
     </>

@@ -72,28 +72,6 @@ async function sendEmail(
   }
 }
 
-async function sendWelcomeEmail(userId: string): Promise<void> {
-  const user = (await Meteor.users.findOneAsync(userId)) as
-    | MeteorUser
-    | undefined;
-  const site = await getSite();
-  const welcomeText = site && site.emails?.[0];
-
-  const emailBody = getWelcomeEmailBody(
-    welcomeText?.appeal,
-    site as any,
-    user?.username,
-    welcomeText?.body
-  );
-
-  try {
-    await sendEmail(user?.emails?.[0].address, welcomeText?.subject, emailBody);
-  } catch (error) {
-    console.log('email error', error);
-    throw new Meteor.Error(error as string);
-  }
-}
-
 async function sendNewContributorEmail(userId: string): Promise<void> {
   const user = (await Meteor.users.findOneAsync(userId)) as
     | MeteorUser
@@ -135,7 +113,6 @@ async function sendNewAdminEmail(userId: string): Promise<void> {
 
 export {
   sendEmail,
-  sendWelcomeEmail,
   sendNewContributorEmail,
   sendNewAdminEmail,
 };

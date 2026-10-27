@@ -157,8 +157,8 @@ up by its code alone: the handler answers `account-not-found` and leaves the
 code unspent, the page asks the person to confirm and accept the terms
 (`ConfirmSignup`), and only the resubmitted code with
 `createAccount: { acceptedTerms: true }` creates the account (generated
-username, `termsAcceptedAt`, participant membership, welcome email) and
-lands on `/welcome`. `/login` and `/register` run the same flow with
+username, `termsAcceptedAt`, participant membership) and lands on
+`/welcome`; no welcome email is sent. `/login` and `/register` run the same flow with
 different wording; `/forgot-password` and `/reset-password/:token` show the
 login form.
 

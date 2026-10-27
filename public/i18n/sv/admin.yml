@@ -107,8 +107,8 @@ categories:
 # ADMIN EMAILS PAGE
 emails:
   title: Automatiserade e-postmeddelanden
-  description: Konfigurera automatiserade e-postmeddelanden som användare får när de registrerar sig, verifieras eller blir administratörer
-  shortcutHelper: Konfigurera automatiserade e-postmeddelanden som användare får när de registrerar sig, verifieras eller blir administratörer
+  description: Konfigurera automatiserade e-postmeddelanden som användare får när de verifieras som arrangörer eller blir administratörer
+  shortcutHelper: Konfigurera automatiserade e-postmeddelanden som användare får när de verifieras som arrangörer eller blir administratörer
   form:
     subject:
       label: Ämne

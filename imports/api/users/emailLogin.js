@@ -11,12 +11,12 @@ import { deliverEmail, getSmtpSettings } from '../_utils/services/mails/smtp';
 import Memberships from '../memberships/membership';
 import { generateUsernameFromEmail } from './username.helpers';
 import { loginEmail } from './loginEmail';
-import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
 
 /**
  * Email-only login: type your email, get a six-digit code and a one-click
- * link, and you're in. There is no password and no separate sign-up — an
- * address we haven't seen becomes a new participant on its first login.
+ * link, and you're in. There is no password. An address we haven't seen
+ * gets an account only once the person confirms it (see the login handler)
+ * and then lands on /welcome — no welcome email.
  *
  * One pending request per address lives in `loginCodes`, hashed. A new
  * request replaces the old one; a code allows a few wrong guesses, then the
@@ -94,7 +94,8 @@ async function verifyExisting(existing, email) {
 
 // A new account, made only once the person has confirmed it and accepted
 // the terms: a generated username (editable later), the address verified,
-// when the terms were accepted, and a participant membership.
+// when the terms were accepted, and a participant membership. No welcome
+// email: the welcome screen (/welcome) says it all.
 async function createAccountFor(email) {
   const username = await generateUsernameFromEmail(email);
   const userId = await Accounts.createUserAsync({ email, username });
@@ -109,13 +110,6 @@ async function createAccountFor(email) {
       role: 'participant',
       joinDate: new Date(),
       isPublic: true,
-    });
-    Meteor.defer(async () => {
-      try {
-        await sendWelcomeEmail(userId);
-      } catch (error) {
-        console.error('[emailLogin] welcome email failed', error);
-      }
     });
   }
 
