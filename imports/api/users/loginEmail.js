@@ -3,13 +3,13 @@ import escapeHtml from '../_utils/escapeHtml';
 
 /**
  * The email with the login code, in the look of the login page: the
- * crane and the site's name on the season's floor, one sheet of paper with
+ * site's name on the season's floor, one sheet of paper with
  * a Fraunces title, the code in six boxes, a green pill button and the
  * small print under a hairline.
  *
  * Email clients don't read CSS variables, so the materials are the hex
  * values from imports/ui/utils/globalStylesManager.ts, and the green comes
- * from the site's theme with the same formulas. Images are PNG (Outlook
+ * from the site's theme with the same formulas. The envelope is a PNG (Outlook
  * shows no WebP) in public/email/. Everything is inline styles and tables.
  */
 
@@ -132,14 +132,7 @@ export function loginEmail({ lang, siteName, theme, code, url }) {
 
       <tr><td align="center" style="padding:0 0 20px;">
         <a href="${escapeHtml(site)}" style="text-decoration:none;color:${MYLLA};">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-            <td valign="middle" style="padding-right:10px;">
-              <img src="${escapeHtml(
-                publicUrl('/email/trana.png')
-              )}" width="27" height="40" alt="" style="display:block;border:0;width:27px;height:40px;">
-            </td>
-            <td valign="middle" style="font-family:${UI};font-size:16px;font-weight:700;color:${MYLLA};">${name}</td>
-          </tr></table>
+          <span style="font-family:${UI};font-size:16px;font-weight:700;color:${MYLLA};">${name}</span>
         </a>
       </td></tr>
 
