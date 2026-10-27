@@ -386,6 +386,59 @@ const events = [
     dates: [occurrence('2026-12-19', '17:00', '21:00')],
     description: '<p>Ett gemensamt julbord där alla tar med en rätt. Alla är välkomna.</p>',
   },
+
+  // Bio
+  {
+    title: 'Filmkväll på Tranehov',
+    subTitle: 'Varje torsdag – månadens filmer på stor duk',
+    organizer: 'anna.lindqvist',
+    place: 'Tranehov, Tranemo',
+    capacity: 150,
+    dates: weekly('2026-10-29', '19:00', '21:30'),
+    description: '<p>Tranehovs salong blir biograf. Vi visar en ny film varje vecka, från svenska nyheter till uppmärksammade filmer från festivalerna. Biljetter köps i kassan från klockan 18.30, och kiosken har kaffe, godis och popcorn.</p>',
+  },
+  {
+    title: 'Barnbio på höstlovet',
+    subTitle: 'Tecknad film för de yngsta',
+    organizer: 'fatima.hassan',
+    place: 'Tranehov, Tranemo',
+    capacity: 150,
+    dates: [occurrence('2026-11-04', '14:00', '15:30')],
+    description: '<p>En tecknad familjefilm med svenskt tal, lämplig från fyra år. Barn under sju år ser filmen tillsammans med en vuxen. Popcorn ingår i biljetten.</p>',
+  },
+  {
+    title: 'Seniorbio med fika',
+    subTitle: 'Dagbio i Dalstorp',
+    organizer: 'anna.lindqvist',
+    place: 'Dalshov, Dalstorp',
+    capacity: 60,
+    dates: [
+      occurrence('2026-11-12', '13:00', '15:30'),
+      occurrence('2026-12-10', '13:00', '15:30'),
+    ],
+    description: '<p>En lugn eftermiddag på bio, med fika i pausen. Filmen visas med svensk text och hörslinga. Anmäl dig gärna, så vet vi hur mycket kaffe vi ska koka.</p>',
+  },
+  {
+    title: 'Filmklubb i Glasets Hus',
+    subTitle: 'Klassiker på 35 mm',
+    organizer: 'lars.svensson',
+    place: 'Glasets Hus',
+    capacity: 40,
+    dates: [
+      occurrence('2026-11-21', '18:00', '20:30'),
+      occurrence('2026-12-12', '18:00', '20:30'),
+    ],
+    description: '<p>Filmklubben visar en klassiker från arkivet på riktig 35 mm-film, och efteråt pratar vi om den över en kopp kaffe. Medlemskap behövs inte.</p>',
+  },
+  {
+    title: 'Julbio för hela familjen',
+    subTitle: 'Sista söndagen före jul',
+    organizer: 'fatima.hassan',
+    place: 'Tranehov, Tranemo',
+    capacity: 150,
+    dates: [occurrence('2026-12-20', '15:00', '16:45')],
+    description: '<p>En julfilm för stora och små, med glögg och pepparkakor i foajén innan visningen.</p>',
+  },
 ];
 
 let created = 0;

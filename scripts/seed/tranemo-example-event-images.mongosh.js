@@ -106,6 +106,31 @@ const photos = [
     credit: "Foto: Andejons (CC BY-SA 3.0, Wikimedia Commons).",
   },
   {
+    title: "Filmkväll på Tranehov",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/The_Cinema_Beckenham_2018-11-17.jpg/1280px-The_Cinema_Beckenham_2018-11-17.jpg",
+    credit: "Foto: John K Thorne (public domain, Wikimedia Commons).",
+  },
+  {
+    title: "Barnbio på höstlovet",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Bowl_of_Popcorn_%28Unsplash%29.jpg/1280px-Bowl_of_Popcorn_%28Unsplash%29.jpg",
+    credit: "Foto: Alex Munsell (CC0, Wikimedia Commons).",
+  },
+  {
+    title: "Seniorbio med fika",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Columbia_City_Cinema_main_hall.jpg/1280px-Columbia_City_Cinema_main_hall.jpg",
+    credit: "Foto: Joe Mabel (CC BY-SA 3.0, Wikimedia Commons).",
+  },
+  {
+    title: "Filmklubb i Glasets Hus",
+    url: "https://upload.wikimedia.org/wikipedia/commons/0/0c/1930%27s_35mm_film_projector..jpg",
+    credit: "Foto: YellowFratello (CC BY-SA 4.0, Wikimedia Commons).",
+  },
+  {
+    title: "Julbio för hela familjen",
+    url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Strood_510_seat_Queens_Cinema_auditorium_and_proscenium_arch_5708.jpg/1280px-Strood_510_seat_Queens_Cinema_auditorium_and_proscenium_arch_5708.jpg",
+    credit: "Foto: ClemRutter (CC BY-SA 4.0, Wikimedia Commons).",
+  },
+  {
     title: "Läxhjälp för högstadiet",
     url: "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/Study_Break_-_Reading_at_Tulane_University%2C_2009.jpg/1280px-Study_Break_-_Reading_at_Tulane_University%2C_2009.jpg",
     credit: "Foto: Tulane Public Relations (CC BY 2.0, Wikimedia Commons).",
