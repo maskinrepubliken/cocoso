@@ -17,7 +17,11 @@ import EmailLogin from './EmailLogin';
 import PasswordLogin from './PasswordLogin';
 import AuthPanel from './AuthPanel';
 
-export default function LoginPage() {
+export default function LoginPage({
+  mode = 'login',
+}: {
+  mode?: 'login' | 'signup';
+}) {
   const site = useAtomValue(siteAtom);
   const currentUser = useAtomValue(currentUserAtom);
   const [role, setRole] = useAtom(roleAtom);
@@ -74,9 +78,17 @@ export default function LoginPage() {
     }
   };
 
-  const otherWay = passwordMode
-    ? { to: '/login', label: t('emailLogin.withEmail'), quiet: true }
-    : { to: '/login?losenord', label: t('emailLogin.withPassword'), quiet: true };
+  const links =
+    mode === 'signup'
+      ? [{ to: '/login', label: t('emailLogin.signup.toLogin') }]
+      : [
+          { to: '/register', label: t('emailLogin.toSignup') },
+          {
+            to: '/login?losenord',
+            label: t('emailLogin.withPassword'),
+            quiet: true,
+          },
+        ];
 
   let panel;
   if (currentUser || linkState === 'checking') {
@@ -105,9 +117,15 @@ export default function LoginPage() {
       </AuthPanel>
     );
   } else if (passwordMode) {
-    panel = <PasswordLogin links={[otherWay]} />;
+    panel = (
+      <PasswordLogin
+        links={[
+          { to: '/login', label: t('emailLogin.withEmail'), quiet: true },
+        ]}
+      />
+    );
   } else {
-    panel = <EmailLogin links={[otherWay]} />;
+    panel = <EmailLogin key={mode} links={links} mode={mode} />;
   }
 
   return (

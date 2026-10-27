@@ -31,6 +31,9 @@ export function AuthError({ children }: { children: React.ReactNode }) {
 }
 
 interface EmailLoginProps {
+  // Same flow either way — the server makes the account on the first code —
+  // but /register and /login say different things
+  mode?: 'login' | 'signup';
   links?: AuthPanelProps['links'];
   // An address to start from, e.g. after a dead link
   initialEmail?: string;
@@ -40,6 +43,7 @@ interface EmailLoginProps {
 // form for new and returning people — the server makes the account on the
 // first successful code.
 export default function EmailLogin({
+  mode = 'login',
   links,
   initialEmail = '',
 }: EmailLoginProps) {
@@ -65,7 +69,7 @@ export default function EmailLogin({
       'login-code-invalid': t('emailLogin.errors.invalidCode'),
       'invalid-email': t('emailLogin.errors.invalidEmail'),
       'too-many-requests': t('emailLogin.errors.tooMany'),
-    })[err?.error as string] || t('emailLogin.errors.sendFailed');
+    }[err?.error as string] || t('emailLogin.errors.sendFailed'));
 
   const requestCode = async () => {
     setBusy(true);
@@ -192,8 +196,10 @@ export default function EmailLogin({
 
   return (
     <AuthPanel
-      title={t('emailLogin.title')}
-      lead={t('emailLogin.lead')}
+      title={t(
+        mode === 'signup' ? 'emailLogin.signup.title' : 'emailLogin.title'
+      )}
+      lead={t(mode === 'signup' ? 'emailLogin.signup.lead' : 'emailLogin.lead')}
       links={links}
       footer={
         <p>

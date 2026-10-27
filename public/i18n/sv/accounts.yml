@@ -136,8 +136,13 @@ delete:
 emailLogin:
   withPassword: Administratör? Logga in med lösenord
   withEmail: Logga in med e-post i stället
-  title: Logga in eller skapa konto
-  lead: Skriv din e-postadress så skickar vi en kod. Inget lösenord behövs.
+  title: Logga in
+  lead: Skriv in din e-postadress så skickar vi en länk som du kan logga in med.
+  toSignup: Inget konto än? Skapa ett
+  signup:
+    title: Skapa konto
+    lead: Skriv in din e-postadress så skickar vi en länk som du kan skapa ditt konto med.
+    toLogin: Har du redan ett konto? Logga in
   terms: Genom att fortsätta godkänner du
   email:
     label: E-postadress

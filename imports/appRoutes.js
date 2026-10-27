@@ -64,6 +64,7 @@ function revalidateOn(relevantParams = []) {
 }
 
 const LoginPage = loadable(() => import('/imports/ui/pages/auth/LoginPage'));
+const SignupPage = loadable(() => import('/imports/ui/pages/auth/SignupPage'));
 const Terms = loadable(() => import('/imports/ui/entry/Terms'));
 const NotFoundPage = loadable(() => import('/imports/ui/pages/NotFoundPage'));
 
@@ -694,9 +695,13 @@ export default function appRoutes(props) {
           path: 'login',
           element: createRouteElement(LoginPage, props),
         },
-        // Login is by email only; sign-up and password pages, and links to
-        // them in old emails, land on the same form.
-        ...['register', 'forgot-password', 'reset-password/:token'].map(
+        {
+          path: 'register',
+          element: createRouteElement(SignupPage, props),
+        },
+        // There are no passwords to reset any more; links to these pages in
+        // old emails land on the login form.
+        ...['forgot-password', 'reset-password/:token'].map(
           (path) => ({ path, element: createRouteElement(LoginPage, props) })
         ),
         {

@@ -136,8 +136,13 @@ delete:
 emailLogin:
   withPassword: Administrator? Log in with password
   withEmail: Log in with email instead
-  title: Log in or sign up
-  lead: Enter your email and we'll send you a code. No password needed.
+  title: Log in
+  lead: Enter your email address and we'll send you a link you can log in with.
+  toSignup: No account yet? Create one
+  signup:
+    title: Create an account
+    lead: Enter your email address and we'll send you a link you can create your account with.
+    toLogin: Already have an account? Log in
   terms: By continuing you accept
   email:
     label: Email address
