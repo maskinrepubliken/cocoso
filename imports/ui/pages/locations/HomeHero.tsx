@@ -39,18 +39,25 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
 
   const icons = seasonIcons[season] || seasonIcons.host;
 
-  // ?hem=logotyp shows the colourful word logo in place of the title and
-  // the floating icons, so the two versions can be compared side by side.
-  if (searchParams.get('hem') === 'logotyp') {
+  // The start page opens on the colourful word logo: one line on wide
+  // screens, stacked on narrow ones. ?hem=ikoner brings back the earlier
+  // version, the title with the floating seasonal icons.
+  if (searchParams.get('hem') !== 'ikoner') {
     return (
       <section className="home-hero vav is-logo">
         <div className="home-hero-inner">
           <div className="home-hero-text">
             <h1 className="home-hero-logo">
-              <img
-                src="/images/tranemo-evenemangskalender.svg"
-                alt={settings.name}
-              />
+              <picture>
+                <source
+                  media="(min-width: 700px)"
+                  srcSet="/images/tranemo-evenemangskalender-bred.svg"
+                />
+                <img
+                  src="/images/tranemo-evenemangskalender.svg"
+                  alt={settings.name}
+                />
+              </picture>
             </h1>
             <p className="home-hero-tagline">
               {settings.tagline || tc('home.hero.tagline')}
