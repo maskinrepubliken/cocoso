@@ -1,38 +1,19 @@
-import { Meteor } from 'meteor/meteor';
-import React, { useState } from 'react';
+import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import {
-  siteAtom,
-  currentUserAtom,
-  roleAtom,
-} from '/imports/state';
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  Heading,
-  Divider,
-  Modal,
-  Text,
-} from '/imports/ui/core';
+import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
+import { Alert, Box, Checkbox, Heading, Divider, Text } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 import Boxling from '/imports/ui/pages/admin/Boxling';
 import { call } from '/imports/api/_utils/shared';
-
-import { useNavigate } from 'react-router';
 
 export default function EditProfilePrivacy() {
   const currentUser = useAtomValue(currentUserAtom);
   const site = useAtomValue(siteAtom);
   const role = useAtomValue(roleAtom);
-  const [isLeaveModalOn, setIsLeaveModalOn] = useState(false);
-  const [isLeaving, setIsLeaving] = useState(false);
   const [t] = useTranslation('accounts');
   const [tc] = useTranslation('common');
-  const navigate = useNavigate();
 
   const setProfilePublic = async (isPublic) => {
     try {
@@ -57,25 +38,6 @@ export default function EditProfilePrivacy() {
       );
     } catch (error) {
       message.error(error.reason);
-    }
-  };
-
-  const leaveHost = async () => {
-    setIsLeaving(true);
-    try {
-      await call('leaveHost');
-      message.success(
-        tc('message.success.leave', {
-          host: site?.settings?.name,
-        })
-      );
-      Meteor.logout();
-      navigate('/');
-      setIsLeaveModalOn(false);
-    } catch (error) {
-      message.error(error.reason);
-    } finally {
-      setIsLeaving(false);
     }
   };
 
@@ -113,7 +75,6 @@ export default function EditProfilePrivacy() {
         <Divider my="4" />
 
         <Box pt="2">
-
           <Alert bg="white" type="info" css={{ marginBottom: '0.4rem' }}>
             <Text fontSize="sm">
               <Trans
@@ -144,33 +105,8 @@ export default function EditProfilePrivacy() {
               </Text>
             </p>
           </Box>
-
-          <Box py="2">
-            <Button
-              colorScheme="red"
-              size="sm"
-              onClick={() => setIsLeaveModalOn(true)}
-            >
-              {t('actions.leave', { host: communityName })}
-            </Button>
-          </Box>
         </Box>
       </Boxling>
-
-      <Modal
-        id="edit-profile-leave-confirm"
-        open={isLeaveModalOn}
-        title={t('leave.title')}
-        confirmText={t('leave.label')}
-        confirmButtonProps={{
-          colorScheme: 'red',
-          isLoading: isLeaving,
-        }}
-        onConfirm={leaveHost}
-        onClose={() => setIsLeaveModalOn(false)}
-      >
-        <Text>{t('leave.body')}</Text>
-      </Modal>
     </>
   );
 }

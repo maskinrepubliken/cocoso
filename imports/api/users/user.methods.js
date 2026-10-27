@@ -20,7 +20,6 @@ import { AddressPattern, cleanAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
 import { isFreshInstall } from './passwordLogin';
-import { sendWelcomeEmail } from '../_utils/services/mails/mail.methods';
 
 // How long a deleted account's user document is kept after the answer
 const DELETE_AFTER_MS = 2000;
@@ -241,55 +240,6 @@ Meteor.methods({
     return Boolean(emailExists);
   },
 
-  async setSelfAsParticipant() {
-    const user = await Meteor.userAsync();
-    if (!user) {
-      return;
-    }
-    const site = await getSite();
-    if (!site) {
-      throw new Meteor.Error('Site not found');
-    }
-
-    const existingMembership = await Memberships.findOneAsync({
-      userId: user._id,
-    });
-    if (existingMembership) {
-      throw new Meteor.Error('You are already a participant');
-    }
-
-    try {
-      await Memberships.insertAsync({
-        userId: user._id,
-        role: 'participant',
-        joinDate: new Date(),
-        isPublic: true,
-      });
-
-      await sendWelcomeEmail(user._id);
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
-  },
-
-  async removeAsParticipant() {
-    const user = await Meteor.userAsync();
-
-    const membership = await Memberships.findOneAsync({
-      userId: user._id,
-    });
-
-    if (!membership) {
-      throw new Meteor.Error('You are already not a participant');
-    }
-
-    try {
-      await Memberships.removeAsync({ userId: user._id });
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
-  },
-
   async saveUserInfo(values) {
     // Only these profile fields may be written by the user themself. Never
     // spread client input straight into $set on the users collection: the
@@ -500,21 +450,6 @@ Meteor.methods({
   },
 
   removeAvatar: () => {},
-
-  async leaveHost() {
-    const user = await Meteor.userAsync();
-    const userId = user?._id;
-
-    if (!userId) {
-      return;
-    }
-
-    try {
-      await Memberships.removeAsync({ userId });
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
-  },
 
   async resetUserPassword(email) {
     Accounts.urls.resetPassword = function (token) {

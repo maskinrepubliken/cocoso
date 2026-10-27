@@ -4,7 +4,6 @@ actions:
   logout: Logga ut
   forgot: Glömt ditt lösenord?
   reset: Återställ ditt lösenord
-  leave: Lämna {{ host }}
 
 login:
   labels:
@@ -63,9 +62,6 @@ password:
 
 profile:
   label: Personlig information
-  join: Gå med
-  joinHost: Gå med {{ host }}
-  joinAsParticipantQuestion: Vill du gå med i denna organisation?
   settings: Profilinställningar
   image: Profilbild
   form:
@@ -85,7 +81,6 @@ profile:
 
   message:
     role: Du som <bold>{{ username }}</bold> är en del av <bold>{{ host }}</bold> community med rollen <bold>{{ role }}</bold>
-    participant: Du är en del av denna gemenskap. Välkommen!
     deny: Du är inte en del av denna organisation.
     notfound: Användare med detta användarnamn inom denna organisation hittades inte, eller valde att dölja sin profil
     platform: Informationen du anger här kommer att vara publik. Du kan välja att dölja ditt konto, men vi rekommenderar att du är publik för att underlätta kommunikationen med andra medlemmar. Håll din information uppdaterad!
@@ -118,11 +113,6 @@ report:
     required: Beskriv problemet innan du skickar in.
     success: Rapport inskickad. Tack.
 
-leave:
-  action: Lämna Community
-  label: Bekräfta att du lämnar
-  title: Är du säker?
-  body: Du är på väg att lämna denna community och överge din roll och privilegierna. Du kanske inte kan hämta dem igen. Är du säker?
 
 delete:
   action: Radera konto

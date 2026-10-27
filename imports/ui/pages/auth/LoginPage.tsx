@@ -1,13 +1,11 @@
-import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 
-import { Box, Button, Center, Image, Modal, Text } from '/imports/ui/core';
+import { Box, Button } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
-import { call } from '../../../api/_utils/shared';
-import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
+import { currentUserAtom } from '/imports/state';
 
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 import LoaderCircle from 'lucide-react/dist/esm/icons/loader-circle';
@@ -23,11 +21,8 @@ export default function LoginPage({
 }: {
   mode?: 'login' | 'signup';
 }) {
-  const site = useAtomValue(siteAtom);
   const currentUser = useAtomValue(currentUserAtom);
-  const [role, setRole] = useAtom(roleAtom);
   const [t] = useTranslation('accounts');
-  const [joinModal, setJoinModal] = useState(false);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const linkToken = searchParams.get('token');
@@ -72,29 +67,10 @@ export default function LoginPage({
       navigate('/welcome');
       return;
     }
-    const membership = currentUser?.memberships?.[0];
-    setRole(membership?.role || null);
-    if (['participant', 'contributor', 'admin'].includes(membership?.role)) {
-      navigate('/admin/my-profile/general');
-    } else {
-      setJoinModal(true);
-    }
+    // Everyone with an account belongs to the site (the server sees to the
+    // membership on login), so there is no "join" question any more
+    navigate('/admin/my-profile/general');
   }, [currentUser]);
-
-  const cancelJoin = () => {
-    Meteor.logout();
-    setJoinModal(false);
-    message.info(t('logout.messages.success'));
-  };
-
-  const confirmJoin = async () => {
-    try {
-      await call('setSelfAsParticipant');
-      message.success(t('profile.message.participant'));
-    } catch (error) {
-      message.error(error.reason || error.error);
-    }
-  };
 
   const links =
     mode === 'signup'
@@ -157,30 +133,5 @@ export default function LoginPage({
     panel = <EmailLogin key={mode} links={links} mode={mode} />;
   }
 
-  return (
-    <Box pb="8">
-      {panel}
-
-      <Modal
-        open={joinModal}
-        id="login-page-join"
-        title={t('profile.joinHost', {
-          host: site?.settings?.name,
-        })}
-        onConfirm={() => confirmJoin()}
-        onClose={() => cancelJoin()}
-        confirmText={t('profile.join')}
-      >
-        <Center>
-          <Image
-            alt={`${site?.settings?.name} logo`}
-            src={site?.logo}
-            m="4"
-            width="4xs"
-          />
-        </Center>
-        <Text fontSize="lg">{t('profile.joinAsParticipantQuestion')}</Text>
-      </Modal>
-    </Box>
-  );
+  return <Box pb="8">{panel}</Box>;
 }

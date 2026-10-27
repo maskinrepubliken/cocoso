@@ -4,7 +4,6 @@ actions:
   logout: Logout
   forgot: Forgot your password?
   reset: Reset your password
-  leave: Leave {{ host }}
 
 login:
   labels:
@@ -63,9 +62,6 @@ password:
 
 profile:
   label: Personal Info
-  join: Join
-  joinHost: Join {{ host }}
-  joinAsParticipantQuestion: Would you like to join this organization with the participant role?
   settings: Profile Settings
   image: Profile image
   form:
@@ -85,7 +81,6 @@ profile:
 
   message:
     role: You as <bold>{{ username }}</bold> are part of <bold>{{ host }}</bold> community with the <bold>{{ role }}</bold> role
-    participant: You are a part of this community. Welcome!
     deny: You are not part of this community.
     notfound: User with this username within this organization not found, or chose to hide their profile
     platform: Information you enter here will be saved globally in the {{ platform }} platform and published in the communities you choose.
@@ -118,11 +113,6 @@ report:
     required: Please describe the issue before submitting.
     success: Report submitted. Thank you.
 
-leave:
-  action: Leave Community
-  label: Confirm Leaving
-  title: Are you sure?
-  body: You are about to leave this community and abandon your role and the privileges. You may not be able to retrieve them again. Are you sure?
 
 delete:
   action: Delete Account

@@ -67,8 +67,19 @@ async function sendLoginEmail({ email, code, token, lang, isNew }) {
   await deliverEmail({ from, to: email, subject, html, text });
 }
 
-// Marks the address verified — they just proved they read it.
+// Marks the address verified — they just proved they read it — and makes
+// sure they belong to the site. There is one site and no "join" step any
+// more: an account without a membership (left over from the old "leave"
+// button or an interrupted deletion) simply becomes a participant again.
 async function verifyExisting(existing, email) {
+  if (!(await Memberships.findOneAsync({ userId: existing._id }))) {
+    await Memberships.insertAsync({
+      userId: existing._id,
+      role: 'participant',
+      joinDate: new Date(),
+      isPublic: true,
+    });
+  }
   const entry = existing.emails?.find(
     (e) => normalizeEmail(e.address) === email
   );
