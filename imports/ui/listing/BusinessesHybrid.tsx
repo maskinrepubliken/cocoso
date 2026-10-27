@@ -10,7 +10,6 @@ import { locationsAtom, siteAtom } from '/imports/state';
 import { formatAddress } from '/imports/api/_utils/address';
 import PlaceTag from '/imports/ui/generic/PlaceTag';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
-import ThreeDIcon, { type ThreeDIconName } from '/imports/ui/generic/ThreeDIcon';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
@@ -26,10 +25,12 @@ import {
 import PageHeading from './PageHeading';
 
 // Äta/handla/bo: cafés, restaurants, shops and inns. Where something is
-// matters most, so the page opens with a choice of place; below it the
-// cards come under Äta, Handla and Bo. Each card tells enough to decide
-// without opening it: what it is, whether it is open, today's hours and a
-// taste of the menu, range or rooms with prices.
+// matters most, so the page opens with the start page's place cards as a
+// picker; below it the places come under Äta, Handla and Bo. The cards
+// speak the same picture language as the place cards — a photo with the
+// name over a dark fade — and say enough to decide without opening them:
+// the kind, whether it is open, a few lines about it and a taste of the
+// menu, range or rooms.
 
 // Menu lines shown on a card.
 const TASTE = 3;
@@ -38,11 +39,12 @@ const KINDS = ['eat', 'shop', 'stay'] as const;
 
 type Kind = (typeof KINDS)[number];
 
-// Each kind's icon, colour (from the logo's letters) and paper tint.
-const KIND_LOOK: Record<Kind, { icon: ThreeDIconName; ink: string; tint: string }> = {
-  eat: { icon: 'cup', ink: '#c4512f', tint: '#fdf3ed' },
-  shop: { icon: 'bag', ink: '#2f6fa3', tint: '#eef4fa' },
-  stay: { icon: 'key', ink: '#7a4f9a', tint: '#f5f0f8' },
+// Each kind's colour, from the letters of the logo, and the light end of
+// the gradient behind a card without a photo.
+const KIND_LOOK: Record<Kind, { ink: string; light: string }> = {
+  eat: { ink: '#c4512f', light: '#f3cdb8' },
+  shop: { ink: '#2f6fa3', light: '#c4dbee' },
+  stay: { ink: '#7a4f9a', light: '#dccbe8' },
 };
 
 const lookOf = (kind?: string) => KIND_LOOK[kind as Kind] || KIND_LOOK.eat;
@@ -50,7 +52,7 @@ const lookOf = (kind?: string) => KIND_LOOK[kind as Kind] || KIND_LOOK.eat;
 const kindVars = (kind?: string) =>
   ({
     '--kind': lookOf(kind).ink,
-    '--kind-tint': lookOf(kind).tint,
+    '--kind-light': lookOf(kind).light,
   }) as React.CSSProperties;
 
 const Page = styled('div', {
@@ -61,7 +63,6 @@ const Page = styled('div', {
   width: '100%',
 });
 
-// The start page's place cards, smaller, as the picker.
 const Picker = styled('nav', {
   marginBottom: '1.25rem',
 });
@@ -70,143 +71,140 @@ const Notice = styled('p', {
   color: 'var(--cocoso-mylla-soft)',
   fontSize: '0.85rem',
   fontStyle: 'italic',
-  margin: '0 auto 1.5rem',
+  margin: '0 auto 1.75rem',
   maxWidth: '60ch',
   textAlign: 'center',
 });
 
 const Section = styled('section', {
-  marginBottom: '2.5rem',
+  marginBottom: '2.25rem',
 });
 
-// A quiet label over each kind's cards; the cards' colour does the work.
-const SectionHead = styled('div', {
-  alignItems: 'center',
+// A quiet label over each kind; the cards themselves carry the colour.
+const SectionHead = styled('h2', {
+  alignItems: 'baseline',
+  color: 'var(--kind)',
   display: 'flex',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.8rem',
+  fontWeight: 700,
   gap: '0.5rem',
-  marginBottom: '0.6rem',
-  '& h2': {
-    color: 'var(--kind)',
-    fontFamily: 'var(--cocoso-font-ui)',
-    fontSize: '0.8rem',
-    fontWeight: 700,
-    letterSpacing: '0.08em',
-    margin: 0,
-    textTransform: 'uppercase',
-  },
+  letterSpacing: '0.08em',
+  margin: '0 0 0.75rem',
+  textTransform: 'uppercase',
   '& .count': {
     color: 'var(--cocoso-mylla-soft)',
-    fontSize: '0.8rem',
+    fontWeight: 600,
+    letterSpacing: 0,
+    textTransform: 'none',
   },
-  '&::after': {
-    backgroundColor: 'var(--kind)',
-    content: '""',
-    flex: 1,
-    height: '1px',
-    opacity: 0.3,
-  },
-});
-
-const KindIcon = styled('span', {
-  alignItems: 'center',
-  backgroundColor: 'rgba(255, 253, 247, 0.94)',
-  borderRadius: '999px',
-  bottom: '0.6rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
-  display: 'inline-flex',
-  gap: '0.1rem',
-  padding: '0.2rem',
-  position: 'absolute',
-  right: '0.6rem',
-  zIndex: 1,
-  '& img': { height: '30px', width: '30px' },
-});
-
-const OnPicture = styled('div', {
-  left: '0.6rem',
-  position: 'absolute',
-  top: '0.6rem',
-  zIndex: 1,
 });
 
 const Cards = styled('div', {
   display: 'grid',
-  gap: '1rem',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 480px), 1fr))',
+  gap: '1.25rem',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
 });
 
-// Each card takes its first kind's colour: a band along the top and a
-// faint tint on the paper, so Äta, Handla and Bo read apart at a glance.
 const Card = styled(Link, {
-  backgroundColor: 'var(--kind-tint)',
+  backgroundColor: 'var(--cocoso-papper)',
   borderRadius: 'var(--cocoso-radius-kort, 12px)',
-  borderTop: '5px solid var(--kind)',
   boxShadow: 'var(--cocoso-skugga-kort, var(--cocoso-skugga))',
   color: 'inherit',
-  display: 'grid',
-  gridTemplateColumns: 'minmax(0, 1fr)',
+  display: 'flex',
+  flexDirection: 'column',
   overflow: 'hidden',
   textDecoration: 'none',
-  transition: 'transform 0.15s ease',
-  '&:hover': { transform: 'translateY(-2px)' },
+  transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+  '&:hover': {
+    boxShadow: '0 16px 28px -14px rgba(60, 40, 20, 0.55)',
+    transform: 'translateY(-3px)',
+  },
   '&:hover h3': { textDecoration: 'underline' },
-  '@media (min-width: 560px)': {
-    gridTemplateColumns: '38% minmax(0, 1fr)',
+});
+
+// The photo with the name over a dark fade, as on the place cards. Without
+// a photo, generated shapes on a gradient in the kind's colour.
+const Picture = styled('div', {
+  aspectRatio: '3 / 2',
+  background:
+    'linear-gradient(135deg, var(--kind-light), var(--kind)) center / cover',
+  overflow: 'hidden',
+  position: 'relative',
+  '& > img': {
+    display: 'block',
+    height: '100%',
+    inset: 0,
+    objectFit: 'cover',
+    position: 'absolute',
+    width: '100%',
+  },
+  '& > .shapes': {
+    height: '100%',
+    inset: 0,
+    mixBlendMode: 'multiply',
+    opacity: 0.55,
+    position: 'absolute',
+    width: '100%',
   },
 });
 
-const Picture = styled('div', {
-  aspectRatio: '16 / 9',
-  overflow: 'hidden',
-  position: 'relative',
-  '& > img, & > svg': {
-    display: 'block',
-    height: '100%',
-    objectFit: 'cover',
-    width: '100%',
+const Overlay = styled('div', {
+  background:
+    'linear-gradient(to top, rgba(42, 37, 32, 0.82), rgba(42, 37, 32, 0.35) 55%, rgba(42, 37, 32, 0))',
+  bottom: 0,
+  color: '#fff',
+  left: 0,
+  padding: '2.5rem 1rem 0.85rem',
+  position: 'absolute',
+  right: 0,
+  textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
+  '& h3': {
+    fontFamily: 'var(--cocoso-font-display)',
+    fontSize: '1.45rem',
+    fontVariationSettings: '"SOFT" 60',
+    fontWeight: 600,
+    lineHeight: 1.15,
+    margin: 0,
   },
-  '@media (min-width: 560px)': {
-    aspectRatio: 'auto',
-    minHeight: '100%',
-    '& > img, & > svg': { position: 'absolute', inset: 0 },
+  '& p': {
+    fontSize: '0.9rem',
+    margin: '0.15rem 0 0',
+    opacity: 0.92,
   },
+});
+
+const Badges = styled('div', {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.3rem',
+  justifyContent: 'space-between',
+  left: '0.7rem',
+  position: 'absolute',
+  right: '0.7rem',
+  top: '0.7rem',
+  '& .kinds': { display: 'flex', gap: '0.3rem' },
+});
+
+const KindChip = styled('span', {
+  backgroundColor: 'var(--k)',
+  borderRadius: '999px',
+  boxShadow: '0 1px 4px rgba(0, 0, 0, 0.2)',
+  color: '#fff',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '0.72rem',
+  fontWeight: 700,
+  letterSpacing: '0.06em',
+  padding: '0.3rem 0.65rem',
+  textTransform: 'uppercase',
 });
 
 const Body = styled('div', {
   display: 'flex',
+  flex: 1,
   flexDirection: 'column',
-  gap: '0.45rem',
-  padding: '0.9rem 1rem 1rem',
-  '& h3': {
-    fontFamily: 'var(--cocoso-font-display)',
-    fontSize: '1.3rem',
-    fontVariationSettings: '"SOFT" 60',
-    fontWeight: 600,
-    lineHeight: 1.2,
-    margin: 0,
-  },
-});
-
-const Kinds = styled('div', {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.3rem',
-  '& span': {
-    backgroundColor: 'var(--k)',
-    borderRadius: '999px',
-    color: '#fff',
-    fontSize: '0.7rem',
-    fontWeight: 700,
-    letterSpacing: '0.06em',
-    padding: '0.15rem 0.55rem',
-    textTransform: 'uppercase',
-  },
-});
-
-const Tagline = styled('p', {
-  fontSize: '0.95rem',
-  fontWeight: 600,
-  margin: 0,
+  gap: '0.55rem',
+  padding: '0.85rem 1rem 1rem',
 });
 
 const Excerpt = styled('p', {
@@ -220,47 +218,29 @@ const Excerpt = styled('p', {
   WebkitLineClamp: 3,
 });
 
-const Taste = styled('div', {
-  borderTop: '1px dashed var(--cocoso-colors-theme-200, rgba(0,0,0,0.15))',
+// A few lines from the menu on one line: "Lantbröd 65 kr · Rågbröd 70 kr".
+const Taste = styled('p', {
   fontSize: '0.85rem',
-  paddingTop: '0.45rem',
+  lineHeight: 1.5,
+  margin: 0,
   '& .title': {
-    color: 'var(--cocoso-mylla-soft)',
-    fontSize: '0.72rem',
+    color: 'var(--kind)',
     fontWeight: 700,
-    letterSpacing: '0.06em',
-    marginBottom: '0.2rem',
-    textTransform: 'uppercase',
+    marginRight: '0.4rem',
   },
-  '& ul': { listStyle: 'none', margin: 0, padding: 0 },
-  '& li': {
-    display: 'flex',
-    gap: '0.5rem',
-    lineHeight: 1.5,
-  },
-  '& .name': {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  '& .dots': {
-    borderBottom: '1px dotted var(--cocoso-mylla-soft)',
-    flex: 1,
-    marginBottom: '0.35rem',
-    minWidth: '1rem',
-    opacity: 0.5,
-  },
-  '& .price': { fontWeight: 600, whiteSpace: 'nowrap' },
+  '& .price': { color: 'var(--cocoso-mylla-soft)' },
+  '& .sep': { color: 'var(--cocoso-mylla-soft)', margin: '0 0.35rem' },
 });
 
 const Facts = styled('div', {
+  borderTop: '1px solid rgba(60, 40, 20, 0.1)',
   color: 'var(--cocoso-mylla-soft)',
   display: 'flex',
   flexWrap: 'wrap',
-  fontSize: '0.82rem',
-  gap: '0.2rem 0.9rem',
+  fontSize: '0.8rem',
+  gap: '0.25rem 0.9rem',
   marginTop: 'auto',
-  paddingTop: '0.3rem',
+  paddingTop: '0.6rem',
   '& span': { alignItems: 'center', display: 'inline-flex', gap: '0.3rem' },
 });
 
@@ -291,7 +271,7 @@ export const Status = styled('span', {
 
 const StatusLine = styled('div', {
   fontSize: '0.85rem',
-  minHeight: '1.3em',
+  '&:empty': { display: 'none' },
 });
 
 function OpenStatus({ business }: { business: any }) {
@@ -307,7 +287,6 @@ function OpenStatus({ business }: { business: any }) {
       <Status open>
         {t('businesses.openNow')} ·{' '}
         {t('businesses.closesAt', { time: formatTime(state.closes) })}
-        {today && ` · ${t('businesses.todayHours', { hours: today })}`}
       </Status>
     );
   }
@@ -347,6 +326,7 @@ function BusinessCard({
 }) {
   const { t } = useTranslation('common');
   const locations = useAtomValue(locationsAtom);
+  const kind = business.kinds?.[0];
   const image = business.images?.[0];
   const place = locations.find((l: any) => l._id === business.locationId);
   const prefix = place ? `/${place.slug}` : '';
@@ -356,10 +336,7 @@ function BusinessCard({
   const phone = business.contact?.phone;
 
   return (
-    <Card
-      style={kindVars(business.kinds?.[0])}
-      to={`${prefix}/businesses/${business._id}`}
-    >
+    <Card style={kindVars(kind)} to={`${prefix}/businesses/${business._id}`}>
       <Picture>
         {image ? (
           <img
@@ -368,58 +345,49 @@ function BusinessCard({
             src={getImageUrl(image, 'small') || image}
           />
         ) : (
-          <PlaceholderImage seed={business._id} />
+          <PlaceholderImage className="shapes" seed={business._id} />
         )}
-        {showPlace && place && (
-          <OnPicture>
+        <Badges>
+          <span className="kinds">
+            {business.kinds?.map((k: string) => (
+              <KindChip
+                key={k}
+                style={{ '--k': lookOf(k).ink } as React.CSSProperties}
+              >
+                {t(`businesses.kinds.${k}`)}
+              </KindChip>
+            ))}
+          </span>
+          {showPlace && place && (
             <PlaceTag
               name={place.name}
               onImage
               world={worldForLocation(locations, place._id)}
             />
-          </OnPicture>
-        )}
-        <KindIcon>
-          {business.kinds?.map((k: string) => (
-            <ThreeDIcon key={k} name={lookOf(k).icon} size={30} />
-          ))}
-        </KindIcon>
+          )}
+        </Badges>
+        <Overlay>
+          <h3>{business.label}</h3>
+          {business.tagline && <p>{business.tagline}</p>}
+        </Overlay>
       </Picture>
       <Body>
-        <Kinds>
-          {business.kinds?.map((k: string) => (
-            <span
-              key={k}
-              style={{ '--k': lookOf(k).ink } as React.CSSProperties}
-            >
-              {t(`businesses.kinds.${k}`)}
-            </span>
-          ))}
-        </Kinds>
-        <h3>{business.label}</h3>
-        {business.tagline && <Tagline>{business.tagline}</Tagline>}
-        {excerpt && <Excerpt>{excerpt}</Excerpt>}
         <StatusLine>
           <OpenStatus business={business} />
         </StatusLine>
+        {excerpt && <Excerpt>{excerpt}</Excerpt>}
         {taste.length > 0 && (
           <Taste>
-            <div className="title">
-              {t(`businesses.menu.${business.kinds?.[0] || 'eat'}`)}
-            </div>
-            <ul>
-              {taste.map((item: any, i: number) => (
-                <li key={`${item.name}-${i}`}>
-                  <span className="name">{item.name}</span>
-                  {item.price && (
-                    <>
-                      <span className="dots" />
-                      <span className="price">{item.price}</span>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <span className="title">
+              {t(`businesses.menu.${kind || 'eat'}`)}
+            </span>
+            {taste.map((item: any, i: number) => (
+              <React.Fragment key={`${item.name}-${i}`}>
+                {i > 0 && <span className="sep">·</span>}
+                {item.name}
+                {item.price && <span className="price"> {item.price}</span>}
+              </React.Fragment>
+            ))}
           </Taste>
         )}
         {(address || phone || business.hoursNote) && (
@@ -479,16 +447,12 @@ export default function BusinessesHybrid({
       <Page>
         <Picker aria-label={t('locations.switcher.choose')}>
           <LocationCards
-            all={{
-              count: all.length,
-              name: t('locations.switcher.whole'),
-              to: '/businesses',
-            }}
+            all={{ name: t('locations.switcher.whole'), to: '/businesses' }}
             compact
-            counts={Object.fromEntries(
-              locations.map((l: any) => [l._id, inPlace(l._id).length])
-            )}
             currentId={current?._id ?? null}
+            emptyIds={locations
+              .filter((l: any) => inPlace(l._id).length === 0)
+              .map((l: any) => l._id)}
             locations={locations}
             section="businesses"
           />
@@ -499,8 +463,7 @@ export default function BusinessesHybrid({
         {sections.map(({ kind, items }) => (
           <Section key={kind} style={kindVars(kind)}>
             <SectionHead>
-              <ThreeDIcon name={lookOf(kind).icon} size={22} />
-              <h2>{t(`businesses.kinds.${kind}`)}</h2>
+              {t(`businesses.kinds.${kind}`)}
               <span className="count">
                 {t('businesses.count', { count: items.length })}
               </span>
