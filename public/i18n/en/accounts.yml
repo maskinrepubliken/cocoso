@@ -163,6 +163,7 @@ emailLogin:
     lead: There is no account for <strong>{{email}}</strong> yet. Do you want to create one?
     factEmail: You log in with this email address – no password.
     factProfile: Your name and picture only show if you add them yourself.
+    factOrganizer: Before you can post your own events, an administrator has to approve you as an organizer.
     factDelete: You can delete the account whenever you like from your profile.
     terms: I have read and accept
     needTerms: Tick the box to accept the terms and create the account.
@@ -199,6 +200,6 @@ welcome:
       text: See what's on in the calendar and sign up for events.
     organizer:
       title: Want to post your own events?
-      text: Ask an administrator to make you an organizer, for example via Feedback at the bottom of the page.
+      text: Before you can post your own events, an administrator has to approve you as an organizer. Get in touch via Feedback at the bottom of the page.
   toProfile: Fill in your profile
   toHome: Go to the home page

@@ -37,8 +37,22 @@ const STRINGS = {
       button: 'Skapa konto',
       ignore:
         'Har du inte försökt skapa ett konto? Då kan du bortse från det här mejlet — inget konto skapas utan koden.',
-      text: (site, code, url) =>
-        `Din kod för att skapa konto på ${site}: ${code}\n\nEller skapa kontot direkt: ${url}\n\nKoden och länken gäller i 15 minuter och fungerar en gång. Har du inte försökt skapa ett konto? Då kan du bortse från det här mejlet.`,
+      // The box that says plainly what is about to happen
+      notice: {
+        heading: 'Ett nytt konto skapas',
+        intro: (email, site) =>
+          `Det finns inget konto för ${email} på ${site} än. Om du fortsätter skapas ett.`,
+        points: [
+          'Du loggar in med den här e-postadressen – inget lösenord.',
+          'Du blir deltagare på sidan. Namn och bild syns bara om du själv fyller i dem.',
+          'Innan du kan lägga upp egna evenemang måste en administratör godkänna dig som arrangör.',
+          'Du kan ta bort kontot när du vill under din profil.',
+        ],
+        confirm:
+          'Inget skapas förrän du har bekräftat kontot och godkänt användarvillkoren på sidan.',
+      },
+      text: (site, code, url, notice) =>
+        `${notice}\n\nDin kod för att skapa konto på ${site}: ${code}\n\nEller skapa kontot direkt: ${url}\n\nKoden och länken gäller i 15 minuter och fungerar en gång. Har du inte försökt skapa ett konto? Då kan du bortse från det här mejlet.`,
     },
   },
   en: {
@@ -61,8 +75,21 @@ const STRINGS = {
       button: 'Create account',
       ignore:
         "Didn't try to create an account? You can ignore this email — no account is made without the code.",
-      text: (site, code, url) =>
-        `Your code to create an account on ${site}: ${code}\n\nOr create it directly: ${url}\n\nThe code and link are valid for 15 minutes and work once. Didn't try to create an account? You can ignore this email.`,
+      notice: {
+        heading: 'A new account will be created',
+        intro: (email, site) =>
+          `There is no account for ${email} on ${site} yet. If you go on, one will be created.`,
+        points: [
+          'You log in with this email address – no password.',
+          'You become a participant on the site. Your name and picture only show if you add them yourself.',
+          'Before you can post your own events, an administrator has to approve you as an organizer.',
+          'You can delete the account whenever you like from your profile.',
+        ],
+        confirm:
+          'Nothing is created until you have confirmed the account and accepted the terms on the site.',
+      },
+      text: (site, code, url, notice) =>
+        `${notice}\n\nYour code to create an account on ${site}: ${code}\n\nOr create it directly: ${url}\n\nThe code and link are valid for 15 minutes and work once. Didn't try to create an account? You can ignore this email.`,
     },
   },
 };
@@ -98,6 +125,10 @@ function themeColors(theme) {
 }
 
 const MYLLA = '#22302a';
+// Tegel, the site's warm accent, for the new-account notice
+const TEGEL = '#c8613a';
+const TEGEL_600 = '#a84e2d';
+const TEGEL_TINT = '#fbf1ea';
 const MYLLA_SOFT = '#5c6b60';
 const LINJE = '#d5dfc2';
 const DISPLAY = "Fraunces, Georgia, 'Times New Roman', serif";
@@ -121,9 +152,43 @@ function codeBoxes(code, color) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;border-collapse:separate;"><tr>${cells}</tr></table>`;
 }
 
-// `isNew`: the address has no account yet, so the mail confirms it and the
-// code creates the account (see findOrCreateUser in emailLogin.js).
-export function loginEmail({ lang, siteName, theme, code, url, isNew }) {
+function noticeBox(notice, email, siteName) {
+  const points = notice.points
+    .map(
+      (point) =>
+        `<tr><td valign="top" style="width:16px;padding:0 0 6px;font-family:${UI};font-size:15px;line-height:1.45;color:${TEGEL};">&bull;</td><td style="padding:0 0 6px;font-family:${UI};font-size:15px;line-height:1.45;color:${MYLLA};">${escapeHtml(
+          point
+        )}</td></tr>`
+    )
+    .join('');
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+          <tr><td style="background:${TEGEL_TINT};border-left:4px solid ${TEGEL};border-radius:10px;padding:16px 18px;text-align:left;">
+            <p style="margin:0 0 6px;font-family:${UI};font-size:16px;font-weight:700;line-height:1.3;color:${TEGEL_600};">${escapeHtml(
+    notice.heading
+  )}</p>
+            <p style="margin:0 0 10px;font-family:${UI};font-size:15px;line-height:1.45;color:${MYLLA};">${escapeHtml(
+    notice.intro(email, siteName)
+  )}</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">${points}</table>
+            <p style="margin:6px 0 0;font-family:${UI};font-size:15px;font-weight:700;line-height:1.45;color:${MYLLA};">${escapeHtml(
+    notice.confirm
+  )}</p>
+          </td></tr>
+        </table>`;
+}
+
+const noticeText = (notice, email, siteName) =>
+  [
+    notice.heading.toUpperCase(),
+    notice.intro(email, siteName),
+    ...notice.points.map((point) => `- ${point}`),
+    notice.confirm,
+  ].join('\n');
+
+// `isNew`: the address has no account yet. The mail says so plainly, and
+// the code then leads to the confirm step (ConfirmSignup) before anything
+// is created — see the emailLogin login handler.
+export function loginEmail({ lang, siteName, theme, code, url, isNew, email }) {
   const base = STRINGS[lang] || STRINGS.sv;
   const s = isNew ? { ...base, ...base.signup } : base;
   const c = themeColors(theme);
@@ -176,6 +241,7 @@ export function loginEmail({ lang, siteName, theme, code, url, isNew }) {
     s.lead(siteName)
   )}</p>
 
+        ${isNew && s.notice ? noticeBox(s.notice, email, siteName) : ''}
         ${codeBoxes(code, MYLLA)}
 
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0;">
@@ -206,6 +272,11 @@ export function loginEmail({ lang, siteName, theme, code, url, isNew }) {
   return {
     subject: s.subject(code, siteName),
     html,
-    text: s.text(siteName, code, url),
+    text: s.text(
+      siteName,
+      code,
+      url,
+      isNew && s.notice ? noticeText(s.notice, email, siteName) : ''
+    ),
   };
 }

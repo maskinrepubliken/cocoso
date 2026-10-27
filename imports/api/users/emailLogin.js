@@ -61,6 +61,7 @@ async function sendLoginEmail({ email, code, token, lang, isNew }) {
     code,
     url,
     isNew,
+    email,
   });
 
   await deliverEmail({ from, to: email, subject, html, text });

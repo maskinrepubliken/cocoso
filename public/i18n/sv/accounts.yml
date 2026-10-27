@@ -163,6 +163,7 @@ emailLogin:
     lead: Det finns inget konto för <strong>{{email}}</strong> än. Vill du skapa ett?
     factEmail: Du loggar in med den här e-postadressen – inget lösenord.
     factProfile: Ditt namn och din bild visas bara om du själv fyller i dem.
+    factOrganizer: Innan du kan lägga upp egna evenemang måste en administratör godkänna dig som arrangör.
     factDelete: Du kan ta bort kontot när du vill under din profil.
     terms: Jag har läst och godkänner
     needTerms: Kryssa i att du godkänner villkoren för att skapa kontot.
@@ -199,6 +200,6 @@ welcome:
       text: Se vad som händer i kalendern och anmäl dig till evenemang.
     organizer:
       title: Vill du lägga upp egna evenemang?
-      text: Be en administratör att göra dig till arrangör, till exempel via Ge feedback längst ner på sidan.
+      text: Innan du kan lägga upp egna evenemang måste en administratör godkänna dig som arrangör. Hör av dig via Ge feedback längst ner på sidan.
   toProfile: Fyll i din profil
   toHome: Till startsidan

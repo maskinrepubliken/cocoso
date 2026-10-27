@@ -77,6 +77,7 @@ export default function ConfirmSignup({
         <ul className="auth-facts">
           <li>{t('emailLogin.confirm.factEmail')}</li>
           <li>{t('emailLogin.confirm.factProfile')}</li>
+          <li>{t('emailLogin.confirm.factOrganizer')}</li>
           <li>{t('emailLogin.confirm.factDelete')}</li>
         </ul>
 
