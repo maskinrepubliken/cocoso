@@ -7,8 +7,8 @@ export interface AuthPanelProps {
   lead?: React.ReactNode;
   // A lucide icon shown in a round badge above the title
   icon?: React.ReactNode;
-  // Tints the badge red, for "this didn't work"
-  tone?: 'default' | 'error';
+  // Tints the badge: red for "this didn't work", orange for "take note"
+  tone?: 'default' | 'error' | 'warning';
   children?: React.ReactNode;
   // Small print at the bottom of the sheet (terms, "didn't get it?")
   footer?: React.ReactNode;

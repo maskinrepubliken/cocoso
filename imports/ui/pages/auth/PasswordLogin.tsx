@@ -37,8 +37,8 @@ export default function PasswordLogin({
         err?.error === 'password-login-disabled'
           ? t('emailLogin.errors.passwordDisabled')
           : err?.error === 'too-many-requests'
-            ? t('emailLogin.errors.tooMany')
-            : t('emailLogin.password.wrong')
+          ? t('emailLogin.errors.tooMany')
+          : t('emailLogin.password.wrong')
       );
       setBusy(false);
     }
@@ -47,8 +47,11 @@ export default function PasswordLogin({
   return (
     <AuthPanel
       icon={<KeyRound />}
+      tone="warning"
       title={t('emailLogin.password.title')}
-      lead={t('emailLogin.password.lead')}
+      lead={
+        <span className="auth-notice">{t('emailLogin.password.lead')}</span>
+      }
       links={links}
     >
       <form

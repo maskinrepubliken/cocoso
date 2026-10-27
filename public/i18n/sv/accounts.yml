@@ -159,7 +159,7 @@ emailLogin:
     newCode: Få en ny kod
   password:
     title: Logga in med lösenord
-    lead: För administratörer, om inloggningen med e-post inte fungerar.
+    lead: Endast möjligt för administratörer.
     missing: Fyll i både användarnamn och lösenord.
     wrong: Fel användarnamn eller lösenord.
   errors:

@@ -4603,6 +4603,22 @@ body {
   color: #b42318;
 }
 
+.auth-badge--warning {
+  background: var(--cocoso-tegel-100);
+  color: var(--cocoso-tegel-600);
+}
+
+/* A lead that must not be missed, e.g. "only for administrators" */
+.auth-notice {
+  background: var(--cocoso-tegel-100);
+  border-radius: var(--cocoso-radius-falt);
+  color: var(--cocoso-tegel-600);
+  display: inline-block;
+  font-family: var(--cocoso-font-ui);
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+}
+
 .auth-title {
   color: var(--cocoso-mylla);
   font-family: var(--cocoso-font-display);
@@ -4807,6 +4823,12 @@ body {
   color: var(--cocoso-mylla-soft);
   font-size: 0.8125rem;
   font-weight: 400;
+}
+
+/* The quiet link sits on its own line under the main one */
+.auth-links .auth-panel-link--quiet {
+  flex-basis: 100%;
+  text-align: center;
 }
 
 /* === Start page: the places ===

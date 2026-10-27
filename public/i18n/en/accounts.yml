@@ -159,7 +159,7 @@ emailLogin:
     newCode: Get a new code
   password:
     title: Log in with password
-    lead: For administrators, in case the email login isn't working.
+    lead: Only possible for administrators.
     missing: Fill in both username and password.
     wrong: Wrong username or password.
   errors:
