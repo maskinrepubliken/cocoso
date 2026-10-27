@@ -7261,6 +7261,10 @@ body {
   line-height: 0;
 }
 
+.home-hero.is-logo .home-hero-tagline {
+  margin-top: 24px;
+}
+
 .home-hero-logo picture,
 .home-hero-logo img {
   display: block;
