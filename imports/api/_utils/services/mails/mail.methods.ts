@@ -2,14 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
 import { getSite } from '../../../site/site';
-import {
-  isValidEmail,
-  getEmailBody,
-  extractEmailAddress,
-  EmailTemplate,
-} from './mail.helpers';
-import { getWelcomeEmailBody } from './templates.mails';
+import { isValidEmail, extractEmailAddress } from './mail.helpers';
 import { deliverEmail, getSmtpSettings } from './smtp';
+import { roleEmail } from './roleEmails';
 import type { MeteorUser } from '/imports/ui/types';
 
 // Server-only helpers, not Meteor methods: as methods anyone could call them
@@ -72,47 +67,39 @@ async function sendEmail(
   }
 }
 
-async function sendNewContributorEmail(userId: string): Promise<void> {
+// The email for a new role, in the site's email design (roleEmails.js)
+// with the site's own texts from Admin → E-post.
+async function sendRoleEmail(
+  userId: string,
+  role: 'contributor' | 'admin'
+): Promise<void> {
   const user = (await Meteor.users.findOneAsync(userId)) as
-    | MeteorUser
+    | (MeteorUser & { firstName?: string })
     | undefined;
-  const site = await getSite();
-  const welcomeText = site && site.emails?.[1];
-
-  const emailBody = getWelcomeEmailBody(
-    welcomeText?.appeal,
-    site as any,
-    user?.username,
-    welcomeText?.body
-  );
-
-  try {
-    await sendEmail(user?.emails?.[0].address, welcomeText?.subject, emailBody);
-  } catch (error) {
-    throw new Meteor.Error(error as string);
+  const to = user?.emails?.[0]?.address;
+  if (!to) {
+    return;
   }
+  const site = (await getSite()) as any;
+  const siteName = site?.settings?.name || '';
+  const { subject, html, text } = roleEmail({
+    role,
+    template: site?.emails?.[role === 'admin' ? 2 : 1],
+    name: user?.firstName || user?.username || '',
+    siteName,
+    theme: site?.theme,
+  });
+
+  const fromEmail = getSmtpSettings()?.fromEmail || '';
+  const from = siteName
+    ? `${siteName} <${extractEmailAddress(fromEmail)}>`
+    : fromEmail;
+  await deliverEmail({ from, to, subject, html, text });
 }
 
-async function sendNewAdminEmail(userId: string): Promise<void> {
-  const user = (await Meteor.users.findOneAsync(userId)) as
-    | MeteorUser
-    | undefined;
-  const site = await getSite();
-  const email = site && site.emails?.[2];
+const sendNewContributorEmail = (userId: string) =>
+  sendRoleEmail(userId, 'contributor');
 
-  try {
-    await sendEmail(
-      user?.emails?.[0].address,
-      email?.subject,
-      getEmailBody(email as EmailTemplate, user?.username || '')
-    );
-  } catch (error) {
-    throw new Meteor.Error(error as string);
-  }
-}
+const sendNewAdminEmail = (userId: string) => sendRoleEmail(userId, 'admin');
 
-export {
-  sendEmail,
-  sendNewContributorEmail,
-  sendNewAdminEmail,
-};
+export { sendEmail, sendNewContributorEmail, sendNewAdminEmail };

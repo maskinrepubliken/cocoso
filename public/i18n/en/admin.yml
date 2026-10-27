@@ -116,7 +116,7 @@ emails:
     appeal:
       label: Appeal
       holder: Dear
-      addon: '@username'
+      addon: + first name
     body:
       label: Body
     image:

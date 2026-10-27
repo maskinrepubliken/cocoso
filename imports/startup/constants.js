@@ -51,24 +51,27 @@ const defaultMainColor = {
   },
 };
 
+// Texts for Admin → E-post (site.emails). [0] is the old welcome email,
+// no longer sent; [1] and [2] go out when someone is verified as an
+// organizer or made admin, in the design of roleEmails.js.
 const defaultEmails = [
   {
     key: 'participant',
-    subject: 'Welcome!',
-    appeal: 'Dear',
-    body: 'Welcome! As new part of our community, you may attend our groups and public events. Look forward to hanging out with you!',
+    subject: 'Välkommen!',
+    appeal: 'Hej',
+    body: 'Välkommen! Ditt konto är skapat.',
   },
   {
     key: 'cocreator',
-    subject: 'You are now verified',
-    appeal: 'Dear',
-    body: 'You are now verified in our community. This means that you are privileged to create public activities & groups, publish your works, and book resources in our community. \nLook forward!',
+    subject: 'Du är nu verifierad arrangör',
+    appeal: 'Hej',
+    body: 'En administratör har verifierat dig som arrangör. Det betyder att du nu kan lägga upp egna evenemang i kalendern.\nLogga in som vanligt med din e-postadress, så kan du börja direkt.',
   },
   {
     key: 'admin',
-    subject: 'You are now an admin',
-    appeal: 'Dear',
-    body: 'You are now registered as an admin in our space. This means that in addition to the privileges of being a contributor; you may create new pages and configure a bunch of options in our shared system. Please use your powers responsible, and enjoy. \nLook forward!',
+    subject: 'Du är nu administratör',
+    appeal: 'Hej',
+    body: 'Du har fått rollen administratör. Utöver att lägga upp evenemang kan du nu hantera sidans innehåll, inställningar och medlemmar – till exempel verifiera nya arrangörer.\nAnvänd dina rättigheter varsamt.',
   },
 ];
 

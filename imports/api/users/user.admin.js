@@ -73,7 +73,10 @@ Meteor.methods({
           },
         },
       });
-      await sendNewAdminEmail(memberId);
+      // The role is changed even if the email can't go out
+      sendNewAdminEmail(memberId).catch((error) => {
+        console.error('[roles] could not send the role email', error);
+      });
     } catch (error) {
       throw new Meteor.Error(error, 'Did not work! :/');
     }
@@ -110,7 +113,10 @@ Meteor.methods({
           },
         },
       });
-      await sendNewContributorEmail(memberId);
+      // The role is changed even if the email can't go out
+      sendNewContributorEmail(memberId).catch((error) => {
+        console.error('[roles] could not send the role email', error);
+      });
     } catch (error) {
       throw new Meteor.Error(error, 'Did not work! :/');
     }

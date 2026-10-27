@@ -116,7 +116,7 @@ emails:
     appeal:
       label: Tilltal
       holder: Hej
-      addon: '@username'
+      addon: + förnamn
     body:
       label: Beskrivning
     image:
