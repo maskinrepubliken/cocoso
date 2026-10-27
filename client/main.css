@@ -2618,20 +2618,8 @@ body {
   font-size: 14px;
 }
 
-.site-brand-loc .place-tag-mark,
-.site-loc-item .place-tag-mark {
-  width: 22px;
-  height: 22px;
-  font-size: 11px;
-}
-
 .site-loc-item .place-tag {
   padding-left: 0;
-}
-
-/* In the pill itself the name alone is enough; the disc stays in the menu */
-.site-brand-loc .place-tag-mark {
-  display: none;
 }
 
 .site-brand-loc .place-tag {
@@ -3953,13 +3941,6 @@ body {
   mix-blend-mode: multiply;
 }
 
-.location-card-stamp {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(255, 253, 247, 0.92);
-}
-
 .location-card-name {
   position: absolute;
   left: 0;
@@ -4483,7 +4464,7 @@ body {
   align-items: center;
   gap: 6px;
   height: 26px;
-  padding: 0 10px 0 4px;
+  padding: 0 10px;
   border-radius: 999px;
   background: var(--cocoso-papper);
   box-shadow: var(--cocoso-skugga);
@@ -4501,19 +4482,9 @@ body {
 
 /* On a card's own paper: the same tag, no pill behind it */
 .place-tag.bare {
-  padding-right: 0;
+  padding: 0;
   background: none;
   box-shadow: none;
-}
-
-.place-tag-mark {
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
 }
 
 /* Keyboard focus on the header's menu buttons (place, info, account) */
@@ -4855,8 +4826,7 @@ body {
 
 /* === The place cards as a picker ===
    At the top of a listing (Äta/handla/bo) the same cards choose the place:
-   lower, with a count in the corner, the chosen one ringed and the places
-   with nothing dimmed. */
+   lower, the chosen one ringed and the places with nothing dimmed. */
 .location-cards.is-compact {
   justify-content: safe center;
   padding-top: 4px;
@@ -4873,28 +4843,6 @@ body {
   font-size: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.location-cards.is-compact .location-card-stamp {
-  top: 8px;
-  right: 8px;
-}
-
-.location-card-count {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 1;
-  min-width: 22px;
-  padding: 3px 7px;
-  border-radius: 999px;
-  background: rgba(255, 253, 247, 0.92);
-  color: var(--cocoso-colors-theme-800);
-  font-family: var(--cocoso-font-ui);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-  text-align: center;
 }
 
 .location-card.is-current::after {

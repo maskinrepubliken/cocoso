@@ -10,7 +10,8 @@ export interface PlaceTagProps {
   className?: string;
 }
 
-// A place's name as a small pill with its stamp initial: the orttag.
+// A place's name as a small pill in the place's ink: the orttag. The name
+// is enough; no initial or stamp beside it.
 export default function PlaceTag({
   name,
   world,
@@ -18,15 +19,11 @@ export default function PlaceTag({
   className = '',
 }: PlaceTagProps) {
   const ink = world?.ink || 'var(--cocoso-colors-theme-700)';
-  const tint = world?.tint || 'var(--cocoso-colors-theme-100)';
   return (
     <span
       className={`place-tag ${onImage ? 'on-image' : ''} ${className}`}
       style={{ color: ink }}
     >
-      <span className="place-tag-mark" style={{ background: tint, color: ink }}>
-        {name.trim().charAt(0).toUpperCase()}
-      </span>
       {name}
     </span>
   );
