@@ -4853,6 +4853,79 @@ body {
   );
 }
 
+/* === The place cards as a picker ===
+   At the top of a listing (Äta/handla/bo) the same cards choose the place:
+   lower, with a count in the corner, the chosen one ringed and the places
+   with nothing dimmed. */
+.location-cards.is-compact {
+  justify-content: safe center;
+  padding-top: 4px;
+}
+
+.location-cards.is-compact .location-card {
+  width: 156px;
+  height: 84px;
+}
+
+.location-cards.is-compact .location-card-name {
+  padding: 22px 10px 8px;
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.location-cards.is-compact .location-card-stamp {
+  top: 8px;
+  right: 8px;
+}
+
+.location-card-count {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  min-width: 22px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.92);
+  color: var(--cocoso-colors-theme-800);
+  font-family: var(--cocoso-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+}
+
+.location-card.is-current::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 3px solid var(--cocoso-colors-theme-800);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.location-card.is-empty:not(.is-current) {
+  opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+  .location-cards.is-compact {
+    justify-content: flex-start;
+  }
+
+  .location-cards.is-compact .location-card {
+    width: clamp(132px, 38vw, 150px);
+    height: 76px;
+  }
+
+  .location-cards.is-compact .location-card-name {
+    font-size: 15px;
+  }
+}
+
 /* === Start page: the site's sections ===
    One paper card per section of the menu, with its 3D icon, the menu's
    label and a line about what it is for. */

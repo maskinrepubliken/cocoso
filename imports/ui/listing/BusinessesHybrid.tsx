@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
-import LandmarkIcon from 'lucide-react/dist/esm/icons/landmark';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 
@@ -13,6 +12,7 @@ import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
+import { LocationCards } from '/imports/ui/pages/locations/LocationsGrid';
 import {
   formatDay,
   formatTime,
@@ -40,61 +40,9 @@ const Page = styled('div', {
   width: '100%',
 });
 
+// The start page's place cards, smaller, as the picker.
 const Picker = styled('nav', {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.5rem',
-  justifyContent: 'center',
-  margin: '0 auto 1.25rem',
-  maxWidth: '900px',
-});
-
-const Choice = styled(Link, {
-  alignItems: 'center',
-  backgroundColor: 'var(--cocoso-papper)',
-  border: '2px solid transparent',
-  borderRadius: '999px',
-  boxShadow: 'var(--cocoso-skugga)',
-  color: 'var(--ink)',
-  display: 'inline-flex',
-  fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '1rem',
-  fontWeight: 700,
-  gap: '0.5rem',
-  minHeight: '44px',
-  padding: '0.3rem 0.9rem 0.3rem 0.35rem',
-  textDecoration: 'none',
-  transition: 'transform 0.15s ease, border-color 0.15s ease',
-  '&:hover': { borderColor: 'var(--tint)', transform: 'translateY(-1px)' },
-  '& .mark': {
-    alignItems: 'center',
-    backgroundColor: 'var(--tint)',
-    borderRadius: '999px',
-    color: 'var(--ink)',
-    display: 'inline-flex',
-    fontSize: '0.8rem',
-    height: '32px',
-    justifyContent: 'center',
-    width: '32px',
-  },
-  '& .count': {
-    color: 'var(--cocoso-mylla-soft)',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-  },
-  variants: {
-    current: {
-      true: {
-        backgroundColor: 'var(--ink)',
-        color: 'var(--cocoso-papper)',
-        '& .mark': { backgroundColor: 'var(--cocoso-papper)' },
-        '& .count': { color: 'var(--cocoso-papper)', opacity: 0.8 },
-      },
-    },
-    empty: {
-      true: { opacity: 0.6 },
-    },
-  },
+  marginBottom: '1.25rem',
 });
 
 const Notice = styled('p', {
@@ -464,48 +412,20 @@ export default function BusinessesHybrid({
 
       <Page>
         <Picker aria-label={t('locations.switcher.choose')}>
-          <Choice
-            current={!current}
-            preventScrollReset
-            style={
-              {
-                '--ink': 'var(--cocoso-colors-theme-800)',
-                '--tint': 'var(--cocoso-colors-theme-100)',
-              } as React.CSSProperties
-            }
-            to="/businesses"
-          >
-            <span className="mark">
-              <LandmarkIcon width={16} height={16} />
-            </span>
-            {t('locations.switcher.whole')}
-            <span className="count">{all.length}</span>
-          </Choice>
-          {locations.map((location: any) => {
-            const world = worldForLocation(locations, location._id);
-            const count = inPlace(location._id).length;
-            return (
-              <Choice
-                key={location._id}
-                current={current?._id === location._id}
-                empty={count === 0}
-                preventScrollReset
-                style={
-                  {
-                    '--ink': world?.ink,
-                    '--tint': world?.tint,
-                  } as React.CSSProperties
-                }
-                to={`/${location.slug}/businesses`}
-              >
-                <span className="mark">
-                  {location.name.trim().charAt(0).toUpperCase()}
-                </span>
-                {location.name}
-                <span className="count">{count}</span>
-              </Choice>
-            );
-          })}
+          <LocationCards
+            all={{
+              count: all.length,
+              name: t('locations.switcher.whole'),
+              to: '/businesses',
+            }}
+            compact
+            counts={Object.fromEntries(
+              locations.map((l: any) => [l._id, inPlace(l._id).length])
+            )}
+            currentId={current?._id ?? null}
+            locations={locations}
+            section="businesses"
+          />
         </Picker>
 
         {hasExamples && <Notice>{t('businesses.example')}</Notice>}
