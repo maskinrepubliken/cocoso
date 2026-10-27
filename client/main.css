@@ -3905,13 +3905,17 @@ body {
   text-transform: uppercase;
 }
 
+/* The row scrolls sideways, and a scrolling box clips what sticks out of
+   it, so it gets room around the cards for their hover lift and shadow,
+   taken back with negative margins so the row sits where it did. */
 .location-cards {
   display: flex;
   gap: 12px;
-  max-width: 100%;
+  max-width: calc(100% + 32px);
   overflow-x: auto;
   scrollbar-width: none;
-  padding-bottom: 4px;
+  margin: -8px -16px -32px;
+  padding: 8px 16px 32px;
 }
 
 .location-cards::-webkit-scrollbar {
@@ -4032,8 +4036,8 @@ body {
   /* The places scroll sideways; the third card peeks in from the edge so
      the row reads as a row. */
   .location-cards {
-    margin: 0 calc(-1 * var(--cocoso-gutter));
-    padding: 0 var(--cocoso-gutter) 4px;
+    margin: -8px calc(-1 * var(--cocoso-gutter)) -32px;
+    padding: 8px var(--cocoso-gutter) 32px;
     scroll-snap-type: x proximity;
     scroll-padding: 0 16px;
   }
@@ -4970,7 +4974,6 @@ body {
    lower, the chosen one ringed and the places with nothing dimmed. */
 .location-cards.is-compact {
   justify-content: safe center;
-  padding-top: 4px;
 }
 
 /* The name sits in the flow here, so a card grows to fit a long name
