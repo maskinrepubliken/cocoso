@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
@@ -29,6 +30,7 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
   const site = useAtomValue(siteAtom) || siteDoc;
   const season = useAtomValue(seasonAtom);
   const [tc] = useTranslation('common');
+  const [searchParams] = useSearchParams();
 
   const settings = site?.settings;
   if (!settings?.name) {
@@ -37,6 +39,27 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
 
   const icons = seasonIcons[season] || seasonIcons.host;
 
+  // ?hem=logotyp shows the colourful word logo in place of the title and
+  // the floating icons, so the two versions can be compared side by side.
+  if (searchParams.get('hem') === 'logotyp') {
+    return (
+      <section className="home-hero vav is-logo">
+        <div className="home-hero-inner">
+          <div className="home-hero-text">
+            <h1 className="home-hero-logo">
+              <img
+                src="/images/tranemo-evenemangskalender.svg"
+                alt={settings.name}
+              />
+            </h1>
+            <p className="home-hero-tagline">
+              {settings.tagline || tc('home.hero.tagline')}
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="home-hero vav">

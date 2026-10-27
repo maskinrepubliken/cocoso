@@ -5649,7 +5649,7 @@ body {
 
 .site-footer-text {
   min-width: 0;
-  max-width: 640px;
+  max-width: 540px;
 }
 
 .site-footer-name {
@@ -7241,4 +7241,22 @@ body {
 
 .where-fields {
   padding: 4px 0 12px;
+}
+
+/* Start page hero, logo version (?hem=logotyp): the word logo in place
+   of the title and the icon cluster */
+.home-hero.is-logo .home-hero-text {
+  flex-basis: 100%;
+  max-width: 540px;
+}
+
+.home-hero-logo {
+  margin: 0;
+  line-height: 0;
+}
+
+.home-hero-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
