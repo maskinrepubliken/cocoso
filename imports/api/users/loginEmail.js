@@ -43,8 +43,7 @@ const STRINGS = {
         intro: (email, site) =>
           `Det finns inget konto för ${email} på ${site} än. Om du fortsätter skapas ett.`,
         points: [
-          'Du loggar in med den här e-postadressen – inget lösenord.',
-          'Du blir deltagare på sidan. Namn och bild syns bara om du själv fyller i dem.',
+          'Ditt namn och bild syns bara om du själv fyller i dem.',
           'Innan du kan lägga upp egna evenemang måste en administratör godkänna dig som arrangör.',
           'Du kan ta bort kontot när du vill under din profil.',
         ],
@@ -80,8 +79,7 @@ const STRINGS = {
         intro: (email, site) =>
           `There is no account for ${email} on ${site} yet. If you go on, one will be created.`,
         points: [
-          'You log in with this email address – no password.',
-          'You become a participant on the site. Your name and picture only show if you add them yourself.',
+          'Your name and picture only show if you add them yourself.',
           'Before you can post your own events, an administrator has to approve you as an organizer.',
           'You can delete the account whenever you like from your profile.',
         ],
@@ -125,10 +123,6 @@ function themeColors(theme) {
 }
 
 const MYLLA = '#22302a';
-// Tegel, the site's warm accent, for the new-account notice
-const TEGEL = '#c8613a';
-const TEGEL_600 = '#a84e2d';
-const TEGEL_TINT = '#fbf1ea';
 const MYLLA_SOFT = '#5c6b60';
 const LINJE = '#d5dfc2';
 const DISPLAY = "Fraunces, Georgia, 'Times New Roman', serif";
@@ -152,20 +146,26 @@ function codeBoxes(code, color) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;border-collapse:separate;"><tr>${cells}</tr></table>`;
 }
 
-function noticeBox(notice, email, siteName) {
+// In the site's green, like the confirm screen's list — information, not
+// a warning
+function noticeBox(notice, email, siteName, c) {
   const points = notice.points
     .map(
       (point) =>
-        `<tr><td valign="top" style="width:16px;padding:0 0 6px;font-family:${UI};font-size:15px;line-height:1.45;color:${TEGEL};">&bull;</td><td style="padding:0 0 6px;font-family:${UI};font-size:15px;line-height:1.45;color:${MYLLA};">${escapeHtml(
+        `<tr><td valign="top" style="width:16px;padding:0 0 6px;font-family:${UI};font-size:15px;line-height:1.45;color:${
+          c.button
+        };">&bull;</td><td style="padding:0 0 6px;font-family:${UI};font-size:15px;line-height:1.45;color:${MYLLA};">${escapeHtml(
           point
         )}</td></tr>`
     )
     .join('');
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
-          <tr><td style="background:${TEGEL_TINT};border-left:4px solid ${TEGEL};border-radius:10px;padding:16px 18px;text-align:left;">
-            <p style="margin:0 0 6px;font-family:${UI};font-size:16px;font-weight:700;line-height:1.3;color:${TEGEL_600};">${escapeHtml(
-    notice.heading
-  )}</p>
+          <tr><td style="background:${c.tint};border-left:4px solid ${
+    c.button
+  };border-radius:10px;padding:16px 18px;text-align:left;">
+            <p style="margin:0 0 6px;font-family:${UI};font-size:16px;font-weight:700;line-height:1.3;color:${
+    c.strong
+  };">${escapeHtml(notice.heading)}</p>
             <p style="margin:0 0 10px;font-family:${UI};font-size:15px;line-height:1.45;color:${MYLLA};">${escapeHtml(
     notice.intro(email, siteName)
   )}</p>
@@ -241,7 +241,7 @@ export function loginEmail({ lang, siteName, theme, code, url, isNew, email }) {
     s.lead(siteName)
   )}</p>
 
-        ${isNew && s.notice ? noticeBox(s.notice, email, siteName) : ''}
+        ${isNew && s.notice ? noticeBox(s.notice, email, siteName, c) : ''}
         ${codeBoxes(code, MYLLA)}
 
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0;">
