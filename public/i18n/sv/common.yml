@@ -727,7 +727,6 @@ businesses:
     eat: Meny
     shop: Sortiment
     stay: Rum och priser
-  example: Exempel. Öppettider, meny och priser är påhittade och stämmer inte med verkligheten.
   exampleShort: Exempeldata
   empty: Inget här än.
   emptyIn: 'Inget i {{ name }} än. Välj en annan ort ovan.'

@@ -405,7 +405,6 @@ export default function BusinessesHybrid({
   const current = useCurrentLocation();
 
   const all = businesses || [];
-  const hasExamples = all.some((b) => b.isExample);
   const inPlace = (id: string) => all.filter((b) => b.locationId === id);
 
   // The picker chooses the place; below it the cards come in Äta, Handla
@@ -435,8 +434,6 @@ export default function BusinessesHybrid({
             section="businesses"
           />
         </Picker>
-
-        {hasExamples && <Notice>{t('businesses.example')}</Notice>}
 
         {sections.map(({ kind, items }) => (
           <Section key={kind} style={kindVars(kind)}>

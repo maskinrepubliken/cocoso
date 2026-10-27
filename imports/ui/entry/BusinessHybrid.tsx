@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
-import InfoIcon from 'lucide-react/dist/esm/icons/info';
 
 import { styled } from '/stitches.config';
 import AddressBlock from '/imports/ui/generic/AddressBlock';
@@ -121,25 +120,6 @@ const Note = styled('p', {
   color: 'var(--cocoso-mylla-soft)',
   fontSize: '0.88rem',
   margin: '0.75rem 0 0',
-});
-
-const ExampleNote = styled('p', {
-  alignItems: 'flex-start',
-  backgroundColor: 'var(--cocoso-colors-theme-50)',
-  borderRadius: '12px',
-  display: 'flex',
-  fontSize: '0.9rem',
-  gap: '0.5rem',
-  margin: '0 auto 2rem',
-  maxWidth: '980px',
-  padding: '0.75rem 1rem',
-  '& svg': {
-    color: 'var(--cocoso-colors-theme-800)',
-    flexShrink: 0,
-    height: '1.1rem',
-    marginTop: '0.1rem',
-    width: '1.1rem',
-  },
 });
 
 const MenuGrid = styled('div', {
@@ -320,13 +300,6 @@ export default function BusinessHybrid({
           </Sidebar>
 
           <RestArea>
-            {business.isExample && (
-              <ExampleNote>
-                <InfoIcon aria-hidden />
-                {t('businesses.example')}
-              </ExampleNote>
-            )}
-
             {business.menu && business.menu.length > 0 && (
               <EntryColumn>
                 <SectionHead>
