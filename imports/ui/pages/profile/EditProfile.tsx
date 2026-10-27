@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import {
-  Alert,
+  Loader,
   Box,
   Button,
   Center,
@@ -103,12 +103,11 @@ export default function EditProfile() {
     }
   }, [isMember, tabs, pathnameLastPart]);
 
+  // Everyone logged in has a membership (the server sees to it on login);
+  // without one yet, it is still on its way — or the person is being logged
+  // out and sent elsewhere. No "not part of this organisation" error.
   if (!isMember) {
-    return (
-      <Center p="8">
-        <Alert type="error">{t('profile.message.deny')}</Alert>
-      </Center>
-    );
+    return <Loader />;
   }
 
   return (

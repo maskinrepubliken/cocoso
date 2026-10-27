@@ -80,7 +80,6 @@ profile:
       label: Kontaktinformation
 
   message:
-    deny: Du är inte en del av denna organisation.
     notfound: Användare med detta användarnamn inom denna organisation hittades inte, eller valde att dölja sin profil
     platform: Informationen du anger här kommer att vara publik. Du kan välja att dölja ditt konto, men vi rekommenderar att du är publik för att underlätta kommunikationen med andra medlemmar. Håll din information uppdaterad!
 

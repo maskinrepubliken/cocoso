@@ -103,6 +103,12 @@ export default function WrapperHybrid({
     }
     return null;
   }, []);
+  // Logged out by Meteor itself — the account deleted in another tab, or
+  // the session ended on the server — rather than through useLogout
+  const isLoggedOut = useTracker(
+    () => Meteor.isClient && !Meteor.userId() && !Meteor.loggingIn(),
+    []
+  );
 
   const setValues = async () => {
     setCurrentHost(await call('getSite'));
@@ -173,6 +179,15 @@ export default function WrapperHybrid({
     setDayjsLocale(i18n.language);
   }, [i18n?.language]);
 
+  // Forget the user once Meteor has, so the header and the pages behind it
+  // don't go on showing someone who is no longer logged in
+  useEffect(() => {
+    if (isLoggedOut) {
+      setCurrentUser(null);
+      setRole(null);
+    }
+  }, [isLoggedOut]);
+
   useEffect(() => {
     if (!currentUser) return;
     setCurrentUser(currentUser);
@@ -232,8 +247,18 @@ export default function WrapperHybrid({
                 fontWeight: 600,
                 padding: '10px 14px',
               },
-              success: { iconTheme: { primary: 'var(--cocoso-colors-theme-500)', secondary: '#fff' } },
-              error: { iconTheme: { primary: 'var(--cocoso-lingon)', secondary: '#fff' } },
+              success: {
+                iconTheme: {
+                  primary: 'var(--cocoso-colors-theme-500)',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: 'var(--cocoso-lingon)',
+                  secondary: '#fff',
+                },
+              },
             }}
           />
         )}
