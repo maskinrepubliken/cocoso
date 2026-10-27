@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import CircleAlert from 'lucide-react/dist/esm/icons/circle-alert';
 
 export interface AuthPanelProps {
   title: string;
@@ -63,6 +64,16 @@ export default function AuthPanel({
           </nav>
         )}
       </div>
+    </div>
+  );
+}
+
+// A red note inside the panel: what went wrong and what to do next
+export function AuthError({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="auth-error" role="alert">
+      <CircleAlert aria-hidden />
+      <span>{children}</span>
     </div>
   );
 }

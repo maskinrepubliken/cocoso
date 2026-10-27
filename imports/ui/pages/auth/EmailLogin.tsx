@@ -4,7 +4,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left';
 import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
-import CircleAlert from 'lucide-react/dist/esm/icons/circle-alert';
 import MailCheck from 'lucide-react/dist/esm/icons/mail-check';
 
 import { Button, Input } from '/imports/ui/core';
@@ -12,8 +11,9 @@ import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
 
 import { loginWithEmail } from './functions';
-import AuthPanel, { AuthPanelProps } from './AuthPanel';
+import AuthPanel, { AuthError, AuthPanelProps } from './AuthPanel';
 import CodeInput from './CodeInput';
+import ConfirmSignup from './ConfirmSignup';
 
 // Matches RESEND_AFTER_MS in imports/api/users/emailLogin.js
 const RESEND_AFTER_S = 30;
@@ -21,18 +21,9 @@ const RESEND_AFTER_S = 30;
 const isEmail = (value: string) =>
   z.string().email().safeParse(value.trim()).success;
 
-export function AuthError({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="auth-error" role="alert">
-      <CircleAlert aria-hidden />
-      <span>{children}</span>
-    </div>
-  );
-}
-
 interface EmailLoginProps {
-  // Same flow either way — the server makes the account on the first code —
-  // but /register and /login say different things
+  // Same flow either way — a new address gets the confirm step after its
+  // code — but /register and /login say different things
   mode?: 'login' | 'signup';
   links?: AuthPanelProps['links'];
   // An address to start from, e.g. after a dead link
@@ -40,15 +31,15 @@ interface EmailLoginProps {
 }
 
 // The whole login: an address, then the code that was mailed to it. Same
-// form for new and returning people — the server makes the account on the
-// first successful code.
+// form for new and returning people; for an address without an account the
+// server asks for confirmation first (ConfirmSignup).
 export default function EmailLogin({
   mode = 'login',
   links,
   initialEmail = '',
 }: EmailLoginProps) {
   const [t, i18n] = useTranslation('accounts');
-  const [step, setStep] = useState<'email' | 'code'>('email');
+  const [step, setStep] = useState<'email' | 'code' | 'confirm'>('email');
   const [email, setEmail] = useState(initialEmail);
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
@@ -95,9 +86,15 @@ export default function EmailLogin({
       await loginWithEmail({ email: email.trim(), code: value });
       message.success(t('login.messages.success'));
     } catch (err: any) {
+      setBusy(false);
+      if (err?.error === 'account-not-found') {
+        // Right code, no account yet: confirm before anything is created
+        setCode(value);
+        setStep('confirm');
+        return;
+      }
       setError(errorText(err));
       setCode('');
-      setBusy(false);
     }
   };
 
@@ -111,6 +108,19 @@ export default function EmailLogin({
       submitCode(value);
     }
   };
+
+  if (step === 'confirm') {
+    return (
+      <ConfirmSignup
+        credentials={{ email: email.trim(), code }}
+        email={email.trim()}
+        onCancel={() => {
+          setStep('email');
+          setCode('');
+        }}
+      />
+    );
+  }
 
   if (step === 'code') {
     return (

@@ -158,6 +158,17 @@ emailLogin:
     resendIn: du kan be om en ny kod om {{seconds}} s
     resent: Om adressen stämmer är ett nytt mejl på väg
     otherEmail: Använd en annan e-postadress
+  confirm:
+    title: Skapa ditt konto
+    lead: Det finns inget konto för <strong>{{email}}</strong> än. Vill du skapa ett?
+    factEmail: Du loggar in med den här e-postadressen – inget lösenord.
+    factProfile: Ditt namn och din bild visas bara om du själv fyller i dem.
+    factDelete: Du kan ta bort kontot när du vill under din profil.
+    terms: Jag har läst och godkänner
+    needTerms: Kryssa i att du godkänner villkoren för att skapa kontot.
+    submit: Skapa mitt konto
+    cancel: Avbryt, skapa inget konto
+    expired: Koden har gått ut. Börja om och be om en ny kod.
   link:
     busy: Loggar in…
     failedTitle: Länken fungerar inte längre
@@ -174,3 +185,20 @@ emailLogin:
     tooMany: För många försök. Vänta en minut och försök igen.
     sendFailed: Vi kunde inte skicka mejlet. Försök igen om en stund.
     passwordDisabled: Lösenord används bara av administratörer. Logga in med din e-postadress i stället.
+
+welcome:
+  kicker: Ditt konto är skapat
+  title: Välkommen till {{site}}!
+  lead: Du är inloggad som <strong>{{email}}</strong>. Nästa gång loggar du in med samma adress.
+  steps:
+    profile:
+      title: Fyll i din profil
+      text: Lägg till namn och en bild så att andra känner igen dig.
+    events:
+      title: Hitta något att göra
+      text: Se vad som händer i kalendern och anmäl dig till evenemang.
+    organizer:
+      title: Vill du lägga upp egna evenemang?
+      text: Be en administratör att göra dig till arrangör, till exempel via Ge feedback längst ner på sidan.
+  toProfile: Fyll i din profil
+  toHome: Till startsidan

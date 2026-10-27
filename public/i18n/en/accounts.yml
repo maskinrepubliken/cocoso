@@ -158,6 +158,17 @@ emailLogin:
     resendIn: you can ask for a new code in {{seconds}} s
     resent: If the address is right, a new email is on its way
     otherEmail: Use another email address
+  confirm:
+    title: Create your account
+    lead: There is no account for <strong>{{email}}</strong> yet. Do you want to create one?
+    factEmail: You log in with this email address – no password.
+    factProfile: Your name and picture only show if you add them yourself.
+    factDelete: You can delete the account whenever you like from your profile.
+    terms: I have read and accept
+    needTerms: Tick the box to accept the terms and create the account.
+    submit: Create my account
+    cancel: Cancel, don't create an account
+    expired: The code has expired. Start again and ask for a new code.
   link:
     busy: Logging in…
     failedTitle: That link no longer works
@@ -174,3 +185,20 @@ emailLogin:
     tooMany: Too many attempts. Wait a minute and try again.
     sendFailed: We couldn't send the email. Try again in a while.
     passwordDisabled: Passwords are only for administrators. Log in with your email address instead.
+
+welcome:
+  kicker: Your account is ready
+  title: Welcome to {{site}}!
+  lead: You are logged in as <strong>{{email}}</strong>. Next time, log in with the same address.
+  steps:
+    profile:
+      title: Fill in your profile
+      text: Add a name and a picture so others recognise you.
+    events:
+      title: Find something to do
+      text: See what's on in the calendar and sign up for events.
+    organizer:
+      title: Want to post your own events?
+      text: Ask an administrator to make you an organizer, for example via Feedback at the bottom of the page.
+  toProfile: Fill in your profile
+  toHome: Go to the home page

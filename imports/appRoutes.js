@@ -65,6 +65,9 @@ function revalidateOn(relevantParams = []) {
 
 const LoginPage = loadable(() => import('/imports/ui/pages/auth/LoginPage'));
 const SignupPage = loadable(() => import('/imports/ui/pages/auth/SignupPage'));
+const WelcomePage = loadable(() =>
+  import('/imports/ui/pages/auth/WelcomePage')
+);
 const Terms = loadable(() => import('/imports/ui/entry/Terms'));
 const NotFoundPage = loadable(() => import('/imports/ui/pages/NotFoundPage'));
 
@@ -699,11 +702,16 @@ export default function appRoutes(props) {
           path: 'register',
           element: createRouteElement(SignupPage, props),
         },
+        {
+          path: 'welcome',
+          element: createRouteElement(WelcomePage, props),
+        },
         // There are no passwords to reset any more; links to these pages in
         // old emails land on the login form.
-        ...['forgot-password', 'reset-password/:token'].map(
-          (path) => ({ path, element: createRouteElement(LoginPage, props) })
-        ),
+        ...['forgot-password', 'reset-password/:token'].map((path) => ({
+          path,
+          element: createRouteElement(LoginPage, props),
+        })),
         {
           path: 'terms-&-privacy-policy',
           element: createRouteElement(Terms, props),

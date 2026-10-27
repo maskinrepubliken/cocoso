@@ -31,6 +31,9 @@ Users.schema.UserProfile = {
   address: { type: new SimpleSchema(Schemas.Address), optional: true },
   locationId: { type: String, optional: true },
   lang: { type: String, optional: true },
+  // When the person accepted the terms, confirming their new account
+  // (imports/api/users/emailLogin.js). Missing on older accounts.
+  termsAcceptedAt: { type: Date, optional: true },
   avatar: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   avatarLegacy: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   isPublic: { type: Boolean, defaultValue: true, optional: true },

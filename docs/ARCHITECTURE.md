@@ -152,14 +152,19 @@ People log in by email only (`imports/api/users/emailLogin.js`): `/login`
 asks for an address, `requestLoginCode` mails a six-digit code and a
 one-click link (`/login?token=…`), and a custom `emailLogin` login handler
 checks either. Codes are stored hashed in `loginCodes`, last 15 minutes, work
-once and allow five wrong guesses. An address with no account gets one on its
-first login (generated username, participant membership, welcome email), so
-there is no separate sign-up; `/register`, `/forgot-password` and
-`/reset-password/:token` show the same form.
+once and allow five wrong guesses. An address with no account is not signed
+up by its code alone: the handler answers `account-not-found` and leaves the
+code unspent, the page asks the person to confirm and accept the terms
+(`ConfirmSignup`), and only the resubmitted code with
+`createAccount: { acceptedTerms: true }` creates the account (generated
+username, `termsAcceptedAt`, participant membership, welcome email) and
+lands on `/welcome`. `/login` and `/register` run the same flow with
+different wording; `/forgot-password` and `/reset-password/:token` show the
+login form.
 
 Passwords are kept only for administrators, as a way in if mail stops
-working: `/login?losenord` (linked from nowhere) shows a username/password
-form, and `imports/api/users/passwordLogin.js` refuses password logins and
+working: `/login?losenord` shows a username/password
+form (behind a small grey link under the login panel), and `imports/api/users/passwordLogin.js` refuses password logins and
 resets for anyone who is not an admin. Accounts cannot be created from the
 browser (`forbidClientAccountCreation`), and `createAccount` only works on a
 fresh install with no admin yet — the first-run `/setup`, which still makes

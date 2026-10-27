@@ -7,10 +7,7 @@ import { check, Match } from 'meteor/check';
 import { getSite } from '../site/site';
 import { publicUrl } from '../_utils/shared';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
-import {
-  deliverEmail,
-  getSmtpSettings,
-} from '../_utils/services/mails/smtp';
+import { deliverEmail, getSmtpSettings } from '../_utils/services/mails/smtp';
 import Memberships from '../memberships/membership';
 import { generateUsernameFromEmail } from './username.helpers';
 import { loginEmail } from './loginEmail';
@@ -35,7 +32,10 @@ const LoginCodes = new Mongo.Collection('loginCodes');
 const sha256 = (value) =>
   crypto.createHash('sha256').update(String(value)).digest('hex');
 
-const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
+const normalizeEmail = (email) =>
+  String(email || '')
+    .trim()
+    .toLowerCase();
 
 const looksLikeEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -66,30 +66,29 @@ async function sendLoginEmail({ email, code, token, lang, isNew }) {
   await deliverEmail({ from, to: email, subject, html, text });
 }
 
-// The account behind an address, made on the spot the first time: a
-// generated username (editable later), the address marked verified — they
-// just proved they read it — and a participant membership, as sign-up used
-// to give.
-async function findOrCreateUser(email) {
-  const existing = await Accounts.findUserByEmail(email);
-  if (existing) {
-    const entry = existing.emails?.find(
-      (e) => normalizeEmail(e.address) === email
+// Marks the address verified — they just proved they read it.
+async function verifyExisting(existing, email) {
+  const entry = existing.emails?.find(
+    (e) => normalizeEmail(e.address) === email
+  );
+  if (entry && !entry.verified) {
+    await Meteor.users.updateAsync(
+      { _id: existing._id, 'emails.address': entry.address },
+      { $set: { 'emails.$.verified': true } }
     );
-    if (entry && !entry.verified) {
-      await Meteor.users.updateAsync(
-        { _id: existing._id, 'emails.address': entry.address },
-        { $set: { 'emails.$.verified': true } }
-      );
-    }
-    return existing._id;
   }
+  return existing._id;
+}
 
+// A new account, made only once the person has confirmed it and accepted
+// the terms: a generated username (editable later), the address verified,
+// when the terms were accepted, and a participant membership.
+async function createAccountFor(email) {
   const username = await generateUsernameFromEmail(email);
   const userId = await Accounts.createUserAsync({ email, username });
   await Meteor.users.updateAsync(
     { _id: userId },
-    { $set: { 'emails.0.verified': true } }
+    { $set: { 'emails.0.verified': true, termsAcceptedAt: new Date() } }
   );
 
   if (!(await Memberships.findOneAsync({ userId }))) {
@@ -160,11 +159,17 @@ Meteor.methods({
 
 // Client side: Accounts.callLoginMethod({ methodArguments: [{ emailLogin:
 // { email, code } }] }) or [{ emailLogin: { token } }] from the link.
+//
+// An address without an account is not signed up by the code alone: the
+// handler answers `account-not-found` (with the address, which the caller
+// has just proved they own) and leaves the code unspent. The client then
+// asks the person to confirm and accept the terms, and sends the same code
+// again with `createAccount: { acceptedTerms: true }`.
 Accounts.registerLoginHandler('emailLogin', async (options) => {
   if (!options?.emailLogin) {
     return undefined;
   }
-  const { email: rawEmail, code, token } = options.emailLogin;
+  const { email: rawEmail, code, token, createAccount } = options.emailLogin;
 
   let request;
   if (token) {
@@ -180,7 +185,10 @@ Accounts.registerLoginHandler('emailLogin', async (options) => {
       if (attempts >= MAX_ATTEMPTS) {
         await LoginCodes.removeAsync({ _id: request._id });
       } else {
-        await LoginCodes.updateAsync({ _id: request._id }, { $set: { attempts } });
+        await LoginCodes.updateAsync(
+          { _id: request._id },
+          { $set: { attempts } }
+        );
       }
       throw invalid();
     }
@@ -190,15 +198,27 @@ Accounts.registerLoginHandler('emailLogin', async (options) => {
     throw invalid();
   }
 
+  const existing = await Accounts.findUserByEmail(request.email);
+  if (!existing && createAccount?.acceptedTerms !== true) {
+    throw new Meteor.Error('account-not-found', 'No account for this address', {
+      email: request.email,
+    });
+  }
+
   // Spent either way: a code or link logs in once.
   await LoginCodes.removeAsync({ _id: request._id });
 
-  const userId = await findOrCreateUser(request.email);
+  const userId = existing
+    ? await verifyExisting(existing, request.email)
+    : await createAccountFor(request.email);
   return { userId };
 });
 
 Meteor.startup(async () => {
   await LoginCodes.createIndexAsync({ email: 1 });
   await LoginCodes.createIndexAsync({ tokenHash: 1 });
-  await LoginCodes.createIndexAsync({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+  await LoginCodes.createIndexAsync(
+    { expiresAt: 1 },
+    { expireAfterSeconds: 0 }
+  );
 });

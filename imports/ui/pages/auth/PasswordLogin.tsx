@@ -6,8 +6,7 @@ import { Button, Input } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 
 import { loginWithPasswordAsync } from './functions';
-import AuthPanel, { AuthPanelProps } from './AuthPanel';
-import { AuthError } from './EmailLogin';
+import AuthPanel, { AuthError, AuthPanelProps } from './AuthPanel';
 
 // The administrators' way in if mail is down (/login?losenord). The server
 // refuses passwords for everyone else (imports/api/users/passwordLogin.js).

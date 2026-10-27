@@ -53,3 +53,17 @@ export function loginWithEmail(credentials) {
     });
   });
 }
+
+// Set just before a confirmed sign-up logs in, so the login page sends the
+// new person to /welcome instead of their profile (LoginPage reads it once).
+let newAccountPending = false;
+
+export function markNewAccount(value = true) {
+  newAccountPending = value;
+}
+
+export function takeNewAccount() {
+  const pending = newAccountPending;
+  newAccountPending = false;
+  return pending;
+}

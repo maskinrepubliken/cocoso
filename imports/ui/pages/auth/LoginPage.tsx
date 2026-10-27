@@ -12,7 +12,8 @@ import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 import LoaderCircle from 'lucide-react/dist/esm/icons/loader-circle';
 
-import { loginWithEmail } from './functions';
+import { loginWithEmail, takeNewAccount } from './functions';
+import ConfirmSignup from './ConfirmSignup';
 import EmailLogin from './EmailLogin';
 import PasswordLogin from './PasswordLogin';
 import AuthPanel from './AuthPanel';
@@ -35,9 +36,14 @@ export default function LoginPage({
   // everyone else.
   const passwordMode = searchParams.has('losenord');
   // The button in the login email lands here with ?token=…
-  const [linkState, setLinkState] = useState<'checking' | 'failed' | null>(
-    linkToken ? 'checking' : null
-  );
+  const [linkState, setLinkState] = useState<
+    'checking' | 'failed' | 'confirm' | null
+  >(linkToken ? 'checking' : null);
+  // A valid link for an address with no account yet: kept to confirm with
+  const [pendingLink, setPendingLink] = useState<{
+    token: string;
+    email: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!linkToken || currentUser) {
@@ -47,11 +53,23 @@ export default function LoginPage({
     setLinkState('checking');
     loginWithEmail({ token: linkToken })
       .then(() => message.success(t('login.messages.success')))
-      .catch(() => setLinkState('failed'));
+      .catch((err) => {
+        if (err?.error === 'account-not-found') {
+          setPendingLink({ token: linkToken, email: err.details?.email || '' });
+          setLinkState('confirm');
+        } else {
+          setLinkState('failed');
+        }
+      });
   }, [linkToken]);
 
   useEffect(() => {
     if (!currentUser) {
+      return;
+    }
+    // A confirmed sign-up goes to the welcome screen, not the profile
+    if (takeNewAccount()) {
+      navigate('/welcome');
       return;
     }
     const membership = currentUser?.memberships?.[0];
@@ -97,6 +115,17 @@ export default function LoginPage({
       <AuthPanel
         icon={<LoaderCircle className="auth-spinner" />}
         title={t('emailLogin.link.busy')}
+      />
+    );
+  } else if (linkState === 'confirm' && pendingLink) {
+    panel = (
+      <ConfirmSignup
+        credentials={{ token: pendingLink.token }}
+        email={pendingLink.email}
+        onCancel={() => {
+          setPendingLink(null);
+          setLinkState(null);
+        }}
       />
     );
   } else if (linkState === 'failed') {
