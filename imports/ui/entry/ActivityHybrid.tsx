@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import loadable from '@loadable/component';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
 import type { Address } from '/imports/api/_utils/address';
 import { useAtomValue } from 'jotai';
 import HTMLReactParser from 'html-react-parser';
@@ -17,7 +16,8 @@ import { styled } from '/stitches.config';
 import { Button, Tag } from '/imports/ui/core';
 import Notice from '/imports/ui/generic/Notice';
 import type { Site } from '/imports/ui/types';
-import { publicUrl } from '/imports/api/_utils/shared';
+import { activityShareImageUrl } from '/imports/api/share/shareImage';
+import ShareMeta from '/imports/ui/layout/ShareMeta';
 import {
   canCreateContentAtom,
   currentUserAtom,
@@ -26,7 +26,7 @@ import {
 import { useLocationTag } from '/imports/ui/utils/useLocation';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
-import { getImageUrl, getImageUrlBest } from '../utils/imageHelper';
+import { getImageUrl } from '../utils/imageHelper';
 import { shareLink } from '../utils/shareLink';
 import BackLink from './BackLink';
 
@@ -295,27 +295,22 @@ export default function ActivityHybrid({
   const images = (activity.images || [activity.imageUrl]).filter(
     (img): img is string => Boolean(img)
   );
-  const url = publicUrl(
-    `/${isPublicActivity ? 'activities' : 'calendar'}/${activity._id}`
-  );
-  const description = activity.subTitle || activity.title;
-  const imageUrl = getImageUrlBest(images[0]);
+  // A shared link shows the generated picture with the title, place and
+  // date while the event has dates left, then its own photo.
+  const shareImage = activityShareImageUrl(activity);
 
   return (
     <Page>
-      <Helmet>
-        <title>{activity.title}</title>
-        <meta name="title" content={activity.title} />
-        <meta name="description" content={description} />
-        <meta property="og:title" content={activity.title?.substring(0, 40)} />
-        <meta property="og:url" content={url} />
-        {imageUrl && <meta property="og:image" content={imageUrl} />}
-        <meta
-          property="og:description"
-          content={description?.substring(0, 150)}
-        />
-        <meta property="og:type" content="article" />
-      </Helmet>
+      <ShareMeta
+        title={activity.title}
+        description={activity.subTitle || activity.longDescription}
+        path={`/${isPublicActivity ? 'activities' : 'calendar'}/${
+          activity._id
+        }`}
+        image={shareImage || images[0]}
+        generatedImage={Boolean(shareImage)}
+        type="article"
+      />
 
       <TopBar>
         <BackLink backLink={backLink} />

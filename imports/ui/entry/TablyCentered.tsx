@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 import { Trans, useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
 
 import {
   Avatar,
@@ -18,8 +17,8 @@ import NiceSlider from '../generic/NiceSlider';
 import PlaceholderImage from '../generic/PlaceholderImage';
 import Tabs from '../core/Tabs';
 import BackLink, { BackLinkData } from './BackLink';
-import { getImageUrl, getImageUrlBest } from '../utils/imageHelper';
-import { publicUrl } from '/imports/api/_utils/shared';
+import { getImageUrl } from '../utils/imageHelper';
+import ShareMeta from '../layout/ShareMeta';
 import { shareLink } from '../utils/shareLink';
 
 interface Author {
@@ -227,28 +226,16 @@ const TablyCentered: React.FC<TablyCenteredProps> = ({
   const showImageArea = images !== null;
   const presentImages = images?.filter((img): img is string => Boolean(img));
   const hasImages = Boolean(presentImages && presentImages.length > 0);
-  const imageUrl = getImageUrlBest(presentImages && presentImages[0]);
 
   return (
     <>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{title}</title>
-        <meta name="title" content={title} />
-        <meta name="description" content={description} />
-        <meta name="tags" content={tags?.join(',')} />
-        <meta property="og:title" content={title?.substring(0, 40)} />
-        <meta property="og:url" content={url} />
-        <meta
-          property="og:image"
-          content={imageUrl || publicUrl('/images/og-default.jpg')}
-        />
-        <meta
-          property="og:description"
-          content={description?.substring(0, 150)}
-        />
-        <meta property="og:type" content="article" />
-      </Helmet>
+      <ShareMeta
+        title={title}
+        description={description}
+        path={url || ''}
+        image={presentImages?.[0]}
+        type="article"
+      />
 
       <Center w="100%">
         <Box w="100%">

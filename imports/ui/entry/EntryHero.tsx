@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
-import { Helmet } from 'react-helmet';
 import { Trans } from 'react-i18next';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 
 import { styled } from '/stitches.config';
 import { Button } from '/imports/ui/core';
-import { publicUrl } from '/imports/api/_utils/shared';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { LightboxTrigger } from '/imports/ui/generic/Lightbox';
-import { getImageUrl, getImageUrlBest } from '/imports/ui/utils/imageHelper';
+import ShareMeta, { type ShareMetaProps } from '/imports/ui/layout/ShareMeta';
+import { getImageUrl } from '/imports/ui/utils/imageHelper';
 
 import BackLink, { BackLinkData } from './BackLink';
 
@@ -365,7 +364,7 @@ interface EntryMetaProps {
   description?: string;
   image?: string;
   path: string;
-  type?: string;
+  type?: ShareMetaProps['type'];
 }
 
 // What the page says about itself to browsers and link previews.
@@ -376,21 +375,14 @@ export function EntryMeta({
   path,
   type = 'article',
 }: EntryMetaProps) {
-  const shareImage = getImageUrlBest(image);
   return (
-    <Helmet>
-      <title>{title}</title>
-      <meta name="title" content={title} />
-      <meta name="description" content={description} />
-      <meta property="og:title" content={title?.substring(0, 40)} />
-      <meta property="og:url" content={publicUrl(path)} />
-      <meta
-        property="og:image"
-        content={shareImage || publicUrl('/images/og-default.jpg')}
-      />
-      <meta property="og:description" content={description.substring(0, 150)} />
-      <meta property="og:type" content={type} />
-    </Helmet>
+    <ShareMeta
+      title={title}
+      description={description}
+      image={image}
+      path={path}
+      type={type}
+    />
   );
 }
 

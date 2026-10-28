@@ -2,13 +2,12 @@ import React from 'react';
 import { Link, useLocation } from 'react-router';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
 
 import { Box, Center, Heading, Text } from '/imports/ui/core';
 import type { Site } from '/imports/ui/types';
 
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
-import { publicUrl } from '/imports/api/_utils/shared';
+import ShareMeta from '/imports/ui/layout/ShareMeta';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
 
@@ -87,37 +86,23 @@ export default function PageHeading({
     (item) => item.name === listing
   );
   const [tc] = useTranslation('common');
+  const { pathname } = useLocation();
   const description = hideDescription
     ? ''
     : sectionDescription(listingInMenu, tc);
   const heading = title || listingInMenu?.label;
-  const url = publicUrl(`/${listingInMenu?.name}`);
   // What a link to this page shows elsewhere: the menu's description when
   // the admin wrote one, else the site's own line; the site's social image.
   const metaDescription = description || tc('home.hero.tagline');
-  const imageUrl = publicUrl('/images/og-default.jpg');
   const icon = sectionIcons[listing];
 
   return (
     <>
-      <Helmet>
-        <title>{String(heading || 'Page')}</title>
-        <link rel="canonical" href={url} />
-        <meta charSet="utf-8" />
-        <meta name="title" content={String(heading || 'Page')} />
-        <meta name="description" content={String(metaDescription)} />
-        <meta
-          property="og:title"
-          content={String(heading || 'Page')?.substring(0, 40)}
-        />
-        <meta property="og:url" content={url} />
-        <meta property="og:image" content={imageUrl} />
-        <meta
-          property="og:description"
-          content={String(metaDescription)?.substring(0, 150)}
-        />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      <ShareMeta
+        title={heading ? String(heading) : undefined}
+        description={metaDescription}
+        path={pathname}
+      />
       <Center>
         <Box px="2" w="100%">
           <div className="page-heading-row page-wrap">

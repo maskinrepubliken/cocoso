@@ -208,7 +208,11 @@ export default function WrapperHybrid({
 
   return (
     <>
-      <HelmetHybrid siteDoc={site || siteDoc} />
+      <HelmetHybrid
+        siteDoc={site || siteDoc}
+        pathname={pathname}
+        description={(i18nInstance || i18n).t('common:home.hero.tagline')}
+      />
 
       <I18nextProvider i18n={i18nInstance || i18n}>
         <SkipLink />

@@ -1,7 +1,6 @@
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import { Link, useLoaderData, useRouteLoaderData } from 'react-router';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
@@ -18,7 +17,8 @@ import { locationsAtom } from '/imports/state';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { isMenuItemShown } from '/imports/api/_utils/features';
-import { publicUrl } from '/imports/api/_utils/shared';
+import { locationShareImageUrl } from '/imports/api/share/shareImage';
+import ShareMeta from '/imports/ui/layout/ShareMeta';
 
 import type { SlugData } from './SlugHandler';
 
@@ -74,13 +74,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
   const prefix = `/${location.slug}`;
   const heroImage = getImageUrl(location.images?.[0], 'full');
   const world = worldForLocation(locations, location._id);
-  const title = `${location.name} | ${siteDoc?.settings?.name}`;
-  const description = location.description
-    ? DOMPurify.sanitize(location.description, { ALLOWED_TAGS: [] })
-        .replace(/\s+/g, ' ')
-        .trim()
-        .slice(0, 160)
-    : '';
+  const shareImage = locationShareImageUrl(location);
 
   return (
     <Box>
@@ -155,6 +149,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
         <Box className="landing-section">
           <ComposablePageHybrid
             siteDoc={siteDoc}
+            withMeta={false}
             composablePage={{
               ...composablePage,
               settings: { ...composablePage.settings, hideTitle: true },
@@ -174,13 +169,18 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           {activities?.length ? (
             <div className="card-grid card-grid-wide">
               {activities.map((activity: any, index: number) => (
-                <Link key={activity._id} to={`${prefix}/activities/${activity._id}`}>
+                <Link
+                  key={activity._id}
+                  to={`${prefix}/activities/${activity._id}`}
+                >
                   <SexyThumb activity={activity} index={index} />
                 </Link>
               ))}
             </div>
           ) : (
-            <p className="landing-empty">{tc('locations.landing.nothingYet')}</p>
+            <p className="landing-empty">
+              {tc('locations.landing.nothingYet')}
+            </p>
           )}
         </Section>
       )}
@@ -196,7 +196,10 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
           {resources?.length ? (
             <div className="card-grid">
               {resources.map((resource: any, index: number) => (
-                <Link key={resource._id} to={`${prefix}/resources/${resource._id}`}>
+                <Link
+                  key={resource._id}
+                  to={`${prefix}/resources/${resource._id}`}
+                >
                   <NewGridThumb
                     fixedImageHeight
                     imageUrl={
@@ -211,7 +214,9 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
               ))}
             </div>
           ) : (
-            <p className="landing-empty">{tc('locations.landing.nothingYet')}</p>
+            <p className="landing-empty">
+              {tc('locations.landing.nothingYet')}
+            </p>
           )}
         </Section>
       )}
@@ -234,17 +239,13 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
         </Section>
       )}
 
-      <Helmet>
-        <title>{title}</title>
-        <link rel="canonical" href={publicUrl(prefix)} />
-        <meta name="title" content={title} />
-        <meta name="description" content={description} />
-        <meta property="og:title" content={title.substring(0, 60)} />
-        <meta property="og:url" content={publicUrl(prefix)} />
-        {heroImage && <meta property="og:image" content={heroImage} />}
-        <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      <ShareMeta
+        title={location.name}
+        description={location.description}
+        path={prefix}
+        image={shareImage}
+        generatedImage
+      />
     </Box>
   );
 }

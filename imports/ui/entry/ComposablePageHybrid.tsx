@@ -9,7 +9,7 @@ import { Box, Button, Center, Flex, Grid } from '/imports/ui/core';
 import { Divider, Heading } from '/imports/ui/core';
 import EmblaSlider from '/imports/ui/generic/EmblaSlider';
 import type { Site } from '/imports/ui/types';
-import { Helmet } from 'react-helmet';
+import ShareMeta from '/imports/ui/layout/ShareMeta';
 import { publicUrl } from '/imports/api/_utils/shared';
 
 export interface ModuleValue {
@@ -172,11 +172,14 @@ interface ComposablePage {
 export interface ComposablePageHybridProps {
   siteDoc: Site;
   composablePage: ComposablePage;
+  /** Off when the page is part of another (a place's landing page). */
+  withMeta?: boolean;
 }
 
 export default function ComposablePageHybrid({
   siteDoc,
   composablePage,
+  withMeta = true,
 }: ComposablePageHybridProps) {
   if (!composablePage) {
     return null;
@@ -184,28 +187,16 @@ export default function ComposablePageHybrid({
 
   const hideMenu = composablePage.settings?.hideMenu;
   const hideTitle = composablePage.settings?.hideTitle;
-  const titleWithHost = `${siteDoc.settings?.name} | ${composablePage.title}`;
 
   return (
     <>
-      <Helmet>
-        <title>{titleWithHost}</title>
-        <link rel="canonical" href={publicUrl(`/cp/${composablePage._id}`)} />
-        <meta charSet="utf-8" />
-        <meta name="title" content={titleWithHost} />
-        <meta name="description" content={composablePage.description || ''} />
-        <meta
-          property="og:title"
-          content={String(titleWithHost)?.substring(0, 40)}
+      {withMeta && (
+        <ShareMeta
+          title={composablePage.title}
+          description={composablePage.description}
+          path={`/cp/${composablePage._id}`}
         />
-        <meta property="og:url" content={publicUrl(`/cp/${composablePage._id}`)} />
-        <meta property="og:image" content={siteDoc.logo} />
-        <meta
-          property="og:description"
-          content={String(composablePage.description || '')?.substring(0, 150)}
-        />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      )}
 
       <Box mt="4">
         {hideMenu ? (

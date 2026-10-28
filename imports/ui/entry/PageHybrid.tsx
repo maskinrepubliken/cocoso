@@ -1,4 +1,3 @@
-import { Helmet } from 'react-helmet';
 import React from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
@@ -6,15 +5,15 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Box, Center, Heading } from '/imports/ui/core';
 
 import NiceSlider from '../generic/NiceSlider';
-import { parseTitle, publicUrl } from '/imports/api/_utils/shared';
-import { getImageUrlBest } from '/imports/ui/utils/imageHelper';
+import { parseTitle } from '/imports/api/_utils/shared';
+import ShareMeta from '/imports/ui/layout/ShareMeta';
 
 interface SimplePageProps {
   description?: string;
   images?: string[];
   imageUrl?: string;
   title?: string;
-  url?: string;
+  path: string;
 }
 
 function SimplePage({
@@ -22,31 +21,17 @@ function SimplePage({
   images,
   imageUrl,
   title,
-  url,
+  path,
 }: SimplePageProps) {
   return (
     <>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{title}</title>
-        <meta name="title" content={title} />
-        <meta name="description" content={description} />
-        <meta property="og:title" content={title?.substring(0, 40)} />
-        <meta
-          property="og:image"
-          content={getImageUrlBest(images && images[0]) || undefined}
-        />
-        <meta property="og:url" content={url} />
-        <meta
-          property="og:image"
-          content={getImageUrlBest(imageUrl) || undefined}
-        />
-        <meta
-          property="og:description"
-          content={description?.substring(0, 150)}
-        />
-        <meta property="og:type" content="article" />
-      </Helmet>
+      <ShareMeta
+        title={title}
+        description={description}
+        path={path}
+        image={images?.[0] || imageUrl}
+        type="article"
+      />
 
       <Center>
         <Heading
@@ -105,17 +90,13 @@ export default function PageHybrid({ currentPage }: PageHybridProps) {
     return null;
   }
 
-  const url = publicUrl(`/info/${parseTitle(currentPage.title)}`);
-
   return (
     <SimplePage
       description={currentPage.longDescription}
       images={currentPage.images}
       title={currentPage.title}
-      url={url}
-      imageUrl={
-        getImageUrlBest(currentPage.images?.[0]) || currentPage.images?.[0]
-      }
+      path={`/info/${parseTitle(currentPage.title)}`}
+      imageUrl={currentPage.imageUrl}
     />
   );
 }

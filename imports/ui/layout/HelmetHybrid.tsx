@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { publicUrl } from '/imports/api/_utils/shared';
+
+import ShareMeta from './ShareMeta';
 
 const publicSettings = Meteor?.settings?.public;
 
@@ -16,15 +17,27 @@ const GENERIC_FONT_FAMILIES = [
   'system-ui',
 ];
 
+// og:locale wants a territory as well as a language
+const LOCALES: Record<string, string> = { sv: 'sv_SE', en: 'en_GB' };
+
 export interface HelmetHybridProps {
   siteDoc: any;
+  /** The current path, for the defaults' canonical and og:url. */
+  pathname: string;
+  /** What a link shows when the page says nothing of its own. */
+  description?: string;
 }
 
-export default function HelmetHybrid({ siteDoc }: HelmetHybridProps) {
+export default function HelmetHybrid({
+  siteDoc,
+  pathname,
+  description,
+}: HelmetHybridProps) {
   if (!siteDoc) {
     return null;
   }
   const lang = siteDoc.settings?.lang;
+  const siteName = siteDoc.settings?.name || '';
   const fontFamily = siteDoc?.theme?.body?.fontFamily;
   const fontHref =
     fontFamily && !GENERIC_FONT_FAMILIES.includes(fontFamily)
@@ -35,43 +48,58 @@ export default function HelmetHybrid({ siteDoc }: HelmetHybridProps) {
   const iconsBase = publicSettings?.iconsBaseUrl || '/icons';
 
   return (
-    <Helmet htmlAttributes={{ lang }}>
-      <title>{siteDoc.settings?.name}</title>
-      <link rel="canonical" href={publicUrl()} />
-      <meta name="theme-color" content="#eeeedb" />
-      <link rel="icon" type="image/svg+xml" href={`${iconsBase}/favicon.svg`} />
+    <>
+      {/* The defaults for a page that does not describe itself; the pages'
+          own ShareMeta replaces them. */}
+      <ShareMeta description={description} path={pathname} />
+      <Helmet
+        htmlAttributes={{ lang }}
+        defaultTitle={siteName}
+        titleTemplate={siteName ? `%s | ${siteName}` : '%s'}
+      >
+        {siteName && <meta property="og:site_name" content={siteName} />}
+        {siteName && <meta property="og:title" content={siteName} />}
+        {siteName && <meta name="twitter:title" content={siteName} />}
+        {lang && <meta property="og:locale" content={LOCALES[lang] || lang} />}
+        <meta name="theme-color" content="#eeeedb" />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href={`${iconsBase}/favicon.svg`}
+        />
 
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
-      {fontHref && <link href={fontHref} rel="stylesheet" />}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+        {fontHref && <link href={fontHref} rel="stylesheet" />}
 
-      <link
-        rel="android-chrome-192x192"
-        sizes="192x192"
-        href={`${iconsBase}/android-chrome-192x192.png`}
-      />
-      <link
-        rel="android-chrome-512x512"
-        sizes="512x512"
-        href={`${iconsBase}/android-chrome-512x512.png`}
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="180x180"
-        href={`${iconsBase}/apple-touch-icon.png`}
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="32x32"
-        href={`${iconsBase}/favicon-32x32.png`}
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="16x16"
-        href={`${iconsBase}/favicon-16x16.png`}
-      />
-    </Helmet>
+        <link
+          rel="android-chrome-192x192"
+          sizes="192x192"
+          href={`${iconsBase}/android-chrome-192x192.png`}
+        />
+        <link
+          rel="android-chrome-512x512"
+          sizes="512x512"
+          href={`${iconsBase}/android-chrome-512x512.png`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href={`${iconsBase}/apple-touch-icon.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href={`${iconsBase}/favicon-32x32.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href={`${iconsBase}/favicon-16x16.png`}
+        />
+      </Helmet>
+    </>
   );
 }

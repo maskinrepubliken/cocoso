@@ -1,13 +1,10 @@
-import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { useAtomValue } from 'jotai';
 
 import { Box, Center, Heading, Grid } from '/imports/ui/core';
 
-import { isDesktopAtom, siteAtom } from '../../state';
-
-const publicSettings = Meteor.settings.public;
+import { isDesktopAtom } from '../../state';
 
 export interface TemplateProps {
   heading?: string;
@@ -25,13 +22,12 @@ export default function Template({
   children,
 }: TemplateProps) {
   const isDesktop = useAtomValue(isDesktopAtom);
-  const site = useAtomValue(siteAtom);
-  const siteName = site?.settings?.name || publicSettings.name;
 
   return (
     <>
       <Helmet>
-        <title>{heading ? `${heading} | ${siteName}` : siteName}</title>
+        {/* HelmetHybrid adds " | <site name>" */}
+        {heading && <title>{String(heading)}</title>}
       </Helmet>
       {isDesktop ? (
         <Grid columns={{ md: 1, lg: 3 }} p="3" templateColumns="3fr 4fr 3fr">
