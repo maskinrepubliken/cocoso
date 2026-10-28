@@ -9,10 +9,7 @@ import Activities from './activity';
 import Groups from '../groups/group';
 import Memberships from '../memberships/membership';
 import Resources from '../resources/resource';
-import {
-  getRegistrationEmailBody,
-  getUnregistrationEmailBody,
-} from './activity.mails';
+import { registrationEmail, unregistrationEmail } from './activity.mails';
 import {
   attachOrganizerProfiles,
   cleanContact,
@@ -134,9 +131,9 @@ const pickAttendeeValues = (values) => {
 };
 
 // A registration stands even when its confirmation email cannot be sent.
-const sendConfirmation = async (to, subject, body) => {
+const sendConfirmation = async (to, { subject, html, text }) => {
   try {
-    await sendEmail(to, subject, body);
+    await sendEmail(to, subject, html, undefined, text);
   } catch (error) {
     console.error('Could not send registration email', error);
   }
@@ -887,18 +884,17 @@ Meteor.methods({
     };
 
     const site = await getSite();
-    const hostName = site?.settings?.name;
 
     const field = `datesAndTimes.${occurenceIndex}.attendees`;
     const occurence = theActivity.datesAndTimes[occurenceIndex];
     const currentUser = await Meteor.userAsync();
-    const emailBody = getRegistrationEmailBody(
-      await attachPlaceAddress(theActivity),
-      values,
-      occurence,
+    const email = registrationEmail({
+      activity: await attachPlaceAddress(theActivity),
+      values: rsvpValues,
+      occurrence: occurence,
       site,
-      currentUser
-    );
+      currentUser,
+    });
 
     try {
       await Activities.updateAsync(activityId, {
@@ -909,11 +905,7 @@ Meteor.methods({
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't register attendance");
     }
-    await sendConfirmation(
-      rsvpValues.email,
-      `"${theActivity.title}", ${hostName}`,
-      emailBody
-    );
+    await sendConfirmation(rsvpValues.email, email);
   },
 
   // The registration is identified by the email and last name it was made
@@ -978,14 +970,14 @@ Meteor.methods({
     const theOccurence = newDatesAndTimes[occurenceIndex];
 
     const site = await getSite();
-    const emailBody = getRegistrationEmailBody(
-      await attachPlaceAddress(theActivity),
-      rsvpValues,
-      theOccurence,
+    const email = registrationEmail({
+      activity: await attachPlaceAddress(theActivity),
+      values: rsvpValues,
+      occurrence: theOccurence,
       site,
       currentUser,
-      true
-    );
+      isUpdate: true,
+    });
 
     const field = `datesAndTimes.${occurenceIndex}.attendees.${attendeeIndex}`;
 
@@ -998,11 +990,7 @@ Meteor.methods({
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update attendance");
     }
-    await sendConfirmation(
-      rsvpValues.email,
-      `Update to your registration for "${theActivity.title}" at ${site.settings.name}`,
-      emailBody
-    );
+    await sendConfirmation(rsvpValues.email, email);
   },
 
   // Looks up one's own registration for changing or cancelling it.
@@ -1063,7 +1051,6 @@ Meteor.methods({
     );
 
     const site = await getSite();
-    const hostName = site.settings.name;
 
     try {
       await Activities.updateAsync(activityId, {
@@ -1076,8 +1063,13 @@ Meteor.methods({
     }
     await sendConfirmation(
       email,
-      `Update to your registration for "${theActivity.title}" at ${hostName}`,
-      getUnregistrationEmailBody(theActivity, theNonAttendee, site, currentUser)
+      unregistrationEmail({
+        activity: await attachPlaceAddress(theActivity),
+        values: theNonAttendee,
+        occurrence: theOccurence,
+        site,
+        currentUser,
+      })
     );
   },
 });

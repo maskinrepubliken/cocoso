@@ -15,7 +15,9 @@ async function sendEmail(
   id: string | undefined,
   subjectEmail: string | undefined,
   textEmail: string,
-  fromName?: string
+  fromName?: string,
+  // A plain-text part, for clients that show no HTML
+  plainText?: string
 ): Promise<void> {
   check([id, subjectEmail, textEmail], [String]);
   if (!id) {
@@ -57,6 +59,7 @@ async function sendEmail(
     to: toEmail,
     subject: subjectEmail,
     html: textEmail,
+    ...(plainText ? { text: plainText } : {}),
   };
 
   try {
