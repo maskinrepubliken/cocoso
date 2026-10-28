@@ -402,14 +402,14 @@ event:
     past: "Det här datumet har redan varit."
     forDate: "Anmälan till {{date}}"
   change:
-    toggle: "Ändra eller avboka din anmälan"
+    toggle: "Ändra eller avanmäl dig"
     intro: "Ange efternamnet och e-postadressen du anmälde dig med."
     find: "Hitta min anmälan"
     notFound: "Vi hittade ingen anmälan med de uppgifterna. Kontrollera datum och stavning och försök igen."
     save: "Spara ändringar"
-    cancel: "Avboka min anmälan"
+    cancel: "Avanmäl mig"
     updated: "Din anmälan är ändrad."
-    removed: "Din anmälan är avbokad."
+    removed: "Du är avanmäld."
   tools:
     intro: "Bara du och administratörerna ser den här listan med e-postadresser."
     edit: "Redigera evenemanget"

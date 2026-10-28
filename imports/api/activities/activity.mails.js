@@ -39,10 +39,10 @@ const STRINGS = {
       lead: (title) => `Så här ser din anmälan till ${title} ut nu.`,
     },
     change:
-      'Vill du ändra eller avboka? Öppna evenemanget, välj tillfället och klicka på ”Ändra eller avboka din anmälan”.',
+      'Vill du ändra något eller avanmäla dig? Öppna evenemanget, välj tillfället och klicka på ”Ändra eller avanmäl dig”.',
     cancel: {
-      subject: (title) => `Din anmälan är avbokad: ${title}`,
-      title: 'Din anmälan är avbokad',
+      subject: (title) => `Du är avanmäld: ${title}`,
+      title: 'Du är avanmäld',
       lead: (title) => `Du är inte längre anmäld till ${title}.`,
       again:
         'Ångrar du dig? Du kan anmäla dig igen på evenemangets sida, så länge det finns platser kvar.',
@@ -68,10 +68,10 @@ const STRINGS = {
       lead: (title) => `This is your registration for ${title} now.`,
     },
     change:
-      'Want to change or cancel? Open the event, choose the date and click “Change or cancel your registration”.',
+      'Want to change or cancel? Open the event, choose the date and click “Change or cancel your sign-up”.',
     cancel: {
-      subject: (title) => `Your registration is cancelled: ${title}`,
-      title: 'Your registration is cancelled',
+      subject: (title) => `Your sign-up is cancelled: ${title}`,
+      title: 'Your sign-up is cancelled',
       lead: (title) => `You are no longer signed up for ${title}.`,
       again:
         'Changed your mind? You can sign up again on the event page, as long as there are places left.',

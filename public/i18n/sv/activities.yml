@@ -166,7 +166,7 @@ public:
       actions:
         create: Anmäl mig
         update: Uppdatera
-        remove: Avboka din anmälan
+        remove: Avanmäl mig
       hideName: "Dölj mitt namn för andra besökare"
       emailPrivate: "Bara arrangören ser din e-post."
     email: E-postadressen är redan anmäld. Ändra din befintliga anmälan i stället.
@@ -181,7 +181,7 @@ public:
     label: Deltagare
     create: Tack, du är anmäld. Vi ses!
     update: Din anmälan är ändrad
-    remove: Din anmälan är avbokad
+    remove: Du är avanmäld
     show: Visa deltagare
     none: "Ingen har anmält sig än."
     hidden: "+ {{count}} som valt att inte visa sitt namn"
@@ -189,7 +189,7 @@ public:
     full: Evenemanget är fullt
     fullByYou: Grattis! Du fick den sista platsen!
   cancel:
-    label: Ändra eller avboka din anmälan
+    label: Ändra eller avanmäl dig
     found: Fortsätt
     notFound: Ange efternamn och e-post som du anmälde dig med
   past: Det här tillfället har redan varit
