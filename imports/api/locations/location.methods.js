@@ -8,6 +8,7 @@ import Groups from '../groups/group';
 import Works from '../works/work';
 import { isAdmin } from '../users/user.roles';
 import { isReservedSlug, slugify } from './reservedSlugs';
+import { warmShareImage } from '../share/shareImage.server';
 
 const sort = { order: 1, name: 1 };
 
@@ -133,6 +134,7 @@ Meteor.methods({
         updatedAt: new Date(),
       },
     });
+    warmShareImage('location', locationId);
   },
 
   async setLocationPublished(locationId, isPublished) {
@@ -142,6 +144,9 @@ Meteor.methods({
     await Locations.updateAsync(locationId, {
       $set: { isPublished, updatedAt: new Date() },
     });
+    if (isPublished) {
+      warmShareImage('location', locationId);
+    }
   },
 
   async reorderLocations(locationIds) {

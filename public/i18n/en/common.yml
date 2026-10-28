@@ -741,6 +741,6 @@ businesses:
 shareImage:
   event: Event
   welcome: Welcome to
-  nextTime: 'Next time {{ date }}'
-  moreDates_one: '+ {{ count }} more date'
-  moreDates_other: '+ {{ count }} more dates'
+  everyWeek: every week
+  everyOtherWeek: every other week
+  dates: dates

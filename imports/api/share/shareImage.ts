@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 
 import { publicUrl } from '/imports/api/_utils/shared';
-import { getNextOccurrence } from '/imports/api/activities/recurrence';
 
 // The generated share images: a 1200×630 picture with an entry's title,
 // place and date that link previews (Facebook, Messenger, WhatsApp,
@@ -13,13 +12,15 @@ import { getNextOccurrence } from '/imports/api/activities/recurrence';
 // data which picture the server will draw, and puts a fingerprint of it in
 // the image's URL. When the title, place or next date changes, the URL
 // changes too, so the services that cache previews fetch the new one.
+// Nothing in the picture depends on the day it is drawn, because a cached
+// preview is shown for as long as the post that carries it.
 
 export const SHARE_IMAGE_ROUTE = '/share-image';
 export const SHARE_IMAGE_WIDTH = 1200;
 export const SHARE_IMAGE_HEIGHT = 630;
 
 // Bump when the drawing changes, so every image is drawn anew.
-const DESIGN_VERSION = 1;
+const DESIGN_VERSION = 3;
 
 export type ShareImageKind = 'activity' | 'location';
 
@@ -81,11 +82,13 @@ export function activityHasShareImage(activity: ShareableActivity): boolean {
   );
 }
 
-export function activityShareFingerprint(
-  activity: ShareableActivity,
-  day: string = today()
-): string {
-  const next = getNextOccurrence(activity.datesAndTimes, day);
+// Only what is drawn, and nothing that changes with the day: the picture
+// (and so its URL, which the services cache by) stays the same until the
+// event itself is edited.
+export function activityShareFingerprint(activity: ShareableActivity): string {
+  const dates = (activity.datesAndTimes || [])
+    .map((d) => [d.startDate, d.startTime, d.endDate, d.endTime].join(' '))
+    .sort();
   return hashString(
     JSON.stringify([
       DESIGN_VERSION,
@@ -93,8 +96,7 @@ export function activityShareFingerprint(
       activity.resource || activity.place,
       activity.locationId,
       (activity.images && activity.images[0]) || activity.imageUrl,
-      next,
-      upcomingOccurrences(activity.datesAndTimes, day).length,
+      dates,
     ])
   );
 }

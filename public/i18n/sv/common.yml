@@ -738,6 +738,6 @@ businesses:
 shareImage:
   event: Evenemang
   welcome: Välkommen till
-  nextTime: 'Nästa gång {{ date }}'
-  moreDates_one: '+ {{ count }} tillfälle till'
-  moreDates_other: '+ {{ count }} fler tillfällen'
+  everyWeek: varje vecka
+  everyOtherWeek: varannan vecka
+  dates: tillfällen

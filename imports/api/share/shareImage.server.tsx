@@ -7,10 +7,7 @@ import path from 'path';
 import sharp from 'sharp';
 
 import Activities from '/imports/api/activities/activity';
-import {
-  getNextOccurrence,
-  getWeeklyPattern,
-} from '/imports/api/activities/recurrence';
+import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import Images from '/imports/api/images/image.collection';
 import Locations from '/imports/api/locations/location';
 import { getSite } from '/imports/api/site/site';
@@ -37,7 +34,6 @@ import {
   activityHasShareImage,
   activityShareFingerprint,
   locationShareFingerprint,
-  upcomingOccurrences,
   type ShareImageKind,
   type ShareableActivity,
   type ShareableLocation,
@@ -269,14 +265,15 @@ async function renderPicture(
     .toBuffer();
 }
 
-// The almanac label from the cards: the day large, the month in tegel.
-async function renderStamp(day: string, month: string) {
+// The almanac label from the cards: the day large, the month (or "varje
+// vecka") small in tegel.
+async function renderStamp(day: string, small: string) {
   const dayLayer = await renderText(day, {
     font: 'display',
-    size: 64,
+    size: day.length > 3 ? 52 : 64,
     color: COLORS.ink,
   });
-  const monthLayer = await renderText(month.toUpperCase(), {
+  const monthLayer = await renderText(small.toUpperCase(), {
     font: 'uiBold',
     size: 20,
     color: COLORS.tegel,
@@ -503,68 +500,121 @@ interface DateEntry {
   endTime?: string;
 }
 
-// The dates as people say them: "Tisdag 3 november, 14:00–16:00",
-// "Varje tisdag 14:00–16:00 / Nästa gång tisdag 3 november".
+// The dates as they stay true. A link preview is cached by Facebook,
+// WhatsApp and the rest and shown for as long as the post lives, so the
+// picture never says "next time" or "in three days": a single date with
+// its year, a weekly rhythm with the period it runs, or the span of an
+// irregular series with its number of dates.
 function describeDates(
   datesAndTimes: DateEntry[],
   t: (key: string, options?: Record<string, unknown>) => string,
   lang: string
-) {
-  const today = dayjs().format('YYYY-MM-DD');
-  const upcoming = upcomingOccurrences(datesAndTimes, today);
-  const next = getNextOccurrence(datesAndTimes, today);
-  if (!next) {
+): { lines: InfoLine[]; stamp: { day: string; small: string } | null } {
+  const dates = [...datesAndTimes].sort((a, b) =>
+    `${a.startDate}${a.startTime}`.localeCompare(`${b.startDate}${b.startTime}`)
+  );
+  if (!dates.length) {
     return { lines: [] as InfoLine[], stamp: null };
   }
-  const start = dayjs(next.startDate);
-  const end = dayjs(next.endDate || next.startDate);
-  const withYear = (day: dayjs.Dayjs, format: string) =>
-    day.year() === dayjs().year()
-      ? day.format(format)
-      : day.format(`${format} YYYY`);
-  const times = [next.startTime, next.endTime].filter(Boolean).join('–');
-  const multiDay = next.endDate && next.endDate !== next.startDate;
+  const first = dates[0];
+  const last = dates[dates.length - 1];
+  const start = dayjs(first.startDate);
+  const end = dayjs(last.endDate || last.startDate);
+  const times = (d: DateEntry) =>
+    [d.startTime, d.endTime].filter(Boolean).join('–');
 
-  const stamp = {
-    day: multiDay
-      ? `${start.format('D')}–${end.format('D')}`
-      : start.format('D'),
-    month: start.format('MMM').replace('.', ''),
+  // "5 december 2026", "3–5 december 2026", "30 november – 2 december 2026"
+  const span = () => {
+    if (start.isSame(end, 'day')) {
+      return start.format('D MMMM YYYY');
+    }
+    if (start.isSame(end, 'month')) {
+      return `${start.format('D')}–${end.format('D MMMM YYYY')}`;
+    }
+    return start.isSame(end, 'year')
+      ? `${start.format('D MMMM')} – ${end.format('D MMMM YYYY')}`
+      : `${start.format('D MMMM YYYY')} – ${end.format('D MMMM YYYY')}`;
+  };
+  const dateStamp = {
+    day:
+      first.endDate && first.endDate !== first.startDate
+        ? `${start.format('D')}–${dayjs(first.endDate).format('D')}`
+        : start.format('D'),
+    small: start.format('MMM').replace('.', ''),
   };
 
-  const pattern = getWeeklyPattern(datesAndTimes);
-  if (pattern && pattern.until >= today) {
+  if (dates.length === 1) {
+    const when = start.isSame(end, 'day')
+      ? capitalize(start.format('dddd D MMMM YYYY'))
+      : span();
+    const time = times(first);
     return {
-      stamp,
+      stamp: dateStamp,
+      lines: [
+        { icon: 'calendar' as const, text: time ? `${when}, ${time}` : when },
+      ],
+    };
+  }
+
+  const pattern = getWeeklyPattern(dates);
+  if (pattern) {
+    const weekdays = [...new Set(pattern.slots.map((slot) => slot.weekday))];
+    return {
+      // One weekday: "Tis / varje vecka" on the label; several do not fit
+      stamp:
+        weekdays.length === 1
+          ? {
+              day: capitalize(
+                dayjs().day(weekdays[0]).format('ddd').replace('.', '')
+              ),
+              small: t(
+                pattern.intervalWeeks === 2
+                  ? 'shareImage.everyOtherWeek'
+                  : 'shareImage.everyWeek'
+              ),
+            }
+          : null,
       lines: [
         {
           icon: 'calendar' as const,
           text: capitalize(describePattern(pattern, t as never, lang)),
         },
-        {
-          muted: true,
-          text: t('shareImage.nextTime', {
-            date: withYear(start, 'dddd D MMMM'),
-          }),
-        },
+        { muted: true, text: span() },
       ],
     };
   }
 
-  const when = multiDay
-    ? `${withYear(start, 'D MMMM')} – ${withYear(end, 'D MMMM')}`
-    : capitalize(withYear(start, 'dddd D MMMM'));
-  const lines: InfoLine[] = [
-    { icon: 'calendar', text: times ? `${when}, ${times}` : when },
-  ];
-  if (upcoming.length > 1) {
-    lines.push({
-      muted: true,
-      text: t('shareImage.moreDates', { count: upcoming.length - 1 }),
-    });
+  // A few dates are named ("21 november och 12 december 2026"), more are
+  // given as their span; the label says how many. The time goes under
+  // them when it is the same every time.
+  const sameYear = start.isSame(end, 'year');
+  const listed =
+    dates.length <= 3
+      ? `${joinList(
+          dates.map((d) =>
+            dayjs(d.startDate).format(sameYear ? 'D MMMM' : 'D MMMM YYYY')
+          ),
+          lang
+        )}${sameYear ? ` ${end.format('YYYY')}` : ''}`
+      : span();
+  const allTimes = [...new Set(dates.map(times))];
+  const lines: InfoLine[] = [{ icon: 'calendar', text: capitalize(listed) }];
+  if (allTimes.length === 1 && allTimes[0]) {
+    lines.push({ muted: true, text: allTimes[0] });
   }
-  return { lines, stamp };
+  return {
+    stamp: { day: String(dates.length), small: t('shareImage.dates') },
+    lines,
+  };
 }
+
+const joinList = (items: string[], lang: string) => {
+  try {
+    return new Intl.ListFormat(lang, { type: 'conjunction' }).format(items);
+  } catch {
+    return items.join(', ');
+  }
+};
 
 async function drawActivity(activity: ShareableActivity): Promise<Buffer> {
   const { lang, t, siteName } = await siteContext();
@@ -590,7 +640,7 @@ async function drawActivity(activity: ShareableActivity): Promise<Buffer> {
       activity._id || activity.title || '',
       world
     ),
-    stamp ? renderStamp(stamp.day, stamp.month) : null,
+    stamp ? renderStamp(stamp.day, stamp.small) : null,
   ]);
 
   return composeCard({
@@ -732,6 +782,17 @@ export async function getShareImage(
     pending.set(key, drawing);
   }
   return { buffer: await drawing, fingerprint: entry.fingerprint };
+}
+
+// Draws an entry's picture right after it is saved, so it is ready when
+// the link is first shared: Facebook and WhatsApp give up on an image that
+// takes long, and the first preview is the one that stays.
+export function warmShareImage(kind: ShareImageKind, id: string): void {
+  Meteor.defer(() => {
+    getShareImage(kind, id).catch((error) =>
+      console.error('[share-image] could not draw', kind, id, error)
+    );
+  });
 }
 
 export async function removeShareImages(

@@ -19,6 +19,7 @@ import {
   resolveContactUserId,
 } from './activity.organizers';
 import { attachPlaceAddress, ownActivityAddress } from './activity.place';
+import { warmShareImage } from '../share/shareImage.server';
 import { formatAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { cleanKinds } from '../_utils/kinds';
@@ -630,6 +631,7 @@ Meteor.methods({
           'activities'
         );
       }
+      warmShareImage('activity', activityId);
       return activityId;
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't add to Collection");
@@ -748,7 +750,7 @@ Meteor.methods({
     }
 
     try {
-      return await Activities.updateAsync(activityId, {
+      const updated = await Activities.updateAsync(activityId, {
         $set: {
           ...safeValues,
           ...(newAuthor || {}),
@@ -758,6 +760,8 @@ Meteor.methods({
         },
         ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
       });
+      warmShareImage('activity', activityId);
+      return updated;
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update activity");
     }
