@@ -308,6 +308,11 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
         path={`/@${user.username}`}
         title={name}
         type="profile"
+        profile={{
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        }}
       />
 
       <EntryTopBar

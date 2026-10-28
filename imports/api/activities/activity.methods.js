@@ -757,6 +757,8 @@ Meteor.methods({
           ...(locationId ? { locationId } : {}),
           isMunicipalityOnly:
             !locationId && Boolean(safeValues.isMunicipalityOnly),
+          // og:updated_time / article:modified_time on the event page
+          latestUpdate: new Date(),
         },
         ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
       });

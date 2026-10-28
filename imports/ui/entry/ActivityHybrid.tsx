@@ -16,8 +16,11 @@ import { styled } from '/stitches.config';
 import { Button, Tag } from '/imports/ui/core';
 import Notice from '/imports/ui/generic/Notice';
 import type { Site } from '/imports/ui/types';
+import { kindsOf } from '/imports/api/_utils/kinds';
+import { publicUrl } from '/imports/api/_utils/shared';
 import { activityShareImageUrl } from '/imports/api/share/shareImage';
-import ShareMeta from '/imports/ui/layout/ShareMeta';
+import { eventStructuredData } from '/imports/ui/utils/structuredData';
+import ShareMeta, { shareText } from '/imports/ui/layout/ShareMeta';
 import {
   canCreateContentAtom,
   currentUserAtom,
@@ -189,6 +192,10 @@ interface Activity {
   contact?: PublicContact | null;
   contactUserId?: string | null;
   organizerProfiles?: OrganizerProfile[];
+  kinds?: string[] | null;
+  category?: { key?: string } | null;
+  creationDate?: Date | string;
+  latestUpdate?: Date | string;
 }
 
 export interface ActivityHybridProps {
@@ -298,18 +305,63 @@ export default function ActivityHybrid({
   // A shared link shows the generated picture with the title, place and
   // date while the event has dates left, then its own photo.
   const shareImage = activityShareImageUrl(activity);
+  const path = `/${isPublicActivity ? 'activities' : 'calendar'}/${
+    activity._id
+  }`;
+  const kindLabels = kindsOf(activity).map((key) => tc(`eventKinds.${key}`));
+  const author =
+    activity.organizerProfiles?.find((p) => p.userId === activity.authorId) ||
+    activity.organizerProfiles?.[0];
+  const organizer = author
+    ? {
+        name:
+          [author.firstName, author.lastName].filter(Boolean).join(' ') ||
+          author.username,
+        url: publicUrl(`/@${author.username}`),
+      }
+    : null;
+  const pictures = [
+    shareImage,
+    ...images.map((image) => getImageUrl(image, 'full')),
+  ].filter((image): image is string => Boolean(image));
 
   return (
     <Page>
       <ShareMeta
         title={activity.title}
         description={activity.subTitle || activity.longDescription}
-        path={`/${isPublicActivity ? 'activities' : 'calendar'}/${
-          activity._id
-        }`}
+        path={path}
         image={shareImage || images[0]}
         generatedImage={Boolean(shareImage)}
         type="article"
+        article={{
+          publishedTime: activity.creationDate,
+          modifiedTime: activity.latestUpdate || activity.creationDate,
+          section: kindLabels[0] || locationName,
+          tags: [...kindLabels, locationName].filter((tag): tag is string =>
+            Boolean(tag)
+          ),
+          authors: organizer ? [organizer.url] : [],
+        }}
+        structuredData={
+          isPublicActivity
+            ? eventStructuredData({
+                title: activity.title,
+                description: shareText(
+                  activity.subTitle || activity.longDescription,
+                  300
+                ),
+                url: publicUrl(path),
+                images: pictures,
+                datesAndTimes: dates,
+                venue: activity.resource || activity.place,
+                locationName,
+                address: activity.placeAddress || activity.address,
+                organizer,
+                isArchived: activity.isArchived,
+              })
+            : null
+        }
       />
 
       <TopBar>

@@ -17,8 +17,10 @@ import { locationsAtom } from '/imports/state';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { isMenuItemShown } from '/imports/api/_utils/features';
+import { publicUrl } from '/imports/api/_utils/shared';
 import { locationShareImageUrl } from '/imports/api/share/shareImage';
-import ShareMeta from '/imports/ui/layout/ShareMeta';
+import ShareMeta, { shareText } from '/imports/ui/layout/ShareMeta';
+import { placeStructuredData } from '/imports/ui/utils/structuredData';
 
 import type { SlugData } from './SlugHandler';
 
@@ -245,6 +247,14 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
         path={prefix}
         image={shareImage}
         generatedImage
+        coordinates={location.coordinates}
+        structuredData={placeStructuredData({
+          name: location.name,
+          description: shareText(location.description, 300),
+          url: publicUrl(prefix),
+          image: heroImage || shareImage,
+          coordinates: location.coordinates,
+        })}
       />
     </Box>
   );

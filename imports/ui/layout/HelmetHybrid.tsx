@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
+import { allLangs } from '/imports/startup/i18n';
+
 import ShareMeta from './ShareMeta';
 
 const publicSettings = Meteor?.settings?.public;
@@ -61,6 +63,19 @@ export default function HelmetHybrid({
         {siteName && <meta property="og:title" content={siteName} />}
         {siteName && <meta name="twitter:title" content={siteName} />}
         {lang && <meta property="og:locale" content={LOCALES[lang] || lang} />}
+        {allLangs
+          .filter((other) => other.value !== lang)
+          .map((other) => (
+            <meta
+              key={other.value}
+              property="og:locale:alternate"
+              content={LOCALES[other.value] || other.value}
+            />
+          ))}
+        {/* Facebook's Sharing Debugger asks for an app; optional */}
+        {publicSettings?.facebookAppId && (
+          <meta property="fb:app_id" content={publicSettings.facebookAppId} />
+        )}
         <meta name="theme-color" content="#eeeedb" />
         <link
           rel="icon"

@@ -359,31 +359,15 @@ export const plainText = (html?: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-interface EntryMetaProps {
-  title?: string;
-  description?: string;
-  image?: string;
-  path: string;
-  type?: ShareMetaProps['type'];
-}
+type EntryMetaProps = Omit<ShareMetaProps, 'image'> & { image?: string };
 
 // What the page says about itself to browsers and link previews.
 export function EntryMeta({
-  title,
   description = '',
-  image,
-  path,
   type = 'article',
+  ...rest
 }: EntryMetaProps) {
-  return (
-    <ShareMeta
-      title={title}
-      description={description}
-      image={image}
-      path={path}
-      type={type}
-    />
-  );
+  return <ShareMeta description={description} type={type} {...rest} />;
 }
 
 interface PictureProps {

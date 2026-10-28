@@ -118,6 +118,7 @@ export default async function serverRenderer(sink) {
     ${helmet.title.toString()}
     ${helmet.meta.toString()}
     ${helmet.link.toString()}
+    ${helmet.script.toString()}
     <style id="global-theme">${globalCssString}</style>
     <style id="stitches">${getCssText()}</style>
   `);

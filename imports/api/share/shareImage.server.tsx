@@ -832,7 +832,9 @@ if (Meteor.isServer && !Meteor.isTest) {
       sweepShareImages()
         .then((count) => {
           if (count) {
-            console.log(`[share-image] removed ${count} unused share image(s)`);
+            console.info(
+              `[share-image] removed ${count} unused share image(s)`
+            );
           }
         })
         .catch((error) => console.error('[share-image] sweep failed', error));
