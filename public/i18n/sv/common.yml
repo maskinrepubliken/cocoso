@@ -737,6 +737,7 @@ businesses:
 # Den genererade bilden en delad länk visar (imports/api/share)
 shareImage:
   event: Evenemang
+  resource: Plats
   welcome: Välkommen till
   everyWeek: varje vecka
   everyOtherWeek: varannan vecka

@@ -117,27 +117,31 @@ export function eventStructuredData(event: EventData): object[] | null {
 }
 
 export interface PlaceData {
+  /** "Place", or a more exact schema.org type for a venue */
+  type?: string;
   name?: string;
   description?: string;
   url: string;
   image?: string | null;
   coordinates?: { lat: number; lng: number } | null;
+  /** The street address; a place (ort) without one is its own locality. */
+  address?: Partial<Address> | null;
 }
 
-// A place (ort) in the municipality
+// A place (ort) in the municipality, or a venue (lokal) with its address
 export function placeStructuredData(place: PlaceData): object | null {
   if (!place.name) {
     return null;
   }
   return {
     '@context': 'https://schema.org',
-    '@type': 'Place',
+    '@type': place.type || 'Place',
     name: place.name,
     ...(place.description ? { description: place.description } : {}),
     url: place.url,
     ...(place.image ? { image: place.image } : {}),
     ...(place.coordinates ? { geo: geo(place.coordinates) } : {}),
-    address: {
+    address: postalAddress(place.address) || {
       '@type': 'PostalAddress',
       addressLocality: place.name,
       addressCountry: 'SE',

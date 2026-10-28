@@ -11,6 +11,7 @@ import { attachBookingPerson, cleanBooking } from './resource.booking';
 import Activities from '../activities/activity';
 import { cleanKinds } from '../_utils/kinds';
 import { RESOURCE_KIND_KEYS } from '../../ui/pages/resources/resourceKinds';
+import { warmShareImage } from '../share/shareImage.server';
 
 async function validateLabel(label, resourceId) {
   // set resource query
@@ -148,6 +149,7 @@ Meteor.methods({
         newResourceId,
         'resources'
       );
+      warmShareImage('resource', newResourceId);
       return newResourceId;
     } catch (error) {
       throw new Meteor.Error(error);
@@ -206,6 +208,7 @@ Meteor.methods({
         },
         ...(Object.keys(unset).length ? { $unset: unset } : {}),
       });
+      warmShareImage('resource', resourceId);
       // Activities held at this resource follow it.
       await Activities.updateAsync(
         { resourceId },

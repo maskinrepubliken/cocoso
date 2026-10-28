@@ -20,6 +20,11 @@ import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 import LocationTag from '/imports/ui/generic/LocationTag';
 import BookableChip from '/imports/ui/generic/BookableChip';
+import { publicUrl } from '/imports/api/_utils/shared';
+import { resourceShareImageUrl } from '/imports/api/share/shareImage';
+import { shareText } from '/imports/ui/layout/ShareMeta';
+import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { placeStructuredData } from '/imports/ui/utils/structuredData';
 
 import EntryHero, {
   Chip,
@@ -48,6 +53,8 @@ interface Resource {
   isCombo?: boolean;
   locationId?: string;
   resourcesForCombo?: ResourceForCombo[];
+  kinds?: string[] | null;
+  category?: { key?: string } | null;
 }
 
 export interface ResourceHybridProps {
@@ -140,6 +147,11 @@ export default function ResourceHybrid({
     (item) => item.name === 'resources'
   );
 
+  // A shared link shows the generated picture with the name, kind,
+  // description and address
+  const path = `/resources/${resource._id}`;
+  const shareImage = resourceShareImageUrl(resource) || undefined;
+
   const withContact = hasContact(resource.contact);
   // Places made up of others are for booking in the calendar too
   const isCombo = isFeatureEnabled('bookings') && resource.isCombo;
@@ -149,9 +161,20 @@ export default function ResourceHybrid({
       <EntryPage>
         <EntryMeta
           description={plainText(resource.description)}
-          image={images[0]}
-          path={`/resources/${resource._id}`}
+          image={shareImage}
+          generatedImage
+          path={path}
           title={resource.label}
+          type="website"
+          coordinates={resource.address?.coordinates}
+          structuredData={placeStructuredData({
+            name: resource.label,
+            description: shareText(resource.description, 300),
+            url: publicUrl(path),
+            image: getImageUrl(images[0], 'full') || shareImage,
+            coordinates: resource.address?.coordinates,
+            address: resource.address,
+          })}
         />
 
         <EntryTopBar

@@ -20,9 +20,9 @@ export const SHARE_IMAGE_WIDTH = 1200;
 export const SHARE_IMAGE_HEIGHT = 630;
 
 // Bump when the drawing changes, so every image is drawn anew.
-const DESIGN_VERSION = 3;
+const DESIGN_VERSION = 6;
 
-export type ShareImageKind = 'activity' | 'location';
+export type ShareImageKind = 'activity' | 'location' | 'resource';
 
 // FNV-1a, as a short base-36 string.
 function hashString(input: string): string {
@@ -44,6 +44,8 @@ interface DateEntry {
 export interface ShareableActivity {
   _id?: string;
   title?: string;
+  subTitle?: string;
+  longDescription?: string;
   resource?: string;
   place?: string;
   locationId?: string | null;
@@ -51,6 +53,17 @@ export interface ShareableActivity {
   imageUrl?: unknown;
   datesAndTimes?: DateEntry[];
   isArchived?: boolean;
+}
+
+export interface ShareableResource {
+  _id?: string;
+  label?: string;
+  description?: string;
+  images?: unknown[];
+  kinds?: string[] | null;
+  category?: { key?: string } | null;
+  locationId?: string | null;
+  address?: { street?: string; postalCode?: string; city?: string } | null;
 }
 
 export interface ShareableLocation {
@@ -93,6 +106,8 @@ export function activityShareFingerprint(activity: ShareableActivity): string {
     JSON.stringify([
       DESIGN_VERSION,
       activity.title,
+      activity.subTitle,
+      activity.longDescription,
       activity.resource || activity.place,
       activity.locationId,
       (activity.images && activity.images[0]) || activity.imageUrl,
@@ -110,6 +125,21 @@ export function locationShareFingerprint(location: ShareableLocation): string {
       location.images?.[0],
       location.colorKey,
       location.order,
+    ])
+  );
+}
+
+export function resourceShareFingerprint(resource: ShareableResource): string {
+  return hashString(
+    JSON.stringify([
+      DESIGN_VERSION,
+      resource.label,
+      resource.description,
+      resource.images?.[0],
+      resource.kinds || resource.category?.key,
+      resource.locationId,
+      resource.address?.street,
+      resource.address?.city,
     ])
   );
 }
@@ -146,5 +176,18 @@ export function locationShareImageUrl(
     'location',
     location._id,
     locationShareFingerprint(location)
+  );
+}
+
+export function resourceShareImageUrl(
+  resource: ShareableResource
+): string | null {
+  if (!resource?._id) {
+    return null;
+  }
+  return shareImageUrl(
+    'resource',
+    resource._id,
+    resourceShareFingerprint(resource)
   );
 }

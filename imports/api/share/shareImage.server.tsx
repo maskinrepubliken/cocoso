@@ -10,6 +10,9 @@ import Activities from '/imports/api/activities/activity';
 import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import Images from '/imports/api/images/image.collection';
 import Locations from '/imports/api/locations/location';
+import Resources from '/imports/api/resources/resource';
+import { formatAddress } from '/imports/api/_utils/address';
+import { kindsOf } from '/imports/api/_utils/kinds';
 import { getSite } from '/imports/api/site/site';
 import {
   getMediaStorageRoot,
@@ -34,9 +37,11 @@ import {
   activityHasShareImage,
   activityShareFingerprint,
   locationShareFingerprint,
+  resourceShareFingerprint,
   type ShareImageKind,
   type ShareableActivity,
   type ShareableLocation,
+  type ShareableResource,
 } from './shareImage';
 
 // Draws the share images (see shareImage.ts) with sharp: the text is set
@@ -118,9 +123,10 @@ async function renderText(
 async function renderTitle(
   title: string,
   width: number,
-  maxLines: number
+  maxLines: number,
+  maxSize = 76
 ): Promise<TextLayer> {
-  const sizes = [76, 68, 60, 54, 48];
+  const sizes = [76, 68, 60, 54, 48].filter((size) => size <= maxSize);
   const fits = (layer: TextLayer, size: number) =>
     layer.height <= size * 1.3 * maxLines;
   for (const size of sizes) {
@@ -359,7 +365,13 @@ interface InfoLine {
 
 interface CardContent {
   kicker: string;
+  /** Used instead of the kicker when that does not fit on one line */
+  kickerShort?: string;
   title: string;
+  /** A line under the title: the event's subtitle */
+  subtitle?: string;
+  /** The description, quieter, as much as there is room for */
+  summary?: string;
   lines: InfoLine[];
   picture: Buffer;
   stamp?: Buffer | null;
@@ -369,17 +381,93 @@ interface CardContent {
 const TEXT_X = 72;
 const TEXT_W = PICTURE.x - TEXT_X - 56;
 const FOOTER_H = 96;
+const TEXT_TOP = 44;
+// The text block ends this far above the crane
+const TEXT_BOTTOM = H - FOOTER_H - 28;
+
+const trimEnd = (text: string) => text.replace(/[\s,.;:–—-]+$/, '');
+
+// The text in at most `maxLines` lines, cut after a word with an ellipsis
+// when it is longer; null when nothing fits.
+async function renderClamped(
+  text: string | undefined,
+  options: TextOptions,
+  maxLines: number
+): Promise<TextLayer | null> {
+  if (!text || maxLines <= 0) {
+    return null;
+  }
+  const oneLine = await renderText('Åg', { ...options, width: undefined });
+  const limit =
+    oneLine.height * maxLines + (options.lineHeight || 0) * (maxLines - 1) + 4;
+  const whole = await renderText(text, options);
+  if (whole.height <= limit) {
+    return whole;
+  }
+  const words = text.split(/\s+/);
+  let low = 1;
+  let high = words.length - 1;
+  let best: TextLayer | null = null;
+  while (low <= high) {
+    const middle = Math.floor((low + high) / 2);
+    const layer = await renderText(
+      `${trimEnd(words.slice(0, middle).join(' '))}…`,
+      options
+    );
+    if (layer.height <= limit) {
+      best = layer;
+      low = middle + 1;
+    } else {
+      high = middle - 1;
+    }
+  }
+  return best;
+}
+
+const SUBTITLE_STYLE: TextOptions = {
+  font: 'ui',
+  size: 27,
+  color: COLORS.ink,
+  width: TEXT_W,
+};
+const SUMMARY_STYLE: TextOptions = {
+  font: 'ui',
+  size: 23,
+  color: COLORS.soft,
+  width: TEXT_W,
+  lineHeight: 3,
+};
+
+// How many lines title, subtitle and description get, roomiest first; the
+// first that leaves room for the dates and the place is used.
+const TEXT_PLANS: Array<[number, number, number]> = [
+  [3, 2, 3],
+  [2, 2, 3],
+  [2, 2, 2],
+  [2, 1, 2],
+  [2, 1, 1],
+  [2, 1, 0],
+  [2, 0, 0],
+  [1, 0, 0],
+];
 
 async function composeCard(content: CardContent): Promise<Buffer> {
   const layers: sharp.OverlayOptions[] = [];
-  const kicker = await renderText(content.kicker.toUpperCase(), {
+  const kickerStyle: TextOptions = {
     font: 'uiBold',
     size: 22,
     color: COLORS.tegel,
     letterSpacing: 0.14,
-    width: TEXT_W,
-  });
-  const title = await renderTitle(content.title, TEXT_W, 3);
+  };
+  let kicker = await renderText(content.kicker.toUpperCase(), kickerStyle);
+  if (kicker.width > TEXT_W) {
+    kicker = await renderText(
+      (content.kickerShort || content.kicker).toUpperCase(),
+      { ...kickerStyle, width: TEXT_W }
+    );
+  }
+  // A title with text under it is set a size smaller, so the text has room
+  const titleMax = content.subtitle || content.summary ? 64 : 76;
   // Lines with an icon, and the quieter lines under them, share an indent
   const lines = await Promise.all(
     content.lines.map(async (line, index) => {
@@ -397,21 +485,70 @@ async function composeCard(content: CardContent): Promise<Buffer> {
     })
   );
 
-  // The text block centred in the space above the footer
-  const gaps = { kicker: 22, title: 34, line: 12 };
-  const blockHeight =
-    kicker.height +
-    gaps.kicker +
-    title.height +
-    (lines.length ? gaps.title : 0) +
+  const gaps = { kicker: 22, title: 14, subtitle: 10, text: 28, line: 12 };
+  const linesHeight =
     lines.reduce((sum, { layer }) => sum + layer.height, 0) +
     Math.max(0, lines.length - 1) * gaps.line;
-  let y = Math.max(44, Math.round((H - FOOTER_H - blockHeight) / 2) + 16);
 
+  // Each part is drawn once per number of lines it is tried with
+  const drawn = new Map<string, Promise<TextLayer | null>>();
+  const once = (key: string, draw: () => Promise<TextLayer | null>) => {
+    if (!drawn.has(key)) {
+      drawn.set(key, draw());
+    }
+    return drawn.get(key) as Promise<TextLayer | null>;
+  };
+
+  let parts: (TextLayer | null)[] = [];
+  let blockHeight = 0;
+  for (const [titleLines, subtitleLines, summaryLines] of TEXT_PLANS) {
+    parts = await Promise.all([
+      once(`t${titleLines}`, () =>
+        renderTitle(content.title, TEXT_W, titleLines, titleMax)
+      ),
+      once(`s${subtitleLines}`, () =>
+        renderClamped(content.subtitle, SUBTITLE_STYLE, subtitleLines)
+      ),
+      once(`d${summaryLines}`, () =>
+        renderClamped(content.summary, SUMMARY_STYLE, summaryLines)
+      ),
+    ]);
+    const [title, subtitle, summary] = parts;
+    blockHeight =
+      kicker.height +
+      gaps.kicker +
+      (title?.height || 0) +
+      (subtitle ? gaps.title + subtitle.height : 0) +
+      (summary ? (subtitle ? gaps.subtitle : gaps.title) + summary.height : 0) +
+      (lines.length ? gaps.text + linesHeight : 0);
+    if (blockHeight <= TEXT_BOTTOM - TEXT_TOP) {
+      break;
+    }
+  }
+  const [title, subtitle, summary] = parts;
+
+  // The text block centred in the space above the footer
+  let y = Math.max(
+    TEXT_TOP,
+    Math.round((TEXT_BOTTOM + TEXT_TOP - blockHeight) / 2)
+  );
   layers.push({ input: kicker.data, left: TEXT_X, top: y });
   y += kicker.height + gaps.kicker;
-  layers.push({ input: title.data, left: TEXT_X, top: y });
-  y += title.height + gaps.title;
+  if (title) {
+    layers.push({ input: title.data, left: TEXT_X, top: y });
+    y += title.height;
+  }
+  if (subtitle) {
+    y += gaps.title;
+    layers.push({ input: subtitle.data, left: TEXT_X, top: y });
+    y += subtitle.height;
+  }
+  if (summary) {
+    y += subtitle ? gaps.subtitle : gaps.title;
+    layers.push({ input: summary.data, left: TEXT_X, top: y });
+    y += summary.height;
+  }
+  y += gaps.text;
   lines.forEach(({ line, indent, layer }) => {
     if (line.icon) {
       layers.push({
@@ -643,9 +780,18 @@ async function drawActivity(activity: ShareableActivity): Promise<Buffer> {
     stamp ? renderStamp(stamp.day, stamp.small) : null,
   ]);
 
+  // The subtitle under the title, then as much of the description as
+  // fits (unless it only repeats the subtitle)
+  const subtitle = plainText(activity.subTitle);
+  const description = withoutCredits(plainText(activity.longDescription));
   return composeCard({
     kicker: [t('shareImage.event'), place?.name].filter(Boolean).join(' · '),
     title: activity.title || '',
+    subtitle,
+    summary:
+      description && !(subtitle && description.startsWith(subtitle))
+        ? shorten(description, 320)
+        : undefined,
     lines,
     picture,
     stamp: stampLayer,
@@ -653,13 +799,18 @@ async function drawActivity(activity: ShareableActivity): Promise<Buffer> {
   });
 }
 
-const plainText = (html = '') =>
-  html
+const plainText = (html?: string | null) =>
+  (html || '')
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ')
     .trim();
+
+// Descriptions often end with the photo's credit ("Foto: … (CC BY-SA 4.0,
+// Wikimedia Commons)."), which is not for the picture.
+const withoutCredits = (text: string) =>
+  text.replace(/(^|[.!?]\s+)(foto|bild|photo|image)\s*:[^]*$/i, '$1').trim();
 
 const shorten = (text: string, max: number) =>
   text.length <= max ? text : `${text.slice(0, max).replace(/\s+\S*$/, '')}…`;
@@ -672,7 +823,6 @@ async function drawLocation(location: ShareableLocation): Promise<Buffer> {
     0
   );
   const world = worldForPlace(location, index);
-  const description = shorten(plainText(location.description), 130);
   const picture = await renderPicture(
     location.images?.[0],
     location._id || location.name || '',
@@ -681,7 +831,39 @@ async function drawLocation(location: ShareableLocation): Promise<Buffer> {
   return composeCard({
     kicker: t('shareImage.welcome'),
     title: location.name || '',
-    lines: description ? [{ text: description, muted: true }] : [],
+    summary: shorten(withoutCredits(plainText(location.description)), 320),
+    lines: [],
+    picture,
+    siteName,
+  });
+}
+
+// A place to be (lokal): its kind and the ort above the name, the
+// description, the address.
+async function drawResource(resource: ShareableResource): Promise<Buffer> {
+  const { t, siteName } = await siteContext();
+  const places = await placesInOrder();
+  const index = places.findIndex((p) => p._id === resource.locationId);
+  const place = index === -1 ? null : places[index];
+  const world = worldForPlace(place || undefined, Math.max(index, 0));
+  const kind = kindsOf(resource)[0];
+  const address = formatAddress(resource.address as never);
+  const picture = await renderPicture(
+    resource.images?.[0],
+    resource._id || resource.label || '',
+    world
+  );
+  return composeCard({
+    kicker: [
+      kind ? t(`resourceKinds.${kind}`) : t('shareImage.resource'),
+      place?.name,
+    ]
+      .filter(Boolean)
+      .join(' · '),
+    kickerShort: kind ? t(`resourceKinds.${kind}`) : t('shareImage.resource'),
+    title: resource.label || '',
+    summary: shorten(withoutCredits(plainText(resource.description)), 320),
+    lines: address ? [{ icon: 'pin', text: address }] : [],
     picture,
     siteName,
   });
@@ -710,6 +892,8 @@ async function findEntry(
       {
         fields: {
           title: 1,
+          subTitle: 1,
+          longDescription: 1,
           resource: 1,
           place: 1,
           locationId: 1,
@@ -728,6 +912,17 @@ async function findEntry(
       // An event with no dates left is drawn when asked but not kept
       keep: activityHasShareImage(activity),
       draw: () => drawActivity(activity),
+    };
+  }
+  if (kind === 'resource') {
+    const resource = await Resources.findOneAsync({ _id: id });
+    if (!resource) {
+      return null;
+    }
+    return {
+      fingerprint: resourceShareFingerprint(resource),
+      keep: true,
+      draw: () => drawResource(resource),
     };
   }
   const location = await Locations.findOneAsync({ _id: id, isPublished: true });
@@ -809,7 +1004,7 @@ export async function removeShareImages(
 // left (or removed, or archived) and of places that are gone or hidden.
 export async function sweepShareImages(): Promise<number> {
   let removed = 0;
-  for (const kind of ['activity', 'location'] as ShareImageKind[]) {
+  for (const kind of ['activity', 'location', 'resource'] as ShareImageKind[]) {
     const dir = path.join(getMediaStorageRoot(), STORAGE_DIR, kind);
     const ids = await fsp.readdir(dir).catch(() => [] as string[]);
     for (const id of ids) {
@@ -824,7 +1019,7 @@ export async function sweepShareImages(): Promise<number> {
 }
 
 export const isShareImageKind = (kind: string): kind is ShareImageKind =>
-  kind === 'activity' || kind === 'location';
+  kind === 'activity' || kind === 'location' || kind === 'resource';
 
 if (Meteor.isServer && !Meteor.isTest) {
   Meteor.startup(() => {

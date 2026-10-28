@@ -740,6 +740,7 @@ businesses:
 # The generated picture a shared link shows (imports/api/share)
 shareImage:
   event: Event
+  resource: Place
   welcome: Welcome to
   everyWeek: every week
   everyOtherWeek: every other week
