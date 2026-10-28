@@ -10,6 +10,7 @@ import {
 } from '../../api/_utils/services/mails/smtp';
 import './api';
 import './media';
+import './shareImages';
 import './rateLimits';
 
 const { cdnServer } = Meteor.settings;

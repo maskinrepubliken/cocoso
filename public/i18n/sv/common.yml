@@ -733,3 +733,11 @@ businesses:
   around: Runt om i kommunen
   count_one: '{{ count }} ställe'
   count_other: '{{ count }} ställen'
+
+# Den genererade bilden en delad länk visar (imports/api/share)
+shareImage:
+  event: Evenemang
+  welcome: Välkommen till
+  nextTime: 'Nästa gång {{ date }}'
+  moreDates_one: '+ {{ count }} tillfälle till'
+  moreDates_other: '+ {{ count }} fler tillfällen'

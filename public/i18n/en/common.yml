@@ -736,3 +736,11 @@ businesses:
   around: Around the municipality
   count_one: '{{ count }} place'
   count_other: '{{ count }} places'
+
+# The generated picture a shared link shows (imports/api/share)
+shareImage:
+  event: Event
+  welcome: Welcome to
+  nextTime: 'Next time {{ date }}'
+  moreDates_one: '+ {{ count }} more date'
+  moreDates_other: '+ {{ count }} more dates'
