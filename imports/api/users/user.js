@@ -41,6 +41,15 @@ Users.schema.UserProfile = {
   avatarLegacy: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   isPublic: { type: Boolean, defaultValue: true, optional: true },
 
+  // What the person wants to hear from the site, set on the profile's
+  // notification page (imports/api/notifications). Missing means the
+  // defaults there: no newsletter, event updates by email and push.
+  notificationPrefs: { type: Object, optional: true },
+  'notificationPrefs.newsletter': { type: Boolean, optional: true },
+  'notificationPrefs.newsletterChangedAt': { type: Date, optional: true },
+  'notificationPrefs.eventEmail': { type: Boolean, optional: true },
+  'notificationPrefs.eventPush': { type: Boolean, optional: true },
+
   groups: { type: Array, defaultValue: [] },
   'groups.$': {
     type: new SimpleSchema({

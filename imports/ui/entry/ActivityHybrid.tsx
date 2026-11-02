@@ -44,8 +44,10 @@ import OrganizerSection, {
 import AttendeesSection from '../pages/activities/event/AttendeesSection';
 import RegistrationSection from '../pages/activities/event/RegistrationSection';
 import OrganizerToolsSection from '../pages/activities/event/OrganizerToolsSection';
+import FollowSection from '../pages/activities/event/FollowSection';
 import {
   Occurrence,
+  isPastOccurrence,
   pickOccurrenceIndex,
 } from '../pages/activities/event/occurrences';
 
@@ -427,6 +429,13 @@ export default function ActivityHybrid({
 
           {isPublicActivity && occurrence && (
             <AttendeesSection attendees={occurrence.attendees} />
+          )}
+
+          {isPublicActivity && (
+            <FollowSection
+              activity={activity}
+              isOver={dates.every((date) => isPastOccurrence(date))}
+            />
           )}
 
           {isOrganizer && (

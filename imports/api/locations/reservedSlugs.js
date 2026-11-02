@@ -20,6 +20,8 @@ export const RESERVED_SLUGS = [
   'reset-password',
   'resources',
   'terms-&-privacy-policy',
+  'unsubscribe',
+  'unsubscribe-now',
   'welcome',
   'works',
 ];

@@ -31,6 +31,7 @@ import {
   parseGroupActivities,
 } from './activity.helpers';
 import { sendEmail } from '../_utils/services/mails/mail.methods';
+import { scheduleChangeNotice } from '../notifications/notify';
 
 const filterPrivateGroups = async (activities, user) => {
   if (!activities) {
@@ -763,6 +764,11 @@ Meteor.methods({
         ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
       });
       warmShareImage('activity', activityId);
+      // A new time or place is told to those signed up and following
+      // (imports/api/notifications/notify.ts), a few minutes after saving
+      if (theActivity.isPublicActivity && theActivity.isPublished) {
+        scheduleChangeNotice(theActivity);
+      }
       return updated;
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't update activity");

@@ -20,6 +20,10 @@ import { AddressPattern, cleanAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
 import { isFreshInstall } from './passwordLogin';
+import {
+  ActivityFollows,
+  PushSubscriptions,
+} from '../notifications/notification';
 
 // How long a deleted account's user document is kept after the answer
 const DELETE_AFTER_MS = 2000;
@@ -489,6 +493,9 @@ Meteor.methods({
         $set: { deletionRequestedAt: new Date() },
       });
       await Memberships.removeAsync({ userId });
+      // No more push to their browsers, no events followed
+      await PushSubscriptions.removeAsync({ userId });
+      await ActivityFollows.removeAsync({ userId });
       Meteor.setTimeout(() => {
         Meteor.users.removeAsync(userId).catch((error) => {
           console.error('[deleteAccount] could not remove user', error);

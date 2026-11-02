@@ -10,6 +10,7 @@ import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 
 import Section, { Muted } from './Section';
+import SendUpdate from './SendUpdate';
 import { Occurrence, countPeople } from './occurrences';
 
 const Table = styled('table', {
@@ -176,6 +177,10 @@ export default function OrganizerToolsSection({
         <Muted css={{ marginTop: '0.5rem' }}>
           {tc('event.tools.archiveFirst')}
         </Muted>
+      )}
+
+      {activity.isPublicActivity && !activity.isArchived && (
+        <SendUpdate activityId={activity._id} />
       )}
 
       <DeleteEntryHandler context="activities" item={activity as any} />

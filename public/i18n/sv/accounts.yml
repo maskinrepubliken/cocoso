@@ -91,6 +91,7 @@ profile:
     language: Språk
     options: Alternativ
     privacy: Integritet
+    notifications: Notiser
     keywords:
       label: Nyckelord
       description: Här kan du lägga till nyckelord som visar dina kunskaper och intressen, eller vad du vill att andra personer kontaktar dig om. Nyckelorden kommer fungera som sökord för att hitta din profil. Skriv ett ord i taget!
@@ -199,3 +200,31 @@ privacy:
       participant: Du kan ha en profil och anmäla dig till evenemang. För att lägga upp egna evenemang behöver en administratör verifiera dig som arrangör.
       contributor: Du är verifierad arrangör och kan lägga upp egna evenemang.
       admin: Du är administratör och kan hantera hela sidan, dess innehåll och medlemmar.
+notifications:
+  saved: Inställningen är sparad.
+  push:
+    title: Pushnotiser
+    intro: Få en notis i telefonen eller datorn när ett evenemang du följer eller är anmäld till ändras, eller när arrangören har något nytt att berätta.
+    on: Pushnotiser är på i den här webbläsaren.
+    off: Pushnotiser är av i den här webbläsaren.
+    turnOn: Slå på i den här webbläsaren
+    turnOff: Stäng av i den här webbläsaren
+    test: Skicka en testnotis
+    testSent: En testnotis är på väg.
+    denied: Webbläsaren blockerar notiser från sidan. Tillåt dem i webbläsarens inställningar för webbplatsen och försök igen.
+    unsupported: Den här webbläsaren kan inte visa pushnotiser.
+    needsInstall: På iPhone och iPad lägger du först till sidan på hemskärmen (Dela → Lägg till på hemskärmen), öppnar den därifrån och slår på notiser.
+    devices_one: Du får pushnotiser på {{count}} enhet.
+    devices_other: Du får pushnotiser på {{count}} enheter.
+  events:
+    title: Evenemang
+    intro: Uppdateringar om evenemang du följer eller är anmäld till – ett meddelande från arrangören, eller ny tid eller plats.
+    email: Via e-post
+    push: Som pushnotis
+    following: Evenemang du följer
+    none: Du följer inga evenemang än. Tryck på ”Följ” på ett evenemangs sida.
+    unfollow: Sluta följa
+  newsletter:
+    title: Nyhetsbrev
+    label: Ja, skicka nyhetsbrevet till mig
+    intro: Nyheter från {{site}} via e-post då och då. Du kan avsluta när du vill, här eller med länken i varje nyhetsbrev.

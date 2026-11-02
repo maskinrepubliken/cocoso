@@ -60,3 +60,6 @@ import '../../api/composablepages/composablepage.methods';
 
 // Site-wide search (the box in the header)
 import '../../api/search/search.methods';
+
+// Push notifications, event updates and the mailing list's opt-outs
+import '../../api/notifications/notification.methods';

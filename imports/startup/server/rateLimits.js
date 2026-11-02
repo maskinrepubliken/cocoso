@@ -18,8 +18,24 @@ const RULES = [
       'removeAttendance',
       'findAttendance',
       'sendNewsletter',
+      'sendActivityMessage',
+      'sendTestPush',
     ],
     limit: 5,
+    intervalMs: 60 * 1000,
+  },
+  // Notification settings, following events and unsubscribe links.
+  {
+    methods: [
+      'savePushSubscription',
+      'removePushSubscription',
+      'setNotificationPrefs',
+      'followActivity',
+      'unfollowActivity',
+      'describeUnsubscribe',
+      'unsubscribe',
+    ],
+    limit: 30,
     intervalMs: 60 * 1000,
   },
   // Account creation and username/email probing.

@@ -193,6 +193,36 @@ are still hand-written HTML strings in `activity.mails.js`,
 Email. User-supplied scalars must be passed through
 `imports/api/_utils/escapeHtml.js` before interpolation.
 
+## Notifications
+
+`imports/api/notifications/` holds what the site tells people outside the
+page: push notifications, updates about events and the mailing list's
+opt-outs. Each person chooses under Profile → Notifications
+(`/admin/my-profile/notifications`); the choices are `notificationPrefs` on
+the user (newsletter off, event updates by email and push on, by default).
+
+- **Web Push** is done with Node's own crypto, no library (`webPush.ts`:
+  RFC 8291 encryption, RFC 8292 VAPID). The VAPID key pair and the secret
+  that signs unsubscribe links are made on first use and kept in the
+  server-only `serverKeys` collection; replacing the VAPID pair orphans
+  every browser's subscription. Browsers subscribe through
+  `imports/ui/utils/webPush.ts` and the service worker `public/sw.js`, which
+  only shows notifications and caches nothing. One `pushSubscriptions`
+  document per browser; the push service's 404/410 removes it. iPhones and
+  iPads allow push only once the site is added to the home screen, hence
+  the manifest at `/manifest.webmanifest`.
+- **Event updates** go to everyone signed up for any date of an event and
+  everyone following it (`activityFollows`), by email and/or push as each
+  chose; an address without an account gets email. The organizer sends a
+  message from the event page's organizer tools (at most five a day), and a
+  change of time or place in `updateActivity` is told automatically five
+  minutes after the last save (`scheduleChangeNotice`, in memory). Messages
+  are logged in `activityUpdates` and shown on the event page.
+- **The newsletter** (`sendNewsletter`) goes only to people who said yes on
+  their profile. Newsletters and event updates carry a signed unsubscribe
+  link (`/unsubscribe/<token>`, which asks for a click) and RFC 8058
+  `List-Unsubscribe` one-click headers (`POST /unsubscribe-now/<token>`).
+
 ## Internationalisation
 
 i18next loads YAML from `public/i18n/<lang>/<ns>.yml` over HTTP with

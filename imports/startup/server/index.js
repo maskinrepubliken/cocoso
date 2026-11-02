@@ -11,6 +11,8 @@ import {
 import './api';
 import './media';
 import './shareImages';
+import './unsubscribe';
+import './manifest';
 import './rateLimits';
 
 const { cdnServer } = Meteor.settings;

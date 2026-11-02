@@ -153,6 +153,12 @@ const EditProfileLanguage = loadable(() =>
 const EditProfilePrivacy = loadable(() =>
   import('/imports/ui/pages/profile/EditProfilePrivacy')
 );
+const EditProfileNotifications = loadable(() =>
+  import('/imports/ui/pages/profile/EditProfileNotifications')
+);
+const Unsubscribe = loadable(() =>
+  import('/imports/ui/pages/profile/Unsubscribe')
+);
 const MemberActivities = loadable(() =>
   import('/imports/ui/pages/activities/MemberActivities')
 );
@@ -288,6 +294,10 @@ const getAdminRoutes = (props) => [
       {
         path: 'privacy',
         element: createRouteElement(EditProfilePrivacy, props),
+      },
+      {
+        path: 'notifications',
+        element: createRouteElement(EditProfileNotifications, props),
       },
     ],
   },
@@ -715,6 +725,11 @@ export default function appRoutes(props) {
         {
           path: 'terms-&-privacy-policy',
           element: createRouteElement(Terms, props),
+        },
+        // From the link in a newsletter or an event update
+        {
+          path: 'unsubscribe/:token',
+          element: createRouteElement(Unsubscribe, props),
         },
         {
           path: 'newsletters',

@@ -91,6 +91,7 @@ profile:
     language: Language
     options: Options
     privacy: Privacy
+    notifications: Notifications
     keywords:
       label: Keywords
       description: Here you can select and create some keywords that explains you and your skills well. They will be shown on your profile page, as well as be filterable on the members page.
@@ -199,3 +200,31 @@ privacy:
       participant: You can have a profile and sign up for events. To post your own events, an administrator needs to verify you as an organizer.
       contributor: You are a verified organizer and can post your own events.
       admin: You are an administrator and can manage the whole site, its content and members.
+notifications:
+  saved: Your setting has been saved.
+  push:
+    title: Push notifications
+    intro: Get a notification on this phone or computer when an event you follow or are signed up for changes, or its organizer has news.
+    on: Push notifications are on in this browser.
+    off: Push notifications are off in this browser.
+    turnOn: Turn on in this browser
+    turnOff: Turn off in this browser
+    test: Send a test notification
+    testSent: A test notification is on its way.
+    denied: This browser blocks notifications from the site. Allow them in the browser's settings for the site, then try again.
+    unsupported: This browser cannot show push notifications.
+    needsInstall: On iPhone and iPad, first add the site to your home screen (Share → Add to Home Screen), open it from there and turn notifications on.
+    devices_one: You get push notifications on {{count}} device.
+    devices_other: You get push notifications on {{count}} devices.
+  events:
+    title: Events
+    intro: Updates about events you follow or are signed up for – a message from the organizer, or a new time or place.
+    email: By email
+    push: As push notifications
+    following: Events you follow
+    none: You don't follow any events yet. Press “Follow” on an event's page.
+    unfollow: Stop following
+  newsletter:
+    title: Newsletter
+    label: Yes, send me the newsletter
+    intro: News from {{site}} by email now and then. You can unsubscribe whenever you like, here or with the link in every newsletter.

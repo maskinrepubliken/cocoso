@@ -369,6 +369,8 @@ event:
     attendees: "Deltagare"
     organizerTools: "För arrangören"
     discussion: "Diskussion"
+    follow: "Uppdateringar"
+    news: "Nytt från arrangören"
   dates:
     choose: "Välj datum"
     more: "Visa alla {{count}} datum"
@@ -428,6 +430,25 @@ event:
   discussion:
     open: "Öppna diskussionen"
     onlyVerified: "För verifierade medlemmar"
+  follow:
+    intro: "Följ evenemanget så får du veta om tid eller plats ändras och när arrangören har något nytt att berätta. Via e-post och pushnotis, som du väljer under Notiser i din profil."
+    follow: "Följ evenemanget"
+    unfollow: "Sluta följa"
+    following: "Du följer evenemanget."
+    login: "Logga in för att följa"
+    attendees: "Anmäld? Då får du uppdateringarna via e-post ändå."
+    settings: "Inställningar för notiser"
+  message:
+    title: "Skicka en uppdatering"
+    intro: "Går till alla som är anmälda till något av tillfällena och alla som följer evenemanget, via e-post och pushnotis. Den visas också på evenemangets sida."
+    audience_one: "Når {{count}} person just nu."
+    audience_other: "Når {{count}} personer just nu."
+    placeholder: "T.ex. Vi samlas vid huvudentrén i stället – välkomna!"
+    send: "Skicka uppdatering"
+    confirm: "Skicka uppdateringen till alla anmälda och alla som följer?"
+    sent_one: "Uppdateringen är skickad till {{count}} person."
+    sent_other: "Uppdateringen är skickad till {{count}} personer."
+    automatic: "Ändrar du tid eller plats får alla veta det automatiskt några minuter efter att du sparat."
 
 home:
   sections:
@@ -510,6 +531,7 @@ termsPage:
       paragraphs:
         - "När du skapar ett konto sparar vi ditt användarnamn, din e-postadress och ett krypterat lösenord. Det du själv fyller i på din sida, som namn, bild och presentation, sparas också och visas för besökare."
         - "När du anmäler dig till ett evenemang sparas namn, e-postadress och antal personer. Arrangören ser uppgifterna; andra besökare ser bara ditt namn, om du inte valt att dölja det."
+        - "Följer du ett evenemang, prenumererar på nyhetsbrevet eller slår på pushnotiser sparar vi det valet, och för pushnotiser en adress från webbläsarens pushtjänst (Google, Apple eller Mozilla beroende på webbläsare). Notiserna går krypterade genom den tjänsten, så den kan inte läsa dem. Du stänger av allt under Notiser i din profil, och varje mejl har en länk för att sluta."
         - "Vi sparar inga uppgifter om dig i marknadsföringssyfte och lämnar inte ut dem till någon utanför kommunen. Lagringen sker på servrar inom EU."
     - title: Kakor
       paragraphs:
@@ -742,3 +764,13 @@ shareImage:
   everyWeek: varje vecka
   everyOtherWeek: varannan vecka
   dates: tillfällen
+
+unsubscribe:
+  title: "Avsluta prenumeration"
+  newsletter: "Sluta skicka nyhetsbrevet till {{email}}?"
+  activity: "Sluta skicka uppdateringar om ”{{title}}” till {{email}}?"
+  confirm: "Ja, avsluta"
+  done: "Klart. Du får inte de här mejlen längre."
+  invalid: "Länken fungerar inte. Den kan ha blivit avklippt i mejlet – prova att kopiera hela adressen."
+  settings: "Allt du får från oss väljer du under Notiser i din profil."
+  home: "Till startsidan"

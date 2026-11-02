@@ -372,6 +372,8 @@ event:
     attendees: "Attendees"
     organizerTools: "For the organizer"
     discussion: "Discussion"
+    follow: "Updates"
+    news: "News from the organizer"
   dates:
     choose: "Choose a date"
     more: "Show all {{count}} dates"
@@ -431,6 +433,25 @@ event:
   discussion:
     open: "Open the discussion"
     onlyVerified: "For verified members"
+  follow:
+    intro: "Follow the event to hear if the time or place changes, and when the organizer has news. By email and push notification, as you choose under Notifications in your profile."
+    follow: "Follow the event"
+    unfollow: "Stop following"
+    following: "You follow the event."
+    login: "Log in to follow"
+    attendees: "Signed up? Then you get the updates by email anyway."
+    settings: "Notification settings"
+  message:
+    title: "Send an update"
+    intro: "Goes to everyone signed up for any of the dates and everyone following the event, by email and push notification. It is also shown on the event page."
+    audience_one: "Reaches {{count}} person right now."
+    audience_other: "Reaches {{count}} people right now."
+    placeholder: "E.g. We meet at the main entrance instead – see you there!"
+    send: "Send update"
+    confirm: "Send this update to everyone signed up and following?"
+    sent_one: "The update has been sent to {{count}} person."
+    sent_other: "The update has been sent to {{count}} people."
+    automatic: "When you change the time or place, everyone is told automatically a few minutes after you save."
 
 home:
   sections:
@@ -513,6 +534,7 @@ termsPage:
       paragraphs:
         - "When you create an account we store your username, your e-mail address and an encrypted password. What you fill in on your page, such as name, picture and presentation, is stored too and shown to visitors."
         - "When you sign up for an event, your name, e-mail address and number of people are stored. The organizer sees them; other visitors see only your name, unless you chose to hide it."
+        - "If you follow an event, join the newsletter or turn on push notifications, we store that choice, and for push an address from your browser's push service (Google, Apple or Mozilla, depending on the browser). Notifications pass through that service encrypted, so it cannot read them. You turn it all off under Notifications in your profile, and every email has a link to stop it."
         - "We keep no data about you for marketing and hand nothing to anyone outside the municipality. Data is stored on servers within the EU."
     - title: Cookies
       paragraphs:
@@ -745,3 +767,13 @@ shareImage:
   everyWeek: every week
   everyOtherWeek: every other week
   dates: dates
+
+unsubscribe:
+  title: "Unsubscribe"
+  newsletter: "Stop sending the newsletter to {{email}}?"
+  activity: "Stop sending updates about “{{title}}” to {{email}}?"
+  confirm: "Yes, unsubscribe"
+  done: "Done. You won't get these emails any more."
+  invalid: "This link doesn't work. It may have been cut short in the email – try copying the whole address."
+  settings: "You choose everything you get from us under Notifications in your profile."
+  home: "To the start page"

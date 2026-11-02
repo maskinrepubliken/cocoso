@@ -77,6 +77,8 @@ export default function HelmetHybrid({
           <meta property="fb:app_id" content={publicSettings.facebookAppId} />
         )}
         <meta name="theme-color" content="#eeeedb" />
+        {/* Installable as an app: iPhones only allow push from one */}
+        <link rel="manifest" href="/manifest.webmanifest" />
         <link
           rel="icon"
           type="image/svg+xml"

@@ -48,6 +48,23 @@ const STRINGS = {
         'Ångrar du dig? Du kan anmäla dig igen på evenemangets sida, så länge det finns platser kvar.',
     },
     plus: (n) => ` + ${n} ${n === 1 ? 'person' : 'personer'}`,
+    updates: {
+      message: {
+        subject: (title) => `Nytt om ${title}`,
+        title: 'Nytt från arrangören',
+        lead: (title) => `Arrangören av ${title} har skickat ett meddelande.`,
+      },
+      changed: {
+        subject: (title) => `Ändrat: ${title}`,
+        title: 'Evenemanget är ändrat',
+        lead: (title, what) => `${what} för ${title} är ändrad.`,
+      },
+      what: { time: 'Tiden', place: 'Platsen', both: 'Tiden och platsen' },
+      why: (title) =>
+        `Du får det här eftersom du är anmäld till eller följer ${title}.`,
+      stop: 'Vill du inte få fler uppdateringar om evenemanget?',
+      stopLink: 'Sluta få uppdateringar',
+    },
   },
   en: {
     locale: 'en-GB',
@@ -77,6 +94,27 @@ const STRINGS = {
         'Changed your mind? You can sign up again on the event page, as long as there are places left.',
     },
     plus: (n) => ` + ${n} ${n === 1 ? 'person' : 'people'}`,
+    updates: {
+      message: {
+        subject: (title) => `News about ${title}`,
+        title: 'News from the organizer',
+        lead: (title) => `The organizer of ${title} has sent a message.`,
+      },
+      changed: {
+        subject: (title) => `Changed: ${title}`,
+        title: 'The event has changed',
+        lead: (title, what) => `${what} of ${title} has changed.`,
+      },
+      what: {
+        time: 'The time',
+        place: 'The place',
+        both: 'The time and place',
+      },
+      why: (title) =>
+        `You get this because you are signed up for or follow ${title}.`,
+      stop: 'Rather not hear more about this event?',
+      stopLink: 'Stop updates',
+    },
   },
 };
 
@@ -245,5 +283,109 @@ export function unregistrationEmail({
     text: [lead, facts.text, `${s.button}: ${url}`, s.cancel.again].join(
       '\n\n'
     ),
+  };
+}
+
+// The coming dates, at most three, each on its own line
+function comingDates(activity, s) {
+  const today = new Date().toISOString().slice(0, 10);
+  const all = activity.datesAndTimes || [];
+  const coming = all.filter(
+    (date) => (date.endDate || date.startDate) >= today
+  );
+  return (coming.length > 0 ? coming : all)
+    .slice(0, 3)
+    .map((date) => formatOccurrence(date, s.locale));
+}
+
+/**
+ * An update about an event, to everyone signed up for or following it:
+ * a message from its organizer (`kind: 'message'`) or, after the organizer
+ * changed its time or place, what it is now (`kind: 'changed'`; `changes`
+ * holds 'time' and/or 'place'). `lang` is the reader's language, `stopUrl`
+ * the signed link that ends updates about this event for them.
+ */
+export function activityUpdateEmail({
+  activity,
+  site,
+  lang,
+  kind,
+  message,
+  changes = [],
+  stopUrl,
+}) {
+  const s = STRINGS[lang] || STRINGS[site?.settings?.lang] || STRINGS.sv;
+  const u = s.updates;
+  const texts = kind === 'changed' ? u.changed : u.message;
+  const what =
+    changes.includes('time') && changes.includes('place')
+      ? u.what.both
+      : u.what[changes.includes('place') ? 'place' : 'time'];
+  const lead = texts.lead(activity.title, what);
+  const url = publicUrl(`/activities/${activity._id}`);
+  const c = themeColors(site?.theme);
+
+  const where = [
+    activity.resource || activity.place || '',
+    formatAddress(activity.placeAddress),
+  ]
+    .filter(Boolean)
+    .map((line) => escapeHtml(line))
+    .join('<br>');
+  const dates = comingDates(activity, s);
+  const rows = [
+    [s.event, escapeHtml(activity.title)],
+    [s.when, dates.map((date) => escapeHtml(date)).join('<br>')],
+    [s.where, where],
+  ];
+  const factsText = rows
+    .filter(([, value]) => value)
+    .map(([label, value]) => `${label}: ${unescape(value)}`)
+    .join('\n');
+
+  const messageHtml = message
+    ? `<p style="margin:0 0 20px;font-family:${UI};font-size:16px;line-height:1.55;color:${MYLLA};text-align:left;white-space:pre-line;">${escapeHtml(
+        message
+      )}</p>`
+    : '';
+  const stop = stopUrl
+    ? `<p style="margin:12px 0 0;font-family:${UI};font-size:13px;line-height:1.5;color:${MYLLA_SOFT};text-align:center;">${escapeHtml(
+        u.stop
+      )} <a href="${escapeHtml(stopUrl)}" style="color:${
+        c.strong
+      };">${escapeHtml(u.stopLink)}</a></p>`
+    : '';
+
+  const html = emailPage({
+    lang,
+    siteName: site?.settings?.name || '',
+    theme: site?.theme,
+    title: texts.title,
+    lead,
+    preheader: message ? message.slice(0, 120) : dates[0] || '',
+    picture: null,
+    content: [
+      messageHtml,
+      picture(activity.images?.[0]),
+      details(rows),
+      emailButton({ href: url, label: s.button, c }),
+      emailSmallPrint([u.why(activity.title)]),
+      stop,
+    ].join('\n'),
+  });
+
+  return {
+    subject: texts.subject(activity.title),
+    html,
+    text: [
+      lead,
+      message,
+      factsText,
+      `${s.button}: ${url}`,
+      u.why(activity.title),
+      stopUrl ? `${u.stopLink}: ${stopUrl}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n\n'),
   };
 }

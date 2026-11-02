@@ -84,6 +84,10 @@ export default function EditProfile() {
       title: t('profile.menu.privacy'),
       path: 'privacy',
     },
+    {
+      title: t('profile.menu.notifications'),
+      path: 'notifications',
+    },
   ];
 
   const isMember = ['admin', 'contributor', 'participant'].includes(role);

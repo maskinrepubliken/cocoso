@@ -21,6 +21,7 @@ Meteor.publish('currentUser', function () {
         lang: 1,
         lastName: 1,
         notifications: 1,
+        notificationPrefs: 1,
         publicContact: 1,
         address: 1,
         locationId: 1,
