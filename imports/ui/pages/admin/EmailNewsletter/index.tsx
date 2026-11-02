@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import ExternalLinkIcon from 'lucide-react/dist/esm/icons/external-link';
 import { render as renderEmail } from '@react-email/render';
@@ -57,6 +57,17 @@ export default function EmailNewsletter() {
   const [state, setState] = useAtom(newsletterAtom);
   const [t] = useTranslation('admin');
   const [tc] = useTranslation('common');
+  // Everyone who said yes to the newsletter; only they get it
+  const [subscribers, setSubscribers] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (role !== 'admin') {
+      return;
+    }
+    call('getMailingListCount')
+      .then((count) => setSubscribers(count as number))
+      .catch(() => setSubscribers(null));
+  }, [role, state.sending]);
 
   useEffect(() => {
     if (!state.uploadingImages) {
@@ -170,6 +181,16 @@ export default function EmailNewsletter() {
         </Center>
 
         <Text>{t('newsletter.subtitle')}</Text>
+        {subscribers !== null && (
+          <Box mt="2">
+            <Box>
+              <Text fontWeight="bold">
+                {t('newsletter.subscribers', { count: subscribers })}
+              </Text>
+            </Box>
+            <Text fontSize="sm">{t('newsletter.subscribersHelp')}</Text>
+          </Box>
+        )}
 
         <Boxling mt="4">
           <EmailForm site={site} onSubmit={handleSubmit} />
@@ -224,6 +245,13 @@ export default function EmailNewsletter() {
         }
       >
         {t('newsletter.modals.body')}
+        {subscribers !== null && (
+          <Box mt="2">
+            <Text fontWeight="bold">
+              {t('newsletter.subscribers', { count: subscribers })}
+            </Text>
+          </Box>
+        )}
       </Modal>
     </>
   );

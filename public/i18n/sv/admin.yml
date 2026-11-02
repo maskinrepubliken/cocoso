@@ -134,9 +134,12 @@ emails:
 # ADMIN EMAIL NEWSLETTER PAGE
 newsletter:
   title: Skicka ett nyhetsbrev
-  description: Skicka ett e-postnyhetsbrev till alla dina användare samtidigt
-  shortcutHelper: Skicka ett e-postnyhetsbrev till alla dina användare samtidigt
-  subtitle: Här kan du skapa ett nyhetsbrev som går ut till alla medlemmar i er community. Du kan enkelt komponera brevet med egen text och bifoga material som är publicerade på er sida.
+  description: Skicka ett nyhetsbrev via e-post till alla på e-postlistan
+  shortcutHelper: Skicka ett nyhetsbrev via e-post till alla på e-postlistan
+  subtitle: Här skapar du ett nyhetsbrev med egen text och material som är publicerat på sidan, och skickar det till alla på e-postlistan.
+  subscribers_one: "{{count}} person finns på e-postlistan."
+  subscribers_other: "{{count}} personer finns på e-postlistan."
+  subscribersHelp: Bara de får nyhetsbrevet. Alla med konto kan gå med eller gå ur under Notiser i sin profil, och varje nyhetsbrev har en länk för att avsluta.
   subtitle2: 'För att skriva e-postmeddelandet nedan måste du ange minst en av: brödtext, en bild och/eller valda innehållsobjekt som listas i community-appen.'
   contenthelper: Du kan infoga befintligt innehåll från din sida genom att välja poster i listan här nedanför. Text och bild samt länk till posterna läggs automatiskt in i nyhetsbrevet.
   labels:
@@ -144,8 +147,8 @@ newsletter:
     browserlink: Klicka här för att se detta e-postmeddelande i webbläsaren
     previouslink: Visa tidigare nyhetsbrev
   modals:
-    title: Bekräfta sändning till alla personer
-    body: Du är på väg att skicka detta e-postmeddelande till alla medlemmar i din community. Du kan inte återställa denna åtgärd när du har skickat detta e-postmeddelande till dina medlemmar.
+    title: Bekräfta utskick till e-postlistan
+    body: Du är på väg att skicka det här mejlet till alla på e-postlistan. Det går inte att ångra när det väl är skickat.
     yes: Ja, skicka gärna
     send: Skicka e-post
   error:
@@ -168,7 +171,7 @@ newsletter:
       label: Text
   notification:
     success:
-      emailsent: Ditt e-postmeddelande har skickats till alla medlemmar
+      emailsent: Nyhetsbrevet är skickat till e-postlistan
 listings:
   title: Listningssidor
   shortcutHelper: För varje listsida kan du ange en titel och en beskrivning

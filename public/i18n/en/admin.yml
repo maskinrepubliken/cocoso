@@ -134,9 +134,12 @@ emails:
 # ADMIN EMAIL NEWSLETTER PAGE
 newsletter:
   title: Send a Newsletter
-  description: Send an email newsletter to all your users at once
-  shortcutHelper: Send an email newsletter to all your users at once.
-  subtitle: Here you can compose an email and easily attach published content from the website, and then send out to all members of your community.
+  description: Send an email newsletter to everyone on the mailing list
+  shortcutHelper: Send an email newsletter to everyone on the mailing list.
+  subtitle: Here you can compose an email, attach published content from the website and send it to everyone on the mailing list.
+  subscribers_one: "{{count}} person is on the mailing list."
+  subscribers_other: "{{count}} people are on the mailing list."
+  subscribersHelp: Only they get the newsletter. Anyone with an account can join or leave under Notifications in their profile, and every newsletter has a link to unsubscribe.
   subtitle2: 'To compose the email below, you have to enter at least one of: body text, an image and/or selected content items listed in the community app.'
   contenthelper: You may insert existing content from the listing pages by selecting the entries you want to attach within the email below.
   labels:
@@ -144,8 +147,8 @@ newsletter:
     browserlink: Click here to view this email in browser
     previouslink: View Previous Newsletters
   modals:
-    title: Confirm Sending to everyone
-    body: You are about to send this email to all members of your community. You cannot revert this action once you have sent this email to your members.
+    title: Confirm sending to the mailing list
+    body: You are about to send this email to everyone on the mailing list. It cannot be undone once sent.
     yes: Yes, send please
     send: Send email
   error:
@@ -168,7 +171,7 @@ newsletter:
       label: Text
   notification:
     success:
-      emailsent: Your email is successfully sent to all members
+      emailsent: The newsletter has been sent to the mailing list
 listings:
   title: Listing pages
   shortcutHelper: For each different listing page feature, you can set a title, and a description

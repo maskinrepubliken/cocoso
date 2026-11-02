@@ -1,12 +1,43 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
-import { getSite } from '/imports/api/site/site';
-
 import Newsletters from './newsletter';
 import { isAdmin } from '../users/user.roles';
-import Memberships from '../memberships/membership';
-import { sendEmail } from '../_utils/services/mails/mail.methods';
+import escapeHtml from '../_utils/escapeHtml';
+import { deliverEmail } from '../_utils/services/mails/smtp';
+import { fromAddress } from '../notifications/notify';
+import {
+  listUnsubscribeHeaders,
+  unsubscribeUrl,
+} from '../notifications/unsubscribeLinks';
+
+// The mailing list: everyone who has said yes to the newsletter on their
+// profile's notification page. Nobody else gets it.
+const onMailingList = { 'notificationPrefs.newsletter': true };
+
+const STOP = {
+  sv: {
+    why: 'Du får det här eftersom du prenumererar på vårt nyhetsbrev.',
+    link: 'Avsluta prenumerationen',
+  },
+  en: {
+    why: 'You get this because you subscribe to our newsletter.',
+    link: 'Unsubscribe',
+  },
+};
+
+// The reader's own unsubscribe line, at the end of the newsletter
+function withStopLine(html, url, lang) {
+  const s = STOP[lang] || STOP.sv;
+  const line = `<p style="margin:24px auto;max-width:440px;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;color:#5c6b60;text-align:center;">${escapeHtml(
+    s.why
+  )} <a href="${escapeHtml(url)}" style="color:#5c6b60;">${escapeHtml(
+    s.link
+  )}</a></p>`;
+  return html.includes('</body>')
+    ? html.replace('</body>', `${line}</body>`)
+    : `${html}${line}`;
+}
 
 Meteor.methods({
   async getNewsletters() {
@@ -30,120 +61,107 @@ Meteor.methods({
     });
   },
 
+  // How many are on the mailing list, for the admin's newsletter page
+  async getMailingListCount() {
+    const currentUser = await Meteor.userAsync();
+    if (!currentUser || !(await isAdmin(currentUser._id))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    return Meteor.users.find(onMailingList).countAsync();
+  },
+
   async sendNewsletter(email, emailHtml) {
     check(email, Object);
     check(emailHtml, String);
 
     if (!email?.subject) {
-      throw new Meteor.Error('Email subject is required');
+      throw new Meteor.Error('subject-required', 'Email subject is required');
     }
 
-    const site = await getSite();
     const currentUser = await Meteor.userAsync();
 
     if (!currentUser || !(await isAdmin(currentUser._id))) {
-      throw new Meteor.Error('You are not allowed!');
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
-    try {
-      const newEmailId = await Newsletters.insertAsync({
-        ...email,
-        authorId: currentUser._id,
-        authorUsername: currentUser.username,
-        creationDate: new Date(),
-      });
-
-      const emailHtmlWithBrowserLink = emailHtml.replace(
-        '[newsletter-id]',
-        newEmailId
-      );
-
-      // Safer member fetching with limits
-      const memberships = await Memberships.find(
-        {},
-        { fields: { userId: 1 }, limit: 10000 }
-      ).fetchAsync();
-      const userIds = memberships.map((m) => m.userId);
-      const memberUsers = await Meteor.users
-        .find(
-          { _id: { $in: userIds } },
-          { fields: { username: 1, emails: 1 } }
-        )
-        .fetchAsync();
-      const members = memberUsers.map((u) => ({
+    const members = (
+      await Meteor.users
+        .find(onMailingList, {
+          fields: { username: 1, firstName: 1, emails: 1, lang: 1 },
+          limit: 10000,
+        })
+        .fetchAsync()
+    )
+      .map((u) => ({
         _id: u._id,
-        username: u.username,
+        name: u.firstName || u.username,
         email: u.emails?.[0]?.address,
-      }));
+        lang: u.lang,
+      }))
+      .filter((member) => member.email);
 
-      if (members.length === 0) {
-        throw new Meteor.Error('No members found to send newsletter to');
-      }
-
-      // Send emails in batches to avoid memory overflow on large member lists
-      const BATCH_SIZE = 20;
-      const results = [];
-
-      for (let i = 0; i < members.length; i += BATCH_SIZE) {
-        const batch = members.slice(i, i + BATCH_SIZE);
-        const batchResults = await Promise.allSettled(
-          batch.map(async (member) => {
-            const emailAddress = member?.email;
-            if (!emailAddress) {
-              return {
-                status: 'skipped',
-                reason: 'No email address',
-                member: member._id,
-              };
-            }
-
-            const emailHtmlWithUsername = emailHtmlWithBrowserLink.replace(
-              '[username]',
-              member.username || 'there'
-            );
-
-            try {
-              await sendEmail(
-                emailAddress,
-                email.subject,
-                emailHtmlWithUsername
-              );
-              console.log('sent to:', emailAddress);
-              return { status: 'sent', member: member._id };
-            } catch (error) {
-              console.error('failed to send to:', emailAddress);
-              return {
-                status: 'failed',
-                error: error.message,
-                member: member._id,
-              };
-            }
-          })
-        );
-        results.push(...batchResults);
-      }
-
-      // Log summary
-      const sentCount = results.filter(
-        (r) => r.value?.status === 'sent'
-      ).length;
-      const failedCount = results.filter(
-        (r) => r.value?.status === 'failed'
-      ).length;
-
-      console.log(
-        `Newsletter ${newEmailId}: Sent ${sentCount}, Failed ${failedCount}`
+    if (members.length === 0) {
+      throw new Meteor.Error(
+        'no-subscribers',
+        'Nobody is on the mailing list yet'
       );
-
-      return {
-        newsletterId: newEmailId,
-        sent: sentCount,
-        failed: failedCount,
-        total: members.length,
-      };
-    } catch (error) {
-      console.error('Newsletter sending failed:', error);
-      throw new Meteor.Error(error);
     }
+
+    const newEmailId = await Newsletters.insertAsync({
+      ...email,
+      authorId: currentUser._id,
+      authorUsername: currentUser.username,
+      creationDate: new Date(),
+    });
+
+    const emailHtmlWithBrowserLink = emailHtml.replace(
+      '[newsletter-id]',
+      newEmailId
+    );
+    const from = await fromAddress();
+
+    // In batches, so a long list doesn't hold every message in memory
+    const BATCH_SIZE = 20;
+    let sent = 0;
+    let failed = 0;
+
+    for (let i = 0; i < members.length; i += BATCH_SIZE) {
+      const batch = members.slice(i, i + BATCH_SIZE);
+      await Promise.allSettled(
+        batch.map(async (member) => {
+          const target = { kind: 'newsletter', email: member.email };
+          const html = withStopLine(
+            emailHtmlWithBrowserLink.replace(
+              '[username]',
+              escapeHtml(member.name || '')
+            ),
+            await unsubscribeUrl(target),
+            member.lang
+          );
+          try {
+            await deliverEmail({
+              from,
+              to: member.email,
+              subject: email.subject,
+              html,
+              headers: await listUnsubscribeHeaders(target),
+            });
+            sent += 1;
+          } catch (error) {
+            console.error('[newsletter] failed to send:', error?.message);
+            failed += 1;
+          }
+        })
+      );
+    }
+
+    console.log(`Newsletter ${newEmailId}: Sent ${sent}, Failed ${failed}`);
+
+    return {
+      newsletterId: newEmailId,
+      sent,
+      failed,
+      total: members.length,
+    };
   },
 });
