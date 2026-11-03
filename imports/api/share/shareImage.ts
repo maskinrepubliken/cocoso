@@ -20,7 +20,7 @@ export const SHARE_IMAGE_WIDTH = 1200;
 export const SHARE_IMAGE_HEIGHT = 630;
 
 // Bump when the drawing changes, so every image is drawn anew.
-const DESIGN_VERSION = 10;
+const DESIGN_VERSION = 11;
 
 export type ShareImageKind = 'activity' | 'location' | 'resource';
 

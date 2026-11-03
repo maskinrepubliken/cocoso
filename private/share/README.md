@@ -1,7 +1,4 @@
-# Assets for generated share images
-
-The crane beside the site name is `public/3dicons/trana-hals.webp`, copied
-here so the server can read it.
+# Fonts for generated share images
 
 Static instances of the site's two typefaces, used by the server when it
 draws the share images (`imports/api/share/shareImage.server.tsx`). The

@@ -627,7 +627,7 @@ const posterFade = Buffer.from(
 
 const FOOTER_H = 96;
 const TEXT_TOP = 44;
-// The text block ends this far above the crane
+// The text block ends this far above the site's name
 const TEXT_BOTTOM = H - FOOTER_H - 28;
 
 const trimEnd = (text: string) => text.replace(/[\s,.;:–—-]+$/, '');
@@ -840,23 +840,17 @@ async function composeCard(content: CardContent): Promise<Buffer> {
     y += layer.height + gaps.line;
   });
 
-  // The footer: the crane and the site's name
-  const crane = await sharp(asset('trana-hals.webp'))
-    .resize({ height: 54 })
-    .png()
-    .toBuffer({ resolveWithObject: true });
+  // The footer: the site's name
   const siteName = await renderText(content.siteName, {
     font: 'uiBold',
     size: 22,
     color: palette.site,
-    width: textW - crane.info.width - 16,
+    width: textW,
   });
-  const footerY = H - 48 - 54;
-  layers.push({ input: crane.data, left: textX - 6, top: footerY });
   layers.push({
     input: siteName.data,
-    left: textX - 6 + crane.info.width + 12,
-    top: footerY + Math.round((54 - siteName.height) / 2) + 4,
+    left: textX,
+    top: H - 48 - 54 + Math.round((54 - siteName.height) / 2) + 4,
   });
 
   // The date label on the picture's corner
