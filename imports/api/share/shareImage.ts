@@ -20,7 +20,7 @@ export const SHARE_IMAGE_WIDTH = 1200;
 export const SHARE_IMAGE_HEIGHT = 630;
 
 // Bump when the drawing changes, so every image is drawn anew.
-const DESIGN_VERSION = 8;
+const DESIGN_VERSION = 10;
 
 export type ShareImageKind = 'activity' | 'location' | 'resource';
 
@@ -49,6 +49,8 @@ export interface ShareableActivity {
   resource?: string;
   place?: string;
   locationId?: string | null;
+  kinds?: string[] | null;
+  category?: { key?: string } | null;
   images?: unknown[];
   imageUrl?: unknown;
   datesAndTimes?: DateEntry[];
@@ -110,6 +112,8 @@ export function activityShareFingerprint(activity: ShareableActivity): string {
       activity.longDescription,
       activity.resource || activity.place,
       activity.locationId,
+      // the kind picks the layout
+      activity.kinds || activity.category?.key,
       (activity.images && activity.images[0]) || activity.imageUrl,
       dates,
     ])

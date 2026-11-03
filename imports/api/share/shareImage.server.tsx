@@ -397,16 +397,23 @@ interface CardContent {
   summary?: string;
   lines: InfoLine[];
   /** What the picture is made of */
-  art: { imageRef: unknown; seed: string; world: LocationWorld };
+  art: {
+    imageRef: unknown;
+    seed: string;
+    world: LocationWorld;
+    /** "event:<kind>", "resource:<kind>" or "location"; picks the layout */
+    kind?: string;
+  };
   stamp?: Buffer | null;
   siteName: string;
 }
 
 // --- Layouts -----------------------------------------------------------------
 //
-// Entries do not all look alike: each gets one of a few layouts, picked
-// from its id, so the same event always gets the same one (the picture's
-// URL, which the services cache by, does not change with it).
+// Entries do not all look alike: the kind of event or venue picks one of a
+// few layouts (LAYOUT_BY_KIND below), places (orter) are drawn in their own
+// colour, and anything without a kind gets one picked from its id. The
+// kind is part of the image's fingerprint, so a new kind gives a new URL.
 //
 // - card:   the paper ground, text left, the photo framed on the right
 // - mirror: the same with the photo on the left and the text on the right
@@ -501,8 +508,70 @@ function makeLayout(name: LayoutName, world: LocationWorld): Layout {
   }
 }
 
-// FNV-1a over the id, so the pick is the same on every server
-function layoutFor(seed: string, hasPhoto: boolean): LayoutName {
+// Which layout each kind gets: the big pictures of culture, film and
+// sights as posters, the outdoors and the social in the place's colour,
+// sports and learning mirrored, and the everyday as the card.
+const LAYOUT_BY_KIND: Record<string, LayoutName> = {
+  'event:kultur': 'poster',
+  'event:bio': 'poster',
+  'event:natur': 'band',
+  'event:social': 'band',
+  'event:idrott': 'mirror',
+  'event:larande': 'mirror',
+  'event:barn': 'card',
+  'event:senior': 'card',
+  'resource:sevardhet': 'poster',
+  'resource:kultur': 'mirror',
+  'resource:friluft': 'band',
+  'resource:bad': 'band',
+  'resource:idrottshall': 'card',
+  'resource:idrottsplats': 'card',
+  location: 'band',
+};
+
+// An entry with several kinds is drawn as its most telling one: the
+// specific kinds before the broad ones ("Barn & familj" before "Kultur").
+const KIND_PRIORITY: Record<'event' | 'resource', string[]> = {
+  event: [
+    'bio',
+    'natur',
+    'barn',
+    'senior',
+    'idrott',
+    'larande',
+    'social',
+    'kultur',
+  ],
+  resource: [
+    'sevardhet',
+    'bad',
+    'friluft',
+    'idrottsplats',
+    'idrottshall',
+    'kultur',
+  ],
+};
+
+function layoutKind(
+  type: 'event' | 'resource',
+  kinds: string[]
+): string | undefined {
+  const kind =
+    KIND_PRIORITY[type].find((key) => kinds.includes(key)) || kinds[0];
+  return kind && `${type}:${kind}`;
+}
+
+function layoutFor(
+  kind: string | undefined,
+  seed: string,
+  hasPhoto: boolean
+): LayoutName {
+  const byKind = kind ? LAYOUT_BY_KIND[kind] : undefined;
+  if (byKind) {
+    // A poster needs a photo; without one the place's colour carries it
+    return byKind === 'poster' && !hasPhoto ? 'band' : byKind;
+  }
+  // FNV-1a over the id, so the pick is the same on every server
   let hash = 0x811c9dc5;
   for (let i = 0; i < seed.length; i += 1) {
     hash ^= seed.charCodeAt(i);
@@ -614,9 +683,9 @@ const TEXT_PLANS: Array<[number, number, number]> = [
 ];
 
 async function composeCard(content: CardContent): Promise<Buffer> {
-  const { imageRef, seed, world } = content.art;
+  const { imageRef, seed, world, kind } = content.art;
   const photo = await usablePhoto(imageRef);
-  const layout = makeLayout(layoutFor(seed, Boolean(photo)), world);
+  const layout = makeLayout(layoutFor(kind, seed, Boolean(photo)), world);
   const { palette } = layout;
   const textX = layout.text.x;
   const textW = layout.text.w;
@@ -991,6 +1060,7 @@ async function drawActivity(activity: ShareableActivity): Promise<Buffer> {
       imageRef: (activity.images && activity.images[0]) || activity.imageUrl,
       seed: activity._id || activity.title || '',
       world,
+      kind: layoutKind('event', kindsOf(activity)),
     },
     stamp: stampLayer,
     siteName,
@@ -1030,6 +1100,7 @@ async function drawLocation(location: ShareableLocation): Promise<Buffer> {
       imageRef: location.images?.[0],
       seed: location._id || location.name || '',
       world,
+      kind: 'location',
     },
     siteName,
   });
@@ -1060,6 +1131,7 @@ async function drawResource(resource: ShareableResource): Promise<Buffer> {
       imageRef: resource.images?.[0],
       seed: resource._id || resource.label || '',
       world,
+      kind: layoutKind('resource', kindsOf(resource)),
     },
     siteName,
   });
@@ -1093,6 +1165,8 @@ async function findEntry(
           resource: 1,
           place: 1,
           locationId: 1,
+          kinds: 1,
+          category: 1,
           images: 1,
           imageUrl: 1,
           datesAndTimes: 1,
