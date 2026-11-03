@@ -2,6 +2,73 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/maskinrepubliken/cocoso/compare/v4.1.0...v5.0.0) (2026-11-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **admin:** nobody is on the mailing list until they opt in, so a
+newsletter sent right after this release reaches no one. Ask members to
+join under Profile → Notifications before the next newsletter.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01UvzE4fnKe4Ag7KvgqPy5K6
+
+### Features
+
+* **activities:** registration emails in the new design, in Swedish ([e1de4c0](https://github.com/maskinrepubliken/cocoso/commit/e1de4c0095fd19fd5bd81458fbdae1510811db57))
+* **activities:** replace Mat and Marknad kinds with Bio and Senior ([32c4bed](https://github.com/maskinrepubliken/cocoso/commit/32c4bed73ad5db6793c82290cbf06dd9207f8dd8))
+* **admin:** send the newsletter only to the opt-in mailing list ([4a199db](https://github.com/maskinrepubliken/cocoso/commit/4a199dbf6ec2bb28d48dca5cff090b56aef78928))
+* **auth:** add a small "log in with password" link for administrators ([fd971fb](https://github.com/maskinrepubliken/cocoso/commit/fd971fb638b8f585ddf9f621a40d35775c46c422))
+* **auth:** confirm new accounts explicitly and welcome them ([6206024](https://github.com/maskinrepubliken/cocoso/commit/62060244299fdbed2e71a86dad7ae33ec857ce40))
+* **auth:** give sign-up its own page at /register ([9d37810](https://github.com/maskinrepubliken/cocoso/commit/9d37810269f88f21970fbffbcb86086562a9bf2a))
+* **auth:** give the login-code email the login page's design ([f3014b2](https://github.com/maskinrepubliken/cocoso/commit/f3014b2aad3eac5fef01f73a6df9c8851a016492))
+* **auth:** keep passwords for administrators only, behind /login?losenord ([5a2b219](https://github.com/maskinrepubliken/cocoso/commit/5a2b219ca39e26fc24185c1c67144fe9858346c5))
+* **auth:** log in with email only — a code or a link, no password ([749ec22](https://github.com/maskinrepubliken/cocoso/commit/749ec2290e2ba4233a5ee84924ce0989c0678bdf))
+* **auth:** own heading and button in the email for new accounts ([ffcb5e9](https://github.com/maskinrepubliken/cocoso/commit/ffcb5e9aa7f446290060b190ce6c90f306a2a7db))
+* **auth:** redesign the login screens ([67cc210](https://github.com/maskinrepubliken/cocoso/commit/67cc2103ed251e0e74b58dd4f919409284cb2335))
+* **auth:** say plainly that password login is for administrators only ([894758e](https://github.com/maskinrepubliken/cocoso/commit/894758e5c21552ed246324f8e2b5efefa109024a))
+* **auth:** warn plainly in the email that a new account will be made ([089b62d](https://github.com/maskinrepubliken/cocoso/commit/089b62dc0a9b036c6239d23807c33cc3d7f24260))
+* **businesses:** group by Äta/Handla/Bo and colour the cards by kind ([aa8724d](https://github.com/maskinrepubliken/cocoso/commit/aa8724d1ea197f4a6b17809b6a647cb7a2c9e13b))
+* **businesses:** list places that are open now first ([43a45de](https://github.com/maskinrepubliken/cocoso/commit/43a45ded75e0438dbe8e9bf09f49f0574e19ca56))
+* **businesses:** pick a place first and show more on each card ([a37878c](https://github.com/maskinrepubliken/cocoso/commit/a37878c0796debaf4f6ccd63d66e61edc466d85f))
+* **businesses:** redesign the cards as photo tiles like the place cards ([3c10574](https://github.com/maskinrepubliken/cocoso/commit/3c10574f0cb960dc42ac14b2f4fd884cdc4fd0a6))
+* **businesses:** remove the "Exempeldata" chip on a place's page ([2910eca](https://github.com/maskinrepubliken/cocoso/commit/2910eca8d7f6295b821e2bbb28eb3fa7e0565225))
+* **businesses:** remove the "made-up example" notice ([a9c7def](https://github.com/maskinrepubliken/cocoso/commit/a9c7def436c8808c7ab3564f1cdf787bf1a17178))
+* **businesses:** rename the section to "Äta, handla & bo" ([d12fa62](https://github.com/maskinrepubliken/cocoso/commit/d12fa62d00cfc0bd87294817f40fd739bca49d7e))
+* **businesses:** show "Öppet nu" as a green badge on the photo ([167f947](https://github.com/maskinrepubliken/cocoso/commit/167f94772277125b17483d69c5ee254a84cbd604))
+* **businesses:** smaller cards without the kind chips ([eb81530](https://github.com/maskinrepubliken/cocoso/commit/eb8153089b659d3cbf4d49fed3690a1c72a8610d))
+* **businesses:** use the start page's place cards as the place picker ([52d711a](https://github.com/maskinrepubliken/cocoso/commit/52d711ab109b4e5ce7325b293fa4aa07e3755a05))
+* **home:** add a word-logo version of the start page hero ([e83cebe](https://github.com/maskinrepubliken/cocoso/commit/e83cebeddfc2ffb54a74b5f585034f255c9ddbf2))
+* **home:** calm the start page logo and drop the hyphen ([5da4f02](https://github.com/maskinrepubliken/cocoso/commit/5da4f027ab8849c7bfc8395833b0bf538a903186))
+* **home:** make the word logo the start page's default hero ([022b607](https://github.com/maskinrepubliken/cocoso/commit/022b60748abe0a47a305567e9981cb2d5d376b7a))
+* **locations:** show places by name only, without the circled initial ([846c752](https://github.com/maskinrepubliken/cocoso/commit/846c75284104bae33d4c78bdb1c69a184cd6989f))
+* **notifications:** web push, event updates and follow buttons ([b76c309](https://github.com/maskinrepubliken/cocoso/commit/b76c3095da907a2bae942e48893a527c22379318))
+* **people:** role emails in the new design with Swedish texts ([2f775c0](https://github.com/maskinrepubliken/cocoso/commit/2f775c0487188f453ea360319f8d2d804dc8c6c5))
+* **people:** simpler privacy settings with one visibility switch ([9cea223](https://github.com/maskinrepubliken/cocoso/commit/9cea223cbd7c05e7bd75b525e13a41d8df38970e))
+* **share:** add subtitle and description to share images, and venues ([f4eb05c](https://github.com/maskinrepubliken/cocoso/commit/f4eb05c30f49b5c427512d45dc5117a4b131d435))
+* **share:** describe every page to link previews from one component ([36face8](https://github.com/maskinrepubliken/cocoso/commit/36face839181d9b02cb5c6c8eb183aed53c4c591))
+* **share:** draw share images with title, place and date for events ([ac3c372](https://github.com/maskinrepubliken/cocoso/commit/ac3c3729b94265c3be11c1f01e4f3c8cfbb15887))
+* **share:** drop the crane from the share images ([b8eab15](https://github.com/maskinrepubliken/cocoso/commit/b8eab15330781b06b3ea3e9b5eee252d39240a17))
+* **share:** fill in the rest of Open Graph and add schema.org data ([9e3bb2e](https://github.com/maskinrepubliken/cocoso/commit/9e3bb2e24f4bc07ecab683019b49b4ed1681c07b))
+* **share:** give events and places one of four share image layouts ([1a86fc6](https://github.com/maskinrepubliken/cocoso/commit/1a86fc6d42eb28c7b07e7356b19425f0538120bb))
+* **share:** keep share images true for as long as a preview is cached ([ad309bc](https://github.com/maskinrepubliken/cocoso/commit/ad309bc0ace8e528a24c820ea7857cee186ba133))
+* **share:** let the kind of event or venue pick the share image layout ([8b4da28](https://github.com/maskinrepubliken/cocoso/commit/8b4da286554341e228f51a0f308bacdae8ab3b49))
+
+
+### Bug Fixes
+
+* **auth:** drop the "Gå med …?" question and the "Lämna …" button ([d200853](https://github.com/maskinrepubliken/cocoso/commit/d20085354d894f433d3fac5eee113c9b1daab84a))
+* **auth:** stop sending the old welcome email to new accounts ([5a243ef](https://github.com/maskinrepubliken/cocoso/commit/5a243efd83a3ab8a58faf2913a52d22422b5cc27))
+* **layout:** restore the footer text's 640px max width ([06dcd84](https://github.com/maskinrepubliken/cocoso/commit/06dcd843cd939dc99a21f56c3953d30c28b4c9ff))
+* **locations:** never cut off a place's name in the place picker ([39d57c3](https://github.com/maskinrepubliken/cocoso/commit/39d57c3d90d492f5ef22ad35bb15a61794840bb1))
+* **locations:** stop cutting off the place cards' shadow on hover ([54d790f](https://github.com/maskinrepubliken/cocoso/commit/54d790fbb403af8b0cf1a5b8114220b5114a6627))
+* **mail:** actually send email, and fail loudly when it can't ([a41f0e0](https://github.com/maskinrepubliken/cocoso/commit/a41f0e0d477e59ce95c268db6224a4619db314c5))
+* **mail:** read the SMTP password from SMTP_PASSWORD / .env, not settings ([9fa6498](https://github.com/maskinrepubliken/cocoso/commit/9fa6498de2668d0e7bd3f971358ec0568148da3f))
+* **people:** deleting your account logs you out and takes you home ([570b038](https://github.com/maskinrepubliken/cocoso/commit/570b0381ba7d2274027d344ed73431459e4a768c))
+* **people:** forget a logged-out user everywhere, no "not part of" error ([23c1ab9](https://github.com/maskinrepubliken/cocoso/commit/23c1ab9a31cf72eb36bd40e9ab50a0f8917401ad))
+* **security:** stop the browser from sending email through the site ([5261188](https://github.com/maskinrepubliken/cocoso/commit/5261188f1b0c1d8d7e70cd99dfc96d3fce7e9459))
+
 ## [4.1.0](https://github.com/maskinrepubliken/cocoso/compare/v4.0.0...v4.1.0) (2026-10-22)
 
 
