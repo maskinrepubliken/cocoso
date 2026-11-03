@@ -201,8 +201,8 @@ opt-outs. Each person chooses under Profile → Notifications
 (`/admin/my-profile/notifications`); the choices are `notificationPrefs` on
 the user (newsletter off, event updates by email and push on, by default).
 
-- **Web Push** is done with Node's own crypto, no library (`webPush.ts`:
-  RFC 8291 encryption, RFC 8292 VAPID). The VAPID key pair and the secret
+- **Web Push** is sent with the `web-push` package (`webPush.ts`: RFC 8291
+  encryption, RFC 8292 VAPID). The VAPID key pair and the secret
   that signs unsubscribe links are made on first use and kept in the
   server-only `serverKeys` collection; replacing the VAPID pair orphans
   every browser's subscription. Browsers subscribe through
