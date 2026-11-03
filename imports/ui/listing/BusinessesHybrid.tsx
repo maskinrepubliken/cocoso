@@ -469,9 +469,34 @@ export default function BusinessesHybrid({
   // and Bo order. Something that is several kinds, like a manor with a
   // restaurant and rooms, is shown once, under its first kind.
   const shown = current ? inPlace(current._id) : all;
+
+  // Within a kind, what is open now comes first, then what opens later
+  // today, then places without opening hours (an inn is booked, not
+  // visited), and last what is closed all day. The sort is stable, so the
+  // order by name holds within each step. It needs the clock, so the
+  // server renders by name and the browser reorders once mounted.
+  const now = useNow();
+  const rank = (business: any) => {
+    if (!now) {
+      return 0;
+    }
+    if (!business.openingHours?.length) {
+      return 2;
+    }
+    const state = openState(business.openingHours, now);
+    if (state.open) {
+      return 0;
+    }
+    return state.next?.day === isoDay(now) ? 1 : 3;
+  };
+
   const sections = KINDS.map((kind) => ({
     kind,
-    items: shown.filter((b) => (b.kinds?.[0] || 'eat') === kind),
+    items: shown
+      .filter((b) => (b.kinds?.[0] || 'eat') === kind)
+      .map((b) => ({ b, r: rank(b) }))
+      .sort((x, y) => x.r - y.r)
+      .map(({ b }) => b),
   })).filter(({ items }) => items.length > 0);
 
   return (
