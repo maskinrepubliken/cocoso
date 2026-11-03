@@ -124,7 +124,8 @@ async function renderTitle(
   title: string,
   width: number,
   maxLines: number,
-  maxSize = 76
+  maxSize = 76,
+  color: string = COLORS.green
 ): Promise<TextLayer> {
   const sizes = [76, 68, 60, 54, 48].filter((size) => size <= maxSize);
   const fits = (layer: TextLayer, size: number) =>
@@ -133,7 +134,7 @@ async function renderTitle(
     const layer = await renderText(title, {
       font: 'display',
       size,
-      color: COLORS.green,
+      color,
       width,
     });
     if (fits(layer, size)) {
@@ -146,7 +147,7 @@ async function renderTitle(
     const layer = await renderText(`${words.slice(0, count).join(' ')}…`, {
       font: 'display',
       size,
-      color: COLORS.green,
+      color,
       width,
     });
     if (fits(layer, size)) {
@@ -156,14 +157,20 @@ async function renderTitle(
   return renderText(title.slice(0, 40), {
     font: 'display',
     size,
-    color: COLORS.green,
+    color,
     width,
   });
 }
 
 // --- Pictures ------------------------------------------------------------
 
-const PICTURE = { x: 724, y: 48, w: 428, h: 534, radius: 30 };
+interface Frame {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  radius: number;
+}
 
 const MAX_REMOTE_BYTES = 15 * 1024 * 1024;
 
@@ -223,15 +230,14 @@ const roundedMask = (w: number, h: number, r: number) =>
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="${w}" height="${h}" rx="${r}" ry="${r}" fill="#fff"/></svg>`
   );
 
-// The card's picture: the photo when there is one that loads, else the
+// The card's picture in a frame: the photo when there is one, else the
 // place's colour world with the generated shapes, as on the event cards.
 async function renderPicture(
-  imageRef: unknown,
+  photo: Buffer | null,
   seed: string,
-  world: LocationWorld
+  world: LocationWorld,
+  { w, h, radius }: Frame
 ): Promise<Buffer> {
-  const { w, h, radius } = PICTURE;
-  const photo = imageRef ? await loadImage(imageRef) : null;
   let base: Buffer | null = null;
   if (photo) {
     base = await sharp(photo, { failOn: 'none' })
@@ -264,11 +270,28 @@ async function renderPicture(
       </svg>`
     );
   }
-  return sharp(base)
-    .resize(w, h)
-    .composite([{ input: roundedMask(w, h, radius), blend: 'dest-in' }])
+  const sized = sharp(base).resize(w, h);
+  return (
+    radius
+      ? sized.composite([
+          { input: roundedMask(w, h, radius), blend: 'dest-in' },
+        ])
+      : sized
+  )
     .png()
     .toBuffer();
+}
+
+// A photo that loads and is large enough to carry the whole picture
+async function usablePhoto(ref: unknown): Promise<Buffer | null> {
+  const photo = ref ? await loadImage(ref) : null;
+  if (!photo) {
+    return null;
+  }
+  const meta = await sharp(photo, { failOn: 'none' })
+    .metadata()
+    .catch(() => null);
+  return meta?.width ? photo : null;
 }
 
 // The almanac label from the cards: the day large, the month (or "varje
@@ -373,13 +396,166 @@ interface CardContent {
   /** The description, quieter, as much as there is room for */
   summary?: string;
   lines: InfoLine[];
-  picture: Buffer;
+  /** What the picture is made of */
+  art: { imageRef: unknown; seed: string; world: LocationWorld };
   stamp?: Buffer | null;
   siteName: string;
 }
 
-const TEXT_X = 72;
-const TEXT_W = PICTURE.x - TEXT_X - 56;
+// --- Layouts -----------------------------------------------------------------
+//
+// Entries do not all look alike: each gets one of a few layouts, picked
+// from its id, so the same event always gets the same one (the picture's
+// URL, which the services cache by, does not change with it).
+//
+// - card:   the paper ground, text left, the photo framed on the right
+// - mirror: the same with the photo on the left and the text on the right
+// - poster: the photo across the whole picture, the text light on a
+//           darkening fade from the left (only with a real photo)
+// - band:   the place's colour (forest, clay, glass …) as a field on the
+//           left with light text, the photo filling the right side
+
+type LayoutName = 'card' | 'mirror' | 'poster' | 'band';
+
+interface Palette {
+  title: string;
+  ink: string;
+  soft: string;
+  accent: string;
+  site: string;
+}
+
+interface Layout {
+  name: LayoutName;
+  text: { x: number; w: number };
+  picture: Frame;
+  palette: Palette;
+  /** Where the date label goes, given its width */
+  stamp: (width: number) => { left: number; top: number };
+  shadow: boolean;
+}
+
+const ON_PAPER: Palette = {
+  title: COLORS.green,
+  ink: COLORS.ink,
+  soft: COLORS.soft,
+  accent: COLORS.tegel,
+  site: COLORS.green,
+};
+
+const ON_DARK: Palette = {
+  title: COLORS.paper,
+  ink: '#f4efe4',
+  soft: '#ddd5c4',
+  accent: '#f2a782',
+  site: COLORS.paper,
+};
+
+function makeLayout(name: LayoutName, world: LocationWorld): Layout {
+  switch (name) {
+    case 'mirror': {
+      const picture = { x: 48, y: 48, w: 428, h: 534, radius: 30 };
+      return {
+        name,
+        text: { x: 540, w: W - 540 - 60 },
+        picture,
+        palette: ON_PAPER,
+        stamp: (width) => ({
+          left: picture.x + picture.w - width + 34,
+          top: picture.y + 28,
+        }),
+        shadow: true,
+      };
+    }
+    case 'poster':
+      return {
+        name,
+        text: { x: 72, w: 600 },
+        picture: { x: 0, y: 0, w: W, h: H, radius: 0 },
+        palette: ON_DARK,
+        stamp: (width) => ({ left: W - width - 44, top: 40 }),
+        shadow: false,
+      };
+    case 'band': {
+      const picture = { x: 680, y: 0, w: W - 680, h: H, radius: 0 };
+      return {
+        name,
+        text: { x: 64, w: 560 },
+        picture,
+        palette: { ...ON_DARK, accent: world.from, soft: world.tint },
+        stamp: (width) => ({ left: picture.x - width / 2, top: 40 }),
+        shadow: false,
+      };
+    }
+    default: {
+      const picture = { x: 724, y: 48, w: 428, h: 534, radius: 30 };
+      return {
+        name: 'card',
+        text: { x: 72, w: picture.x - 72 - 56 },
+        picture,
+        palette: ON_PAPER,
+        stamp: () => ({ left: picture.x - 34, top: picture.y + 28 }),
+        shadow: true,
+      };
+    }
+  }
+}
+
+// FNV-1a over the id, so the pick is the same on every server
+function layoutFor(seed: string, hasPhoto: boolean): LayoutName {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash ^= seed.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  const names: LayoutName[] = hasPhoto
+    ? ['card', 'mirror', 'poster', 'band']
+    : ['card', 'mirror', 'band'];
+  return names[hash % names.length];
+}
+
+// The ground behind it all
+function groundFor(layout: Layout, world: LocationWorld): Buffer {
+  if (layout.name === 'band') {
+    return Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="0.6" y2="1">
+            <stop offset="0" stop-color="${world.to}"/>
+            <stop offset="1" stop-color="${world.ink}"/>
+          </linearGradient>
+          <pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M8 0H0V8" fill="none" stroke="#ffffff" stroke-opacity="0.05"/>
+          </pattern>
+        </defs>
+        <rect width="${W}" height="${H}" fill="url(#g)"/>
+        <rect width="${W}" height="${H}" fill="url(#grid)"/>
+      </svg>`
+    );
+  }
+  return background;
+}
+
+// Over the photo of a poster: dark on the text's side, clear on the other
+const posterFade = Buffer.from(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+    <defs>
+      <linearGradient id="f" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#1c1610" stop-opacity="0.9"/>
+        <stop offset="0.5" stop-color="#1c1610" stop-opacity="0.8"/>
+        <stop offset="0.8" stop-color="#1c1610" stop-opacity="0.15"/>
+        <stop offset="1" stop-color="#1c1610" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0.6" stop-color="#1c1610" stop-opacity="0"/>
+        <stop offset="1" stop-color="#1c1610" stop-opacity="0.55"/>
+      </linearGradient>
+    </defs>
+    <rect width="${W}" height="${H}" fill="url(#f)"/>
+    <rect width="${W}" height="${H}" fill="url(#b)"/>
+  </svg>`
+);
+
 const FOOTER_H = 96;
 const TEXT_TOP = 44;
 // The text block ends this far above the crane
@@ -424,20 +600,6 @@ async function renderClamped(
   return best;
 }
 
-const SUBTITLE_STYLE: TextOptions = {
-  font: 'ui',
-  size: 27,
-  color: COLORS.ink,
-  width: TEXT_W,
-};
-const SUMMARY_STYLE: TextOptions = {
-  font: 'ui',
-  size: 23,
-  color: COLORS.soft,
-  width: TEXT_W,
-  lineHeight: 3,
-};
-
 // How many lines title, subtitle and description get, roomiest first; the
 // first that leaves room for the dates and the place is used.
 const TEXT_PLANS: Array<[number, number, number]> = [
@@ -452,18 +614,66 @@ const TEXT_PLANS: Array<[number, number, number]> = [
 ];
 
 async function composeCard(content: CardContent): Promise<Buffer> {
+  const { imageRef, seed, world } = content.art;
+  const photo = await usablePhoto(imageRef);
+  const layout = makeLayout(layoutFor(seed, Boolean(photo)), world);
+  const { palette } = layout;
+  const textX = layout.text.x;
+  const textW = layout.text.w;
+  const picture = await renderPicture(photo, seed, world, layout.picture);
+  const subtitleStyle: TextOptions = {
+    font: 'ui',
+    size: 27,
+    color: palette.ink,
+    width: textW,
+  };
+  const summaryStyle: TextOptions = {
+    font: 'ui',
+    size: 23,
+    color: palette.soft,
+    width: textW,
+    lineHeight: 3,
+  };
+
   const layers: sharp.OverlayOptions[] = [];
+  // Under the text: the photo (poster) or the framed photo with its shadow
+  if (layout.name === 'poster') {
+    layers.push({ input: picture, left: 0, top: 0 });
+    layers.push({ input: posterFade, left: 0, top: 0 });
+  } else {
+    const frame = layout.picture;
+    if (layout.shadow) {
+      layers.push({
+        input: Buffer.from(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+            <defs><filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="16"/>
+            </filter></defs>
+            <rect x="${frame.x + 6}" y="${frame.y + 18}" width="${
+            frame.w - 12
+          }" height="${frame.h - 12}" rx="${
+            frame.radius
+          }" fill="#3c2814" fill-opacity="0.32" filter="url(#s)"/>
+          </svg>`
+        ),
+        left: 0,
+        top: 0,
+      });
+    }
+    layers.push({ input: picture, left: frame.x, top: frame.y });
+  }
+
   const kickerStyle: TextOptions = {
     font: 'uiBold',
     size: 22,
-    color: COLORS.tegel,
+    color: palette.accent,
     letterSpacing: 0.14,
   };
   let kicker = await renderText(content.kicker.toUpperCase(), kickerStyle);
-  if (kicker.width > TEXT_W) {
+  if (kicker.width > textW) {
     kicker = await renderText(
       (content.kickerShort || content.kicker).toUpperCase(),
-      { ...kickerStyle, width: TEXT_W }
+      { ...kickerStyle, width: textW }
     );
   }
   // A title with text under it is set a size smaller, so the text has room
@@ -478,8 +688,8 @@ async function composeCard(content: CardContent): Promise<Buffer> {
         layer: await renderText(line.text, {
           font: 'ui',
           size: line.muted ? 25 : 29,
-          color: line.muted ? COLORS.soft : COLORS.ink,
-          width: TEXT_W - indent,
+          color: line.muted ? palette.soft : palette.ink,
+          width: textW - indent,
         }),
       };
     })
@@ -504,13 +714,13 @@ async function composeCard(content: CardContent): Promise<Buffer> {
   for (const [titleLines, subtitleLines, summaryLines] of TEXT_PLANS) {
     parts = await Promise.all([
       once(`t${titleLines}`, () =>
-        renderTitle(content.title, TEXT_W, titleLines, titleMax)
+        renderTitle(content.title, textW, titleLines, titleMax, palette.title)
       ),
       once(`s${subtitleLines}`, () =>
-        renderClamped(content.subtitle, SUBTITLE_STYLE, subtitleLines)
+        renderClamped(content.subtitle, subtitleStyle, subtitleLines)
       ),
       once(`d${summaryLines}`, () =>
-        renderClamped(content.summary, SUMMARY_STYLE, summaryLines)
+        renderClamped(content.summary, summaryStyle, summaryLines)
       ),
     ]);
     const [title, subtitle, summary] = parts;
@@ -532,32 +742,32 @@ async function composeCard(content: CardContent): Promise<Buffer> {
     TEXT_TOP,
     Math.round((TEXT_BOTTOM + TEXT_TOP - blockHeight) / 2)
   );
-  layers.push({ input: kicker.data, left: TEXT_X, top: y });
+  layers.push({ input: kicker.data, left: textX, top: y });
   y += kicker.height + gaps.kicker;
   if (title) {
-    layers.push({ input: title.data, left: TEXT_X, top: y });
+    layers.push({ input: title.data, left: textX, top: y });
     y += title.height;
   }
   if (subtitle) {
     y += gaps.title;
-    layers.push({ input: subtitle.data, left: TEXT_X, top: y });
+    layers.push({ input: subtitle.data, left: textX, top: y });
     y += subtitle.height;
   }
   if (summary) {
     y += subtitle ? gaps.subtitle : gaps.title;
-    layers.push({ input: summary.data, left: TEXT_X, top: y });
+    layers.push({ input: summary.data, left: textX, top: y });
     y += summary.height;
   }
   y += gaps.text;
   lines.forEach(({ line, indent, layer }) => {
     if (line.icon) {
       layers.push({
-        input: icon(line.icon, 30, COLORS.tegel),
-        left: TEXT_X,
+        input: icon(line.icon, 30, palette.accent),
+        left: textX,
         top: y + Math.max(0, Math.round((Math.min(layer.height, 40) - 30) / 2)),
       });
     }
-    layers.push({ input: layer.data, left: TEXT_X + indent, top: y });
+    layers.push({ input: layer.data, left: textX + indent, top: y });
     y += layer.height + gaps.line;
   });
 
@@ -569,46 +779,37 @@ async function composeCard(content: CardContent): Promise<Buffer> {
   const siteName = await renderText(content.siteName, {
     font: 'uiBold',
     size: 22,
-    color: COLORS.green,
-    width: TEXT_W - crane.info.width - 16,
+    color: palette.site,
+    width: textW - crane.info.width - 16,
   });
   const footerY = H - 48 - 54;
-  layers.push({ input: crane.data, left: TEXT_X - 6, top: footerY });
+  layers.push({ input: crane.data, left: textX - 6, top: footerY });
   layers.push({
     input: siteName.data,
-    left: TEXT_X - 6 + crane.info.width + 12,
+    left: textX - 6 + crane.info.width + 12,
     top: footerY + Math.round((54 - siteName.height) / 2) + 4,
   });
 
-  // The picture with a soft shadow, the date label on its corner
-  const shadow = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-      <defs><filter id="s" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur stdDeviation="16"/>
-      </filter></defs>
-      <rect x="${PICTURE.x + 6}" y="${PICTURE.y + 18}" width="${
-      PICTURE.w - 12
-    }" height="${PICTURE.h - 12}" rx="${
-      PICTURE.radius
-    }" fill="#3c2814" fill-opacity="0.32" filter="url(#s)"/>
-    </svg>`
-  );
-  layers.push({ input: shadow, left: 0, top: 0 });
-  layers.push({ input: content.picture, left: PICTURE.x, top: PICTURE.y });
+  // The date label on the picture's corner
   if (content.stamp) {
+    const { width = 140 } = await sharp(content.stamp).metadata();
     layers.push({
       input: content.stamp,
-      left: PICTURE.x - 34,
-      top: PICTURE.y + 28,
+      ...roundPosition(layout.stamp(width)),
     });
   }
 
-  return sharp(background)
+  return sharp(groundFor(layout, world))
     .composite(layers)
     .flatten({ background: '#f1f0dc' })
     .jpeg({ quality: 86, mozjpeg: true })
     .toBuffer();
 }
+
+const roundPosition = ({ left, top }: { left: number; top: number }) => ({
+  left: Math.round(left),
+  top: Math.round(top),
+});
 
 // --- Entries -----------------------------------------------------------------
 
@@ -771,14 +972,7 @@ async function drawActivity(activity: ShareableActivity): Promise<Buffer> {
     lines.push({ icon: 'pin', text: where });
   }
 
-  const [picture, stampLayer] = await Promise.all([
-    renderPicture(
-      (activity.images && activity.images[0]) || activity.imageUrl,
-      activity._id || activity.title || '',
-      world
-    ),
-    stamp ? renderStamp(stamp.day, stamp.small) : null,
-  ]);
+  const stampLayer = stamp ? await renderStamp(stamp.day, stamp.small) : null;
 
   // The subtitle under the title, then as much of the description as
   // fits (unless it only repeats the subtitle)
@@ -793,7 +987,11 @@ async function drawActivity(activity: ShareableActivity): Promise<Buffer> {
         ? shorten(description, 320)
         : undefined,
     lines,
-    picture,
+    art: {
+      imageRef: (activity.images && activity.images[0]) || activity.imageUrl,
+      seed: activity._id || activity.title || '',
+      world,
+    },
     stamp: stampLayer,
     siteName,
   });
@@ -823,17 +1021,16 @@ async function drawLocation(location: ShareableLocation): Promise<Buffer> {
     0
   );
   const world = worldForPlace(location, index);
-  const picture = await renderPicture(
-    location.images?.[0],
-    location._id || location.name || '',
-    world
-  );
   return composeCard({
     kicker: t('shareImage.welcome'),
     title: location.name || '',
     summary: shorten(withoutCredits(plainText(location.description)), 320),
     lines: [],
-    picture,
+    art: {
+      imageRef: location.images?.[0],
+      seed: location._id || location.name || '',
+      world,
+    },
     siteName,
   });
 }
@@ -848,11 +1045,6 @@ async function drawResource(resource: ShareableResource): Promise<Buffer> {
   const world = worldForPlace(place || undefined, Math.max(index, 0));
   const kind = kindsOf(resource)[0];
   const address = formatAddress(resource.address as never);
-  const picture = await renderPicture(
-    resource.images?.[0],
-    resource._id || resource.label || '',
-    world
-  );
   return composeCard({
     kicker: [
       kind ? t(`resourceKinds.${kind}`) : t('shareImage.resource'),
@@ -864,7 +1056,11 @@ async function drawResource(resource: ShareableResource): Promise<Buffer> {
     title: resource.label || '',
     summary: shorten(withoutCredits(plainText(resource.description)), 320),
     lines: address ? [{ icon: 'pin', text: address }] : [],
-    picture,
+    art: {
+      imageRef: resource.images?.[0],
+      seed: resource._id || resource.label || '',
+      world,
+    },
     siteName,
   });
 }
