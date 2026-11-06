@@ -174,18 +174,31 @@ modals:
 
   # FEEDBACK FORM
   feedback:
-    label: Give Feedback
+    label: Give feedback
     form:
+      intro: The service is new and in beta. Tell us what works, what gets in the way and what you miss. Everything is read by the people who build it.
       email:
         label: Your email address
+        hint: (if you would like an answer)
       subject:
-        label: Subject
+        label: What is it about?
         select:
-          suggest: Suggestion
-          bug: Bug
-          compliment: Compliment
+          suggestion: Suggestion
+          bug: Something is wrong
+          compliment: Praise
       details:
         label: Message
+        placeholder:
+          suggestion: What would make the service better for you?
+          bug: What happened, and where? What did you expect?
+          compliment: What do you like?
+      privacy: Goes to the site's administrators, nowhere else.
+      sending: Sending…
+      error: The message could not be sent. Please try again in a while.
+      thanks:
+        title: Thank you!
+        text: Your message has reached us. If you left your email address, we may get back to you.
+        close: Close
 
   toPortalApp: Continue to the Portal App
 
@@ -504,7 +517,7 @@ seasons:
 cookies:
   title: Before you continue
   text: "We only use the cookies the site needs to work: one to keep you signed in, one to remember your language and one to remember that you have read this. No cookies for tracking or advertising."
-  beta: The service is new and still being built, so things may change and something may not work yet. Tell us what you think: the "Give feedback" button is always at the bottom of the page.
+  beta: 'The service is new and still being built, so things may change and something may not work yet. Tell us what you think: the "Give feedback" button is always at the bottom of the page.'
   ok: Got it
 
 footer:
