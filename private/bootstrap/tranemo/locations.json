@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "tranemo",
+    "name": "Tranemo tätort",
+    "description": "<p>Kommunens centralort vid Tranemosjön, med Centralen, biblioteket, simhallen och Tranehov.</p>",
+    "isPublished": true,
+    "order": 0,
+    "images": []
+  },
+  {
+    "slug": "uddebo",
+    "name": "Uddebo",
+    "description": "<p>Byn vid Assman med det gamla väveriet, i dag fullt av verkstäder, bageri och kultur.</p>",
+    "isPublished": true,
+    "order": 1,
+    "images": []
+  },
+  {
+    "slug": "limmared",
+    "name": "Limmared",
+    "description": "<p>Glasbruksorten med Glasets Hus, Sveriges äldsta glasbruk i drift.</p>",
+    "isPublished": true,
+    "order": 2,
+    "images": []
+  },
+  {
+    "slug": "dalstorp",
+    "name": "Dalstorp",
+    "description": "<p>Orten vid Dalstorpasjön med skolan, idrottshallen, Dalshov och badplatsen.</p>",
+    "isPublished": true,
+    "order": 3,
+    "images": []
+  },
+  {
+    "slug": "langhem",
+    "name": "Länghem",
+    "description": "<p>Samhället vid Sävsjön med Torpa stenhus, Hofsnäs herrgård och Ingsvallen.</p>",
+    "isPublished": true,
+    "order": 4,
+    "images": []
+  }
+]

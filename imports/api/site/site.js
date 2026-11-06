@@ -48,9 +48,9 @@ Site.schema = new SimpleSchema({
   // One line under the name in the start page's welcome band.
   'settings.tagline': { type: String, optional: true },
   'settings.email': Schemas.Email,
-  'settings.address': { type: String },
-  'settings.city': { type: String },
-  'settings.country': { type: String },
+  'settings.address': { type: String, optional: true },
+  'settings.city': { type: String, optional: true },
+  'settings.country': { type: String, optional: true },
   'settings.lang': { type: String, optional: true },
   'settings.season': { type: String, optional: true },
   'settings.menu': { type: Array },
@@ -97,6 +97,10 @@ Site.schema = new SimpleSchema({
 
   emails: { type: Array },
   'emails.$': new SimpleSchema(SchemasSite.emailTemplate),
+
+  // Which parts of the data pack were loaded at first start, and when
+  // (imports/startup/server/bootstrap.ts). Keeps them from loading twice.
+  bootstrap: { type: Object, optional: true, blackbox: true },
 
   createdAt: { type: Date },
 });

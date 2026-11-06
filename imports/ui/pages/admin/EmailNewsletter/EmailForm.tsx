@@ -33,12 +33,14 @@ const getDefaultFooter = (site: any) => {
 
   const { settings } = site;
   const siteUrl = publicUrl();
-  const address = `${settings.address}, ${settings.city}, ${settings.country}`;
+  const address = [settings.address, settings.city, settings.country]
+    .filter(Boolean)
+    .join(', ');
 
   return `
     <h1 style="margin-bottom: 24px;">${settings?.name}</h1>
     <br />
-    <p>${address}</p>
+    ${address ? `<p>${address}</p>` : ''}
     <p>
       <a href="mailto:${settings?.email}">
         ${settings?.email}

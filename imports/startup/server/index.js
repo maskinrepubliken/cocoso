@@ -4,6 +4,7 @@ import { onPageLoad } from 'meteor/server-render';
 import { WebAppInternals } from 'meteor/webapp';
 
 import serverRenderer from './serverRenderer';
+import { bootstrapSite } from './bootstrap';
 import {
   getSmtpSettings,
   mailUrlFor,
@@ -47,6 +48,12 @@ function setupSMTP() {
 
 Meteor.startup(async () => {
   setupSMTP();
+
+  try {
+    await bootstrapSite();
+  } catch (error) {
+    console.error('[bootstrap] failed:', error);
+  }
 
   if (cdnServer) {
     WebAppInternals.setBundledJsCssPrefix(cdnServer);
