@@ -1,45 +1,67 @@
+// The menu a fresh install starts with: the Tranemo labels, with groups,
+// works and info hidden (groups and works are switched off as features).
 const defaultMenu = [
   {
-    label: 'Activities',
+    label: 'Evenemang',
     name: 'activities',
     isVisible: true,
     isHomePage: true,
+    isComposablePage: false,
   },
   {
-    label: 'Groups',
+    label: 'Föreningar',
     name: 'groups',
-    isVisible: true,
+    isVisible: false,
     isHomePage: false,
+    isComposablePage: false,
   },
   {
-    label: 'Calendar',
+    label: 'Kalender',
     name: 'calendar',
     isVisible: true,
     isHomePage: false,
+    isComposablePage: false,
   },
   {
-    label: 'Works',
+    label: 'Förfrågningar',
     name: 'works',
-    isVisible: true,
+    description:
+      'Samåk, låna, ge bort och hjälp varandra – grannar emellan i hela kommunen.',
+    isVisible: false,
     isHomePage: false,
+    isComposablePage: false,
   },
   {
-    label: 'People',
+    label: 'Arrangörer',
     name: 'people',
+    description:
+      'Här hittar du alla aktiva föreningar, verksamheter och eldsjälar.',
     isVisible: true,
     isHomePage: false,
+    isComposablePage: false,
   },
   {
-    label: 'Resources',
+    label: 'Platser',
     name: 'resources',
     isVisible: true,
     isHomePage: false,
+    isComposablePage: false,
+  },
+  {
+    label: 'Äta, handla & bo',
+    name: 'businesses',
+    description:
+      'Kaféer, restauranger, butiker och ställen att bo på i hela kommunen.',
+    isVisible: true,
+    isHomePage: false,
+    isComposablePage: false,
   },
   {
     label: 'Info',
     name: 'info',
-    isVisible: true,
+    isVisible: false,
     isHomePage: false,
+    isComposablePage: false,
   },
 ];
 
@@ -75,22 +97,26 @@ const defaultEmails = [
   },
 ];
 
+// The "Hemma i Tranemo" palette: soft green floor, deep green accents.
 const defaultTheme = {
-  hue: (Math.floor(Math.random() * 360) + 1).toString(),
+  hue: '85',
+  saturation: '45',
+  accentHue: '118',
+  accentSaturation: '48',
   body: {
-    backgroundColor: 'var(--cocoso-colors-theme-100)',
+    backgroundColor: 'var(--cocoso-season-golv)',
     backgroundImage: 'none',
     backgroundRepeat: 'no-repeat',
-    borderRadius: '0.25rem',
+    borderRadius: '0.625rem',
     fontFamily: 'sans-serif',
   },
   menu: {
-    backgroundColor: 'var(--cocoso-colors-theme-50)',
+    backgroundColor: 'var(--cocoso-papper)',
     borderColor: 'var(--cocoso-colors-theme-200)',
     borderRadius: '0.25rem',
     borderStyle: 'solid',
     borderWidth: '0',
-    color: 'var(--cocoso-colors-theme-800)',
+    color: 'var(--cocoso-colors-theme-700)',
     fontStyle: 'normal',
     textTransform: 'none',
   },

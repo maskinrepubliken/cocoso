@@ -121,7 +121,7 @@ Meteor.methods({
       await Pages.insertAsync({
         authorId: currentUser._id,
         authorName: currentUser.username,
-        title: `About ${values.name}`,
+        title: values.aboutTitle || `Om ${values.name}`,
         longDescription: values.about,
         isPublished: true,
         order: 1,
