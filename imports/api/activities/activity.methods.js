@@ -791,7 +791,13 @@ Meteor.methods({
       }
       return updated;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't update activity");
+      // A Meteor.Error with an Error object as its code can't be sent and
+      // crashes the server; send the reason as text
+      console.error('[updateActivity]', error);
+      throw new Meteor.Error(
+        'update-failed',
+        error?.reason || error?.message || "Couldn't update activity"
+      );
     }
   },
 
