@@ -7607,33 +7607,6 @@ body {
   text-transform: uppercase;
 }
 
-/* The feedback callout: an icon and where the button always is */
-.cookie-notice-feedback {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 8px 12px;
-  margin: 4px 0 12px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: var(--cocoso-colors-theme-700);
-  color: #fff;
-}
-
-.cookie-notice-feedback svg {
-  color: #fff;
-}
-
-.cookie-notice-body .cookie-notice-feedback p {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.4;
-}
-
-.cookie-notice-feedback strong {
-  white-space: nowrap;
-}
-
 .cookie-notice-body .cookie-notice-cookies {
   color: var(--cocoso-mylla-soft);
   font-size: 13px;

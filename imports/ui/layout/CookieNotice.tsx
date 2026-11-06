@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
-import MessageCircleIcon from 'lucide-react/dist/esm/icons/message-circle';
+import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { pageTitlesAtom } from '/imports/state';
@@ -68,16 +67,9 @@ export default function CookieNotice() {
           {tc('cookies.beta')}
         </p>
 
-        {/* Where feedback lives, said plainly */}
-        <div className="cookie-notice-feedback">
-          <MessageCircleIcon aria-hidden="true" width={22} height={22} />
-          <p>
-            <Trans
-              i18nKey="common:cookies.feedbackHint"
-              components={{ b: <strong /> }}
-            />
-          </p>
-        </div>
+        <p>
+          <strong>{tc('cookies.feedbackHint')}</strong>
+        </p>
 
         <p className="cookie-notice-cookies">{tc('cookies.text')}</p>
 
