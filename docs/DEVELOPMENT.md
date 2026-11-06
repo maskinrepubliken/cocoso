@@ -16,9 +16,11 @@ cp changethis.settings.json private/settings.json   # then edit it, see docs/CON
 meteor run --settings private/settings.json --port 3000
 ```
 
-On first visit with an empty database the setup wizard creates the first
-admin account and the site (name and contact details). Add the
-municipality's locations afterwards under Admin → Places.
+On first start against an empty database the server creates the site and
+its first admin from `site` in the settings, and loads the data pack it
+names (places, venues, request kinds, pages). The admin's generated password
+is printed to the server log once. See
+[CONFIGURATION.md](CONFIGURATION.md#site--creating-the-site-on-first-start).
 
 ## Scripts
 

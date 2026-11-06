@@ -1,5 +1,13 @@
 {
   "_readme": "Copy this file to private/settings.json and fill in the values. Every key is documented in docs/CONFIGURATION.md. private/settings.json is gitignored.",
+  "site": {
+    "name": "Tranemo",
+    "admin": {
+      "username": "admin",
+      "email": "admin@your-domain.example"
+    },
+    "data": "tranemo"
+  },
   "public": {
     "packages": {
       "dynamic-import": {

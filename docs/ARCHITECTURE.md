@@ -133,8 +133,9 @@ a street or coordinates.
    inlined in `<head>`.
 2. **Hydration.** `imports/startup/client/index.jsx` waits for i18next, calls
    the same bootstrap methods over DDP, builds a browser router with the
-   same route table and hydrates `#root`. If no site exists yet the setup
-   wizard renders instead (admin account, then site).
+   same route table and hydrates `#root`. The site itself is created by the
+   server on first start (`imports/startup/server/bootstrap.ts`); if there
+   is still none, a short note pointing to the settings renders instead.
 3. **Navigation.** Routes declare loaders (`imports/loaders.js`) that call
    Meteor methods through the `call()` wrapper. Components read loader data
    with `useLoaderData()` and global state with jotai atoms. Mutations call
@@ -166,9 +167,9 @@ Passwords are kept only for administrators, as a way in if mail stops
 working: `/login?losenord` shows a username/password
 form (behind a small grey link under the login panel), and `imports/api/users/passwordLogin.js` refuses password logins and
 resets for anyone who is not an admin. Accounts cannot be created from the
-browser (`forbidClientAccountCreation`), and `createAccount` only works on a
-fresh install with no admin yet — the first-run `/setup`, which still makes
-the first admin with a password.
+browser (`forbidClientAccountCreation`); the first admin is made by the
+server on first start, from `site.admin` in the settings, with a generated
+password printed once to the log.
 
 ## Media storage
 

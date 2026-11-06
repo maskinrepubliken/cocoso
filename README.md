@@ -67,8 +67,9 @@ cp changethis.settings.json private/settings.json   # edit; see docs/CONFIGURATI
 npm start                                           # http://localhost:3000
 ```
 
-The first visit opens a setup wizard that creates the platform, the first
-community and the first super-admin account.
+On first start the server creates the site and its first admin from the
+`site` block in the settings; there is no setup page in the browser. See
+[docs/CONFIGURATION.md](docs/CONFIGURATION.md#site--creating-the-site-on-first-start).
 
 | Guide                                          | Contents                                                            |
 | ---------------------------------------------- | ------------------------------------------------------------------- |

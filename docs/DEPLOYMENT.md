@@ -32,6 +32,17 @@ Use a process manager (systemd, pm2) to keep it running. `ROOT_URL` must be
 the public URL of the site; every absolute link the app produces is built
 from it.
 
+On the first start against an empty database the server creates the site,
+its admin and the data pack's places and venues from the `site` block in
+the settings
+([CONFIGURATION.md](CONFIGURATION.md#site--creating-the-site-on-first-start)).
+Read the admin's password from the server log right away; it is printed only
+once. With the compose stack:
+
+```bash
+docker compose logs app | grep '\[bootstrap\]'
+```
+
 ## Reverse proxy
 
 The site's domain points at the process. The proxy must:

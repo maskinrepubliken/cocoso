@@ -21,6 +21,41 @@ Copy it to `private/settings.json` (gitignored) and edit it.
 
 Everything under `public` is visible to any visitor. Never put secrets there.
 
+### `site.*` — creating the site on first start
+
+| Key                   | Required | Meaning                                                                                                                                                                       |
+| --------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `site.name`           | yes      | The place the site is for, e.g. `"Tranemo"`. The site is named `<name>kalendern` ("Tranemokalendern"), and `<name>` is the short name in the header and the start page. |
+| `site.admin.username` | yes      | Username of the first admin.                                                                                                                                                  |
+| `site.admin.email`    | yes      | Email of the first admin, and the site's contact address.                                                                                                                    |
+| `site.data`           | no       | Data pack in `private/bootstrap/<data>/` to load: places, venues, request kinds and pages. `"tranemo"` is the Tranemo pack.                                                  |
+
+```json
+"site": {
+  "name": "Tranemo",
+  "admin": { "username": "admin", "email": "admin@example.org" },
+  "data": "tranemo"
+}
+```
+
+When the server starts (`imports/startup/server/bootstrap.ts`):
+
+1. **No site yet:** it creates one, in Swedish, with the default menu and
+   theme (`imports/startup/constants.js`).
+2. **No admin yet:** it creates the admin with a generated password and
+   prints it to the server log, once, as a `[bootstrap]` line. Log in with
+   it at `/login?losenord`, or by email code at `/login` like everyone else.
+3. **Data pack:** each part (places, venues, request kinds, pages) is loaded
+   only into an empty collection, and only once. The site document records
+   it under `bootstrap`, so something an admin deletes later does not come
+   back on a restart. On an existing site the parts it never had are filled
+   in and the rest is left alone.
+
+Everything after that (name, logo, theme, menu, texts) is edited in the
+admin area; changing `site` later does not change an existing site. There
+is no setup page in the browser. To build a pack from a configured
+database, run `scripts/export-bootstrap-pack.mongosh.js`.
+
 ### `media.*` — uploaded files
 
 | Key                 | Required | Default                                   | Meaning                                                                                                                |
@@ -77,7 +112,8 @@ from the app.
 
 One running instance serves one site. Everything site-specific (name, logo,
 theme, menu, language, email footer) lives in the single `site` document and
-is edited in the admin UI, not in the settings file. The municipality's
+is edited in the admin UI. The settings file only says how to create it the
+first time (`site.*` above). The municipality's
 locations are data too, managed under Admin → Places; each published
 location gets its pages under `/<slug>`.
 
