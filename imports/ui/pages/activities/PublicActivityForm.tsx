@@ -24,7 +24,7 @@ import DatesAndTimes, {
   emptyDateAndTime,
 } from '/imports/ui/forms/DatesAndTimes';
 import { message } from '/imports/ui/generic/message';
-import { Textarea } from '/imports/ui/core';
+import { Modal, Textarea } from '/imports/ui/core';
 import type { SelectedResource, DateAndTime } from '/imports/ui/types';
 
 import publicActivityFormFields from './publicActivityFormFields';
@@ -154,9 +154,15 @@ export default function PublicActivityForm({
     // Only used when no place is chosen; a place brings its own address.
     address: activity?.address || emptyAddress,
     resources: [],
-    // For those signed up and following, sent with a new time or place
-    changeMessage: '',
+    // Whether to tell those signed up and following, asked on saving
+    // (see askToNotify below), and the organizer's words to them
+    notify: null as { send: boolean; message: string } | null,
+    notifyMessage: '',
+    isAskingToNotify: false,
+    pendingFormValues: null as ActivityFormValues | null,
   });
+  // How many are signed up or follow the event being edited
+  const [audience, setAudience] = useState(0);
   const [organizerOptions, setOrganizerOptions] = useState<OrganizerOption[]>(
     []
   );
@@ -181,6 +187,14 @@ export default function PublicActivityForm({
       message.error(error.reason || error.error);
     }
   };
+
+  useEffect(() => {
+    if (activity?._id) {
+      call<number>('getActivityAudience', activity._id)
+        .then((count) => setAudience(Number(count) || 0))
+        .catch(() => setAudience(0));
+    }
+  }, [activity?._id]);
 
   useEffect(() => {
     getResources();
@@ -240,9 +254,8 @@ export default function PublicActivityForm({
 
   const whereMode: WhereMode = state.whereMode || 'place';
 
-  // Editing, and the time or place is no longer what it was: everyone
-  // signed up or following is told (a few minutes after saving), and the
-  // organizer may add a few words of their own
+  // Editing, and the time or place is no longer what it was: worth telling
+  // everyone signed up or following
   const currentPlaceKey =
     whereMode === 'place'
       ? placeKey(state.selectedResource?._id)
@@ -311,15 +324,15 @@ export default function PublicActivityForm({
     }));
   }, [loaders?.isCreating]);
 
-  const handleSubmit = (formValues: ActivityFormValues) => {
-    // An address of its own must be complete if one is given at all.
+  // An address of its own must be complete if one is given at all.
+  const isWhereValid = () => {
     if (whereMode === 'place' && !state.selectedResource) {
       message.error(t('form.where.placeRequired'));
-      return;
+      return false;
     }
     if (whereMode === 'own' && !state.locationPicked) {
       message.error(t('form.where.locationRequired'));
-      return;
+      return false;
     }
     if (
       whereMode === 'own' &&
@@ -327,8 +340,12 @@ export default function PublicActivityForm({
       !isCompleteAddress(state.address)
     ) {
       message.error(tc('address.errors.required'));
-      return;
+      return false;
     }
+    return true;
+  };
+
+  const saveForm = (formValues: ActivityFormValues) => {
     setState((prevState) => ({
       ...prevState,
       formValues,
@@ -337,6 +354,35 @@ export default function PublicActivityForm({
       ...prevState,
       isCreating: true,
     }));
+  };
+
+  // Saving an event that people are signed up for or follow asks first
+  // whether to tell them, and lets the organizer write why
+  const handleSubmit = (formValues: ActivityFormValues) => {
+    if (!isWhereValid()) {
+      return;
+    }
+    if (activity?._id && audience > 0) {
+      setState((prevState: any) => ({
+        ...prevState,
+        isAskingToNotify: true,
+        pendingFormValues: formValues,
+      }));
+      return;
+    }
+    saveForm(formValues);
+  };
+
+  const answerNotify = (send: boolean) => {
+    const formValues = state.pendingFormValues;
+    setState((prevState: any) => ({
+      ...prevState,
+      isAskingToNotify: false,
+      notify: { send, message: send ? prevState.notifyMessage.trim() : '' },
+    }));
+    if (formValues) {
+      saveForm(formValues);
+    }
   };
 
   const handleDatesAndTimesChange = (datesAndTimes: DateAndTime[]) => {
@@ -413,8 +459,8 @@ export default function PublicActivityForm({
         : null,
       isMunicipalityOnly: false,
     };
-    if (isTimeOrPlaceChanged && state.changeMessage.trim()) {
-      newActivity.changeMessage = state.changeMessage.trim();
+    if (state.notify) {
+      newActivity.notify = state.notify;
     }
 
     const selectedResource =
@@ -444,229 +490,254 @@ export default function PublicActivityForm({
   };
 
   return (
-    <GenericEntryForm
-      childrenIndex={2}
-      defaultValues={activity || emptyFormValues}
-      formFields={publicActivityFormFields(t).filter(
-        // The place's name is part of "Var" below
-        (field) => field.value !== 'place'
-      )}
-      isSubmitButtonDisabled={isSubmitButtonDisabled}
-      onSubmit={handleSubmit}
-    >
-      <FormField
-        area="main"
-        helper={t('form.image.helper')}
-        asHeading
-        label={t('form.image.label')}
-        mt="4"
-        mb="8"
-        required
-      >
-        <ImageUploader
-          preExistingImages={activity ? activity.images : []}
-          ping={loaders?.isUploadingImages}
-          onUploadedImages={handleUploadedImages}
-        />
-      </FormField>
-
-      <FormCard title={tc('eventKinds.form.label')}>
-        <p className="form-preview-note">{tc('eventKinds.form.helper')}</p>
-        <KindPicker
-          value={state.kinds}
-          onChange={(kinds) =>
-            setState((prevState: any) => ({ ...prevState, kinds }))
-          }
-        />
-      </FormCard>
-
-      <FormCard
-        title={t(
-          state.organizers.some(
-            (o: OrganizerRef) => o.userId !== state.authorId
-          )
-            ? 'form.cards.organizers'
-            : 'form.cards.organizer'
+    <>
+      <GenericEntryForm
+        childrenIndex={2}
+        defaultValues={activity || emptyFormValues}
+        formFields={publicActivityFormFields(t).filter(
+          // The place's name is part of "Var" below
+          (field) => field.value !== 'place'
         )}
+        isSubmitButtonDisabled={isSubmitButtonDisabled}
+        onSubmit={handleSubmit}
       >
-        <OrganizerFields
-          author={author}
-          authorId={state.authorId}
-          contact={state.contact}
-          contactChoice={contactChoice}
-          contactPerson={contactPerson}
-          currentUserId={currentUser?._id}
-          isAdmin={isAdmin}
-          options={organizerOptions}
-          organizers={state.organizers}
-          onAuthorChange={(authorId) =>
-            setState((prevState: any) => ({
-              ...prevState,
-              authorId,
-              // the new organizer is not also a co-organizer
-              organizers: prevState.organizers.filter(
-                (o: OrganizerRef) => o.userId !== authorId
-              ),
-            }))
-          }
-          onContactChange={(contact) =>
-            setState((prevState: any) => ({ ...prevState, contact }))
-          }
-          onContactChoiceChange={(choice) =>
-            setState((prevState: any) => ({
-              ...prevState,
-              contactChoice: choice,
-            }))
-          }
-          onOrganizersChange={(organizers) =>
-            setState((prevState: any) => ({ ...prevState, organizers }))
-          }
-        />
-      </FormCard>
+        <FormField
+          area="main"
+          helper={t('form.image.helper')}
+          asHeading
+          label={t('form.image.label')}
+          mt="4"
+          mb="8"
+          required
+        >
+          <ImageUploader
+            preExistingImages={activity ? activity.images : []}
+            ping={loaders?.isUploadingImages}
+            onUploadedImages={handleUploadedImages}
+          />
+        </FormField>
 
-      <FormCard title={t('form.cards.place')}>
-        <WhereFields
-          address={state.address}
-          locationPicked={state.locationPicked}
-          locationId={state.locationId}
-          mode={whereMode}
-          organizerAddress={author?.address || null}
-          organizerLocationId={author?.locationId || null}
-          placeName={state.placeName}
-          resources={state.resources}
-          selectedResource={state.selectedResource}
-          onAddressChange={(address) =>
-            setState((prevState: any) => ({ ...prevState, address }))
-          }
-          onLocationChange={({ locationId }) =>
-            setState((prevState: any) => ({
-              ...prevState,
-              locationId,
-              locationPicked: true,
-            }))
-          }
-          onModeChange={(mode) =>
-            setState((prevState: any) => ({ ...prevState, whereMode: mode }))
-          }
-          onPlaceNameChange={(placeName) =>
-            setState((prevState: any) => ({ ...prevState, placeName }))
-          }
-          onSelectResource={handleSelectResource}
-        />
-      </FormCard>
-
-      <FormField
-        area="main"
-        helper={t('form.occurrences.helper')}
-        asHeading
-        label={t('form.occurrences.label')}
-        my="8"
-        required
-      >
-        <DatesAndTimes
-          activityId={activity?._id}
-          datesAndTimes={state.datesAndTimes}
-          isExclusiveActivity={state.isExclusiveActivity}
-          resourceId={
-            // a clash with another booking only matters with bookings on
-            whereMode === 'place' && isFeatureEnabled('bookings')
-              ? state.selectedResource?._id
-              : undefined
-          }
-          onDatesAndTimesChange={handleDatesAndTimesChange}
-        />
-      </FormField>
-
-      {isTimeOrPlaceChanged && (
-        <FormCard title={t('form.cards.notify')}>
-          <p className="toggle-helper" style={{ margin: '0 0 0.5rem' }}>
-            {t('form.notify.helper')}
-          </p>
-          <Textarea
-            aria-label={t('form.cards.notify')}
-            maxLength={2000}
-            placeholder={t('form.notify.placeholder')}
-            rows={3}
-            value={state.changeMessage}
-            onChange={(event) =>
-              setState((prevState: any) => ({
-                ...prevState,
-                changeMessage: event.target.value,
-              }))
+        <FormCard title={tc('eventKinds.form.label')}>
+          <p className="form-preview-note">{tc('eventKinds.form.helper')}</p>
+          <KindPicker
+            value={state.kinds}
+            onChange={(kinds) =>
+              setState((prevState: any) => ({ ...prevState, kinds }))
             }
           />
         </FormCard>
-      )}
 
-      <FormCard title={t('form.cards.booking')}>
-        {/* Blocking the place only means something at a place */}
-        {isFeatureEnabled('bookings') &&
-          whereMode === 'place' &&
-          state.selectedResource && (
-            <ToggleSwitch
-              checked={Boolean(state.isExclusiveActivity)}
-              helper={t('form.booking.exclusiveHelper')}
-              label={t('form.booking.exclusive')}
-              onChange={(isExclusiveActivity) =>
-                setState((prevState: any) => ({
-                  ...prevState,
-                  isExclusiveActivity,
-                }))
-              }
-            />
+        <FormCard
+          title={t(
+            state.organizers.some(
+              (o: OrganizerRef) => o.userId !== state.authorId
+            )
+              ? 'form.cards.organizers'
+              : 'form.cards.organizer'
           )}
-        <ToggleSwitch
-          checked={Boolean(state.isRegistrationEnabled)}
-          helper={t('form.booking.rsvpHelper')}
-          label={t('form.booking.rsvp')}
-          onChange={(isRegistrationEnabled) =>
+        >
+          <OrganizerFields
+            author={author}
+            authorId={state.authorId}
+            contact={state.contact}
+            contactChoice={contactChoice}
+            contactPerson={contactPerson}
+            currentUserId={currentUser?._id}
+            isAdmin={isAdmin}
+            options={organizerOptions}
+            organizers={state.organizers}
+            onAuthorChange={(authorId) =>
+              setState((prevState: any) => ({
+                ...prevState,
+                authorId,
+                // the new organizer is not also a co-organizer
+                organizers: prevState.organizers.filter(
+                  (o: OrganizerRef) => o.userId !== authorId
+                ),
+              }))
+            }
+            onContactChange={(contact) =>
+              setState((prevState: any) => ({ ...prevState, contact }))
+            }
+            onContactChoiceChange={(choice) =>
+              setState((prevState: any) => ({
+                ...prevState,
+                contactChoice: choice,
+              }))
+            }
+            onOrganizersChange={(organizers) =>
+              setState((prevState: any) => ({ ...prevState, organizers }))
+            }
+          />
+        </FormCard>
+
+        <FormCard title={t('form.cards.place')}>
+          <WhereFields
+            address={state.address}
+            locationPicked={state.locationPicked}
+            locationId={state.locationId}
+            mode={whereMode}
+            organizerAddress={author?.address || null}
+            organizerLocationId={author?.locationId || null}
+            placeName={state.placeName}
+            resources={state.resources}
+            selectedResource={state.selectedResource}
+            onAddressChange={(address) =>
+              setState((prevState: any) => ({ ...prevState, address }))
+            }
+            onLocationChange={({ locationId }) =>
+              setState((prevState: any) => ({
+                ...prevState,
+                locationId,
+                locationPicked: true,
+              }))
+            }
+            onModeChange={(mode) =>
+              setState((prevState: any) => ({ ...prevState, whereMode: mode }))
+            }
+            onPlaceNameChange={(placeName) =>
+              setState((prevState: any) => ({ ...prevState, placeName }))
+            }
+            onSelectResource={handleSelectResource}
+          />
+        </FormCard>
+
+        <FormField
+          area="main"
+          helper={t('form.occurrences.helper')}
+          asHeading
+          label={t('form.occurrences.label')}
+          my="8"
+          required
+        >
+          <DatesAndTimes
+            activityId={activity?._id}
+            datesAndTimes={state.datesAndTimes}
+            isExclusiveActivity={state.isExclusiveActivity}
+            resourceId={
+              // a clash with another booking only matters with bookings on
+              whereMode === 'place' && isFeatureEnabled('bookings')
+                ? state.selectedResource?._id
+                : undefined
+            }
+            onDatesAndTimesChange={handleDatesAndTimesChange}
+          />
+        </FormField>
+
+        <FormCard title={t('form.cards.booking')}>
+          {/* Blocking the place only means something at a place */}
+          {isFeatureEnabled('bookings') &&
+            whereMode === 'place' &&
+            state.selectedResource && (
+              <ToggleSwitch
+                checked={Boolean(state.isExclusiveActivity)}
+                helper={t('form.booking.exclusiveHelper')}
+                label={t('form.booking.exclusive')}
+                onChange={(isExclusiveActivity) =>
+                  setState((prevState: any) => ({
+                    ...prevState,
+                    isExclusiveActivity,
+                  }))
+                }
+              />
+            )}
+          <ToggleSwitch
+            checked={Boolean(state.isRegistrationEnabled)}
+            helper={t('form.booking.rsvpHelper')}
+            label={t('form.booking.rsvp')}
+            onChange={(isRegistrationEnabled) =>
+              setState((prevState: any) => ({
+                ...prevState,
+                isRegistrationEnabled,
+              }))
+            }
+          />
+          {/* Laid out as the switches above: label, helper, control */}
+          {state.isRegistrationEnabled && (
+            <div className="toggle-row">
+              <span className="toggle-text">
+                <label className="toggle-label" htmlFor="activity-capacity">
+                  {t('form.capacity.label')}
+                </label>
+                <span className="toggle-helper">
+                  {t('form.booking.capacityHelper')}
+                </span>
+              </span>
+              <span className="stepper">
+                <button
+                  type="button"
+                  aria-label={t('form.capacity.less')}
+                  disabled={Number(state.capacity) <= 1}
+                  onClick={() => stepCapacity(-1)}
+                >
+                  <MinusIcon aria-hidden width={16} height={16} />
+                </button>
+                <input
+                  id="activity-capacity"
+                  inputMode="numeric"
+                  max={maxAttendees}
+                  min={1}
+                  type="number"
+                  value={state.capacity}
+                  onChange={handleCapacityChange}
+                />
+                <button
+                  type="button"
+                  aria-label={t('form.capacity.more')}
+                  disabled={Number(state.capacity) >= maxAttendees}
+                  onClick={() => stepCapacity(1)}
+                >
+                  <PlusIcon aria-hidden width={16} height={16} />
+                </button>
+              </span>
+            </div>
+          )}
+        </FormCard>
+      </GenericEntryForm>
+
+      <Modal
+        cancelText={t('form.notify.skip')}
+        confirmButtonProps={{
+          isDisabled: !isTimeOrPlaceChanged && !state.notifyMessage.trim(),
+        }}
+        confirmText={t('form.notify.send')}
+        id="activity-save-notify"
+        open={state.isAskingToNotify}
+        title={t('form.notify.title')}
+        onClose={() =>
+          setState((prevState: any) => ({
+            ...prevState,
+            isAskingToNotify: false,
+          }))
+        }
+        onConfirm={() => answerNotify(true)}
+        onSecondaryButtonClick={() => answerNotify(false)}
+      >
+        <p style={{ margin: '0 0 0.5rem' }}>
+          {t('form.notify.audience', { count: audience })}{' '}
+          {isTimeOrPlaceChanged
+            ? t('form.notify.changed')
+            : t('form.notify.unchanged')}
+        </p>
+        <Textarea
+          aria-label={t('form.notify.label')}
+          maxLength={2000}
+          placeholder={t('form.notify.placeholder')}
+          rows={4}
+          value={state.notifyMessage}
+          onChange={(event) =>
             setState((prevState: any) => ({
               ...prevState,
-              isRegistrationEnabled,
+              notifyMessage: event.target.value,
             }))
           }
         />
-        {/* Laid out as the switches above: label, helper, control */}
-        {state.isRegistrationEnabled && (
-          <div className="toggle-row">
-            <span className="toggle-text">
-              <label className="toggle-label" htmlFor="activity-capacity">
-                {t('form.capacity.label')}
-              </label>
-              <span className="toggle-helper">
-                {t('form.booking.capacityHelper')}
-              </span>
-            </span>
-            <span className="stepper">
-              <button
-                type="button"
-                aria-label={t('form.capacity.less')}
-                disabled={Number(state.capacity) <= 1}
-                onClick={() => stepCapacity(-1)}
-              >
-                <MinusIcon aria-hidden width={16} height={16} />
-              </button>
-              <input
-                id="activity-capacity"
-                inputMode="numeric"
-                max={maxAttendees}
-                min={1}
-                type="number"
-                value={state.capacity}
-                onChange={handleCapacityChange}
-              />
-              <button
-                type="button"
-                aria-label={t('form.capacity.more')}
-                disabled={Number(state.capacity) >= maxAttendees}
-                onClick={() => stepCapacity(1)}
-              >
-                <PlusIcon aria-hidden width={16} height={16} />
-              </button>
-            </span>
-          </div>
-        )}
-      </FormCard>
-    </GenericEntryForm>
+        <p className="toggle-helper" style={{ margin: '0.5rem 0 0' }}>
+          {isTimeOrPlaceChanged
+            ? t('form.notify.optional')
+            : t('form.notify.required')}
+        </p>
+      </Modal>
+    </>
   );
 }

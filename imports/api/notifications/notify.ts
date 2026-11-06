@@ -307,7 +307,15 @@ export function scheduleChangeNotice(
         return;
       }
       const changes = noticeableChanges(snapshot, after);
-      if (changes.length > 0) {
+      if (changes.length === 0 && words) {
+        // Nothing moved, but the organizer had something to say
+        await notifyActivity({
+          activityId: id,
+          kind: 'message',
+          message: words,
+          authorId: editor,
+        });
+      } else if (changes.length > 0) {
         await notifyActivity({
           activityId: id,
           kind: 'changed',

@@ -666,11 +666,12 @@ Meteor.methods({
       authorName,
       isArchived,
       archivedAt,
-      // Not stored: the organizer's words to go with a new time or place
-      changeMessage,
+      // Not stored: whether to tell those signed up and following, and
+      // the organizer's words to them (asked when saving in the form)
+      notify,
       ...safeValues
     } = values;
-    check(changeMessage, Match.Maybe(String));
+    check(notify, Match.Maybe({ send: Boolean, message: Match.Maybe(String) }));
     let newAuthor = null;
     if (authorId && authorId !== theActivity.authorId) {
       // Only an admin hands an event over, also to themself: a
@@ -773,11 +774,18 @@ Meteor.methods({
         ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
       });
       warmShareImage('activity', activityId);
-      // A new time or place is told to those signed up and following
-      // (imports/api/notifications/notify.ts), a few minutes after saving
-      if (theActivity.isPublicActivity && theActivity.isPublished) {
+      // Those signed up and following are told a few minutes after saving
+      // (imports/api/notifications/notify.ts): of a new time or place, and
+      // the organizer's words if any. The form asks the organizer first
+      // (`notify`); without an answer, as from the calendar, a new time or
+      // place is told anyway.
+      if (
+        theActivity.isPublicActivity &&
+        theActivity.isPublished &&
+        notify?.send !== false
+      ) {
         scheduleChangeNotice(theActivity, {
-          message: (changeMessage || '').trim().slice(0, 2000),
+          message: (notify?.message || '').trim().slice(0, 2000),
           editorId: user._id,
         });
       }
