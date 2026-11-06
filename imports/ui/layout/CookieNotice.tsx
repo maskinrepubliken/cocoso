@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
@@ -46,7 +47,8 @@ export default function CookieNotice() {
     ? `/info/${parseTitle(aboutPage.title)}`
     : '/info/about';
 
-  return (
+  // Straight into <body>, so no wrapper's stacking or transform can hide it
+  return createPortal(
     <section
       aria-labelledby="cookie-notice-title"
       className="cookie-notice"
@@ -67,9 +69,7 @@ export default function CookieNotice() {
         </p>
 
         <nav className="cookie-notice-links">
-          <Link to={aboutTo}>
-            {tc('footer.about')}
-          </Link>
+          <Link to={aboutTo}>{tc('footer.about')}</Link>
           <FeedbackForm
             trigger={(openFeedback) => (
               <button type="button" onClick={openFeedback}>
@@ -77,15 +77,14 @@ export default function CookieNotice() {
               </button>
             )}
           />
-          <Link to="/terms-&-privacy-policy">
-            {tc('terms.title')}
-          </Link>
+          <Link to="/terms-&-privacy-policy">{tc('terms.title')}</Link>
         </nav>
       </div>
 
       <button className="cookie-notice-ok" type="button" onClick={close}>
         {tc('cookies.ok')}
       </button>
-    </section>
+    </section>,
+    document.body
   );
 }
