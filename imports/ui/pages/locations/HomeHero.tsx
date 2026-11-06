@@ -107,17 +107,7 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
     <section className="home-hero vav is-text">
       <div className="home-hero-inner">
         <div className="home-hero-text">
-          <span className="home-hero-eyebrow">
-            <span className="home-hero-dots" aria-hidden="true">
-              {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                <i key={n} />
-              ))}
-            </span>
-            {tc('home.hero.welcome')}
-            <span className="home-hero-beta" title={tc('home.hero.betaNote')}>
-              {tc('home.hero.beta')}
-            </span>
-          </span>
+          <span className="home-hero-eyebrow">{tc('home.hero.welcome')}</span>
           <h1 className="home-hero-title">
             {rest ? (
               <>
@@ -129,12 +119,16 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
             )}
           </h1>
           {tagline}
+          <p className="home-hero-beta">
+            <span className="home-hero-beta-icon" aria-hidden="true">
+              <ThreeDIcon name="lab" size={46} />
+            </span>
+            <span>
+              <strong>{tc('home.hero.beta')}</strong>
+              {tc('home.hero.betaNote')}
+            </span>
+          </p>
         </div>
-
-        {/* The header's mark, large: the crane on a dark green disc */}
-        <span className="home-hero-mark" aria-hidden="true">
-          <ThreeDIcon name="trana-hals" size={200} />
-        </span>
       </div>
     </section>
   );

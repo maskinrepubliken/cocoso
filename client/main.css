@@ -7414,101 +7414,70 @@ body {
   padding: 4px 0 12px;
 }
 
-/* Start page hero, text version (the default): a large title, the
-   part after the short name in the season's accent, and a row of seven
-   dots in the logo's colours beside the welcome line */
-.home-hero.is-text .home-hero-inner {
-  flex-wrap: nowrap;
-  align-items: center;
-}
-
+/* Start page hero, text version (the default): a large title with the
+   part after the short name in a soft green, the tagline, and a beta
+   badge beneath */
 .home-hero.is-text .home-hero-text {
-  flex: 1 1 0;
-  min-width: 0;
+  flex-basis: 100%;
   max-width: 820px;
 }
 
-/* The header's crane mark (.site-brand-mark-trana) at --d across: the
-   same proportions, scaled from its 32px original */
-.home-hero-mark {
-  --d: 150px;
-  position: relative;
-  flex: none;
-  width: var(--d);
-  height: var(--d);
-  margin: calc(var(--d) * 0.22) 2% 0 0;
-  border-radius: 999px;
-  background: var(--cocoso-colors-theme-700);
-  box-shadow: 0 18px 40px -18px rgba(30, 79, 27, 0.55);
-}
-
-.home-hero-mark .threed-icon {
-  position: absolute;
-  top: calc(var(--d) * -7 / 32);
-  left: 50%;
-  translate: calc(-50% + var(--d) * 5 / 32) 0;
-  width: calc(var(--d) * 31 / 32);
-  height: calc(var(--d) * 46 / 32);
-  clip-path: circle(
-    calc(var(--d) * 30 / 32) at calc(var(--d) * 10.5 / 32)
-      calc(var(--d) * 9 / 32)
-  );
-  object-fit: contain;
-}
-
-/* On phones the mark sits small at the right of the welcome line */
-@media (max-width: 699px) {
-  .home-hero.is-text .home-hero-inner {
-    position: relative;
-  }
-
-  .home-hero-mark {
-    --d: 52px;
-    position: absolute;
-    top: -24px;
-    right: var(--cocoso-gutter);
-    margin: 0;
-    box-shadow: 0 8px 18px -8px rgba(30, 79, 27, 0.5);
-  }
-}
-
-.home-hero-beta {
-  margin-left: 2px;
-  padding: 3px 9px 2px;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  line-height: 1.2;
-  cursor: help;
-}
-
 .home-hero.is-text .home-hero-eyebrow {
-  color: var(--cocoso-colors-theme-700);
-  display: flex;
-  align-items: center;
-  gap: 12px;
   margin-bottom: 14px;
 }
 
-.home-hero-dots {
+/* A glass pill with a 3D flask tipping out of its left end */
+.home-hero-beta {
   display: inline-flex;
-  gap: 4px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 7px 20px 7px 8px;
+  border: 1px solid rgba(30, 79, 27, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 24px -14px rgba(30, 79, 27, 0.45);
+  color: #4b4239;
+  font-size: 14px;
+  line-height: 1.35;
 }
 
-.home-hero-dots i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
+.home-hero-beta-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fffdf6, #f1e6c6);
+  box-shadow: inset 0 0 0 1px rgba(30, 79, 27, 0.1);
 }
 
-.home-hero-dots i:nth-child(1) { background: #e2603f; }
-.home-hero-dots i:nth-child(2) { background: #efa92e; }
-.home-hero-dots i:nth-child(3) { background: #5b9647; }
-.home-hero-dots i:nth-child(4) { background: #4a94c6; }
-.home-hero-dots i:nth-child(5) { background: #9561a8; }
-.home-hero-dots i:nth-child(6) { background: #e87c33; }
-.home-hero-dots i:nth-child(7) { background: #2f9c86; }
+.home-hero-beta-icon .threed-icon {
+  width: 50px;
+  height: 50px;
+  margin: -14px -6px 0 0;
+  rotate: -14deg;
+  filter: drop-shadow(0 5px 6px rgba(60, 30, 70, 0.3));
+}
+
+.home-hero-beta strong {
+  margin-right: 6px;
+  color: var(--cocoso-colors-theme-700);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 699px) {
+  .home-hero-beta {
+    border-radius: 24px;
+    font-size: 13px;
+  }
+}
 
 .home-hero.is-text .home-hero-title {
   /* "Tranemokalendern" on one line, as large as the column allows */
