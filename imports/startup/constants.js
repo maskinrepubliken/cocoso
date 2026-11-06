@@ -65,7 +65,7 @@ const defaultEmails = [
     key: 'cocreator',
     subject: 'Du är nu arrangör',
     appeal: 'Hej',
-    body: 'En administratör har verifierat dig som arrangör. Det betyder att du nu kan lägga upp egna evenemang i kalendern.\nLogga in som vanligt med din e-postadress, så kan du börja direkt.',
+    body: 'En administratör har gjort dig till arrangör. Det betyder att du nu kan lägga upp egna evenemang i kalendern.\nLogga in som vanligt med din e-postadress, så kan du börja direkt.',
   },
   {
     key: 'admin',

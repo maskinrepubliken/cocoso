@@ -197,8 +197,8 @@ privacy:
     title: Din roll
     current: 'Roll: <strong>{{role}}</strong>'
     means:
-      participant: Du kan ha en profil och anmäla dig till evenemang. För att lägga upp egna evenemang behöver en administratör verifiera dig som arrangör.
-      contributor: Du är verifierad arrangör och kan lägga upp egna evenemang.
+      participant: Du kan ha en profil och anmäla dig till evenemang. För att lägga upp egna evenemang behöver en administratör göra dig till arrangör.
+      contributor: Du är arrangör och kan lägga upp egna evenemang.
       admin: Du är administratör och kan hantera hela sidan, dess innehåll och medlemmar.
 notifications:
   saved: Inställningen är sparad.

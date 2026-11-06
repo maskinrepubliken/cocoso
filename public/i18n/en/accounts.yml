@@ -197,8 +197,8 @@ privacy:
     title: Your role
     current: 'Role: <strong>{{role}}</strong>'
     means:
-      participant: You can have a profile and sign up for events. To post your own events, an administrator needs to verify you as an organizer.
-      contributor: You are a verified organizer and can post your own events.
+      participant: You can have a profile and sign up for events. To post your own events, an administrator needs to make you an organizer.
+      contributor: You are an organizer and can post your own events.
       admin: You are an administrator and can manage the whole site, its content and members.
 notifications:
   saved: Your setting has been saved.
