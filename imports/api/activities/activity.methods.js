@@ -784,10 +784,14 @@ Meteor.methods({
         theActivity.isPublished &&
         notify?.send !== false
       ) {
+        // The event is saved either way; a notice that can't be queued is
+        // logged, not reported as a failed save
         scheduleChangeNotice(theActivity, {
           message: (notify?.message || '').trim().slice(0, 2000),
           editorId: user._id,
-        });
+        }).catch((error) =>
+          console.error('[updateActivity] notice not queued', error)
+        );
       }
       return updated;
     } catch (error) {

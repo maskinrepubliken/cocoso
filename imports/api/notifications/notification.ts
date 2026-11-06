@@ -60,6 +60,23 @@ export const ActivityUpdates = new Mongo.Collection<ActivityUpdateDoc>(
   'activityUpdates'
 );
 
+/**
+ * A notice of a new time or place waiting to go out (notify.ts): one per
+ * event, sent at `dueAt`, five minutes after the last save. `before` is
+ * the event as it was before the first of those saves.
+ */
+export interface ActivityChangeNoticeDoc {
+  _id: string; // the event's id
+  before: any;
+  message?: string;
+  editorId?: string;
+  dueAt: Date;
+  createdAt: Date;
+}
+
+export const ActivityChangeNotices =
+  new Mongo.Collection<ActivityChangeNoticeDoc>('activityChangeNotices');
+
 // The person's choices, on the user document as `notificationPrefs`
 export interface NotificationPrefs {
   // On the site's mailing list (admins' newsletters)

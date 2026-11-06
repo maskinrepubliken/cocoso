@@ -7,6 +7,8 @@ import { activityUpdateEmail } from '../activities/activity.mails';
 import { deliverEmail, getSmtpSettings } from '../_utils/services/mails/smtp';
 import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import {
+  ActivityChangeNotices,
+  type ActivityChangeNoticeDoc,
   ActivityFollows,
   ActivityUpdates,
   DEFAULT_PREFS,
@@ -129,7 +131,10 @@ async function recipientsOf(
   }
 
   return [...byEmail.entries()]
-    .filter(([key, r]) => !muted.has(key) && r.user?._id !== exceptUserId)
+    .filter(
+      ([key, r]) =>
+        !muted.has(key) && !(exceptUserId && r.user?._id === exceptUserId)
+    )
     .map(([, r]) => r);
 }
 
@@ -272,14 +277,30 @@ export function noticeableChanges(before: any, after: any): string[] {
 // a slip twice sends one update — measured against the event as it was
 // before the first save. The organizer may write a few words with the
 // change in the event form (`message`; the latest one written counts).
-// Lost on a restart; the organizer can still send a message.
+// Kept in the database (activityChangeNotices, one per event) and sent by
+// a loop below, so a restart of the server doesn't lose them.
 const WAIT_MS = 5 * 60 * 1000;
-const pending = new Map<
-  string,
-  { before: any; message?: string; editorId?: string; timer: NodeJS.Timeout }
->();
+const POLL_MS = 30 * 1000;
 
-export function scheduleChangeNotice(
+// What noticeableChanges compares, and nothing more
+const snapshotOf = (activity: any) => ({
+  datesAndTimes: (activity.datesAndTimes || []).map((d: any) => ({
+    startDate: d.startDate,
+    startTime: d.startTime,
+    endDate: d.endDate,
+    endTime: d.endTime,
+  })),
+  resourceId: activity.resourceId || null,
+  address: activity.address
+    ? {
+        street: activity.address.street || '',
+        postalCode: activity.address.postalCode || '',
+        city: activity.address.city || '',
+      }
+    : null,
+});
+
+export async function scheduleChangeNotice(
   before: any,
   { message, editorId }: { message?: string; editorId?: string } = {}
 ) {
@@ -287,50 +308,81 @@ export function scheduleChangeNotice(
   if (!id) {
     return;
   }
-  const earlier = pending.get(id);
-  if (earlier) {
-    clearTimeout(earlier.timer);
+  await ActivityChangeNotices.upsertAsync(
+    { _id: id },
+    {
+      $set: {
+        dueAt: new Date(Date.now() + WAIT_MS),
+        ...(message ? { message } : {}),
+        ...(editorId ? { editorId } : {}),
+      },
+      // The event as it was before the first of the saves
+      $setOnInsert: { before: snapshotOf(before), createdAt: new Date() },
+    }
+  );
+}
+
+async function sendChangeNotice(notice: ActivityChangeNoticeDoc) {
+  const id = notice._id;
+  const after = await Activities.findOneAsync(id);
+  if (
+    !after ||
+    after.isArchived ||
+    !after.isPublished ||
+    !after.isPublicActivity
+  ) {
+    return;
   }
-  const snapshot = earlier?.before || before;
-  const words = message || earlier?.message;
-  const editor = editorId || earlier?.editorId;
-  const timer = setTimeout(async () => {
-    pending.delete(id);
+  const words = notice.message;
+  const changes = noticeableChanges(notice.before, after);
+  if (changes.length === 0 && words) {
+    // Nothing moved, but the organizer had something to say
+    await notifyActivity({
+      activityId: id,
+      kind: 'message',
+      message: words,
+      authorId: notice.editorId,
+    });
+  } else if (changes.length > 0) {
+    await notifyActivity({
+      activityId: id,
+      kind: 'changed',
+      changes,
+      ...(words ? { message: words, authorId: notice.editorId } : {}),
+    });
+  }
+}
+
+// Each due notice is taken off the list before it is sent, so it goes out
+// once even if a send fails half-way
+async function sendDueNotices() {
+  const due = await ActivityChangeNotices.find(
+    { dueAt: { $lte: new Date() } },
+    { fields: { _id: 1 } }
+  ).fetchAsync();
+  for (const { _id } of due) {
+    const notice = await ActivityChangeNotices.findOneAsync(_id);
+    const removed = await ActivityChangeNotices.removeAsync({
+      _id,
+      dueAt: { $lte: new Date() },
+    });
+    if (!notice || !removed) {
+      continue;
+    }
     try {
-      const after = await Activities.findOneAsync(id);
-      if (
-        !after ||
-        after.isArchived ||
-        !after.isPublished ||
-        !after.isPublicActivity
-      ) {
-        return;
-      }
-      const changes = noticeableChanges(snapshot, after);
-      if (changes.length === 0 && words) {
-        // Nothing moved, but the organizer had something to say
-        await notifyActivity({
-          activityId: id,
-          kind: 'message',
-          message: words,
-          authorId: editor,
-        });
-      } else if (changes.length > 0) {
-        await notifyActivity({
-          activityId: id,
-          kind: 'changed',
-          changes,
-          ...(words ? { message: words, authorId: editor } : {}),
-        });
-      }
+      await sendChangeNotice(notice);
     } catch (error) {
       console.error('[notify] change notice failed', error);
     }
-  }, WAIT_MS);
-  pending.set(id, {
-    before: snapshot,
-    message: words,
-    editorId: editor,
-    timer,
+  }
+}
+
+if (Meteor.isServer) {
+  Meteor.startup(() => {
+    Meteor.setInterval(() => {
+      sendDueNotices().catch((error) =>
+        console.error('[notify] change notices failed', error)
+      );
+    }, POLL_MS);
   });
 }

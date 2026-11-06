@@ -216,9 +216,10 @@ the user (newsletter off, event updates by email and push on, by default).
   everyone following it (`activityFollows`), by email and/or push as each
   chose; an address without an account gets email. The organizer sends a
   message from the event page's organizer tools (at most five a day), and a
-  change of time or place in `updateActivity` is told automatically five
-  minutes after the last save (`scheduleChangeNotice`, in memory). Messages
-  are logged in `activityUpdates` and shown on the event page.
+  change of time or place in `updateActivity` is told five minutes after
+  the last save (`scheduleChangeNotice`: queued in `activityChangeNotices`
+  and sent by a loop every 30 seconds, so a restart loses nothing).
+  Messages are logged in `activityUpdates` and shown on the event page.
 - **The newsletter** (`sendNewsletter`) goes only to people who said yes on
   their profile. Newsletters and event updates carry a signed unsubscribe
   link (`/unsubscribe/<token>`, which asks for a click) and RFC 8058
