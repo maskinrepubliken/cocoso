@@ -170,3 +170,101 @@ export function emailPage({
 </body>
 </html>`;
 }
+
+export const TEGEL = '#a84e2d'; // --cocoso-tegel-600, readable on white
+
+/**
+ * The layout for emails about one event: the event's share image on top
+ * (its title, date, place and the site's name, drawn by imports/api/share),
+ * linked to the event, then a small kicker saying what this email is about,
+ * the event's title and the content, left-aligned like a letter. The site's
+ * name and any opt-out go in a single line at the bottom instead of a
+ * header. `hero`: { src, href, alt } or null, when the site's name heads the
+ * email as in emailPage. `footer` is already-safe HTML.
+ */
+export function emailEventPage({
+  lang,
+  siteName,
+  theme,
+  preheader,
+  hero,
+  kicker,
+  title,
+  content,
+  footer,
+}) {
+  const c = themeColors(theme);
+  const site = publicUrl('/');
+  const top = hero?.src
+    ? `<a href="${escapeHtml(hero.href)}" style="text-decoration:none;">
+          <img src="${escapeHtml(hero.src)}" width="480" alt="${escapeHtml(
+        hero.alt || ''
+      )}" style="display:block;border:0;width:100%;max-width:480px;height:auto;border-radius:12px;background:${
+        c.tint
+      };font-family:${UI};font-size:15px;color:${MYLLA};">
+        </a>`
+    : `<a href="${escapeHtml(
+        site
+      )}" style="font-family:${UI};font-size:16px;font-weight:700;color:${MYLLA};text-decoration:none;">${escapeHtml(
+        siteName
+      )}</a>`;
+  const siteLink = `<a href="${escapeHtml(
+    site
+  )}" style="color:${MYLLA_SOFT};font-weight:700;text-decoration:none;">${escapeHtml(
+    siteName
+  )}</a>`;
+  return `<!doctype html>
+<html lang="${lang === 'en' ? 'en' : 'sv'}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>${escapeHtml(title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; padding:0; }
+  a { color:${c.strong}; }
+  @media (max-width: 480px) {
+    .sheet { padding:0 4px !important; }
+    .title { font-size:24px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#ffffff;font-variant-numeric:lining-nums;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#ffffff;">${escapeHtml(
+    preheader || ''
+  )}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;">
+  <tr><td align="center" style="padding:24px 12px 32px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
+
+      <tr><td align="${hero?.src ? 'left' : 'center'}" style="padding:0 0 ${
+    hero?.src ? 24 : 28
+  }px;">
+        ${top}
+      </td></tr>
+
+      <tr><td class="sheet" align="left" style="padding:0;text-align:left;">
+        ${
+          kicker
+            ? `<p style="margin:0 0 6px;font-family:${UI};font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${TEGEL};">${escapeHtml(
+                kicker
+              )}</p>`
+            : ''
+        }
+        <h1 class="title" style="margin:0 0 16px;font-family:${DISPLAY};font-size:28px;font-weight:600;line-height:1.15;letter-spacing:-0.01em;color:${MYLLA};">${escapeHtml(
+    title
+  )}</h1>
+        ${content}
+        <p style="margin:28px 0 0;padding:16px 0 0;border-top:1px solid ${LINJE};font-family:${UI};font-size:13px;line-height:1.5;color:${MYLLA_SOFT};">${siteLink}${
+    footer ? ` &middot; ${footer}` : ''
+  }</p>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
