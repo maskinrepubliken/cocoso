@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.2.0](https://github.com/maskinrepubliken/cocoso/compare/v5.1.0...v5.2.0) (2026-11-06)
+
+
+### Features
+
+* **home:** add the crane mark and a beta badge to the start page hero ([294eca3](https://github.com/maskinrepubliken/cocoso/commit/294eca32b64b51323f05bc0502205fa8d842265b))
+* **home:** move the beta badge under the start page text, drop the crane ([7bc36b5](https://github.com/maskinrepubliken/cocoso/commit/7bc36b5105b94dbd9dcaf2a87250e49b50e3f081))
+* **layout:** lead the cookie notice with the beta and point to feedback ([50eb5b0](https://github.com/maskinrepubliken/cocoso/commit/50eb5b0effa2cf4ba60a35ebe92c58dd8f71e0d2))
+* **layout:** put "Ge feedback nu" among the cookie notice's links ([09046a8](https://github.com/maskinrepubliken/cocoso/commit/09046a82f9790fcf9cf22fb58f017caa757f6609))
+* **layout:** send feedback to the site's admins and redesign the form ([7ab57b3](https://github.com/maskinrepubliken/cocoso/commit/7ab57b3b407fe42cfdd387b58f76235802a703e7))
+* **layout:** tell first-time visitors about cookies and the beta ([df48731](https://github.com/maskinrepubliken/cocoso/commit/df487311dc37bf3a9455dd0f4e3ee8adb1fd738d))
+
+
+### Bug Fixes
+
+* **i18n:** repair the English common translations ([1e430d2](https://github.com/maskinrepubliken/cocoso/commit/1e430d2d343ea38b75e89e9bdabd3fccfd9ad83c))
+* **layout:** keep the cookie notice until "Jag förstår" is pressed ([465a98d](https://github.com/maskinrepubliken/cocoso/commit/465a98d43a5daa6230f10197ed4dfd26978b840c))
+* **layout:** render the cookie notice straight into the page body ([31c2553](https://github.com/maskinrepubliken/cocoso/commit/31c2553ce42c7812aeafe8897295702cd37c2c51))
+
 ## [5.1.0](https://github.com/maskinrepubliken/cocoso/compare/v5.0.0...v5.1.0) (2026-11-06)
 
 
