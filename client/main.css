@@ -7417,12 +7417,74 @@ body {
 /* Start page hero, text version (the default): a large title, the
    part after the short name in the season's accent, and a row of seven
    dots in the logo's colours beside the welcome line */
+.home-hero.is-text .home-hero-inner {
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
 .home-hero.is-text .home-hero-text {
-  flex-basis: 100%;
+  flex: 1 1 0;
+  min-width: 0;
   max-width: 820px;
 }
 
+/* The header's crane mark (.site-brand-mark-trana) at --d across: the
+   same proportions, scaled from its 32px original */
+.home-hero-mark {
+  --d: 150px;
+  position: relative;
+  flex: none;
+  width: var(--d);
+  height: var(--d);
+  margin: calc(var(--d) * 0.22) 2% 0 0;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-700);
+  box-shadow: 0 18px 40px -18px rgba(30, 79, 27, 0.55);
+}
+
+.home-hero-mark .threed-icon {
+  position: absolute;
+  top: calc(var(--d) * -7 / 32);
+  left: 50%;
+  translate: calc(-50% + var(--d) * 5 / 32) 0;
+  width: calc(var(--d) * 31 / 32);
+  height: calc(var(--d) * 46 / 32);
+  clip-path: circle(
+    calc(var(--d) * 30 / 32) at calc(var(--d) * 10.5 / 32)
+      calc(var(--d) * 9 / 32)
+  );
+  object-fit: contain;
+}
+
+/* On phones the mark sits small at the right of the welcome line */
+@media (max-width: 699px) {
+  .home-hero.is-text .home-hero-inner {
+    position: relative;
+  }
+
+  .home-hero-mark {
+    --d: 52px;
+    position: absolute;
+    top: -24px;
+    right: var(--cocoso-gutter);
+    margin: 0;
+    box-shadow: 0 8px 18px -8px rgba(30, 79, 27, 0.5);
+  }
+}
+
+.home-hero-beta {
+  margin-left: 2px;
+  padding: 3px 9px 2px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  cursor: help;
+}
+
 .home-hero.is-text .home-hero-eyebrow {
+  color: var(--cocoso-colors-theme-700);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -7458,7 +7520,8 @@ body {
 }
 
 .home-hero-title-rest {
-  color: var(--cocoso-season-accent);
+  /* the theme's green, toned down towards the hero's warm grey */
+  color: color-mix(in oklab, var(--cocoso-colors-theme-500) 62%, #8c8571);
 }
 
 .home-hero.is-text .home-hero-tagline {

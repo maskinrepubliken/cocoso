@@ -464,6 +464,8 @@ home:
   hero:
     welcome: Välkommen till
     tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
+    beta: Beta
+    betaNote: Tjänsten är ny och byggs fortfarande. Saker kan ändras.
 
 # Förfrågningar (works shown as requests between neighbours)
 requests:

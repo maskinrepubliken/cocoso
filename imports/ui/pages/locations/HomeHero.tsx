@@ -94,7 +94,7 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
   }
 
   // When the name begins with the short name ("Tranemo" + "kalendern"),
-  // the rest is set in the season's accent colour.
+  // the rest is set in a softer green.
   const short = settings.shortName;
   const rest =
     short &&
@@ -114,6 +114,9 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
               ))}
             </span>
             {tc('home.hero.welcome')}
+            <span className="home-hero-beta" title={tc('home.hero.betaNote')}>
+              {tc('home.hero.beta')}
+            </span>
           </span>
           <h1 className="home-hero-title">
             {rest ? (
@@ -127,6 +130,11 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
           </h1>
           {tagline}
         </div>
+
+        {/* The header's mark, large: the crane on a dark green disc */}
+        <span className="home-hero-mark" aria-hidden="true">
+          <ThreeDIcon name="trana-hals" size={200} />
+        </span>
       </div>
     </section>
   );
