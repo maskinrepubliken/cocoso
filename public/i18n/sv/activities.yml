@@ -11,6 +11,10 @@ form:
     organizers: "Arrangörer"
     place: "Plats"
     booking: "Bokning och anmälan"
+    notify: "Meddela de som kommer"
+  notify:
+    helper: "Du har ändrat tid eller plats. Alla som är anmälda eller följer evenemanget får veta det via e-post och pushnotis några minuter efter att du sparat. Skriv gärna några ord – varför, eller vad de behöver veta."
+    placeholder: "T.ex. Biblioteket renoveras, så vi ses i församlingshemmet i stället."
   booking:
     exclusive: "Platsen är upptagen"
     exclusiveHelper: "Ingen annan kan boka platsen i kalendern medan evenemanget pågår."

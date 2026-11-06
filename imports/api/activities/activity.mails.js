@@ -190,6 +190,16 @@ const link = (href, label, c) =>
     label
   )}</a>`;
 
+// The organizer's own words, large, set off by a green rule
+const messageBlock = (message, c, marginTop) =>
+  `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:${marginTop}px 0 0;">
+          <tr><td style="padding:2px 0 2px 16px;border-left:3px solid ${
+            c.button
+          };font-family:${UI};font-size:20px;line-height:1.5;color:${MYLLA};white-space:pre-line;">${escapeHtml(
+    message
+  )}</td></tr>
+        </table>`;
+
 function registrationFacts(activity, values, occurrence, s, withPeople) {
   const name = [values?.firstName, values?.lastName]
     .filter(Boolean)
@@ -333,21 +343,19 @@ export function activityUpdateEmail({
       [s.when, dates],
       [s.where, [place].filter(Boolean)],
     ]);
+    // Any words the organizer wrote with the change follow it
     body = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0;">
-          <tr><td style="padding:14px 18px;background:${c.tint};border-radius:12px;">${rows.html}</td></tr>
-        </table>`;
-    bodyText = rows.text;
+          <tr><td style="padding:14px 18px;background:${
+            c.tint
+          };border-radius:12px;">${rows.html}</td></tr>
+        </table>
+        ${message ? messageBlock(message, c, 20) : ''}`;
+    bodyText = [rows.text, message].filter(Boolean).join('\n\n');
   } else {
     const meta = [dates[0], activity.resource || activity.place]
       .filter(Boolean)
       .join(' · ');
-    body = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0;">
-          <tr><td style="padding:2px 0 2px 16px;border-left:3px solid ${
-            c.button
-          };font-family:${UI};font-size:20px;line-height:1.5;color:${MYLLA};white-space:pre-line;">${escapeHtml(
-      message || ''
-    )}</td></tr>
-        </table>
+    body = `${messageBlock(message || '', c, 0)}
         ${
           meta
             ? `<p style="margin:16px 0 0;font-family:${UI};font-size:14px;line-height:1.5;color:${MYLLA_SOFT};">${escapeHtml(

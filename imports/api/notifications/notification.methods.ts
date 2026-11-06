@@ -300,7 +300,8 @@ Meteor.methods({
       return [];
     }
     return ActivityUpdates.find(
-      { activityId, kind: 'message' },
+      // Messages, and the words an organizer sent with a new time or place
+      { activityId, message: { $exists: true } },
       { fields: { message: 1, sentAt: 1 }, sort: { sentAt: -1 }, limit: 10 }
     ).fetchAsync();
   },

@@ -24,6 +24,7 @@ import DatesAndTimes, {
   emptyDateAndTime,
 } from '/imports/ui/forms/DatesAndTimes';
 import { message } from '/imports/ui/generic/message';
+import { Textarea } from '/imports/ui/core';
 import type { SelectedResource, DateAndTime } from '/imports/ui/types';
 
 import publicActivityFormFields from './publicActivityFormFields';
@@ -68,6 +69,23 @@ interface ActivityData extends ActivityFormValues {
   contactUserId?: string | null;
   authorId?: string;
 }
+
+// What the people coming are told about when it changes (notify.ts on the
+// server compares the same things): every date's times, and the place
+const datesKey = (dates?: DateAndTime[]) =>
+  (dates || [])
+    .map((d) => [d.startDate, d.startTime, d.endDate, d.endTime].join(' '))
+    .sort()
+    .join(',');
+const placeKey = (
+  resourceId?: string | null,
+  address?: Partial<Address> | null
+) =>
+  resourceId
+    ? `place:${resourceId}`
+    : [address?.street, address?.postalCode, address?.city]
+        .map((part) => (part || '').trim().toLowerCase())
+        .join('|');
 
 const hasContact = (contact?: Contact | null) =>
   Boolean(contact && (contact.email || contact.phone || contact.website));
@@ -136,6 +154,8 @@ export default function PublicActivityForm({
     // Only used when no place is chosen; a place brings its own address.
     address: activity?.address || emptyAddress,
     resources: [],
+    // For those signed up and following, sent with a new time or place
+    changeMessage: '',
   });
   const [organizerOptions, setOrganizerOptions] = useState<OrganizerOption[]>(
     []
@@ -219,6 +239,23 @@ export default function PublicActivityForm({
   }, [author, state.whereMode]);
 
   const whereMode: WhereMode = state.whereMode || 'place';
+
+  // Editing, and the time or place is no longer what it was: everyone
+  // signed up or following is told (a few minutes after saving), and the
+  // organizer may add a few words of their own
+  const currentPlaceKey =
+    whereMode === 'place'
+      ? placeKey(state.selectedResource?._id)
+      : placeKey(
+          null,
+          whereMode === 'organizer' ? author?.address : state.address
+        );
+  const isTimeOrPlaceChanged = Boolean(
+    activity?._id &&
+      state.whereMode &&
+      (datesKey(state.datesAndTimes) !== datesKey(activity.datesAndTimes) ||
+        currentPlaceKey !== placeKey(activity.resourceId, activity.address))
+  );
 
   // Whose contact details the event shows: the chosen organizer while they
   // are one of its organizers, otherwise the organizer.
@@ -376,6 +413,9 @@ export default function PublicActivityForm({
         : null,
       isMunicipalityOnly: false,
     };
+    if (isTimeOrPlaceChanged && state.changeMessage.trim()) {
+      newActivity.changeMessage = state.changeMessage.trim();
+    }
 
     const selectedResource =
       whereMode === 'place' ? state.selectedResource : null;
@@ -536,6 +576,27 @@ export default function PublicActivityForm({
           onDatesAndTimesChange={handleDatesAndTimesChange}
         />
       </FormField>
+
+      {isTimeOrPlaceChanged && (
+        <FormCard title={t('form.cards.notify')}>
+          <p className="toggle-helper" style={{ margin: '0 0 0.5rem' }}>
+            {t('form.notify.helper')}
+          </p>
+          <Textarea
+            aria-label={t('form.cards.notify')}
+            maxLength={2000}
+            placeholder={t('form.notify.placeholder')}
+            rows={3}
+            value={state.changeMessage}
+            onChange={(event) =>
+              setState((prevState: any) => ({
+                ...prevState,
+                changeMessage: event.target.value,
+              }))
+            }
+          />
+        </FormCard>
+      )}
 
       <FormCard title={t('form.cards.booking')}>
         {/* Blocking the place only means something at a place */}

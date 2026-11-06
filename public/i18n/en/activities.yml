@@ -11,6 +11,10 @@ form:
     organizers: "Organizers"
     place: "Place"
     booking: "Booking and registration"
+    notify: "Tell those coming"
+  notify:
+    helper: "You changed the time or place. Everyone signed up or following the event is told so by email and push notification a few minutes after you save. Add a few words if you like – why, or what they should know."
+    placeholder: "E.g. The library is closed for renovation, so we meet in the parish hall instead."
   booking:
     exclusive: "The place is taken"
     exclusiveHelper: "Nobody else can book the place in the calendar while the event is on."

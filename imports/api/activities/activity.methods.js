@@ -660,8 +660,17 @@ Meteor.methods({
 
     // Ownership fields are not client-writable, except that an admin may
     // hand the event to another organizer.
-    const { _id, authorId, authorName, isArchived, archivedAt, ...safeValues } =
-      values;
+    const {
+      _id,
+      authorId,
+      authorName,
+      isArchived,
+      archivedAt,
+      // Not stored: the organizer's words to go with a new time or place
+      changeMessage,
+      ...safeValues
+    } = values;
+    check(changeMessage, Match.Maybe(String));
     let newAuthor = null;
     if (authorId && authorId !== theActivity.authorId) {
       // Only an admin hands an event over, also to themself: a
@@ -767,7 +776,10 @@ Meteor.methods({
       // A new time or place is told to those signed up and following
       // (imports/api/notifications/notify.ts), a few minutes after saving
       if (theActivity.isPublicActivity && theActivity.isPublished) {
-        scheduleChangeNotice(theActivity);
+        scheduleChangeNotice(theActivity, {
+          message: (changeMessage || '').trim().slice(0, 2000),
+          editorId: user._id,
+        });
       }
       return updated;
     } catch (error) {

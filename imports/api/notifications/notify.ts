@@ -270,12 +270,19 @@ export function noticeableChanges(before: any, after: any): string[] {
 
 // Changes are told a while after the last save, so an organizer correcting
 // a slip twice sends one update — measured against the event as it was
-// before the first save. Lost on a restart; the organizer can still send a
-// message.
+// before the first save. The organizer may write a few words with the
+// change in the event form (`message`; the latest one written counts).
+// Lost on a restart; the organizer can still send a message.
 const WAIT_MS = 5 * 60 * 1000;
-const pending = new Map<string, { before: any; timer: NodeJS.Timeout }>();
+const pending = new Map<
+  string,
+  { before: any; message?: string; editorId?: string; timer: NodeJS.Timeout }
+>();
 
-export function scheduleChangeNotice(before: any) {
+export function scheduleChangeNotice(
+  before: any,
+  { message, editorId }: { message?: string; editorId?: string } = {}
+) {
   const id = before?._id;
   if (!id) {
     return;
@@ -285,6 +292,8 @@ export function scheduleChangeNotice(before: any) {
     clearTimeout(earlier.timer);
   }
   const snapshot = earlier?.before || before;
+  const words = message || earlier?.message;
+  const editor = editorId || earlier?.editorId;
   const timer = setTimeout(async () => {
     pending.delete(id);
     try {
@@ -299,11 +308,21 @@ export function scheduleChangeNotice(before: any) {
       }
       const changes = noticeableChanges(snapshot, after);
       if (changes.length > 0) {
-        await notifyActivity({ activityId: id, kind: 'changed', changes });
+        await notifyActivity({
+          activityId: id,
+          kind: 'changed',
+          changes,
+          ...(words ? { message: words, authorId: editor } : {}),
+        });
       }
     } catch (error) {
       console.error('[notify] change notice failed', error);
     }
   }, WAIT_MS);
-  pending.set(id, { before: snapshot, timer });
+  pending.set(id, {
+    before: snapshot,
+    message: words,
+    editorId: editor,
+    timer,
+  });
 }
