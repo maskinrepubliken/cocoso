@@ -228,18 +228,3 @@ notifications:
     title: Nyhetsbrev
     label: Ja, skicka nyhetsbrevet till mig
     intro: Nyheter från {{site}} via e-post då och då. Du kan avsluta när du vill, här eller med länken i varje nyhetsbrev.
-
-setup:
-  steps:
-    user:
-      title: Användare
-      description: Administratörskonto
-    site:
-      title: Webbplats
-      description: Namn och kontaktuppgifter
-  aboutTitle: "Om {{name}}"
-  success: Installationen är klar
-  goHome: Till startsidan
-  errors:
-    user: Det gick inte att skapa användaren
-    site: Det gick inte att skapa webbplatsen

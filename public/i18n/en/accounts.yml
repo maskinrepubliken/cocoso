@@ -228,18 +228,3 @@ notifications:
     title: Newsletter
     label: Yes, send me the newsletter
     intro: News from {{site}} by email now and then. You can unsubscribe whenever you like, here or with the link in every newsletter.
-
-setup:
-  steps:
-    user:
-      title: User
-      description: Admin account
-    site:
-      title: Site
-      description: Name and contact details
-  aboutTitle: "About {{name}}"
-  success: You have successfully finished the installation
-  goHome: Go to the home page
-  errors:
-    user: Error creating user
-    site: Error creating the site

@@ -19,7 +19,6 @@ import { requireContact } from '../_utils/contact';
 import { AddressPattern, cleanAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
-import { isFreshInstall } from './passwordLogin';
 import {
   ActivityFollows,
   PushSubscriptions,
@@ -203,30 +202,6 @@ Meteor.methods({
     }
 
     return await userModel(user);
-  },
-
-  async createAccount(values) {
-    check(values.email, String);
-    check(values.username, String);
-    check(values.password, String);
-
-    // Only the first-run /setup makes password accounts; everyone else
-    // gets theirs from email login.
-    if (!(await isFreshInstall())) {
-      throw new Meteor.Error('not-allowed', 'Sign up by logging in with email');
-    }
-
-    const userExists = await Accounts.findUserByUsername(values.username);
-
-    if (userExists) {
-      throw new Meteor.Error('username-taken', 'Username is taken');
-    }
-
-    try {
-      return await Accounts.createUserAsync(values);
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
   },
 
   async isUsernameUnique(username) {

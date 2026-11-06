@@ -7,7 +7,6 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import appRoutes from '/imports/appRoutes';
-import SetupHome from '/imports/ui/pages/setup';
 import i18n, { getChosenLang, setDayjsLocale } from '/imports/startup/i18n';
 import { resolveSeason } from '/imports/api/_utils/season';
 
@@ -57,10 +56,16 @@ onPageLoad(async () => {
   const pageTitles = await Meteor.callAsync('getPageTitles');
   const locations = await Meteor.callAsync('getLocations');
 
+  // The site is created by the server from settings.site on first start
+  // (imports/startup/server/bootstrap.ts); there is no setup page.
   if (!site) {
-    console.info('No site configured yet. Rendering the setup wizard.');
     const root = createRoot(container);
-    root.render(<SetupHome />);
+    root.render(
+      <p style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
+        The site is not set up yet: set <code>site</code> in the settings and
+        restart the server. See docs/CONFIGURATION.md.
+      </p>
+    );
     return;
   }
 

@@ -41,7 +41,7 @@ const RULES = [
   },
   // Account creation and username/email probing.
   {
-    methods: ['createAccount', 'isUsernameUnique', 'isEmailUnique'],
+    methods: ['isUsernameUnique', 'isEmailUnique'],
     limit: 10,
     intervalMs: 60 * 1000,
   },

@@ -2,12 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
 import Site, { getSite, sitePublicFields } from './site';
-import Pages from '../pages/page';
-import {
-  defaultEmails,
-  defaultMenu,
-  defaultTheme,
-} from '../../startup/constants';
 import { isAdmin } from '../users/user.roles';
 import Memberships from '../memberships/membership';
 import dayjs from 'dayjs';
@@ -89,56 +83,6 @@ async function requireAdmin() {
 }
 
 Meteor.methods({
-  // Bootstraps the site. Only callable from the setup wizard, i.e. while no
-  // site exists yet; the caller becomes its first admin.
-  async createSite(values) {
-    const currentUser = await Meteor.userAsync();
-    if (!currentUser) {
-      throw new Meteor.Error('not-allowed', 'You are not allowed');
-    }
-
-    if (await getSite()) {
-      throw new Meteor.Error('site-exists', 'The site is already set up');
-    }
-
-    try {
-      await Site.insertAsync({
-        emails: defaultEmails,
-        settings: {
-          name: values.name,
-          email: values.email,
-          address: values.address,
-          city: values.city,
-          country: values.country,
-          menu: defaultMenu,
-          lang: 'sv',
-          hue: Math.ceil(Math.random() * 360).toString(),
-        },
-        theme: defaultTheme,
-        createdAt: new Date(),
-      });
-
-      await Pages.insertAsync({
-        authorId: currentUser._id,
-        authorName: currentUser.username,
-        title: values.aboutTitle || `Om ${values.name}`,
-        longDescription: values.about,
-        isPublished: true,
-        order: 1,
-        creationDate: new Date(),
-      });
-
-      await Memberships.insertAsync({
-        userId: currentUser._id,
-        role: 'admin',
-        joinDate: new Date(),
-        isPublic: true,
-      });
-    } catch (error) {
-      throw new Meteor.Error(error);
-    }
-  },
-
   async getSite() {
     return await getSite(sitePublicFields);
   },
