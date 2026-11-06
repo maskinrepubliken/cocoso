@@ -134,6 +134,6 @@ labels:
 
 viewAs:
   started: Du ser nu sajten som {{ username }}
-  banner: 'Du ser sajten som {{ username }} ({{ role }})'
+  banner: 'Du ser sajten som <b>{{ username }}</b>'
   back: Tillbaka till mitt konto
   backSuccess: Du är tillbaka på ditt eget konto

@@ -133,6 +133,6 @@ labels:
 
 viewAs:
   started: You now see the site as {{ username }}
-  banner: 'You are viewing the site as {{ username }} ({{ role }})'
+  banner: 'You are viewing the site as <b>{{ username }}</b>'
   back: Back to my account
   backSuccess: You are back on your own account

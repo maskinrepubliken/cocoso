@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import EyeIcon from 'lucide-react/dist/esm/icons/eye';
 
-import { Box, Button, Flex, Text } from '/imports/ui/core';
 import { currentUserAtom, roleAtom, viewAsAtom } from '/imports/state';
 import { stopViewAs } from '/imports/utils/viewAs';
 import { message } from '/imports/ui/generic/message';
 
-// A strip at the very top while an admin is viewing the site as another
-// member, with the way back to their own account.
+// A dark pill floating at the foot of the screen while an admin is
+// viewing the site as another member: who, with what role, and the way
+// back to their own account.
 export default function ViewAsBanner() {
   const [t] = useTranslation('members');
   const viewAs = useAtomValue(viewAsAtom);
@@ -24,7 +24,7 @@ export default function ViewAsBanner() {
   }
 
   const username = currentUser?.username || viewAs;
-  const roleLabel = role ? t(`roles.${role}`).toLowerCase() : '';
+  const roleLabel = role ? t(`roles.${role}`) : '';
 
   const handleBack = async () => {
     setBusy(true);
@@ -40,28 +40,26 @@ export default function ViewAsBanner() {
   };
 
   return (
-    <Box
-      bg="red.100"
-      px="4"
-      py="2"
-      css={{
-        borderBottom: '2px solid var(--cocoso-colors-red-400)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-      }}
-    >
-      <Flex align="center" justify="center" gap="4" wrap="wrap">
-        <Flex align="center" gap="2">
-          <EyeIcon width={18} height={18} />
-          <Text fontWeight="bold">
-            {t('viewAs.banner', { username, role: roleLabel })}
-          </Text>
-        </Flex>
-        <Button size="sm" colorScheme="red" disabled={busy} onClick={handleBack}>
-          {t('viewAs.back')}
-        </Button>
-      </Flex>
-    </Box>
+    <div className="view-as-bar" role="status">
+      <span className="view-as-icon" aria-hidden="true">
+        <EyeIcon width={18} height={18} />
+      </span>
+      <span className="view-as-text">
+        <Trans
+          i18nKey="members:viewAs.banner"
+          values={{ username }}
+          components={{ b: <strong /> }}
+        />
+        {roleLabel && <span className="view-as-role">{roleLabel}</span>}
+      </span>
+      <button
+        className="view-as-back"
+        disabled={busy}
+        type="button"
+        onClick={handleBack}
+      >
+        {t('viewAs.back')}
+      </button>
+    </div>
   );
 }
