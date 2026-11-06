@@ -174,16 +174,29 @@ modals:
   feedback:
     label: Ge feedback
     form:
+      intro: Tjänsten är ny och i beta. Berätta vad som fungerar, vad som krånglar och vad du saknar. Allt läses av oss som bygger den.
       email:
         label: Din e-postadress
+        hint: (om du vill ha svar)
       subject:
-        label: Ämne
+        label: Vad gäller det?
         select:
-          suggest: Förslag
-          bug: Bugg
-          compliment: Komplimang
+          suggestion: Förslag
+          bug: Något är fel
+          compliment: Beröm
       details:
         label: Meddelande
+        placeholder:
+          suggestion: Vad skulle göra tjänsten bättre för dig?
+          bug: Vad hände, och var? Vad väntade du dig?
+          compliment: Vad gillar du?
+      privacy: Går till sajtens administratörer, ingen annanstans.
+      sending: Skickar…
+      error: Meddelandet kunde inte skickas. Försök igen om en stund.
+      thanks:
+        title: Tack!
+        text: Ditt meddelande har kommit fram. Om du lämnade din e-postadress kan vi höra av oss.
+        close: Stäng
 
   toPortalApp: Fortsätt till portalen
 

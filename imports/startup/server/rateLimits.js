@@ -20,6 +20,7 @@ const RULES = [
       'sendNewsletter',
       'sendActivityMessage',
       'sendTestPush',
+      'sendFeedback',
     ],
     limit: 5,
     intervalMs: 60 * 1000,

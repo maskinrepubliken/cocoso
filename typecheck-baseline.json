@@ -70,7 +70,6 @@
   "imports/ui/layout/ChangeLanguageMenu.tsx | TS2322 | Type '{ children: (string | Element)[]; fontSize: string; mb: string; css: { marginBottom: \"0.5rem\"; textAlign: \"center\"; }; }' is not assignable to type 'IntrinsicAttributes & TextProps'.": 1,
   "imports/ui/layout/ChangeLanguageMenu.tsx | TS6133 | 'centered' is declared but its value is never read.": 1,
   "imports/ui/layout/ChangeLanguageMenu.tsx | TS6133 | 'select' is declared but its value is never read.": 1,
-  "imports/ui/layout/FeedbackForm.tsx | TS6133 | 'isDarkText' is declared but its value is never read.": 1,
   "imports/ui/layout/Header.tsx | TS1232 | An import declaration can only be used at the top level of a namespace or module.": 2,
   "imports/ui/layout/HelmetHybrid.tsx | TS2322 | Type 'true' is not assignable to type 'CrossOrigin'.": 1,
   "imports/ui/layout/Template.tsx | TS2322 | Type '{ children: string; as: \"h1\"; mb: string; size: \"lg\"; textAlign: string; }' is not assignable to type 'IntrinsicAttributes & HeadingProps'.": 1,
