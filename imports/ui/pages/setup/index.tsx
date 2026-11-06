@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Alert, Box, Button, Center } from '/imports/ui/core';
 import SiteForm from '/imports/ui/forms/SiteForm';
@@ -26,17 +27,6 @@ interface SignupFormValues {
   password: string;
 }
 
-const steps = [
-  {
-    title: 'User',
-    description: 'Admin account',
-  },
-  {
-    title: 'siteDoc',
-    description: 'Name and contact details',
-  },
-];
-
 const siteModel = {
   name: '',
   email: '',
@@ -47,6 +37,19 @@ const siteModel = {
 };
 
 export default function SetupHome() {
+  const [t] = useTranslation('accounts');
+
+  const steps = [
+    {
+      title: t('setup.steps.user.title'),
+      description: t('setup.steps.user.description'),
+    },
+    {
+      title: t('setup.steps.site.title'),
+      description: t('setup.steps.site.description'),
+    },
+  ];
+
   const [state, setState] = useState<{
     currentStep: string;
     user: any;
@@ -99,7 +102,7 @@ export default function SetupHome() {
     try {
       const userId = await call('createAccount', data);
       if (!userId) {
-        message.error('User creation failed');
+        message.error(t('setup.errors.user'));
         return;
       }
       await loginWithPasswordAsync(data.username, data.password);
@@ -110,7 +113,7 @@ export default function SetupHome() {
       }));
     } catch (error: any) {
       message.error(
-        error.error?.reason || error.reason || 'Error creating user'
+        error.error?.reason || error.reason || t('setup.errors.user')
       );
     }
   };
@@ -118,7 +121,7 @@ export default function SetupHome() {
   const onCreateHost = async (data: SiteFormValues) => {
     const parsedValues = {
       ...data,
-      aboutTitle: `About ${data.name}`,
+      aboutTitle: t('setup.aboutTitle', { name: data.name }),
     };
 
     try {
@@ -129,7 +132,7 @@ export default function SetupHome() {
         host,
       }));
     } catch (error: any) {
-      message.error(error.reason || error.error || 'Error creating the site');
+      message.error(error.reason || error.error || t('setup.errors.site'));
     }
   };
 
@@ -142,12 +145,10 @@ export default function SetupHome() {
       // finished
       return (
         <>
-          <Alert type="success">
-            You have successfully finished the installation
-          </Alert>
+          <Alert type="success">{t('setup.success')}</Alert>
           <Center>
             <Button my="4" variant="ghost" onClick={() => goHomeAndReload()}>
-              Go to the home page
+              {t('setup.goHome')}
             </Button>
           </Center>
         </>
