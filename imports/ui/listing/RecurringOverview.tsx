@@ -352,7 +352,9 @@ const Slot = styled(Link, {
     fontVariationSettings: '"SOFT" 60',
     fontSize: '0.98rem',
     fontWeight: 600,
+    hyphens: 'auto',
     lineHeight: 1.2,
+    overflowWrap: 'break-word',
   },
   '& small': {
     display: 'block',
