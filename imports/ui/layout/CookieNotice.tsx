@@ -68,7 +68,7 @@ export default function CookieNotice() {
           {tc('cookies.beta')}
         </p>
 
-        {/* Where feedback lives, said plainly, with a way in right here */}
+        {/* Where feedback lives, said plainly */}
         <div className="cookie-notice-feedback">
           <MessageCircleIcon aria-hidden="true" width={22} height={22} />
           <p>
@@ -77,6 +77,12 @@ export default function CookieNotice() {
               components={{ b: <strong /> }}
             />
           </p>
+        </div>
+
+        <p className="cookie-notice-cookies">{tc('cookies.text')}</p>
+
+        <nav className="cookie-notice-links">
+          <Link to={aboutTo}>{tc('footer.about')}</Link>
           <FeedbackForm
             trigger={(openFeedback) => (
               <button type="button" onClick={openFeedback}>
@@ -84,12 +90,6 @@ export default function CookieNotice() {
               </button>
             )}
           />
-        </div>
-
-        <p className="cookie-notice-cookies">{tc('cookies.text')}</p>
-
-        <nav className="cookie-notice-links">
-          <Link to={aboutTo}>{tc('footer.about')}</Link>
           <Link to="/terms-&-privacy-policy">{tc('terms.title')}</Link>
         </nav>
       </div>
