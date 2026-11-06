@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.0](https://github.com/maskinrepubliken/cocoso/compare/v5.0.0...v5.1.0) (2026-11-06)
+
+
+### Features
+
+* **home:** add a plain-text start page hero and the Tranemokalendern logo ([f1cdcec](https://github.com/maskinrepubliken/cocoso/commit/f1cdcec0e6817e912249c7f46380022029c9f7d8))
+* **home:** make the text hero the start page default, logo at ?hem=mats ([e02f9b9](https://github.com/maskinrepubliken/cocoso/commit/e02f9b9a2ddd0006c0d260e71f70de1eadb80815))
+* **site:** rename the service to Tranemokalendern ([cc9ee3e](https://github.com/maskinrepubliken/cocoso/commit/cc9ee3e1d74102d54c1b73b4e37b68b09d5f3e5c))
+
+
+### Bug Fixes
+
+* **layout:** hyphenate long titles in the start page's weekly strip ([e1a750c](https://github.com/maskinrepubliken/cocoso/commit/e1a750c51a1fa741dc9276554b219c93a4d3db1f))
+* **layout:** load the Raleway and Fraunces web fonts again ([3b070ba](https://github.com/maskinrepubliken/cocoso/commit/3b070ba380bf54c42b975f7c78320332aadb8fb1))
+
 ## [5.0.0](https://github.com/maskinrepubliken/cocoso/compare/v4.1.0...v5.0.0) (2026-11-03)
 
 
