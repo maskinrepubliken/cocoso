@@ -37,8 +37,8 @@ const STRINGS = {
     },
     change: 'Ändra eller avanmäl dig',
     cancel: {
-      subject: (title) => `Du är avanmäld: ${title}`,
-      kicker: 'Du är avanmäld',
+      subject: (title) => `Du är inte längre anmäld: ${title}`,
+      kicker: 'Du är inte längre anmäld',
       again:
         'Ångrar du dig? Anmäl dig igen på evenemangets sida, så länge det finns platser kvar.',
     },
@@ -71,8 +71,8 @@ const STRINGS = {
     },
     change: 'Change or cancel your sign-up',
     cancel: {
-      subject: (title) => `Your sign-up is cancelled: ${title}`,
-      kicker: 'Your sign-up is cancelled',
+      subject: (title) => `You're no longer signed up: ${title}`,
+      kicker: "You're no longer signed up",
       again:
         'Changed your mind? Sign up again on the event page, as long as there are places left.',
     },
@@ -270,6 +270,7 @@ export function unregistrationEmail({
     preheader: `${s.cancel.kicker}: ${activity.title}`,
     hero: heroOf(activity, [when]),
     status: s.cancel.kicker,
+    statusTone: 'alert',
     title: activity.title,
     content: [
       rows.html,

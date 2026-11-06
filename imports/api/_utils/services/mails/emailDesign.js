@@ -172,6 +172,8 @@ export function emailPage({
 }
 
 export const TEGEL = '#a84e2d'; // --cocoso-tegel-600, readable on white
+// For a headline that takes something away ("Du är inte längre anmäld")
+export const ALERT = '#b3261e';
 
 /**
  * The layout for emails about one event, left-aligned like a letter: what
@@ -183,7 +185,8 @@ export const TEGEL = '#a84e2d'; // --cocoso-tegel-600, readable on white
  * `kicker` is only a label ("Nytt från arrangören") over the event's
  * title, for emails whose news is in the content. The site's name and
  * any opt-out go in a single line at the bottom; there is no header.
- * `hero`: { src, alt } or null; `button`: { href, label }; `footer` is
+ * `statusTone: 'alert'` sets the headline in red, for news that takes
+ * something away. `hero`: { src, alt } or null; `button`: { href, label }; `footer` is
  * already-safe HTML.
  */
 export function emailEventPage({
@@ -194,6 +197,7 @@ export function emailEventPage({
   hero,
   button,
   status,
+  statusTone,
   kicker,
   title,
   content,
@@ -258,7 +262,7 @@ export function emailEventPage({
         ${
           status
             ? `<h1 class="status" style="margin:0 0 6px;font-family:${DISPLAY};font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-0.01em;color:${
-                c.strong
+                statusTone === 'alert' ? ALERT : c.strong
               };">${escapeHtml(status)}</h1>
         <p style="margin:0 0 18px;font-family:${DISPLAY};font-size:21px;font-weight:600;line-height:1.25;color:${MYLLA};">${escapeHtml(
                 title
