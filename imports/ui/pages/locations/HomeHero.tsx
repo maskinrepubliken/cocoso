@@ -22,10 +22,14 @@ export const seasonIcons: Record<Season, ThreeDIconName[]> = {
 
 // The welcome band at the top of the start page. The header above it is
 // deliberately compact, so this is where a first-time visitor is told where
-// they have arrived: the site's name, one line about what it is, and the
-// what it is for. Woven texture and two seasonal glows behind, a cluster of
-// seasonal 3D icons to the right. Rendered only at the root; the places
-// come further down the page.
+// they have arrived: the site's name and one line about what it is for,
+// on a woven texture with two seasonal glows behind. Rendered only at the
+// root; the places come further down the page.
+//
+// Three versions, picked with ?hem=:
+// - (none): the colourful "tranemokalendern" word logo
+// - text: the welcome line, the name as a plain title and the tagline
+// - ikoner: as text, with a cluster of seasonal 3D icons to the right
 export default function HomeHero({ siteDoc }: HomeHeroProps) {
   const site = useAtomValue(siteAtom) || siteDoc;
   const season = useAtomValue(seasonAtom);
@@ -37,31 +41,38 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
     return null;
   }
 
-  const icons = seasonIcons[season] || seasonIcons.host;
+  const variant = searchParams.get('hem');
+  const tagline = (
+    <p className="home-hero-tagline">
+      {settings.tagline || tc('home.hero.tagline')}
+    </p>
+  );
 
-  // The start page opens on the colourful word logo: one line on wide
-  // screens, stacked on narrow ones. ?hem=ikoner brings back the earlier
-  // version, the title with the floating seasonal icons.
-  if (searchParams.get('hem') !== 'ikoner') {
+  if (variant === 'text' || variant === 'ikoner') {
+    const icons = seasonIcons[season] || seasonIcons.host;
     return (
-      <section className="home-hero vav is-logo">
+      <section className={`home-hero vav is-${variant}`}>
         <div className="home-hero-inner">
+          {variant === 'ikoner' && (
+            <div className="home-hero-icons" aria-hidden="true">
+              <ThreeDIcon className="home-hero-crane" name="trana" size={230} />
+              {icons.map((name, index) => (
+                <ThreeDIcon
+                  key={name}
+                  className={`home-hero-icon is-${index + 1}`}
+                  name={name}
+                  size={[150, 120, 110, 90][index]}
+                />
+              ))}
+            </div>
+          )}
+
           <div className="home-hero-text">
-            <h1 className="home-hero-logo">
-              <picture>
-                <source
-                  media="(min-width: 700px)"
-                  srcSet="/images/tranemo-evenemangskalender-bred.svg"
-                />
-                <img
-                  src="/images/tranemo-evenemangskalender.svg"
-                  alt={settings.name}
-                />
-              </picture>
-            </h1>
-            <p className="home-hero-tagline">
-              {settings.tagline || tc('home.hero.tagline')}
-            </p>
+            <span className="home-hero-eyebrow">
+              {tc('home.hero.welcome')}
+            </span>
+            <h1 className="home-hero-title">{settings.name}</h1>
+            {tagline}
           </div>
         </div>
       </section>
@@ -69,26 +80,13 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
   }
 
   return (
-    <section className="home-hero vav">
+    <section className="home-hero vav is-logo">
       <div className="home-hero-inner">
-        <div className="home-hero-icons" aria-hidden="true">
-          <ThreeDIcon className="home-hero-crane" name="trana" size={230} />
-          {icons.map((name, index) => (
-            <ThreeDIcon
-              key={name}
-              className={`home-hero-icon is-${index + 1}`}
-              name={name}
-              size={[150, 120, 110, 90][index]}
-            />
-          ))}
-        </div>
-
         <div className="home-hero-text">
-          <span className="home-hero-eyebrow">{tc('home.hero.welcome')}</span>
-          <h1 className="home-hero-title">{settings.name}</h1>
-          <p className="home-hero-tagline">
-            {settings.tagline || tc('home.hero.tagline')}
-          </p>
+          <h1 className="home-hero-logo">
+            <img src="/images/tranemokalendern.svg" alt={settings.name} />
+          </h1>
+          {tagline}
         </div>
       </div>
     </section>

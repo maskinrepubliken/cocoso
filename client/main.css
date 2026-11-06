@@ -3863,7 +3863,7 @@ body {
   font-family: var(--cocoso-font-display);
   font-variation-settings: 'SOFT' 60;
   /* As on a desktop at every width: the long second line
-     ("Evenemangskalender") filling the column, never wider */
+     ("Tranemokalendern") filling the column, never wider */
   font-size: min(62px, 10cqi);
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -7414,17 +7414,11 @@ body {
   padding: 4px 0 12px;
 }
 
-/* Start page hero, logo version (the default; ?hem=ikoner shows the
-   title and icon cluster instead): the word logo in place of both */
+/* Start page hero, logo version (the default; ?hem=text and ?hem=ikoner
+   show the title instead): the word logo in place of the title */
 .home-hero.is-logo .home-hero-text {
   flex-basis: 100%;
-  max-width: 480px;
-}
-
-@media (min-width: 700px) {
-  .home-hero.is-logo .home-hero-text {
-    max-width: 920px;
-  }
+  max-width: 760px;
 }
 
 .home-hero-logo {
@@ -7436,7 +7430,6 @@ body {
   margin-top: 24px;
 }
 
-.home-hero-logo picture,
 .home-hero-logo img {
   display: block;
   width: 100%;
