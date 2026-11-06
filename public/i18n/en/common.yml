@@ -251,6 +251,8 @@ people:
   events: Events
   upcoming_one: '{{ count }} upcoming event'
   upcoming_other: '{{ count }} upcoming events'
+  upcomingShort_one: '{{ count }} upcoming'
+  upcomingShort_other: '{{ count }} upcoming'
   email: Send an email
   website: Website
   noEvents: '{{ username }} has no events yet.'
