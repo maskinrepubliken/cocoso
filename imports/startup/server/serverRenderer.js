@@ -33,7 +33,9 @@ export default async function serverRenderer(sink) {
     undefined,
     siteDoc?.settings?.season
   );
-  const globalCssString = siteDoc ? getGlobalStyles(siteDoc.theme, season) : '';
+  // Before setup there is no site document; render the default theme anyway so
+  // themed buttons and focus rings are not left without colours.
+  const globalCssString = getGlobalStyles(siteDoc?.theme, season);
   const { getCssText } = stitchesConfig;
 
   const pageTitles = pages.map((p) => p.title);
