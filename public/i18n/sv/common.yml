@@ -498,6 +498,12 @@ seasons:
   host: Höst
   vinter: Vinter
 
+cookies:
+  title: Kakor, och en tjänst i beta
+  text: "Vi använder bara de kakor som behövs för att sidan ska fungera: en för att hålla dig inloggad, en för att minnas ditt språk och en för att minnas att du har läst det här. Inga kakor för spårning eller reklam."
+  beta: Tjänsten är ny och byggs fortfarande, så saker kan ändras och något kanske inte fungerar än. Berätta gärna vad du tycker!
+  ok: Jag förstår
+
 footer:
   byline: En tjänst skapad av och för föreningslivet i Tranemo Kommun. Utvecklas av Uddebo Makerspace, Tranemo Kommun och Maskinrepubliken.
   about: Om sidan
@@ -537,7 +543,7 @@ termsPage:
         - "Vi sparar inga uppgifter om dig i marknadsföringssyfte och lämnar inte ut dem till någon utanför kommunen. Lagringen sker på servrar inom EU."
     - title: Kakor
       paragraphs:
-        - "Tjänsten använder bara kakor som behövs för att den ska fungera: en för att hålla dig inloggad och en för att minnas vilket språk du valt. Inga kakor för spårning eller reklam."
+        - "Tjänsten använder bara kakor som behövs för att den ska fungera: en för att hålla dig inloggad, en för att minnas vilket språk du valt och en för att minnas att du har sett informationen om kakor. Inga kakor för spårning eller reklam."
     - title: Dina rättigheter
       paragraphs:
         - "Du kan när som helst se och ändra dina uppgifter under din profil, och ta bort ditt konto där. Då raderas dina personuppgifter. Evenemang och inlägg du skapat kan ligga kvar utan ditt namn om andra är beroende av dem."

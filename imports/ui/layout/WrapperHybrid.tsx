@@ -36,6 +36,7 @@ import DummyWrapper from './DummyWrapper';
 import Header from './Header';
 import ViewAsBanner from './ViewAsBanner';
 import { Footer } from './Footers';
+import CookieNotice from './CookieNotice';
 
 dayjs.extend(updateLocale);
 
@@ -235,6 +236,7 @@ export default function WrapperHybrid({
             </main>
 
             {!adminPage && <Footer site={site || siteDoc} />}
+            {!adminPage && <CookieNotice />}
           </DummyWrapper>
         </Suspense>
 

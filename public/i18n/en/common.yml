@@ -501,6 +501,12 @@ seasons:
   host: Autumn
   vinter: Winter
 
+cookies:
+  title: Cookies, and a service in beta
+  text: "We only use the cookies the site needs to work: one to keep you signed in, one to remember your language and one to remember that you have read this. No cookies for tracking or advertising."
+  beta: The service is new and still being built, so things may change and something may not work yet. Tell us what you think!
+  ok: Got it
+
 footer:
   byline: A service made by and for the associations of Tranemo municipality. Developed by Uddebo Makerspace, Tranemo municipality and Maskinrepubliken.
   about: About this site
@@ -540,7 +546,7 @@ termsPage:
         - "We keep no data about you for marketing and hand nothing to anyone outside the municipality. Data is stored on servers within the EU."
     - title: Cookies
       paragraphs:
-        - "The service uses only the cookies it needs to work: one to keep you logged in and one to remember your language. No tracking or advertising cookies."
+        - "The service uses only the cookies it needs to work: one to keep you logged in, one to remember your language and one to remember that you have seen the note about cookies. No tracking or advertising cookies."
     - title: Your rights
       paragraphs:
         - "You can see and change your data under your profile at any time, and delete your account there. Your personal data is then erased. Events and posts you created may remain without your name if others depend on them."
