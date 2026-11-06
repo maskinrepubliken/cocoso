@@ -177,13 +177,14 @@ export const TEGEL = '#a84e2d'; // --cocoso-tegel-600, readable on white
  * The layout for emails about one event, left-aligned like a letter: what
  * this email is about, the event's title and the content first; then,
  * together at the end, the event's share image (its title, date, place and
- * the site's name, drawn by imports/api/share) and the button to the event,
- * both linking there. `status` is the news itself ("Du är anmäld!") and is
- * the headline, with the event's title under it; `kicker` is only a label
- * ("Nytt från arrangören") over the event's title, for emails whose news is
- * in the content. The site's name and any opt-out go in a single line at
- * the bottom; there is no header. `hero`: { src, alt } or null; `button`:
- * { href, label }; `footer` is already-safe HTML.
+ * the site's name, drawn by imports/api/share) and a link to the event
+ * under it, both leading there. `status` is the news itself ("Du är
+ * anmäld!") and is the headline, with the event's title under it;
+ * `kicker` is only a label ("Nytt från arrangören") over the event's
+ * title, for emails whose news is in the content. The site's name and
+ * any opt-out go in a single line at the bottom; there is no header.
+ * `hero`: { src, alt } or null; `button`: { href, label }; `footer` is
+ * already-safe HTML.
  */
 export function emailEventPage({
   lang,
@@ -211,11 +212,15 @@ export function emailEventPage({
       };font-family:${UI};font-size:15px;color:${MYLLA};">
         </a>`
     : '';
+  // A plain link under the picture, not a button: the picture is the call
   const action = button
-    ? emailButton({ href: button.href, label: button.label, c }).replace(
-        'margin:24px 0 0;',
-        `margin:${picture ? 12 : 24}px 0 0;`
-      )
+    ? `<p style="margin:${
+        picture ? 10 : 24
+      }px 0 0;font-family:${UI};font-size:16px;font-weight:700;line-height:1.4;"><a href="${escapeHtml(
+        button.href
+      )}" style="color:${c.strong};text-decoration:none;">${escapeHtml(
+        button.label
+      )} &rarr;</a></p>`
     : '';
   const siteLink = `<a href="${escapeHtml(
     site
