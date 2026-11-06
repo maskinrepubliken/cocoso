@@ -517,7 +517,9 @@ seasons:
 cookies:
   title: Before you continue
   text: "We only use the cookies the site needs to work: one to keep you signed in, one to remember your language and one to remember that you have read this. No cookies for tracking or advertising."
-  beta: 'The service is new and still being built, so things may change and something may not work yet. Tell us what you think: the "Give feedback" button is always at the bottom of the page.'
+  beta: The service is new and still being built, so things may change and something may not work yet. We would love to hear what you think!
+  feedbackHint: The <b>Give feedback</b> button is always at the very bottom of every page.
+  feedbackNow: Give feedback now
   ok: Got it
 
 footer:

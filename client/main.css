@@ -7603,6 +7603,57 @@ body {
   text-transform: uppercase;
 }
 
+/* The feedback callout: an icon, where the button always is, and a
+   button to give feedback straight away */
+.cookie-notice-feedback {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 4px 0 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
+}
+
+.cookie-notice-feedback svg {
+  color: #fff;
+}
+
+.cookie-notice-body .cookie-notice-feedback p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.cookie-notice-feedback strong {
+  white-space: nowrap;
+}
+
+.cookie-notice-feedback button {
+  grid-column: 2;
+  justify-self: start;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--cocoso-colors-theme-800);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cookie-notice-feedback button:hover {
+  background: #f1e6c6;
+}
+
+.cookie-notice-body .cookie-notice-cookies {
+  color: var(--cocoso-mylla-soft);
+  font-size: 13px;
+}
+
 .cookie-notice-links {
   display: flex;
   flex-wrap: wrap;

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import MessageCircleIcon from 'lucide-react/dist/esm/icons/message-circle';
 import { useAtomValue } from 'jotai';
 
 import { pageTitlesAtom } from '/imports/state';
@@ -62,21 +63,33 @@ export default function CookieNotice() {
         <h2 id="cookie-notice-title" className="cookie-notice-title">
           {tc('cookies.title')}
         </h2>
-        <p>{tc('cookies.text')}</p>
         <p>
           <strong className="cookie-notice-beta">{tc('home.hero.beta')}</strong>{' '}
           {tc('cookies.beta')}
         </p>
 
-        <nav className="cookie-notice-links">
-          <Link to={aboutTo}>{tc('footer.about')}</Link>
+        {/* Where feedback lives, said plainly, with a way in right here */}
+        <div className="cookie-notice-feedback">
+          <MessageCircleIcon aria-hidden="true" width={22} height={22} />
+          <p>
+            <Trans
+              i18nKey="common:cookies.feedbackHint"
+              components={{ b: <strong /> }}
+            />
+          </p>
           <FeedbackForm
             trigger={(openFeedback) => (
               <button type="button" onClick={openFeedback}>
-                {tc('modals.feedback.label')}
+                {tc('cookies.feedbackNow')}
               </button>
             )}
           />
+        </div>
+
+        <p className="cookie-notice-cookies">{tc('cookies.text')}</p>
+
+        <nav className="cookie-notice-links">
+          <Link to={aboutTo}>{tc('footer.about')}</Link>
           <Link to="/terms-&-privacy-policy">{tc('terms.title')}</Link>
         </nav>
       </div>
