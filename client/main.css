@@ -7414,8 +7414,68 @@ body {
   padding: 4px 0 12px;
 }
 
-/* Start page hero, logo version (the default; ?hem=text and ?hem=ikoner
-   show the title instead): the word logo in place of the title */
+/* Start page hero, text version (the default): a large title, the
+   part after the short name in the season's accent, and a row of seven
+   dots in the logo's colours beside the welcome line */
+.home-hero.is-text .home-hero-text {
+  flex-basis: 100%;
+  max-width: 820px;
+}
+
+.home-hero.is-text .home-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.home-hero-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.home-hero-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.home-hero-dots i:nth-child(1) { background: #e2603f; }
+.home-hero-dots i:nth-child(2) { background: #efa92e; }
+.home-hero-dots i:nth-child(3) { background: #5b9647; }
+.home-hero-dots i:nth-child(4) { background: #4a94c6; }
+.home-hero-dots i:nth-child(5) { background: #9561a8; }
+.home-hero-dots i:nth-child(6) { background: #e87c33; }
+.home-hero-dots i:nth-child(7) { background: #2f9c86; }
+
+.home-hero.is-text .home-hero-title {
+  /* "Tranemokalendern" on one line, as large as the column allows */
+  font-size: min(104px, 12.4cqi);
+  font-variation-settings: 'SOFT' 100, 'opsz' 144;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+  text-wrap: nowrap;
+}
+
+.home-hero-title-rest {
+  color: var(--cocoso-season-accent);
+}
+
+.home-hero.is-text .home-hero-tagline {
+  margin-top: 22px;
+  max-width: 44ch;
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+@media (max-width: 959px) {
+  .home-hero.is-text .home-hero-tagline {
+    font-size: 17px;
+  }
+}
+
+/* Start page hero, logo version (?hem=mats): the word logo in place of
+   the title */
 .home-hero.is-logo .home-hero-text {
   flex-basis: 100%;
   max-width: 760px;
