@@ -174,16 +174,16 @@ export function emailPage({
 export const TEGEL = '#a84e2d'; // --cocoso-tegel-600, readable on white
 
 /**
- * The layout for emails about one event: the event's share image on top
- * (its title, date, place and the site's name, drawn by imports/api/share),
- * linked to the event, then what this email is about, the event's title and
- * the content, left-aligned like a letter. `status` is the news itself
- * ("Du är anmäld!") and is the headline, with the event's title under it;
- * `kicker` is only a label ("Nytt från arrangören") over the event's title,
- * for emails whose news is in the content. The site's
- * name and any opt-out go in a single line at the bottom instead of a
- * header. `hero`: { src, href, alt } or null, when the site's name heads the
- * email as in emailPage. `footer` is already-safe HTML.
+ * The layout for emails about one event, left-aligned like a letter: what
+ * this email is about, the event's title and the content first; then,
+ * together at the end, the event's share image (its title, date, place and
+ * the site's name, drawn by imports/api/share) and the button to the event,
+ * both linking there. `status` is the news itself ("Du är anmäld!") and is
+ * the headline, with the event's title under it; `kicker` is only a label
+ * ("Nytt från arrangören") over the event's title, for emails whose news is
+ * in the content. The site's name and any opt-out go in a single line at
+ * the bottom; there is no header. `hero`: { src, alt } or null; `button`:
+ * { href, label }; `footer` is already-safe HTML.
  */
 export function emailEventPage({
   lang,
@@ -191,6 +191,7 @@ export function emailEventPage({
   theme,
   preheader,
   hero,
+  button,
   status,
   kicker,
   title,
@@ -199,19 +200,23 @@ export function emailEventPage({
 }) {
   const c = themeColors(theme);
   const site = publicUrl('/');
-  const top = hero?.src
-    ? `<a href="${escapeHtml(hero.href)}" style="text-decoration:none;">
+  const picture = hero?.src
+    ? `<a href="${escapeHtml(
+        button?.href || site
+      )}" style="display:block;margin:28px 0 0;text-decoration:none;">
           <img src="${escapeHtml(hero.src)}" width="480" alt="${escapeHtml(
         hero.alt || ''
       )}" style="display:block;border:0;width:100%;max-width:480px;height:auto;border-radius:12px;background:${
         c.tint
       };font-family:${UI};font-size:15px;color:${MYLLA};">
         </a>`
-    : `<a href="${escapeHtml(
-        site
-      )}" style="font-family:${UI};font-size:16px;font-weight:700;color:${MYLLA};text-decoration:none;">${escapeHtml(
-        siteName
-      )}</a>`;
+    : '';
+  const action = button
+    ? emailButton({ href: button.href, label: button.label, c }).replace(
+        'margin:24px 0 0;',
+        `margin:${picture ? 12 : 24}px 0 0;`
+      )
+    : '';
   const siteLink = `<a href="${escapeHtml(
     site
   )}" style="color:${MYLLA_SOFT};font-weight:700;text-decoration:none;">${escapeHtml(
@@ -244,12 +249,6 @@ export function emailEventPage({
   <tr><td align="center" style="padding:24px 12px 32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
 
-      <tr><td align="${hero?.src ? 'left' : 'center'}" style="padding:0 0 ${
-    hero?.src ? 24 : 28
-  }px;">
-        ${top}
-      </td></tr>
-
       <tr><td class="sheet" align="left" style="padding:0;text-align:left;">
         ${
           status
@@ -271,6 +270,8 @@ export function emailEventPage({
               )}</h1>`
         }
         ${content}
+        ${picture}
+        ${action}
         <p style="margin:28px 0 0;padding:16px 0 0;border-top:1px solid ${LINJE};font-family:${UI};font-size:13px;line-height:1.5;color:${MYLLA_SOFT};">${siteLink}${
     footer ? ` &middot; ${footer}` : ''
   }</p>

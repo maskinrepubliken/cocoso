@@ -6,7 +6,6 @@ import {
   MYLLA,
   MYLLA_SOFT,
   UI,
-  emailButton,
   emailEventPage,
   themeColors,
 } from '../_utils/services/mails/emailDesign';
@@ -145,7 +144,8 @@ const placeOf = (activity) =>
     .join(', ');
 
 // The share image (title, date and place drawn in, so it carries the
-// event's look); the event's own picture once it has no dates left
+// event's look); the event's own picture once it has no dates left. Shown
+// with the button at the end and linking to the event, as the button does.
 function heroOf(activity, dates) {
   const src = activityShareImageUrl(activity) || activity.images?.[0];
   if (!src) {
@@ -153,7 +153,6 @@ function heroOf(activity, dates) {
   }
   return {
     src,
-    href: publicUrl(`/activities/${activity._id}`),
     alt: [activity.title, dates[0], activity.resource || activity.place]
       .filter(Boolean)
       .join(' – '),
@@ -234,9 +233,8 @@ export function registrationEmail({
     hero: heroOf(activity, [when]),
     status: kind.kicker,
     title: activity.title,
-    content: [rows.html, emailButton({ href: url, label: s.button, c })].join(
-      '\n'
-    ),
+    content: rows.html,
+    button: { href: url, label: s.button },
     footer: link(url, s.change, c),
   });
 
@@ -262,7 +260,6 @@ export function unregistrationEmail({
 }) {
   const s = stringsFor(site, currentUser?.lang);
   const url = publicUrl(`/activities/${activity._id}`);
-  const c = themeColors(site?.theme);
   const when = formatOccurrence(occurrence, s.locale);
   const rows = registrationFacts(activity, values, occurrence, s, false);
 
@@ -278,8 +275,8 @@ export function unregistrationEmail({
       rows.html,
       `<div style="height:16px;line-height:16px;">&nbsp;</div>`,
       paragraph(s.cancel.again),
-      emailButton({ href: url, label: s.button, c }),
     ].join('\n'),
+    button: { href: url, label: s.button },
   });
 
   return {
@@ -369,7 +366,8 @@ export function activityUpdateEmail({
     // A new time or place is the news; a message's news is the message
     ...(kind === 'changed' ? { status: kicker } : { kicker }),
     title: activity.title,
-    content: [body, emailButton({ href: url, label: s.button, c })].join('\n'),
+    content: body,
+    button: { href: url, label: s.button },
     footer: stopUrl ? link(stopUrl, u.stop, c) : '',
   });
 
