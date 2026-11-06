@@ -20,7 +20,9 @@ const hasSeen = () =>
 // Shown on a visitor's first visit: which cookies the site uses (only
 // the necessary ones, so there is nothing to opt out of), that the
 // service is in beta, and links to the about page, feedback and the
-// terms. Rendered only after mount, so the server's HTML never differs.
+// terms. It stays on every page, the links included, until "Jag förstår"
+// is pressed. Rendered only after mount, so the server's HTML never
+// differs.
 export default function CookieNotice() {
   const [tc] = useTranslation('common');
   const pageTitles = useAtomValue(pageTitlesAtom);
@@ -65,7 +67,7 @@ export default function CookieNotice() {
         </p>
 
         <nav className="cookie-notice-links">
-          <Link to={aboutTo} onClick={close}>
+          <Link to={aboutTo}>
             {tc('footer.about')}
           </Link>
           <FeedbackForm
@@ -75,7 +77,7 @@ export default function CookieNotice() {
               </button>
             )}
           />
-          <Link to="/terms-&-privacy-policy" onClick={close}>
+          <Link to="/terms-&-privacy-policy">
             {tc('terms.title')}
           </Link>
         </nav>
