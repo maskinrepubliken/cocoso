@@ -7458,8 +7458,11 @@ body {
 .home-hero-beta-icon .threed-icon {
   width: 50px;
   height: 50px;
-  margin: -14px -6px 0 0;
+  /* 10px wider than the disc: 5px out on each side, so it stays centred */
+  margin: -14px -5px 0;
   rotate: -14deg;
+  /* the tilt swings the heavy bulb right; nudged back so it looks centred */
+  translate: -5% 0;
   filter: drop-shadow(0 5px 6px rgba(60, 30, 70, 0.3));
 }
 
@@ -7576,8 +7579,9 @@ body {
 .cookie-notice-icon .threed-icon {
   width: 56px;
   height: 56px;
-  margin: -16px -6px 0 0;
+  margin: -16px -4px 0;
   rotate: -14deg;
+  translate: -5% 0;
   filter: drop-shadow(0 5px 6px rgba(60, 30, 70, 0.3));
 }
 
@@ -7603,8 +7607,7 @@ body {
   text-transform: uppercase;
 }
 
-/* The feedback callout: an icon, where the button always is, and a
-   button to give feedback straight away */
+/* The feedback callout: an icon and where the button always is */
 .cookie-notice-feedback {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -7629,24 +7632,6 @@ body {
 
 .cookie-notice-feedback strong {
   white-space: nowrap;
-}
-
-.cookie-notice-feedback button {
-  grid-column: 2;
-  justify-self: start;
-  padding: 6px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: #fff;
-  color: var(--cocoso-colors-theme-800);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.cookie-notice-feedback button:hover {
-  background: #f1e6c6;
 }
 
 .cookie-notice-body .cookie-notice-cookies {
