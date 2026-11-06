@@ -2,14 +2,7 @@ import React, { useState } from 'react';
 import { Trans } from 'react-i18next';
 import MessageCircleIcon from 'lucide-react/dist/esm/icons/message-circle';
 
-import {
-  Button,
-  Flex,
-  Input,
-  Modal,
-  Select,
-  Textarea,
-} from '/imports/ui/core';
+import { Button, Flex, Input, Modal, Select, Textarea } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
 
 const feedbackOptions = [
@@ -41,21 +34,30 @@ const feedbackOptions = [
 
 export interface FeedbackFormProps {
   isDarkText?: boolean;
+  // Something else to open the form with than the default button
+  trigger?: (open: () => void) => React.ReactNode;
 }
 
-export default function FeedbackForm({ isDarkText = false }: FeedbackFormProps) {
+export default function FeedbackForm({
+  isDarkText = false,
+  trigger,
+}: FeedbackFormProps) {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   return (
     <>
-      <Button
-        leftIcon={<MessageCircleIcon width={16} height={16} />}
-        size="sm"
-        variant="outline"
-        onClick={() => setShowFeedbackModal(true)}
-      >
-        <Trans i18nKey="common:modals.feedback.label">Give Feedback</Trans>
-      </Button>
+      {trigger ? (
+        trigger(() => setShowFeedbackModal(true))
+      ) : (
+        <Button
+          leftIcon={<MessageCircleIcon width={16} height={16} />}
+          size="sm"
+          variant="outline"
+          onClick={() => setShowFeedbackModal(true)}
+        >
+          <Trans i18nKey="common:modals.feedback.label">Give Feedback</Trans>
+        </Button>
+      )}
 
       <Modal
         hideFooter
