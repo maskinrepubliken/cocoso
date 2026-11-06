@@ -174,7 +174,7 @@ modals:
   feedback:
     label: Ge feedback
     form:
-      intro: Tjänsten är ny och i beta. Berätta vad som fungerar, vad som krånglar och vad du saknar. Allt läses av oss som bygger den.
+      intro: Berätta vad som fungerar, vad som krånglar och vad du saknar. Allt du skriver läses av oss som bygger tjänsten.
       email:
         label: Din e-postadress
         hint: (om du vill ha svar)

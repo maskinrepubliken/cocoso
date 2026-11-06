@@ -176,7 +176,7 @@ modals:
   feedback:
     label: Give feedback
     form:
-      intro: The service is new and in beta. Tell us what works, what gets in the way and what you miss. Everything is read by the people who build it.
+      intro: Tell us what works, what gets in the way and what you miss. Everything you write is read by the people who build the service.
       email:
         label: Your email address
         hint: (if you would like an answer)
