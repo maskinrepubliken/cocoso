@@ -183,7 +183,7 @@ modals:
           bug: Bugg
           compliment: Komplimang
       details:
-        label: Message
+        label: Meddelande
 
   toPortalApp: Fortsätt till portalen
 
