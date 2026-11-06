@@ -176,8 +176,11 @@ export const TEGEL = '#a84e2d'; // --cocoso-tegel-600, readable on white
 /**
  * The layout for emails about one event: the event's share image on top
  * (its title, date, place and the site's name, drawn by imports/api/share),
- * linked to the event, then a small kicker saying what this email is about,
- * the event's title and the content, left-aligned like a letter. The site's
+ * linked to the event, then what this email is about, the event's title and
+ * the content, left-aligned like a letter. `status` is the news itself
+ * ("Du är anmäld!") and is the headline, with the event's title under it;
+ * `kicker` is only a label ("Nytt från arrangören") over the event's title,
+ * for emails whose news is in the content. The site's
  * name and any opt-out go in a single line at the bottom instead of a
  * header. `hero`: { src, href, alt } or null, when the site's name heads the
  * email as in emailPage. `footer` is already-safe HTML.
@@ -188,6 +191,7 @@ export function emailEventPage({
   theme,
   preheader,
   hero,
+  status,
   kicker,
   title,
   content,
@@ -228,6 +232,7 @@ export function emailEventPage({
   @media (max-width: 480px) {
     .sheet { padding:0 4px !important; }
     .title { font-size:24px !important; }
+    .status { font-size:28px !important; }
   }
 </style>
 </head>
@@ -247,15 +252,24 @@ export function emailEventPage({
 
       <tr><td class="sheet" align="left" style="padding:0;text-align:left;">
         ${
-          kicker
-            ? `<p style="margin:0 0 6px;font-family:${UI};font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${TEGEL};">${escapeHtml(
-                kicker
+          status
+            ? `<h1 class="status" style="margin:0 0 6px;font-family:${DISPLAY};font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-0.01em;color:${
+                c.strong
+              };">${escapeHtml(status)}</h1>
+        <p style="margin:0 0 18px;font-family:${DISPLAY};font-size:21px;font-weight:600;line-height:1.25;color:${MYLLA};">${escapeHtml(
+                title
               )}</p>`
-            : ''
-        }
+            : `${
+                kicker
+                  ? `<p style="margin:0 0 4px;font-family:${UI};font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${TEGEL};">${escapeHtml(
+                      kicker
+                    )}</p>`
+                  : ''
+              }
         <h1 class="title" style="margin:0 0 16px;font-family:${DISPLAY};font-size:28px;font-weight:600;line-height:1.15;letter-spacing:-0.01em;color:${MYLLA};">${escapeHtml(
-    title
-  )}</h1>
+                title
+              )}</h1>`
+        }
         ${content}
         <p style="margin:28px 0 0;padding:16px 0 0;border-top:1px solid ${LINJE};font-family:${UI};font-size:13px;line-height:1.5;color:${MYLLA_SOFT};">${siteLink}${
     footer ? ` &middot; ${footer}` : ''

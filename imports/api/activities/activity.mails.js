@@ -30,7 +30,7 @@ const STRINGS = {
     button: 'Visa evenemanget',
     register: {
       subject: (title) => `Du är anmäld: ${title}`,
-      kicker: 'Du är anmäld',
+      kicker: 'Du är anmäld!',
     },
     update: {
       subject: (title) => `Din anmälan är ändrad: ${title}`,
@@ -64,7 +64,7 @@ const STRINGS = {
     button: 'View the event',
     register: {
       subject: (title) => `You're signed up: ${title}`,
-      kicker: "You're signed up",
+      kicker: "You're signed up!",
     },
     update: {
       subject: (title) => `Your registration has changed: ${title}`,
@@ -232,7 +232,7 @@ export function registrationEmail({
     theme: site?.theme,
     preheader: when,
     hero: heroOf(activity, [when]),
-    kicker: kind.kicker,
+    status: kind.kicker,
     title: activity.title,
     content: [rows.html, emailButton({ href: url, label: s.button, c })].join(
       '\n'
@@ -272,7 +272,7 @@ export function unregistrationEmail({
     theme: site?.theme,
     preheader: `${s.cancel.kicker}: ${activity.title}`,
     hero: heroOf(activity, [when]),
-    kicker: s.cancel.kicker,
+    status: s.cancel.kicker,
     title: activity.title,
     content: [
       rows.html,
@@ -346,7 +346,7 @@ export function activityUpdateEmail({
     body = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0;">
           <tr><td style="padding:2px 0 2px 16px;border-left:3px solid ${
             c.button
-          };font-family:${UI};font-size:17px;line-height:1.55;color:${MYLLA};white-space:pre-line;">${escapeHtml(
+          };font-family:${UI};font-size:20px;line-height:1.5;color:${MYLLA};white-space:pre-line;">${escapeHtml(
       message || ''
     )}</td></tr>
         </table>
@@ -366,7 +366,8 @@ export function activityUpdateEmail({
     theme: site?.theme,
     preheader: message ? message.slice(0, 120) : dates[0] || '',
     hero: heroOf(activity, dates),
-    kicker,
+    // A new time or place is the news; a message's news is the message
+    ...(kind === 'changed' ? { status: kicker } : { kicker }),
     title: activity.title,
     content: [body, emailButton({ href: url, label: s.button, c })].join('\n'),
     footer: stopUrl ? link(stopUrl, u.stop, c) : '',
