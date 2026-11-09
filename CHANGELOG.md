@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.3.0](https://github.com/maskinrepubliken/cocoso/compare/v5.2.1...v5.3.0) (2026-11-09)
+
+
+### Features
+
+* **activities:** ask whether to tell those coming when saving an event ([7d0f02c](https://github.com/maskinrepubliken/cocoso/commit/7d0f02cf727257a95d497a003e0247dd09e55ffc))
+* **activities:** let organizers add a message to a new time or place ([679ad97](https://github.com/maskinrepubliken/cocoso/commit/679ad97948064430188ead4eca5537aac0585a3a))
+* **activities:** put the event first in its emails, with its share image ([ed04c8e](https://github.com/maskinrepubliken/cocoso/commit/ed04c8ee188968616136428a942e02e2cb607f8d))
+* **settings:** create the site from settings on first start ([7ecd974](https://github.com/maskinrepubliken/cocoso/commit/7ecd974b37ae4c58bf9ba03c32719f686f5e9c09))
+
+
+### Bug Fixes
+
+* **activities:** don't crash the server when saving an event fails ([cf6e5e6](https://github.com/maskinrepubliken/cocoso/commit/cf6e5e6880d920612cc63280605c9bd2fa8b46bb))
+* **i18n:** translate the setup wizard and fix the "siteDoc" step label ([05b0b6a](https://github.com/maskinrepubliken/cocoso/commit/05b0b6a5605c4910c3a7063695d218f3f7cfe234))
+* **notifications:** keep queued change notices across restarts ([87f59bc](https://github.com/maskinrepubliken/cocoso/commit/87f59bcaf1ad11c2115974eb77e21b367cf07a7e))
+* **settings:** give the setup wizard theme colours before a site exists ([ebb5c13](https://github.com/maskinrepubliken/cocoso/commit/ebb5c13f5a2c716aae79cbd37406b04958967905))
+* **settings:** start a fresh install with the Tranemo menu and theme ([c44c5e3](https://github.com/maskinrepubliken/cocoso/commit/c44c5e3cfcead03b001f33c134a36d7249e38b75))
+
 ### [5.2.1](https://github.com/maskinrepubliken/cocoso/compare/v5.2.0...v5.2.1) (2026-11-06)
 
 ## [5.2.0](https://github.com/maskinrepubliken/cocoso/compare/v5.1.0...v5.2.0) (2026-11-06)
