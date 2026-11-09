@@ -1,3 +1,4 @@
+/* global PACK */
 // Writes the data pack a new instance is bootstrapped with
 // (private/bootstrap/<pack>/, read by imports/startup/server/bootstrap.ts)
 // from a configured site: its places (locations), its venues (resources),
