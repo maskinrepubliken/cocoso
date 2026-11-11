@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.6.0](https://github.com/maskinrepubliken/cocoso/compare/v5.5.1...v5.6.0) (2026-11-11)
+
+
+### Features
+
+* **resources:** remove a place from its edit form ([ec522d3](https://github.com/maskinrepubliken/cocoso/commit/ec522d302b6b1b0d869aebf46f5914915d561911))
+
+
+### Bug Fixes
+
+* **activities:** give link previews a description when an event has none ([62075aa](https://github.com/maskinrepubliken/cocoso/commit/62075aaf2c025dd813dc02f552a7fd501442d7ed))
+* **resources:** call the place form "Ny plats" and "Redigera platsen" ([66717f1](https://github.com/maskinrepubliken/cocoso/commit/66717f151a25d6f5f0cc9dc1c98647e885e4642e))
+
 ### [5.5.1](https://github.com/maskinrepubliken/cocoso/compare/v5.5.0...v5.5.1) (2026-11-11)
 
 
