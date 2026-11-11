@@ -6,6 +6,15 @@ export type Season = 'var' | 'sommar' | 'host' | 'vinter';
 
 export const SEASONS: Season[] = ['var', 'sommar', 'host', 'vinter'];
 
+// Each season's floor (--cocoso-season-golv), for what cannot read the CSS
+// variable: the browser's theme-color and the app manifest.
+export const SEASON_FLOOR: Record<Season, string> = {
+  var: '#e9f3dc',
+  sommar: '#edf3df',
+  host: '#eeeedb',
+  vinter: '#eceee7',
+};
+
 export function getSeason(date: Date = new Date()): Season {
   const month = date.getMonth() + 1;
   if (month >= 3 && month <= 5) return 'var';

@@ -2,6 +2,7 @@ import { WebApp } from 'meteor/webapp';
 import type { IncomingMessage, ServerResponse } from 'http';
 
 import { getSite } from '/imports/api/site/site';
+import { SEASON_FLOOR, resolveSeason } from '/imports/api/_utils/season';
 
 /**
  * The web app manifest, so the site can be added to a phone's home screen
@@ -13,6 +14,9 @@ WebApp.connectHandlers.use(
   async (_req: IncomingMessage, res: ServerResponse) => {
     const site = (await getSite()) as any;
     const name = site?.settings?.name || 'Cocoso';
+    // The splash screen and bar in the season's floor, as the page has it
+    const floor =
+      SEASON_FLOOR[resolveSeason(null, undefined, site?.settings?.season)];
     res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=3600');
     res.end(
@@ -23,8 +27,8 @@ WebApp.connectHandlers.use(
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#eeeedb',
+        background_color: floor,
+        theme_color: floor,
         icons: [
           {
             src: '/icons/android-chrome-192x192.png',

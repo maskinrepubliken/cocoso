@@ -872,8 +872,25 @@ a,
   --cocoso-colors-blue-900: #1e3a8a;
 }
 
+/* The season floor with its woven grid under everything, so pulling the
+   page past its top or bottom on a phone (and the area around a notch)
+   shows the page's own ground instead of a flat, paler colour. */
+html {
+  background-color: var(--cocoso-season-golv, var(--cocoso-colors-theme-50));
+  background-image: repeating-linear-gradient(
+      0deg,
+      rgba(30, 79, 27, 0.07) 0 1px,
+      transparent 1px 7px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(30, 79, 27, 0.07) 0 1px,
+      transparent 1px 7px
+    );
+}
+
 body {
-  background-color: var(--cocoso-colors-theme-50);
+  background-color: var(--cocoso-season-golv, var(--cocoso-colors-theme-50));
 }
 
 .cocoso-input {

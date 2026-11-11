@@ -1,8 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { useAtomValue } from 'jotai';
 
 import { allLangs } from '/imports/startup/i18n';
+import { seasonAtom } from '/imports/state';
+import { SEASON_FLOOR } from '/imports/api/_utils/season';
 
 import ShareMeta from './ShareMeta';
 
@@ -35,6 +38,7 @@ export default function HelmetHybrid({
   pathname,
   description,
 }: HelmetHybridProps) {
+  const season = useAtomValue(seasonAtom);
   if (!siteDoc) {
     return null;
   }
@@ -76,9 +80,21 @@ export default function HelmetHybrid({
         {publicSettings?.facebookAppId && (
           <meta property="fb:app_id" content={publicSettings.facebookAppId} />
         )}
-        <meta name="theme-color" content="#eeeedb" />
+        {/* The browser's bar and the strip around a notch take the
+            season's floor, as the page does */}
+        <meta name="theme-color" content={SEASON_FLOOR[season]} />
         {/* Installable as an app: iPhones only allow push from one */}
         <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        {/* The name under the icon on the home screen, short like the manifest's */}
+        {siteName && (
+          <meta
+            name="apple-mobile-web-app-title"
+            content={siteDoc.settings?.shortName || siteName}
+          />
+        )}
         <link
           rel="icon"
           type="image/svg+xml"
