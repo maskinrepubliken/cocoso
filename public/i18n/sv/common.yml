@@ -523,7 +523,7 @@ cookies:
 
 installApp:
   pill:
-    install: Lägg till på hemskärmen
+    install: Som app
     push: Slå på notiser
   title: Ha appen i telefonen
   intro: Lägg sidan på hemskärmen så öppnas den som en app, direkt från ikonen. Sedan kan du få en notis när ett evenemang du följer ändras.

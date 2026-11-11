@@ -526,7 +526,7 @@ cookies:
 
 installApp:
   pill:
-    install: Add to home screen
+    install: As an app
     push: Turn on notifications
   title: Get the app on your phone
   intro: Put the site on your home screen and it opens like an app, straight from its icon. Then you can get a notification when an event you follow changes.
