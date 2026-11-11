@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.5.0](https://github.com/maskinrepubliken/cocoso/compare/v5.4.0...v5.5.0) (2026-11-11)
+
+
+### Features
+
+* **activities:** keep a draft of the event form in the browser ([5f48315](https://github.com/maskinrepubliken/cocoso/commit/5f48315f8a33258ad870b461dce1935fc1f8c4d3))
+* **ui:** popups that stay until closed, restyled to match the sheets ([b07875c](https://github.com/maskinrepubliken/cocoso/commit/b07875c6f6a18ada71470914d3ff77df6b381c9c))
+
+
+### Bug Fixes
+
+* **activities:** never lock the edit sheet after a failed save ([1ce93d5](https://github.com/maskinrepubliken/cocoso/commit/1ce93d5df1f296fc6eda7fc96f42f04b5c2c744b))
+
 ## [5.4.0](https://github.com/maskinrepubliken/cocoso/compare/v5.3.0...v5.4.0) (2026-11-11)
 
 
