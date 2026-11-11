@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.8.0](https://github.com/maskinrepubliken/cocoso/compare/v5.7.0...v5.8.0) (2026-11-11)
+
+
+### Features
+
+* **ui:** give every notice a tinted, see-through glass look ([15d823f](https://github.com/maskinrepubliken/cocoso/commit/15d823fd970ac7d894eefd036f57b52e74ccd4ae))
+
+
+### Bug Fixes
+
+* **ui:** translate the page error and redo the event-not-found note ([784d314](https://github.com/maskinrepubliken/cocoso/commit/784d3143a81297ce15ade955351d45e05637b7b1))
+
 ## [5.7.0](https://github.com/maskinrepubliken/cocoso/compare/v5.6.0...v5.7.0) (2026-11-11)
 
 
