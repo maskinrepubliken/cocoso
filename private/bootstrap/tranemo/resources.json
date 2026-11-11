@@ -1,21 +1,7 @@
 [
   {
-    "label": "Ambjörnarpshallen",
-    "description": "Gymnastiksal i Ambjörnarp som drivs av bygden och kan hyras för träning och sammankomster.<p><em>Exempelbild, inte från platsen. Foto: Globetrotter19 (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Ambjörnarp"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Sports_Hall%2C_interior%2C_2020_G%C3%B6d.jpg/1280px-Sports_Hall%2C_interior%2C_2020_G%C3%B6d.jpg"
-    ]
-  },
-  {
     "label": "Badplatsen Dalstorpasjön",
-    "description": "Badplats i Dalstorp med omklädningsrum, brygga, badflotte, gräsytor och beachvolleyplan.<p><em>Bilden visar Dalstorpasjön från bron i Dalstorp. Foto: Ogrendel02 (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
+    "description": "Badplats i Dalstorp med omklädningsrum, brygga, badflotte, gräsytor och beachvolleyplan.",
     "isBookable": true,
     "address": {
       "city": "Dalstorp"
@@ -29,78 +15,8 @@
     "location": "dalstorp"
   },
   {
-    "label": "Badplatsen Grytteredssjön, Hulared",
-    "description": "Badplats i Hulared med sandstrand, grönytor och gungor.<p><em>Exempelbild, inte från platsen. Foto: Sjunnesson (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Hulared"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Estabosj%C3%B6ns_badplats.jpg/1280px-Estabosj%C3%B6ns_badplats.jpg"
-    ]
-  },
-  {
-    "label": "Badplatsen Kvarnsjön, Sjötofta",
-    "description": "Enklare badplats i Kvarnsjön vid Sjötofta.<p><em>Exempelbild, inte från platsen. Foto: David Castor (dcastor) (CC0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Sjötofta"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/K%C3%A5sj%C3%B6n.jpg/1280px-K%C3%A5sj%C3%B6n.jpg"
-    ]
-  },
-  {
-    "label": "Badplatsen Lagmanshagasjön, Ljungsarp",
-    "description": "Badplats med lång, långgrund sandstrand. Omklädningsrum, badflotte, toalett samt bord och bänkar.<p><em>Exempelbild, inte från platsen. Foto: R. Henrik Nilsson (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Ljungsarp"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Fageredssjon_swimming_area_Vastergotland_Sweden_6Sep2022.jpg/1280px-Fageredssjon_swimming_area_Vastergotland_Sweden_6Sep2022.jpg"
-    ]
-  },
-  {
-    "label": "Badplatsen Marjebosjön, Mossebo",
-    "description": "Enklare badplats i Marjebosjön vid Mossebo.<p><em>Exempelbild, inte från platsen. Foto: Matsskoglund (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Mossebo"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/L%C3%A5ngsj%C3%B6badet_oktober_2017.jpg/1280px-L%C3%A5ngsj%C3%B6badet_oktober_2017.jpg"
-    ]
-  },
-  {
-    "label": "Badplatsen Nygårdssjön, Nittorp",
-    "description": "Badplats i Nittorp med omklädningsrum, toalett, brygga, gräsmatta, grillplats samt bord och bänkar.<p><em>Exempelbild, inte från platsen. Foto: Sinikka Halme (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Nittorp"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Beach_Evedal_Helgasj%C3%B6n_V%C3%A4xj%C3%B6_1.jpg/1280px-Beach_Evedal_Helgasj%C3%B6n_V%C3%A4xj%C3%B6_1.jpg"
-    ]
-  },
-  {
-    "label": "Badplatsen Stomsjön, Ljungsarp",
-    "description": "Enklare badplats i Stomsjön vid Ljungsarp. Foto: Ulkl (public domain, Wikimedia Commons).",
+    "label": "Badplatsen Stomsjön",
+    "description": "Enklare badplats i Stomsjön vid Ljungsarp.",
     "isBookable": true,
     "address": {
       "city": "Ljungsarp"
@@ -113,8 +29,8 @@
     ]
   },
   {
-    "label": "Badplatsen Sämsjön, Månstad",
-    "description": "Badplats i Månstad med omklädningsrum, brygga, grönytor och bänkar.<p><em>Bilden visar Sämsjön vid Vegby. Foto: Pjotr'k (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
+    "label": "Badplatsen Sämsjön",
+    "description": "Badplats i Månstad med omklädningsrum, brygga, grönytor och bänkar.",
     "isBookable": true,
     "address": {
       "city": "Månstad"
@@ -127,37 +43,8 @@
     ]
   },
   {
-    "label": "Badplatsen Sävsjön, Länghem",
-    "description": "Enklare badplats i Sävsjön vid Länghem.<p><em>Exempelbild, inte från platsen. Foto: Kayralampi (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Länghem"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/K%C3%A4yr%C3%A4lammen_uimaranta.jpg/1280px-K%C3%A4yr%C3%A4lammen_uimaranta.jpg"
-    ],
-    "location": "langhem"
-  },
-  {
-    "label": "Badplatsen Torpasjön, Hofsnäs",
-    "description": "Badplats vid Hofsnäs med brygga, mycket stor gräsyta och omklädningsmöjligheter. Båtuthyrning, grillplatser och café i närheten.<p><em>Exempelbild, inte från platsen. Foto: L.elizao63 (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Hofsnäs"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Torpasj%C3%B6n.jpg/1280px-Torpasj%C3%B6n.jpg"
-    ]
-  },
-  {
     "label": "Badplatsen Tranemosjön",
-    "description": "Kommunal badplats i Tranemo med brygga, badflotte, gräsytor, toalett, båtbrygga, bord och bänkar samt beachvolleyplan. Foto: AleWi (CC BY-SA 4.0, Wikimedia Commons).",
+    "description": "Kommunal badplats i Tranemo med brygga, badflotte, gräsytor, toalett, båtbrygga, bord och bänkar samt beachvolleyplan.",
     "isBookable": true,
     "address": {
       "city": "Tranemo"
@@ -171,36 +58,7 @@
     "location": "tranemo"
   },
   {
-    "label": "Badplatsen Visen, Ambjörnarp",
-    "description": "Badplats i sjön Visen med brygga, hopptorn, grönytor, bord och bänkar.<p><em>Exempelbild, inte från platsen. Foto: So9q (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Ambjörnarp"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Badplats_Lemundtj%C3%A4rn_%2857181%29.jpg/1280px-Badplats_Lemundtj%C3%A4rn_%2857181%29.jpg"
-    ]
-  },
-  {
-    "label": "Badplatsen Ösjön, Limmared",
-    "description": "Badplats i Limmared med omklädningsrum, brygga, flotte, grönytor, grillplats samt bord och bänkar.<p><em>Exempelbild, inte från platsen. Foto: Ermell (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Limmared"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Stengardshultsj%C3%B6n_Badplats-20140723-RM-080233.jpg/1280px-Stengardshultsj%C3%B6n_Badplats-20140723-RM-080233.jpg"
-    ],
-    "location": "limmared"
-  },
-  {
-    "label": "Centralen, Tranemo",
+    "label": "Centralen",
     "description": "<p>Kulturhus vid Tranemosjön, öppnat 2020 i samarbete mellan Tranemo kommun, näringslivet och föreningen Centralen. Rymmer bibliotek, bistro, hotell och flexibla kreativa ytor för möten, utställningar och evenemang.</p>",
     "isBookable": true,
     "address": {
@@ -221,62 +79,8 @@
     "location": "tranemo"
   },
   {
-    "label": "Dalshov, Dalstorp",
-    "description": "Idrottsplats i Dalstorp med konstgräsplan. Intill finns Dalstorps IF:s padelhall.<p><em>Exempelbild, inte från platsen. Foto: Andreaze (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Dalstorp",
-      "coordinates": {
-        "lat": 57.5999159,
-        "lng": 13.5090563
-      },
-      "postalCode": "514 60",
-      "street": "Nittorpsvägen"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/L%C3%A5sb%C3%B6le_ordenshus.jpg/1280px-L%C3%A5sb%C3%B6le_ordenshus.jpg"
-    ],
-    "location": "dalstorp"
-  },
-  {
-    "label": "Dalstorpskolans idrottshall",
-    "description": "Idrottshall på 18 x 36 m i Dalstorp för basket, innebandy, fotboll, volleyboll, badminton och tennis. Bokas via kommunens e-tjänst för hallbokning.<p><em>Exempelbild, inte från platsen. Foto: Holger.Ellgaard (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Dalstorp"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "booking": {
-      "info": "Bokas via kommunens e-tjänst för hallbokning.",
-      "url": "https://www.tranemo.se/"
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Torsviks_idrottshall%2C_2022c.jpg/1280px-Torsviks_idrottshall%2C_2022c.jpg"
-    ],
-    "location": "dalstorp"
-  },
-  {
-    "label": "Ekelid, Ambjörnarp",
-    "description": "Fotbollsplan i Ambjörnarp med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: Hans Lindqvist (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Ambjörnarp"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Tavn%C3%A4s_f%C3%B6reningshus_01.jpg/1280px-Tavn%C3%A4s_f%C3%B6reningshus_01.jpg"
-    ]
-  },
-  {
-    "label": "Forumtorget, Tranemo",
-    "description": "Torget i centrala Tranemo som används för utomhusevenemang, marknader och framträdanden.<p><em>Bilden visar torget vid Tranemo kommunhus. Foto: AleWi (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
+    "label": "Forumtorget",
+    "description": "Torget i centrala Tranemo som används för utomhusevenemang, marknader och framträdanden.",
     "isBookable": true,
     "address": {
       "city": "Tranemo"
@@ -291,7 +95,7 @@
   },
   {
     "label": "Glasets Hus",
-    "description": "<p>Kulturhus vid Limmareds glasbruk, Sveriges äldsta glasbruk i drift (grundat 1740). Här finns glashytta, glasmuseum, utställningshall, möteslokaler, aktivitetspark, padelbanor och restaurang. Drivs av föreningen Kultur 1740 och ägs av Tranemo kommun. Foto: Hansnerstu (CC BY-SA 4.0, Wikimedia Commons).</p>",
+    "description": "<p>Kulturhus vid Limmareds glasbruk, Sveriges äldsta glasbruk i drift (grundat 1740). Här finns glashytta, glasmuseum, utställningshall, möteslokaler, aktivitetspark, padelbanor och restaurang. Drivs av föreningen Kultur 1740 och ägs av Tranemo kommun.</p>",
     "isBookable": true,
     "address": {
       "street": "Östra järnvägsgatan",
@@ -312,146 +116,8 @@
     "location": "limmared"
   },
   {
-    "label": "Glasvallen, Limmared",
-    "description": "Fotbollsplan i Limmared med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: AleWi (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Limmared",
-      "coordinates": {
-        "lat": 57.5359264,
-        "lng": 13.3673849
-      },
-      "postalCode": "514 41",
-      "street": "Sparregatan"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "booking": {
-      "info": "Planen bokas genom Limmareds fotbollsklubb, som sköter Glasvallen.",
-      "contactUserId": "dsE22cPaduRbcYZkj"
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Bollebygd%2C_Bj%C3%B6rnskogsvallen%2C_20230521%2C_12.jpg/1280px-Bollebygd%2C_Bj%C3%B6rnskogsvallen%2C_20230521%2C_12.jpg"
-    ],
-    "location": "limmared"
-  },
-  {
-    "label": "Grimsborg, Grimsås",
-    "description": "Fotbollsplan i Grimsås med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: Nisann (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Grimsås",
-      "coordinates": {
-        "lat": 57.4872448,
-        "lng": 13.5487452
-      },
-      "postalCode": "335 71",
-      "street": "Norra vägen"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Rodasel-bygdegarden-juli2013.jpg/1280px-Rodasel-bygdegarden-juli2013.jpg"
-    ]
-  },
-  {
-    "label": "Grimsås bassäng",
-    "description": "Uppvärmd utomhusbassäng på 25 x 12,5 m i Grimsås, öppen under sommarsäsongen.<p><em>Exempelbild, inte från platsen. Foto: Oliver Lazarevski (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Grimsås"
-    },
-    "kinds": [
-      "bad"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Trelleborgs_badhus%2C_Gamla_bass%C3%A4ngen.jpg/1280px-Trelleborgs_badhus%2C_Gamla_bass%C3%A4ngen.jpg"
-    ]
-  },
-  {
-    "label": "Grimsås fritidsstuga",
-    "description": "Fritidsanläggning i Grimsås med motionsspår, tennisbana och discgolfbana.<p><em>Exempelbild, inte från platsen. Foto: Erik Andreasson (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Grimsås"
-    },
-    "kinds": [
-      "idrottsplats",
-      "friluft"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Stora_Holmevattnet_Raststuga_01.jpg/1280px-Stora_Holmevattnet_Raststuga_01.jpg"
-    ]
-  },
-  {
-    "label": "Grimsåsskolans idrottshall",
-    "description": "Idrottshall på 18 x 36 m i Grimsås för basket, innebandy, fotboll, volleyboll, badminton och tennis. Bokas via kommunens e-tjänst för hallbokning.<p><em>Exempelbild, inte från platsen. Foto: Holger.Ellgaard (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Grimsås"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "booking": {
-      "info": "Bokas via kommunens e-tjänst för hallbokning.",
-      "url": "https://www.tranemo.se/"
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Konradsbergs_idrottshall%2C_2018d.jpg/1280px-Konradsbergs_idrottshall%2C_2018d.jpg"
-    ]
-  },
-  {
-    "label": "Gymnastiksalen, Ljungsarp",
-    "description": "Gymnastiksal i Ljungsarp som drivs av bygden och kan hyras för träning och sammankomster.<p><em>Exempelbild, inte från platsen. Foto: Andy_king50 (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Ljungsarp"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Turnhalle_F%C3%BCnfzehnerstra%C3%9Fe_18_2014_innen_1.jpg/1280px-Turnhalle_F%C3%BCnfzehnerstra%C3%9Fe_18_2014_innen_1.jpg"
-    ]
-  },
-  {
-    "label": "Hagatorpets friluftsgård, Tranemo",
-    "description": "Friluftsområde med motionsspår, utegym, elljusspår och skidspår på vintern. Friluftsgård med servering som drivs av Stiftelsen Hagatorpets Friluftsgård. Adress: Hagatorpet, 514 91 Tranemo. Telefon 0325-709 50.<p><em>Exempelbild, inte från platsen. Foto: Udo Schröter (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "street": "Hagatorpet",
-      "postalCode": "514 91",
-      "city": "Tranemo",
-      "coordinates": {
-        "lat": 57.4718994,
-        "lng": 13.3411136
-      }
-    },
-    "kinds": [
-      "idrottsplats",
-      "friluft"
-    ],
-    "contact": {
-      "phone": "0325-709 50"
-    },
-    "booking": {
-      "info": "Friluftsgården kan hyras för möten, fester och läger.",
-      "contact": {
-        "name": "Stiftelsen Hagatorpets Friluftsgård",
-        "phone": "0325-709 50"
-      }
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Domaruddens_friluftsg%C3%A5rd.jpg/1280px-Domaruddens_friluftsg%C3%A5rd.jpg"
-    ],
-    "location": "tranemo"
-  },
-  {
     "label": "Hofsnäs herrgård",
-    "description": "<p>Herrgård på en halvö mellan Torpasjön och Yttre Åsunden i Torpanäsets naturreservat. Café och bistro, gårdsbutiken Lilla Saluhallen i det gamla magasinet samt naturstigar på 1 till 4,8 km genom gamla ekskogar och betesmarker. Foto: Pimvantend (CC BY-SA 4.0, Wikimedia Commons).</p>",
+    "description": "<p>Herrgård på en halvö mellan Torpasjön och Yttre Åsunden i Torpanäsets naturreservat. Café och bistro, gårdsbutiken Lilla Saluhallen i det gamla magasinet samt naturstigar på 1 till 4,8 km genom gamla ekskogar och betesmarker.</p>",
     "isBookable": true,
     "address": {
       "street": "Hovsnäs Gamlegården 1",
@@ -472,188 +138,8 @@
     "location": "langhem"
   },
   {
-    "label": "Idrottsparken, Månstad",
-    "description": "Fotbollsplan i Månstad med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: Green Yoshi (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Månstad"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Klostervallen.jpg/1280px-Klostervallen.jpg"
-    ]
-  },
-  {
-    "label": "Ingsvallen, Länghem",
-    "description": "Fotbollsplan i Länghem med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: Bene Riobó (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Länghem"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Campo_do_Dalhem_IF_01.jpg/1280px-Campo_do_Dalhem_IF_01.jpg"
-    ],
-    "location": "langhem"
-  },
-  {
-    "label": "Kroksjöns fiskecamp, Tranemo",
-    "description": "Fiskeanläggning vid Kroksjön med stuguthyrning och café.<p><em>Exempelbild, inte från platsen. Foto: Erik Andreasson (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Tranemo",
-      "coordinates": {
-        "lat": 57.4717595,
-        "lng": 13.3744924
-      },
-      "postalCode": "514 33"
-    },
-    "kinds": [
-      "friluft"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Livarebosj%C3%B6n_Raststuga_-_setting.jpg/1280px-Livarebosj%C3%B6n_Raststuga_-_setting.jpg"
-    ],
-    "location": "tranemo"
-  },
-  {
-    "label": "Limmaredsskolans idrottshall",
-    "description": "Idrottshall på 18 x 36 m i Limmared för basket, innebandy, fotboll, volleyboll, badminton och tennis. Bokas via kommunens e-tjänst för hallbokning.<p><em>Exempelbild, inte från platsen. Foto: Kilianarning (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Limmared"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "booking": {
-      "info": "Bokas via kommunens e-tjänst för hallbokning.",
-      "url": "https://www.tranemo.se/"
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/Kleine_Sporthalle_%28Innenansicht%29_der_Freien_Waldorfschule_Hannover-Maschsee.jpg/1280px-Kleine_Sporthalle_%28Innenansicht%29_der_Freien_Waldorfschule_Hannover-Maschsee.jpg"
-    ],
-    "location": "limmared"
-  },
-  {
-    "label": "Lindstorp, Ölsremma",
-    "description": "Gymnastiksal i Ölsremma intill skidspåren.<p><em>Exempelbild, inte från platsen. Foto: Udo Schröter (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Ölsremma"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Bygdegard_Granhammar_Kungsor.JPG/1280px-Bygdegard_Granhammar_Kungsor.JPG"
-    ]
-  },
-  {
-    "label": "Länghemsskolans idrottshall",
-    "description": "Idrottshall på 18 x 36 m i Länghem för basket, innebandy, fotboll, volleyboll, badminton och tennis. Bokas via kommunens e-tjänst för hallbokning.<p><em>Exempelbild, inte från platsen. Foto: Kilianarning (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Länghem"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "booking": {
-      "info": "Bokas via kommunens e-tjänst för hallbokning.",
-      "url": "https://www.tranemo.se/"
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/Neue_Sporthalle_%28Innenansicht%29_der_Freien_Waldorfschule_Hannover-Maschsee.jpg/1280px-Neue_Sporthalle_%28Innenansicht%29_der_Freien_Waldorfschule_Hannover-Maschsee.jpg"
-    ],
-    "location": "langhem"
-  },
-  {
-    "label": "Nittorps ishall",
-    "description": "Kommunens enda ishall, hemmaarena för Nittorps IK. Allmänhetens åkning och ishockey. Adress: Grimsåsvägen 13, 514 54 Nittorp. Telefon 0325-730 78.<p><em>Exempelbild, inte från platsen. Foto: Kotivalo (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "street": "Grimsåsvägen 13",
-      "postalCode": "514 54",
-      "city": "Nittorp",
-      "coordinates": {
-        "lat": 57.5459124,
-        "lng": 13.4917253
-      }
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "contact": {
-      "phone": "0325-730 78"
-    },
-    "booking": {
-      "info": "Istider för föreningar, skolor och privatpersoner bokas direkt med ishallen.",
-      "contact": {
-        "name": "Nittorps ishall",
-        "phone": "0325-730 78"
-      }
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Kuparivuori_indoor_ice_rink.jpg/1280px-Kuparivuori_indoor_ice_rink.jpg"
-    ]
-  },
-  {
-    "label": "Rosenlunds curlinghall, Limmared",
-    "description": "Curlinghall som drivs av Limmareds curlingklubb. Adress: Storgatan, 514 42 Limmared.<p><em>Exempelbild, inte från platsen. Foto: Katafrakt (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "street": "Storgatan",
-      "postalCode": "514 42",
-      "city": "Limmared",
-      "coordinates": {
-        "lat": 57.5297956,
-        "lng": 13.3535739
-      }
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Curling_%C5%81%C3%B3d%C5%BA_ice_rink_-_inside.jpg/1280px-Curling_%C5%81%C3%B3d%C5%BA_ice_rink_-_inside.jpg"
-    ],
-    "location": "limmared"
-  },
-  {
-    "label": "Sjötoftahallen",
-    "description": "Gymnastiksal i Sjötofta som drivs av bygden och kan hyras för träning och sammankomster.<p><em>Exempelbild, inte från platsen. Foto: Windharp (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Sjötofta"
-    },
-    "kinds": [
-      "idrottshall"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Hans-Kern-Sporthalle_%28Reutlingen%29_Innen_1.jpg/1280px-Hans-Kern-Sporthalle_%28Reutlingen%29_Innen_1.jpg"
-    ]
-  },
-  {
-    "label": "Sjövalla, Sjötofta",
-    "description": "Fotbollsplan i Sjötofta med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: Mikael Ejdemyr (CC0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Sjötofta"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/G%C3%B6tavallen.JPG/1280px-G%C3%B6tavallen.JPG"
-    ]
-  },
-  {
-    "label": "Torpa stenhus, Länghem",
-    "description": "Ett av Sveriges bäst bevarade 1500-talsslott vid Yttre Åsunden. Guidade visningar, slottscafé, restaurang och boende på slottsområdet. Skyltat från riksväg 27 vid Länghem. Foto: Artifex (CC BY-SA 3.0, Wikimedia Commons).",
+    "label": "Torpa stenhus",
+    "description": "Ett av Sveriges bäst bevarade 1500-talsslott vid Yttre Åsunden. Guidade visningar, slottscafé, restaurang och boende på slottsområdet. Skyltat från riksväg 27 vid Länghem.",
     "isBookable": true,
     "address": {
       "city": "Länghem"
@@ -668,50 +154,8 @@
     "location": "langhem"
   },
   {
-    "label": "Trainspot skatepark, Limmared",
-    "description": "Skatepark för skateboard, kickbike och BMX. Adress: Östra Järnvägsgatan, 514 41 Limmared.<p><em>Exempelbild, inte från platsen. Foto: W.carter (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "street": "Östra Järnvägsgatan",
-      "postalCode": "514 41",
-      "city": "Limmared",
-      "coordinates": {
-        "lat": 57.5354609,
-        "lng": 13.3544403
-      }
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Part_of_ramp_at_Brastad_SK8%2C_the_new_skatepark_in_Lysekil_Municipality.jpg/1280px-Part_of_ramp_at_Brastad_SK8%2C_the_new_skatepark_in_Lysekil_Municipality.jpg"
-    ],
-    "location": "limmared"
-  },
-  {
-    "label": "Tranehov, Tranemo",
-    "description": "Tranemos idrottsplats med konstgräsplan, naturgräs- och grusplaner samt Tranemo IF:s padelhall (Prefabhallen).<p><em>Exempelbild, inte från platsen. Foto: Holger.Ellgaard (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Tranemo",
-      "coordinates": {
-        "lat": 57.4823052,
-        "lng": 13.331199
-      },
-      "postalCode": "514 34",
-      "street": "Diskusgatan"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Ulriksberg_Bygdeg%C3%A5rden_2014.jpg/1280px-Ulriksberg_Bygdeg%C3%A5rden_2014.jpg"
-    ],
-    "location": "tranemo"
-  },
-  {
     "label": "Tranemo bibliotek",
-    "description": "Kommunens huvudbibliotek i byggnaden Centralen. Läsesal med tidningar, studieplatser, bokutlåning och programverksamhet. I huset finns även caféet Sångbergs. Adress: Willéns väg 5, 514 33 Tranemo. Telefon 0325-57 64 00. Foto: AleWi (CC BY-SA 4.0, Wikimedia Commons).",
+    "description": "Kommunens huvudbibliotek i byggnaden Centralen. Läsesal med tidningar, studieplatser, bokutlåning och programverksamhet. I huset finns även caféet Sångbergs. Adress: Willéns väg 5, 514 33 Tranemo. Telefon 0325-57 64 00.",
     "isBookable": true,
     "address": {
       "street": "Willéns väg 5",
@@ -742,59 +186,8 @@
     "location": "tranemo"
   },
   {
-    "label": "Tranemo hembygdspark",
-    "description": "Hembygdspark på Tranemosjöns östra strand med bland annat Karinabostugan och ett samhällsmuseum under utveckling. Plats för nationaldagsfirande, midsommar och andra traditionella evenemang. Adress: Tennisvägen 6, 514 31 Tranemo.<p><em>Exempelbild, inte från platsen. Foto: Jenforne (CC BY-SA 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "street": "Tennisvägen 6",
-      "postalCode": "514 31",
-      "city": "Tranemo",
-      "coordinates": {
-        "lat": 57.4844712,
-        "lng": 13.3286806
-      }
-    },
-    "kinds": [
-      "kultur",
-      "sevardhet"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/%C3%85rdala_hembygdsg%C3%A5rd_2006.jpg/1280px-%C3%85rdala_hembygdsg%C3%A5rd_2006.jpg"
-    ],
-    "location": "tranemo"
-  },
-  {
-    "label": "Tranemo sim- och idrottshall",
-    "description": "Kommunens simhall med två bassänger och flera typer av bastu, samt två idrottshallar (22 x 42 m och 23 x 43 m) och en spegelsal för dans och yoga. Bokas via kommunens e-tjänst för hallbokning. Adress: Limmaredsvägen 2, 514 32 Tranemo. Telefon 0325-57 64 50.<p><em>Exempelbild, inte från platsen. Foto: Mattias Ek (CC BY 4.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "street": "Limmaredsvägen 2",
-      "postalCode": "514 32",
-      "city": "Tranemo",
-      "coordinates": {
-        "lat": 57.495892,
-        "lng": 13.3408469
-      }
-    },
-    "kinds": [
-      "idrottshall",
-      "bad"
-    ],
-    "contact": {
-      "phone": "0325-57 64 50"
-    },
-    "booking": {
-      "info": "Idrottshallarna och spegelsalen bokas via kommunens e-tjänst för hallbokning. Frågor om simhallen besvaras i receptionen.",
-      "url": "https://www.tranemo.se/"
-    },
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/V%C3%A4stertorpshallen_stora_simhallen_SSM_10024249.jpg/1280px-V%C3%A4stertorpshallen_stora_simhallen_SSM_10024249.jpg"
-    ],
-    "location": "tranemo"
-  },
-  {
     "label": "Tranemosjön runt",
-    "description": "Vandringsslinga på 5,5 km runt Tranemosjön med fågeltorn, hembygdsparken och badplatsen längs vägen. Foto: Ulkl (public domain, Wikimedia Commons).",
+    "description": "Vandringsslinga på 5,5 km runt Tranemosjön med fågeltorn, hembygdsparken och badplatsen längs vägen.",
     "isBookable": true,
     "address": {
       "city": "Tranemo"
@@ -808,27 +201,7 @@
     "location": "tranemo"
   },
   {
-    "label": "Vallskoga, Ljungsarp",
-    "description": "Fotbollsplan i Ljungsarp med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: Calle Eklund/V-wolf (CC BY 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Ljungsarp",
-      "coordinates": {
-        "lat": 57.5651383,
-        "lng": 13.5932899
-      },
-      "postalCode": "514 55",
-      "street": "Lagmansvägen"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Ingvallsbennings_idrottsplats.jpg/1280px-Ingvallsbennings_idrottsplats.jpg"
-    ]
-  },
-  {
-    "label": "Väveriet, Uddebo",
+    "label": "Väveriet",
     "description": "<p>Det gamla väveriet i Uddebo som lades ner 2012 och nu rymmer bageri, pizzeria, café, ateljéer, kontor och verkstäder för keramik, trä och textil. Utställningar, öppet hus och evenemang under året.</p>",
     "isBookable": true,
     "address": {
@@ -847,25 +220,5 @@
       "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Haslach_an_der_M%C3%BChl_-_Textiles_Zentrum_Haslach_-_30_-_verschiedene_Handwebst%C3%BChle.jpg/1280px-Haslach_an_der_M%C3%BChl_-_Textiles_Zentrum_Haslach_-_30_-_verschiedene_Handwebst%C3%BChle.jpg"
     ],
     "location": "uddebo"
-  },
-  {
-    "label": "Åsavallen, Nittorp",
-    "description": "Fotbollsplan i Nittorp med gräs- och grusplan.<p><em>Exempelbild, inte från platsen. Foto: Hangsna (CC BY-SA 3.0, Wikimedia Commons).</em></p>",
-    "isBookable": true,
-    "address": {
-      "city": "Nittorp",
-      "coordinates": {
-        "lat": 57.5461492,
-        "lng": 13.4938798
-      },
-      "postalCode": "514 54",
-      "street": "Åsenvägen"
-    },
-    "kinds": [
-      "idrottsplats"
-    ],
-    "images": [
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b2/H%C3%A4llbybrynn%2C_Skogsvallen.JPG/1280px-H%C3%A4llbybrynn%2C_Skogsvallen.JPG"
-    ]
   }
 ]
