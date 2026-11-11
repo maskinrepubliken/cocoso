@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import SearchIcon from 'lucide-react/dist/esm/icons/search';
@@ -247,9 +248,11 @@ export default function SiteSearch({ site }: SiteSearchProps) {
   }, [isOpen]);
 
   const open = () => {
-    setIsOpen(true);
-    // Let the field render before focusing it (it is hidden on phones).
-    setTimeout(() => inputRef.current?.focus(), 0);
+    // Show the field (hidden until now) and focus it in the same tap:
+    // iPhones only bring up the keyboard for a focus inside the gesture,
+    // not one deferred with a timeout.
+    flushSync(() => setIsOpen(true));
+    inputRef.current?.focus();
   };
 
   const close = () => {
