@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Rolls out the image tagged :production on this server. Run as root, by the
+# deploy workflow over SSH (the `deploy` user may run only this, through sudo)
+# or by hand. Takes no arguments: what runs is decided by which image GitHub
+# has tagged :production (.github/workflows/deploy.yml).
+#
+# Pulls the image, recreates the app, and waits for it to answer. If it does
+# not answer in time, the previous image is put back and the script fails, so
+# the workflow run turns red while the site keeps running the old version.
+set -euo pipefail
+
+APP_DIR=/opt/cocoso
+IMAGE=ghcr.io/maskinrepubliken/cocoso:production
+HEALTH_URL=http://127.0.0.1:3000/
+WAIT_SECONDS=120
+
+cd "$APP_DIR"
+exec 9>/run/lock/cocoso-deploy.lock
+flock -n 9 || { echo "en annan deploy pågår redan" >&2; exit 1; }
+
+healthy() {
+  for _ in $(seq 1 $((WAIT_SECONDS / 3))); do
+    curl -fsS -o /dev/null --max-time 5 "$HEALTH_URL" && return 0
+    sleep 3
+  done
+  return 1
+}
+
+previous="$(docker inspect --format '{{.Image}}' cocoso-app 2>/dev/null || true)"
+echo "kör nu: ${previous:-ingenting}"
+
+docker compose pull --quiet app
+next="$(docker image inspect --format '{{.Id}}' "$IMAGE")"
+echo "ny image: $next ($(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE"))"
+
+if [[ "$next" == "$previous" ]]; then
+  echo "samma image kör redan; startar inte om"
+  healthy && { echo "appen svarar"; exit 0; }
+  echo "VARNING: appen svarar inte" >&2
+  exit 1
+fi
+
+docker compose up -d app
+if healthy; then
+  echo "appen svarar med den nya imagen"
+  docker image prune -f >/dev/null
+  exit 0
+fi
+
+echo "FEL: appen svarade inte inom ${WAIT_SECONDS} s; senaste loggraderna:" >&2
+docker compose logs --tail=40 app >&2 || true
+if [[ -n "$previous" ]]; then
+  echo "går tillbaka till $previous" >&2
+  docker tag "$previous" "$IMAGE"
+  docker compose up -d app
+  healthy && echo "den tidigare imagen kör och svarar igen" >&2 || echo "VARNING: inte heller den tidigare imagen svarar" >&2
+fi
+exit 1

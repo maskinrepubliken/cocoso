@@ -1,0 +1,121 @@
+name: Deploy to production
+
+# Moving the production branch deploys. The branch only ever points at a
+# release that is already on main, so its image has been built by docker.yml:
+# this workflow waits for that image, tags it :production, joins the tailnet
+# and runs the deploy on the server. The server's `deploy` user may run only
+# /usr/local/sbin/cocoso-deploy (deploy/production/), which pulls :production,
+# checks that the site answers and rolls back if it doesn't.
+#
+# Roll back by running this workflow by hand with an older release's commit;
+# the branch itself only moves forward.
+#
+# Needs the GitHub environment "production" (deployments from the production
+# branch only) with the secrets TS_OAUTH_CLIENT_ID, TS_OAUTH_SECRET and
+# DEPLOY_SSH_KEY, and the variables DEPLOY_HOST, DEPLOY_KNOWN_HOSTS and PRODUCTION_URL.
+# Setting it up: deploy/production/README.md.
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: Commit on main to deploy (full sha); empty deploys the production branch
+        required: false
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Commit to deploy
+        id: commit
+        env:
+          INPUT: ${{ inputs.commit }}
+        run: |
+          sha="${INPUT:-$GITHUB_SHA}"
+          if ! [[ "$sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::skriv hela commit-sha:n (40 tecken), inte '$sha'"; exit 1
+          fi
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error::$sha finns inte på main; bara släppta commits deployas"; exit 1
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Deployar $(git log -1 --format='%h %s' "$sha")" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # docker.yml builds the image when the release reaches main; it may still
+      # be running when production is moved right after.
+      - name: Wait for the release image
+        run: |
+          ref="$IMAGE:sha-${{ steps.commit.outputs.sha }}"
+          for i in $(seq 1 90); do
+            if docker buildx imagetools inspect "$ref" >/dev/null 2>&1; then
+              echo "imagen finns: $ref"; exit 0
+            fi
+            echo "väntar på $ref ($i/90)"; sleep 60
+          done
+          echo "::error::$ref byggdes inte inom 90 minuter; se arbetsflödet Docker image"; exit 1
+
+      - name: Tag it :production
+        run: |
+          docker buildx imagetools create -t "$IMAGE:production" "$IMAGE:sha-${{ steps.commit.outputs.sha }}"
+          docker buildx imagetools inspect "$IMAGE:production" | head -3
+
+      - name: Join the tailnet
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Deploy on the server
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          # The server's authorized_keys runs cocoso-deploy whatever is asked for.
+          ssh -i ~/.ssh/deploy -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 "deploy@$DEPLOY_HOST" deploy
+
+      - name: The public site answers
+        env:
+          URL: ${{ vars.PRODUCTION_URL }}
+        run: |
+          for i in $(seq 1 12); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$URL")"
+            [ "$code" = 200 ] && { echo "$URL svarar 200"; exit 0; }
+            echo "svarar $code ($i/12)"; sleep 10
+          done
+          echo "::error::$URL svarar inte 200"; exit 1
