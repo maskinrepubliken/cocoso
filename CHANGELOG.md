@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.5.1](https://github.com/maskinrepubliken/cocoso/compare/v5.5.0...v5.5.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* **media:** give the media volume to the app's user on every deploy ([d6ba5c8](https://github.com/maskinrepubliken/cocoso/commit/d6ba5c85f95d54f3fd82cccac0729ae893f5c20e))
+* **media:** stop the nightly backup from taking over the media volume ([5d0ba44](https://github.com/maskinrepubliken/cocoso/commit/5d0ba443f05028ecffa52de8f88bba0fded13baf))
+
 ## [5.5.0](https://github.com/maskinrepubliken/cocoso/compare/v5.4.0...v5.5.0) (2026-11-11)
 
 
