@@ -65,6 +65,22 @@ git push origin dev:main        # fast-forward main to the release — no checko
 If the last push is rejected, `main` has commits that are not on `dev`; stop
 and tell the person rather than forcing or merging by hand.
 
+**Deploy (only when told "deploy" / "deploya" / "to production"):** a release
+on `main` is not live until the `production` branch points at it. Moving the
+branch is the deploy: `.github/workflows/deploy.yml` waits for the release's
+image, tags it `:production` and rolls it out on the server, with a health
+check and an automatic rollback.
+
+```bash
+git fetch origin main production
+git push origin origin/main:production   # fast-forward only; never force
+```
+
+Then follow the run under Actions → "Deploy to production" and check the site.
+`production` only moves forward and only to commits on `main`. To roll back,
+run that workflow by hand on the `production` branch with an older release's
+full commit sha; do not move the branch backwards.
+
 ## Commit messages: write them for the changelog
 
 Releases are cut with `npm run release` (standard-version), which generates

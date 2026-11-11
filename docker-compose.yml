@@ -1,6 +1,7 @@
 # Local Cocoso stack: the app, MongoDB, and volumes for the database and
 # uploads. Start it with `docker compose up -d --build`, then open
-# http://localhost:3000 and complete the setup wizard.
+# http://localhost:3000. The site and its first admin are created from `site`
+# in the settings on first start (docs/CONFIGURATION.md).
 
 # The stack name, shown as the group row in Docker Desktop. Pinned rather than
 # derived from the directory, so moving or renaming this checkout cannot
