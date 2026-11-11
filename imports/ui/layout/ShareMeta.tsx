@@ -140,13 +140,13 @@ export default function ShareMeta({
     <Helmet>
       {pageTitle && <title>{pageTitle}</title>}
       <link rel="canonical" href={url} />
-      <meta name="description" content={text} />
+      {text && <meta name="description" content={text} />}
       {noIndex && <meta name="robots" content="noindex" />}
 
       <meta property="og:type" content={type} />
       <meta property="og:url" content={url} />
       {pageTitle && <meta property="og:title" content={pageTitle} />}
-      <meta property="og:description" content={text} />
+      {text && <meta property="og:description" content={text} />}
       <meta property="og:image" content={imageUrl} />
       {imageUrl.startsWith('https:') && (
         <meta property="og:image:secure_url" content={imageUrl} />
@@ -200,7 +200,7 @@ export default function ShareMeta({
 
       <meta name="twitter:card" content="summary_large_image" />
       {pageTitle && <meta name="twitter:title" content={pageTitle} />}
-      <meta name="twitter:description" content={text} />
+      {text && <meta name="twitter:description" content={text} />}
       <meta name="twitter:image" content={imageUrl} />
       {alt && <meta name="twitter:image:alt" content={alt} />}
 

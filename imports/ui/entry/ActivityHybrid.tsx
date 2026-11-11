@@ -47,6 +47,7 @@ import OrganizerToolsSection from '../pages/activities/event/OrganizerToolsSecti
 import FollowSection from '../pages/activities/event/FollowSection';
 import {
   Occurrence,
+  formatOccurrence,
   isPastOccurrence,
   pickOccurrenceIndex,
 } from '../pages/activities/event/occurrences';
@@ -322,6 +323,20 @@ export default function ActivityHybrid({
         url: publicUrl(`/@${author.username}`),
       }
     : null;
+  // What a shared link says: the event's own words, or, when it has none,
+  // what kind of event it is, when and where.
+  const venue = activity.resource || activity.place;
+  const description =
+    shareText(activity.subTitle || activity.longDescription) ||
+    [
+      kindLabels.join(', '),
+      occurrence && formatOccurrence(occurrence),
+      [venue, venue !== locationName && locationName]
+        .filter(Boolean)
+        .join(', '),
+    ]
+      .filter(Boolean)
+      .join(' · ');
   const pictures = [
     shareImage,
     ...images.map((image) => getImageUrl(image, 'full')),
@@ -331,7 +346,7 @@ export default function ActivityHybrid({
     <Page>
       <ShareMeta
         title={activity.title}
-        description={activity.subTitle || activity.longDescription}
+        description={description}
         path={path}
         image={shareImage || images[0]}
         generatedImage={Boolean(shareImage)}
@@ -349,14 +364,15 @@ export default function ActivityHybrid({
           isPublicActivity
             ? eventStructuredData({
                 title: activity.title,
-                description: shareText(
-                  activity.subTitle || activity.longDescription,
-                  300
-                ),
+                description:
+                  shareText(
+                    activity.subTitle || activity.longDescription,
+                    300
+                  ) || description,
                 url: publicUrl(path),
                 images: pictures,
                 datesAndTimes: dates,
-                venue: activity.resource || activity.place,
+                venue,
                 locationName,
                 address: activity.placeAddress || activity.address,
                 organizer,
