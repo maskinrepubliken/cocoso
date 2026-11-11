@@ -2,10 +2,12 @@ import React from 'react';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
+import { useAtomValue } from 'jotai';
 
 import { styled } from '/stitches.config';
 import { Button } from '/imports/ui/core';
 import DeleteEntryHandler from '/imports/ui/entry/DeleteEntryHandler';
+import { roleAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 
@@ -55,6 +57,8 @@ export default function OrganizerToolsSection({
   const [tc] = useTranslation('common');
   const [, setSearchParams] = useSearchParams();
   const revalidator = useRevalidator();
+  // Admins may delete without archiving first
+  const isAdmin = useAtomValue(roleAtom) === 'admin';
   const attendees = occurrence?.attendees || [];
 
   const csvData = attendees.map((a) => ({
@@ -163,17 +167,29 @@ export default function OrganizerToolsSection({
             </Button>
           </>
         ) : (
-          <Button
-            colorScheme="red"
-            size="sm"
-            variant="ghost"
-            onClick={() => setArchived(true)}
-          >
-            {tc('event.tools.archive')}
-          </Button>
+          <>
+            <Button
+              colorScheme="red"
+              size="sm"
+              variant="ghost"
+              onClick={() => setArchived(true)}
+            >
+              {tc('event.tools.archive')}
+            </Button>
+            {isAdmin && (
+              <Button
+                colorScheme="red"
+                size="sm"
+                variant="ghost"
+                onClick={() => setSearchParams({ delete: 'true' })}
+              >
+                {tc('event.tools.remove')}
+              </Button>
+            )}
+          </>
         )}
       </Buttons>
-      {!activity.isArchived && (
+      {!activity.isArchived && !isAdmin && (
         <Muted css={{ marginTop: '0.5rem' }}>
           {tc('event.tools.archiveFirst')}
         </Muted>

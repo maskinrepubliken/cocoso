@@ -820,13 +820,19 @@ Meteor.methods({
       throw new Meteor.Error('not-found', 'Activity not found');
     }
 
-    if (user._id !== theActivity.authorId && !(await isAdmin(user._id))) {
+    const userIsAdmin = await isAdmin(user._id);
+    if (user._id !== theActivity.authorId && !userIsAdmin) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 
-    // Deleting a public event is a two-step thing: archive first, then
-    // delete. A group's own meeting is removed from the group page directly.
-    if (!theActivity.isArchived && !theActivity.isGroupMeeting) {
+    // Deleting a public event is a two-step thing for its organizer:
+    // archive first, then delete. Admins may delete straight away, and a
+    // group's own meeting is removed from the group page directly.
+    if (
+      !theActivity.isArchived &&
+      !theActivity.isGroupMeeting &&
+      !userIsAdmin
+    ) {
       throw new Meteor.Error(
         'not-archived',
         'Archive the event before deleting it'
