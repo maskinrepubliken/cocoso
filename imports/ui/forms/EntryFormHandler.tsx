@@ -82,8 +82,9 @@ export default function EntryFormHandler({
     };
   }, [open]);
 
+  // Cancel is never locked, not even while saving: whatever goes wrong
+  // with a save, the user can always get out of the sheet.
   const requestClose = () => {
-    if (busy) return;
     setConfirmOpen(true);
   };
 
@@ -103,7 +104,7 @@ export default function EntryFormHandler({
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [open, confirmOpen, busy]);
+  }, [open, confirmOpen]);
 
   const context = useMemo(() => ({ formId, setSubmitDisabled }), [formId]);
 
@@ -140,7 +141,6 @@ export default function EntryFormHandler({
             type="button"
             aria-label={tc('actions.close')}
             className="entry-sheet-close"
-            disabled={busy}
             onClick={requestClose}
           >
             <XIcon aria-hidden width={20} height={20} />
@@ -175,7 +175,7 @@ export default function EntryFormHandler({
             )}
           </div>
           <div className="entry-sheet-actions">
-            <Button disabled={busy} variant="outline" onClick={requestClose}>
+            <Button variant="outline" onClick={requestClose}>
               {tc('actions.cancel')}
             </Button>
             <Button

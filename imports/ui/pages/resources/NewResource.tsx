@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
 import { call } from '/imports/api/_utils/shared';
-import { message } from '/imports/ui/generic/message';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
+import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 
 import ResourceForm from './ResourceForm';
 
 export default function NewResource() {
+  const saveFailed = useSaveFailed();
   const [newEntryId, setNewEntryId] = useState<string | null>(null);
 
   const createResource = async (newResource: any) => {
@@ -14,7 +15,7 @@ export default function NewResource() {
       const respond = await call('createResource', newResource);
       setNewEntryId(respond);
     } catch (error: any) {
-      message.error(error.reason || error.error);
+      saveFailed(error);
     }
   };
 

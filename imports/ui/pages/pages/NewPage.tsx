@@ -4,12 +4,13 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { call, parseTitle } from '/imports/api/_utils/shared';
 import { pageTitlesAtom, roleAtom } from '/imports/state';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
-import { message } from '/imports/ui/generic/message';
+import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 
 import PageForm from './PageForm';
 import { pagesAtom } from './PageItemHandler';
 
 export default function NewPage() {
+  const saveFailed = useSaveFailed();
   const role = useAtomValue(roleAtom);
   const setPageTitles = useSetAtom(pageTitlesAtom);
   const setPages = useSetAtom(pagesAtom);
@@ -22,7 +23,7 @@ export default function NewPage() {
       setPageTitles(await call('getPageTitles'));
       setNewEntryTitle(parseTitle(newPage.title));
     } catch (error: any) {
-      message.error(error.reason || error.error);
+      saveFailed(error);
     }
   };
 

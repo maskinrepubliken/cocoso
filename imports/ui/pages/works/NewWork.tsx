@@ -3,12 +3,13 @@ import { useAtomValue } from 'jotai';
 
 import { currentUserAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
-import { message } from '/imports/ui/generic/message';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
+import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 
 import WorkForm from './WorkForm';
 
 export default function NewWork() {
+  const saveFailed = useSaveFailed();
   const [newEntryId, setNewEntryId] = useState<string | null>(null);
   const currentUser = useAtomValue(currentUserAtom);
 
@@ -17,7 +18,7 @@ export default function NewWork() {
       const respond = await call('createWork', newWork);
       setNewEntryId(respond);
     } catch (error: any) {
-      message.error(error.reason || error.error);
+      saveFailed(error);
     }
   };
 

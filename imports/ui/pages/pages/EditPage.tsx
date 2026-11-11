@@ -3,13 +3,14 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import { call, parseTitle } from '/imports/api/_utils/shared';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
-import { message } from '/imports/ui/generic/message';
+import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 import { pageTitlesAtom, roleAtom } from '/imports/state';
 
 import PageForm from './PageForm';
 import { currentPageAtom, pagesAtom } from './PageItemHandler';
 
 export default function EditPage() {
+  const saveFailed = useSaveFailed();
   const [updated, setUpdated] = useState<string | null>(null);
   const setPageTitles = useSetAtom(pageTitlesAtom);
   const currentPage = useAtomValue(currentPageAtom);
@@ -28,7 +29,7 @@ export default function EditPage() {
         setUpdated(null);
       }, 1000);
     } catch (error: any) {
-      message.error(error.reason || error.error);
+      saveFailed(error);
     }
   };
 

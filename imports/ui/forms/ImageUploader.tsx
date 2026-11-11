@@ -19,7 +19,7 @@ import {
   uploadImage,
 } from '../../api/_utils/services/clientUpload';
 import DocumentUploadHelper from './UploadHelpers';
-import { message } from '../generic/message';
+import useSaveFailed from './useSaveFailed';
 
 // A little line drawing of a framed landscape, sun and hills, with a plus:
 // pictures to come.
@@ -110,6 +110,7 @@ export default function ImageUploader({
   onUploadedImages,
 }: ImageUploaderProps) {
   const [tc] = useTranslation('common');
+  const saveFailed = useSaveFailed();
   const [localImages, setLocalImages] = useState(
     preExistingImages
       ? preExistingImages.map((image) => ({
@@ -140,7 +141,7 @@ export default function ImageUploader({
       onUploadedImages(imagesReadyToSave);
     } catch (error: any) {
       toast.dismissAll();
-      message.error(error.reason || error.error);
+      saveFailed(error);
     }
   };
 

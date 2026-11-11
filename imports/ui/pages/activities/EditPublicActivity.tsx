@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { useAtom } from 'jotai';
 
 import { call } from '/imports/api/_utils/shared';
-import { message } from '/imports/ui/generic/message';
 import activityErrorText from './form/activityError';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
+import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 
 import PublicActivityForm from './PublicActivityForm';
 import { activityAtom } from './ActivityItemHandler';
 
 export default function EditPublicActivity() {
+  const saveFailed = useSaveFailed();
   const [updated, setUpdated] = useState<string | null>(null);
   const [activity, setActivity] = useAtom(activityAtom);
 
@@ -24,7 +25,7 @@ export default function EditPublicActivity() {
         setUpdated(null);
       }, 1000);
     } catch (error: any) {
-      message.error(activityErrorText(error));
+      saveFailed(error, activityErrorText(error));
     }
   };
 

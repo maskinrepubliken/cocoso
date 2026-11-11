@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { call } from '/imports/api/_utils/shared';
-import { message } from '/imports/ui/generic/message';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
+import useSaveFailed from '/imports/ui/forms/useSaveFailed';
+import activityErrorText from '../activities/form/activityError';
 import { emptyDateAndTime } from '/imports/ui/forms/DatesAndTimes';
 
 import CalendarActivityForm from './CalendarActivityForm';
@@ -19,6 +20,7 @@ interface NewCalendarActivityProps {
 }
 
 export default function NewCalendarActivity({ resources }: NewCalendarActivityProps) {
+  const saveFailed = useSaveFailed();
   const [newEntryId, setNewEntryId] = useState(null);
   const [searchParams] = useSearchParams();
   const [initialActivity, setInitialActivity] = useState(null);
@@ -59,7 +61,7 @@ export default function NewCalendarActivity({ resources }: NewCalendarActivityPr
       const respond = await call('createActivity', newActivity);
       setNewEntryId(respond);
     } catch (error: any) {
-      message.error(error.reason || error.error);
+      saveFailed(error, activityErrorText(error));
     }
   };
 

@@ -3,12 +3,13 @@ import { useAtom } from 'jotai';
 
 import { call } from '/imports/api/_utils/shared';
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
-import { message } from '/imports/ui/generic/message';
+import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 
 import GroupForm from './GroupForm';
 import { groupAtom } from './GroupItemHandler';
 
 export default function EditGroup() {
+  const saveFailed = useSaveFailed();
   const [updated, setUpdated] = useState<string | null>(null);
   const [group, setGroup] = useAtom(groupAtom);
 
@@ -23,7 +24,7 @@ export default function EditGroup() {
         setUpdated(null);
       }, 1000);
     } catch (error: any) {
-      message.error(error.reason || error.error);
+      saveFailed(error);
     }
   };
 
