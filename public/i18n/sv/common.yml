@@ -53,7 +53,7 @@ labels:
     calendar: Nytt bokning
     groups: Nytt grupp/process
     info: Nytt infosida
-    resources: Ny resurs
+    resources: Ny plats
     works: Nytt inlägg
     host: Nytt community
   update:
@@ -62,7 +62,7 @@ labels:
     groups: Uppdatera gruppen/processen
     info: Uppdatera infosidan
     pages: Update sidan
-    resources: Uppdatera resursen
+    resources: Redigera platsen
     works: Uppdatera inlägget
   event: Arrangemang
   bookings: Bokningar

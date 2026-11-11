@@ -53,7 +53,7 @@ labels:
     calendar: New Booking
     groups: New Process/Group
     info: New Info Page
-    resources: New Resource
+    resources: New Place
     works: New Post
     host: New Community
   update:
@@ -62,7 +62,7 @@ labels:
     groups: Update Process/Group
     info: Update Info Page
     pages: Update Page
-    resources: Update Resource
+    resources: Edit Place
     works: Update Post
   event: Event
   bookings: Bookings
