@@ -18,6 +18,8 @@ export interface EntryFormHandlerProps {
   title: string;
   forEdit?: boolean;
   onClose: () => void;
+  // When given, a Remove button sits next to Cancel in the footer
+  onDelete?: () => void;
   children?: React.ReactNode;
 }
 
@@ -43,6 +45,7 @@ export default function EntryFormHandler({
   title,
   forEdit = false,
   onClose,
+  onDelete,
   children,
 }: EntryFormHandlerProps) {
   const loaders = useAtomValue(loaderAtom);
@@ -175,6 +178,11 @@ export default function EntryFormHandler({
             )}
           </div>
           <div className="entry-sheet-actions">
+            {onDelete && (
+              <Button colorScheme="red" variant="ghost" onClick={onDelete}>
+                {tc('actions.remove')}
+              </Button>
+            )}
             <Button variant="outline" onClick={requestClose}>
               {tc('actions.cancel')}
             </Button>

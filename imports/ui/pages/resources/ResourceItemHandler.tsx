@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import loadable from '@loadable/component';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useSearchParams } from 'react-router';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 
 import ResourceHybrid from '/imports/ui/entry/ResourceHybrid';
-import { canCreateContentAtom, renderedAtom } from '/imports/state';
+import { canCreateContentAtom, renderedAtom, roleAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
@@ -20,6 +20,8 @@ export default function ResourceItemHandler({ siteDoc }) {
   const setResource = useSetAtom(resourceAtom);
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
+  const role = useAtomValue(roleAtom);
+  const [, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     setResource(resource);
@@ -38,7 +40,16 @@ export default function ResourceItemHandler({ siteDoc }) {
           <ResourceInteractionHandler />
 
           {canCreateContent && (
-            <EditEntryHandler context="resources">
+            <EditEntryHandler
+              context="resources"
+              onDelete={
+                // Only admins may delete; the confirm dialog lives in
+                // ResourceAdminFunctions
+                role === 'admin'
+                  ? () => setSearchParams({ delete: 'true' })
+                  : undefined
+              }
+            >
               <EditResource />
             </EditEntryHandler>
           )}

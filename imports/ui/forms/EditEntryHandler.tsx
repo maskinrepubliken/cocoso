@@ -11,10 +11,15 @@ import EntryFormHandler from './EntryFormHandler';
 
 export interface EditEntryHandlerProps {
   context: string;
+  onDelete?: () => void;
   children?: React.ReactNode;
 }
 
-export default function EditEntryHandler({ context, children }: EditEntryHandlerProps) {
+export default function EditEntryHandler({
+  context,
+  onDelete,
+  children,
+}: EditEntryHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const setLoaders = useSetAtom(loaderAtom);
@@ -38,6 +43,7 @@ export default function EditEntryHandler({ context, children }: EditEntryHandler
     title,
     forEdit: true,
     onClose: handleClose,
+    onDelete,
     children,
   };
 
