@@ -7545,24 +7545,28 @@ body {
   gap: 4px 16px;
   box-sizing: border-box;
   width: min(520px, calc(100vw - 2 * var(--cocoso-gutter)));
+  max-height: calc(100dvh - 2 * var(--cocoso-gutter));
   padding: 20px 22px 18px 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid rgba(30, 79, 27, 0.14);
   border-radius: 20px;
-  background: rgba(253, 251, 244, 0.9);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  /* Nearly opaque paper, no backdrop blur: Safari on iPhone left the card
+     blank when a blurred backdrop and the entry animation met, and a
+     long text now scrolls inside the card rather than off the screen. */
+  background: rgba(253, 251, 244, 0.97);
   box-shadow: 0 24px 60px -24px rgba(30, 50, 25, 0.55);
   color: #4b4239;
   font-family: var(--cocoso-font-ui);
   font-size: 14px;
   line-height: 1.5;
-  animation: cookie-notice-in 0.35s ease-out both;
+  animation: cookie-notice-in 0.35s ease-out backwards;
 }
 
 @keyframes cookie-notice-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    translate: 0 16px;
   }
 }
 
@@ -7654,8 +7658,9 @@ body {
   .cookie-notice {
     left: 12px;
     right: 12px;
-    bottom: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
     width: auto;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-bottom));
     padding: 16px 16px 14px 14px;
     gap: 4px 12px;
   }
