@@ -7,17 +7,22 @@ import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 
 import Template from '../layout/Template';
 
-// The page for a link that leads nowhere: a friendly note, not an error code.
+// The page for a link that leads nowhere: a friendly note, not an error
+// code, in the tinted glass of the other notices.
 export default function NotFoundPage() {
   const [t] = useTranslation('common');
 
   return (
     <Template>
       <Center py="12" px="4">
-        <div className="new-entry-helper" style={{ maxWidth: '440px' }}>
+        <div
+          className="new-entry-helper cocoso-notice"
+          data-tone="warning"
+          style={{ maxWidth: '440px' }}
+        >
           <ThreeDIcon name="zoom" size={96} />
           <h3>{t('labels.notfound.info')}</h3>
-          <p>404</p>
+          <p className="notice-code">404</p>
           <Link className="new-entry-helper-button" to="/">
             {t('labels.notfound.gohome')}
           </Link>

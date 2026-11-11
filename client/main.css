@@ -8117,8 +8117,73 @@ body {
   }
 }
 
-/* Popups (react-hot-toast): their glass look is set inline in
-   imports/ui/generic/message.tsx; here only the layout inside. */
+/* Notices: popups, alerts and the not-found card share one look, a pane
+   of glass tinted with the notice's tone. Each picks its tone with
+   data-tone (or an is-<tone> class on popups) and reads the rest from the
+   variables below. */
+.cocoso-notice {
+  --notice-tone: #3f6b7a;
+  --notice-bg: color-mix(
+    in srgb,
+    var(--notice-tone) 20%,
+    rgb(255 253 247 / 0.5)
+  );
+  --notice-ink: color-mix(in srgb, var(--notice-tone) 45%, var(--cocoso-mylla));
+  --notice-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--notice-tone) 34%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    0 16px 40px -14px color-mix(in srgb, var(--notice-tone) 55%, transparent);
+  background: var(--notice-bg);
+  box-shadow: var(--notice-shadow);
+  color: var(--notice-ink);
+  -webkit-backdrop-filter: blur(22px) saturate(1.7);
+  backdrop-filter: blur(22px) saturate(1.7);
+}
+
+.cocoso-notice[data-tone='success'],
+.cocoso-notice.is-success {
+  --notice-tone: var(--cocoso-colors-theme-500);
+}
+
+.cocoso-notice[data-tone='warning'],
+.cocoso-notice.is-warning {
+  --notice-tone: var(--cocoso-tegel);
+}
+
+.cocoso-notice[data-tone='error'],
+.cocoso-notice.is-error {
+  --notice-tone: var(--cocoso-lingon);
+}
+
+.cocoso-notice.is-loading {
+  --notice-tone: var(--cocoso-mylla-soft);
+}
+
+/* The not-found card is a notice, not a link: it does not lift on hover */
+.new-entry-helper.cocoso-notice {
+  min-height: 0;
+}
+
+.new-entry-helper.cocoso-notice:hover {
+  transform: none;
+  box-shadow: var(--notice-shadow);
+}
+
+.new-entry-helper.cocoso-notice h3 {
+  color: var(--cocoso-mylla);
+}
+
+.new-entry-helper.cocoso-notice .notice-code {
+  color: var(--notice-ink);
+  font-family: var(--cocoso-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+/* Popups (react-hot-toast): the library sets its look inline, so
+   imports/ui/generic/message.tsx points it at the variables above; here
+   only the layout inside. */
 .cocoso-toast {
   gap: 4px;
 }
@@ -8146,17 +8211,18 @@ body {
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--cocoso-mylla-soft);
+  color: inherit;
+  opacity: 0.75;
   cursor: pointer;
 }
 
 .cocoso-toast-close:hover {
-  background: var(--cocoso-colors-theme-100);
-  color: var(--cocoso-mylla);
+  background: color-mix(in srgb, var(--notice-tone) 18%, transparent);
+  opacity: 1;
 }
 
 .cocoso-toast-close:focus-visible {
-  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline: 2px solid var(--notice-tone);
   outline-offset: 1px;
 }
 

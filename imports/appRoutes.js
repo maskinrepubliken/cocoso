@@ -225,25 +225,31 @@ class RouteErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
-          <h2>Something went wrong while loading this page.</h2>
-          {this.state.message && (
-            <p
-              style={{
-                color: '#666',
-                fontFamily: 'monospace',
-                fontSize: '0.85rem',
-              }}
-            >
-              {this.state.message}
-            </p>
-          )}
-          <button
-            onClick={() => this.setState({ hasError: false, message: null })}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        <div style={{ padding: '48px 16px', display: 'grid' }}>
+          <div
+            className="new-entry-helper cocoso-notice"
+            data-tone="error"
+            role="alert"
+            style={{ maxWidth: '440px', margin: '0 auto' }}
           >
-            Try Again
-          </button>
+            <h3>Something went wrong while loading this page.</h3>
+            {this.state.message && (
+              <p
+                className="notice-code"
+                style={{ fontFamily: 'monospace', letterSpacing: 0 }}
+              >
+                {this.state.message}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => this.setState({ hasError: false, message: null })}
+              className="new-entry-helper-button"
+              style={{ border: 0, cursor: 'pointer' }}
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       );
     }

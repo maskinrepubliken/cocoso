@@ -7,14 +7,17 @@ import CheckIcon from 'lucide-react/dist/esm/icons/check';
 
 import { Box, Flex } from './Box';
 
-const alertColors = {
-  info: '#3182CE',
-  warning: '#DD6B20',
-  success: '#38A169',
-  error: '#E53E3E',
+type AlertType = 'info' | 'warning' | 'success' | 'error';
+
+const icons: Record<AlertType, typeof InfoIcon> = {
+  info: InfoIcon,
+  warning: WarningIcon,
+  success: CheckIcon,
+  error: AlertIcon,
 };
 
 const AlertTitle = styled('h3', {
+  color: 'var(--cocoso-mylla)',
   fontSize: '1.5rem',
   fontWeight: 'bold',
   marginBottom: '0.5rem',
@@ -22,58 +25,21 @@ const AlertTitle = styled('h3', {
 
 const AlertDescription = styled('div', {
   fontSize: '1rem',
+  fontWeight: 600,
 });
 
-// AlertContainer
-interface AlertContainerProps {
-  status?: 'info' | 'warning' | 'success' | 'error';
-  children?: React.ReactNode;
-}
-
-const AlertContainerStyled = styled('div', {
-  borderRadius: 'var(--cocoso-radius-falt)',
-  backgroundColor: 'var(--cocoso-papper)',
-  border: '1px solid var(--cocoso-linje)',
-  borderLeftWidth: '4px',
-  boxShadow: 'var(--cocoso-skugga)',
-  color: 'var(--cocoso-mylla)',
-  padding: '1rem',
+// A pane of glass tinted with the alert's tone; the look is .cocoso-notice
+// in client/main.css, shared with the popups.
+const AlertContainer = styled('div', {
+  borderRadius: 'var(--cocoso-radius-meny)',
+  fontFamily: 'var(--cocoso-font-ui)',
+  padding: '14px 16px',
 });
-
-const AlertContainer = (props: AlertContainerProps) => {
-  const { status, children, ...rest } = props;
-  const color =
-    status === 'error'
-      ? 'red'
-      : status === 'warning'
-      ? 'orange'
-      : status === 'success'
-      ? 'green'
-      : 'blue';
-
-  return (
-    <AlertContainerStyled
-      css={{
-        borderLeftColor:
-          color === 'red'
-            ? 'var(--cocoso-lingon)'
-            : color === 'orange'
-            ? 'var(--cocoso-tegel)'
-            : color === 'green'
-            ? 'var(--cocoso-colors-theme-500)'
-            : '#3f6b7a',
-      }}
-      {...rest}
-    >
-      {children}
-    </AlertContainerStyled>
-  );
-};
 
 interface AlertProps {
   message?: string | React.ReactNode;
   title?: string | React.ReactNode;
-  type?: 'info' | 'warning' | 'success' | 'error';
+  type?: AlertType;
   children?: React.ReactNode;
 }
 
@@ -84,16 +50,20 @@ export default function Alert({
   children,
   ...props
 }: AlertProps) {
+  const Icon = icons[type];
+
   return (
-    <AlertContainer status={type} {...props}>
-      <Flex>
-        <Box mr="2" css={{ flexShrink: 0, flexGrow: 0 }}>
-          {type === 'info' && <InfoIcon color={alertColors[type]} />}
-          {type === 'warning' && <WarningIcon color={alertColors[type]} />}
-          {type === 'success' && <CheckIcon color={alertColors[type]} />}
-          {type === 'error' && <AlertIcon color={alertColors[type]} />}
+    <AlertContainer
+      className="cocoso-notice"
+      data-tone={type}
+      role={type === 'error' ? 'alert' : 'status'}
+      {...props}
+    >
+      <Flex css={{ alignItems: 'flex-start' }}>
+        <Box mr="2" css={{ flexShrink: 0, flexGrow: 0, display: 'flex' }}>
+          <Icon aria-hidden color="var(--notice-tone)" />
         </Box>
-        <Box>
+        <Box css={{ alignSelf: 'center' }}>
           {title && <AlertTitle>{title}</AlertTitle>}
           {(message || children) && (
             <AlertDescription>{message || children}</AlertDescription>
