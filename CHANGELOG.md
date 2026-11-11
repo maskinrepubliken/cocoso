@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.7.0](https://github.com/maskinrepubliken/cocoso/compare/v5.6.0...v5.7.0) (2026-11-11)
+
+
+### Features
+
+* **activities:** let admins remove an event straight away ([029262d](https://github.com/maskinrepubliken/cocoso/commit/029262d79f1d3999a6887ee7ad65c7b411b57431))
+
+
+### Bug Fixes
+
+* **resources:** keep places with upcoming events from being removed ([70bf29a](https://github.com/maskinrepubliken/cocoso/commit/70bf29a517055b3ad1562b2d16dff0971498719a))
+
 ## [5.6.0](https://github.com/maskinrepubliken/cocoso/compare/v5.5.1...v5.6.0) (2026-11-11)
 
 
