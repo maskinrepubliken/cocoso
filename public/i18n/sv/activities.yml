@@ -83,6 +83,9 @@ form:
   description:
     label: Beskrivning
     helper: Lägg till en längre beskrivning av evenemanget
+  draft:
+    restored: "Här är det du skrev {{when}} men inte sparade ännu. Bilder som inte sparades behöver läggas till igen."
+    discard: Släng utkastet
   errors:
     imageRequired: Lägg till minst en bild till evenemanget.
     organizerContact: Alla arrangörer behöver en e-postadress eller ett telefonnummer i sin profil.

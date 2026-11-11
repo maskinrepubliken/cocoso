@@ -8159,3 +8159,26 @@ body {
   outline: 2px solid var(--cocoso-colors-theme-500);
   outline-offset: 1px;
 }
+
+/* A draft brought back in a form (imports/ui/forms/formDraft.ts) */
+.form-draft-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+  padding: 10px 12px 10px 16px;
+  border-radius: var(--cocoso-radius-kort);
+  background: color-mix(in srgb, var(--cocoso-colors-theme-100) 70%, transparent);
+  box-shadow: inset 4px 0 0 var(--cocoso-colors-theme-500);
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.form-draft-notice p {
+  flex: 1 1 280px;
+  margin: 0;
+}

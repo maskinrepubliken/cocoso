@@ -15,8 +15,10 @@ export default function NewPublicActivity() {
     try {
       const respond = await call('createActivity', newActivity);
       setNewEntryId(respond);
+      return true;
     } catch (error: any) {
       saveFailed(error, activityErrorText(error));
+      return false;
     }
   };
 

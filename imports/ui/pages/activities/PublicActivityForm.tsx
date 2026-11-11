@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
+import dayjs from 'dayjs';
 
 import MinusIcon from 'lucide-react/dist/esm/icons/minus';
 import PlusIcon from 'lucide-react/dist/esm/icons/plus';
@@ -24,7 +25,13 @@ import DatesAndTimes, {
   emptyDateAndTime,
 } from '/imports/ui/forms/DatesAndTimes';
 import { message } from '/imports/ui/generic/message';
-import { Modal, Textarea } from '/imports/ui/core';
+import { Button, Modal, Textarea } from '/imports/ui/core';
+import {
+  clearDraft,
+  draftKey,
+  loadDraft,
+  saveDraft,
+} from '/imports/ui/forms/formDraft';
 import type { SelectedResource, DateAndTime } from '/imports/ui/types';
 
 import publicActivityFormFields from './publicActivityFormFields';
@@ -109,8 +116,51 @@ const sameAddress = (
 
 interface PublicActivityFormProps {
   activity?: ActivityData;
-  onFinalize: (activity: any) => void;
+  // Resolves to true once the event is saved
+  onFinalize: (activity: any) => Promise<boolean | void> | void;
 }
+
+// What a draft keeps of the form (see formDraft.ts): the typed texts, and
+// everything chosen outside them. Pictures not yet uploaded are not kept.
+const DRAFT_FIELDS = [
+  'address',
+  'authorId',
+  'capacity',
+  'contact',
+  'contactChoice',
+  'datesAndTimes',
+  'isExclusiveActivity',
+  'isRegistrationEnabled',
+  'kinds',
+  'locationId',
+  'locationPicked',
+  'organizers',
+  'placeName',
+  'selectedResource',
+  'whereMode',
+] as const;
+const TEXT_FIELDS = ['title', 'subTitle', 'longDescription', 'place'] as const;
+
+interface ActivityDraft {
+  state: Record<string, any>;
+  values: Record<string, any>;
+}
+
+const draftState = (state: any) =>
+  JSON.stringify(DRAFT_FIELDS.map((field) => state[field] ?? null));
+
+// The texts as written; an empty editor counts as empty.
+const draftTexts = (values: any) =>
+  JSON.stringify(
+    TEXT_FIELDS.map((field) =>
+      String(values?.[field] ?? '')
+        .replace(/<p><br><\/p>/g, '')
+        .trim()
+    )
+  );
+
+const pick = (from: any, fields: readonly string[]) =>
+  Object.fromEntries(fields.map((field) => [field, from?.[field]]));
 
 export const emptyFormValues: ActivityFormValues = {
   longDescription: '',
@@ -119,14 +169,43 @@ export const emptyFormValues: ActivityFormValues = {
   title: '',
 };
 
-export default function PublicActivityForm({
+// The event form keeps a draft of what is written in this browser until the
+// event is saved, so nothing is lost when saving fails. Throwing the draft
+// away starts the form over.
+export default function PublicActivityForm(props: PublicActivityFormProps) {
+  const currentUser = useAtomValue(currentUserAtom);
+  const [generation, setGeneration] = useState(0);
+  const key = draftKey(
+    currentUser?._id,
+    `event:${props.activity?._id || 'new'}`
+  );
+  return (
+    <ActivityForm
+      key={`${key}:${generation}`}
+      {...props}
+      draftKey={key}
+      onDiscardDraft={() => {
+        clearDraft(key);
+        setGeneration((n) => n + 1);
+      }}
+    />
+  );
+}
+
+function ActivityForm({
   activity,
+  draftKey: key,
+  onDiscardDraft,
   onFinalize,
-}: PublicActivityFormProps) {
+}: PublicActivityFormProps & {
+  draftKey: string;
+  onDiscardDraft: () => void;
+}) {
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const isAdmin = role === 'admin';
-  const [state, setState] = useState<any>({
+  const [draft] = useState(() => loadDraft<ActivityDraft>(key));
+  const [pristine] = useState<any>(() => ({
     capacity: activity ? activity.capacity : defaultCapacity,
     datesAndTimes: activity ? activity.datesAndTimes : [emptyDateAndTime],
     formValues: activity || emptyFormValues,
@@ -160,7 +239,16 @@ export default function PublicActivityForm({
     notifyMessage: '',
     isAskingToNotify: false,
     pendingFormValues: null as ActivityFormValues | null,
-  });
+  }));
+  const defaultValues = {
+    ...(activity || emptyFormValues),
+    ...(draft?.data.values || {}),
+  };
+  const [state, setState] = useState<any>(() => ({
+    ...pristine,
+    ...(draft?.data.state || {}),
+    formValues: defaultValues,
+  }));
   // How many are signed up or follow the event being edited
   const [audience, setAudience] = useState(0);
   const [organizerOptions, setOrganizerOptions] = useState<OrganizerOption[]>(
@@ -294,6 +382,63 @@ export default function PublicActivityForm({
       cancelled = true;
     };
   }, [contactChoice, author]);
+
+  // The draft: written a moment after each change, and only when something
+  // differs from what the form started with. A draft that is brought back
+  // stays until the event is saved or the draft is thrown away.
+  const textsRef = useRef<Record<string, any>>(defaultValues);
+  const [textsChanged, setTextsChanged] = useState(0);
+  const baselineRef = useRef({
+    state: draftState(pristine),
+    texts: draftTexts(activity || emptyFormValues),
+  });
+  const isSavedRef = useRef(false);
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
+  // A new event picks where it is once the organizer is known; that is
+  // where the form starts, not a change.
+  const isWhereSetRef = useRef(Boolean(state.whereMode));
+  useEffect(() => {
+    if (state.whereMode && !isWhereSetRef.current) {
+      isWhereSetRef.current = true;
+      if (!draft) {
+        baselineRef.current.state = draftState(state);
+      }
+    }
+  }, [state.whereMode]);
+
+  const onValuesChange = useCallback((values: Record<string, any>) => {
+    textsRef.current = values;
+    setTextsChanged((n) => n + 1);
+  }, []);
+
+  const keepDraft = () => {
+    if (isSavedRef.current) {
+      return;
+    }
+    const current = stateRef.current;
+    const isChanged =
+      draftState(current) !== baselineRef.current.state ||
+      draftTexts(textsRef.current) !== baselineRef.current.texts;
+    if (isChanged) {
+      saveDraft<ActivityDraft>(key, {
+        state: pick(current, DRAFT_FIELDS),
+        values: pick(textsRef.current, TEXT_FIELDS),
+      });
+    } else if (!draft) {
+      clearDraft(key);
+    }
+  };
+  const keepDraftRef = useRef(keepDraft);
+  keepDraftRef.current = keepDraft;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => keepDraftRef.current(), 400);
+    return () => window.clearTimeout(timer);
+  }, [state, textsChanged]);
+  // Leaving the form keeps the very last change too
+  useEffect(() => () => keepDraftRef.current(), []);
 
   const isFormValid = () => {
     const { datesAndTimes } = state;
@@ -477,7 +622,10 @@ export default function PublicActivityForm({
       newActivity.resource = null;
     }
 
-    onFinalize(newActivity);
+    if ((await onFinalize(newActivity)) === true) {
+      isSavedRef.current = true;
+      clearDraft(key);
+    }
   };
 
   const handleUploadedImages = (images: string[]) => {
@@ -491,9 +639,22 @@ export default function PublicActivityForm({
 
   return (
     <>
+      {draft && (
+        <div className="form-draft-notice" role="status">
+          <p>
+            {t('form.draft.restored', {
+              when: dayjs(draft.savedAt).format('D MMMM HH:mm'),
+            })}
+          </p>
+          <Button size="sm" variant="outline" onClick={onDiscardDraft}>
+            {t('form.draft.discard')}
+          </Button>
+        </div>
+      )}
       <GenericEntryForm
         childrenIndex={2}
-        defaultValues={activity || emptyFormValues}
+        defaultValues={defaultValues}
+        onValuesChange={onValuesChange}
         formFields={publicActivityFormFields(t).filter(
           // The place's name is part of "Var" below
           (field) => field.value !== 'place'

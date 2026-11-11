@@ -83,6 +83,9 @@ form:
   description:
     label: Description
     helper: Add a longer description of the event
+  draft:
+    restored: "This is what you wrote {{when}} but did not save yet. Pictures that were not saved need to be added again."
+    discard: Discard draft
   errors:
     imageRequired: Add at least one picture to the event.
     organizerContact: Every organizer needs an email address or a phone number in their profile.

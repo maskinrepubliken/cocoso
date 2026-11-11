@@ -59,6 +59,9 @@ interface GenericEntryFormProps {
   formFields: FormFieldItem[];
   isSubmitButtonDisabled: boolean;
   onSubmit: () => void;
+  // Called with all the field values whenever one of them changes, e.g. to
+  // keep a draft
+  onValuesChange?: (values: Record<string, any>) => void;
 }
 
 // The name of the entry is the field everything else hangs on.
@@ -146,12 +149,19 @@ export default function GenericEntryForm({
   formFields,
   isSubmitButtonDisabled = false,
   onSubmit,
+  onValuesChange,
 }: GenericEntryFormProps) {
-  const { control, handleSubmit, register } = useForm({
+  const { control, handleSubmit, register, watch } = useForm({
     defaultValues: defaultValues || undefined,
   });
   const loaders = useAtomValue(loaderAtom);
   const sheet = useEntryFormSheet();
+
+  useEffect(() => {
+    if (!onValuesChange) return undefined;
+    const subscription = watch((values) => onValuesChange(values));
+    return () => subscription.unsubscribe();
+  }, [watch, onValuesChange]);
 
   // Inside the entry sheet, Save sits in the sheet's footer.
   useEffect(() => {

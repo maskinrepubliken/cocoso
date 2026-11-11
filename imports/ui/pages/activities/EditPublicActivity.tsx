@@ -24,8 +24,10 @@ export default function EditPublicActivity() {
       setTimeout(() => {
         setUpdated(null);
       }, 1000);
+      return true;
     } catch (error: any) {
       saveFailed(error, activityErrorText(error));
+      return false;
     }
   };
 
