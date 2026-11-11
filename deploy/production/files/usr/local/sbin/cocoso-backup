@@ -18,10 +18,13 @@ cd "$APP_DIR"
 docker compose exec -T mongo mongodump --quiet --db cocoso --archive --gzip \
   > "$TMP/mongo-$STAMP.archive.gz"
 
-# 2. Media: a tarball of the volume.
+# 2. Media: a tarball of the volume. Mounted on a path alpine does not have:
+#    Docker fills an empty volume with the image's files at the mount point,
+#    even read-only, and alpine's /media is root-owned (cdrom, floppy, usb),
+#    which left the app unable to write its uploads.
 MEDIA_VOL="$(docker volume ls -q --filter name=^cocoso_media-data$)"
-docker run --rm -v "$MEDIA_VOL":/media:ro -v "$TMP":/out alpine \
-  tar -czf "/out/media-$STAMP.tar.gz" -C /media .
+docker run --rm -v "$MEDIA_VOL":/source:ro -v "$TMP":/out alpine \
+  tar -czf "/out/media-$STAMP.tar.gz" -C /source .
 
 # 3. Configuration. .env holds the SMTP password and is included on purpose:
 #    the pulling side keeps it in an encrypted restic repository.
