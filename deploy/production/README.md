@@ -149,4 +149,5 @@ Test a dump without touching the live data by restoring it under another name
 | Deploy run fails at "Deploy on the server" with `Permission denied` | The deploy key on the server and in `DEPLOY_SSH_KEY` don't match, or the ACL doesn't let `tag:ci` reach `tag:server:22`. |
 | `Host key verification failed` | `DEPLOY_KNOWN_HOSTS` is outdated (server reinstalled?). Check why before replacing it. |
 | "appen svarade inte inom 120 s" | The new image doesn't start; the previous one is back. See the log lines in the run, fix, release again. |
+| Saving an image fails; the log says `EACCES: permission denied, mkdir '/var/lib/cocoso/media/images'` | The media volume is not owned by the app's user (uid 1000). Every deploy fixes it; by hand: `docker run --rm -v cocoso_media-data:/m alpine chown -R 1000:1000 /m`. |
 | SSH from the office times out for a while | ufw rate-limits port 22 per address (6 connections in 30 s) and fail2ban bans repeated failed logins. Use the tailnet address, which is never limited. |

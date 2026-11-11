@@ -26,6 +26,15 @@ healthy() {
   return 1
 }
 
+# The app runs as node (uid 1000) and writes uploads to the media volume. A
+# volume left owned by root makes every upload fail with EACCES, so hand it
+# (and anything in it not already theirs) to uid 1000 on every deploy.
+media="$(docker volume ls -q --filter name=^cocoso_media-data$)"
+if [[ -n "$media" ]]; then
+  docker run --rm -v "$media":/m alpine sh -c \
+    'chown 1000:1000 /m && find /m ! -user 1000 -exec chown 1000:1000 {} +'
+fi
+
 previous="$(docker inspect --format '{{.Image}}' cocoso-app 2>/dev/null || true)"
 echo "kör nu: ${previous:-ingenting}"
 
