@@ -524,6 +524,37 @@ cookies:
   feedbackNow: Give feedback now
   ok: Got it
 
+installApp:
+  pill:
+    install: Add to home screen
+    push: Turn on notifications
+  title: Get the app on your phone
+  intro: Put the site on your home screen and it opens like an app, straight from its icon. Then you can get a notification when an event you follow changes.
+  install:
+    title: Add to your home screen
+    prompt: Your browser can install the site as an app right away.
+    button: Install the app
+    done: Done – you are using the app from your home screen.
+    ios:
+      share: Tap the Share button (a square with an arrow pointing up) – at the bottom of Safari, or by the address bar.
+      add: Scroll down in the list and choose “Add to Home Screen”.
+      confirm: Tap “Add” in the top right corner.
+      open: Open the app from its new icon on your home screen and come back here to turn on notifications.
+    otherBrowser: If you cannot find “Add to Home Screen”, open the page in Safari and try again from there.
+    android:
+      menu: Open the browser's menu (the three dots in the corner).
+      add: Choose “Add to Home screen” or “Install app”, and confirm.
+      open: Open the app from its new icon on your home screen.
+  push:
+    title: Turn on notifications
+    intro: Get a notification when an event you follow or are signed up for changes, or when the organiser has news.
+    button: Turn on notifications
+    on: Notifications are on on this phone. You choose what you get under your profile's notifications.
+    needsInstall: On an iPhone or iPad, notifications can only be turned on from the app on the home screen. Do step 1 first and open the app from there.
+    denied: Your phone blocks notifications from the site. Allow them in the settings for the browser or the app, then try again.
+    unsupported: This browser cannot show notifications.
+    login: Notifications follow your account, so log in first – then come back here.
+
 footer:
   byline: A service made by and for the associations of Tranemo municipality. Developed by Uddebo Makerspace, Tranemo municipality and Maskinrepubliken.
   about: About this site

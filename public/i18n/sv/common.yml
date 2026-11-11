@@ -521,6 +521,37 @@ cookies:
   feedbackNow: Ge feedback nu
   ok: Jag förstår
 
+installApp:
+  pill:
+    install: Lägg till på hemskärmen
+    push: Slå på notiser
+  title: Ha appen i telefonen
+  intro: Lägg sidan på hemskärmen så öppnas den som en app, direkt från ikonen. Sedan kan du få en notis när ett evenemang du följer ändras.
+  install:
+    title: Lägg till på hemskärmen
+    prompt: Din webbläsare kan installera sidan som en app direkt.
+    button: Installera appen
+    done: Klart – du använder appen från hemskärmen.
+    ios:
+      share: Tryck på Dela-knappen (en fyrkant med en pil uppåt) – längst ner i Safari eller vid adressfältet.
+      add: Scrolla ner i listan och välj ”Lägg till på hemskärmen”.
+      confirm: Tryck på ”Lägg till” uppe till höger.
+      open: Öppna appen från den nya ikonen på hemskärmen och kom tillbaka hit för att slå på notiser.
+    otherBrowser: Hittar du inte ”Lägg till på hemskärmen”? Öppna sidan i Safari och försök därifrån.
+    android:
+      menu: Öppna webbläsarens meny (de tre prickarna i hörnet).
+      add: Välj ”Lägg till på startskärmen” eller ”Installera app” och bekräfta.
+      open: Öppna appen från den nya ikonen på startskärmen.
+  push:
+    title: Slå på notiser
+    intro: Få en notis när ett evenemang du följer eller är anmäld till ändras, eller när arrangören har något nytt att berätta.
+    button: Slå på notiser
+    on: Notiser är på i den här telefonen. Vad du får väljer du under notiser i din profil.
+    needsInstall: På iPhone och iPad går notiser bara att slå på från appen på hemskärmen. Gör steg 1 först och öppna appen därifrån.
+    denied: Telefonen blockerar notiser från sidan. Tillåt dem i inställningarna för webbläsaren eller appen och försök igen.
+    unsupported: Den här webbläsaren kan inte visa notiser.
+    login: Notiser hör till ditt konto, så logga in först – och kom sedan tillbaka hit.
+
 footer:
   byline: En tjänst skapad av och för föreningslivet i Tranemo Kommun. Utvecklas av Uddebo Makerspace, Tranemo Kommun och Maskinrepubliken.
   about: Om sidan

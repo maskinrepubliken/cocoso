@@ -7694,6 +7694,137 @@ body {
   }
 }
 
+/* === Add to home screen (layout/InstallApp.tsx) === */
+
+/* The footer pill stands out a little from its neighbours: it is the one
+   thing there a visitor on a phone is asked to do */
+.site-footer-tools .install-app-pill {
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
+  cursor: pointer;
+}
+
+.site-footer-tools .install-app-pill:hover {
+  background: var(--cocoso-colors-theme-800);
+  color: #fff;
+}
+
+.install-app {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: var(--cocoso-font-ui);
+  color: #4b4239;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.install-app p {
+  margin: 0;
+}
+
+.install-app-intro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.install-app-intro .threed-icon {
+  flex: none;
+  width: 56px;
+  height: 56px;
+}
+
+/* Each step a paper card with its number in a disc; a done one is ticked
+   and fades back */
+.install-app-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--cocoso-linje);
+  border-radius: var(--cocoso-radius-kort);
+  background: var(--cocoso-papper);
+}
+
+.install-app-step h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.install-app-number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
+  font-family: var(--cocoso-font-ui);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.install-app-step.is-done .install-app-number {
+  background: var(--cocoso-colors-theme-500);
+}
+
+.install-app-done {
+  color: var(--cocoso-colors-theme-700);
+  font-weight: 700;
+}
+
+.install-app-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.install-app-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.install-app-list svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--cocoso-colors-theme-700);
+}
+
+.install-app-note {
+  color: var(--cocoso-mylla-soft);
+  font-size: 14px;
+}
+
+.install-app-login {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.install-app-login:hover {
+  background: var(--cocoso-colors-theme-800);
+  color: #fff;
+}
+
 /* === Feedback form (layout/FeedbackForm.tsx) === */
 
 .feedback-form {

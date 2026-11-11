@@ -12,6 +12,7 @@ import { isMenuItemShown } from '/imports/api/_utils/features';
 import { parseTitle } from '/imports/api/_utils/shared';
 
 import FeedbackForm from './FeedbackForm';
+import InstallApp from './InstallApp';
 import LanguageSwitch from './LanguageSwitch';
 import useLogout from './useLogout';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
@@ -54,6 +55,7 @@ export function Footer({ site }: FooterProps) {
           <p className="site-footer-name">{settings.name}</p>
 
           {/* The tools right under the name: language, about, feedback,
+              "add to home screen" on a phone,
               and login last when logged out */}
           <div className="site-footer-tools">
             <LanguageSwitch />
@@ -67,6 +69,7 @@ export function Footer({ site }: FooterProps) {
               </Link>
             )}
             <FeedbackForm />
+            <InstallApp />
             {!currentUser && (
               <Link className="site-footer-pill" to="/login">
                 <LogInIcon width={16} height={16} />

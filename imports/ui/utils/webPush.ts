@@ -15,11 +15,11 @@ export type PushState =
   | 'off'
   | 'on';
 
-const isIos = () =>
+export const isIos = () =>
   /iPad|iPhone|iPod/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-const isStandalone = () =>
+export const isStandalone = () =>
   window.matchMedia?.('(display-mode: standalone)').matches ||
   (navigator as any).standalone === true;
 
