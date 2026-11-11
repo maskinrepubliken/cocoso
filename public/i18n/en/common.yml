@@ -122,6 +122,7 @@ message:
 
   error:
     imageRequired: Image is required
+    placeHasUpcoming: This place has {{ count }} upcoming event(s). Move or remove them first, then the place can be removed.
 
   access:
     deny: You are not allowed

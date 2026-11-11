@@ -122,6 +122,7 @@ message:
 
   error:
     imageRequired: Bild krävs
+    placeHasUpcoming: Platsen har {{ count }} kommande evenemang. Flytta eller ta bort dem först, sedan kan platsen tas bort.
 
   access:
     deny: Du har inte behörighet

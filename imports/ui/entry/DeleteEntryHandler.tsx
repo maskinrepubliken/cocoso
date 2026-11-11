@@ -69,6 +69,12 @@ export default function DeleteEntryHandler({
         window.location.reload();
       }
     } catch (error: any) {
+      if (error.error === 'place-has-upcoming') {
+        message.error(
+          tc('message.error.placeHasUpcoming', { count: error.details?.count })
+        );
+        return;
+      }
       message.error(error.reason || error.error);
     }
   };

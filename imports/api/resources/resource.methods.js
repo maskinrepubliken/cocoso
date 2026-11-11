@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import dayjs from 'dayjs';
 import { check, Match } from 'meteor/check';
 import { locationSelector } from '../_utils/shared';
 import { requireAddress } from '../_utils/address';
@@ -245,6 +246,45 @@ Meteor.methods({
     if (!user || !(await isAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
+
+    const resource = await Resources.findOneAsync(resourceId, {
+      fields: { address: 1 },
+    });
+    if (!resource) {
+      throw new Meteor.Error('not-found', 'Place not found');
+    }
+
+    const heldHere = { resourceId };
+
+    // Refuse while events are still to come, so nobody turns up at a place
+    // that has vanished from the site. Move or remove them first.
+    const today = dayjs().format('YYYY-MM-DD');
+    const upcoming = await Activities.find({
+      ...heldHere,
+      'datesAndTimes.endDate': { $gte: today },
+    }).countAsync();
+    if (upcoming > 0) {
+      throw new Meteor.Error(
+        'place-has-upcoming',
+        `${upcoming} upcoming event(s) are held at this place`,
+        { count: upcoming }
+      );
+    }
+
+    // Past events stay as they were held: they keep the place's name and
+    // take over its address, but no longer link to a page that is gone.
+    if (resource.address) {
+      await Activities.updateAsync(
+        { ...heldHere, address: null },
+        { $set: { address: resource.address } },
+        { multi: true }
+      );
+    }
+    await Activities.updateAsync(
+      heldHere,
+      { $unset: { resourceId: '' } },
+      { multi: true }
+    );
 
     try {
       await Resources.removeAsync({ _id: resourceId });
