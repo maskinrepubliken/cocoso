@@ -3,6 +3,10 @@
 Cocoso deploys as a standard Meteor bundle: one Node process, one MongoDB
 database, a reverse proxy in front, and a persistent directory for uploads.
 
+This page describes the generic setup. The production site itself (the
+server, its hardening, the automatic deploy from the `production` branch and
+the backups) is in [deploy/production/README.md](../deploy/production/README.md).
+
 ## Build
 
 ```bash

@@ -1,0 +1,6 @@
+// /etc/apt/apt.conf.d/20auto-upgrades — security updates every day.
+// The provider's image masks apt-daily*.timer and unattended-upgrades;
+// setup.sh unmasks them.
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::AutocleanInterval "7";

@@ -25,3 +25,7 @@ tsconfig.tsbuildinfo
 *.log
 npm-debug.log*
 docs/design/egna-ikoner/node_modules/
+
+# Server-specific setup values and keys (deploy/production/README.md)
+/deploy/production/setup.env
+/deploy/production/keys/

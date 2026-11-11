@@ -1,0 +1,34 @@
+# /etc/caddy/Caddyfile
+# Caddy runs natively (Debian package) in front of the app on 127.0.0.1:3000.
+# It obtains Let's Encrypt certificates, redirects http to https, serves
+# HTTP/2 and HTTP/3 and proxies the WebSocket (DDP) connection.
+# Replace kalendern.example.org with the site's domain.
+
+www.kalendern.example.org {
+	redir https://kalendern.example.org{uri} permanent
+}
+
+kalendern.example.org {
+	encode zstd gzip
+
+	# Images are sent as base64 in method calls; documents up to 30 MB.
+	request_body {
+		max_size 40MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	reverse_proxy 127.0.0.1:3000 {
+		# Caddy sets X-Forwarded-Proto/For/Host itself.
+		flush_interval -1
+	}
+
+	# To journald (journalctl -u caddy). A file under /var/log fails: the
+	# Debian unit runs Caddy with ProtectSystem.
+	log
+}

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Nightly application backup: a MongoDB dump, the uploaded media and the
+# configuration, in /var/backups/cocoso/{daily,weekly}/. Run by
+# cocoso-backup.timer. Another machine pulls the folder read-only with rsync
+# as the user backup-pull (rrsync -ro), over the tailnet.
+set -euo pipefail
+APP_DIR=/opt/cocoso
+OUT=/var/backups/cocoso
+KEEP_DAILY=14
+KEEP_WEEKLY=8
+STAMP="$(date +%Y-%m-%d_%H%M)"
+TMP="$(mktemp -d "$OUT/.tmp.XXXXXX")"
+trap 'rm -rf "$TMP"' EXIT
+mkdir -p "$OUT/daily" "$OUT/weekly"
+cd "$APP_DIR"
+
+# 1. Database: a consistent dump with mongodump inside the mongo container.
+docker compose exec -T mongo mongodump --quiet --db cocoso --archive --gzip \
+  > "$TMP/mongo-$STAMP.archive.gz"
+
+# 2. Media: a tarball of the volume.
+MEDIA_VOL="$(docker volume ls -q --filter name=^cocoso_media-data$)"
+docker run --rm -v "$MEDIA_VOL":/media:ro -v "$TMP":/out alpine \
+  tar -czf "/out/media-$STAMP.tar.gz" -C /media .
+
+# 3. Configuration. .env holds the SMTP password and is included on purpose:
+#    the pulling side keeps it in an encrypted restic repository.
+tar -czf "$TMP/config-$STAMP.tar.gz" -C "$APP_DIR" docker-compose.yml settings.json .env
+
+# 4. Checksums (verified by the pulling side), then move into place at once.
+( cd "$TMP" && sha256sum ./*.gz > "SHA256SUMS-$STAMP" )
+mv "$TMP"/* "$OUT/daily/"
+
+# Sundays: keep a weekly copy.
+if [[ "$(date +%u)" == 7 ]]; then
+  cp "$OUT/daily/"*"$STAMP"* "$OUT/weekly/"
+fi
+
+# 5. Rotation.
+prune() { # dir keep
+  ls -1t "$1" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{4}' | sort -ur \
+    | tail -n +"$(( $2 + 1 ))" | while read -r old; do rm -f "$1"/*"$old"*; done
+}
+prune "$OUT/daily" "$KEEP_DAILY"
+prune "$OUT/weekly" "$KEEP_WEEKLY"
+
+# Readable by the group backup (backup-pull is a member), nobody else.
+chmod -R o-rwx "$OUT"; chgrp -R backup "$OUT"; chmod -R g+rX "$OUT"
+echo "cocoso-backup: ok $STAMP ($(du -sh "$OUT" | cut -f1) total)"

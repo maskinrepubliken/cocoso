@@ -1,0 +1,55 @@
+# /opt/cocoso/docker-compose.yml — production.
+# Caddy (on the host) terminates TLS and proxies to 127.0.0.1:3000.
+# Deploys run /usr/local/sbin/cocoso-deploy, which pulls :production.
+
+name: cocoso
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    # Meteor needs a replica set for oplog tailing; one member is enough.
+    # WiredTiger's cache is capped so Mongo doesn't take half of a 4 GB machine.
+    command: ['--replSet', 'rs0', '--bind_ip_all', '--wiredTigerCacheSizeGB', '0.5']
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'mongosh --quiet --eval "try { rs.status().ok } catch (e) { rs.initiate({_id:\"rs0\",members:[{_id:0,host:\"mongo:27017\"}]}).ok }" | grep -q 1',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  app:
+    image: ghcr.io/maskinrepubliken/cocoso:production
+    restart: unless-stopped
+    init: true
+    container_name: cocoso-app
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file: .env # ROOT_URL, SMTP_PASSWORD
+    environment:
+      PORT: 3000
+      MONGO_URL: mongodb://mongo:27017/cocoso?replicaSet=rs0
+      MONGO_OPLOG_URL: mongodb://mongo:27017/local?replicaSet=rs0
+      MEDIA_STORAGE_PATH: /var/lib/cocoso/media
+      METEOR_SETTINGS_FILE: /run/cocoso/settings.json
+    volumes:
+      # Read by the app as uid 1000 inside the container: keep it mode 644.
+      - ./settings.json:/run/cocoso/settings.json:ro
+      - media-data:/var/lib/cocoso/media
+    ports:
+      - '127.0.0.1:3000:3000' # local only; Caddy serves 80/443
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+volumes:
+  mongo-data:
+  media-data:

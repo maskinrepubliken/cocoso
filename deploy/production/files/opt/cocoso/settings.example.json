@@ -1,0 +1,22 @@
+{
+  "_readme": "Production settings, mode 644 (the app reads it as uid 1000). No secrets here: the SMTP password is SMTP_PASSWORD in .env. Every key: docs/CONFIGURATION.md.",
+  "public": {
+    "packages": { "dynamic-import": { "useLocationOrigin": true } },
+    "name": "Tranemokalendern"
+  },
+  "media": { "storagePath": "/var/lib/cocoso/media" },
+  "cdnServer": "",
+  "mailCredentials": {
+    "smtp": {
+      "fromEmail": "Tranemokalendern <noreply@kalendern.example.org>",
+      "userName": "noreply@kalendern.example.org",
+      "host": "mail.kalendern.example.org",
+      "port": "465"
+    }
+  },
+  "site": {
+    "name": "Tranemo",
+    "admin": { "username": "<admin username>", "email": "<admin email>" },
+    "data": "tranemo"
+  }
+}

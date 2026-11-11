@@ -1,0 +1,3 @@
+# /etc/sudoers.d/91-deploy (mode 440). The deploy user may run the deploy
+# script as root, with no arguments ("" forbids any), and nothing else.
+deploy ALL=(root) NOPASSWD: /usr/local/sbin/cocoso-deploy ""
