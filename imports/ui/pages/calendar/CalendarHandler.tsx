@@ -1,12 +1,9 @@
 import React, { useMemo } from 'react';
-import { useLoaderData, useNavigate, useSearchParams } from 'react-router';
-import dayjs from 'dayjs';
+import { useLoaderData, useNavigate } from 'react-router';
 import loadable from '@loadable/component';
-import { useAtomValue } from 'jotai';
 
 import { Loader, Skeleton } from '/imports/ui/core';
 import { parseAllBookingsWithResources } from '/imports/api/_utils/shared';
-import { canCreateContentAtom } from '/imports/state';
 import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
@@ -15,17 +12,10 @@ import EventViewMenu from '/imports/ui/listing/EventViewMenu';
 import useEventFilters from '/imports/ui/listing/useEventFilters';
 import { EVENT_KINDS } from '/imports/ui/pages/activities/eventKinds';
 import { kindsOf } from '/imports/api/_utils/kinds';
-import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
 });
-
-interface SlotInfo {
-  start: Date;
-  end: Date;
-  slots?: Date[];
-}
 
 interface Resource {
   _id: string;
@@ -59,29 +49,7 @@ interface CalendarHandlerProps {
   siteDoc: any;
 }
 
-const parseNewEntryParams = (
-  slotInfo: SlotInfo,
-  selectedResource: Resource | null,
-  type: string
-) => {
-  const params = {
-    startDate: dayjs(slotInfo?.start).format('YYYY-MM-DD'),
-    endDate: dayjs(slotInfo?.end).format('YYYY-MM-DD'),
-    startTime: dayjs(slotInfo?.start).format('HH:mm'),
-    endTime: dayjs(slotInfo?.end).format('HH:mm'),
-    resourceId: selectedResource ? selectedResource._id : '',
-  };
-
-  if (type !== 'other') {
-    params.endDate = dayjs(slotInfo?.end).add(-1, 'days').format('YYYY-MM-DD');
-    params.endTime = '23:59';
-  }
-
-  return params;
-};
-
 export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
-  const canCreateContent = useAtomValue(canCreateContentAtom);
   const site = siteDoc;
   const { activities, resources } = useLoaderData() as {
     activities: Activity[];
@@ -90,7 +58,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
 
   const navigate = useNavigate();
   const prefix = useLocationPrefix();
-  const [, setSearchParams] = useSearchParams();
 
   const activitiesParsed = useMemo(
     () => parseAllBookingsWithResources(activities, resources),
@@ -110,35 +77,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       time: activity.startTime,
     });
     navigate(`${prefix}/${listing}/${activity.activityId}?${query}`);
-  };
-
-  const handleSelectSlot = (slotInfo: SlotInfo) => {
-    if (!canCreateContent || !slotInfo || !isFeatureEnabled('bookings')) {
-      return;
-    }
-
-    let type = 'other';
-
-    if (slotInfo?.slots && slotInfo.slots.length === 1) {
-      // One day selected in month view
-      type = 'month-oneday';
-    } else if (
-      // Multiple days selected in month view
-      slotInfo?.slots &&
-      slotInfo.slots.length > 1 &&
-      dayjs(slotInfo?.end).format('HH:mm') === '00:00'
-    ) {
-      type = 'month-multipledays';
-    }
-
-    // No venue is preselected; the form asks for the place.
-    const dateParams = parseNewEntryParams(slotInfo, null, type);
-
-    setSearchParams((params) => ({
-      ...params,
-      ...dateParams,
-      new: true,
-    }));
   };
 
   // The same Filter as on the events page: kinds and places; one moves
@@ -213,9 +151,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
               onTogglePlace={filters.togglePlace}
             />
           }
-          resources={resources}
           onSelect={handleSelectActivity}
-          onSelectSlot={handleSelectSlot}
         />
       </div>
     </>

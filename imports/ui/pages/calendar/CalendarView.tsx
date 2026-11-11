@@ -4,19 +4,14 @@ import { Calendar, dayjsLocalizer, type View } from 'react-big-calendar';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import dayjs from 'dayjs';
-import { useAtomValue } from 'jotai';
 import RepeatIcon from 'lucide-react/dist/esm/icons/repeat';
 
 if (Meteor.isClient) {
   import('react-big-calendar/lib/css/react-big-calendar.css');
 }
 import useMediaQuery from '/imports/api/_utils/useMediaQuery';
-import { canCreateContentAtom, renderedAtom } from '/imports/state';
-import { isFeatureEnabled } from '/imports/api/_utils/features';
-import NewEntryHandler from '/imports/ui/forms/NewEntryHandler';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 
-import NewCalendarActivity from './NewCalendarActivity';
 import DayView from './DayView';
 
 const weekday = require('dayjs/plugin/weekday');
@@ -36,19 +31,11 @@ interface CalendarActivity {
   isRecurring?: boolean;
 }
 
-interface Resource {
-  _id: string;
-  label: string;
-  isBookable?: boolean;
-}
-
 interface CalendarViewProps {
   activities: CalendarActivity[];
-  resources: Resource[];
   // Shown at the end of the toolbar, after the views (the Filter)
   toolbarEnd?: React.ReactNode;
   onSelect: (activity: CalendarActivity, e: React.SyntheticEvent) => void;
-  onSelectSlot: (slotInfo: any) => void;
 }
 
 // How an event reads in a cell or a list row: a repeat mark for the weekly
@@ -185,14 +172,10 @@ const VIEW_COMPONENTS = {
 
 export default function CalendarView({
   activities,
-  resources,
   toolbarEnd,
   onSelect,
-  onSelectSlot,
 }: CalendarViewProps) {
   const [t] = useTranslation('calendar');
-  const canCreateContent = useAtomValue(canCreateContentAtom);
-  const rendered = useAtomValue(renderedAtom);
   const localizer = useMemo(() => dayjsLocalizer(dayjs), []);
   const isNarrow = useMediaQuery('(max-width: 720px)');
   // null until the visitor picks a view (now or on an earlier visit): the
@@ -279,7 +262,6 @@ export default function CalendarView({
         min={dayBounds.min}
         popup
         popupOffset={30}
-        selectable={isFeatureEnabled('bookings')}
         showMultiDayTimes
         step={60}
         timeslots={1}
@@ -298,15 +280,8 @@ export default function CalendarView({
         })}
         onNavigate={navigateTo}
         onSelectEvent={onSelect}
-        onSelectSlot={onSelectSlot}
         onView={changeView}
       />
-
-      {rendered && canCreateContent && isFeatureEnabled('bookings') ? (
-        <NewEntryHandler context="calendar">
-          <NewCalendarActivity resources={resources} />
-        </NewEntryHandler>
-      ) : null}
     </ToolbarEndContext.Provider>
   );
 }

@@ -116,7 +116,7 @@ export interface DotsProps {
 
 /**
  * SelectedResource for resource selection in forms
- * Used in CalendarActivityForm and PublicActivityForm
+ * Used in PublicActivityForm
  */
 export interface SelectedResource {
   _id: string;
@@ -151,7 +151,7 @@ export interface MeteorUser {
 
 /**
  * DateAndTime for activity date/time occurrences in forms
- * Used in DatesAndTimes, CalendarActivityForm, PublicActivityForm
+ * Used in DatesAndTimes and PublicActivityForm
  */
 export interface DateAndTime {
   startDate: string;
