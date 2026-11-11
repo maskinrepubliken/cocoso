@@ -22,7 +22,10 @@ WebApp.connectHandlers.use(
     res.end(
       JSON.stringify({
         name,
-        short_name: site?.settings?.shortName || name,
+        // Under the icon on the home screen: the short name in capitals
+        short_name: (site?.settings?.shortName || name).toLocaleUpperCase(
+          site?.settings?.lang || 'sv'
+        ),
         lang: site?.settings?.lang || 'sv',
         start_url: '/',
         scope: '/',

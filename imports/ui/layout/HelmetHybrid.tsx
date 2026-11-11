@@ -88,11 +88,14 @@ export default function HelmetHybrid({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        {/* The name under the icon on the home screen, short like the manifest's */}
+        {/* The name under the icon on the home screen: the short name in
+            capitals, as in the manifest */}
         {siteName && (
           <meta
             name="apple-mobile-web-app-title"
-            content={siteDoc.settings?.shortName || siteName}
+            content={(
+              siteDoc.settings?.shortName || siteName
+            ).toLocaleUpperCase(lang || 'sv')}
           />
         )}
         <link
