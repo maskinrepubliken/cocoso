@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.4.0](https://github.com/maskinrepubliken/cocoso/compare/v5.3.0...v5.4.0) (2026-11-11)
+
+
+### Features
+
+* **layout:** call the footer's home-screen button "Som app" ([390c2c8](https://github.com/maskinrepubliken/cocoso/commit/390c2c83107fc1bde6430c41f16c64425b01991d))
+* **layout:** guide phones to add the app and turn on notifications ([2744fa8](https://github.com/maskinrepubliken/cocoso/commit/2744fa8afc44f2bc83340d4a0f19401142d0730e))
+* **layout:** name the home-screen app "TRANEMO" ([41d955a](https://github.com/maskinrepubliken/cocoso/commit/41d955aa299298b11c60ba0f61101e9c20231819))
+
+
+### Bug Fixes
+
+* **layout:** open the keyboard when the search is opened on a phone ([31ce5ca](https://github.com/maskinrepubliken/cocoso/commit/31ce5ca7a4f043d06ca69ab0bf213db322c71d53))
+* **layout:** show the cookie and beta notice's text on iPhones ([81e9f18](https://github.com/maskinrepubliken/cocoso/commit/81e9f1871d4e3bc79d9a3fa0156247b69af2a806))
+* **layout:** show the page's own ground when overscrolling on phones ([ef352fb](https://github.com/maskinrepubliken/cocoso/commit/ef352fb6189a2a9548b5dade95f20694f41a5216))
+
 ## [5.3.0](https://github.com/maskinrepubliken/cocoso/compare/v5.2.1...v5.3.0) (2026-11-09)
 
 

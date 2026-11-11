@@ -2,7 +2,7 @@
   "name": "cocoso",
   "private": true,
   "description": "![Cocoso logo](https://www.cocoso.info/cocoso-logo.png)",
-  "version": "5.3.0",
+  "version": "5.4.0",
   "main": "server/main.js",
   "directories": {
     "lib": "lib"
