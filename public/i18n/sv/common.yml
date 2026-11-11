@@ -86,6 +86,10 @@ labels:
   notfound:
     info: Det du letade efter kunde inte hittas
     gohome: Gå tillbaka till startsidan
+  pageError:
+    title: Något gick fel när sidan skulle laddas
+    info: Det kan vara ett tillfälligt problem. Försök igen om en liten stund.
+    retry: Försök igen
   newPopupLabel: Skapa ett nytt inlägg
   newFormEntry: Nytt inlägg i {{ context }}
   editFormEntry: Redigera inlägget i {{ context }}
@@ -442,6 +446,8 @@ event:
   archived:
     tag: "Arkiverat"
     notFound: "Det här evenemanget är inte tillgängligt."
+    notFoundInfo: "Det kan ha tagits bort eller arkiverats, eller så är länken fel."
+    seeAll: "Se alla evenemang"
     onlyYou: "Arkiverade evenemang visas bara för dig och administratörerna."
   discussion:
     open: "Öppna diskussionen"

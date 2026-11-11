@@ -86,6 +86,10 @@ labels:
   notfound:
     info: What you look for could not be found
     gohome: Back to home page
+  pageError:
+    title: Something went wrong while loading this page
+    info: It may be a temporary problem. Try again in a moment.
+    retry: Try again
   newPopupLabel: Create a new entry in
   newFormEntry: New Entry in {{ context }}
   editFormEntry: Edit Entry in {{ context }}
@@ -445,6 +449,8 @@ event:
   archived:
     tag: "Archived"
     notFound: "This event is not available."
+    notFoundInfo: "It may have been removed or archived, or the link may be wrong."
+    seeAll: "See all events"
     onlyYou: "Archived events are only shown to you and the admins."
   discussion:
     open: "Open the discussion"

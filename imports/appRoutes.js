@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
+import i18n from 'i18next';
 import { redirect, useNavigation } from 'react-router';
 
 import { isFeatureEnabled } from '/imports/api/_utils/features';
@@ -9,6 +10,7 @@ import loadable from '@loadable/component';
 import WrapperHybrid from '/imports/ui/layout/WrapperHybrid';
 import HomeHandler from '/imports/HomeHandler';
 import { Loader } from '/imports/ui/core';
+import NoticeCard from '/imports/ui/generic/NoticeCard';
 
 // Keep main public listing and entry pages eager for SSR compatibility
 import ActivityListHandler from '/imports/ui/pages/activities/ActivityListHandler';
@@ -225,32 +227,35 @@ class RouteErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '48px 16px', display: 'grid' }}>
-          <div
-            className="new-entry-helper cocoso-notice"
-            data-tone="error"
-            role="alert"
-            style={{ maxWidth: '440px', margin: '0 auto' }}
-          >
-            <h3>Something went wrong while loading this page.</h3>
-            {this.state.message && (
-              <p
-                className="notice-code"
-                style={{ fontFamily: 'monospace', letterSpacing: 0 }}
-              >
+        <NoticeCard
+          tone="error"
+          title={i18n.t('common:labels.pageError.title')}
+          code={
+            this.state.message && (
+              <span style={{ fontFamily: 'monospace', letterSpacing: 0 }}>
                 {this.state.message}
-              </p>
-            )}
-            <button
-              type="button"
-              onClick={() => this.setState({ hasError: false, message: null })}
-              className="new-entry-helper-button"
-              style={{ border: 0, cursor: 'pointer' }}
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
+              </span>
+            )
+          }
+          actions={
+            <>
+              <button
+                type="button"
+                onClick={() =>
+                  this.setState({ hasError: false, message: null })
+                }
+                className="new-entry-helper-button"
+              >
+                {i18n.t('common:labels.pageError.retry')}
+              </button>
+              <a className="new-entry-helper-button is-quiet" href="/">
+                {i18n.t('common:labels.notfound.gohome')}
+              </a>
+            </>
+          }
+        >
+          {i18n.t('common:labels.pageError.info')}
+        </NoticeCard>
       );
     }
 

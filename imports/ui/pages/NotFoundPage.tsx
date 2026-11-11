@@ -2,32 +2,26 @@ import { Link } from 'react-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Center } from '/imports/ui/core';
-import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
+import NoticeCard from '/imports/ui/generic/NoticeCard';
 
 import Template from '../layout/Template';
 
-// The page for a link that leads nowhere: a friendly note, not an error
-// code, in the tinted glass of the other notices.
+// The page for a link that leads nowhere: a friendly note, not an error code.
 export default function NotFoundPage() {
   const [t] = useTranslation('common');
 
   return (
     <Template>
-      <Center py="12" px="4">
-        <div
-          className="new-entry-helper cocoso-notice"
-          data-tone="warning"
-          style={{ maxWidth: '440px' }}
-        >
-          <ThreeDIcon name="zoom" size={96} />
-          <h3>{t('labels.notfound.info')}</h3>
-          <p className="notice-code">404</p>
+      <NoticeCard
+        icon="zoom"
+        title={t('labels.notfound.info')}
+        code="404"
+        actions={
           <Link className="new-entry-helper-button" to="/">
             {t('labels.notfound.gohome')}
           </Link>
-        </div>
-      </Center>
+        }
+      />
     </Template>
   );
 }

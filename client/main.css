@@ -8173,6 +8173,26 @@ body {
   color: var(--cocoso-mylla);
 }
 
+.notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.notice-actions .new-entry-helper-button {
+  border: 0;
+  cursor: pointer;
+}
+
+/* The second way on: glass instead of the full accent */
+.notice-actions .new-entry-helper-button.is-quiet {
+  background: rgb(255 253 247 / 0.6);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--notice-tone) 34%, transparent);
+  color: var(--cocoso-mylla);
+}
+
 .new-entry-helper.cocoso-notice .notice-code {
   color: var(--notice-ink);
   font-family: var(--cocoso-font-ui);

@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import loadable from '@loadable/component';
-import { useLoaderData, useNavigate, useSearchParams } from 'react-router';
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from 'react-router';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
-import { Alert, Center } from '/imports/ui/core';
-
+import NoticeCard from '/imports/ui/generic/NoticeCard';
 import ActivityHybrid from '/imports/ui/entry/ActivityHybrid';
 import { canCreateContentAtom, renderedAtom, roleAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
@@ -35,9 +39,22 @@ export default function ActivityItemHandler({ siteDoc }) {
   // Archived events are served only to their organizer and admins.
   if (!activity) {
     return (
-      <Center p="8">
-        <Alert message={tc('event.archived.notFound')} />
-      </Center>
+      <NoticeCard
+        icon="calendar"
+        title={tc('event.archived.notFound')}
+        actions={
+          <>
+            <Link className="new-entry-helper-button" to="/activities">
+              {tc('event.archived.seeAll')}
+            </Link>
+            <Link className="new-entry-helper-button is-quiet" to="/">
+              {tc('labels.notfound.gohome')}
+            </Link>
+          </>
+        }
+      >
+        {tc('event.archived.notFoundInfo')}
+      </NoticeCard>
     );
   }
 
