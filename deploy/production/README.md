@@ -62,6 +62,26 @@ let it move only to commits whose CI passed.
 `production`, with the full commit sha of an older release. The branch stays
 where it is; the next push to it deploys forward again.
 
+## Updating the server's own scripts
+
+`cocoso-deploy`, `cocoso-backup` (with its systemd units) and the deploy user's
+sudo rule live outside the Docker image, so a deploy does not update them.
+After a release that changes them, from a checkout of this repository:
+
+    deploy/production/update-server.sh <admin>@<server>
+
+It installs them as they are on the `production` branch and lists what changed.
+
+## Changing production data
+
+One-off data scripts (`scripts/migrations/*.mongosh.js`) are run against the
+production database with
+
+    deploy/production/run-mongosh.sh <admin>@<server> <script.js>            # dry run
+    deploy/production/run-mongosh.sh <admin>@<server> <script.js> --apply    # changes data
+
+Take a fresh backup first (`sudo cocoso-backup` on the server).
+
 ## GitHub
 
 - **Environment `production`** (Settings → Environments), deployment branches:
