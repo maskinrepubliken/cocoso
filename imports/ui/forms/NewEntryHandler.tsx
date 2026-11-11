@@ -5,6 +5,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 
 import { canCreateContentAtom } from '/imports/state';
 import { initialLoader, loaderAtom } from '/imports/ui/utils/loaderHandler';
+import { dismissFormError } from '/imports/ui/generic/message';
 
 import EntryFormHandler from './EntryFormHandler';
 
@@ -24,6 +25,7 @@ export default function NewEntryHandler({
 
   const handleClose = () => {
     setLoaders({ ...initialLoader });
+    dismissFormError();
     setSearchParams((params) => ({ ...params, new: 'false' }));
   };
 

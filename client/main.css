@@ -8116,3 +8116,46 @@ body {
     display: none;
   }
 }
+
+/* Popups (react-hot-toast): their glass look is set inline in
+   imports/ui/generic/message.tsx; here only the layout inside. */
+.cocoso-toast {
+  gap: 4px;
+}
+
+.cocoso-toast-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 6px;
+  overflow-wrap: anywhere;
+}
+
+.cocoso-toast-text > div {
+  margin: 0 !important;
+  justify-content: flex-start !important;
+}
+
+.cocoso-toast-close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  align-self: flex-start;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cocoso-mylla-soft);
+  cursor: pointer;
+}
+
+.cocoso-toast-close:hover {
+  background: var(--cocoso-colors-theme-100);
+  color: var(--cocoso-mylla);
+}
+
+.cocoso-toast-close:focus-visible {
+  outline: 2px solid var(--cocoso-colors-theme-500);
+  outline-offset: 1px;
+}

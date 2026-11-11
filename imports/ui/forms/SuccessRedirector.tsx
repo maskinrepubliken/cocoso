@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import { useNavigate, useRevalidator, useSearchParams } from 'react-router';
 
 import { initialLoader, loaderAtom } from '/imports/ui/utils/loaderHandler';
+import { dismissFormError } from '/imports/ui/generic/message';
 
 export interface SuccessRedirectorProps {
   context?: string;
@@ -44,6 +45,7 @@ export default function SuccessRedirector({
 
   useEffect(() => {
     if (typeof ping !== 'string') return;
+    dismissFormError();
     setLoaders((prevState) => ({ ...prevState, isSuccess: true }));
     handleSuccess();
   }, [ping]);

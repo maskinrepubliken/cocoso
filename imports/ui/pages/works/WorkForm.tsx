@@ -97,7 +97,7 @@ export default function WorkForm({ work, onFinalize }: WorkFormProps) {
 
   const handleSubmit = (formValues: WorkFormValues) => {
     if (!state.selectedCategory) {
-      message.error(t('message.categorymissing'));
+      message.formError(t('message.categorymissing'));
       return;
     }
     setState((prevState) => ({

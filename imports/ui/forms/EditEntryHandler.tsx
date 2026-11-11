@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { canCreateContentAtom } from '/imports/state';
 import { initialLoader, loaderAtom } from '/imports/ui/utils/loaderHandler';
+import { dismissFormError } from '/imports/ui/generic/message';
 
 import EntryFormHandler from './EntryFormHandler';
 
@@ -21,6 +22,7 @@ export default function EditEntryHandler({ context, children }: EditEntryHandler
 
   const handleClose = () => {
     setLoaders({ ...initialLoader });
+    dismissFormError();
     setSearchParams((params) => ({ ...params, edit: 'false' }));
   };
 

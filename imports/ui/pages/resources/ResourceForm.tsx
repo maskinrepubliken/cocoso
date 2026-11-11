@@ -114,7 +114,7 @@ export default function ResourceForm({
   const handleSubmit = (formValues: ResourceFormValues) => {
     // A place is where something happens: no saving it without an address.
     if (!isCompleteAddress(state.address)) {
-      message.error(tc('address.errors.required'));
+      message.formError(tc('address.errors.required'));
       return;
     }
     // A bookable place says how: an organizer, an email or phone, or a link.
@@ -125,7 +125,7 @@ export default function ResourceForm({
         (booking.via === 'own' && !isReachable(booking.contact)) ||
         (booking.via === 'link' && !booking.url.trim()))
     ) {
-      message.error(t(`form.booking.errors.${booking.via}`));
+      message.formError(t(`form.booking.errors.${booking.via}`));
       return;
     }
     setState((prevState) => ({

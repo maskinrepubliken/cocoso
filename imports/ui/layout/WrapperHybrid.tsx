@@ -5,7 +5,6 @@ import { Outlet, useLocation } from 'react-router';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useAtom, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import { Toaster } from 'react-hot-toast';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/sv';
@@ -30,6 +29,7 @@ import { resolveSeason } from '/imports/api/_utils/season';
 import { restoreViewAsState } from '/imports/utils/viewAs';
 import { call } from '/imports/api/_utils/shared';
 import { Loader } from '/imports/ui/core';
+import { MessageHost } from '/imports/ui/generic/message';
 
 import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
@@ -240,34 +240,7 @@ export default function WrapperHybrid({
           </DummyWrapper>
         </Suspense>
 
-        {rendered && (
-          <Toaster
-            containerStyle={{ minWidth: '120px', zIndex: 999999 }}
-            toastOptions={{
-              style: {
-                background: 'var(--cocoso-papper)',
-                borderRadius: 'var(--cocoso-radius-kort)',
-                boxShadow: 'var(--cocoso-skugga-meny)',
-                color: 'var(--cocoso-mylla)',
-                fontFamily: 'var(--cocoso-font-ui)',
-                fontWeight: 600,
-                padding: '10px 14px',
-              },
-              success: {
-                iconTheme: {
-                  primary: 'var(--cocoso-colors-theme-500)',
-                  secondary: '#fff',
-                },
-              },
-              error: {
-                iconTheme: {
-                  primary: 'var(--cocoso-lingon)',
-                  secondary: '#fff',
-                },
-              },
-            }}
-          />
-        )}
+        {rendered && <MessageHost />}
       </I18nextProvider>
     </>
   );

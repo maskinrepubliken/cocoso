@@ -327,11 +327,11 @@ export default function PublicActivityForm({
   // An address of its own must be complete if one is given at all.
   const isWhereValid = () => {
     if (whereMode === 'place' && !state.selectedResource) {
-      message.error(t('form.where.placeRequired'));
+      message.formError(t('form.where.placeRequired'));
       return false;
     }
     if (whereMode === 'own' && !state.locationPicked) {
-      message.error(t('form.where.locationRequired'));
+      message.formError(t('form.where.locationRequired'));
       return false;
     }
     if (
@@ -339,7 +339,7 @@ export default function PublicActivityForm({
       hasAddress(state.address) &&
       !isCompleteAddress(state.address)
     ) {
-      message.error(tc('address.errors.required'));
+      message.formError(tc('address.errors.required'));
       return false;
     }
     return true;

@@ -71,7 +71,7 @@ export default function GroupForm({ group, onFinalize }: GroupFormProps) {
   const handleSubmit = (formValues: GroupFormValues) => {
     // Every group can be reached by email or phone.
     if (!isReachable(state.contact)) {
-      message.error(tc('contact.errors.required'));
+      message.formError(tc('contact.errors.required'));
       return;
     }
     setState((prevState) => ({
