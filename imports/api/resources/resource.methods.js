@@ -144,6 +144,8 @@ Meteor.methods({
       isBookable: 1,
       booking: 1,
       isUnlisted: 1,
+      // the parent's address shows under "Del av"
+      address: 1,
     };
     const [partOf, parts] = await Promise.all([
       resource.parentId

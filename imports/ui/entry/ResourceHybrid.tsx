@@ -14,7 +14,10 @@ import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import AddressBlock from '/imports/ui/generic/AddressBlock';
-import { ContactDetails } from '/imports/ui/generic/ContactDetails';
+import {
+  AddressDetails,
+  ContactDetails,
+} from '/imports/ui/generic/ContactDetails';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
@@ -69,6 +72,7 @@ interface PlaceLink {
   isBookable?: boolean;
   booking?: object | null;
   isUnlisted?: boolean;
+  address?: Partial<Address> | null;
 }
 
 export interface ResourceHybridProps {
@@ -374,6 +378,10 @@ export default function ResourceHybrid({
                     <SideTitle as="p">{tc('entry.partOf')}</SideTitle>
                     <h3>{partOf.label}</h3>
                   </ParentLink>
+                  {/* Its address is this place's too */}
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <AddressDetails address={partOf.address} />
+                  </div>
                   {withContact && (
                     <>
                       <SideTitle css={{ margin: '1.5rem 0 1rem' }}>
