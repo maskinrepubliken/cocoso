@@ -17,7 +17,7 @@ import {
 import { Button, IconButton } from './Button';
 import Checkbox from './Checkbox';
 import { Code, Heading, Link, Tag, Text } from './Text';
-import { Fade, Slide } from './FadeSlide';
+import { Fade } from './FadeSlide';
 import Input from './Input';
 import Image from './Image';
 import Loader from './Loader';
@@ -66,7 +66,6 @@ export {
   Radio,
   RadioGroup,
   Select,
-  Slide,
   Spinner,
   Skeleton,
   Progress,
