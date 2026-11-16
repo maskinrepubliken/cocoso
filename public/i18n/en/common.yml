@@ -522,7 +522,7 @@ home:
     calendar: "All events as a calendar, month by month or as a list."
     groups: "The municipality’s groups: what they do, when they meet and how to join."
     works: "Carpool, lend, give away and ask for a hand, between neighbours."
-    people: "Those who organize: associations, services and enthusiasts, with their upcoming events."
+    people: "Those who organize: groups, services and enthusiasts, with their upcoming events."
     resources: "Venues, meeting places and outings, and what happens there."
     info: "About the service, how to use it and whom to contact."
   hero:
@@ -602,7 +602,7 @@ installApp:
     login: Notifications follow your account, so log in first – then come back here.
 
 footer:
-  byline: A service made by and for the associations of Tranemo municipality. Developed by Uddebo Makerspace, Tranemo municipality and Maskinrepubliken.
+  byline: A service made by and for the groups of Tranemo municipality. Developed by Uddebo Makerspace, Tranemo municipality and Maskinrepubliken.
   about: About this site
   signedInAs: "Signed in as <me>{{name}}</me>."
 
@@ -626,8 +626,8 @@ termsPage:
   sections:
     - title: About the service
       paragraphs:
-        - "{{site}} is run by Tranemo municipality. It gathers events, associations, places and requests in the municipality. Reading and searching needs no account."
-        - "With an account you can publish events, present your association, book venues, sign up for events and answer requests. The account is personal."
+        - "{{site}} is run by Tranemo municipality. It gathers events, groups, places and requests in the municipality. Reading and searching needs no account."
+        - "With an account you can publish events, present your group, book venues, sign up for events and answer requests. The account is personal."
     - title: How we behave
       paragraphs:
         - "What you publish is visible to every visitor. Be respectful, stick to the truth, and only publish what you have the right to, such as pictures you took yourself or have permission to use."

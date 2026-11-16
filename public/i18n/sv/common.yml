@@ -519,7 +519,7 @@ home:
     calendar: "Alla evenemang som en kalender, månad för månad eller som en lista."
     groups: "Kommunens grupper: vad de gör, när de träffas och hur du går med."
     works: "Samåk, låna, ge bort och be om hjälp, grannar emellan."
-    people: "De som arrangerar: föreningar, verksamheter och eldsjälar, med sina kommande evenemang."
+    people: "De som arrangerar: grupper, verksamheter och eldsjälar, med sina kommande evenemang."
     resources: "Lokaler, mötesplatser och utflyktsmål, och vad som händer där."
     info: "Om tjänsten, hur du använder den och vem du kontaktar."
   hero:
@@ -599,7 +599,7 @@ installApp:
     login: Notiser hör till ditt konto, så logga in först – och kom sedan tillbaka hit.
 
 footer:
-  byline: En tjänst skapad av och för föreningslivet i Tranemo Kommun. Utvecklas av Uddebo Makerspace, Tranemo Kommun och Maskinrepubliken.
+  byline: En tjänst skapad av och för grupperna i Tranemo Kommun. Utvecklas av Uddebo Makerspace, Tranemo Kommun och Maskinrepubliken.
   about: Om sidan
   signedInAs: "Inloggad som <me>{{name}}</me>."
 
@@ -623,8 +623,8 @@ termsPage:
   sections:
     - title: Om tjänsten
       paragraphs:
-        - "{{site}} drivs av Tranemo kommun. Tjänsten samlar evenemang, föreningar, platser och förfrågningar i kommunen. Att läsa och söka kräver inget konto."
-        - "Med ett konto kan du publicera evenemang, visa din förening, boka lokaler, anmäla dig till evenemang och svara på förfrågningar. Kontot är personligt."
+        - "{{site}} drivs av Tranemo kommun. Tjänsten samlar evenemang, grupper, platser och förfrågningar i kommunen. Att läsa och söka kräver inget konto."
+        - "Med ett konto kan du publicera evenemang, visa din grupp, boka lokaler, anmäla dig till evenemang och svara på förfrågningar. Kontot är personligt."
     - title: Så här uppför vi oss
       paragraphs:
         - "Det du publicerar syns för alla besökare. Skriv respektfullt, håll dig till sanningen och publicera bara sådant du har rätt att publicera, till exempel bilder du tagit själv eller har tillstånd att använda."
