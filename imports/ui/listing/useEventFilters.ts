@@ -10,7 +10,7 @@ import type { EventView, EventWhen } from './EventViewMenu';
 
 // What the Filter menu narrows events to, read from and written to the
 // address: ?kind= and ?ort= (lists), ?showPast= and ?when=; on the Platser
-// page also ?unlisted=1 and ?bookable=1. Shared by the events page, the
+// page also ?bookable=1. Shared by the events page, the
 // calendar and the Platser page, so they filter alike.
 export default function useEventFilters(
   listing: 'activities' | 'calendar' | 'resources'
@@ -75,13 +75,9 @@ export default function useEventFilters(
       .map((location: any) => location._id)
   );
 
-  // Platser only: parts of other places left out of the list shown too,
-  // and only the places that can be booked
-  const isPlaces = listing === 'resources';
-  const showUnlisted = isPlaces && searchParams.get('unlisted') === '1';
-  const onlyBookable = isPlaces && searchParams.get('bookable') === '1';
-  const toggleUnlisted = () =>
-    setParams({ unlisted: showUnlisted ? null : '1' });
+  // Platser only: only the places that can be booked
+  const onlyBookable =
+    listing === 'resources' && searchParams.get('bookable') === '1';
   const toggleBookable = () =>
     setParams({ bookable: onlyBookable ? null : '1' });
 
@@ -92,11 +88,9 @@ export default function useEventFilters(
     category?: { key?: string } | null;
     locationId?: string | null;
     isMunicipalityOnly?: boolean;
-    isUnlisted?: boolean;
     isBookable?: boolean;
     booking?: object | null;
   }) =>
-    (!isPlaces || showUnlisted || !item.isUnlisted) &&
     (!onlyBookable || isBookablePlace(item)) &&
     (!kinds.length || kindsOf(item).some((key) => kinds.includes(key))) &&
     (Boolean(currentLocation) ||
@@ -121,10 +115,9 @@ export default function useEventFilters(
     Boolean(view.when) ||
     (kinds.length > 0 && (kindsFromMenu || listing === 'calendar')) ||
     (!currentLocation && placeSlugs.length > 0) ||
-    showUnlisted ||
     onlyBookable;
 
-  const menuOnly = { unlisted: null, bookable: null };
+  const menuOnly = { bookable: null };
   const resetAll = () =>
     setParams({ kind: null, filter: null, ort: null, when: null, ...menuOnly });
 
@@ -151,12 +144,10 @@ export default function useEventFilters(
     // for memo dependencies
     filterKey: `${kinds.join(',')}|${[...placeIds].join(',')}|${
       view.when
-    }|${showUnlisted}|${onlyBookable}`,
+    }|${onlyBookable}`,
     matches,
     view,
     setView,
-    showUnlisted,
-    toggleUnlisted,
     onlyBookable,
     toggleBookable,
     isNarrowed,

@@ -669,18 +669,18 @@ resourceKinds:
   form:
     label: Type of place
     helper: Choose one or more. Helps people find the place.
-# The view menu at the end of the kinds on the events page
+# The Boka switch in the Filter menu on the Platser page
 resourceView:
-  unlisted: Also places not in the list
+  heading: Booking
   bookable: Only places that can be booked
 
+# The view menu at the end of the kinds on the events page
 eventView:
   button: Filter
   headings:
     kinds: Categories
     places: Places
     when: When
-    show: Show
   anytime:
     title: Any date
     detail: Everything coming up

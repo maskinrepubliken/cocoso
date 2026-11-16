@@ -43,8 +43,6 @@ export default function ResourcesHybrid({
     matches,
     view,
     setView,
-    showUnlisted,
-    toggleUnlisted,
     onlyBookable,
     toggleBookable,
     isNarrowed,
@@ -124,13 +122,8 @@ export default function ResourcesHybrid({
           selectedKinds={kinds}
           view={view}
           withTime={false}
+          optionsHeading={tc('resourceView.heading')}
           options={[
-            {
-              key: 'unlisted',
-              label: tc('resourceView.unlisted'),
-              isChecked: showUnlisted,
-              onToggle: toggleUnlisted,
-            },
             {
               key: 'bookable',
               label: tc('resourceView.bookable'),

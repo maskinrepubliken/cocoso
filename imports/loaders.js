@@ -101,9 +101,11 @@ export async function getResources({ locationId } = {}) {
   const resources = await call('getResources', locationId || undefined);
 
   return {
-    // Parts of other places left out of the list (isUnlisted) come too:
-    // the Filter can show them
-    resources: localFirst(resources, locationId),
+    // Parts of other places can be left out of the list (isUnlisted)
+    resources: localFirst(
+      resources.filter((resource) => !resource.isUnlisted),
+      locationId
+    ),
   };
 }
 

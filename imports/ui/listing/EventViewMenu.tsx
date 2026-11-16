@@ -88,8 +88,9 @@ interface EventViewMenuProps {
   // Where the kinds' names live in common.yml (the kinds of platser on the
   // Platser page)
   kindNamespace?: string;
-  // Further switches, one to a line (on the Platser page: show unlisted
-  // places, only bookable ones)
+  // Further switches, one to a line, under their own heading (on the
+  // Platser page: Boka, only bookable places)
+  optionsHeading?: string;
   options?: {
     key: string;
     label: string;
@@ -113,6 +114,7 @@ export default function EventViewMenu({
   withTime = true,
   variant = 'tile',
   kindNamespace = 'eventKinds',
+  optionsHeading,
   options = [],
   onChange,
   onToggleKind,
@@ -297,9 +299,7 @@ export default function EventViewMenu({
 
           {options.length > 0 && (
             <>
-              <p className="view-menu-heading">
-                {tc('eventView.headings.show')}
-              </p>
+              <p className="view-menu-heading">{optionsHeading}</p>
               <div className="view-menu-list">
                 {options.map((option) =>
                   check(
