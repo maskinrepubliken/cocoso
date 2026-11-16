@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 
 import { styled } from '/stitches.config';
+import SegmentedToggle from '/imports/ui/generic/SegmentedToggle';
 import { renderedAtom } from '/imports/state';
 import {
   getWeeklyPattern,
@@ -73,31 +74,6 @@ const PanelTitle = styled('h2', {
   },
 });
 
-const Segmented = styled('div', {
-  background: 'rgba(255, 253, 247, 0.7)',
-  borderRadius: '999px',
-  display: 'flex',
-  padding: '3px',
-});
-
-const SegButton = styled('button', {
-  background: 'transparent',
-  border: 0,
-  borderRadius: '999px',
-  color: 'var(--cocoso-colors-theme-800)',
-  cursor: 'pointer',
-  fontFamily: 'var(--cocoso-font-ui)',
-  fontSize: '0.875rem',
-  fontWeight: 700,
-  padding: '0.35rem 0.95rem',
-  transition: 'background-color 0.15s ease',
-  variants: {
-    active: {
-      true: { background: 'var(--cocoso-colors-theme-700)', color: 'white' },
-    },
-  },
-});
-
 const Rows = styled('ul', {
   display: 'grid',
   gap: '0.9rem 0.75rem',
@@ -128,7 +104,8 @@ const Row = styled(Link, {
   '&::before': {
     background: 'var(--cocoso-season-accent, var(--cocoso-tegel))',
     borderRadius: '50%',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.3), inset 0 -2px 3px rgba(0, 0, 0, 0.2)',
+    boxShadow:
+      '0 1px 2px rgba(0, 0, 0, 0.3), inset 0 -2px 3px rgba(0, 0, 0, 0.2)',
     content: '""',
     height: '12px',
     left: '50%',
@@ -137,7 +114,10 @@ const Row = styled(Link, {
     top: '-6px',
     width: '12px',
   },
-  '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 14px 26px -14px rgba(60, 40, 20, 0.5)' },
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: '0 14px 26px -14px rgba(60, 40, 20, 0.5)',
+  },
 });
 
 const Time = styled('span', {
@@ -323,7 +303,9 @@ const DayName = styled('h3', {
   variants: {
     today: {
       true: {
-        '& span:last-child': { color: 'var(--cocoso-season-accent, var(--cocoso-tegel))' },
+        '& span:last-child': {
+          color: 'var(--cocoso-season-accent, var(--cocoso-tegel))',
+        },
       },
     },
   },
@@ -339,7 +321,10 @@ const Slot = styled(Link, {
   padding: '0.4rem 0.55rem',
   textDecoration: 'none',
   transition: 'box-shadow 0.15s ease, transform 0.15s ease',
-  '&:hover': { boxShadow: '0 6px 14px -8px rgba(60, 40, 20, 0.5)', transform: 'translateY(-1px)' },
+  '&:hover': {
+    boxShadow: '0 6px 14px -8px rgba(60, 40, 20, 0.5)',
+    transform: 'translateY(-1px)',
+  },
   '& b': {
     display: 'block',
     fontSize: '0.8rem',
@@ -470,22 +455,14 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
           {offset === 0 ? t('recurring.today') : t('recurring.tomorrow')}
           <small>{day.format('dddd D MMMM')}</small>
         </PanelTitle>
-        <Segmented role="group">
-          <SegButton
-            active={offset === 0}
-            aria-pressed={offset === 0}
-            onClick={() => setOffset(0)}
-          >
-            {t('recurring.today')}
-          </SegButton>
-          <SegButton
-            active={offset === 1}
-            aria-pressed={offset === 1}
-            onClick={() => setOffset(1)}
-          >
-            {t('recurring.tomorrow')}
-          </SegButton>
-        </Segmented>
+        <SegmentedToggle
+          choices={[
+            { value: 'today', label: t('recurring.today') },
+            { value: 'tomorrow', label: t('recurring.tomorrow') },
+          ]}
+          value={offset === 0 ? 'today' : 'tomorrow'}
+          onChange={(day) => setOffset(day === 'today' ? 0 : 1)}
+        />
       </PanelHead>
 
       {rows.length === 0 ? (
@@ -641,7 +618,10 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
               {slots.map(({ activity, pattern, slot }) => (
                 <Slot
                   key={activity._id}
-                  to={entryLink(activity, { startDate: date, startTime: slot.startTime })}
+                  to={entryLink(activity, {
+                    startDate: date,
+                    startTime: slot.startTime,
+                  })}
                 >
                   <b>{timeSpan(slot.startTime, slot.endTime)}</b>
                   <strong>{activity.title}</strong>

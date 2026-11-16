@@ -12,15 +12,17 @@ form:
     label: Var platsen finns
     address: Adress
     parent: Del av en annan plats
+    coordinates: Koordinater
+    helpers:
+      address: "Gatuadressen. Kartpunkten tas fram ur den."
+      coordinates: "En punkt på kartan, för en plats utan gatuadress som en sjö eller ett spår. Ange också närmaste ort."
+      parent: "För en plats som ligger i en annan, till exempel ett bibliotek i ett kulturhus. Den får den platsens adress och visas på dess sida."
   parent:
     required: Välj platsen den är en del av.
-    helper: "För en plats som ligger i en annan, till exempel ett bibliotek i ett kulturhus. Den får den platsens adress och visas på dess sida."
     holder: Välj en plats
     empty: Ingen plats med det namnet
     unlisted: Visa inte i listan över platser
     unlistedHelper: "Den visas ändå på sidan för {{place}} och i sökresultat."
-  address:
-    helper: "Var platsen ligger. Varje plats behöver en ort och en gatuadress eller koordinater."
   contact:
     helper: "Valfritt. Vem man frågar om platsen, till exempel om bokning."
   booking:
