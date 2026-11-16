@@ -36,14 +36,12 @@ export default function NewButton({ site }: NewButtonProps) {
   const isAdmin = role === 'admin';
   const section = getCurrentSection(location.pathname, prefix);
 
-  // The sections one can create in, as the menu lists them. Info pages and
-  // places are the admins' to add.
+  // The sections one can create in, as the menu lists them. Info pages are
+  // the admins' to add; organizers add events and places too.
   const creatable = (site?.settings?.menu || [])
     .filter((item: any) => isMenuItemShown(item) && !item.isComposablePage)
     .filter((item: any) => item.name !== 'people')
-    .filter(
-      (item: any) => isAdmin || !['info', 'resources'].includes(item.name)
-    );
+    .filter((item: any) => isAdmin || item.name !== 'info');
   const current = creatable.find((item: any) => item.name === section);
   // On the listing itself, not on a page inside it (an event, a place)
   const rest = (
