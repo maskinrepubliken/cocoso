@@ -1,11 +1,8 @@
-import { Trans } from 'react-i18next';
 import React from 'react';
 import { useAtomValue } from 'jotai';
 
 import { currentUserAtom } from '/imports/state';
-import { Flex, Text } from '/imports/ui/core';
 import { EntryActions } from '/imports/ui/entry/EntryHero';
-import { ChatButton } from '/imports/ui/chattery/ChatHandler';
 
 import GroupMeetingDates from './GroupMeetingDates';
 import GroupJoinButton from './GroupJoinButton';
@@ -31,36 +28,13 @@ export default function GroupInteractionHandler() {
       (member) => member.memberId === currentUser._id && member.isAdmin
     );
 
-  const title = (
-    <Flex align="center">
-      <Trans i18nKey="common:labels.discussion" />
-      <Text fontSize="sm" fontWeight="normal" ml="2" mt="1">
-        <Trans i18nKey="common:labels.chat.onlymembers" />
-      </Text>
-    </Flex>
-  );
-
   const memberProps = { currentUser, group, isAdmin, isMember };
-
-  const notificationCount = currentUser?.notifications?.find(
-    (n) => n?.contextId === group?._id
-  )?.unSeenIndexes?.length;
-
-  const chatProps = {
-    context: 'groups',
-    currentUser,
-    item: group,
-    notificationCount,
-    title,
-    withInput: true,
-  };
 
   if (isAdmin) {
     return (
       <EntryActions>
         <GroupAdminFunctions />
         <GroupMeetingDates {...memberProps} />
-        <ChatButton {...chatProps} />
       </EntryActions>
     );
   }
@@ -69,7 +43,6 @@ export default function GroupInteractionHandler() {
     return (
       <EntryActions>
         <GroupMeetingDates {...memberProps} />
-        <ChatButton {...chatProps} />
         <GroupLeaveButton />
       </EntryActions>
     );

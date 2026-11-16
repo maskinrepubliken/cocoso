@@ -15,6 +15,7 @@ import { parseTitle } from '/imports/api/_utils/shared';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
 import { currentUserAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import DiscussionButton from './DiscussionButton';
 import EditButton from './EditButton';
 import LanguageSwitch from './LanguageSwitch';
 import LocationSwitcher from './LocationSwitcher';
@@ -503,6 +504,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           <SiteSearch site={site} />
           <NewButton site={site} />
           <EditButton />
+          <DiscussionButton />
           <UserPopup site={site} />
         </div>
       </div>

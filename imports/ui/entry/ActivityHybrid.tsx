@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import loadable from '@loadable/component';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import type { Address } from '/imports/api/_utils/address';
@@ -21,11 +20,7 @@ import { publicUrl } from '/imports/api/_utils/shared';
 import { activityShareImageUrl } from '/imports/api/share/shareImage';
 import { eventStructuredData } from '/imports/ui/utils/structuredData';
 import ShareMeta, { shareText } from '/imports/ui/layout/ShareMeta';
-import {
-  canCreateContentAtom,
-  currentUserAtom,
-  roleAtom,
-} from '/imports/state';
+import { currentUserAtom, roleAtom } from '/imports/state';
 import { useLocationTag } from '/imports/ui/utils/useLocation';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
@@ -33,7 +28,7 @@ import { getImageUrl } from '../utils/imageHelper';
 import { shareLink } from '../utils/shareLink';
 import BackLink from './BackLink';
 
-import Section, { NARROW, WIDE } from '../pages/activities/event/Section';
+import { NARROW, WIDE } from '../pages/activities/event/Section';
 import WhenSection from '../pages/activities/event/WhenSection';
 import PlaceSection from '../pages/activities/event/PlaceSection';
 import LocationTag from '/imports/ui/generic/LocationTag';
@@ -51,13 +46,6 @@ import {
   isPastOccurrence,
   pickOccurrenceIndex,
 } from '../pages/activities/event/occurrences';
-
-// The chat pulls in browser-only styles, so it is loaded on the client.
-const ChatButton = loadable(() =>
-  import('/imports/ui/chattery/ChatHandler').then((m) => ({
-    default: m.ChatButton,
-  }))
-);
 
 const Page = styled('div', {
   margin: '0 auto',
@@ -245,7 +233,6 @@ export default function ActivityHybrid({
   const revalidator = useRevalidator();
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
-  const canCreateContent = useAtomValue(canCreateContentAtom);
 
   // The author, any co-organizer and the admins manage the event.
   const isOrganizer = Boolean(
@@ -459,22 +446,6 @@ export default function ActivityHybrid({
               activity={activity}
               occurrence={occurrence}
             />
-          )}
-
-          {currentUser && canCreateContent && isPublicActivity && (
-            <Section
-              aside={tc('event.discussion.onlyVerified')}
-              order={8}
-              title={tc('event.sections.discussion')}
-            >
-              <ChatButton
-                context="activities"
-                currentUser={currentUser}
-                item={activity}
-                title={tc('event.sections.discussion')}
-                withInput
-              />
-            </Section>
           )}
         </Column>
 

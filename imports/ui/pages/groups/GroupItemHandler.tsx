@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
 import loadable from '@loadable/component';
 import { useLoaderData } from 'react-router';
-import { atom, useAtomValue, useAtom } from 'jotai';
+import { useAtomValue, useAtom } from 'jotai';
 
 import GroupHybrid from '/imports/ui/entry/GroupHybrid';
 import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
+import { groupAtom } from './groupAtom';
+
 const GroupInteractionHandler = loadable(
   () => import('./components/GroupInteractionHandler')
 );
 const EditGroup = loadable(() => import('./EditGroup'));
 
-export const groupAtom = atom(null);
+export { groupAtom };
 
 export default function GroupItemHandler({ siteDoc }) {
   const { group, documents } = useLoaderData();

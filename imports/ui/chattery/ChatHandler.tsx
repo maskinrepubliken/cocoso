@@ -1,17 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSubscribe, useTracker } from 'meteor/react-meteor-data';
 import { useTranslation } from 'react-i18next';
-import MessagesSquare from 'lucide-react/dist/esm/icons/messages-square';
 
-import {
-  Box,
-  Center,
-  Drawer,
-  Flex,
-  IconButton,
-  NotificationBadge,
-  Text,
-} from '/imports/ui/core';
+import { Drawer } from '/imports/ui/core';
 import { call } from '/imports/api/_utils/shared';
 import Chats from '/imports/api/chats/chat';
 
@@ -118,78 +109,5 @@ export function ChatUI({
         />
       )}
     </Drawer>
-  );
-}
-
-interface ChatButtonProps {
-  context: string;
-  currentUser: CurrentUser | null;
-  item: Item | null;
-  notificationCount?: number;
-  title?: string;
-  withInput: boolean;
-}
-
-export function ChatButton({
-  context,
-  currentUser,
-  item,
-  notificationCount,
-  title,
-  withInput,
-}: ChatButtonProps) {
-  const [open, setOpen] = useState(false);
-  const [tc] = useTranslation('common');
-
-  const props: ChatUIProps = {
-    context,
-    currentUser,
-    item,
-    open,
-    title,
-    withInput,
-    setOpen,
-  };
-
-  return (
-    <Box css={{ flexGrow: '0' }}>
-      <Center>
-        <Flex
-          align="center"
-          direction="column"
-          gap="0"
-          style={{
-            position: 'relative',
-          }}
-        >
-          <Box mb="1">
-            <IconButton
-              aria-label="Chat button"
-              icon={<MessagesSquare />}
-              variant="outline"
-              onClick={() => setOpen(true)}
-            />
-          </Box>
-          {notificationCount && notificationCount !== 0 && (
-            <NotificationBadge colorScheme="red">
-              {notificationCount?.toString()}
-            </NotificationBadge>
-          )}
-          <Text
-            css={{
-              color: 'var(--cocoso-mylla)',
-              fontSize: '0.8rem',
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-            onClick={() => setOpen(true)}
-          >
-            {tc('labels.discussion')}
-          </Text>
-        </Flex>
-      </Center>
-
-      <ChatUI {...props} />
-    </Box>
   );
 }

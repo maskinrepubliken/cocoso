@@ -7,11 +7,9 @@ import { Box, Button } from '/imports/ui/core';
 import {
   canCreateContentAtom,
   siteAtom,
-  currentUserAtom,
   isDesktopAtom,
   roleAtom,
 } from '/imports/state';
-import { ChatButton } from '/imports/ui/chattery/ChatHandler';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { EntryActions } from '/imports/ui/entry/EntryHero';
 
@@ -37,7 +35,6 @@ function ReserveButton({ resource }) {
 
 export default function ResourceInteractionHandler() {
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  const currentUser = useAtomValue(currentUserAtom);
   const resource = useAtomValue(resourceAtom);
   const role = useAtomValue(roleAtom);
 
@@ -45,22 +42,20 @@ export default function ResourceInteractionHandler() {
     return null;
   }
 
-  if (role !== 'admin' && !canCreateContent) {
+  const isAdmin = role === 'admin';
+  // The discussion is in the header; what is left is the admin menu and
+  // the book button.
+  const canBook =
+    canCreateContent && isFeatureEnabled('bookings') && resource.isBookable;
+
+  if (!isAdmin && !canBook) {
     return null;
   }
 
   return (
     <EntryActions>
-      {role === 'admin' && <ResourceAdminFunctions />}
-      {isFeatureEnabled('bookings') && resource.isBookable ? (
-        <ReserveButton resource={resource} />
-      ) : null}
-      <ChatButton
-        context="resources"
-        currentUser={currentUser}
-        item={resource}
-        withInput
-      />
+      {isAdmin && <ResourceAdminFunctions />}
+      {canBook && <ReserveButton resource={resource} />}
     </EntryActions>
   );
 }
