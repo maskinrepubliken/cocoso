@@ -19,14 +19,14 @@ tabs:
 
 form:
   contact:
-    helper: "Hur allmänheten når föreningen. En e-postadress eller ett telefonnummer krävs."
+    helper: "Hur allmänheten når gruppen. En e-postadress eller ett telefonnummer krävs."
   private:
     label: Sluten grupp (endast för inbjudna)
     helper: Slutna grupper är endast synliga för deras medlemmar, och deltagande är endast möjligt via inbjudningar från deras administratörer. Du kan inte ändra den till offentlig efter att du har skapat den. Du kommer hantera inbjudningarna efter att du har skapat gruppen.
     holder: Välj
   title:
     label: Titel
-    helper: Ange en titel för din grupp / process
+    helper: Ange ett namn på gruppen
     holder: Att förstå Benjamin
   subtitle:
     label: Undertitel

@@ -53,15 +53,15 @@ labels:
   create:
     activities: Skapa ett nytt evenemang
     calendar: Skapa ett nytt evenemang
-    groups: Nytt grupp/process
-    info: Nytt infosida
+    groups: Ny grupp
+    info: Ny infosida
     resources: Ny plats
     works: Nytt inlägg
     host: Nytt community
   update:
     activities: Redigera evenemanget
     calendar: Redigera evenemanget
-    groups: Redigera föreningen
+    groups: Redigera gruppen
     info: Redigera infosidan
     pages: Redigera sidan
     resources: Redigera platsen
@@ -171,7 +171,7 @@ entryMenu:
   newPage: Ny infosida
   delete:
     activities: Ta bort evenemanget
-    groups: Ta bort föreningen
+    groups: Ta bort gruppen
     resources: Ta bort platsen
     works: Ta bort förfrågan
     info: Ta bort sidan
@@ -193,9 +193,9 @@ modals:
         body: "<b>{{name}}</b> försvinner från kalendern, tillsammans med alla anmälningar."
         yes: Ta bort evenemanget
       groups:
-        title: Ta bort föreningen?
-        body: "<b>{{name}}</b> och föreningens sida försvinner från webbplatsen."
-        yes: Ta bort föreningen
+        title: Ta bort gruppen?
+        body: "<b>{{name}}</b> och gruppens sida försvinner från webbplatsen."
+        yes: Ta bort gruppen
       resources:
         title: Ta bort platsen?
         body: "<b>{{name}}</b> försvinner från webbplatsen. Evenemang som redan har hållits där finns kvar, med platsens namn och adress."
@@ -517,14 +517,14 @@ home:
     intro: "Allt som händer i kommunen, sorterat så att du hittar det du letar efter."
     activities: "Konserter, marknader, träningar och allt annat som händer, med anmälan direkt på sidan."
     calendar: "Alla evenemang som en kalender, månad för månad eller som en lista."
-    groups: "Kommunens föreningar och grupper: vad de gör, när de träffas och hur du går med."
+    groups: "Kommunens grupper: vad de gör, när de träffas och hur du går med."
     works: "Samåk, låna, ge bort och be om hjälp, grannar emellan."
     people: "De som arrangerar: föreningar, verksamheter och eldsjälar, med sina kommande evenemang."
     resources: "Lokaler, mötesplatser och utflyktsmål, och vad som händer där."
     info: "Om tjänsten, hur du använder den och vem du kontaktar."
   hero:
     welcome: Välkommen till
-    tagline: Evenemang, föreningar och platser i hela kommunen, samlat på ett ställe.
+    tagline: Evenemang, grupper och platser i hela kommunen, samlat på ett ställe.
     beta: Beta
     betaNote: Tjänsten är ny och byggs fortfarande. Saker kan ändras.
 
@@ -749,7 +749,7 @@ search:
   kinds:
     activities: Evenemang
     pastActivities: Tidigare evenemang
-    groups: Föreningar
+    groups: Grupper
     resources: Platser
     works: Förfrågningar
     info: Info
@@ -759,7 +759,7 @@ search:
 # The entry pages (förening, plats, förfrågan); in common because SSR only
 # loads common
 entry:
-  group: Förening
+  group: Grupp
   place: Plats
   meetings: Träffar
   members_one: '{{ count }} medlem'
@@ -793,7 +793,7 @@ listing:
   subjects:
     activities: evenemangen
     calendar: kalendern
-    groups: föreningarna
+    groups: grupperna
     people: arrangörerna
     resources: platserna
     works: förfrågningarna

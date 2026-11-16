@@ -53,7 +53,7 @@ labels:
   create:
     activities: Create a new event
     calendar: Create a new event
-    groups: New Process/Group
+    groups: New group
     info: New Info Page
     resources: New Place
     works: New Post
@@ -61,7 +61,7 @@ labels:
   update:
     activities: Edit the event
     calendar: Edit the event
-    groups: Edit the association
+    groups: Edit the group
     info: Edit the info page
     pages: Edit the page
     resources: Edit the place
@@ -173,7 +173,7 @@ entryMenu:
   newPage: New info page
   delete:
     activities: Delete the event
-    groups: Delete the association
+    groups: Delete the group
     resources: Delete the place
     works: Delete the request
     info: Delete the page
@@ -195,9 +195,9 @@ modals:
         body: "<b>{{name}}</b> disappears from the calendar, along with all sign-ups."
         yes: Delete the event
       groups:
-        title: Delete the association?
+        title: Delete the group?
         body: "<b>{{name}}</b> and its page disappear from the site."
-        yes: Delete the association
+        yes: Delete the group
       resources:
         title: Delete the place?
         body: "<b>{{name}}</b> disappears from the site. Events already held there stay, with the place's name and address."
@@ -520,14 +520,14 @@ home:
     intro: "Everything that happens in the municipality, sorted so you find what you are after."
     activities: "Concerts, markets, training sessions and all else that is on, with sign-up right on the page."
     calendar: "All events as a calendar, month by month or as a list."
-    groups: "The municipality’s associations and groups: what they do, when they meet and how to join."
+    groups: "The municipality’s groups: what they do, when they meet and how to join."
     works: "Carpool, lend, give away and ask for a hand, between neighbours."
     people: "Those who organize: associations, services and enthusiasts, with their upcoming events."
     resources: "Venues, meeting places and outings, and what happens there."
     info: "About the service, how to use it and whom to contact."
   hero:
     welcome: Welcome to
-    tagline: Events, associations and places across the whole municipality, in one place.
+    tagline: Events, groups and places across the whole municipality, in one place.
     beta: Beta
     betaNote: The service is new and still being built. Things may change.
 
@@ -762,7 +762,7 @@ search:
 # The entry pages (group, place, request); in common because SSR only
 # loads common
 entry:
-  group: Association
+  group: Group
   place: Place
   meetings: Meetings
   members_one: '{{ count }} member'
