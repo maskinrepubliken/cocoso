@@ -44,10 +44,17 @@ async function findParent(parentId, resourceId) {
   }
   const parent = await Resources.findOneAsync(
     { _id: parentId },
-    { fields: { address: 1, locationId: 1, parentId: 1 } }
+    { fields: { address: 1, locationId: 1, parentId: 1, isUnlisted: 1 } }
   );
   if (!parent) {
     throw new Meteor.Error('parent-not-found', 'The parent place is gone');
+  }
+  // A place left out of the list (a room, say) has no parts of its own
+  if (parent.isUnlisted) {
+    throw new Meteor.Error(
+      'parent-is-unlisted',
+      'A place cannot be part of a place left out of the list'
+    );
   }
   if (resourceId) {
     let above = parent;
@@ -117,6 +124,7 @@ Meteor.methods({
           isCombo: 1,
           locationId: 1,
           parentId: 1,
+          isUnlisted: 1,
           resourcesForCombo: 1,
           // a picture for the place picker in the event form
           images: { $slice: 1 },

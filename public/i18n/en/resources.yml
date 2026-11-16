@@ -15,14 +15,12 @@ form:
     coordinates: Coordinates
     details:
       address: "Street, postal code and town. The map point is looked up from it."
-      coordinates: "A point on the map and the nearest town, for a lake or a trail, say."
+      coordinates: "A point on the map, for a lake or a trail, say."
       parent: "Inside another place, like a room in the library. Gets that place's address."
   parent:
     required: Choose the place it is part of.
-    holder: Choose a place
-    empty: No place by that name
-    unlisted: Leave it out of the list of places
-    unlistedHelper: "It is still shown on {{place}}'s page and in search results."
+    unlisted: Don't show on the places page
+    unlistedHelper: "Then it is only shown on {{place}}'s page and in search results."
   contact:
     helper: "Optional. Who to ask about the place, for example about booking it."
   booking:

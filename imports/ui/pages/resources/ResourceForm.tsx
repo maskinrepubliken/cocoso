@@ -19,7 +19,12 @@ import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import CrosshairIcon from 'lucide-react/dist/esm/icons/crosshair';
+import BuildingIcon from 'lucide-react/dist/esm/icons/building-2';
+import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
 import FormCard from '/imports/ui/pages/activities/form/FormCard';
+import PlacePicker from '/imports/ui/pages/activities/form/PlacePicker';
 
 import resourceFormFields from './resourceFormFields';
 import BookingFields, {
@@ -54,6 +59,7 @@ interface ResourceOption {
   label: string;
   isCombo?: boolean;
   parentId?: string | null;
+  isUnlisted?: boolean;
 }
 
 interface ResourceFormProps {
@@ -73,14 +79,16 @@ export const emptyFormValues: ResourceFormValues = {
 
 const animatedComponents = makeAnimated();
 
-// The places a place can be part of: any but itself and its own parts,
-// all the way down.
+// The places a place can be part of: any listed one but itself and its
+// own parts, all the way down. A place left out of the list (a room) has
+// no parts of its own.
 function possibleParents(
   resources: ResourceOption[],
   resourceId?: string
 ): ResourceOption[] {
+  const listed = resources.filter((r) => !r.isUnlisted);
   if (!resourceId) {
-    return resources;
+    return listed;
   }
   const below = new Set([resourceId]);
   let grew = true;
@@ -93,7 +101,7 @@ function possibleParents(
       }
     });
   }
-  return resources
+  return listed
     .filter((r) => !below.has(r._id))
     .sort((a, b) => a.label.localeCompare(b.label, 'sv'));
 }
@@ -111,16 +119,21 @@ const placementOf = (resource?: ResourceData): Placement => {
   return 'address';
 };
 
-const PLACEMENTS: Placement[] = ['address', 'coordinates', 'parent'];
+const PLACEMENTS: {
+  value: Placement;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}[] = [
+  { value: 'address', Icon: MapPinIcon },
+  { value: 'coordinates', Icon: CrosshairIcon },
+  { value: 'parent', Icon: BuildingIcon },
+];
 
-// Only what the chosen way uses: a map point keeps the town, not a street.
+// Only what the chosen way uses: a map point alone, or the street address.
 const addressFor = (
   placement: Placement,
   address: Partial<Address>
 ): Partial<Address> =>
-  placement === 'coordinates'
-    ? { city: address.city, coordinates: address.coordinates }
-    : address;
+  placement === 'coordinates' ? { coordinates: address.coordinates } : address;
 
 export default function ResourceForm({
   resource,
@@ -294,49 +307,31 @@ export default function ResourceForm({
       {/* Where it is: an address of its own, a map point, or inside another
           place and so at its address. Only one. */}
       <FormCard tall title={t('form.placement.label')}>
-        {/* One of three, as radio rows, each saying what it is for */}
-        <div
-          aria-label={t('form.placement.label')}
-          className="placement-options"
-          role="radiogroup"
-        >
-          {PLACEMENTS.map((value) => (
-            <button
-              key={value}
-              aria-checked={state.placement === value}
-              className={`placement-option ${
-                state.placement === value ? 'is-active' : ''
-              }`}
-              role="radio"
-              type="button"
-              onClick={() =>
-                setState((prevState: any) => ({
-                  ...prevState,
-                  placement: value,
-                }))
-              }
-            >
-              <span aria-hidden className="placement-radio" />
-              <span>
-                <strong>{t(`form.placement.${value}`)}</strong>
-                <small>{t(`form.placement.details.${value}`)}</small>
-              </span>
-            </button>
-          ))}
-        </div>
+        {/* One of three, as the chips with small icons of the event
+            form's "Plats", with a line on the chosen one */}
+        <ChoiceChips
+          label={t('form.placement.label')}
+          value={state.placement as Placement}
+          choices={PLACEMENTS.map(({ value, Icon }) => ({
+            value,
+            label: t(`form.placement.${value}`),
+            icon: <Icon aria-hidden />,
+            description: t(`form.placement.details.${value}`),
+          }))}
+          onChange={(placement) =>
+            setState((prevState: any) => ({ ...prevState, placement }))
+          }
+        />
         {state.placement === 'parent' ? (
           <>
-            <AutoCompleteSelect
-              getOptionLabel={(option: ResourceOption) => option.label}
-              getOptionValue={(option: ResourceOption) => option._id}
-              noOptionsMessage={() => t('form.parent.empty')}
-              options={parentOptions}
-              placeholder={t('form.parent.holder')}
-              value={parent}
-              onChange={(option: ResourceOption | null) =>
+            {/* The same place picker as where an event is held */}
+            <PlacePicker
+              places={parentOptions}
+              selectedId={state.parentId}
+              onPick={(place) =>
                 setState((prevState: any) => ({
                   ...prevState,
-                  parentId: option?._id || null,
+                  parentId: place._id,
                 }))
               }
             />

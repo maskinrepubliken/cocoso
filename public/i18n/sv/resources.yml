@@ -15,14 +15,12 @@ form:
     coordinates: Koordinater
     details:
       address: "Gata, postnummer och ort. Kartpunkten tas fram ur adressen."
-      coordinates: "En punkt på kartan och närmaste ort, för till exempel en sjö eller ett spår."
+      coordinates: "En punkt på kartan, för till exempel en sjö eller ett spår."
       parent: "Ligger i en annan plats, som ett rum i biblioteket. Får den platsens adress."
   parent:
     required: Välj platsen den är en del av.
-    holder: Välj en plats
-    empty: Ingen plats med det namnet
-    unlisted: Visa inte i listan över platser
-    unlistedHelper: "Den visas ändå på sidan för {{place}} och i sökresultat."
+    unlisted: Visa inte på plats-sidan
+    unlistedHelper: "Då visas den bara på sidan för {{place}} och i sökresultat."
   contact:
     helper: "Valfritt. Vem man frågar om platsen, till exempel om bokning."
   booking:
