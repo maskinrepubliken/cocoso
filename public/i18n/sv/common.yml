@@ -723,6 +723,8 @@ entry:
   capacity: 'Plats för {{ count }}'
   combo: Består av flera platser
   comboParts: Ingår
+  partOf: Del av
+  parts: Platser här
   pictures: Bilder
   postedBy: 'Upplagd av {{ name }}'
   contact: Kontakt

@@ -8,6 +8,14 @@ messages:
   comborequires:
 
 form:
+  parent:
+    label: Del av en annan plats
+    helper: "Valfritt. För en plats som ligger i en annan, till exempel ett bibliotek i ett kulturhus. Den får då den platsens adress och listas på dess sida."
+    holder: Välj en plats
+    empty: Ingen plats med det namnet
+    address: "Adressen och orten hämtas från {{place}}."
+    unlisted: Visa inte i listan över platser
+    unlistedHelper: "Den visas ändå på sidan för {{place}} och i sökresultat."
   address:
     helper: "Var platsen ligger. Varje plats behöver en ort och en gatuadress eller koordinater."
   contact:

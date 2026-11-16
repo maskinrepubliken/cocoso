@@ -11,6 +11,14 @@ Resources.schema = new SimpleSchema({
   // The place this resource is in; see imports/api/locations.
   locationId: { type: String, optional: true },
 
+  // The place this one is part of, like the library in Centralen. It then
+  // has that place's address and location (kept in step by updateResource)
+  // and is listed on that place's page.
+  parentId: { type: String, optional: true },
+  // A part left out of the list of places and a location's landing page;
+  // search and its parent's page still show it.
+  isUnlisted: { type: Boolean, optional: true },
+
   label: { type: String },
   // The kinds of place, keys from imports/ui/pages/resources/resourceKinds.ts;
   // a place can be several (read with kindsOf in _utils/kinds.ts)
@@ -89,8 +97,10 @@ Resources.publicFields = {
   images: 1,
   isBookable: 1,
   isCombo: 1,
+  isUnlisted: 1,
   label: 1,
   locationId: 1,
+  parentId: 1,
   resourcesForCombo: 1,
   createdAt: 1,
   userId: 1,

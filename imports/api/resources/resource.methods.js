@@ -35,6 +35,63 @@ function cleanResourceKinds(kinds) {
   return cleanKinds(kinds, RESOURCE_KIND_KEYS);
 }
 
+// The place a place is part of, or null. It must exist and must not be
+// the place itself or one of its own parts.
+async function findParent(parentId, resourceId) {
+  check(parentId, Match.Maybe(String));
+  if (!parentId) {
+    return null;
+  }
+  const parent = await Resources.findOneAsync(
+    { _id: parentId },
+    { fields: { address: 1, locationId: 1, parentId: 1 } }
+  );
+  if (!parent) {
+    throw new Meteor.Error('parent-not-found', 'The parent place is gone');
+  }
+  if (resourceId) {
+    let above = parent;
+    for (let depth = 0; above && depth < 20; depth += 1) {
+      if (above._id === resourceId) {
+        throw new Meteor.Error(
+          'parent-is-part',
+          'A place cannot be part of itself or of one of its parts'
+        );
+      }
+      above = above.parentId
+        ? await Resources.findOneAsync(
+            { _id: above.parentId },
+            { fields: { parentId: 1 } }
+          )
+        : null;
+    }
+  }
+  return parent;
+}
+
+// The parts of a place have its address and location: after the place
+// changes, they and their own parts (and the events held there) follow.
+async function updateParts(resourceId, address, locationId) {
+  const parts = await Resources.find(
+    { parentId: resourceId },
+    { fields: { _id: 1 } }
+  ).fetchAsync();
+  for (const part of parts) {
+    await Resources.updateAsync(
+      { _id: part._id },
+      locationId
+        ? { $set: { address, locationId } }
+        : { $set: { address }, $unset: { locationId: 1 } }
+    );
+    await Activities.updateAsync(
+      { resourceId: part._id },
+      locationId ? { $set: { locationId } } : { $unset: { locationId: 1 } },
+      { multi: true }
+    );
+    await updateParts(part._id, address, locationId);
+  }
+}
+
 // RESOURCE METHODS
 Meteor.methods({
   async getResources(locationId) {
@@ -59,6 +116,7 @@ Meteor.methods({
           isBookable: 1,
           isCombo: 1,
           locationId: 1,
+          parentId: 1,
           resourcesForCombo: 1,
           // a picture for the place picker in the event form
           images: { $slice: 1 },
@@ -71,9 +129,24 @@ Meteor.methods({
 
   async getResourceById(resourceId) {
     const fields = Resources.publicFields;
-    return await attachBookingPerson(
+    const resource = await attachBookingPerson(
       await Resources.findOneAsync(resourceId, { fields })
     );
+    if (!resource) {
+      return resource;
+    }
+    // The page links up to the place it is part of and down to its parts
+    const short = { fields: { _id: 1, label: 1 } };
+    const [partOf, parts] = await Promise.all([
+      resource.parentId
+        ? Resources.findOneAsync({ _id: resource.parentId }, short)
+        : null,
+      Resources.find(
+        { parentId: resource._id },
+        { ...short, sort: { label: 1 } }
+      ).fetchAsync(),
+    ]);
+    return { ...resource, partOf: partOf || null, parts };
   },
 
   async getResourceBookingsForUser(resourceId) {
@@ -122,7 +195,12 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     await validateLabel(values.label);
-    const address = await withCoordinates(requireAddress(values.address));
+    // A part of another place is where that place is
+    const parent = await findParent(values.parentId);
+    const address = parent
+      ? parent.address
+      : await withCoordinates(requireAddress(values.address));
+    const locationId = parent ? parent.locationId : values.locationId;
     const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
     const booking = await cleanBooking(values.booking);
@@ -131,6 +209,8 @@ Meteor.methods({
       category: _category,
       kinds: _kinds,
       booking: _booking,
+      parentId: _parentId,
+      isUnlisted: _isUnlisted,
       ...rest
     } = values;
     try {
@@ -139,8 +219,10 @@ Meteor.methods({
         address,
         ...(contact ? { contact } : {}),
         ...(booking ? { booking } : {}),
+        ...(parent ? { parentId: parent._id } : {}),
+        ...(parent && values.isUnlisted ? { isUnlisted: true } : {}),
         kinds,
-        locationId: values.locationId || undefined,
+        locationId: locationId || undefined,
         userId: user._id,
         createdBy: user.username,
         createdAt: new Date(),
@@ -173,7 +255,13 @@ Meteor.methods({
       throw new Meteor.Error('not-found', 'Resource not found');
     }
 
-    const address = await withCoordinates(requireAddress(values.address));
+    // A part of another place is where that place is
+    const parent = await findParent(values.parentId, resourceId);
+    const address = parent
+      ? parent.address
+      : await withCoordinates(requireAddress(values.address));
+    const locationId = parent ? parent.locationId : values.locationId;
+    const isUnlisted = Boolean(parent && values.isUnlisted);
     const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
     const booking = await cleanBooking(values.booking);
@@ -181,7 +269,11 @@ Meteor.methods({
       _id,
       userId,
       createdBy,
-      locationId,
+      locationId: _locationId,
+      parentId: _parentId,
+      isUnlisted: _isUnlisted,
+      partOf: _partOf,
+      parts: _parts,
       contact: _contact,
       category: _category,
       kinds: _kinds,
@@ -195,6 +287,8 @@ Meteor.methods({
       // the single kind from before kinds
       category: 1,
       ...(locationId ? {} : { locationId: 1 }),
+      ...(parent ? {} : { parentId: 1 }),
+      ...(isUnlisted ? {} : { isUnlisted: 1 }),
     };
 
     try {
@@ -204,6 +298,8 @@ Meteor.methods({
           address,
           ...(contact ? { contact } : {}),
           ...(booking ? { booking } : {}),
+          ...(parent ? { parentId: parent._id } : {}),
+          ...(isUnlisted ? { isUnlisted } : {}),
           kinds,
           ...(locationId ? { locationId } : {}),
           updatedBy: user.username,
@@ -218,6 +314,7 @@ Meteor.methods({
         locationId ? { $set: { locationId } } : { $unset: { locationId: 1 } },
         { multi: true }
       );
+      await updateParts(resourceId, address, locationId);
       if (
         !resource.isCombo &&
         (await Resources.findOneAsync({
@@ -285,6 +382,14 @@ Meteor.methods({
     await Activities.updateAsync(
       heldHere,
       { $unset: { resourceId: '' } },
+      { multi: true }
+    );
+
+    // Its parts stay where they are, as places of their own, and are
+    // listed again
+    await Resources.updateAsync(
+      { parentId: resourceId },
+      { $unset: { parentId: 1, isUnlisted: 1 } },
       { multi: true }
     );
 

@@ -55,6 +55,14 @@ interface Resource {
   resourcesForCombo?: ResourceForCombo[];
   kinds?: string[] | null;
   category?: { key?: string } | null;
+  // The place it is part of, and the places that are part of it
+  partOf?: PlaceLink | null;
+  parts?: PlaceLink[];
+}
+
+interface PlaceLink {
+  _id: string;
+  label: string;
 }
 
 export interface ResourceHybridProps {
@@ -153,6 +161,7 @@ export default function ResourceHybrid({
   const shareImage = resourceShareImageUrl(resource) || undefined;
 
   const withContact = hasContact(resource.contact);
+  const parts = resource.parts || [];
   // Places made up of others are for booking in the calendar too
   const isCombo = isFeatureEnabled('bookings') && resource.isCombo;
 
@@ -216,8 +225,23 @@ export default function ResourceHybrid({
             />
           </CardArea>
 
-          {hasAddress(resource.address) || withContact || resource.booking ? (
+          {hasAddress(resource.address) ||
+          withContact ||
+          resource.booking ||
+          resource.partOf ||
+          parts.length ? (
             <Sidebar>
+              {/* Up to the place it is in, like Centralen for the library */}
+              {resource.partOf && (
+                <Panel css={{ marginBottom: '1.25rem' }}>
+                  <SideTitle>{tc('entry.partOf')}</SideTitle>
+                  <Parts css={{ marginTop: '0.75rem' }}>
+                    <Link to={`${prefix}/resources/${resource.partOf._id}`}>
+                      {resource.partOf.label}
+                    </Link>
+                  </Parts>
+                </Panel>
+              )}
               <Panel css={{ overflow: 'hidden' }}>
                 <AddressBlock
                   address={resource.address}
@@ -243,6 +267,22 @@ export default function ResourceHybrid({
                     booking={resource.booking}
                     label={resource.label}
                   />
+                </Panel>
+              )}
+              {/* The places in it, listed or not */}
+              {parts.length > 0 && (
+                <Panel css={{ marginTop: '1.25rem' }}>
+                  <SideTitle>{tc('entry.parts')}</SideTitle>
+                  <Parts css={{ marginTop: '0.75rem' }}>
+                    {parts.map((part) => (
+                      <Link
+                        key={part._id}
+                        to={`${prefix}/resources/${part._id}`}
+                      >
+                        {part.label}
+                      </Link>
+                    ))}
+                  </Parts>
                 </Panel>
               )}
             </Sidebar>

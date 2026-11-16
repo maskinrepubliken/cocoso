@@ -726,6 +726,8 @@ entry:
   capacity: 'Room for {{ count }}'
   combo: Made up of several places
   comboParts: Includes
+  partOf: Part of
+  parts: Places here
   pictures: Pictures
   postedBy: 'Posted by {{ name }}'
   contact: Contact

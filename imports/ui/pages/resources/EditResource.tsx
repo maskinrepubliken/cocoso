@@ -44,6 +44,8 @@ export default function EditResource() {
     isCombo,
     isBookable,
     locationId,
+    parentId,
+    isUnlisted,
     resourcesForCombo,
     title,
   }) => ({
@@ -58,13 +60,19 @@ export default function EditResource() {
     isCombo,
     isBookable,
     locationId,
+    parentId,
+    isUnlisted,
     resourcesForCombo,
     title,
   }))(resource);
 
   return (
     <SuccessRedirector forEdit ping={updated}>
-      <ResourceForm resource={resourceFields} onFinalize={updateResource} />
+      <ResourceForm
+        resource={resourceFields}
+        resourceId={(resource as { _id: string })._id}
+        onFinalize={updateResource}
+      />
     </SuccessRedirector>
   );
 }
