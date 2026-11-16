@@ -141,9 +141,13 @@ Meteor.methods({
       resource.parentId
         ? Resources.findOneAsync({ _id: resource.parentId }, short)
         : null,
+      // each part as a small card with its first picture
       Resources.find(
         { parentId: resource._id },
-        { ...short, sort: { label: 1 } }
+        {
+          fields: { _id: 1, label: 1, images: { $slice: 1 } },
+          sort: { label: 1 },
+        }
       ).fetchAsync(),
     ]);
     return { ...resource, partOf: partOf || null, parts };

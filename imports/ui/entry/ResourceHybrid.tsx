@@ -14,6 +14,7 @@ import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import AddressBlock from '/imports/ui/generic/AddressBlock';
+import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
@@ -63,6 +64,7 @@ interface Resource {
 interface PlaceLink {
   _id: string;
   label: string;
+  images?: string[];
 }
 
 export interface ResourceHybridProps {
@@ -87,6 +89,54 @@ const Parts = styled('div', {
     backgroundColor: 'var(--cocoso-colors-theme-800)',
     color: 'white',
   },
+});
+
+// A place inside this one: its name, and its picture at the right
+const PartCard = styled(Link, {
+  alignItems: 'center',
+  backgroundColor: 'var(--cocoso-papper)',
+  borderRadius: '16px',
+  boxShadow: 'var(--cocoso-skugga)',
+  color: 'var(--site-ink)',
+  display: 'flex',
+  gap: '1rem',
+  minHeight: '88px',
+  overflow: 'hidden',
+  paddingLeft: '1.25rem',
+  textDecoration: 'none',
+  transition: 'transform 0.15s ease',
+  '&:hover': { transform: 'translateY(-2px)' },
+});
+
+const PartName = styled('span', {
+  flex: 1,
+  fontFamily: 'var(--cocoso-font-display)',
+  fontSize: '1.15rem',
+  fontWeight: 700,
+  lineHeight: 1.2,
+  minWidth: 0,
+  padding: '0.75rem 0',
+});
+
+const PartPicture = styled('span', {
+  alignSelf: 'stretch',
+  flex: 'none',
+  overflow: 'hidden',
+  position: 'relative',
+  width: '108px',
+  '& img, & > *': {
+    height: '100%',
+    inset: 0,
+    objectFit: 'cover',
+    position: 'absolute',
+    width: '100%',
+  },
+});
+
+const PartCards = styled('div', {
+  display: 'grid',
+  gap: '0.75rem',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
 });
 
 // From this width where the place is (map, address) and who to ask sit in
@@ -228,8 +278,7 @@ export default function ResourceHybrid({
           {hasAddress(resource.address) ||
           withContact ||
           resource.booking ||
-          resource.partOf ||
-          parts.length ? (
+          resource.partOf ? (
             <Sidebar>
               {/* Up to the place it is in, like Centralen for the library */}
               {resource.partOf && (
@@ -269,22 +318,6 @@ export default function ResourceHybrid({
                   />
                 </Panel>
               )}
-              {/* The places in it, listed or not */}
-              {parts.length > 0 && (
-                <Panel css={{ marginTop: '1.25rem' }}>
-                  <SideTitle>{tc('entry.parts')}</SideTitle>
-                  <Parts css={{ marginTop: '0.75rem' }}>
-                    {parts.map((part) => (
-                      <Link
-                        key={part._id}
-                        to={`${prefix}/resources/${part._id}`}
-                      >
-                        {part.label}
-                      </Link>
-                    ))}
-                  </Parts>
-                </Panel>
-              )}
             </Sidebar>
           ) : null}
 
@@ -303,6 +336,35 @@ export default function ResourceHybrid({
                 </Parts>
               </EntryColumn>
             ) : null}
+
+            {/* The places in it, listed or not, a card each */}
+            {parts.length > 0 && (
+              <EntryColumn>
+                <SectionHead>
+                  <h2>{tc('entry.parts')}</h2>
+                </SectionHead>
+                <PartCards>
+                  {parts.map((part) => {
+                    const src = getImageUrl(part.images?.[0], 'small');
+                    return (
+                      <PartCard
+                        key={part._id}
+                        to={`${prefix}/resources/${part._id}`}
+                      >
+                        <PartName>{part.label}</PartName>
+                        <PartPicture>
+                          {src ? (
+                            <img alt="" src={src} />
+                          ) : (
+                            <PlaceholderImage seed={part._id} />
+                          )}
+                        </PartPicture>
+                      </PartCard>
+                    );
+                  })}
+                </PartCards>
+              </EntryColumn>
+            )}
 
             {images.length > 1 && (
               <EntryColumn>
