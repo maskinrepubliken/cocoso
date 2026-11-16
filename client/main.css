@@ -1187,6 +1187,11 @@ body {
   transform: scale(1.12);
 }
 
+/* The gear's menu opens inside the wrapper: it should not grow with it */
+.new-button-wrapper:has(.szh-menu--state-open) {
+  transform: none;
+}
+
 .site-new-button {
   display: inline-flex;
   padding: 0;
@@ -2794,6 +2799,16 @@ body {
 .szh-menu__item--hover > .site-info-menu-link {
   background: var(--cocoso-colors-theme-100);
   color: var(--site-ink);
+}
+
+/* What cannot be undone, such as deleting, last in a menu and in red */
+.site-info-menu-link.is-danger,
+.szh-menu__item--hover > .site-info-menu-link.is-danger {
+  color: var(--cocoso-colors-red-700);
+}
+
+.szh-menu__item--hover > .site-info-menu-link.is-danger {
+  background: var(--cocoso-colors-red-50);
 }
 
 /* The account menu's first row: who, as a search hit's title and detail */

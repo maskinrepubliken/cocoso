@@ -165,6 +165,19 @@ message:
 entrySheet:
   blocked: Something in the form needs another look before it can be saved
 
+# The gear in the header on a page one may manage (layout/EditButton.tsx)
+entryMenu:
+  label: Manage
+  edit: Edit
+  addDocument: Add document
+  newPage: New info page
+  delete:
+    activities: Delete the event
+    groups: Delete the association
+    resources: Delete the place
+    works: Delete the request
+    info: Delete the page
+
 # A form's draft brought back (imports/ui/forms/useFormDraft.tsx)
 drafts:
   restored: "This is what you wrote {{when}} but did not save yet. Pictures that were not saved need to be added again."

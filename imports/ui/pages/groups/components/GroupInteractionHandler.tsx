@@ -31,11 +31,14 @@ export default function GroupInteractionHandler() {
   const memberProps = { currentUser, group, isAdmin, isMember };
 
   if (isAdmin) {
+    // The admin's choices are in the header's gear; their dialogs are here
     return (
-      <EntryActions>
+      <>
         <GroupAdminFunctions />
-        <GroupMeetingDates {...memberProps} />
-      </EntryActions>
+        <EntryActions>
+          <GroupMeetingDates {...memberProps} />
+        </EntryActions>
+      </>
     );
   }
 

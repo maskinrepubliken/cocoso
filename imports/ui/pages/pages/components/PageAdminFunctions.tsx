@@ -1,47 +1,14 @@
-import { useSearchParams } from 'react-router';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
-import AdminFunctions from '/imports/ui/entry/AdminFunctions';
 import DeleteEntryHandler from '/imports/ui/entry/DeleteEntryHandler';
 
 import { currentPageAtom } from '../PageItemHandler';
 
+// The delete dialog an admin opens from the gear in the header
+// (layout/EditButton.tsx); new and edit open in PageItemHandler.
 export default function PageAdminFunctions() {
-  const [tc] = useTranslation('common');
   const currentPage = useAtomValue(currentPageAtom);
-  const [, setSearchParams] = useSearchParams();
 
-  const handleSelect = (item) => {
-    if (item.kind === 'create') {
-      setSearchParams({ new: 'true' });
-    } else if (item.kind === 'edit') {
-      setSearchParams({ edit: 'true' });
-    } else if (item.kind === 'delete') {
-      setSearchParams({ delete: 'true' });
-    }
-  };
-
-  const menuItems = [
-    {
-      kind: 'create',
-      label: tc('labels.create.info'),
-    },
-    {
-      kind: 'edit',
-      label: tc('actions.update'),
-    },
-    {
-      kind: 'delete',
-      label: tc('actions.remove'),
-    },
-  ];
-
-  return (
-    <>
-      <AdminFunctions menuItems={menuItems} onSelect={handleSelect} />
-      <DeleteEntryHandler item={currentPage} context="info" />
-    </>
-  );
+  return <DeleteEntryHandler item={currentPage} context="info" />;
 }

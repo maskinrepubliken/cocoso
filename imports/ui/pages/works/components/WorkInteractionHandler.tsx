@@ -23,14 +23,17 @@ export default function WorkInteractionHandler() {
       </EntryActions>
     );
   } else {
+    // The author's choices are in the header's gear; their dialogs are here
     return (
-      <EntryActions>
+      <>
         <WorkAdminFunctions />
-        <ContactInfo
-          username={work.authorUsername}
-          value={work.contactInfo}
-        />
-      </EntryActions>
+        <EntryActions>
+          <ContactInfo
+            username={work.authorUsername}
+            value={work.contactInfo}
+          />
+        </EntryActions>
+      </>
     );
   }
 }

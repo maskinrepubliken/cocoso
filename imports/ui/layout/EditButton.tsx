@@ -8,9 +8,11 @@ import {
 } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import PenIcon from 'lucide-react/dist/esm/icons/pen-line';
+import SettingsIcon from 'lucide-react/dist/esm/icons/settings';
 import { useAtomValue } from 'jotai';
 
 import { parseTitle } from '/imports/api/_utils/shared';
+import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import {
   canCreateContentAtom,
   currentUserAtom,
@@ -28,14 +30,18 @@ type Context =
   | 'profile'
   | 'userProfile';
 
-// What the page under the header shows, taken from its route's loader data,
-// and whether this visitor may edit it. Mirrors the server's own checks so
-// the pen only appears where the form would be allowed to save.
-function useEditable(): {
+interface Editable {
   context: Context;
   id: string;
   username?: string;
-} | null {
+  // The entry itself, as the page's loader has it
+  item?: any;
+}
+
+// What the page under the header shows, taken from its route's loader data,
+// and whether this visitor may edit it. Mirrors the server's own checks so
+// the gear only appears where the form would be allowed to save.
+function useEditable(): Editable | null {
   const matches = useMatches();
   const { pageTitle } = useParams();
   const { pathname } = useLocation();
@@ -79,7 +85,7 @@ function useEditable(): {
       activity.authorId === userId ||
       (activity.organizers || []).some((o: any) => o.userId === userId);
     return isAdmin || isOrganizer
-      ? { context: 'activities', id: activity._id }
+      ? { context: 'activities', id: activity._id, item: activity }
       : null;
   }
   if (data.group?._id) {
@@ -87,36 +93,104 @@ function useEditable(): {
     const isGroupAdmin = (group.members || []).some(
       (member: any) => member.memberId === userId && member.isAdmin
     );
-    return isGroupAdmin ? { context: 'groups', id: group._id } : null;
+    return isGroupAdmin
+      ? { context: 'groups', id: group._id, item: group }
+      : null;
   }
   if (data.resource?._id) {
     // A place: the organizer who added it, and admins
     return isAdmin || data.resource.userId === userId
-      ? { context: 'resources', id: data.resource._id }
+      ? { context: 'resources', id: data.resource._id, item: data.resource }
       : null;
   }
   if (data.work?._id) {
     return data.work.authorId === userId
-      ? { context: 'works', id: data.work._id }
+      ? { context: 'works', id: data.work._id, item: data.work }
       : null;
   }
   if (Array.isArray(data.pages) && pageTitle) {
     const page =
       data.pages.find((p: any) => parseTitle(p.title) === pageTitle) ||
       data.pages[0];
-    return isAdmin && page ? { context: 'info', id: page._id } : null;
+    return isAdmin && page ? { context: 'info', id: page._id, item: page } : null;
   }
   return null;
 }
 
-// The pen in the header, next to the plus: on an event, förening, place,
-// request or info page the visitor may edit, it opens that page's form.
+interface GearItem {
+  // The search parameter that opens the dialog for it
+  param: string;
+  label: string;
+  isDanger?: boolean;
+}
+
+// What the gear offers on each kind of page: the same choices as the old
+// admin menus on the page, each opening its dialog through a search
+// parameter. Deleting is offered only where the delete dialog would allow
+// it, and comes last, in red.
+function useGearItems(editable: Editable | null): GearItem[] {
+  const [tc] = useTranslation('common');
+  const [t] = useTranslation('groups');
+  const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
+
+  if (!editable?.item || !currentUser) {
+    return [];
+  }
+  const { context, item } = editable;
+  const isAdmin = role === 'admin';
+  const edit = { param: 'edit', label: tc('entryMenu.edit') };
+  const addDocument = {
+    param: 'addDocument',
+    label: tc('entryMenu.addDocument'),
+  };
+  const remove = {
+    param: 'delete',
+    label: tc(`entryMenu.delete.${context}`),
+    isDanger: true,
+  };
+
+  switch (context) {
+    case 'activities':
+      // An organizer archives an event before it can go; admins may
+      // delete straight away
+      return isAdmin ||
+        (item.isArchived && item.authorId === currentUser._id)
+        ? [edit, remove]
+        : [edit];
+    case 'groups':
+      return [
+        addDocument,
+        { param: 'addMeeting', label: t('admin.add_meeting') },
+        { param: 'members', label: t('admin.manage_members') },
+        ...(item.isPrivate
+          ? [{ param: 'invite', label: t('actions.invite') }]
+          : []),
+        edit,
+        ...(isAdmin || item.authorId === currentUser._id ? [remove] : []),
+      ];
+    case 'resources':
+      // Documents and deleting stay with the admins, as before
+      return isAdmin ? [addDocument, edit, remove] : [edit];
+    case 'works':
+      return [addDocument, edit, remove];
+    case 'info':
+      return [{ param: 'new', label: tc('entryMenu.newPage') }, edit, remove];
+    default:
+      return [];
+  }
+}
+
+// The button in the header next to the plus on a page one may edit: on an
+// event, förening, place, request or info page a gear with what can be done
+// to it; on a profile a pen to its settings.
 export default function EditButton() {
   const [tc] = useTranslation('common');
   const [, setSearchParams] = useSearchParams();
   const editable = useEditable();
+  const gearItems = useGearItems(editable);
 
-  // A short bloom each time the pen appears for a new page.
+  // A short bloom each time the button appears for a new page.
   const [animState, setAnimState] = useState<'idle' | 'subtle'>('idle');
   const [seenId, setSeenId] = useState<string | null>(null);
   const id = editable?.id || null;
@@ -180,27 +254,43 @@ export default function EditButton() {
     );
   }
 
-  const label = tc(`labels.update.${editable.context}`, tc('actions.update'));
+  const label = tc('entryMenu.label');
+  const open = (param: string) =>
+    setSearchParams((params) => {
+      const next = new URLSearchParams(params);
+      next.set(param, 'true');
+      return next;
+    });
 
   return (
     <div className={`new-button-wrapper new-button-${animState}`}>
-      <button
-        type="button"
-        className="site-new-button"
-        aria-label={label}
-        title={label}
-        onClick={() =>
-          setSearchParams((params) => {
-            const next = new URLSearchParams(params);
-            next.set('edit', 'true');
-            return next;
-          })
+      <Menu
+        align="end"
+        ariaLabel={label}
+        button={
+          <span className="site-new site-edit" title={label} aria-hidden>
+            <SettingsIcon width={16} height={16} />
+          </span>
         }
       >
-        <span className="site-new site-edit" aria-hidden>
-          <PenIcon width={16} height={16} />
-        </span>
-      </button>
+        <div className="site-info-menu">
+          {gearItems.map((item) => (
+            <MenuItem
+              key={item.param}
+              style={{ padding: 0 }}
+              onClick={() => open(item.param)}
+            >
+              <span
+                className={`site-info-menu-link ${
+                  item.isDanger ? 'is-danger' : ''
+                }`}
+              >
+                {item.label}
+              </span>
+            </MenuItem>
+          ))}
+        </div>
+      </Menu>
     </div>
   );
 }

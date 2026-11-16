@@ -43,19 +43,19 @@ export default function ResourceInteractionHandler() {
   }
 
   const isAdmin = role === 'admin';
-  // The discussion is in the header; what is left is the admin menu and
-  // the book button.
+  // The discussion and the admin's choices are in the header; all a place
+  // has left for the card is the book button, while bookings are on.
   const canBook =
     canCreateContent && isFeatureEnabled('bookings') && resource.isBookable;
 
-  if (!isAdmin && !canBook) {
-    return null;
-  }
-
   return (
-    <EntryActions>
+    <>
       {isAdmin && <ResourceAdminFunctions />}
-      {canBook && <ReserveButton resource={resource} />}
-    </EntryActions>
+      {canBook && (
+        <EntryActions>
+          <ReserveButton resource={resource} />
+        </EntryActions>
+      )}
+    </>
   );
 }

@@ -14,7 +14,6 @@ interface SimplePageProps {
   imageUrl?: string;
   title?: string;
   path: string;
-  actions?: React.ReactNode;
 }
 
 function SimplePage({
@@ -23,7 +22,6 @@ function SimplePage({
   imageUrl,
   title,
   path,
-  actions,
 }: SimplePageProps) {
   return (
     <>
@@ -57,7 +55,7 @@ function SimplePage({
           <Box
             className="text-content"
             mt="2"
-            mb={actions ? '8' : '24'}
+            mb="24"
             p="6"
             css={{
               backgroundColor: 'var(--cocoso-papper)',
@@ -68,14 +66,6 @@ function SimplePage({
             }}
           >
             {description && HTMLReactParser(DOMPurify.sanitize(description))}
-          </Box>
-        </Center>
-      )}
-
-      {actions && (
-        <Center>
-          <Box mb="24" css={{ maxWidth: '620px', width: '100%' }}>
-            {actions}
           </Box>
         </Center>
       )}
@@ -93,13 +83,9 @@ interface Page {
 
 export interface PageHybridProps {
   currentPage: Page;
-  actions?: React.ReactNode;
 }
 
-export default function PageHybrid({
-  currentPage,
-  actions,
-}: PageHybridProps) {
+export default function PageHybrid({ currentPage }: PageHybridProps) {
   if (!currentPage) {
     return null;
   }
@@ -111,7 +97,6 @@ export default function PageHybrid({
       title={currentPage.title}
       path={`/info/${parseTitle(currentPage.title)}`}
       imageUrl={currentPage.imageUrl}
-      actions={actions}
     />
   );
 }

@@ -163,6 +163,19 @@ message:
 entrySheet:
   blocked: Något i formuläret behöver ses över innan det kan sparas
 
+# The gear in the header on a page one may manage (layout/EditButton.tsx)
+entryMenu:
+  label: Hantera
+  edit: Redigera
+  addDocument: Lägg till dokument
+  newPage: Ny infosida
+  delete:
+    activities: Ta bort evenemanget
+    groups: Ta bort föreningen
+    resources: Ta bort platsen
+    works: Ta bort förfrågan
+    info: Ta bort sidan
+
 # A form's draft brought back (imports/ui/forms/useFormDraft.tsx)
 drafts:
   restored: "Här är det du skrev {{when}} men inte sparade ännu. Bilder som inte sparades behöver läggas till igen."

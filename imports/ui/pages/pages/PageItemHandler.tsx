@@ -9,8 +9,8 @@ import { parseTitle } from '/imports/api/_utils/shared';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 
-const PageInteractionHandler = loadable(
-  () => import('./components/PageInteractionHandler')
+const PageAdminFunctions = loadable(
+  () => import('./components/PageAdminFunctions')
 );
 const NewPage = loadable(() => import('./NewPage'));
 const EditPage = loadable(() => import('./EditPage'));
@@ -48,15 +48,12 @@ export default function PageItemHandler({ siteDoc, pageTitles }) {
 
   return (
     <>
-      <PageHybrid
-        currentPage={currentPage}
-        actions={
-          rendered && role === 'admin' && <PageInteractionHandler />
-        }
-      />
+      <PageHybrid currentPage={currentPage} />
 
       {rendered && (
         <>
+          {role === 'admin' && <PageAdminFunctions />}
+
           {isEdit ? (
             <EditEntryHandler keepsDraft context="info">
               <EditPage />
