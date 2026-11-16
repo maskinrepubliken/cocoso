@@ -79,7 +79,6 @@ export interface ResourceHybridProps {
   documents?: Document[];
   resource: Resource;
   siteDoc: Site;
-  actions?: React.ReactNode;
 }
 
 const Parts = styled('div', {
@@ -266,7 +265,6 @@ export default function ResourceHybrid({
   documents,
   resource,
   siteDoc,
-  actions,
 }: ResourceHybridProps) {
   const [tc] = useTranslation('common');
   const prefix = useLocationPrefix();
@@ -427,8 +425,6 @@ export default function ResourceHybrid({
           ) : null}
 
           <RestArea>
-            {actions}
-
             {isCombo && resource.resourcesForCombo?.length ? (
               <EntryColumn>
                 <SectionHead>

@@ -3764,6 +3764,22 @@ body {
   }
 }
 
+/* A phone with the account on the left and three or more buttons on the
+   right (search, gear, discussion, book): the crane stands for the site
+   name, so the menu button keeps room for the page's name. */
+@media (max-width: 959px) {
+  .site-header-bar:has(.site-header-left .site-user):has(
+      .site-header-right > :nth-child(3)
+    )
+    .site-brand-name,
+  .site-header-bar:has(.site-header-left .site-user):has(
+      .site-header-right > :nth-child(3)
+    )
+    .site-brand-sep {
+    display: none;
+  }
+}
+
 /* === Start page hero ===
    The welcome band under the compact header: name, one line, and the
    places as the way in. Generated shapes fade into the page behind it. */

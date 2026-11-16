@@ -15,6 +15,7 @@ import { parseTitle } from '/imports/api/_utils/shared';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
 import { currentUserAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import BookButton from './BookButton';
 import DiscussionButton from './DiscussionButton';
 import EditButton from './EditButton';
 import LanguageSwitch from './LanguageSwitch';
@@ -503,6 +504,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           <NewButton site={site} />
           <EditButton />
           <DiscussionButton />
+          <BookButton />
         </div>
       </div>
 
