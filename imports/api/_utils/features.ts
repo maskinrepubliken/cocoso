@@ -7,13 +7,13 @@ import { Meteor } from 'meteor/meteor';
 // in the database, so switching a feature back on brings everything back.
 // Change a value here and commit; it is read on both server and client.
 export const FEATURES = {
-  groups: false, // Föreningar
-  works: false, // Förfrågningar
+  groups: true, // Grupper
+  works: true, // Förfrågningar
   // Booking places in the calendar: the bookable flag and combos (places
   // made up of others) on places, the book button, new bookings from the
   // calendar, an event blocking its place and the clash checks. Places
   // still say how to book them (`booking`).
-  bookings: false,
+  bookings: true,
 };
 
 export type Feature = keyof typeof FEATURES;
