@@ -117,7 +117,8 @@ Meteor.methods({
   async createResource(values) {
     check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
-    if (!user || !(await isAdmin(user._id))) {
+    // Organizers add and edit places; only admins remove them.
+    if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     await validateLabel(values.label);
@@ -161,7 +162,8 @@ Meteor.methods({
     check(resourceId, String);
     check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
-    if (!user || !(await isAdmin(user._id))) {
+    // Organizers add and edit places; only admins remove them.
+    if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     await validateLabel(values.label, resourceId);
