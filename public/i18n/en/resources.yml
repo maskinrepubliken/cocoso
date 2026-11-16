@@ -11,7 +11,7 @@ form:
   placement:
     label: Where the place is
     address: Address
-    parent: Part of another place
+    parent: Part of a place
     coordinates: Coordinates
     helpers:
       address: "The street address. The map point is looked up from it."

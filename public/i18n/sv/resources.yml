@@ -11,7 +11,7 @@ form:
   placement:
     label: Var platsen finns
     address: Adress
-    parent: Del av en annan plats
+    parent: Del av en plats
     coordinates: Koordinater
     helpers:
       address: "Gatuadressen. Kartpunkten tas fram ur den."

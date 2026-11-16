@@ -19,7 +19,7 @@ import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
-import SegmentedToggle from '/imports/ui/generic/SegmentedToggle';
+import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import FormCard from '/imports/ui/pages/activities/form/FormCard';
 
 import resourceFormFields from './resourceFormFields';
@@ -61,6 +61,8 @@ interface ResourceFormProps {
   resource?: ResourceData;
   // The place being edited, left out of the places it can be part of
   resourceId?: string;
+  // A new place started from another place's page: part of it to begin with
+  defaultParentId?: string;
   onFinalize: (resource: ResourceData) => void;
 }
 
@@ -110,6 +112,12 @@ const placementOf = (resource?: ResourceData): Placement => {
   return 'address';
 };
 
+const PLACEMENTS: { value: Placement; icon: string }[] = [
+  { value: 'address', icon: 'map-pin' },
+  { value: 'coordinates', icon: 'target' },
+  { value: 'parent', icon: 'cube' },
+];
+
 // Only what the chosen way uses: a map point keeps the town, not a street.
 const addressFor = (
   placement: Placement,
@@ -122,6 +130,7 @@ const addressFor = (
 export default function ResourceForm({
   resource,
   resourceId,
+  defaultParentId,
   onFinalize,
 }: ResourceFormProps) {
   const [state, setState] = useState<any>({
@@ -135,8 +144,8 @@ export default function ResourceForm({
     locationId: resource?.locationId || null,
     // An address of its own, or part of another place (and at its address)
     // (a street address, a map point, or inside another place)
-    placement: placementOf(resource),
-    parentId: resource?.parentId || null,
+    placement: defaultParentId ? 'parent' : placementOf(resource),
+    parentId: resource?.parentId || defaultParentId || null,
     isUnlisted: Boolean(resource?.isUnlisted),
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
     resources: [],
@@ -290,19 +299,33 @@ export default function ResourceForm({
       {/* Where it is: an address of its own, a map point, or inside another
           place and so at its address. Only one. */}
       <FormCard title={t('form.placement.label')}>
-        <SegmentedToggle
-          onPaper
-          choices={[
-            { value: 'address', label: t('form.placement.address') },
-            { value: 'coordinates', label: t('form.placement.coordinates') },
-            { value: 'parent', label: t('form.placement.parent') },
-          ]}
-          label={t('form.placement.label')}
-          value={state.placement}
-          onChange={(placement) =>
-            setState((prevState: any) => ({ ...prevState, placement }))
-          }
-        />
+        {/* One of three, as tiles like the categories above */}
+        <div
+          aria-label={t('form.placement.label')}
+          className="kind-picker is-three"
+          role="radiogroup"
+        >
+          {PLACEMENTS.map(({ value, icon }) => (
+            <button
+              key={value}
+              aria-checked={state.placement === value}
+              className={`kind-picker-tile ${
+                state.placement === value ? 'is-active' : ''
+              }`}
+              role="radio"
+              type="button"
+              onClick={() =>
+                setState((prevState: any) => ({
+                  ...prevState,
+                  placement: value,
+                }))
+              }
+            >
+              <ThreeDIcon name={icon} size={36} />
+              <span>{t(`form.placement.${value}`)}</span>
+            </button>
+          ))}
+        </div>
         <p className="form-preview-note">
           {t(`form.placement.helpers.${state.placement}`)}
         </p>

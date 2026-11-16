@@ -3,9 +3,7 @@ import React from 'react';
 import { styled } from '/stitches.config';
 
 // The pill of choices first seen on the start page ("Idag" / "Imorgon"):
-// one chosen at a time, the chosen one filled in green. On a card or in a
-// form (`onPaper`) the pill gets a pale green ground to stand out from
-// the white.
+// one chosen at a time, the chosen one filled in green.
 const Segmented = styled('div', {
   background: 'rgba(255, 253, 247, 0.7)',
   borderRadius: '999px',
@@ -13,11 +11,6 @@ const Segmented = styled('div', {
   flexWrap: 'wrap',
   maxWidth: '100%',
   padding: '3px',
-  variants: {
-    onPaper: {
-      true: { background: 'var(--cocoso-colors-theme-100)' },
-    },
-  },
 });
 
 const SegButton = styled('button', {
@@ -43,7 +36,6 @@ interface SegmentedToggleProps<T extends string> {
   choices: { value: T; label: string }[];
   onChange: (value: T) => void;
   label?: string;
-  onPaper?: boolean;
 }
 
 export default function SegmentedToggle<T extends string>({
@@ -51,10 +43,9 @@ export default function SegmentedToggle<T extends string>({
   choices,
   onChange,
   label,
-  onPaper = false,
 }: SegmentedToggleProps<T>) {
   return (
-    <Segmented aria-label={label} onPaper={onPaper} role="group">
+    <Segmented aria-label={label} role="group">
       {choices.map((choice) => (
         <SegButton
           key={choice.value}
