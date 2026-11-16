@@ -670,12 +670,17 @@ resourceKinds:
     label: Type of place
     helper: Choose one or more. Helps people find the place.
 # The view menu at the end of the kinds on the events page
+resourceView:
+  unlisted: Also places not in the list
+  bookable: Only places that can be booked
+
 eventView:
   button: Filter
   headings:
     kinds: Categories
     places: Places
     when: When
+    show: Show
   anytime:
     title: Any date
     detail: Everything coming up

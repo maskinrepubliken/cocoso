@@ -4,12 +4,14 @@ import { useAtomValue } from 'jotai';
 import { locationsAtom } from '/imports/state';
 import { kindsOf } from '/imports/api/_utils/kinds';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
+import { isBookablePlace } from '/imports/ui/generic/BookableChip';
 
 import type { EventView, EventWhen } from './EventViewMenu';
 
 // What the Filter menu narrows events to, read from and written to the
-// address: ?kind= and ?ort= (lists), ?showPast= and ?when=. Shared by the
-// events page, the calendar and the Platser page, so they filter alike.
+// address: ?kind= and ?ort= (lists), ?showPast= and ?when=; on the Platser
+// page also ?unlisted=1 and ?bookable=1. Shared by the events page, the
+// calendar and the Platser page, so they filter alike.
 export default function useEventFilters(
   listing: 'activities' | 'calendar' | 'resources'
 ) {
@@ -73,6 +75,16 @@ export default function useEventFilters(
       .map((location: any) => location._id)
   );
 
+  // Platser only: parts of other places left out of the list shown too,
+  // and only the places that can be booked
+  const isPlaces = listing === 'resources';
+  const showUnlisted = isPlaces && searchParams.get('unlisted') === '1';
+  const onlyBookable = isPlaces && searchParams.get('bookable') === '1';
+  const toggleUnlisted = () =>
+    setParams({ unlisted: showUnlisted ? null : '1' });
+  const toggleBookable = () =>
+    setParams({ bookable: onlyBookable ? null : '1' });
+
   // Chosen places keep the events for the whole municipality too, as a
   // place's own page does.
   const matches = (item: {
@@ -80,7 +92,12 @@ export default function useEventFilters(
     category?: { key?: string } | null;
     locationId?: string | null;
     isMunicipalityOnly?: boolean;
+    isUnlisted?: boolean;
+    isBookable?: boolean;
+    booking?: object | null;
   }) =>
+    (!isPlaces || showUnlisted || !item.isUnlisted) &&
+    (!onlyBookable || isBookablePlace(item)) &&
     (!kinds.length || kindsOf(item).some((key) => kinds.includes(key))) &&
     (Boolean(currentLocation) ||
       !placeIds.size ||
@@ -103,15 +120,24 @@ export default function useEventFilters(
   const isNarrowed =
     Boolean(view.when) ||
     (kinds.length > 0 && (kindsFromMenu || listing === 'calendar')) ||
-    (!currentLocation && placeSlugs.length > 0);
+    (!currentLocation && placeSlugs.length > 0) ||
+    showUnlisted ||
+    onlyBookable;
 
+  const menuOnly = { unlisted: null, bookable: null };
   const resetAll = () =>
-    setParams({ kind: null, filter: null, ort: null, when: null });
+    setParams({ kind: null, filter: null, ort: null, when: null, ...menuOnly });
 
   // A kind (or "Alla", with no key) picked in the strip: it, the strip's
   // "Alla" and the Filter are one choice, so the menu's narrowing goes.
   const pickFromStrip = (key: string) =>
-    setParams({ kind: key || null, filter: null, ort: null, when: null });
+    setParams({
+      kind: key || null,
+      filter: null,
+      ort: null,
+      when: null,
+      ...menuOnly,
+    });
 
   return {
     locations,
@@ -123,10 +149,16 @@ export default function useEventFilters(
     placeSlugs,
     togglePlace,
     // for memo dependencies
-    filterKey: `${kinds.join(',')}|${[...placeIds].join(',')}|${view.when}`,
+    filterKey: `${kinds.join(',')}|${[...placeIds].join(',')}|${
+      view.when
+    }|${showUnlisted}|${onlyBookable}`,
     matches,
     view,
     setView,
+    showUnlisted,
+    toggleUnlisted,
+    onlyBookable,
+    toggleBookable,
     isNarrowed,
     resetAll,
     pickFromStrip,

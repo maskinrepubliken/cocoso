@@ -5412,6 +5412,13 @@ body {
   padding: 0 2px;
 }
 
+/* Switches with a longer name: one to a line */
+.view-menu-list {
+  display: grid;
+  gap: 2px;
+  padding: 0 2px;
+}
+
 .view-menu-check-row {
   display: flex;
   align-items: center;

@@ -667,12 +667,17 @@ resourceKinds:
     label: Typ av plats
     helper: Välj en eller flera. Hjälper användare hitta platsen.
 # The view menu at the end of the kinds on the events page
+resourceView:
+  unlisted: Visa även olistade platser
+  bookable: Endast bokningsbara platser
+
 eventView:
   button: Filter
   headings:
     kinds: Kategorier
     places: Orter
     when: När
+    show: Visa
   anytime:
     title: Alla datum
     detail: Allt som är på gång

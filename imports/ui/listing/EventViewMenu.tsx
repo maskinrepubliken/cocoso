@@ -88,6 +88,14 @@ interface EventViewMenuProps {
   // Where the kinds' names live in common.yml (the kinds of platser on the
   // Platser page)
   kindNamespace?: string;
+  // Further switches, one to a line (on the Platser page: show unlisted
+  // places, only bookable ones)
+  options?: {
+    key: string;
+    label: string;
+    isChecked: boolean;
+    onToggle: () => void;
+  }[];
   onChange: (view: Partial<EventView>) => void;
   onToggleKind: (key: string) => void;
   onTogglePlace: (slug: string) => void;
@@ -105,6 +113,7 @@ export default function EventViewMenu({
   withTime = true,
   variant = 'tile',
   kindNamespace = 'eventKinds',
+  options = [],
   onChange,
   onToggleKind,
   onTogglePlace,
@@ -280,6 +289,24 @@ export default function EventViewMenu({
                     </span>,
                     places.includes(location.slug),
                     () => onTogglePlace(location.slug)
+                  )
+                )}
+              </div>
+            </>
+          )}
+
+          {options.length > 0 && (
+            <>
+              <p className="view-menu-heading">
+                {tc('eventView.headings.show')}
+              </p>
+              <div className="view-menu-list">
+                {options.map((option) =>
+                  check(
+                    option.key,
+                    <span className="view-menu-label">{option.label}</span>,
+                    option.isChecked,
+                    option.onToggle
                   )
                 )}
               </div>
