@@ -50,7 +50,7 @@ labels:
   content: Content
   create:
     activities: Create a new event
-    calendar: New Booking
+    calendar: Create a new event
     groups: New Process/Group
     info: New Info Page
     resources: New Place

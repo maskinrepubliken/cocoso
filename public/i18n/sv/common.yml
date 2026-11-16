@@ -50,7 +50,7 @@ labels:
   content: Innehåll
   create:
     activities: Skapa ett nytt evenemang
-    calendar: Nytt bokning
+    calendar: Skapa ett nytt evenemang
     groups: Nytt grupp/process
     info: Nytt infosida
     resources: Ny plats

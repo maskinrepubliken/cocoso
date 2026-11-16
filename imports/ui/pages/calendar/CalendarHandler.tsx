@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import loadable from '@loadable/component';
+import { useAtomValue } from 'jotai';
 
 import { Loader, Skeleton } from '/imports/ui/core';
 import { parseAllBookingsWithResources } from '/imports/api/_utils/shared';
@@ -12,6 +13,8 @@ import EventViewMenu from '/imports/ui/listing/EventViewMenu';
 import useEventFilters from '/imports/ui/listing/useEventFilters';
 import { EVENT_KINDS } from '/imports/ui/pages/activities/eventKinds';
 import { kindsOf } from '/imports/api/_utils/kinds';
+import { canCreateContentAtom, renderedAtom } from '/imports/state';
+import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 
 const CalendarView = loadable(() => import('./CalendarView'), {
   fallback: <Skeleton isEntry />,
@@ -49,8 +52,15 @@ interface CalendarHandlerProps {
   siteDoc: any;
 }
 
+// The plus in the header (?new=true) opens the event form here too
+const NewPublicActivity = loadable(
+  () => import('/imports/ui/pages/activities/NewPublicActivity')
+);
+
 export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   const site = siteDoc;
+  const rendered = useAtomValue(renderedAtom);
+  const canCreateContent = useAtomValue(canCreateContentAtom);
   const { activities, resources } = useLoaderData() as {
     activities: Activity[];
     resources: Resource[];
@@ -83,9 +93,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   // between days and weeks here, so not past/upcoming or a stretch of days.
   const filters = useEventFilters('calendar');
   const presentKinds = useMemo(() => {
-    const keys = new Set(
-      (activities as any[]).flatMap((a) => kindsOf(a))
-    );
+    const keys = new Set((activities as any[]).flatMap((a) => kindsOf(a)));
     return EVENT_KINDS.filter((kind) => keys.has(kind.key));
   }, [activities]);
   const filteredActivities = useMemo(
@@ -154,6 +162,12 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
           onSelect={handleSelectActivity}
         />
       </div>
+
+      {rendered && canCreateContent ? (
+        <NewEntryHandler context="calendar">
+          <NewPublicActivity />
+        </NewEntryHandler>
+      ) : null}
     </>
   );
 }
