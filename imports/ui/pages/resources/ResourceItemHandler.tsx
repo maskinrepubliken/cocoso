@@ -49,7 +49,7 @@ export default function ResourceItemHandler({ siteDoc }) {
 
           {/* The header's plus here: a new place, part of this one */}
           {canCreateContent && (
-            <NewEntryHandler keepsDraft context="resources">
+            <NewEntryHandler keepsDraft publishes context="resources">
               <NewResource parentId={resource._id} />
             </NewEntryHandler>
           )}
@@ -57,6 +57,7 @@ export default function ResourceItemHandler({ siteDoc }) {
           {canCreateContent && (
             <EditEntryHandler
               keepsDraft
+              publishes
               context="resources"
               onDelete={
                 // Only admins may delete; the confirm dialog lives in

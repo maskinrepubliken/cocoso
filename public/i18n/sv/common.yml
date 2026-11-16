@@ -16,6 +16,7 @@ actions:
   submit: Bekräfta
   send: Skicka
   save: Spara
+  publish: Publicera
   cancel: Avbryt
   close: Stäng
   reset: Återställa
@@ -161,12 +162,12 @@ message:
 entrySheet:
   blocked: Något i formuläret behöver ses över innan det kan sparas
 
-# MODAL POP-UPS
 # A form's draft brought back (imports/ui/forms/useFormDraft.tsx)
 drafts:
   restored: "Här är det du skrev {{when}} men inte sparade ännu. Bilder som inte sparades behöver läggas till igen."
   discard: Släng utkastet
 
+# MODAL POP-UPS
 modals:
   confirm:
     delete:

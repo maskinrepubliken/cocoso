@@ -13,12 +13,15 @@ export interface NewEntryHandlerProps {
   context: string;
   // See EntryFormHandler: Cancel closes without asking
   keepsDraft?: boolean;
+  // See EntryFormHandler: the save button says "Publicera"
+  publishes?: boolean;
   children?: React.ReactNode;
 }
 
 export default function NewEntryHandler({
   context,
   keepsDraft,
+  publishes,
   children,
 }: NewEntryHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
@@ -44,6 +47,7 @@ export default function NewEntryHandler({
     title,
     onClose: handleClose,
     keepsDraft,
+    publishes,
     children,
   };
 

@@ -23,6 +23,8 @@ export interface EntryFormHandlerProps {
   // The form keeps a draft of what is written (the event form): nothing
   // is lost on Cancel, so it closes without asking
   keepsDraft?: boolean;
+  // Saving makes the entry public (events, places): "Publicera", not "Spara"
+  publishes?: boolean;
   children?: React.ReactNode;
 }
 
@@ -50,6 +52,7 @@ export default function EntryFormHandler({
   onClose,
   onDelete,
   keepsDraft = false,
+  publishes = false,
   children,
 }: EntryFormHandlerProps) {
   const loaders = useAtomValue(loaderAtom);
@@ -200,7 +203,7 @@ export default function EntryFormHandler({
               loading={busy}
               type="submit"
             >
-              {tc('actions.save')}
+              {tc(publishes ? 'actions.publish' : 'actions.save')}
             </Button>
           </div>
         </footer>

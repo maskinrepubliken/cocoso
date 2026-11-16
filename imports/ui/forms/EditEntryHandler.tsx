@@ -13,6 +13,8 @@ export interface EditEntryHandlerProps {
   context: string;
   // See EntryFormHandler: Cancel closes without asking
   keepsDraft?: boolean;
+  // See EntryFormHandler: the save button says "Publicera"
+  publishes?: boolean;
   onDelete?: () => void;
   children?: React.ReactNode;
 }
@@ -20,6 +22,7 @@ export interface EditEntryHandlerProps {
 export default function EditEntryHandler({
   context,
   keepsDraft,
+  publishes,
   onDelete,
   children,
 }: EditEntryHandlerProps) {
@@ -48,6 +51,7 @@ export default function EditEntryHandler({
     onClose: handleClose,
     onDelete,
     keepsDraft,
+    publishes,
     children,
   };
 

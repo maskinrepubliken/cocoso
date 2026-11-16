@@ -16,6 +16,7 @@ actions:
   submit: Confirm
   send: Send
   save: Save
+  publish: Publish
   cancel: Cancel
   close: Close
   reset: Reset
@@ -163,12 +164,12 @@ message:
 entrySheet:
   blocked: Something in the form needs another look before it can be saved
 
-# MODAL POP-UPS
 # A form's draft brought back (imports/ui/forms/useFormDraft.tsx)
 drafts:
   restored: "This is what you wrote {{when}} but did not save yet. Pictures that were not saved need to be added again."
   discard: Discard draft
 
+# MODAL POP-UPS
 modals:
   confirm:
     delete:
