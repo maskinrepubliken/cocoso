@@ -100,7 +100,7 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
   // and logout.
   return (
     <Menu
-      align="end"
+      align="start"
       button={<UserThumb notificationsCounter={notificationsCounter} />}
     >
       <div className="site-info-menu">

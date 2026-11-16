@@ -2438,15 +2438,21 @@ body {
   padding: 0 14px;
 }
 
-.site-header-bar > .site-brand {
+/* The brand pill with the account beside it, leaving the right side for
+   the page's own buttons */
+.site-header-bar > .site-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   justify-self: start;
+  min-width: 0;
 }
 
 /* When brand, menu and buttons do not fit on one row (Header.tsx measures
    this), all three shrink by the same factor; only when that is not
    enough does the menu pill take a row of its own under the other two. */
 @media (min-width: 960px) {
-  .site-header-bar > .site-brand,
+  .site-header-bar > .site-header-left,
   .site-header-bar > .site-nav,
   .site-header-bar > .site-header-right {
     zoom: var(--bar-zoom, 1);
@@ -2462,7 +2468,7 @@ body {
     padding: 10px 14px 8px;
   }
 
-  .site-header-bar.is-stacked > .site-brand {
+  .site-header-bar.is-stacked > .site-header-left {
     grid-area: brand;
   }
 
@@ -3512,7 +3518,8 @@ body {
   outline-offset: 2px;
 }
 
-.site-header-right .szh-menu-button {
+.site-header-right .szh-menu-button,
+.site-header-left .szh-menu-button:has(.site-user) {
   all: unset;
   display: inline-flex;
   cursor: pointer;
@@ -3604,7 +3611,7 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .site-header-bar:has(.site-search.is-open) > .site-brand,
+  .site-header-bar:has(.site-search.is-open) > .site-header-left,
   .site-header-bar:has(.site-search.is-open) > .site-nav,
   .site-header-bar:has(.site-search.is-open) > .site-more,
   .site-header-bar:has(.site-search.is-open) .new-button-wrapper {
@@ -4467,7 +4474,8 @@ body {
 /* Keyboard focus on the header's menu buttons (place, info, account) */
 .site-brand .szh-menu-button:focus-visible,
 .site-nav .szh-menu-button:focus-visible,
-.site-header-right .szh-menu-button:focus-visible {
+.site-header-right .szh-menu-button:focus-visible,
+.site-header-left .szh-menu-button:has(.site-user):focus-visible {
   outline: 2px solid var(--cocoso-colors-theme-500);
   outline-offset: 2px;
   border-radius: 999px;

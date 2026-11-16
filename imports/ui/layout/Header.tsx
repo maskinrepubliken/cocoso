@@ -305,17 +305,10 @@ export interface HeaderProps {
   pageTitles: any[];
 }
 
-// The site header: one 56px row with the brand/location pill on the left,
-// the menu as a floating pill in the middle and, on the right, the search,
-// the plus for those who may create content, the pen on a page one may
-// edit, and the account.
-// Below 960px the menu moves to a chip row under the bar. The bar is
-// transparent at the top of the page and gains a blurred backdrop once the
-// page scrolls.
-// The site header: one 56px row with the brand/location pill on the left,
-// the menu as a floating pill in the middle and, on the right, the search,
-// the plus for those who may create content, the pen on a page one may
-// edit, and the account.
+// The site header: one 56px row with the brand/location pill and the
+// account on the left, the menu as a floating pill in the middle and, on
+// the right, the search, the plus for those who may create content, the
+// pen on a page one may edit, and the page's discussion.
 // Below 960px the menu pill is gone: the brand pill stretches across the
 // row and a grid button beside the search opens the menu panel. The bar
 // is transparent at the top of the page and gains a blurred backdrop once
@@ -379,10 +372,10 @@ export default function Header({ site, pageTitles }: HeaderProps) {
       if (bar.querySelector('.site-search.is-open')) {
         return;
       }
-      const brand = bar.querySelector<HTMLElement>('.site-brand');
+      const left = bar.querySelector<HTMLElement>('.site-header-left');
       const nav = bar.querySelector<HTMLElement>('.site-nav');
       const right = bar.querySelector<HTMLElement>('.site-header-right');
-      if (!brand || !nav || !right) {
+      if (!left || !nav || !right) {
         return;
       }
       const style = getComputedStyle(bar);
@@ -391,8 +384,10 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         parseFloat(style.paddingLeft) +
         parseFloat(style.paddingRight);
       // Natural widths: scrollWidth is in each group's own (unzoomed)
-      // pixels and counts the content even when the grid squeezes the box
-      const natural = brand.scrollWidth + nav.scrollWidth + right.scrollWidth;
+      // pixels and counts the content even when the grid squeezes the box.
+      // The menu stays centred, so both sides need room for the wider one.
+      const natural =
+        nav.scrollWidth + 2 * Math.max(left.scrollWidth, right.scrollWidth);
       const room = bar.clientWidth - gaps;
       const zoom = Math.min(1, room / natural);
       const next = zoom < MIN_BAR_ZOOM ? 1 : Math.round(zoom * 100) / 100;
@@ -406,7 +401,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     const observer = new ResizeObserver(measure);
     observer.observe(bar);
     bar
-      .querySelectorAll('.site-brand, .site-nav, .site-header-right')
+      .querySelectorAll('.site-header-left, .site-nav, .site-header-right')
       .forEach((el) => observer.observe(el));
     window.addEventListener('resize', measure);
     return () => {
@@ -462,7 +457,10 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         ref={barRef}
         style={{ '--bar-zoom': barZoom } as React.CSSProperties}
       >
-        <LocationSwitcher site={site} items={items} section={section} />
+        <div className="site-header-left">
+          <LocationSwitcher site={site} items={items} section={section} />
+          <UserPopup site={site} />
+        </div>
 
         {/* Phone only: the menu button, carrying the page one is on */}
         <button
@@ -505,7 +503,6 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           <NewButton site={site} />
           <EditButton />
           <DiscussionButton />
-          <UserPopup site={site} />
         </div>
       </div>
 
