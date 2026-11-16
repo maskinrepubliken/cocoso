@@ -150,41 +150,64 @@ const PartCards = styled('div', {
 });
 
 // A place as a small card: its name (and whether it can be booked) and
-// its picture at the right. Under "Här finns" for the parts, and in the
-// sidebar of a part for the place it is in.
-function PlaceCard({
-  place,
-  to,
-  inPanel,
-}: {
-  place: PlaceLink;
-  to: string;
-  inPanel?: boolean;
-}) {
+// its picture at the right, under "Här finns" for the parts.
+function PlaceCard({ place, to }: { place: PlaceLink; to: string }) {
   const src = getImageUrl(place.images?.[0], 'small');
   return (
-    <PartCard
-      css={
-        inPanel
-          ? {
-              boxShadow: 'none',
-              marginTop: '0.75rem',
-              outline: '1.5px solid var(--cocoso-colors-theme-200)',
-            }
-          : undefined
-      }
-      to={to}
-    >
+    <PartCard to={to}>
       <PartText>
         <PartName>{place.label}</PartName>
         <BookableChip place={place} />
       </PartText>
-      <PartPicture>
-        {src ? <img alt="" src={src} /> : <PlaceholderImage seed={place._id} />}
-      </PartPicture>
+      {/* A room or the like without a picture: just the white card */}
+      {src && (
+        <PartPicture>
+          <img alt="" src={src} />
+        </PartPicture>
+      )}
     </PartCard>
   );
 }
+
+// The picture area of a part without a picture of its own: plain white,
+// no generated placeholder. On narrow screens, where the picture sits on
+// top of the card, it takes no room at all.
+const NoPicture = styled('div', {
+  backgroundColor: 'var(--cocoso-papper)',
+  minHeight: '100%',
+  width: '100%',
+  '@media (max-width: 759px)': { display: 'none' },
+});
+
+// In the sidebar of a part, the place it is in: its picture from edge to
+// edge at the top of the card, then "Del av" right above its name.
+const ParentLink = styled(Link, {
+  color: 'var(--site-ink)',
+  display: 'block',
+  textDecoration: 'none',
+  '&:hover h3': { textDecoration: 'underline' },
+  '& h3': {
+    fontFamily: 'var(--cocoso-font-display)',
+    fontSize: '1.35rem',
+    fontWeight: 700,
+    lineHeight: 1.2,
+    margin: '0.3rem 0 0',
+  },
+});
+
+const ParentPicture = styled('div', {
+  height: '170px',
+  margin: '-1.25rem -1.5rem 1.25rem',
+  overflow: 'hidden',
+  position: 'relative',
+  '& img, & > *': {
+    height: '100%',
+    inset: 0,
+    objectFit: 'cover',
+    position: 'absolute',
+    width: '100%',
+  },
+});
 
 // From this width where the place is (map, address) and who to ask sit in
 // a column beside the card, from the top of the page; below it they follow
@@ -316,11 +339,15 @@ export default function ResourceHybrid({
                 ) : null
               }
               picture={
-                <FilledPicture
-                  alt={resource.label}
-                  seed={resource._id}
-                  src={images[0]}
-                />
+                partOf && !images.length ? (
+                  <NoPicture data-filled="" />
+                ) : (
+                  <FilledPicture
+                    alt={resource.label}
+                    seed={resource._id}
+                    src={images[0]}
+                  />
+                )
               }
               title={resource.label}
             />
@@ -331,13 +358,21 @@ export default function ResourceHybrid({
               {/* A part: the place it is in stands for the address, in
                   one card with who to ask */}
               {partOf && (
-                <Panel css={{ marginBottom: '1.25rem' }}>
-                  <SideTitle>{tc('entry.partOf')}</SideTitle>
-                  <PlaceCard
-                    inPanel
-                    place={partOf}
-                    to={`${prefix}/resources/${partOf._id}`}
-                  />
+                <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
+                  <ParentLink to={`${prefix}/resources/${partOf._id}`}>
+                    <ParentPicture>
+                      {partOf.images?.[0] ? (
+                        <img
+                          alt=""
+                          src={getImageUrl(partOf.images[0], 'medium') || ''}
+                        />
+                      ) : (
+                        <PlaceholderImage seed={partOf._id} />
+                      )}
+                    </ParentPicture>
+                    <SideTitle as="p">{tc('entry.partOf')}</SideTitle>
+                    <h3>{partOf.label}</h3>
+                  </ParentLink>
                   {withContact && (
                     <>
                       <SideTitle css={{ margin: '1.5rem 0 1rem' }}>
