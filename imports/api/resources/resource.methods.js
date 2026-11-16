@@ -143,6 +143,7 @@ Meteor.methods({
       images: { $slice: 1 },
       isBookable: 1,
       booking: 1,
+      isUnlisted: 1,
     };
     const [partOf, parts] = await Promise.all([
       resource.parentId

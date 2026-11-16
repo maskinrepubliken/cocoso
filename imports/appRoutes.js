@@ -596,7 +596,23 @@ export default function appRoutes(props) {
           {
             path: ':resourceId/*',
             element: el(ResourceItemHandler),
-            loader: ld(({ params }) => getResource({ params })),
+            loader: ld(async ({ params, request }) => {
+              const data = await getResource({ params });
+              // A place left out of the list has no page of its own: it
+              // opens over the page of the place it is in. Editing and
+              // deleting it still happen here.
+              const part = data?.resource;
+              const url = new URL(request.url);
+              const managing = ['edit', 'delete'].some(
+                (key) => url.searchParams.get(key) === 'true'
+              );
+              if (part?.isUnlisted && part.parentId && !managing) {
+                const at = url.pathname.indexOf('/resources/');
+                const base = url.pathname.slice(0, at + '/resources/'.length);
+                return redirect(`${base}${part.parentId}?part=${part._id}`);
+              }
+              return data;
+            }),
             shouldRevalidate: revalidateOn(['edit']),
           },
         ],

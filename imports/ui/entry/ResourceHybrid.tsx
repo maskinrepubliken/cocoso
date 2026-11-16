@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, type To } from 'react-router';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
@@ -68,6 +68,7 @@ interface PlaceLink {
   images?: string[];
   isBookable?: boolean;
   booking?: object | null;
+  isUnlisted?: boolean;
 }
 
 export interface ResourceHybridProps {
@@ -151,10 +152,10 @@ const PartCards = styled('div', {
 
 // A place as a small card: its name (and whether it can be booked) and
 // its picture at the right, under "Här finns" for the parts.
-function PlaceCard({ place, to }: { place: PlaceLink; to: string }) {
+function PlaceCard({ place, to }: { place: PlaceLink; to: To }) {
   const src = getImageUrl(place.images?.[0], 'small');
   return (
-    <PartCard to={to}>
+    <PartCard preventScrollReset to={to}>
       <PartText>
         <PartName>{place.label}</PartName>
         <BookableChip place={place} />
@@ -442,7 +443,12 @@ export default function ResourceHybrid({
                     <PlaceCard
                       key={part._id}
                       place={part}
-                      to={`${prefix}/resources/${part._id}`}
+                      to={
+                        // Not in the list: it opens over this page
+                        part.isUnlisted
+                          ? { search: `?part=${part._id}` }
+                          : `${prefix}/resources/${part._id}`
+                      }
                     />
                   ))}
                 </PartCards>

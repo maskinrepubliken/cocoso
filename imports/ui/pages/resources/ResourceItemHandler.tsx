@@ -12,6 +12,7 @@ const ResourceInteractionHandler = loadable(
   () => import('./components/ResourceInteractionHandler')
 );
 const EditResource = loadable(() => import('./EditResource'));
+const PartModal = loadable(() => import('/imports/ui/entry/PartModal'));
 
 export const resourceAtom = atom(null);
 
@@ -33,11 +34,16 @@ export default function ResourceItemHandler({ siteDoc }) {
 
   return (
     <>
-      <ResourceHybrid documents={documents} resource={resource} siteDoc={siteDoc} />
+      <ResourceHybrid
+        documents={documents}
+        resource={resource}
+        siteDoc={siteDoc}
+      />
 
       {rendered && (
         <>
           <ResourceInteractionHandler />
+          <PartModal />
 
           {canCreateContent && (
             <EditEntryHandler
