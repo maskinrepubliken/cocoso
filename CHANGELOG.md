@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.9.0](https://github.com/maskinrepubliken/cocoso/compare/v5.8.0...v5.9.0) (2026-11-16)
+
+
+### Features
+
+* **activities:** list a place's rooms right after it in the place picker ([ebcfd05](https://github.com/maskinrepubliken/cocoso/commit/ebcfd051fc8fdecfd890b71d4d077af2b2105ff3))
+* **activities:** say "Publicera" on the event and place forms ([c174d9f](https://github.com/maskinrepubliken/cocoso/commit/c174d9fecb37a534cc22f8e27de88d40c7d65897))
+* **locations:** let a map point alone be an address ([0bdb14b](https://github.com/maskinrepubliken/cocoso/commit/0bdb14bd24d3fdabd0e1a1fade41e3d506aad196))
+* **resources:** add a place from another place's page as a part of it ([9c9f094](https://github.com/maskinrepubliken/cocoso/commit/9c9f0941cda4b9acc515a7b6ea031da50942f047))
+* **resources:** choose between an address and "Del av" in the place form ([11935bb](https://github.com/maskinrepubliken/cocoso/commit/11935bbdf7cb9fa6baad88f42a1833fb8fdc3777))
+* **resources:** choose where a place is from three radio rows ([084c3c5](https://github.com/maskinrepubliken/cocoso/commit/084c3c59399f3acd28c5667303cb05031005bb64))
+* **resources:** drop the unlisted filter, head the switch "Boka" ([e77c27e](https://github.com/maskinrepubliken/cocoso/commit/e77c27e970ca55b30821f67625214183518427c7))
+* **resources:** edit a place with the header's pen, for its owner and admins ([bf70f22](https://github.com/maskinrepubliken/cocoso/commit/bf70f220358f85d6e8a5581e377bbf9610ab6098))
+* **resources:** filter places by bookable and show unlisted ones ([950813d](https://github.com/maskinrepubliken/cocoso/commit/950813d94abae34c30bb318f81cc925d767ec4f7))
+* **resources:** keep drafts of the place and info page forms ([612e479](https://github.com/maskinrepubliken/cocoso/commit/612e479077af9cd407f8993b2b094f3912e0c10a))
+* **resources:** lay out the place form's details as cards ([dfc067d](https://github.com/maskinrepubliken/cocoso/commit/dfc067d4fe7409824f6b932da0b6073173d9a2ef))
+* **resources:** let a place be part of another place ([5f83bf1](https://github.com/maskinrepubliken/cocoso/commit/5f83bf11fef9834c6d20389af238ab4b14ecc1a6))
+* **resources:** let organizers create and edit places ([c632eea](https://github.com/maskinrepubliken/cocoso/commit/c632eeab395d3742829ea20658d8947b7f5083fd))
+* **resources:** one "Del av" card with the parent's picture, no placeholders for parts ([9b1e3c4](https://github.com/maskinrepubliken/cocoso/commit/9b1e3c40a316877bc321136ed6b04c8169047747))
+* **resources:** open unlisted places in a modal on their parent's page ([284565a](https://github.com/maskinrepubliken/cocoso/commit/284565a4605845d471d1211d71111a24aa5b4272))
+* **resources:** pick address, coordinates or "Del av" with a toggle ([0b4eaf3](https://github.com/maskinrepubliken/cocoso/commit/0b4eaf33b477d15f65a3950b00e784834f72e1cd))
+* **resources:** pick the parent place like an event's place ([7e8996e](https://github.com/maskinrepubliken/cocoso/commit/7e8996e59d71f16c7b1baf2e8e7bbcb13797babe))
+* **resources:** pick where a place is with three tiles ([03465ea](https://github.com/maskinrepubliken/cocoso/commit/03465ea2de6ad53b750b4903622dbfa922f477de))
+* **resources:** say "Del av" in a part's card instead of an address ([d243bb5](https://github.com/maskinrepubliken/cocoso/commit/d243bb54c7d763fbce3df7b410a40daf26ddc5ac))
+* **resources:** show a place's parts as cards under "Här finns" ([3220380](https://github.com/maskinrepubliken/cocoso/commit/3220380c6646220e8da7e2cc53b26acb94150142))
+* **resources:** show the parent place as a card beside the contact ([5d6e88f](https://github.com/maskinrepubliken/cocoso/commit/5d6e88f636f80a5bade241f1da9ef28f90c43b7b))
+* **resources:** show the parent's address under "Del av" ([d8fb80e](https://github.com/maskinrepubliken/cocoso/commit/d8fb80e25f45f406d48b18fdf56e57f4c4976207))
+
+
+### Bug Fixes
+
+* **activities:** close the event form on Cancel without a false warning ([a19bd27](https://github.com/maskinrepubliken/cocoso/commit/a19bd274fd4089da5f770854fe95d6d13a955d83))
+* **activities:** keep category names inside their tiles in the forms ([30b61d0](https://github.com/maskinrepubliken/cocoso/commit/30b61d0cf78ed8755b393441f988c11a3bd52ae5))
+* **activities:** keep form cards whole in the two-column sheet ([00e172d](https://github.com/maskinrepubliken/cocoso/commit/00e172d96dcc6655e5611fca9bd29456c755aeee))
+* **activities:** lay out form cards in a grid on wide sheets ([d7a5d49](https://github.com/maskinrepubliken/cocoso/commit/d7a5d494e8ddf7dfb2d873f59afe90874f2e593e))
+* **calendar:** let the header's plus open the event form ([0bdb1b4](https://github.com/maskinrepubliken/cocoso/commit/0bdb1b425a8b16b413bd5c2aed6d3b3b492a2409))
+* **resources:** only the owner and admins may edit a place ([34f877b](https://github.com/maskinrepubliken/cocoso/commit/34f877bc55984dddc5ed578c0ddd7f7178b3be1c))
+* **resources:** show the header's plus on Platser to organizers ([cdd76db](https://github.com/maskinrepubliken/cocoso/commit/cdd76dbf518de2f1c3559e8b9675f1a5d028426e))
+
 ## [5.8.0](https://github.com/maskinrepubliken/cocoso/compare/v5.7.0...v5.8.0) (2026-11-11)
 
 
