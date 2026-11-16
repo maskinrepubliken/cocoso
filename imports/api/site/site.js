@@ -102,6 +102,21 @@ Site.schema = new SimpleSchema({
   // (imports/startup/server/bootstrap.ts). Keeps them from loading twice.
   bootstrap: { type: Object, optional: true, blackbox: true },
 
+  // The sections an admin has switched on or off (api/_utils/features.ts);
+  // one not here keeps its default from the code.
+  features: { type: Object, optional: true },
+  'features.groups': { type: Boolean, optional: true },
+  'features.works': { type: Boolean, optional: true },
+  'features.bookings': { type: Boolean, optional: true },
+  // Who switched what and when, newest last (the last 50); admins only.
+  featuresLog: { type: Array, optional: true },
+  'featuresLog.$': { type: Object },
+  'featuresLog.$.feature': { type: String },
+  'featuresLog.$.enabled': { type: Boolean },
+  'featuresLog.$.at': { type: Date },
+  'featuresLog.$.byUserId': { type: String },
+  'featuresLog.$.byUsername': { type: String, optional: true },
+
   createdAt: { type: Date },
 });
 
@@ -114,6 +129,8 @@ export const sitePublicFields = {
   logoPng: 1,
   settings: 1,
   theme: 1,
+  // Which sections are on: the client needs them before it builds routes
+  features: 1,
 };
 
 export async function getSite(fields) {

@@ -10,6 +10,7 @@ import {
 import { Provider as JotaiProvider, createStore } from 'jotai';
 
 import { getSite, sitePublicFields } from '/imports/api/site/site';
+import { applyFeatures } from '/imports/api/_utils/features';
 import appRoutes from '/imports/appRoutes';
 import { getGlobalStyles } from '/imports/ui/utils/globalStylesManager';
 import { resolveSeason } from '/imports/api/_utils/season';
@@ -81,6 +82,8 @@ export default async function serverRenderer(sink) {
     i18nInstance: requestI18n,
   };
 
+  // The sections switched on, as stored: the routes depend on them
+  applyFeatures(siteDoc?.features);
   const routes = appRoutes(props);
   const { query, dataRoutes } = createStaticHandler(routes);
 

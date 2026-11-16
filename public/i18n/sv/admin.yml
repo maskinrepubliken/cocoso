@@ -465,3 +465,48 @@ season:
   label: Årstid
   helper: "Sajten byter utseende med årstiderna. Lås en här för att behålla den, till exempel under en kampanj."
   auto: Följ kalendern
+
+# Switching whole sections on and off (pages/admin/FeatureSettings.tsx)
+features:
+  title: Funktioner
+  description: Slå på och stäng av hela delar av sajten – med försiktighet
+  warning:
+    title: Ändringar här gäller direkt, för alla
+    body: "Att stänga av en funktion tar bort den från hela sajten på en gång: dess sidor blir \"sidan finns inte\", den försvinner ur menyn, sökningen och startsidan, och ingen kan skapa nytt. Inget innehåll raderas – slår du på funktionen igen kommer allt tillbaka. Den som redan har sajten öppen ser ändringen först när sidan laddas om."
+  on: På
+  off: Av
+  default: Standardläge
+  setBy: "Ändrad av {{name}} {{when}}"
+  menuNote: "Syns i menyn bara om menyposten också är påslagen under Meny."
+  switchOff: Stäng av…
+  switchOn: Slå på…
+  items:
+    groups:
+      label: Grupper
+      about: Gruppsidor, listan över grupper, att gå med i grupper och gruppernas träffar och diskussioner.
+      count_one: "{{count}} grupp finns"
+      count_other: "{{count}} grupper finns"
+      offEffect: Alla gruppsidor och listan över grupper blir "sidan finns inte". Ingen kan skapa grupper eller gå med i dem. Grupperna och deras medlemmar finns kvar i databasen.
+      onEffect: Gruppsidorna och listan över grupper blir synliga igen, med allt innehåll som fanns när funktionen stängdes av.
+    works:
+      label: Förfrågningar
+      about: Förfrågningar och erbjudanden som invånare lägger upp, med listan och sidan för varje förfrågan.
+      count_one: "{{count}} förfrågan finns"
+      count_other: "{{count}} förfrågningar finns"
+      offEffect: Alla förfrågningar och listan över dem blir "sidan finns inte", och ingen kan lägga upp nya. Förfrågningarna finns kvar i databasen.
+      onEffect: Förfrågningarna och listan över dem blir synliga igen, med allt som fanns när funktionen stängdes av.
+    bookings:
+      label: Bokningar
+      about: Att boka platser i kalendern, Boka-knappen på platser, platser som består av flera andra och kontrollen av krockande bokningar.
+      count_one: "{{count}} plats är bokningsbar"
+      count_other: "{{count}} platser är bokningsbara"
+      offEffect: Det går inte längre att boka platser, Boka-knappen försvinner, platser som består av flera andra visas som vanliga platser och krockar kontrolleras inte. Bokningar som redan finns ligger kvar i kalendern. Platserna visar fortfarande hur man bokar dem.
+      onEffect: Platser kan bokas i kalendern igen och Boka-knappen syns på bokningsbara platser.
+  confirm:
+    titleOff: "Stäng av {{name}}?"
+    titleOn: "Slå på {{name}}?"
+    type: "Skriv {{name}} för att bekräfta"
+    yesOff: "Stäng av {{name}}"
+    yesOn: "Slå på {{name}}"
+    done: "{{name}} är nu {{state}}. Sidan laddas om."
+    mismatch: Namnet stämmer inte – inget ändrades.

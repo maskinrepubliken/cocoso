@@ -89,6 +89,9 @@ const AdminSettingsForm = loadable(() =>
 const AdminSettingsFooter = loadable(() =>
   import('/imports/ui/pages/admin/AdminSettingsFooter')
 );
+const FeatureSettings = loadable(() =>
+  import('/imports/ui/pages/admin/FeatureSettings')
+);
 const MenuSettings = loadable(() =>
   import('/imports/ui/pages/admin/MenuSettings')
 );
@@ -332,6 +335,10 @@ const getAdminRoutes = (props) => [
             element: createRouteElement(AdminSettingsFooter, props),
           },
         ],
+      },
+      {
+        path: 'features',
+        element: createRouteElement(FeatureSettings, props),
       },
       {
         path: 'design',

@@ -5,22 +5,45 @@ import { Meteor } from 'meteor/meteor';
 // no search results, no landing-page sections, no create button, no admin
 // listing, and its methods answer as if there were nothing. The data stays
 // in the database, so switching a feature back on brings everything back.
-// Change a value here and commit; it is read on both server and client.
-export const FEATURES = {
-  groups: true, // Grupper
-  works: true, // Förfrågningar
+//
+// Admins switch them under Inställningar › Funktioner, which stores the
+// choice in the site document (`site.features`, see setFeature in
+// site.features.js). The values here are the defaults for a feature no
+// admin has set. Both server and client apply the stored ones with
+// applyFeatures before anything is rendered.
+export const DEFAULT_FEATURES = {
+  groups: false, // Grupper
+  works: false, // Förfrågningar
   // Booking places in the calendar: the bookable flag and combos (places
   // made up of others) on places, the book button, new bookings from the
   // calendar, an event blocking its place and the clash checks. Places
   // still say how to book them (`booking`).
-  bookings: true,
+  bookings: false,
 };
 
-export type Feature = keyof typeof FEATURES;
+export type Feature = keyof typeof DEFAULT_FEATURES;
+export type FeatureValues = Partial<Record<Feature, boolean>>;
+
+export const FEATURE_NAMES = Object.keys(DEFAULT_FEATURES) as Feature[];
+
+// What is in force now: the defaults, with what the admins stored on top.
+const current: Record<Feature, boolean> = { ...DEFAULT_FEATURES };
+
+// Takes the site document's `features`. Anything not stored, or not a
+// boolean, falls back to its default.
+export function applyFeatures(stored?: FeatureValues | null) {
+  FEATURE_NAMES.forEach((name) => {
+    const value = stored?.[name];
+    current[name] = typeof value === 'boolean' ? value : DEFAULT_FEATURES[name];
+  });
+}
+
+export const isFeature = (name: unknown): name is Feature =>
+  typeof name === 'string' && FEATURE_NAMES.includes(name as Feature);
 
 // Anything that is not a feature (a menu item like 'activities') is on.
 export function isFeatureEnabled(name: string): boolean {
-  return FEATURES[name as Feature] !== false;
+  return current[name as Feature] !== false;
 }
 
 // A menu item shows when an admin made it visible and its feature is on.

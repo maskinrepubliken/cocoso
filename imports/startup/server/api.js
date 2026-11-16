@@ -9,6 +9,7 @@ import '../../api/images/image.methods';
 import '../../api/media/media.methods';
 import '../../api/site/site';
 import '../../api/site/site.methods';
+import '../../api/site/site.features';
 import '../../api/memberships/membership';
 import '../../api/users/user';
 import '../../api/users/user.roles';

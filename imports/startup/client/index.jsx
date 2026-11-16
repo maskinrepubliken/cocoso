@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import appRoutes from '/imports/appRoutes';
 import i18n, { getChosenLang, setDayjsLocale } from '/imports/startup/i18n';
 import { resolveSeason } from '/imports/api/_utils/season';
+import { applyFeatures } from '/imports/api/_utils/features';
 
 // Meteor's `autoupdate` package tracks whether the server has a newer client
 // bundle than the one this tab is running (e.g. after a deploy). Lazily
@@ -91,6 +92,9 @@ onPageLoad(async () => {
     ),
   };
 
+  // The sections switched on, as the server rendered them: the routes
+  // depend on them. A change made later shows after a reload.
+  applyFeatures(site.features);
   const router = createBrowserRouter(appRoutes(props));
   reloadOnNextIdleAfterUpdate(router);
 

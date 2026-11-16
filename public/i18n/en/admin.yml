@@ -465,3 +465,48 @@ season:
   label: Season
   helper: "The site changes look with the seasons. Lock one here to keep it, for instance while preparing a campaign."
   auto: Follow the calendar
+
+# Switching whole sections on and off (pages/admin/FeatureSettings.tsx)
+features:
+  title: Features
+  description: Switch whole parts of the site on and off – with care
+  warning:
+    title: Changes here take effect at once, for everyone
+    body: "Switching a feature off removes it from the whole site at once: its pages become \"page not found\", it disappears from the menu, search and the start page, and nobody can create anything new. No content is deleted – switch the feature back on and everything returns. Anyone who already has the site open sees the change only after reloading."
+  on: "On"
+  off: "Off"
+  default: Default
+  setBy: "Changed by {{name}} {{when}}"
+  menuNote: "Shows in the menu only if its menu item is also switched on under Menu."
+  switchOff: Switch off…
+  switchOn: Switch on…
+  items:
+    groups:
+      label: Groups
+      about: Group pages, the list of groups, joining groups, and the groups' meetings and discussions.
+      count_one: "{{count}} group exists"
+      count_other: "{{count}} groups exist"
+      offEffect: Every group page and the list of groups become "page not found". Nobody can create groups or join them. The groups and their members stay in the database.
+      onEffect: The group pages and the list of groups become visible again, with everything they had when the feature was switched off.
+    works:
+      label: Requests
+      about: Requests and offers that residents post, with their list and a page for each.
+      count_one: "{{count}} request exists"
+      count_other: "{{count}} requests exist"
+      offEffect: Every request and their list become "page not found", and nobody can post new ones. The requests stay in the database.
+      onEffect: The requests and their list become visible again, with everything they had when the feature was switched off.
+    bookings:
+      label: Bookings
+      about: Booking places in the calendar, the Book button on places, places made up of others, and the check for clashing bookings.
+      count_one: "{{count}} place is bookable"
+      count_other: "{{count}} places are bookable"
+      offEffect: Places can no longer be booked, the Book button disappears, places made up of others show as plain places and clashes are not checked. Existing bookings stay in the calendar. Places still say how to book them.
+      onEffect: Places can be booked in the calendar again and the Book button shows on bookable places.
+  confirm:
+    titleOff: "Switch off {{name}}?"
+    titleOn: "Switch on {{name}}?"
+    type: "Type {{name}} to confirm"
+    yesOff: "Switch off {{name}}"
+    yesOn: "Switch on {{name}}"
+    done: "{{name}} is now {{state}}. The page reloads."
+    mismatch: The name does not match – nothing was changed.

@@ -39,6 +39,11 @@ const getAdminRoutes = (menuItems) => [
         value: '/admin/settings/design',
         description: <Trans i18nKey="admin:design.description" />,
       },
+      {
+        label: <Trans i18nKey="admin:features.title" />,
+        value: '/admin/settings/features',
+        description: <Trans i18nKey="admin:features.description" />,
+      },
     ],
   },
 
