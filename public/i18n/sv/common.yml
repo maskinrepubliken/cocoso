@@ -59,13 +59,13 @@ labels:
     works: Nytt inlägg
     host: Nytt community
   update:
-    activities: Uppdatera aktivitetet
-    calendar: Uppdatera aktivitetet
-    groups: Uppdatera gruppen/processen
-    info: Uppdatera infosidan
-    pages: Update sidan
+    activities: Redigera evenemanget
+    calendar: Redigera evenemanget
+    groups: Redigera föreningen
+    info: Redigera infosidan
+    pages: Redigera sidan
     resources: Redigera platsen
-    works: Uppdatera inlägget
+    works: Redigera förfrågan
   event: Arrangemang
   bookings: Bokningar
   newBooking: Nytt bokning

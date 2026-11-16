@@ -59,13 +59,13 @@ labels:
     works: New Post
     host: New Community
   update:
-    activities: Update Activity
-    calendar: Update Activity
-    groups: Update Process/Group
-    info: Update Info Page
-    pages: Update Page
-    resources: Edit Place
-    works: Update Post
+    activities: Edit the event
+    calendar: Edit the event
+    groups: Edit the association
+    info: Edit the info page
+    pages: Edit the page
+    resources: Edit the place
+    works: Edit the request
   event: Event
   bookings: Bookings
   newBooking: New Booking
