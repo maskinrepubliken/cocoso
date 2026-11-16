@@ -7251,6 +7251,16 @@ body {
   height: 36px;
 }
 
+/* Three choices side by side (where a place is, in the place form);
+   their names wrap at spaces only */
+.kind-picker.is-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.kind-picker.is-three .kind-picker-tile > span {
+  hyphens: manual;
+}
+
 /* Long names ("Kultur & mötesplatser") wrap inside the tile */
 .kind-picker-tile > span {
   max-width: 100%;
@@ -7281,6 +7291,11 @@ body {
 .entry-form-side > .form-card {
   margin-block: 0 18px !important;
   padding: 18px 18px 8px;
+  /* Never split between the two columns of a wide sheet: a split card
+     left a stray piece of its shadow at the top of the second column */
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
 }
 
 /* --- A choice as a row of chips (ChoiceChips.tsx) --- */
