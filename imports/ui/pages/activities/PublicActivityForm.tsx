@@ -204,7 +204,6 @@ function ActivityForm({
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const isAdmin = role === 'admin';
-  const [draft] = useState(() => loadDraft<ActivityDraft>(key));
   const [pristine] = useState<any>(() => ({
     capacity: activity ? activity.capacity : defaultCapacity,
     datesAndTimes: activity ? activity.datesAndTimes : [emptyDateAndTime],
@@ -240,6 +239,18 @@ function ActivityForm({
     isAskingToNotify: false,
     pendingFormValues: null as ActivityFormValues | null,
   }));
+  // Editing: the event as saved, so a draft from before it was saved again
+  // (by a co-organizer, say) is dropped rather than undoing that. Only the
+  // dates' times count: someone signing up is not a change to the event.
+  const [base] = useState(() =>
+    activity
+      ? draftState({
+          ...pristine,
+          datesAndTimes: datesKey(pristine.datesAndTimes),
+        }) + draftTexts(activity)
+      : undefined
+  );
+  const [draft] = useState(() => loadDraft<ActivityDraft>(key, base));
   const defaultValues = {
     ...(activity || emptyFormValues),
     ...(draft?.data.values || {}),
@@ -422,10 +433,14 @@ function ActivityForm({
       draftState(current) !== baselineRef.current.state ||
       draftTexts(textsRef.current) !== baselineRef.current.texts;
     if (isChanged) {
-      saveDraft<ActivityDraft>(key, {
-        state: pick(current, DRAFT_FIELDS),
-        values: pick(textsRef.current, TEXT_FIELDS),
-      });
+      saveDraft<ActivityDraft>(
+        key,
+        {
+          state: pick(current, DRAFT_FIELDS),
+          values: pick(textsRef.current, TEXT_FIELDS),
+        },
+        base
+      );
     } else if (!draft) {
       clearDraft(key);
     }

@@ -55,9 +55,24 @@ export function useDraftKey(form: string) {
   };
 }
 
-// The draft as it was when the form opened, or null; read once.
-export function useLoadedDraft(key: string): FormDraft<DraftData> | null {
-  const [draft] = useState(() => loadDraft<DraftData>(key));
+// The entry as it is saved, in the form's own fields: kept with a draft of
+// an edit, so the draft can tell when the entry was saved again since.
+export const draftBase = (
+  pristineState: Record<string, any>,
+  pristineValues: Record<string, any>,
+  stateFields: readonly string[],
+  textFields: readonly string[]
+) =>
+  JSON.stringify(pick(pristineState, stateFields)) +
+  textsOf(pristineValues, textFields);
+
+// The draft as it was when the form opened, or null; read once. `base` (an
+// edit's draftBase) drops a draft made before the entry was saved again.
+export function useLoadedDraft(
+  key: string,
+  base?: string
+): FormDraft<DraftData> | null {
+  const [draft] = useState(() => loadDraft<DraftData>(key, base));
   return draft;
 }
 
@@ -70,6 +85,8 @@ interface KeepDraftOptions {
   pristineValues: Record<string, any>;
   stateFields: readonly string[];
   textFields: readonly string[];
+  // When editing: the entry as saved, kept with the draft
+  base?: string;
 }
 
 // Keeps the draft up to date. Hand `onValuesChange` to GenericEntryForm
@@ -82,6 +99,7 @@ export function useKeepDraft({
   pristineValues,
   stateFields,
   textFields,
+  base,
 }: KeepDraftOptions) {
   const textsRef = useRef<Record<string, any>>({
     ...pristineValues,
@@ -105,10 +123,14 @@ export function useKeepDraft({
         baselineRef.current.state ||
       textsOf(textsRef.current, textFields) !== baselineRef.current.texts;
     if (isChanged) {
-      saveDraft<DraftData>(key, {
-        state: pick(stateRef.current, stateFields),
-        values: pick(textsRef.current, textFields),
-      });
+      saveDraft<DraftData>(
+        key,
+        {
+          state: pick(stateRef.current, stateFields),
+          values: pick(textsRef.current, textFields),
+        },
+        base
+      );
     } else if (!draft) {
       clearDraft(key);
     }

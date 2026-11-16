@@ -8,6 +8,7 @@ import FormField from '/imports/ui/forms/FormField';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import {
   DraftNotice,
+  draftBase,
   useDraftKey,
   useKeepDraft,
   useLoadedDraft,
@@ -57,7 +58,12 @@ function InfoPageForm({
   draftKey,
   onDiscard,
 }: PageFormProps & { draftKey: string; onDiscard: () => void }) {
-  const draft = useLoadedDraft(draftKey);
+  // Editing: the page as saved, so a draft from before it was saved again
+  // is dropped rather than undoing that
+  const [base] = useState(() =>
+    page ? draftBase({}, page, [], TEXT_FIELDS) : undefined
+  );
+  const draft = useLoadedDraft(draftKey, base);
   const defaultValues = {
     ...(page || emptyFormValues),
     ...(draft?.data.values || {}),
@@ -75,6 +81,7 @@ function InfoPageForm({
     pristineValues: page || emptyFormValues,
     stateFields: [],
     textFields: TEXT_FIELDS,
+    base,
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('admin');

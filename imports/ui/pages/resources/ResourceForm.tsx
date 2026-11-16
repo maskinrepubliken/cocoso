@@ -19,6 +19,7 @@ import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import {
   DraftNotice,
+  draftBase,
   useDraftKey,
   useKeepDraft,
   useLoadedDraft,
@@ -162,8 +163,13 @@ const TEXT_FIELDS = ['label', 'description'] as const;
 // The place form keeps a draft of what is written in this browser until
 // the place is saved; throwing the draft away starts the form over.
 export default function ResourceForm(props: ResourceFormProps) {
+  // Its own draft for each place, and for a new place inside each place
   const { key, formKey, discard } = useDraftKey(
-    `place:${props.resourceId || 'new'}`
+    props.resourceId
+      ? `place:${props.resourceId}`
+      : props.defaultParentId
+        ? `place:new:in:${props.defaultParentId}`
+        : 'place:new'
   );
   return (
     <PlaceForm key={formKey} {...props} draftKey={key} onDiscard={discard} />
@@ -178,7 +184,6 @@ function PlaceForm({
   draftKey,
   onDiscard,
 }: ResourceFormProps & { draftKey: string; onDiscard: () => void }) {
-  const draft = useLoadedDraft(draftKey);
   const [pristine] = useState<any>(() => ({
     isBookable: resource ? resource.isBookable : true,
     isCombo: resource ? resource.isCombo : false,
@@ -194,6 +199,14 @@ function PlaceForm({
     isUnlisted: Boolean(resource?.isUnlisted),
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
   }));
+  // Editing: the place as saved, so a draft from before it was saved again
+  // is dropped rather than undoing that
+  const [base] = useState(() =>
+    resource
+      ? draftBase(pristine, resource, DRAFT_FIELDS, TEXT_FIELDS)
+      : undefined
+  );
+  const draft = useLoadedDraft(draftKey, base);
   const defaultValues = {
     ...(resource || emptyFormValues),
     ...(draft?.data.values || {}),
@@ -212,6 +225,7 @@ function PlaceForm({
     pristineValues: resource || emptyFormValues,
     stateFields: DRAFT_FIELDS,
     textFields: TEXT_FIELDS,
+    base,
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('resources');
