@@ -36,12 +36,11 @@ export default function GroupItemHandler({ siteDoc }) {
         group={groupItem || group}
         documents={documents}
         siteDoc={siteDoc}
+        actions={rendered && <GroupInteractionHandler />}
       />
 
       {rendered && (
         <>
-          <GroupInteractionHandler />
-
           {canCreateContent && (
             <EditEntryHandler context="groups">
               <EditGroup />

@@ -177,7 +177,7 @@ export function ChatButton({
           )}
           <Text
             css={{
-              color: 'var(--cocoso-colors-theme-50)',
+              color: 'var(--cocoso-mylla)',
               fontSize: '0.8rem',
               fontWeight: 'bold',
               textAlign: 'center',

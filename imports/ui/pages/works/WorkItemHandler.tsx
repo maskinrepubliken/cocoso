@@ -26,12 +26,15 @@ export default function WorkItemHandler({ siteDoc }) {
 
   return (
     <>
-      <WorkHybrid siteDoc={siteDoc} documents={documents} work={work} />
+      <WorkHybrid
+        siteDoc={siteDoc}
+        documents={documents}
+        work={work}
+        actions={rendered && <WorkInteractionHandler />}
+      />
 
       {rendered && (
         <>
-          <WorkInteractionHandler />
-
           {canCreateContent && (
             <EditEntryHandler context="works">
               <EditWork />

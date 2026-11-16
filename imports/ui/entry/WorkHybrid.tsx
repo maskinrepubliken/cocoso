@@ -50,6 +50,7 @@ export interface WorkHybridProps {
   documents?: Document[];
   work: Work;
   siteDoc: Site;
+  actions?: React.ReactNode;
 }
 
 const ProfileLink = styled(Link, {
@@ -99,6 +100,7 @@ export default function WorkHybrid({
   documents,
   work,
   siteDoc,
+  actions,
 }: WorkHybridProps) {
   const [tc] = useTranslation('common');
   if (!work) {
@@ -194,6 +196,8 @@ export default function WorkHybrid({
             </Actions>
           )}
         </EntryHero>
+
+        {actions}
 
         {work.additionalInfo && work.additionalInfo.length > 2 && (
           <EntryColumn>

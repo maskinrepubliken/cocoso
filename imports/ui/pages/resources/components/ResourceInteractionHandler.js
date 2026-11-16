@@ -13,7 +13,7 @@ import {
 } from '/imports/state';
 import { ChatButton } from '/imports/ui/chattery/ChatHandler';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
-import SlideWidget from '/imports/ui/entry/SlideWidget';
+import { EntryActions } from '/imports/ui/entry/EntryHero';
 
 import ResourceAdminFunctions from './ResourceAdminFunctions';
 import { resourceAtom } from '../ResourceItemHandler';
@@ -45,45 +45,22 @@ export default function ResourceInteractionHandler() {
     return null;
   }
 
-  if (role === 'admin') {
-    return (
-      <SlideWidget justify="space-between">
-        <Box w="40px">
-          <ResourceAdminFunctions />
-        </Box>
-        {isFeatureEnabled('bookings') && resource.isBookable ? (
-          <ReserveButton resource={resource} />
-        ) : null}
-        <Box>
-          <ChatButton
-            context="resources"
-            currentUser={currentUser}
-            item={resource}
-            withInput
-          />
-        </Box>
-      </SlideWidget>
-    );
+  if (role !== 'admin' && !canCreateContent) {
+    return null;
   }
 
-  if (canCreateContent) {
-    return (
-      <SlideWidget justify="space-between">
-        <Box w="40px" />
-        {isFeatureEnabled('bookings') && resource.isBookable ? (
-          <ReserveButton resource={resource} />
-        ) : null}
-        <Box>
-          <ChatButton
-            context="resources"
-            currentUser={currentUser}
-            item={resource}
-            withInput
-          />
-        </Box>
-      </SlideWidget>
-    );
-  }
-
-  return null;
+  return (
+    <EntryActions>
+      {role === 'admin' && <ResourceAdminFunctions />}
+      {isFeatureEnabled('bookings') && resource.isBookable ? (
+        <ReserveButton resource={resource} />
+      ) : null}
+      <ChatButton
+        context="resources"
+        currentUser={currentUser}
+        item={resource}
+        withInput
+      />
+    </EntryActions>
+  );
 }

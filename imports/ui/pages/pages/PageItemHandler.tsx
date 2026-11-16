@@ -48,12 +48,15 @@ export default function PageItemHandler({ siteDoc, pageTitles }) {
 
   return (
     <>
-      <PageHybrid currentPage={currentPage} />
+      <PageHybrid
+        currentPage={currentPage}
+        actions={
+          rendered && role === 'admin' && <PageInteractionHandler />
+        }
+      />
 
       {rendered && (
         <>
-          <PageInteractionHandler pages={pages} />
-
           {isEdit ? (
             <EditEntryHandler keepsDraft context="info">
               <EditPage />

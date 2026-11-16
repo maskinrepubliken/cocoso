@@ -204,7 +204,7 @@ export default function GroupMeetingDates(props) {
 
   if (!isFutureMeetings) {
     return (
-      <Text color="gray.100" my="2" textAlign="center">
+      <Text color="var(--cocoso-mylla-soft)" my="2" textAlign="center">
         {t('meeting.info.empty')}
       </Text>
     );
@@ -212,7 +212,7 @@ export default function GroupMeetingDates(props) {
 
   return (
     <>
-      <Center color="gray.100">
+      <Box color="var(--cocoso-mylla)">
         <Box>
           <Center>
             {isMember && (
@@ -224,11 +224,11 @@ export default function GroupMeetingDates(props) {
           </Center>
           <Center>
             <Flex mt="2">
-              <Text color="gray.50" fontSize="sm" mr="2" mt="-1px">
+              <Text color="var(--cocoso-mylla-soft)" fontSize="sm" mr="2" mt="-1px">
                 {t('labels.next_meeting')}
               </Text>
 
-              <Text color="gray.50" fontSize="sm" fontWeight="bold">
+              <Text color="var(--cocoso-mylla)" fontSize="sm" fontWeight="bold">
                 {dayjs(group.meetings[0]?.startDate).format('DD')}{' '}
                 {dayjs(group.meetings[0]?.startDate).format('MMM')}
               </Text>
@@ -237,7 +237,7 @@ export default function GroupMeetingDates(props) {
           <Center py="1">
             {!isMember && (
               <Link
-                color="theme.200"
+                color="theme.700"
                 variant="outline"
                 onClick={() => setModalOpen(true)}
               >
@@ -246,7 +246,7 @@ export default function GroupMeetingDates(props) {
             )}
           </Center>
         </Box>
-      </Center>
+      </Box>
 
       <Modal
         hideFooter

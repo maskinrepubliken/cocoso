@@ -1,9 +1,8 @@
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
-import { Box } from '/imports/ui/core';
 import { currentUserAtom } from '/imports/state';
-import SlideWidget from '/imports/ui/entry/SlideWidget';
+import { EntryActions } from '/imports/ui/entry/EntryHero';
 
 import { workAtom } from '../WorkItemHandler';
 import WorkAdminFunctions from './WorkAdminFunctions';
@@ -19,22 +18,19 @@ export default function WorkInteractionHandler() {
 
   if (!currentUser || currentUser._id !== work.authorId) {
     return (
-      <SlideWidget justify="center">
+      <EntryActions>
         <ContactInfo username={work.authorUsername} />
-      </SlideWidget>
+      </EntryActions>
     );
   } else {
     return (
-      <SlideWidget justify="space-between">
-        <Box w="40px">
-          <WorkAdminFunctions />
-        </Box>
+      <EntryActions>
+        <WorkAdminFunctions />
         <ContactInfo
           username={work.authorUsername}
           value={work.contactInfo}
         />
-        <Box w="40px" />
-      </SlideWidget>
+      </EntryActions>
     );
   }
 }

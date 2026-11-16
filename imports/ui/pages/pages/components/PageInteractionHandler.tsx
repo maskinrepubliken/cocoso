@@ -1,8 +1,7 @@
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
-import SlideWidget from '/imports/ui/entry/SlideWidget';
-import { Box } from '/imports/ui/core';
+import { EntryActions } from '/imports/ui/entry/EntryHero';
 import { currentUserAtom, roleAtom } from '/imports/state';
 
 import PageAdminFunctions from './PageAdminFunctions';
@@ -15,11 +14,8 @@ export default function PageInteractionHandler() {
     return null;
   }
   return (
-    <SlideWidget justify="space-between">
-      <Box w="40px">
-        <PageAdminFunctions />
-      </Box>
-      <Box w="40px" />
-    </SlideWidget>
+    <EntryActions>
+      <PageAdminFunctions />
+    </EntryActions>
   );
 }

@@ -3,8 +3,8 @@ import React from 'react';
 import { useAtomValue } from 'jotai';
 
 import { currentUserAtom } from '/imports/state';
-import { Box, Flex, Text } from '/imports/ui/core';
-import SlideWidget from '/imports/ui/entry/SlideWidget';
+import { Flex, Text } from '/imports/ui/core';
+import { EntryActions } from '/imports/ui/entry/EntryHero';
 import { ChatButton } from '/imports/ui/chattery/ChatHandler';
 
 import GroupMeetingDates from './GroupMeetingDates';
@@ -57,38 +57,28 @@ export default function GroupInteractionHandler() {
 
   if (isAdmin) {
     return (
-      <SlideWidget justify="space-between">
-        <Box w="40px">
-          <GroupAdminFunctions />
-        </Box>
+      <EntryActions>
+        <GroupAdminFunctions />
         <GroupMeetingDates {...memberProps} />
         <ChatButton {...chatProps} />
-      </SlideWidget>
+      </EntryActions>
     );
   }
 
   if (isMember) {
     return (
-      <>
-        <Box p="4">
-          <GroupLeaveButton />
-        </Box>
-
-        <SlideWidget justify="space-between">
-          <Box w="40px" />
-          <GroupMeetingDates {...memberProps} />
-          <ChatButton {...chatProps} />
-        </SlideWidget>
-      </>
+      <EntryActions>
+        <GroupMeetingDates {...memberProps} />
+        <ChatButton {...chatProps} />
+        <GroupLeaveButton />
+      </EntryActions>
     );
   }
 
   return (
-    <SlideWidget>
-      <Box>
-        <GroupJoinButton />
-        <GroupMeetingDates {...memberProps} />
-      </Box>
-    </SlideWidget>
+    <EntryActions>
+      <GroupJoinButton />
+      <GroupMeetingDates {...memberProps} />
+    </EntryActions>
   );
 }

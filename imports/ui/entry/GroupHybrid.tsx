@@ -42,6 +42,7 @@ export interface GroupHybridProps {
   group: Group;
   documents?: Document[];
   siteDoc: Site;
+  actions?: React.ReactNode;
 }
 
 // A förening's page: the card with its picture, framed like a place's, what
@@ -50,6 +51,7 @@ export default function GroupHybrid({
   group,
   documents,
   siteDoc,
+  actions,
 }: GroupHybridProps) {
   const [tc] = useTranslation('common');
   if (!group) {
@@ -118,6 +120,8 @@ export default function GroupHybrid({
             </Actions>
           )}
         </EntryHero>
+
+        {actions}
 
         {hasContact(group.contact) && (
           <EntryColumn>

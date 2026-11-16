@@ -742,6 +742,7 @@ entry:
   seeProfile: 'Till {{ name }}'
   booking: Går att boka
   bookingLink: Boka här
+  actions: Gör mer
 
 lightbox:
   label: Bilder

@@ -40,11 +40,11 @@ export default function ResourceItemHandler({ siteDoc }) {
         documents={documents}
         resource={resource}
         siteDoc={siteDoc}
+        actions={rendered && <ResourceInteractionHandler />}
       />
 
       {rendered && (
         <>
-          <ResourceInteractionHandler />
           <PartModal />
 
           {/* The header's plus here: a new place, part of this one */}
