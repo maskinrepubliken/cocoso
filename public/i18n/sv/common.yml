@@ -17,6 +17,7 @@ actions:
   send: Skicka
   save: Spara
   publish: Publicera
+  saveChanges: Uppdatera
   cancel: Avbryt
   close: Stäng
   reset: Återställa

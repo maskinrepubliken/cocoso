@@ -18,12 +18,11 @@ export interface EntryFormHandlerProps {
   title: string;
   forEdit?: boolean;
   onClose: () => void;
-  // When given, a Remove button sits next to Cancel in the footer
-  onDelete?: () => void;
   // The form keeps a draft of what is written (the event form): nothing
   // is lost on Cancel, so it closes without asking
   keepsDraft?: boolean;
-  // Saving makes the entry public (events, places): "Publicera", not "Spara"
+  // Saving makes a new entry public (events, places): "Publicera", not
+  // "Spara". Editing always says "Uppdatera".
   publishes?: boolean;
   children?: React.ReactNode;
 }
@@ -50,7 +49,6 @@ export default function EntryFormHandler({
   title,
   forEdit = false,
   onClose,
-  onDelete,
   keepsDraft = false,
   publishes = false,
   children,
@@ -189,11 +187,6 @@ export default function EntryFormHandler({
             )}
           </div>
           <div className="entry-sheet-actions">
-            {onDelete && (
-              <Button colorScheme="red" variant="ghost" onClick={onDelete}>
-                {tc('actions.remove')}
-              </Button>
-            )}
             <Button variant="outline" onClick={requestClose}>
               {tc('actions.cancel')}
             </Button>
@@ -203,7 +196,13 @@ export default function EntryFormHandler({
               loading={busy}
               type="submit"
             >
-              {tc(publishes ? 'actions.publish' : 'actions.save')}
+              {tc(
+                forEdit
+                  ? 'actions.saveChanges'
+                  : publishes
+                    ? 'actions.publish'
+                    : 'actions.save'
+              )}
             </Button>
           </div>
         </footer>

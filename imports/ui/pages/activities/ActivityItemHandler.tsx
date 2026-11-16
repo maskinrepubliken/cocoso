@@ -1,17 +1,12 @@
 import React, { useEffect } from 'react';
 import loadable from '@loadable/component';
-import {
-  Link,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from 'react-router';
+import { Link, useLoaderData, useNavigate } from 'react-router';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
 import NoticeCard from '/imports/ui/generic/NoticeCard';
 import ActivityHybrid from '/imports/ui/entry/ActivityHybrid';
-import { canCreateContentAtom, renderedAtom, roleAtom } from '/imports/state';
+import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 
 const EditPublicActivity = loadable(() => import('./EditPublicActivity'));
@@ -24,8 +19,6 @@ export default function ActivityItemHandler({ siteDoc }) {
   const setActivity = useSetAtom(activityAtom);
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
-  const role = useAtomValue(roleAtom);
-  const [, setSearchParams] = useSearchParams();
   const [tc] = useTranslation('common');
 
   useEffect(() => {
@@ -63,18 +56,7 @@ export default function ActivityItemHandler({ siteDoc }) {
       <ActivityHybrid activity={activity} siteDoc={siteDoc} />
 
       {rendered && canCreateContent && activity.isPublicActivity && (
-        <EditEntryHandler
-          keepsDraft
-          publishes
-          context="activities"
-          onDelete={
-            // Admins may delete straight away; the confirm dialog lives in
-            // OrganizerToolsSection
-            role === 'admin'
-              ? () => setSearchParams({ delete: 'true' })
-              : undefined
-          }
-        >
+        <EditEntryHandler keepsDraft publishes context="activities">
           <EditPublicActivity />
         </EditEntryHandler>
       )}

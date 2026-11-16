@@ -17,6 +17,7 @@ actions:
   send: Send
   save: Save
   publish: Publish
+  saveChanges: Update
   cancel: Cancel
   close: Close
   reset: Reset

@@ -13,9 +13,8 @@ export interface EditEntryHandlerProps {
   context: string;
   // See EntryFormHandler: Cancel closes without asking
   keepsDraft?: boolean;
-  // See EntryFormHandler: the save button says "Publicera"
+  // See EntryFormHandler: a new entry says "Publicera"
   publishes?: boolean;
-  onDelete?: () => void;
   children?: React.ReactNode;
 }
 
@@ -23,7 +22,6 @@ export default function EditEntryHandler({
   context,
   keepsDraft,
   publishes,
-  onDelete,
   children,
 }: EditEntryHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
@@ -49,7 +47,6 @@ export default function EditEntryHandler({
     title,
     forEdit: true,
     onClose: handleClose,
-    onDelete,
     keepsDraft,
     publishes,
     children,
