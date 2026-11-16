@@ -90,7 +90,10 @@ function useEditable(): {
     return isGroupAdmin ? { context: 'groups', id: group._id } : null;
   }
   if (data.resource?._id) {
-    return isAdmin ? { context: 'resources', id: data.resource._id } : null;
+    // A place: the organizer who added it, and admins
+    return isAdmin || data.resource.userId === userId
+      ? { context: 'resources', id: data.resource._id }
+      : null;
   }
   if (data.work?._id) {
     return data.work.authorId === userId

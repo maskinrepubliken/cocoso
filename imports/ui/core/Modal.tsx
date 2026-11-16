@@ -15,6 +15,8 @@ interface BaseProps {
   confirmText?: string | React.ReactNode;
   hideFooter?: boolean;
   hideHeader?: boolean;
+  // Buttons or links beside the close button, e.g. to edit what is shown
+  headerActions?: React.ReactNode;
   id: string;
   noPadding?: boolean;
   onCancel?: () => void;
@@ -384,6 +386,7 @@ const Content: React.FC<{
   confirmText?: string;
   hideFooter?: boolean;
   hideHeader?: boolean;
+  headerActions?: React.ReactNode;
   noPadding?: boolean;
   onCancel?: () => void;
   onClose: () => void;
@@ -398,6 +401,7 @@ const Content: React.FC<{
   confirmText,
   hideFooter = false,
   hideHeader = false,
+  headerActions,
   noPadding = false,
   onCancel,
   onClose,
@@ -431,9 +435,20 @@ const Content: React.FC<{
       {!hideHeader ? (
         <Header>
           {title ? <Title>{title}</Title> : <div></div>}
-          <CloseButton aria-label="Close" onClick={onClose}>
-            <CloseIcon />
-          </CloseButton>
+          {headerActions ? (
+            <Box
+              css={{ alignItems: 'center', display: 'flex', gap: '0.25rem' }}
+            >
+              {headerActions}
+              <CloseButton aria-label="Close" onClick={onClose}>
+                <CloseIcon />
+              </CloseButton>
+            </Box>
+          ) : (
+            <CloseButton aria-label="Close" onClick={onClose}>
+              <CloseIcon />
+            </CloseButton>
+          )}
         </Header>
       ) : (
         <Box css={{ position: 'relative' }}>
@@ -488,6 +503,7 @@ const Modal: React.FC<ModalProps> = ({
   confirmText,
   hideFooter = false,
   hideHeader = false,
+  headerActions,
   id = 'modal-portal',
   noPadding,
   open,
@@ -526,6 +542,7 @@ const Modal: React.FC<ModalProps> = ({
           confirmText={confirmText}
           hideFooter={hideFooter}
           hideHeader={hideHeader}
+          headerActions={headerActions}
           noPadding={noPadding}
           title={title}
           onCancel={onCancel}

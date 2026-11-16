@@ -4,10 +4,11 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
+import PenIcon from 'lucide-react/dist/esm/icons/pen-line';
 
 import { styled } from '/stitches.config';
 import { Modal } from '/imports/ui/core';
-import { canCreateContentAtom } from '/imports/state';
+import { currentUserAtom, roleAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
 import { hasContact } from '/imports/api/_utils/contact';
 import BookableChip from '/imports/ui/generic/BookableChip';
@@ -41,13 +42,6 @@ const SectionTitle = styled('h3', {
   textTransform: 'uppercase',
 });
 
-const EditLink = styled(Link, {
-  color: 'var(--cocoso-colors-theme-800)',
-  display: 'inline-block',
-  fontWeight: 600,
-  marginTop: '1.5rem',
-});
-
 // A place left out of the list of places (a room in the library, say)
 // opens over the page of the place it is in, from ?part=<id>, instead of
 // on a page of its own.
@@ -55,7 +49,8 @@ export default function PartModal() {
   const [searchParams, setSearchParams] = useSearchParams();
   const partId = searchParams.get('part');
   const [part, setPart] = useState<any>(null);
-  const canCreateContent = useAtomValue(canCreateContentAtom);
+  const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
   const prefix = useLocationPrefix();
   const [tc] = useTranslation('common');
 
@@ -87,10 +82,31 @@ export default function PartModal() {
   }
 
   const picture = getImageUrl(part?.images?.[0], 'medium');
+  // Edited by the organizer who added it, and by admins. It has no page
+  // to edit it from, so the pencil opens the form on its own page.
+  const canEdit =
+    Boolean(part) &&
+    (role === 'admin' ||
+      (role === 'contributor' && part.userId === currentUser?._id));
 
   return (
     <Modal
       hideFooter
+      headerActions={
+        canEdit ? (
+          // The white pen of the header (EditButton), beside the close
+          <Link
+            aria-label={tc('labels.update.resources', tc('actions.update'))}
+            className="site-new-button"
+            title={tc('labels.update.resources', tc('actions.update'))}
+            to={`${prefix}/resources/${part._id}?edit=true`}
+          >
+            <span aria-hidden className="site-new site-edit">
+              <PenIcon height={16} width={16} />
+            </span>
+          </Link>
+        ) : null
+      }
       id="part-modal"
       open={Boolean(part)}
       size="lg"
@@ -117,12 +133,6 @@ export default function PartModal() {
               <SectionTitle>{tc('contact.title')}</SectionTitle>
               <ContactDetails contact={part.contact} />
             </Section>
-          )}
-          {/* It has no page to edit it from: the form opens on its own */}
-          {canCreateContent && (
-            <EditLink to={`${prefix}/resources/${part._id}?edit=true`}>
-              {tc('actions.update')}
-            </EditLink>
           )}
         </>
       )}
