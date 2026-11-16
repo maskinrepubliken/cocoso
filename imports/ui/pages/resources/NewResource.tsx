@@ -6,7 +6,9 @@ import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 
 import ResourceForm from './ResourceForm';
 
-export default function NewResource() {
+// On a place's page (parentId), the new place is part of that one to
+// begin with.
+export default function NewResource({ parentId }: { parentId?: string }) {
   const saveFailed = useSaveFailed();
   const [newEntryId, setNewEntryId] = useState<string | null>(null);
 
@@ -21,7 +23,7 @@ export default function NewResource() {
 
   return (
     <SuccessRedirector context="resources" ping={newEntryId}>
-      <ResourceForm onFinalize={createResource} />
+      <ResourceForm defaultParentId={parentId} onFinalize={createResource} />
     </SuccessRedirector>
   );
 }

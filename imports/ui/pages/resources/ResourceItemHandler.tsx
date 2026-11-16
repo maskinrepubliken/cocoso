@@ -6,12 +6,14 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 import ResourceHybrid from '/imports/ui/entry/ResourceHybrid';
 import { canCreateContentAtom, renderedAtom, roleAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
+import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
 const ResourceInteractionHandler = loadable(
   () => import('./components/ResourceInteractionHandler')
 );
 const EditResource = loadable(() => import('./EditResource'));
+const NewResource = loadable(() => import('./NewResource'));
 const PartModal = loadable(() => import('/imports/ui/entry/PartModal'));
 
 export const resourceAtom = atom(null);
@@ -44,6 +46,13 @@ export default function ResourceItemHandler({ siteDoc }) {
         <>
           <ResourceInteractionHandler />
           <PartModal />
+
+          {/* The header's plus here: a new place, part of this one */}
+          {canCreateContent && (
+            <NewEntryHandler context="resources">
+              <NewResource parentId={resource._id} />
+            </NewEntryHandler>
+          )}
 
           {canCreateContent && (
             <EditEntryHandler

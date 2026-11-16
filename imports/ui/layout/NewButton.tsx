@@ -51,8 +51,13 @@ export default function NewButton({ site }: NewButtonProps) {
     .filter(Boolean);
   const isListing =
     rest.length === 1 || (rest[0] === 'cp' && rest.length === 2);
+  // A place's page too: a new place there is part of it
+  const isPlacePage = rest[0] === 'resources' && rest.length === 2;
   const isVisible =
-    Boolean(site) && canCreateContent && Boolean(current) && isListing;
+    Boolean(site) &&
+    canCreateContent &&
+    Boolean(current) &&
+    (isListing || isPlacePage);
 
   const [animState, setAnimState] = useState<NewButtonAnimState>('idle');
 
