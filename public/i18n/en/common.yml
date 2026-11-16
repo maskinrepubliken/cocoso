@@ -186,11 +186,30 @@ drafts:
 # MODAL POP-UPS
 modals:
   confirm:
+    # Asked before something is deleted (entry/DeleteEntryHandler.tsx),
+    # in words for what it is
     delete:
-      title: Confirm Delete
-      body: Are you sure you want to delete this entry?
-      cantundo: You can NOT undo this action
-      yes: Yes, delete
+      cantundo: This cannot be undone.
+      activities:
+        title: Delete the event?
+        body: "<b>{{name}}</b> disappears from the calendar, along with all sign-ups."
+        yes: Delete the event
+      groups:
+        title: Delete the association?
+        body: "<b>{{name}}</b> and its page disappear from the site."
+        yes: Delete the association
+      resources:
+        title: Delete the place?
+        body: "<b>{{name}}</b> disappears from the site. Events already held there stay, with the place's name and address."
+        yes: Delete the place
+      works:
+        title: Delete the request?
+        body: "<b>{{name}}</b> disappears from the site."
+        yes: Delete the request
+      info:
+        title: Delete the info page?
+        body: "<b>{{name}}</b> disappears from the site and from the menu."
+        yes: Delete the info page
     newentry:
       title: Confirm Cancelling
       body: Are you sure you want to cancel? Your changes will be lost.

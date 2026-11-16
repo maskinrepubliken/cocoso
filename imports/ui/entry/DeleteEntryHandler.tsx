@@ -1,10 +1,11 @@
 import { useNavigate, useSearchParams } from 'react-router';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
+import AlertIcon from 'lucide-react/dist/esm/icons/triangle-alert';
 
+import { styled } from '/stitches.config';
 import Modal from '/imports/ui/core/Modal';
-import { Box, Center, Text } from '/imports/ui/core';
 
 import { canCreateContentAtom, currentUserAtom, roleAtom } from '../../state';
 import { call } from '../../api/_utils/shared';
@@ -37,7 +38,33 @@ interface BaseItem {
   _id: string;
   authorId?: string;
   userId?: string;
+  // What it is called: a title, or a place's label
+  title?: string;
+  label?: string;
 }
+
+// What goes, by name, then a quiet red line that it is for good
+const Body = styled('p', {
+  color: 'var(--cocoso-mylla)',
+  fontSize: '1.05rem',
+  lineHeight: 1.55,
+  margin: '0 0 1rem',
+  '& strong': { color: 'var(--cocoso-colors-theme-900)' },
+});
+
+const Warning = styled('p', {
+  alignItems: 'center',
+  backgroundColor: 'var(--cocoso-colors-red-50)',
+  borderRadius: 'var(--cocoso-radius-falt)',
+  color: 'var(--cocoso-colors-red-700)',
+  display: 'flex',
+  fontSize: '0.92rem',
+  fontWeight: 600,
+  gap: '0.5rem',
+  margin: 0,
+  padding: '0.6rem 0.8rem',
+  '& svg': { flexShrink: 0, height: '1rem', width: '1rem' },
+});
 
 export interface DeleteEntryHandlerProps {
   item: BaseItem;
@@ -92,15 +119,17 @@ export default function DeleteEntryHandler({
   }
 
   const isOpen = searchParams.get('delete') === 'true';
+  const keys = `modals.confirm.delete.${context}`;
 
   return (
     <Modal
+      cancelText={tc('actions.cancel')}
       confirmButtonProps={{
         colorScheme: 'red',
       }}
-      confirmText={tc('modals.confirm.delete.yes')}
+      confirmText={tc(`${keys}.yes`)}
       id="delete-entry-handler"
-      title={tc('modals.confirm.delete.title')}
+      title={tc(`${keys}.title`)}
       open={isOpen}
       onConfirm={() => deleteEntry()}
       onClose={() => {
@@ -109,27 +138,17 @@ export default function DeleteEntryHandler({
         setSearchParams(newParams);
       }}
     >
-      <Center>
-        <Box>
-          <Text fontSize="lg" textAlign="center">
-            {tc('modals.confirm.delete.body')}
-          </Text>
-          <Box
-            bg="red.200"
-            mt="4"
-            p="2"
-            css={{
-              borderRadius: '1rem',
-              color: 'var(--cocoso-colors-red-900)',
-              textAlign: 'center',
-            }}
-          >
-            <Text fontWeight="bold" size="lg">
-              {tc('modals.confirm.delete.cantundo')}
-            </Text>
-          </Box>
-        </Box>
-      </Center>
+      <Body>
+        <Trans
+          components={{ b: <strong /> }}
+          i18nKey={`common:${keys}.body`}
+          values={{ name: item?.title || item?.label || '' }}
+        />
+      </Body>
+      <Warning>
+        <AlertIcon aria-hidden />
+        {tc('modals.confirm.delete.cantundo')}
+      </Warning>
     </Modal>
   );
 }

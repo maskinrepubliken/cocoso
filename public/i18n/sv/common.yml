@@ -184,11 +184,30 @@ drafts:
 # MODAL POP-UPS
 modals:
   confirm:
+    # Asked before something is deleted (entry/DeleteEntryHandler.tsx),
+    # in words for what it is
     delete:
-      title: Bekräfta radering
-      body: Är du säker på att du vill ta bort denna inlägg?
-      cantundo: Detta kan inte ångras
-      yes: Ja, radera
+      cantundo: Det går inte att ångra.
+      activities:
+        title: Ta bort evenemanget?
+        body: "<b>{{name}}</b> försvinner från kalendern, tillsammans med alla anmälningar."
+        yes: Ta bort evenemanget
+      groups:
+        title: Ta bort föreningen?
+        body: "<b>{{name}}</b> och föreningens sida försvinner från webbplatsen."
+        yes: Ta bort föreningen
+      resources:
+        title: Ta bort platsen?
+        body: "<b>{{name}}</b> försvinner från webbplatsen. Evenemang som redan har hållits där finns kvar, med platsens namn och adress."
+        yes: Ta bort platsen
+      works:
+        title: Ta bort förfrågan?
+        body: "<b>{{name}}</b> försvinner från webbplatsen."
+        yes: Ta bort förfrågan
+      info:
+        title: Ta bort infosidan?
+        body: "<b>{{name}}</b> försvinner från webbplatsen och från menyn."
+        yes: Ta bort infosidan
     newentry:
       title: Bekräfta avbrytningen
       body: Är du säker på att du vill avbryta? Dina ändringar kommer att raderas.
