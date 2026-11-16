@@ -296,7 +296,7 @@ locations:
     intro: Varje ort har en egen sida med det som händer just där.
   form:
     label: Ort
-    helperResource: Var orten finns, hjälper användaren hitta platsen här på sidan.
+    helperResource: Vilken del av kommunen platsen finns, hjälper användaren hitta platsen här på sidan.
     helperActivity: Välj en ort när aktiviteten inte hålls på någon av resurserna. Lämna tomt när den gäller hela kommunen.
     helperFromResource: Orten följer den valda resursen.
     helperGroup: Koppla gruppen till en ort om du vill. Lämna tomt när den är öppen för hela kommunen.
