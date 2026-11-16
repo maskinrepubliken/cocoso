@@ -3,6 +3,7 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
 import LayersIcon from 'lucide-react/dist/esm/icons/layers';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
@@ -65,6 +66,8 @@ interface PlaceLink {
   _id: string;
   label: string;
   images?: string[];
+  isBookable?: boolean;
+  booking?: object | null;
 }
 
 export interface ResourceHybridProps {
@@ -108,14 +111,41 @@ const PartCard = styled(Link, {
   '&:hover': { transform: 'translateY(-2px)' },
 });
 
-const PartName = styled('span', {
+const PartText = styled('span', {
+  alignItems: 'flex-start',
+  display: 'flex',
   flex: 1,
+  flexDirection: 'column',
+  gap: '0.4rem',
+  minWidth: 0,
+  padding: '0.75rem 0',
+});
+
+const PartName = styled('span', {
   fontFamily: 'var(--cocoso-font-display)',
   fontSize: '1.15rem',
   fontWeight: 700,
   lineHeight: 1.2,
-  minWidth: 0,
-  padding: '0.75rem 0',
+});
+
+// In the card of a part, the place it is in: it stands for the address
+const PartOf = styled('span', {
+  alignItems: 'center',
+  display: 'inline-flex',
+  flexWrap: 'wrap',
+  fontWeight: 600,
+  gap: '0.35rem',
+  '& svg': {
+    color: 'var(--cocoso-tegel)',
+    flex: 'none',
+    height: '1.1rem',
+    width: '1.1rem',
+  },
+  '& a': {
+    color: 'var(--cocoso-colors-theme-800)',
+    textDecorationThickness: '1.5px',
+    textUnderlineOffset: '3px',
+  },
 });
 
 const PartPicture = styled('span', {
@@ -211,6 +241,10 @@ export default function ResourceHybrid({
   const shareImage = resourceShareImageUrl(resource) || undefined;
 
   const withContact = hasContact(resource.contact);
+  // A part of another place is where that place is: the card says so, and
+  // the sidebar has no address or map of its own, only who to ask
+  const { partOf } = resource;
+  const withAddress = !partOf && hasAddress(resource.address);
   const parts = resource.parts || [];
   // Places made up of others are for booking in the calendar too
   const isCombo = isFeatureEnabled('bookings') && resource.isCombo;
@@ -255,6 +289,25 @@ export default function ResourceHybrid({
                   <BookableChip place={resource} />
                 </>
               }
+              subtitle={
+                partOf ? (
+                  <PartOf>
+                    <MapPinIcon aria-hidden />
+                    <span>
+                      <Trans
+                        i18nKey="common:entry.partOf"
+                        values={{ place: partOf.label }}
+                        components={[
+                          <Link
+                            key="partOf"
+                            to={`${prefix}/resources/${partOf._id}`}
+                          />,
+                        ]}
+                      />
+                    </span>
+                  </PartOf>
+                ) : undefined
+              }
               html={resource.description}
               meta={
                 resource.capacity ? (
@@ -275,42 +328,32 @@ export default function ResourceHybrid({
             />
           </CardArea>
 
-          {hasAddress(resource.address) ||
-          withContact ||
-          resource.booking ||
-          resource.partOf ? (
+          {withAddress || withContact || resource.booking ? (
             <Sidebar>
-              {/* Up to the place it is in, like Centralen for the library */}
-              {resource.partOf && (
-                <Panel css={{ marginBottom: '1.25rem' }}>
-                  <SideTitle>{tc('entry.partOf')}</SideTitle>
-                  <Parts css={{ marginTop: '0.75rem' }}>
-                    <Link to={`${prefix}/resources/${resource.partOf._id}`}>
-                      {resource.partOf.label}
-                    </Link>
-                  </Parts>
+              {(withAddress || withContact) && (
+                <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
+                  <AddressBlock
+                    address={withAddress ? resource.address : null}
+                    contact={resource.contact}
+                    edge="top"
+                    heading={
+                      <SideTitle>
+                        {tc(
+                          !withAddress
+                            ? 'contact.title'
+                            : withContact
+                            ? 'address.titleWithContact'
+                            : 'address.title'
+                        )}
+                      </SideTitle>
+                    }
+                    label={resource.label}
+                  />
                 </Panel>
               )}
-              <Panel css={{ overflow: 'hidden' }}>
-                <AddressBlock
-                  address={resource.address}
-                  contact={resource.contact}
-                  edge="top"
-                  heading={
-                    <SideTitle>
-                      {tc(
-                        withContact
-                          ? 'address.titleWithContact'
-                          : 'address.title'
-                      )}
-                    </SideTitle>
-                  }
-                  label={resource.label}
-                />
-              </Panel>
               {/* How to book it, under where it is */}
               {resource.booking && (
-                <Panel css={{ marginTop: '1.25rem' }}>
+                <Panel>
                   <SideTitle>{tc('entry.booking')}</SideTitle>
                   <BookingInfo
                     booking={resource.booking}
@@ -351,7 +394,10 @@ export default function ResourceHybrid({
                         key={part._id}
                         to={`${prefix}/resources/${part._id}`}
                       >
-                        <PartName>{part.label}</PartName>
+                        <PartText>
+                          <PartName>{part.label}</PartName>
+                          <BookableChip place={part} />
+                        </PartText>
                         <PartPicture>
                           {src ? (
                             <img alt="" src={src} />

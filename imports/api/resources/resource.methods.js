@@ -145,7 +145,14 @@ Meteor.methods({
       Resources.find(
         { parentId: resource._id },
         {
-          fields: { _id: 1, label: 1, images: { $slice: 1 } },
+          fields: {
+            _id: 1,
+            label: 1,
+            images: { $slice: 1 },
+            // for the "Bokningsbar" chip
+            isBookable: 1,
+            booking: 1,
+          },
           sort: { label: 1 },
         }
       ).fetchAsync(),

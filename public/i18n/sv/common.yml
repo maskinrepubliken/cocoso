@@ -728,7 +728,7 @@ entry:
   capacity: 'Plats för {{ count }}'
   combo: Består av flera platser
   comboParts: Ingår
-  partOf: Del av
+  partOf: "Del av <0>{{place}}</0>"
   parts: Här finns
   pictures: Bilder
   postedBy: 'Upplagd av {{ name }}'
