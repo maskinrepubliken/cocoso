@@ -8,12 +8,15 @@ messages:
   comborequires: Välj minst två objekt för att skapa ett kombinerat objekt. Eller vänligen stäng av "Kombo" för att komponera ett icke-komboobjekt
 
 form:
+  placement:
+    label: Where the place is
+    address: Address
+    parent: Part of another place
   parent:
-    label: Part of another place
-    helper: "Optional. For a place inside another, like a library in a cultural centre. It then has that place's address and is listed on its page."
+    required: Choose the place it is part of.
+    helper: "For a place inside another, like a library in a cultural centre. It has that place's address and is shown on its page."
     holder: Choose a place
     empty: No place by that name
-    address: "The address and location are taken from {{place}}."
     unlisted: Leave it out of the list of places
     unlistedHelper: "It is still shown on {{place}}'s page and in search results."
   address:
@@ -53,7 +56,7 @@ form:
       helper: Please select multiple items to create a combo item
   name:
     label: Name
-    holder: Sound Studio
+    holder: Smultronstället
     helper: Please enter a name for the entry object you would like to create
   description:
     label: Description

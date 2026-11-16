@@ -8,12 +8,15 @@ messages:
   comborequires:
 
 form:
+  placement:
+    label: Var platsen finns
+    address: Adress
+    parent: Del av en annan plats
   parent:
-    label: Del av en annan plats
-    helper: "Valfritt. För en plats som ligger i en annan, till exempel ett bibliotek i ett kulturhus. Den får då den platsens adress och listas på dess sida."
+    required: Välj platsen den är en del av.
+    helper: "För en plats som ligger i en annan, till exempel ett bibliotek i ett kulturhus. Den får den platsens adress och visas på dess sida."
     holder: Välj en plats
     empty: Ingen plats med det namnet
-    address: "Adressen och orten hämtas från {{place}}."
     unlisted: Visa inte i listan över platser
     unlistedHelper: "Den visas ändå på sidan för {{place}} och i sökresultat."
   address:
@@ -53,7 +56,7 @@ form:
       helper: Välj flera objekt för att skapa en kombinationsobjekt
   name:
     label: Namn
-    holder: Sound Studio
+    holder: Smultronstället
     helper: Ange ett namn på den resurs du vill lägga till
   description:
     label: Beskrivning

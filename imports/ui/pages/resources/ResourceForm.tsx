@@ -19,6 +19,7 @@ import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
+import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
 
 import resourceFormFields from './resourceFormFields';
 import BookingFields, {
@@ -109,6 +110,8 @@ export default function ResourceForm({
     contact: resource?.contact || emptyContact,
     booking: bookingState(resource?.booking),
     locationId: resource?.locationId || null,
+    // An address of its own, or part of another place (and at its address)
+    placement: resource?.parentId ? 'parent' : 'address',
     parentId: resource?.parentId || null,
     isUnlisted: Boolean(resource?.isUnlisted),
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
@@ -145,9 +148,14 @@ export default function ResourceForm({
   }, [loaders?.isCreating]);
 
   const handleSubmit = (formValues: ResourceFormValues) => {
-    // A place is where something happens: no saving it without an address.
-    // A part of another place has that place's.
-    if (!state.parentId && !isCompleteAddress(state.address)) {
+    // A place is where something happens: no saving it without an address,
+    // or the place it is part of (and so at its address).
+    const isPart = state.placement === 'parent';
+    if (isPart && !state.parentId) {
+      message.formError(t('form.parent.required'));
+      return;
+    }
+    if (!isPart && !isCompleteAddress(state.address)) {
       message.formError(tc('address.errors.required'));
       return;
     }
@@ -173,6 +181,7 @@ export default function ResourceForm({
   };
 
   const parseResource = async (images: string[]) => {
+    const isPart = state.placement === 'parent';
     const newResource: ResourceData = {
       ...state.formValues,
       address: state.address,
@@ -183,8 +192,8 @@ export default function ResourceForm({
       isBookable: state.isBookable,
       isCombo: state.isCombo,
       locationId: state.locationId,
-      parentId: state.parentId,
-      isUnlisted: Boolean(state.parentId && state.isUnlisted),
+      parentId: isPart ? state.parentId : null,
+      isUnlisted: Boolean(isPart && state.parentId && state.isUnlisted),
       resourcesForCombo: state.resourcesForCombo,
     };
     onFinalize(newResource);
@@ -254,74 +263,79 @@ export default function ResourceForm({
         />
       </FormField>
 
-      <FormField
-        helper={t('form.parent.helper')}
-        label={t('form.parent.label')}
-        mt="6"
-        mb="12"
-      >
-        <AutoCompleteSelect
-          isClearable
-          getOptionLabel={(option: ResourceOption) => option.label}
-          getOptionValue={(option: ResourceOption) => option._id}
-          noOptionsMessage={() => t('form.parent.empty')}
-          options={parentOptions}
-          placeholder={t('form.parent.holder')}
-          value={parent}
-          onChange={(option: ResourceOption | null) =>
-            setState((prevState: any) => ({
-              ...prevState,
-              parentId: option?._id || null,
-            }))
+      {/* Where it is: an address of its own, or inside another place and
+          so at its address. Not both. */}
+      <FormField label={t('form.placement.label')} mt="6" mb="12" required>
+        <ChoiceChips
+          label={t('form.placement.label')}
+          value={state.placement}
+          choices={[
+            {
+              value: 'address',
+              label: t('form.placement.address'),
+              description: t('form.address.helper'),
+              content: (
+                <AddressFields
+                  required
+                  value={state.address}
+                  onChange={(address) =>
+                    setState((prevState: any) => ({ ...prevState, address }))
+                  }
+                />
+              ),
+            },
+            {
+              value: 'parent',
+              label: t('form.placement.parent'),
+              description: t('form.parent.helper'),
+              content: (
+                <>
+                  <AutoCompleteSelect
+                    getOptionLabel={(option: ResourceOption) => option.label}
+                    getOptionValue={(option: ResourceOption) => option._id}
+                    noOptionsMessage={() => t('form.parent.empty')}
+                    options={parentOptions}
+                    placeholder={t('form.parent.holder')}
+                    value={parent}
+                    onChange={(option: ResourceOption | null) =>
+                      setState((prevState: any) => ({
+                        ...prevState,
+                        parentId: option?._id || null,
+                      }))
+                    }
+                  />
+                  {state.parentId && (
+                    <Box pt="4">
+                      <Checkbox
+                        checked={state.isUnlisted}
+                        id="is-unlisted"
+                        onChange={(e) =>
+                          setState((prevState: any) => ({
+                            ...prevState,
+                            isUnlisted: e.target.checked,
+                          }))
+                        }
+                      >
+                        {t('form.parent.unlisted')}
+                      </Checkbox>
+                      <Box pt="1">
+                        <Text fontSize="sm">
+                          {t('form.parent.unlistedHelper', {
+                            place: parent?.label,
+                          })}
+                        </Text>
+                      </Box>
+                    </Box>
+                  )}
+                </>
+              ),
+            },
+          ]}
+          onChange={(placement) =>
+            setState((prevState: any) => ({ ...prevState, placement }))
           }
         />
-        {state.parentId && (
-          <Box pt="4">
-            <Checkbox
-              checked={state.isUnlisted}
-              id="is-unlisted"
-              onChange={(e) =>
-                setState((prevState: any) => ({
-                  ...prevState,
-                  isUnlisted: e.target.checked,
-                }))
-              }
-            >
-              {t('form.parent.unlisted')}
-            </Checkbox>
-            <Box pt="1">
-              <Text fontSize="sm">
-                {t('form.parent.unlistedHelper', { place: parent?.label })}
-              </Text>
-            </Box>
-          </Box>
-        )}
       </FormField>
-
-      {/* A part of another place is where that place is */}
-      {state.parentId ? (
-        <FormField label={tc('address.title')} mt="6" mb="12">
-          <Text fontSize="sm">
-            {t('form.parent.address', { place: parent?.label })}
-          </Text>
-        </FormField>
-      ) : (
-        <FormField
-          helper={t('form.address.helper')}
-          label={tc('address.title')}
-          mt="6"
-          mb="12"
-          required
-        >
-          <AddressFields
-            required
-            value={state.address}
-            onChange={(address) =>
-              setState((prevState: any) => ({ ...prevState, address }))
-            }
-          />
-        </FormField>
-      )}
 
       <FormField
         helper={t('form.contact.helper')}
@@ -346,7 +360,7 @@ export default function ResourceForm({
         />
       </FormField>
 
-      {!state.parentId && (
+      {state.placement === 'address' && (
         <FormField
           helper={tc('locations.form.helperResource')}
           label={tc('locations.form.label')}
