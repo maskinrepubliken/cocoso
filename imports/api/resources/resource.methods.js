@@ -135,26 +135,22 @@ Meteor.methods({
     if (!resource) {
       return resource;
     }
-    // The page links up to the place it is part of and down to its parts
-    const short = { fields: { _id: 1, label: 1 } };
+    // The page links up to the place it is part of and down to its parts,
+    // both as small cards with a picture and whether they can be booked
+    const card = {
+      _id: 1,
+      label: 1,
+      images: { $slice: 1 },
+      isBookable: 1,
+      booking: 1,
+    };
     const [partOf, parts] = await Promise.all([
       resource.parentId
-        ? Resources.findOneAsync({ _id: resource.parentId }, short)
+        ? Resources.findOneAsync({ _id: resource.parentId }, { fields: card })
         : null,
-      // each part as a small card with its first picture
       Resources.find(
         { parentId: resource._id },
-        {
-          fields: {
-            _id: 1,
-            label: 1,
-            images: { $slice: 1 },
-            // for the "Bokningsbar" chip
-            isBookable: 1,
-            booking: 1,
-          },
-          sort: { label: 1 },
-        }
+        { fields: card, sort: { label: 1 } }
       ).fetchAsync(),
     ]);
     return { ...resource, partOf: partOf || null, parts };

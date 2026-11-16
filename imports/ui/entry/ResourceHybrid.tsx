@@ -3,7 +3,6 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
 import LayersIcon from 'lucide-react/dist/esm/icons/layers';
-import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
@@ -15,6 +14,7 @@ import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import AddressBlock from '/imports/ui/generic/AddressBlock';
+import { ContactDetails } from '/imports/ui/generic/ContactDetails';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
@@ -128,26 +128,6 @@ const PartName = styled('span', {
   lineHeight: 1.2,
 });
 
-// In the card of a part, the place it is in: it stands for the address
-const PartOf = styled('span', {
-  alignItems: 'center',
-  display: 'inline-flex',
-  flexWrap: 'wrap',
-  fontWeight: 600,
-  gap: '0.35rem',
-  '& svg': {
-    color: 'var(--cocoso-tegel)',
-    flex: 'none',
-    height: '1.1rem',
-    width: '1.1rem',
-  },
-  '& a': {
-    color: 'var(--cocoso-colors-theme-800)',
-    textDecorationThickness: '1.5px',
-    textUnderlineOffset: '3px',
-  },
-});
-
 const PartPicture = styled('span', {
   alignSelf: 'stretch',
   flex: 'none',
@@ -168,6 +148,43 @@ const PartCards = styled('div', {
   gap: '0.75rem',
   gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
 });
+
+// A place as a small card: its name (and whether it can be booked) and
+// its picture at the right. Under "Här finns" for the parts, and in the
+// sidebar of a part for the place it is in.
+function PlaceCard({
+  place,
+  to,
+  inPanel,
+}: {
+  place: PlaceLink;
+  to: string;
+  inPanel?: boolean;
+}) {
+  const src = getImageUrl(place.images?.[0], 'small');
+  return (
+    <PartCard
+      css={
+        inPanel
+          ? {
+              boxShadow: 'none',
+              marginTop: '0.75rem',
+              outline: '1.5px solid var(--cocoso-colors-theme-200)',
+            }
+          : undefined
+      }
+      to={to}
+    >
+      <PartText>
+        <PartName>{place.label}</PartName>
+        <BookableChip place={place} />
+      </PartText>
+      <PartPicture>
+        {src ? <img alt="" src={src} /> : <PlaceholderImage seed={place._id} />}
+      </PartPicture>
+    </PartCard>
+  );
+}
 
 // From this width where the place is (map, address) and who to ask sit in
 // a column beside the card, from the top of the page; below it they follow
@@ -289,25 +306,6 @@ export default function ResourceHybrid({
                   <BookableChip place={resource} />
                 </>
               }
-              subtitle={
-                partOf ? (
-                  <PartOf>
-                    <MapPinIcon aria-hidden />
-                    <span>
-                      <Trans
-                        i18nKey="common:entry.partOf"
-                        values={{ place: partOf.label }}
-                        components={[
-                          <Link
-                            key="partOf"
-                            to={`${prefix}/resources/${partOf._id}`}
-                          />,
-                        ]}
-                      />
-                    </span>
-                  </PartOf>
-                ) : undefined
-              }
               html={resource.description}
               meta={
                 resource.capacity ? (
@@ -328,20 +326,38 @@ export default function ResourceHybrid({
             />
           </CardArea>
 
-          {withAddress || withContact || resource.booking ? (
+          {withAddress || partOf || withContact || resource.booking ? (
             <Sidebar>
-              {(withAddress || withContact) && (
+              {/* A part: the place it is in stands for the address, in
+                  one card with who to ask */}
+              {partOf && (
+                <Panel css={{ marginBottom: '1.25rem' }}>
+                  <SideTitle>{tc('entry.partOf')}</SideTitle>
+                  <PlaceCard
+                    inPanel
+                    place={partOf}
+                    to={`${prefix}/resources/${partOf._id}`}
+                  />
+                  {withContact && (
+                    <>
+                      <SideTitle css={{ margin: '1.5rem 0 1rem' }}>
+                        {tc('contact.title')}
+                      </SideTitle>
+                      <ContactDetails contact={resource.contact} />
+                    </>
+                  )}
+                </Panel>
+              )}
+              {withAddress && (
                 <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
                   <AddressBlock
-                    address={withAddress ? resource.address : null}
+                    address={resource.address}
                     contact={resource.contact}
                     edge="top"
                     heading={
                       <SideTitle>
                         {tc(
-                          !withAddress
-                            ? 'contact.title'
-                            : withContact
+                          withContact
                             ? 'address.titleWithContact'
                             : 'address.title'
                         )}
@@ -387,27 +403,13 @@ export default function ResourceHybrid({
                   <h2>{tc('entry.parts')}</h2>
                 </SectionHead>
                 <PartCards>
-                  {parts.map((part) => {
-                    const src = getImageUrl(part.images?.[0], 'small');
-                    return (
-                      <PartCard
-                        key={part._id}
-                        to={`${prefix}/resources/${part._id}`}
-                      >
-                        <PartText>
-                          <PartName>{part.label}</PartName>
-                          <BookableChip place={part} />
-                        </PartText>
-                        <PartPicture>
-                          {src ? (
-                            <img alt="" src={src} />
-                          ) : (
-                            <PlaceholderImage seed={part._id} />
-                          )}
-                        </PartPicture>
-                      </PartCard>
-                    );
-                  })}
+                  {parts.map((part) => (
+                    <PlaceCard
+                      key={part._id}
+                      place={part}
+                      to={`${prefix}/resources/${part._id}`}
+                    />
+                  ))}
                 </PartCards>
               </EntryColumn>
             )}
