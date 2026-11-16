@@ -11,12 +11,12 @@ form:
   placement:
     label: Where the place is
     address: Address
-    parent: Part of a place
+    parent: Part of another place
     coordinates: Coordinates
-    helpers:
-      address: "The street address. The map point is looked up from it."
-      coordinates: "A point on the map, for a place without a street address such as a lake or a trail. Give the nearest town too."
-      parent: "For a place inside another, like a library in a cultural centre. It has that place's address and is shown on its page."
+    details:
+      address: "Street, postal code and town. The map point is looked up from it."
+      coordinates: "A point on the map and the nearest town, for a lake or a trail, say."
+      parent: "Inside another place, like a room in the library. Gets that place's address."
   parent:
     required: Choose the place it is part of.
     holder: Choose a place

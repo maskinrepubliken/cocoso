@@ -19,7 +19,6 @@ import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
-import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import FormCard from '/imports/ui/pages/activities/form/FormCard';
 
 import resourceFormFields from './resourceFormFields';
@@ -112,11 +111,7 @@ const placementOf = (resource?: ResourceData): Placement => {
   return 'address';
 };
 
-const PLACEMENTS: { value: Placement; icon: string }[] = [
-  { value: 'address', icon: 'map-pin' },
-  { value: 'coordinates', icon: 'target' },
-  { value: 'parent', icon: 'cube' },
-];
+const PLACEMENTS: Placement[] = ['address', 'coordinates', 'parent'];
 
 // Only what the chosen way uses: a map point keeps the town, not a street.
 const addressFor = (
@@ -298,18 +293,18 @@ export default function ResourceForm({
 
       {/* Where it is: an address of its own, a map point, or inside another
           place and so at its address. Only one. */}
-      <FormCard title={t('form.placement.label')}>
-        {/* One of three, as tiles like the categories above */}
+      <FormCard tall title={t('form.placement.label')}>
+        {/* One of three, as radio rows, each saying what it is for */}
         <div
           aria-label={t('form.placement.label')}
-          className="kind-picker is-three"
+          className="placement-options"
           role="radiogroup"
         >
-          {PLACEMENTS.map(({ value, icon }) => (
+          {PLACEMENTS.map((value) => (
             <button
               key={value}
               aria-checked={state.placement === value}
-              className={`kind-picker-tile ${
+              className={`placement-option ${
                 state.placement === value ? 'is-active' : ''
               }`}
               role="radio"
@@ -321,14 +316,14 @@ export default function ResourceForm({
                 }))
               }
             >
-              <ThreeDIcon name={icon} size={36} />
-              <span>{t(`form.placement.${value}`)}</span>
+              <span aria-hidden className="placement-radio" />
+              <span>
+                <strong>{t(`form.placement.${value}`)}</strong>
+                <small>{t(`form.placement.details.${value}`)}</small>
+              </span>
             </button>
           ))}
         </div>
-        <p className="form-preview-note">
-          {t(`form.placement.helpers.${state.placement}`)}
-        </p>
         {state.placement === 'parent' ? (
           <>
             <AutoCompleteSelect

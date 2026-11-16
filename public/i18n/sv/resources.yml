@@ -11,12 +11,12 @@ form:
   placement:
     label: Var platsen finns
     address: Adress
-    parent: Del av en plats
+    parent: Del av en annan plats
     coordinates: Koordinater
-    helpers:
-      address: "Gatuadressen. Kartpunkten tas fram ur den."
-      coordinates: "En punkt på kartan, för en plats utan gatuadress som en sjö eller ett spår. Ange också närmaste ort."
-      parent: "För en plats som ligger i en annan, till exempel ett bibliotek i ett kulturhus. Den får den platsens adress och visas på dess sida."
+    details:
+      address: "Gata, postnummer och ort. Kartpunkten tas fram ur adressen."
+      coordinates: "En punkt på kartan och närmaste ort, för till exempel en sjö eller ett spår."
+      parent: "Ligger i en annan plats, som ett rum i biblioteket. Får den platsens adress."
   parent:
     required: Välj platsen den är en del av.
     holder: Välj en plats
