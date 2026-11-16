@@ -200,7 +200,7 @@ Meteor.methods({
   async createResource(values) {
     check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
-    // Organizers add and edit places; only admins remove them.
+    // Organizers and admins add places; only admins remove them.
     if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
@@ -254,16 +254,19 @@ Meteor.methods({
     check(resourceId, String);
     check(values, Match.ObjectIncluding({ label: String }));
     const user = await Meteor.userAsync();
-    // Organizers add and edit places; only admins remove them.
     if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
-    await validateLabel(values.label, resourceId);
 
     const resource = await Resources.findOneAsync({ _id: resourceId });
     if (!resource) {
       throw new Meteor.Error('not-found', 'Resource not found');
     }
+    // A place is edited by the organizer who added it, and by admins
+    if (resource.userId !== user._id && !(await isAdmin(user._id))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    await validateLabel(values.label, resourceId);
 
     // A part of another place is where that place is
     const parent = await findParent(values.parentId, resourceId);
