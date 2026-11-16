@@ -16,6 +16,28 @@ export interface PlaceOption {
   imageUrl?: string;
   isCombo?: boolean;
   isBookable?: boolean;
+  // Part of another place and left out of the list (a room in the library)
+  parentId?: string | null;
+  isUnlisted?: boolean;
+}
+
+const isPart = (place: PlaceOption) =>
+  Boolean(place.isUnlisted && place.parentId);
+
+// The places in their order, each followed by the places in it that are
+// left out of the list (the rooms of the library after the library).
+function withPartsAfterParents(places: PlaceOption[]): PlaceOption[] {
+  const parts = places.filter(isPart);
+  const partsOf = (id: string) =>
+    parts
+      .filter((part) => part.parentId === id)
+      .sort((a, b) => a.label.localeCompare(b.label, 'sv'));
+  const ordered = places
+    .filter((place) => !isPart(place))
+    .flatMap((place) => [place, ...partsOf(place._id)]);
+  // Parts whose place is not among these come last
+  const placed = new Set(ordered.map((place) => place._id));
+  return [...ordered, ...parts.filter((part) => !placed.has(part._id))];
 }
 
 // A place's picture, or a pin on green when it has none
@@ -40,6 +62,14 @@ function PlaceThumb({
 }
 
 function PlaceRow({ place }: { place: PlaceOption }) {
+  // A room and the like: under its place, its name only
+  if (isPart(place)) {
+    return (
+      <span className="picker-row-text picker-row-part">
+        <span className="picker-row-title">{place.label}</span>
+      </span>
+    );
+  }
   const where = formatAddress(place.address);
   return (
     <>
@@ -73,6 +103,8 @@ export default function PlacePicker({
   const [t] = useTranslation('activities');
   const [picking, setPicking] = useState(false);
   const selected = places.find((place) => place._id === selectedId);
+  const parentOf = (place: PlaceOption) =>
+    places.find((other) => other._id === place.parentId);
 
   if (selected && !picking) {
     return (
@@ -81,10 +113,16 @@ export default function PlacePicker({
           <PlaceThumb place={selected} />
           <span className="person-card-text">
             <span className="person-card-name">{selected.label}</span>
-            {formatAddress(selected.address) && (
+            {isPart(selected) && parentOf(selected) ? (
               <span className="person-card-note">
-                {formatAddress(selected.address)}
+                {t('form.where.partOf', { place: parentOf(selected)?.label })}
               </span>
+            ) : (
+              formatAddress(selected.address) && (
+                <span className="person-card-note">
+                  {formatAddress(selected.address)}
+                </span>
+              )
             )}
           </span>
           <span className="person-card-action">
@@ -109,9 +147,12 @@ export default function PlacePicker({
       emptyText={t('form.where.empty')}
       getKey={(place) => place._id}
       getSearchText={(place) =>
-        [place.label, formatAddress(place.address)].join(' ')
+        // a room is found by its place's name too
+        isPart(place)
+          ? [place.label, parentOf(place)?.label].join(' ')
+          : [place.label, formatAddress(place.address)].join(' ')
       }
-      items={places}
+      items={withPartsAfterParents(places)}
       placeholder={t('form.where.search')}
       renderItem={(place) => <PlaceRow place={place} />}
       selectedKey={selectedId || undefined}

@@ -7197,6 +7197,15 @@ body {
   white-space: nowrap;
 }
 
+/* a room under its place: lined up with the place's name, no picture */
+.picker-row-part {
+  padding-left: 46px;
+}
+
+.picker-row-part .picker-row-title {
+  font-weight: 500;
+}
+
 .picker-row-detail {
   overflow: hidden;
   color: var(--cocoso-mylla-soft);

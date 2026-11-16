@@ -54,6 +54,7 @@ form:
     phone: "Telefon"
     website: "Webbplats"
   where:
+    partOf: "Del av {{place}}"
     label: "Var"
     helper: "Välj en av kommunens platser, arrangörens adress eller en egen adress. Orten följer av valet."
     place: "Välj en plats"
