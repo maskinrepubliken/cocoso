@@ -11,11 +11,14 @@ import EntryFormHandler from './EntryFormHandler';
 
 export interface NewEntryHandlerProps {
   context: string;
+  // See EntryFormHandler: Cancel closes without asking
+  keepsDraft?: boolean;
   children?: React.ReactNode;
 }
 
 export default function NewEntryHandler({
   context,
+  keepsDraft,
   children,
 }: NewEntryHandlerProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
@@ -40,6 +43,7 @@ export default function NewEntryHandler({
     open,
     title,
     onClose: handleClose,
+    keepsDraft,
     children,
   };
 

@@ -11,12 +11,15 @@ import EntryFormHandler from './EntryFormHandler';
 
 export interface EditEntryHandlerProps {
   context: string;
+  // See EntryFormHandler: Cancel closes without asking
+  keepsDraft?: boolean;
   onDelete?: () => void;
   children?: React.ReactNode;
 }
 
 export default function EditEntryHandler({
   context,
+  keepsDraft,
   onDelete,
   children,
 }: EditEntryHandlerProps) {
@@ -44,6 +47,7 @@ export default function EditEntryHandler({
     forEdit: true,
     onClose: handleClose,
     onDelete,
+    keepsDraft,
     children,
   };
 

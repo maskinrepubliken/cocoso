@@ -20,6 +20,9 @@ export interface EntryFormHandlerProps {
   onClose: () => void;
   // When given, a Remove button sits next to Cancel in the footer
   onDelete?: () => void;
+  // The form keeps a draft of what is written (the event form): nothing
+  // is lost on Cancel, so it closes without asking
+  keepsDraft?: boolean;
   children?: React.ReactNode;
 }
 
@@ -46,6 +49,7 @@ export default function EntryFormHandler({
   forEdit = false,
   onClose,
   onDelete,
+  keepsDraft = false,
   children,
 }: EntryFormHandlerProps) {
   const loaders = useAtomValue(loaderAtom);
@@ -88,17 +92,21 @@ export default function EntryFormHandler({
   // Cancel is never locked, not even while saving: whatever goes wrong
   // with a save, the user can always get out of the sheet.
   const requestClose = () => {
+    if (keepsDraft) {
+      close();
+      return;
+    }
     setConfirmOpen(true);
   };
 
-  const close = () => {
+  function close() {
     setConfirmOpen(false);
     setClosing(true);
     window.setTimeout(() => {
       setClosing(false);
       onClose();
     }, CLOSE_MS);
-  };
+  }
 
   useEffect(() => {
     if (!open || confirmOpen) return undefined;

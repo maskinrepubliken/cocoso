@@ -25,7 +25,7 @@ export default function ActivityListHandler({ siteDoc }) {
       />
 
       {rendered && canCreateContent ? (
-        <NewEntryHandler context="activities">
+        <NewEntryHandler keepsDraft context="activities">
           <NewPublicActivity />
         </NewEntryHandler>
       ) : null}

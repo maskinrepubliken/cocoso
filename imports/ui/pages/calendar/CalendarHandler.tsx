@@ -164,7 +164,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       </div>
 
       {rendered && canCreateContent ? (
-        <NewEntryHandler context="calendar">
+        <NewEntryHandler keepsDraft context="calendar">
           <NewPublicActivity />
         </NewEntryHandler>
       ) : null}

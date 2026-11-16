@@ -64,6 +64,7 @@ export default function ActivityItemHandler({ siteDoc }) {
 
       {rendered && canCreateContent && activity.isPublicActivity && (
         <EditEntryHandler
+          keepsDraft
           context="activities"
           onDelete={
             // Admins may delete straight away; the confirm dialog lives in
