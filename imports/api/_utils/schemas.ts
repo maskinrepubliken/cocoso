@@ -70,7 +70,8 @@ const Schemas: SchemasType = {
   Address: {
     street: { type: String, optional: true },
     postalCode: { type: String, optional: true },
-    city: { type: String },
+    // optional for a place given by coordinates alone
+    city: { type: String, optional: true },
     coordinates: { type: Object, optional: true },
     'coordinates.lat': { type: Number },
     'coordinates.lng': { type: Number },

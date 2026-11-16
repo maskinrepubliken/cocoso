@@ -19,8 +19,8 @@ export interface Address {
   street?: string;
   // Swedish postal code, stored as "514 33".
   postalCode?: string;
-  // Postort: the town the address belongs to.
-  city: string;
+  // Postort: the town the address belongs to. A map point alone needs none.
+  city?: string;
   coordinates?: Coordinates;
 }
 
@@ -44,7 +44,9 @@ const trimmed = (value: unknown): string =>
 export const formatPostalCode = (postalCode?: string): string => {
   const value = trimmed(postalCode);
   const digits = value.replace(/\s/g, '');
-  return /^\d{5}$/.test(digits) ? `${digits.slice(0, 3)} ${digits.slice(3)}` : value;
+  return /^\d{5}$/.test(digits)
+    ? `${digits.slice(0, 3)} ${digits.slice(3)}`
+    : value;
 };
 
 const validCoordinates = (c?: Coordinates | null): c is Coordinates =>
@@ -79,12 +81,12 @@ export const parseCoordinates = (text?: string): Coordinates | null => {
 export const formatCoordinates = (c?: Coordinates | null): string =>
   validCoordinates(c) ? `${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}` : '';
 
-// Enough to find the place: a town, and a street or a point on the map.
+// Enough to find the place: a street and a town, or a point on the map.
 export const isCompleteAddress = (address?: Partial<Address> | null): boolean =>
   Boolean(
     address &&
-      trimmed(address.city) &&
-      (trimmed(address.street) || validCoordinates(address.coordinates))
+      ((trimmed(address.city) && trimmed(address.street)) ||
+        validCoordinates(address.coordinates))
   );
 
 export const hasAddress = (address?: Partial<Address> | null): boolean =>
@@ -116,13 +118,13 @@ export const cleanAddress = (
   const cleaned: Address = {
     ...(street ? { street } : {}),
     ...(postalCode ? { postalCode } : {}),
-    city,
+    ...(city ? { city } : {}),
     ...(coordinates ? { coordinates } : {}),
   };
   if (!isCompleteAddress(cleaned)) {
     throw new Meteor.Error(
       'incomplete-address',
-      'An address needs a town and a street or coordinates'
+      'An address needs a street and a town, or coordinates'
     );
   }
   return cleaned;

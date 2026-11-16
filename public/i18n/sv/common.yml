@@ -290,7 +290,7 @@ locations:
     intro: Varje ort har en egen sida med det som händer just där.
   form:
     label: Ort
-    helperResource: Orten eller platsen där resursen finns. Aktiviteter som hålls här följer den automatiskt.
+    helperResource: Var orten finns, hjälper användaren hitta platsen här på sidan.
     helperActivity: Välj en ort när aktiviteten inte hålls på någon av resurserna. Lämna tomt när den gäller hela kommunen.
     helperFromResource: Orten följer den valda resursen.
     helperGroup: Koppla gruppen till en ort om du vill. Lämna tomt när den är öppen för hela kommunen.
@@ -785,7 +785,7 @@ address:
       helper: "Latitud och longitud, som du kopierar från en karta."
       invalid: "Det ser inte ut som koordinater (latitud, longitud)."
   errors:
-    required: "Fyll i ort och en gatuadress eller koordinater."
+    required: "Fyll i gatuadress och ort, eller koordinater."
 contact:
   title: "Kontakt"
   missing: "Inga kontaktuppgifter än"

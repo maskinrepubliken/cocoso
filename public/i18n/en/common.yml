@@ -293,7 +293,7 @@ locations:
     intro: Each place has a page of its own with what happens right there.
   form:
     label: Place
-    helperResource: The village or place where this resource is. Activities held here follow it automatically.
+    helperResource: Which village it is in; helps people find the place here on the site.
     helperActivity: Pick a place when the activity is not held at one of the resources. Leave empty when it concerns the whole municipality.
     helperFromResource: The place follows the chosen resource.
     helperGroup: Optionally tie this group to a place. Leave empty when it is open to the whole municipality.
@@ -788,7 +788,7 @@ address:
       helper: "Latitude and longitude, as copied from a map."
       invalid: "That does not look like coordinates (latitude, longitude)."
   errors:
-    required: "Enter a town and a street address or coordinates."
+    required: "Give a street address and town, or coordinates."
 contact:
   title: "Contact"
   missing: "No contact details yet"

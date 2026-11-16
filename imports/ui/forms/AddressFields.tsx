@@ -34,7 +34,7 @@ interface AddressFieldsProps {
   // A town and a street or coordinates must be given.
   required?: boolean;
   // Which way the place is given: a street address (coordinates are then
-  // looked up from it), a map point, or both fields at once.
+  // looked up from it), a map point alone, or both fields at once.
   mode?: 'street' | 'coordinates' | 'both';
 }
 
@@ -94,8 +94,8 @@ export default function AddressFields({
           />
         </FormField>
       )}
-      <Row css={withStreet ? undefined : { gridTemplateColumns: '1fr' }}>
-        {withStreet && (
+      {withStreet && (
+        <Row>
           <FormField
             label={tc('address.form.postalCode.label')}
             my="2"
@@ -109,21 +109,21 @@ export default function AddressFields({
               onChange={(e) => set('postalCode', e.target.value)}
             />
           </FormField>
-        )}
-        <FormField
-          label={tc('address.form.city.label')}
-          my="2"
-          required={required}
-        >
-          <Input
-            autoComplete="address-level2"
-            placeholder="Tranemo"
+          <FormField
+            label={tc('address.form.city.label')}
+            my="2"
             required={required}
-            value={address.city || ''}
-            onChange={(e) => set('city', e.target.value)}
-          />
-        </FormField>
-      </Row>
+          >
+            <Input
+              autoComplete="address-level2"
+              placeholder="Tranemo"
+              required={required}
+              value={address.city || ''}
+              onChange={(e) => set('city', e.target.value)}
+            />
+          </FormField>
+        </Row>
+      )}
       {withCoordinates && (
         <FormField
           helper={tc('address.form.coordinates.helper')}
