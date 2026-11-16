@@ -28,8 +28,10 @@ export default function EditPage() {
       setTimeout(() => {
         setUpdated(null);
       }, 1000);
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 
@@ -46,7 +48,11 @@ export default function EditPage() {
 
   return (
     <SuccessRedirector context="info" ping={updated}>
-      <PageForm page={pageFields} onFinalize={updatePage} />
+      <PageForm
+        page={pageFields}
+        pageId={(currentPage as { _id: string })._id}
+        onFinalize={updatePage}
+      />
     </SuccessRedirector>
   );
 }

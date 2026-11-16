@@ -17,6 +17,12 @@ import { call } from '/imports/api/_utils/shared';
 import { kindsOf } from '/imports/api/_utils/kinds';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
+import {
+  DraftNotice,
+  useDraftKey,
+  useKeepDraft,
+  useLoadedDraft,
+} from '/imports/ui/forms/useFormDraft';
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
@@ -68,7 +74,8 @@ interface ResourceFormProps {
   resourceId?: string;
   // A new place started from another place's page: part of it to begin with
   defaultParentId?: string;
-  onFinalize: (resource: ResourceData) => void;
+  // Resolves to true once saved, which throws the draft away
+  onFinalize: (resource: ResourceData) => Promise<boolean | void> | void;
 }
 
 export const emptyFormValues: ResourceFormValues = {
@@ -135,14 +142,44 @@ const addressFor = (
 ): Partial<Address> =>
   placement === 'coordinates' ? { coordinates: address.coordinates } : address;
 
-export default function ResourceForm({
+// What a draft keeps (see useFormDraft): the typed name and description,
+// and everything chosen outside them. Pictures not yet uploaded are not.
+const DRAFT_FIELDS = [
+  'address',
+  'booking',
+  'contact',
+  'isBookable',
+  'isCombo',
+  'isUnlisted',
+  'kinds',
+  'locationId',
+  'parentId',
+  'placement',
+  'resourcesForCombo',
+] as const;
+const TEXT_FIELDS = ['label', 'description'] as const;
+
+// The place form keeps a draft of what is written in this browser until
+// the place is saved; throwing the draft away starts the form over.
+export default function ResourceForm(props: ResourceFormProps) {
+  const { key, formKey, discard } = useDraftKey(
+    `place:${props.resourceId || 'new'}`
+  );
+  return (
+    <PlaceForm key={formKey} {...props} draftKey={key} onDiscard={discard} />
+  );
+}
+
+function PlaceForm({
   resource,
   resourceId,
   defaultParentId,
   onFinalize,
-}: ResourceFormProps) {
-  const [state, setState] = useState<any>({
-    formValues: resource || emptyFormValues,
+  draftKey,
+  onDiscard,
+}: ResourceFormProps & { draftKey: string; onDiscard: () => void }) {
+  const draft = useLoadedDraft(draftKey);
+  const [pristine] = useState<any>(() => ({
     isBookable: resource ? resource.isBookable : true,
     isCombo: resource ? resource.isCombo : false,
     kinds: kindsOf(resource),
@@ -156,7 +193,25 @@ export default function ResourceForm({
     parentId: resource?.parentId || defaultParentId || null,
     isUnlisted: Boolean(resource?.isUnlisted),
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
+  }));
+  const defaultValues = {
+    ...(resource || emptyFormValues),
+    ...(draft?.data.values || {}),
+  };
+  const [state, setState] = useState<any>(() => ({
+    ...pristine,
+    ...(draft?.data.state || {}),
+    formValues: defaultValues,
     resources: [],
+  }));
+  const { onValuesChange, markSaved } = useKeepDraft({
+    key: draftKey,
+    draft,
+    state,
+    pristineState: pristine,
+    pristineValues: resource || emptyFormValues,
+    stateFields: DRAFT_FIELDS,
+    textFields: TEXT_FIELDS,
   });
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('resources');
@@ -240,7 +295,9 @@ export default function ResourceForm({
       isUnlisted: Boolean(isPart && state.parentId && state.isUnlisted),
       resourcesForCombo: state.resourcesForCombo,
     };
-    onFinalize(newResource);
+    if ((await onFinalize(newResource)) === true) {
+      markSaved();
+    }
   };
 
   const handleUploadedImages = (images: string[]) => {
@@ -272,205 +329,209 @@ export default function ResourceForm({
     }));
 
   return (
-    <GenericEntryForm
-      childrenIndex={1}
-      defaultValues={resource || emptyFormValues}
-      formFields={resourceFormFields(t)}
-      onSubmit={handleSubmit}
-    >
-      <FormField
-        area="main"
-        helper={t('form.image.helper')}
-        label={t('form.image.label')}
-        mb="12"
+    <>
+      <DraftNotice draft={draft} onDiscard={onDiscard} />
+      <GenericEntryForm
+        childrenIndex={1}
+        defaultValues={defaultValues}
+        formFields={resourceFormFields(t)}
+        onSubmit={handleSubmit}
+        onValuesChange={onValuesChange}
       >
-        <ImageUploader
-          ping={loaders?.isUploadingImages}
-          preExistingImages={resource ? resource.images : []}
-          onUploadedImages={handleUploadedImages}
-        />
-      </FormField>
+        <FormField
+          area="main"
+          helper={t('form.image.helper')}
+          label={t('form.image.label')}
+          mb="12"
+        >
+          <ImageUploader
+            ping={loaders?.isUploadingImages}
+            preExistingImages={resource ? resource.images : []}
+            onUploadedImages={handleUploadedImages}
+          />
+        </FormField>
 
-      {/* The details as cards in the right column, as in the event form */}
-      <FormCard title={tc('resourceKinds.form.label')}>
-        <p className="form-preview-note">{tc('resourceKinds.form.helper')}</p>
-        <KindPicker
-          kinds={RESOURCE_KINDS}
-          namespace="resourceKinds"
-          value={state.kinds}
-          onChange={(kinds) =>
-            setState((prevState: any) => ({ ...prevState, kinds }))
-          }
-        />
-      </FormCard>
+        {/* The details as cards in the right column, as in the event form */}
+        <FormCard title={tc('resourceKinds.form.label')}>
+          <p className="form-preview-note">{tc('resourceKinds.form.helper')}</p>
+          <KindPicker
+            kinds={RESOURCE_KINDS}
+            namespace="resourceKinds"
+            value={state.kinds}
+            onChange={(kinds) =>
+              setState((prevState: any) => ({ ...prevState, kinds }))
+            }
+          />
+        </FormCard>
 
-      {/* Where it is: an address of its own, a map point, or inside another
+        {/* Where it is: an address of its own, a map point, or inside another
           place and so at its address. Only one. */}
-      <FormCard tall title={t('form.placement.label')}>
-        {/* One of three, as the chips with small icons of the event
+        <FormCard tall title={t('form.placement.label')}>
+          {/* One of three, as the chips with small icons of the event
             form's "Plats", with a line on the chosen one */}
-        <ChoiceChips
-          label={t('form.placement.label')}
-          value={state.placement as Placement}
-          choices={PLACEMENTS.map(({ value, Icon }) => ({
-            value,
-            label: t(`form.placement.${value}`),
-            icon: <Icon aria-hidden />,
-            description: t(`form.placement.details.${value}`),
-          }))}
-          onChange={(placement) =>
-            setState((prevState: any) => ({ ...prevState, placement }))
-          }
-        />
-        {state.placement === 'parent' ? (
-          <>
-            {/* The same place picker as where an event is held */}
-            <PlacePicker
-              places={parentOptions}
-              selectedId={state.parentId}
-              onPick={(place) =>
-                setState((prevState: any) => ({
-                  ...prevState,
-                  parentId: place._id,
-                }))
-              }
-            />
-            {state.parentId && (
-              <Box py="4">
-                <Checkbox
-                  checked={state.isUnlisted}
-                  id="is-unlisted"
-                  onChange={(e) =>
-                    setState((prevState: any) => ({
-                      ...prevState,
-                      isUnlisted: e.target.checked,
-                    }))
-                  }
-                >
-                  {t('form.parent.unlisted')}
-                </Checkbox>
-                <Box pt="1">
-                  <Text fontSize="sm">
-                    {t('form.parent.unlistedHelper', {
-                      place: parent?.label,
-                    })}
-                  </Text>
-                </Box>
-              </Box>
-            )}
-          </>
-        ) : (
-          <>
-            <AddressFields
-              required
-              mode={
-                state.placement === 'coordinates' ? 'coordinates' : 'street'
-              }
-              value={state.address}
-              onChange={(address) =>
-                setState((prevState: any) => ({ ...prevState, address }))
-              }
-            />
-            <FormField
-              helper={tc('locations.form.helperResource')}
-              label={tc('locations.form.label')}
-              my="4"
-            >
-              <LocationSelect
-                value={state.locationId}
-                onChange={({ locationId }) =>
-                  setState((prevState) => ({ ...prevState, locationId }))
+          <ChoiceChips
+            label={t('form.placement.label')}
+            value={state.placement as Placement}
+            choices={PLACEMENTS.map(({ value, Icon }) => ({
+              value,
+              label: t(`form.placement.${value}`),
+              icon: <Icon aria-hidden />,
+              description: t(`form.placement.details.${value}`),
+            }))}
+            onChange={(placement) =>
+              setState((prevState: any) => ({ ...prevState, placement }))
+            }
+          />
+          {state.placement === 'parent' ? (
+            <>
+              {/* The same place picker as where an event is held */}
+              <PlacePicker
+                places={parentOptions}
+                selectedId={state.parentId}
+                onPick={(place) =>
+                  setState((prevState: any) => ({
+                    ...prevState,
+                    parentId: place._id,
+                  }))
                 }
               />
-            </FormField>
-          </>
-        )}
-      </FormCard>
-
-      <FormCard title={tc('contact.title')}>
-        <p className="form-preview-note">{t('form.contact.helper')}</p>
-        <ContactFields
-          value={state.contact}
-          onChange={(contact) =>
-            setState((prevState: any) => ({ ...prevState, contact }))
-          }
-        />
-      </FormCard>
-
-      <FormCard title={t('form.booking.label')}>
-        <BookingFields
-          value={state.booking}
-          onChange={(booking) =>
-            setState((prevState: any) => ({ ...prevState, booking }))
-          }
-        />
-      </FormCard>
-
-      {/* Combos and the bookable flag are for booking in the calendar;
-          while it is off they are kept as they are */}
-      {isFeatureEnabled('bookings') && (
-        <FormField
-          helper={t('form.combo.switch.helper')}
-          label={t('form.combo.switch.label')}
-          mt="6"
-          mb="12"
-        >
-          <Checkbox
-            checked={state.isCombo}
-            id="is-combo"
-            size="lg"
-            onChange={(e) =>
-              setState((prevState) => ({
-                ...prevState,
-                isCombo: e.target.checked,
-              }))
-            }
-          >
-            {t('form.combo.switch.label')}
-          </Checkbox>
-          {state.isCombo && (
-            <Box w="100%" pt="2">
-              <Text fontSize="sm" mb="2">
-                {t('form.combo.select.helper')}
-              </Text>
-              <AutoCompleteSelect
-                isMulti
-                closeMenuOnSelect={false}
-                components={animatedComponents}
-                defaultValue={state.resourcesForCombo}
-                options={autoCompleteOptions}
-                placeholder={t('form.combo.select.holder')}
-                style={{ width: '100%', marginTop: '1rem' }}
-                getOptionValue={(option) => option._id}
-                onChange={handleAutoCompleteSelectChange}
+              {state.parentId && (
+                <Box py="4">
+                  <Checkbox
+                    checked={state.isUnlisted}
+                    id="is-unlisted"
+                    onChange={(e) =>
+                      setState((prevState: any) => ({
+                        ...prevState,
+                        isUnlisted: e.target.checked,
+                      }))
+                    }
+                  >
+                    {t('form.parent.unlisted')}
+                  </Checkbox>
+                  <Box pt="1">
+                    <Text fontSize="sm">
+                      {t('form.parent.unlistedHelper', {
+                        place: parent?.label,
+                      })}
+                    </Text>
+                  </Box>
+                </Box>
+              )}
+            </>
+          ) : (
+            <>
+              <AddressFields
+                required
+                mode={
+                  state.placement === 'coordinates' ? 'coordinates' : 'street'
+                }
+                value={state.address}
+                onChange={(address) =>
+                  setState((prevState: any) => ({ ...prevState, address }))
+                }
               />
-            </Box>
+              <FormField
+                helper={tc('locations.form.helperResource')}
+                label={tc('locations.form.label')}
+                my="4"
+              >
+                <LocationSelect
+                  value={state.locationId}
+                  onChange={({ locationId }) =>
+                    setState((prevState) => ({ ...prevState, locationId }))
+                  }
+                />
+              </FormField>
+            </>
           )}
-        </FormField>
-      )}
+        </FormCard>
 
-      {isFeatureEnabled('bookings') && (
-        <FormField
-          helper={t('form.bookable.helper')}
-          label={t('form.bookable.label')}
-          mt="6"
-          mb="12"
-        >
-          <Checkbox
-            checked={state.isBookable}
-            id="is-bookable"
-            size="lg"
-            onChange={(e) =>
-              setState((prevState) => ({
-                ...prevState,
-                isBookable: e.target.checked,
-              }))
+        <FormCard title={tc('contact.title')}>
+          <p className="form-preview-note">{t('form.contact.helper')}</p>
+          <ContactFields
+            value={state.contact}
+            onChange={(contact) =>
+              setState((prevState: any) => ({ ...prevState, contact }))
             }
+          />
+        </FormCard>
+
+        <FormCard title={t('form.booking.label')}>
+          <BookingFields
+            value={state.booking}
+            onChange={(booking) =>
+              setState((prevState: any) => ({ ...prevState, booking }))
+            }
+          />
+        </FormCard>
+
+        {/* Combos and the bookable flag are for booking in the calendar;
+          while it is off they are kept as they are */}
+        {isFeatureEnabled('bookings') && (
+          <FormField
+            helper={t('form.combo.switch.helper')}
+            label={t('form.combo.switch.label')}
+            mt="6"
+            mb="12"
           >
-            {t('form.bookable.label')}
-          </Checkbox>
-        </FormField>
-      )}
-    </GenericEntryForm>
+            <Checkbox
+              checked={state.isCombo}
+              id="is-combo"
+              size="lg"
+              onChange={(e) =>
+                setState((prevState) => ({
+                  ...prevState,
+                  isCombo: e.target.checked,
+                }))
+              }
+            >
+              {t('form.combo.switch.label')}
+            </Checkbox>
+            {state.isCombo && (
+              <Box w="100%" pt="2">
+                <Text fontSize="sm" mb="2">
+                  {t('form.combo.select.helper')}
+                </Text>
+                <AutoCompleteSelect
+                  isMulti
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  defaultValue={state.resourcesForCombo}
+                  options={autoCompleteOptions}
+                  placeholder={t('form.combo.select.holder')}
+                  style={{ width: '100%', marginTop: '1rem' }}
+                  getOptionValue={(option) => option._id}
+                  onChange={handleAutoCompleteSelectChange}
+                />
+              </Box>
+            )}
+          </FormField>
+        )}
+
+        {isFeatureEnabled('bookings') && (
+          <FormField
+            helper={t('form.bookable.helper')}
+            label={t('form.bookable.label')}
+            mt="6"
+            mb="12"
+          >
+            <Checkbox
+              checked={state.isBookable}
+              id="is-bookable"
+              size="lg"
+              onChange={(e) =>
+                setState((prevState) => ({
+                  ...prevState,
+                  isBookable: e.target.checked,
+                }))
+              }
+            >
+              {t('form.bookable.label')}
+            </Checkbox>
+          </FormField>
+        )}
+      </GenericEntryForm>
+    </>
   );
 }

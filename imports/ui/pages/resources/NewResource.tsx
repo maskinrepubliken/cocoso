@@ -16,8 +16,10 @@ export default function NewResource({ parentId }: { parentId?: string }) {
     try {
       const respond = await call('createResource', newResource);
       setNewEntryId(respond);
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 

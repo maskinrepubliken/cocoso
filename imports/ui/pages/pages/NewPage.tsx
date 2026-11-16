@@ -22,8 +22,10 @@ export default function NewPage() {
       setPages(await call('getPages'));
       setPageTitles(await call('getPageTitles'));
       setNewEntryTitle(parseTitle(newPage.title));
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 

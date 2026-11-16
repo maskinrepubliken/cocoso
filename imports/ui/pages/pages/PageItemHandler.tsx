@@ -55,11 +55,11 @@ export default function PageItemHandler({ siteDoc, pageTitles }) {
           <PageInteractionHandler pages={pages} />
 
           {isEdit ? (
-            <EditEntryHandler context="info">
+            <EditEntryHandler keepsDraft context="info">
               <EditPage />
             </EditEntryHandler>
           ) : (
-            <NewEntryHandler context="info">
+            <NewEntryHandler keepsDraft context="info">
               <NewPage />
             </NewEntryHandler>
           )}

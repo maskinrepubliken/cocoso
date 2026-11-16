@@ -23,7 +23,7 @@ export default function ResourceListHandler({ siteDoc }) {
       />
 
       {rendered && canCreateContent ? (
-        <NewEntryHandler context="resources">
+        <NewEntryHandler keepsDraft context="resources">
           <NewResource />
         </NewEntryHandler>
       ) : null}

@@ -14,7 +14,7 @@ export default function EditResource() {
   const [resource, setResource] = useAtom(resourceAtom);
 
   const updateResource = async (newResource: any) => {
-    if (!resource) return;
+    if (!resource) return false;
     const resourceId = resource._id;
     try {
       await call('updateResource', resourceId, newResource);
@@ -23,8 +23,10 @@ export default function EditResource() {
       setTimeout(() => {
         setUpdated(null);
       }, 1000);
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 
