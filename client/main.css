@@ -7218,7 +7218,7 @@ body {
 
 .kind-picker {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
   gap: 6px;
   margin: 8px 0 10px;
 }
@@ -7236,8 +7236,9 @@ body {
   font-family: var(--cocoso-font-ui);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
+  min-width: 0;
   cursor: pointer;
   /* lifted with top, not transform (see .home-section) */
   position: relative;
@@ -7248,6 +7249,15 @@ body {
 .kind-picker-tile .threed-icon {
   width: 36px;
   height: 36px;
+}
+
+/* Long names ("Kultur & mötesplatser") wrap inside the tile */
+.kind-picker-tile > span {
+  max-width: 100%;
+  line-height: 1.25;
+  text-align: center;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .kind-picker-tile:hover {
