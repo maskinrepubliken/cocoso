@@ -21,7 +21,7 @@ export const resourceAtom = atom(null);
 // A place's page. What one does with it is in the header: the gear, the
 // discussion and, while bookings are on, the book button.
 export default function ResourceItemHandler({ siteDoc }) {
-  const { documents, resource } = useLoaderData();
+  const { documents, resource, organizers, upcoming } = useLoaderData();
   const setResource = useSetAtom(resourceAtom);
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
@@ -39,8 +39,10 @@ export default function ResourceItemHandler({ siteDoc }) {
     <>
       <ResourceHybrid
         documents={documents}
+        organizers={organizers}
         resource={resource}
         siteDoc={siteDoc}
+        upcoming={upcoming}
       />
 
       {rendered && (

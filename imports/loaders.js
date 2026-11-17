@@ -115,12 +115,19 @@ export async function getResource({ params }) {
   }
 
   const { resourceId } = params;
-  const resource = await call('getResourceById', resourceId);
-  const documents = await call('getDocumentsByAttachments', resourceId);
+  const [resource, documents, organizers, upcoming] = await Promise.all([
+    call('getResourceById', resourceId),
+    call('getDocumentsByAttachments', resourceId),
+    // "Se även" and what is coming up there
+    call('getPlaceOrganizers', resourceId),
+    call('getUpcomingActivitiesAtPlace', resourceId),
+  ]);
 
   return {
     documents,
     resource,
+    organizers,
+    upcoming,
   };
 }
 

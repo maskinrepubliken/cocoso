@@ -426,6 +426,29 @@ Meteor.methods({
   },
 
   // The public events a person organizes, for their profile page.
+  // What is coming up at a place and the places in it (its rooms): the
+  // public events, soonest first, for the place's page.
+  async getUpcomingActivitiesAtPlace(resourceId) {
+    check(resourceId, String);
+    const user = await Meteor.userAsync();
+    const today = dayjs().format('YYYY-MM-DD');
+    const parts = await Resources.find(
+      { parentId: resourceId },
+      { fields: { _id: 1 } }
+    ).fetchAsync();
+    const activities = await Activities.find({
+      resourceId: { $in: [resourceId, ...parts.map((part) => part._id)] },
+      isPublicActivity: true,
+      isArchived: { $ne: true },
+      'datesAndTimes.endDate': { $gte: today },
+    }).fetchAsync();
+    const visible = await redactAttendees(
+      await filterPrivateGroups(activities, user),
+      user
+    );
+    return visible.sort(compareDatesForSortActivities).slice(0, 6);
+  },
+
   async getPublicActivitiesByUser(username) {
     check(username, String);
     const user = await Meteor.userAsync();

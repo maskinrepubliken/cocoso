@@ -8,6 +8,7 @@ import { withCoordinates } from '../_utils/geocode';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
+import Memberships from '../memberships/membership';
 import { attachBookingPerson, cleanBooking } from './resource.booking';
 import Activities from '../activities/activity';
 import { cleanKinds } from '../_utils/kinds';
@@ -202,6 +203,49 @@ Meteor.methods({
       ).fetchAsync(),
     ]);
     return { ...resource, partOf: partOf || null, parts };
+  },
+
+  // The organizers linked to a place, for "Se även" on its page: those who
+  // look after it, the one it is booked through, and those who have it as
+  // their place. Only organizers shown publicly, as on the Arrangörer page.
+  async getPlaceOrganizers(resourceId) {
+    check(resourceId, String);
+    const place = await Resources.findOneAsync(
+      { _id: resourceId },
+      { fields: { managerIds: 1, 'booking.contactUserId': 1 } }
+    );
+    if (!place) {
+      return [];
+    }
+    const basedHere = await Meteor.users
+      .find({ homePlaceId: resourceId }, { fields: { _id: 1 } })
+      .fetchAsync();
+    const ids = [
+      ...new Set([
+        ...(place.managerIds || []),
+        ...(place.booking?.contactUserId ? [place.booking.contactUserId] : []),
+        ...basedHere.map((user) => user._id),
+      ]),
+    ];
+    const shown = await Memberships.find(
+      { userId: { $in: ids }, isPublic: true, isOrganizer: true },
+      { fields: { userId: 1 } }
+    ).fetchAsync();
+    const users = await Meteor.users
+      .find(
+        { _id: { $in: shown.map((m) => m.userId) } },
+        { fields: { username: 1, firstName: 1, lastName: 1, avatar: 1 } }
+      )
+      .fetchAsync();
+    return users
+      .map((user) => ({
+        _id: user._id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatar: user.avatar?.src || null,
+      }))
+      .sort((a, b) => a.username.localeCompare(b.username));
   },
 
   async getResourceBookingsForUser(resourceId) {

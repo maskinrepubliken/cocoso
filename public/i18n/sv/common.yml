@@ -759,6 +759,9 @@ search:
 # The entry pages (förening, plats, förfrågan); in common because SSR only
 # loads common
 entry:
+  seeAlso: Se även
+  upcomingHere: Kommande här
+  toPlacePage: Till platssidan
   group: Grupp
   place: Plats
   meetings: Träffar

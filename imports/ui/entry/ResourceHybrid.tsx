@@ -14,6 +14,16 @@ import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import AddressBlock from '/imports/ui/generic/AddressBlock';
+import { useAtomValue } from 'jotai';
+import { locationsAtom } from '/imports/state';
+import useOpenEntry from '/imports/ui/listing/useOpenEntry';
+import SexyThumb from '/imports/ui/listing/SexyThumb';
+import {
+  PersonAvatar,
+  personName,
+  type Person,
+} from '/imports/ui/pages/activities/form/PersonCard';
+import { EventCards } from './UserHybrid';
 import {
   AddressDetails,
   ContactDetails,
@@ -79,6 +89,61 @@ export interface ResourceHybridProps {
   documents?: Document[];
   resource: Resource;
   siteDoc: Site;
+  // The organizers linked to the place, shown under "Se även"
+  organizers?: Person[];
+  // What is coming up here and in the places in it
+  upcoming?: any[];
+}
+
+// "Se även": the organizers linked to the place, each a link to their page
+const SeeAlso = styled('ul', {
+  display: 'grid',
+  gap: '0.5rem',
+  listStyle: 'none',
+  margin: '0.75rem 0 0',
+  padding: 0,
+  '& a': {
+    alignItems: 'center',
+    borderRadius: '12px',
+    color: 'var(--site-ink)',
+    display: 'flex',
+    fontWeight: 600,
+    gap: '0.75rem',
+    padding: '0.35rem 0.5rem 0.35rem 0.35rem',
+    textDecoration: 'none',
+  },
+  '& a:hover': { backgroundColor: 'var(--cocoso-colors-theme-50)' },
+});
+
+// What is coming up at the place, as the events listing's cards
+function PlaceEvents({ events }: { events: any[] }) {
+  const [tc] = useTranslation('common');
+  const locations = useAtomValue(locationsAtom);
+  const openEntry = useOpenEntry('activities');
+  const locationNameOf = (item: any) =>
+    locations.find((l) => l._id === item.locationId)?.name;
+  return (
+    <EntryColumn>
+      <SectionHead>
+        <h2>{tc('entry.upcomingHere')}</h2>
+      </SectionHead>
+      <EventCards>
+        {events.map((item, index) => (
+          <div
+            key={item._id}
+            style={{ cursor: 'pointer' }}
+            onClick={() => openEntry(item)}
+          >
+            <SexyThumb
+              activity={item}
+              index={index}
+              tags={[locationNameOf(item)].filter(Boolean) as string[]}
+            />
+          </div>
+        ))}
+      </EventCards>
+    </EntryColumn>
+  );
 }
 
 const Parts = styled('div', {
@@ -265,6 +330,8 @@ export default function ResourceHybrid({
   documents,
   resource,
   siteDoc,
+  organizers = [],
+  upcoming = [],
 }: ResourceHybridProps) {
   const [tc] = useTranslation('common');
   const prefix = useLocationPrefix();
@@ -358,7 +425,11 @@ export default function ResourceHybrid({
             />
           </CardArea>
 
-          {withAddress || partOf || withContact || resource.booking ? (
+          {withAddress ||
+          partOf ||
+          withContact ||
+          resource.booking ||
+          organizers.length ? (
             <Sidebar>
               {/* A part: the place it is in stands for the address, in
                   one card with who to ask */}
@@ -421,6 +492,22 @@ export default function ResourceHybrid({
                   />
                 </Panel>
               )}
+              {/* The organizers linked to it: just "Se även" */}
+              {organizers.length > 0 && (
+                <Panel css={{ marginTop: resource.booking ? '1.25rem' : 0 }}>
+                  <SideTitle>{tc('entry.seeAlso')}</SideTitle>
+                  <SeeAlso>
+                    {organizers.map((person) => (
+                      <li key={person._id}>
+                        <Link to={`/@${person.username}`}>
+                          <PersonAvatar person={person} size={40} />
+                          <span>{personName(person)}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </SeeAlso>
+                </Panel>
+              )}
             </Sidebar>
           ) : null}
 
@@ -439,6 +526,8 @@ export default function ResourceHybrid({
                 </Parts>
               </EntryColumn>
             ) : null}
+
+            {upcoming.length > 0 && <PlaceEvents events={upcoming} />}
 
             {/* The places in it, listed or not, a card each */}
             {parts.length > 0 && (

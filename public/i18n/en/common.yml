@@ -762,6 +762,9 @@ search:
 # The entry pages (group, place, request); in common because SSR only
 # loads common
 entry:
+  seeAlso: See also
+  upcomingHere: Coming up here
+  toPlacePage: Go to the place
   group: Group
   place: Place
   meetings: Meetings
