@@ -8,6 +8,14 @@ messages:
   comborequires: Välj minst två objekt för att skapa ett kombinerat objekt. Eller vänligen stäng av "Kombo" för att komponera ett icke-komboobjekt
 
 form:
+  managers:
+    label: Managers
+    helper: "The organizers who look after the place and may change it. Admins can always change it."
+    add: Add a manager
+    search: Search for an organizer
+    empty: No organizer by that name
+    none: "No manager yet: only admins can change the place."
+    remove: "Remove {{name}} as manager"
   placement:
     label: Where the place is
     address: Address

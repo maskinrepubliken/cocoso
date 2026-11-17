@@ -12,6 +12,7 @@ import SettingsIcon from 'lucide-react/dist/esm/icons/settings';
 import { useAtomValue } from 'jotai';
 
 import { parseTitle } from '/imports/api/_utils/shared';
+import { managesPlace } from '/imports/api/resources/placeAccess';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import {
   canCreateContentAtom,
@@ -98,8 +99,8 @@ function useEditable(): Editable | null {
       : null;
   }
   if (data.resource?._id) {
-    // A place: the organizer who added it, and admins
-    return isAdmin || data.resource.userId === userId
+    // A place: those who look after it, and admins
+    return isAdmin || managesPlace(userId, data.resource)
       ? { context: 'resources', id: data.resource._id, item: data.resource }
       : null;
   }
@@ -112,7 +113,9 @@ function useEditable(): Editable | null {
     const page =
       data.pages.find((p: any) => parseTitle(p.title) === pageTitle) ||
       data.pages[0];
-    return isAdmin && page ? { context: 'info', id: page._id, item: page } : null;
+    return isAdmin && page
+      ? { context: 'info', id: page._id, item: page }
+      : null;
   }
   return null;
 }
@@ -154,8 +157,7 @@ function useGearItems(editable: Editable | null): GearItem[] {
     case 'activities':
       // An organizer archives an event before it can go; admins may
       // delete straight away
-      return isAdmin ||
-        (item.isArchived && item.authorId === currentUser._id)
+      return isAdmin || (item.isArchived && item.authorId === currentUser._id)
         ? [edit, remove]
         : [edit];
     case 'groups':

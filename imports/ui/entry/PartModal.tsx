@@ -11,6 +11,7 @@ import { Modal } from '/imports/ui/core';
 import { currentUserAtom, roleAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
 import { hasContact } from '/imports/api/_utils/contact';
+import { managesPlace } from '/imports/api/resources/placeAccess';
 import BookableChip from '/imports/ui/generic/BookableChip';
 import { ContactDetails } from '/imports/ui/generic/ContactDetails';
 import BookingInfo from '/imports/ui/pages/resources/components/BookingInfo';
@@ -82,12 +83,13 @@ export default function PartModal() {
   }
 
   const picture = getImageUrl(part?.images?.[0], 'medium');
-  // Edited by the organizer who added it, and by admins. It has no page
-  // to edit it from, so the pencil opens the form on its own page.
+  // Edited by those who look after it (or the place it is in), and by
+  // admins. It has no page to edit it from, so the pen opens the form on
+  // its own page.
   const canEdit =
     Boolean(part) &&
     (role === 'admin' ||
-      (role === 'contributor' && part.userId === currentUser?._id));
+      (role === 'contributor' && managesPlace(currentUser?._id, part)));
 
   return (
     <Modal

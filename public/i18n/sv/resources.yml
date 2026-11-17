@@ -8,6 +8,14 @@ messages:
   comborequires:
 
 form:
+  managers:
+    label: Förvaltare
+    helper: "Arrangörerna som tar hand om platsen och kan ändra den. Administratörer kan alltid ändra."
+    add: Lägg till förvaltare
+    search: Sök efter en arrangör
+    empty: Ingen arrangör med det namnet
+    none: "Ingen förvaltare än: bara administratörer kan ändra platsen."
+    remove: "Ta bort {{name}} som förvaltare"
   placement:
     label: Var platsen finns
     address: Adress

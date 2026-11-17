@@ -9,6 +9,7 @@ import { getSmtpSettings } from '../_utils/services/mails/smtp';
 import Works from '../works/work';
 import Groups from '../groups/group';
 import Memberships from '../memberships/membership';
+import Resources from '../resources/resource';
 import { getUserMemberships } from '../memberships/membership.helpers';
 import {
   ContactPattern,
@@ -471,6 +472,12 @@ Meteor.methods({
       // No more push to their browsers, no events followed
       await PushSubscriptions.removeAsync({ userId });
       await ActivityFollows.removeAsync({ userId });
+      // No longer among those who look after a place
+      await Resources.updateAsync(
+        { managerIds: userId },
+        { $pull: { managerIds: userId } },
+        { multi: true }
+      );
       Meteor.setTimeout(() => {
         Meteor.users.removeAsync(userId).catch((error) => {
           console.error('[deleteAccount] could not remove user', error);

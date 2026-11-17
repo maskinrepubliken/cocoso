@@ -3,7 +3,7 @@ import { Box, Checkbox, Text } from '/imports/ui/core';
 import { useTranslation } from 'react-i18next';
 import AutoCompleteSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
@@ -40,6 +40,9 @@ import BookingFields, {
   bookingValue,
 } from './components/BookingFields';
 import { RESOURCE_KINDS } from './resourceKinds';
+import ManagerFields from './components/ManagerFields';
+import { currentUserAtom, roleAtom } from '/imports/state';
+import type { OrganizerOption } from '/imports/ui/pages/activities/form/OrganizerFields';
 
 interface ResourceFormValues {
   label: string;
@@ -56,6 +59,7 @@ interface ResourceData extends ResourceFormValues {
   locationId?: string | null;
   parentId?: string | null;
   isUnlisted?: boolean;
+  managerIds?: string[];
   isCombo?: boolean;
   resourcesForCombo?: ResourceOption[];
   booking?: Booking | null;
@@ -157,6 +161,7 @@ const DRAFT_FIELDS = [
   'parentId',
   'placement',
   'resourcesForCombo',
+  'managerIds',
 ] as const;
 const TEXT_FIELDS = ['label', 'description'] as const;
 
@@ -168,8 +173,8 @@ export default function ResourceForm(props: ResourceFormProps) {
     props.resourceId
       ? `place:${props.resourceId}`
       : props.defaultParentId
-        ? `place:new:in:${props.defaultParentId}`
-        : 'place:new'
+      ? `place:new:in:${props.defaultParentId}`
+      : 'place:new'
   );
   return (
     <PlaceForm key={formKey} {...props} draftKey={key} onDiscard={discard} />
@@ -184,6 +189,11 @@ function PlaceForm({
   draftKey,
   onDiscard,
 }: ResourceFormProps & { draftKey: string; onDiscard: () => void }) {
+  const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
+  const [organizerOptions, setOrganizerOptions] = useState<OrganizerOption[]>(
+    []
+  );
   const [pristine] = useState<any>(() => ({
     isBookable: resource ? resource.isBookable : true,
     isCombo: resource ? resource.isCombo : false,
@@ -198,6 +208,10 @@ function PlaceForm({
     parentId: resource?.parentId || defaultParentId || null,
     isUnlisted: Boolean(resource?.isUnlisted),
     resourcesForCombo: resource ? resource.resourcesForCombo : [],
+    // Who looks after it: an organizer adding a place does, to begin with
+    managerIds:
+      resource?.managerIds ||
+      (!resource && role !== 'admin' && currentUser ? [currentUser._id] : []),
   }));
   // Editing: the place as saved, so a draft from before it was saved again
   // is dropped rather than undoing that
@@ -245,6 +259,9 @@ function PlaceForm({
 
   useEffect(() => {
     getResources();
+    call<OrganizerOption[]>('getOrganizerOptions', true)
+      .then((options) => setOrganizerOptions(options || []))
+      .catch(() => setOrganizerOptions([]));
   }, []);
 
   useEffect(() => {
@@ -308,6 +325,7 @@ function PlaceForm({
       parentId: isPart ? state.parentId : null,
       isUnlisted: Boolean(isPart && state.parentId && state.isUnlisted),
       resourcesForCombo: state.resourcesForCombo,
+      managerIds: state.managerIds,
     };
     if ((await onFinalize(newResource)) === true) {
       markSaved();
@@ -459,6 +477,17 @@ function PlaceForm({
               </FormField>
             </>
           )}
+        </FormCard>
+
+        <FormCard title={t('form.managers.label')}>
+          <p className="form-preview-note">{t('form.managers.helper')}</p>
+          <ManagerFields
+            options={organizerOptions}
+            value={state.managerIds}
+            onChange={(managerIds) =>
+              setState((prevState: any) => ({ ...prevState, managerIds }))
+            }
+          />
         </FormCard>
 
         <FormCard title={tc('contact.title')}>

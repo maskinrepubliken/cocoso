@@ -48,6 +48,7 @@ export default function EditResource() {
     locationId,
     parentId,
     isUnlisted,
+    managerIds,
     resourcesForCombo,
     title,
   }) => ({
@@ -64,6 +65,7 @@ export default function EditResource() {
     locationId,
     parentId,
     isUnlisted,
+    managerIds,
     resourcesForCombo,
     title,
   }))(resource);

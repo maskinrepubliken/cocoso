@@ -18,6 +18,11 @@ Resources.schema = new SimpleSchema({
   // A part left out of the list of places and a location's landing page;
   // search and its parent's page still show it.
   isUnlisted: { type: Boolean, optional: true },
+  // The organizers who look after the place and may change it, besides the
+  // admins (and the managers of the place it is part of); see
+  // canManagePlace in resource.methods.js. userId is who added it.
+  managerIds: { type: Array, optional: true, defaultValue: [] },
+  'managerIds.$': { type: String },
 
   label: { type: String },
   // The kinds of place, keys from imports/ui/pages/resources/resourceKinds.ts;
@@ -99,6 +104,7 @@ Resources.publicFields = {
   isCombo: 1,
   isUnlisted: 1,
   label: 1,
+  managerIds: 1,
   locationId: 1,
   parentId: 1,
   resourcesForCombo: 1,

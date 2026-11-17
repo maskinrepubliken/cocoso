@@ -76,6 +76,41 @@ async function findParent(parentId, resourceId) {
   return parent;
 }
 
+// Who may change a place: admins, its managers, and the managers of the
+// place it is part of (the library's look after its rooms).
+async function canManagePlace(userId, resource) {
+  if (await isAdmin(userId)) {
+    return true;
+  }
+  if (!(await isContributorOrAdmin(userId))) {
+    return false;
+  }
+  if ((resource.managerIds || []).includes(userId)) {
+    return true;
+  }
+  if (!resource.parentId) {
+    return false;
+  }
+  const parent = await Resources.findOneAsync(
+    { _id: resource.parentId },
+    { fields: { managerIds: 1 } }
+  );
+  return Boolean(parent?.managerIds?.includes(userId));
+}
+
+// The managers as given: organizers or admins, each once.
+async function cleanManagers(managerIds) {
+  check(managerIds, Match.Maybe([String]));
+  const ids = [...new Set(managerIds || [])];
+  const kept = [];
+  for (const id of ids) {
+    if (await isContributorOrAdmin(id)) {
+      kept.push(id);
+    }
+  }
+  return kept;
+}
+
 // The parts of a place have its address and location: after the place
 // changes, they and their own parts (and the events held there) follow.
 async function updateParts(resourceId, address, locationId) {
@@ -154,6 +189,8 @@ Meteor.methods({
       isUnlisted: 1,
       // the parent's address shows under "Del av"
       address: 1,
+      // its managers look after its parts too
+      managerIds: 1,
     };
     const [partOf, parts] = await Promise.all([
       resource.parentId
@@ -222,6 +259,11 @@ Meteor.methods({
     const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
     const booking = await cleanBooking(values.booking);
+    // An organizer who adds a place looks after it (unless they hand it to
+    // others right away); admins need not be named
+    const managerIds = await cleanManagers(
+      values.managerIds || ((await isAdmin(user._id)) ? [] : [user._id])
+    );
     const {
       contact: _contact,
       category: _category,
@@ -229,6 +271,7 @@ Meteor.methods({
       booking: _booking,
       parentId: _parentId,
       isUnlisted: _isUnlisted,
+      managerIds: _managerIds,
       ...rest
     } = values;
     try {
@@ -240,6 +283,7 @@ Meteor.methods({
         ...(parent ? { parentId: parent._id } : {}),
         ...(parent && values.isUnlisted ? { isUnlisted: true } : {}),
         kinds,
+        managerIds,
         locationId: locationId || undefined,
         userId: user._id,
         createdBy: user.username,
@@ -270,8 +314,7 @@ Meteor.methods({
     if (!resource) {
       throw new Meteor.Error('not-found', 'Resource not found');
     }
-    // A place is edited by the organizer who added it, and by admins
-    if (resource.userId !== user._id && !(await isAdmin(user._id))) {
+    if (!(await canManagePlace(user._id, resource))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     await validateLabel(values.label, resourceId);
@@ -286,10 +329,15 @@ Meteor.methods({
     const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
     const booking = await cleanBooking(values.booking);
+    const managerIds =
+      values.managerIds === undefined
+        ? undefined
+        : await cleanManagers(values.managerIds);
     const {
       _id,
       userId,
       createdBy,
+      managerIds: _managerIds,
       locationId: _locationId,
       parentId: _parentId,
       isUnlisted: _isUnlisted,
@@ -322,6 +370,7 @@ Meteor.methods({
           ...(parent ? { parentId: parent._id } : {}),
           ...(isUnlisted ? { isUnlisted } : {}),
           kinds,
+          ...(managerIds ? { managerIds } : {}),
           ...(locationId ? { locationId } : {}),
           updatedBy: user.username,
           updatedAt: new Date(),
