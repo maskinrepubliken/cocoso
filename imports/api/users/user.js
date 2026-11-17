@@ -27,7 +27,10 @@ Users.schema.UserProfile = {
     type: new SimpleSchema(Schemas.PublicContact),
     optional: true,
   },
-  // An organizer's address and place (ort): new events start from them.
+  // Where an organizer usually is, which new events start from: one of
+  // the places (homePlaceId), or else an address and place (ort) of their
+  // own. Not both.
+  homePlaceId: { type: String, optional: true },
   address: { type: new SimpleSchema(Schemas.Address), optional: true },
   locationId: { type: String, optional: true },
   lang: { type: String, optional: true },

@@ -66,6 +66,7 @@ export default function EditUserProfile() {
         },
         ...(user.isOrganizer
           ? {
+              homePlaceId: values.homePlaceId || null,
               address: values.address || null,
               locationId: values.locationId || null,
             }

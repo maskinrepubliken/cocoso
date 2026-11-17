@@ -125,7 +125,24 @@ const ProfilePattern = {
   publicContact: ContactPattern,
   address: AddressPattern,
   locationId: Match.Maybe(Match.OneOf(String, null)),
+  homePlaceId: Match.Maybe(Match.OneOf(String, null)),
 };
+
+// The place an organizer usually is at, when given: one that is listed
+// (not a room left out of the list).
+async function findHomePlace(homePlaceId) {
+  if (!homePlaceId) {
+    return null;
+  }
+  const place = await Resources.findOneAsync(
+    { _id: homePlaceId },
+    { fields: { _id: 1, label: 1, isUnlisted: 1, isBookable: 1, isCombo: 1 } }
+  );
+  if (!place || place.isUnlisted) {
+    throw new Meteor.Error('not-found', 'No such place');
+  }
+  return place;
+}
 
 async function requireAdminUser() {
   const user = await Meteor.userAsync();
@@ -136,11 +153,22 @@ async function requireAdminUser() {
 }
 
 async function writeProfile(userId, values) {
-  const { publicContact, address, locationId, ...rest } = values;
+  const { publicContact, address, locationId, homePlaceId, ...rest } = values;
   const set = { ...rest };
   const unset = {};
+  // One of the places, or an address of one's own: a place given
+  // replaces the address
+  const homePlace =
+    'homePlaceId' in values ? await findHomePlace(homePlaceId) : undefined;
+  if (homePlace) {
+    set.homePlaceId = homePlace._id;
+    unset.address = 1;
+    unset.locationId = 1;
+  } else if (homePlace === null) {
+    unset.homePlaceId = 1;
+  }
   // The address and place new events start from; empty clears them.
-  if ('address' in values) {
+  if ('address' in values && !homePlace) {
     const cleaned = await withCoordinates(cleanAddress(address));
     if (cleaned) {
       set.address = cleaned;
@@ -148,7 +176,7 @@ async function writeProfile(userId, values) {
       unset.address = 1;
     }
   }
-  if ('locationId' in values) {
+  if ('locationId' in values && !homePlace) {
     if (locationId) {
       set.locationId = locationId;
     } else {
@@ -280,6 +308,7 @@ Meteor.methods({
           publicContact: 1,
           address: 1,
           locationId: 1,
+          homePlaceId: 1,
           avatar: 1,
         },
       }
@@ -362,12 +391,17 @@ Meteor.methods({
         publicContact: 1,
         address: 1,
         locationId: 1,
+        homePlaceId: 1,
         avatar: 1,
       },
     });
     if (!organizer) {
       throw new Meteor.Error('not-found', 'No such organizer');
     }
+    // The place they are at, if it is still there
+    const homePlace = organizer.homePlaceId
+      ? await findHomePlace(organizer.homePlaceId).catch(() => null)
+      : null;
     return {
       _id: organizer._id,
       username: organizer.username,
@@ -376,6 +410,14 @@ Meteor.methods({
       publicContact: organizer.publicContact || null,
       address: organizer.address || null,
       locationId: organizer.locationId || null,
+      homePlace: homePlace
+        ? {
+            _id: homePlace._id,
+            label: homePlace.label,
+            isBookable: homePlace.isBookable,
+            isCombo: homePlace.isCombo,
+          }
+        : null,
       avatar: organizer.avatar?.src || null,
     };
   },

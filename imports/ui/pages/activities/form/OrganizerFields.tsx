@@ -10,6 +10,7 @@ import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 import ContactFields from '/imports/ui/forms/ContactFields';
 import type { Contact } from '/imports/api/_utils/contact';
 import type { Address } from '/imports/api/_utils/address';
+import type { SelectedResource } from '/imports/ui/types';
 
 import ChoiceChips, { type Choice } from './ChoiceChips';
 import PersonCard, { PersonAvatar, personName } from './PersonCard';
@@ -29,6 +30,8 @@ export interface OrganizerDefaults extends OrganizerOption {
   publicContact: Contact | null;
   address: Address | null;
   locationId: string | null;
+  // The place they usually are at, if they gave one
+  homePlace?: SelectedResource | null;
 }
 
 export interface OrganizerRef {

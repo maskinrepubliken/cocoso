@@ -326,8 +326,9 @@ function ActivityForm({
   }, [state.authorId]);
 
   // Where the event is, once the organizer's address is known: a new event
-  // starts at it (or at a place when there is none); an event being edited
-  // shows the organizer's address when it is the same one.
+  // starts at the organizer's place or address (or at the place picker when
+  // there is neither); an event being edited shows the organizer's address
+  // when it is the same one.
   useEffect(() => {
     if (state.whereMode || !author) {
       return;
@@ -340,11 +341,17 @@ function ActivityForm({
     } else if (activity) {
       whereMode = activity.place || activity.locationId ? 'own' : 'place';
     } else {
-      whereMode = author.address ? 'organizer' : 'place';
+      whereMode = author.address && !author.homePlace ? 'organizer' : 'place';
     }
+    const startAtHome = !activity && Boolean(author.homePlace);
     setState((prevState: any) => ({
       ...prevState,
       whereMode,
+      // A new event starts at the place the organizer is at
+      selectedResource:
+        startAtHome && !prevState.selectedResource
+          ? author.homePlace
+          : prevState.selectedResource,
       // An address of its own starts in the organizer's place
       locationId: prevState.locationId || author.locationId || null,
       locationPicked: prevState.locationPicked || Boolean(author.locationId),

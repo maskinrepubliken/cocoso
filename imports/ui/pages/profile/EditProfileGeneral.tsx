@@ -46,6 +46,7 @@ export default function EditProfileGeneral() {
       // Only organizers have an address and place on their profile
       ...(contactRequired
         ? {
+            homePlaceId: values.homePlaceId || null,
             address: values.address || null,
             locationId: values.locationId || null,
           }

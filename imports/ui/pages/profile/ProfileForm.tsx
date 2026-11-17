@@ -1,5 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 import { useTranslation } from 'react-i18next';
 
 import { Button, Flex, Heading, Input, Text } from '/imports/ui/core';
@@ -12,6 +14,11 @@ import {
 import AddressFields from '/imports/ui/forms/AddressFields';
 import LocationSelect from '/imports/ui/forms/LocationSelect';
 import { message } from '/imports/ui/generic/message';
+import { call } from '/imports/api/_utils/shared';
+import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
+import PlacePicker, {
+  type PlaceOption,
+} from '/imports/ui/pages/activities/form/PlacePicker';
 
 import FormField from '../../forms/FormField';
 import Quill from '../../forms/Quill';
@@ -26,7 +33,9 @@ interface ProfileFormValues {
     phone?: string;
     website?: string;
   } | null;
-  // An organizer's address and place: new events start from them.
+  // Where an organizer usually is, which new events start from: one of the
+  // places, or an address and place (ort) of their own.
+  homePlaceId?: string | null;
   address?: Partial<Address> | null;
   locationId?: string | null;
 }
@@ -43,10 +52,23 @@ function ProfileForm({
   defaultValues,
   onSubmit,
 }: ProfileFormProps) {
-  const { control, formState, handleSubmit, register } = useForm({
+  const { control, formState, handleSubmit, register, setValue } = useForm({
     defaultValues,
   });
   const { isDirty, isSubmitting } = formState;
+  // At one of the places, or at an address of their own
+  const [where, setWhere] = useState<'place' | 'own'>(
+    defaultValues.homePlaceId ? 'place' : 'own'
+  );
+  const [places, setPlaces] = useState<PlaceOption[]>([]);
+  useEffect(() => {
+    if (!contactRequired) {
+      return;
+    }
+    call<PlaceOption[]>('getResourcesDry')
+      .then((all) => setPlaces((all || []).filter((p) => !p.isUnlisted)))
+      .catch(() => setPlaces([]));
+  }, [contactRequired]);
 
   const [t] = useTranslation('members');
   const [tc] = useTranslation('common');
@@ -59,11 +81,16 @@ function ProfileForm({
             message.error(tc('contact.errors.required'));
             return;
           }
+          if (where === 'place') {
+            // A place stands for the address
+            onSubmit({ ...data, address: null, locationId: null });
+            return;
+          }
           if (hasAddress(data.address) && !isCompleteAddress(data.address)) {
             message.error(tc('address.errors.required'));
             return;
           }
-          onSubmit(data);
+          onSubmit({ ...data, homePlaceId: null });
         })}
       >
         <Flex direction="column" gap="6">
@@ -137,28 +164,72 @@ function ProfileForm({
               <Text size="sm" css={{ color: 'var(--cocoso-mylla-soft)' }}>
                 {t('profile.form.address.helper')}
               </Text>
-              <Controller
-                control={control}
-                name="address"
-                render={({ field }) => (
-                  <AddressFields
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                )}
+              <ChoiceChips
+                label={t('profile.form.address.title')}
+                value={where}
+                choices={[
+                  {
+                    value: 'place',
+                    label: t('profile.form.address.place'),
+                    icon: <MapPinIcon aria-hidden />,
+                    content: (
+                      <Controller
+                        control={control}
+                        name="homePlaceId"
+                        render={({ field }) => (
+                          <PlacePicker
+                            places={places}
+                            selectedId={field.value}
+                            onPick={(place) => field.onChange(place._id)}
+                          />
+                        )}
+                      />
+                    ),
+                  },
+                  {
+                    value: 'own',
+                    label: t('profile.form.address.own'),
+                    icon: <PencilLineIcon aria-hidden />,
+                    content: (
+                      <>
+                        <Controller
+                          control={control}
+                          name="address"
+                          render={({ field }) => (
+                            <AddressFields
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          )}
+                        />
+                        <FormField label={t('profile.form.address.location')}>
+                          <Controller
+                            control={control}
+                            name="locationId"
+                            render={({ field }) => (
+                              <LocationSelect
+                                value={field.value}
+                                onChange={(choice) =>
+                                  field.onChange(choice.locationId)
+                                }
+                              />
+                            )}
+                          />
+                        </FormField>
+                      </>
+                    ),
+                  },
+                ]}
+                onChange={(choice) => {
+                  setWhere(choice);
+                  // the choice alone is a change worth saving
+                  setValue(
+                    'homePlaceId',
+                    choice === 'own' ? null : defaultValues.homePlaceId || null,
+                    { shouldDirty: true }
+                  );
+                }}
               />
-              <FormField label={t('profile.form.address.location')}>
-                <Controller
-                  control={control}
-                  name="locationId"
-                  render={({ field }) => (
-                    <LocationSelect
-                      value={field.value}
-                      onChange={(choice) => field.onChange(choice.locationId)}
-                    />
-                  )}
-                />
-              </FormField>
             </>
           )}
 

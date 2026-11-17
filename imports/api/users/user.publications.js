@@ -25,6 +25,7 @@ Meteor.publish('currentUser', function () {
         publicContact: 1,
         address: 1,
         locationId: 1,
+        homePlaceId: 1,
         username: 1,
       },
     }
