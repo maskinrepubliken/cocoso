@@ -158,13 +158,21 @@ export async function getUser({ params }) {
   const { usernameSlug, slug } = params;
   const username = (usernameSlug || slug)?.replace('@', '');
   const user = await call('getUserInfo', username);
-  const events = user
-    ? await call('getPublicActivitiesByUser', username)
-    : { upcoming: [], past: [] };
+  const [events, places] = user
+    ? await Promise.all([
+        call('getPublicActivitiesByUser', username),
+        // the place(s) they are linked to
+        call('getPlacesOfOrganizer', username),
+      ])
+    : [
+        { upcoming: [], past: [] },
+        { main: null, others: [] },
+      ];
 
   return {
     user,
     events,
+    places,
   };
 }
 

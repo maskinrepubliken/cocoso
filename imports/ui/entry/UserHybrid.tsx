@@ -8,7 +8,6 @@ import MailIcon from 'lucide-react/dist/esm/icons/mail';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
-import { styled } from '/stitches.config';
 import { Alert, Box, Center, Flex } from '/imports/ui/core';
 import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
@@ -17,6 +16,11 @@ import Notice from '/imports/ui/generic/Notice';
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { currentUserAtom, locationsAtom, roleAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
+import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+
+import EventCards from './EventCards';
+import PlaceSummary, { type SummaryPlace } from './PlaceSummary';
+import { PartCards, PlaceCard } from './ResourceHybrid';
 
 import EntryHero, {
   Actions,
@@ -69,13 +73,6 @@ interface PublicContact {
   phone?: string;
   website?: string;
 }
-
-// Events as the listing's cards; also on a place's page
-export const EventCards = styled('div', {
-  display: 'grid',
-  gap: '1rem',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
-});
 
 // The ways to reach them they chose to make public.
 function ContactLinks({ contact }: { contact?: PublicContact | null }) {
@@ -241,21 +238,35 @@ interface User {
   publicContact?: PublicContact | null;
 }
 
+// The places an organizer is linked to (getPlacesOfOrganizer): one shown
+// whole, the rest as small cards
+interface OrganizerPlaces {
+  main: SummaryPlace | null;
+  others: { _id: string; label: string; images?: string[] }[];
+}
+
 export interface UserHybridProps {
   events?: Events;
+  places?: OrganizerPlaces;
   user: User | null;
   siteDoc: Site;
 }
 
 // An organizer's page: a card with their picture, who they are and how to
 // reach them, then the events they organize.
-export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
+export default function UserHybrid({
+  events,
+  places,
+  user,
+  siteDoc,
+}: UserHybridProps) {
   const { workId } = useParams<{ workId?: string }>();
   const { pathname } = useLocation();
   const [tc] = useTranslation('common');
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const revalidator = useRevalidator();
+  const prefix = useLocationPrefix();
 
   // The server renders the page for an anonymous visitor, without the
   // archived events; fetch again once we know this is the person or an admin.
@@ -360,7 +371,24 @@ export default function UserHybrid({ events, user, siteDoc }: UserHybridProps) {
           </Box>
         </Center>
       ) : (
-        <OrganizerEvents events={events} name={name} />
+        <>
+          {/* The place they are at, much as its own page shows it */}
+          {places?.main && <PlaceSummary place={places.main} />}
+          {places?.others?.length ? (
+            <EntryColumn>
+              <PartCards>
+                {places.others.map((place) => (
+                  <PlaceCard
+                    key={place._id}
+                    place={place}
+                    to={`${prefix}/resources/${place._id}`}
+                  />
+                ))}
+              </PartCards>
+            </EntryColumn>
+          ) : null}
+          <OrganizerEvents events={events} name={name} />
+        </>
       )}
     </EntryPage>
   );

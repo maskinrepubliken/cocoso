@@ -248,6 +248,58 @@ Meteor.methods({
       .sort((a, b) => a.username.localeCompare(b.username));
   },
 
+  // The places an organizer is linked to, for their page: their own place
+  // (homePlaceId) first, then those they look after or are booked through.
+  // The first comes whole, with its parts; the rest as small cards.
+  async getPlacesOfOrganizer(username) {
+    check(username, String);
+    const user = await Meteor.users.findOneAsync(
+      { username },
+      { fields: { _id: 1, homePlaceId: 1 } }
+    );
+    if (!user) {
+      return { main: null, others: [] };
+    }
+    const linked = await Resources.find(
+      {
+        $or: [
+          ...(user.homePlaceId ? [{ _id: user.homePlaceId }] : []),
+          { managerIds: user._id },
+          { 'booking.contactUserId': user._id },
+        ],
+        isUnlisted: { $ne: true },
+      },
+      {
+        fields: {
+          _id: 1,
+          label: 1,
+          images: { $slice: 1 },
+          isBookable: 1,
+          booking: 1,
+        },
+        sort: { label: 1 },
+      }
+    ).fetchAsync();
+    if (linked.length === 0) {
+      return { main: null, others: [] };
+    }
+    const first =
+      linked.find((place) => place._id === user.homePlaceId) || linked[0];
+    const main = await attachBookingPerson(
+      await Resources.findOneAsync(first._id, {
+        fields: Resources.publicFields,
+      })
+    );
+    const parts = await Resources.find(
+      { parentId: first._id },
+      { fields: { _id: 1, label: 1, isUnlisted: 1 }, sort: { label: 1 } }
+    ).fetchAsync();
+    return {
+      main: main ? { ...main, parts } : null,
+      others: linked.filter((place) => place._id !== first._id),
+    };
+  },
+
   async getResourceBookingsForUser(resourceId) {
     const user = await Meteor.userAsync();
 

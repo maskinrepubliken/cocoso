@@ -23,7 +23,7 @@ import {
   personName,
   type Person,
 } from '/imports/ui/pages/activities/form/PersonCard';
-import { EventCards } from './UserHybrid';
+import EventCards from './EventCards';
 import {
   AddressDetails,
   ContactDetails,
@@ -213,7 +213,7 @@ const PartPicture = styled('span', {
   },
 });
 
-const PartCards = styled('div', {
+export const PartCards = styled('div', {
   display: 'grid',
   gap: '0.75rem',
   gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
@@ -221,7 +221,7 @@ const PartCards = styled('div', {
 
 // A place as a small card: its name (and whether it can be booked) and
 // its picture at the right, under "Här finns" for the parts.
-function PlaceCard({ place, to }: { place: PlaceLink; to: To }) {
+export function PlaceCard({ place, to }: { place: PlaceLink; to: To }) {
   const src = getImageUrl(place.images?.[0], 'small');
   return (
     <PartCard preventScrollReset to={to}>
