@@ -1934,6 +1934,25 @@ body {
   white-space: normal;
 }
 
+/* A cancelled event: struck through, after a small lingon label */
+.cal-event-cancelled {
+  background: var(--cocoso-lingon);
+  border-radius: 999px;
+  color: white;
+  flex-shrink: 0;
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-right: 0.3rem;
+  padding: 0 0.4rem;
+}
+
+.cal-event-text.is-cancelled,
+.cal-day-what strong.is-cancelled .cal-day-title {
+  text-decoration: line-through;
+}
+
 .cal-event-repeat {
   flex-shrink: 0;
   opacity: 0.75;

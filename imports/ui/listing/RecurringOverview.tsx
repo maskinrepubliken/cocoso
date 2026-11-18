@@ -163,6 +163,10 @@ const Pill = styled('span', {
   variants: {
     kind: {
       recurring: {},
+      cancelled: {
+        background: 'var(--cocoso-lingon)',
+        color: 'white',
+      },
       now: {
         '&::before': {
           background: 'var(--cocoso-colors-theme-600)',
@@ -484,10 +488,20 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
                       : timeSpan(occurrence.startTime, occurrence.endTime)}
                   </Time>
                   <What>
-                    <strong>{activity.title}</strong>
+                    <strong
+                      style={
+                        activity.cancelledAt
+                          ? { textDecoration: 'line-through' }
+                          : undefined
+                      }
+                    >
+                      {activity.title}
+                    </strong>
                     <small>{placeText(activity, placeOf)}</small>
                   </What>
-                  {ongoing ? (
+                  {activity.cancelledAt ? (
+                    <Pill kind="cancelled">{t('event.cancelled.tag')}</Pill>
+                  ) : ongoing ? (
                     <Pill kind="now">{t('recurring.now')}</Pill>
                   ) : pattern ? (
                     <Pill kind="recurring">
@@ -624,9 +638,18 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
                   })}
                 >
                   <b>{timeSpan(slot.startTime, slot.endTime)}</b>
-                  <strong>{activity.title}</strong>
+                  <strong
+                    style={
+                      activity.cancelledAt
+                        ? { textDecoration: 'line-through' }
+                        : undefined
+                    }
+                  >
+                    {activity.title}
+                  </strong>
                   <small>
                     {[
+                      activity.cancelledAt ? t('event.cancelled.tag') : null,
                       placeText(activity, placeOf),
                       pattern.intervalWeeks === 2
                         ? t('recurring.everyOtherWeek')

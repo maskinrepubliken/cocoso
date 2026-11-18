@@ -2,6 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { Navigate } from 'react-big-calendar';
 import RepeatIcon from 'lucide-react/dist/esm/icons/repeat';
+import { useTranslation } from 'react-i18next';
 
 // The calendar's day view, drawn on paper instead of react-big-calendar's
 // time grid: one row per event, in time order, with the place's colour as
@@ -15,6 +16,7 @@ interface DayEvent {
   isMultipleDay?: boolean;
   resource?: string;
   isRecurring?: boolean;
+  isCancelled?: boolean;
   ink?: string;
 }
 
@@ -28,6 +30,7 @@ interface DayViewProps {
 }
 
 function DayView({ date, events, onSelectEvent, localizer }: DayViewProps) {
+  const [tc] = useTranslation('common');
   const dayStart = dayjs(date).startOf('day');
   const dayEnd = dayjs(date).endOf('day');
   const todays = events
@@ -70,9 +73,14 @@ function DayView({ date, events, onSelectEvent, localizer }: DayViewProps) {
                     ).format('HH:mm')}`}
               </span>
               <span className="cal-day-what">
-                <strong>
+                <strong className={event.isCancelled ? 'is-cancelled' : ''}>
                   {event.isRecurring && <RepeatIcon width={13} height={13} />}
-                  {event.title}
+                  {event.isCancelled && (
+                    <span className="cal-event-cancelled">
+                      {tc('event.cancelled.tag')}
+                    </span>
+                  )}
+                  <span className="cal-day-title">{event.title}</span>
                 </strong>
                 {event.resource && <small>{event.resource}</small>}
               </span>

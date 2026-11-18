@@ -45,6 +45,7 @@ interface Activity {
   groupId?: string;
   isGroupPrivate?: boolean;
   images?: string[];
+  cancelledAt?: Date;
 }
 
 interface Resource {
@@ -74,6 +75,7 @@ interface Booking {
   groupId?: string;
   isGroupPrivate?: boolean;
   images?: string[];
+  isCancelled?: boolean;
   isNoResource?: boolean;
   resource?: string;
   resourceId?: string;
@@ -232,6 +234,7 @@ function helper_parseAllBookingsWithResources(
     groupId: activity.groupId,
     isGroupPrivate: activity.isGroupPrivate,
     images: activity.images,
+    isCancelled: Boolean(activity.cancelledAt),
   };
 }
 

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { CSVLink } from 'react-csv';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { styled } from '/stitches.config';
-import { Button } from '/imports/ui/core';
+import { Button, Modal, Textarea } from '/imports/ui/core';
 import DeleteEntryHandler from '/imports/ui/entry/DeleteEntryHandler';
 import { roleAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
@@ -44,6 +44,7 @@ interface OrganizerToolsSectionProps {
     title?: string;
     isPublicActivity?: boolean;
     isArchived?: boolean;
+    cancelledAt?: Date;
   };
   occurrence?: Occurrence | null;
 }
@@ -70,6 +71,38 @@ export default function OrganizerToolsSection({
   const fileName = `${activity.title || 'event'} ${
     occurrence?.startDate || ''
   }.csv`;
+
+  // Calling the event off asks for the organizer's words on why first
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelText, setCancelText] = useState('');
+  const [audience, setAudience] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const askCancel = () => {
+    setIsCancelling(true);
+    call('getActivityAudience', activity._id)
+      .then((count) => setAudience(count as number))
+      .catch(() => setAudience(null));
+  };
+
+  const setCancelled = async (cancelled: boolean) => {
+    setBusy(true);
+    try {
+      await (cancelled
+        ? call('cancelActivity', activity._id, cancelText)
+        : call('uncancelActivity', activity._id));
+      message.success(
+        tc(cancelled ? 'event.tools.cancelled' : 'event.tools.uncancelled')
+      );
+      setIsCancelling(false);
+      setCancelText('');
+      revalidator.revalidate();
+    } catch (error: any) {
+      message.error(error.reason || error.error);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const setArchived = async (archived: boolean) => {
     try {
@@ -168,6 +201,25 @@ export default function OrganizerToolsSection({
           </>
         ) : (
           <>
+            {activity.cancelledAt ? (
+              <Button
+                disabled={busy}
+                size="sm"
+                variant="outline"
+                onClick={() => setCancelled(false)}
+              >
+                {tc('event.tools.uncancel')}
+              </Button>
+            ) : (
+              <Button
+                colorScheme="red"
+                size="sm"
+                variant="outline"
+                onClick={askCancel}
+              >
+                {tc('event.tools.cancel')}
+              </Button>
+            )}
             <Button
               colorScheme="red"
               size="sm"
@@ -195,9 +247,33 @@ export default function OrganizerToolsSection({
         </Muted>
       )}
 
-      {activity.isPublicActivity && !activity.isArchived && (
-        <SendUpdate activityId={activity._id} />
-      )}
+      {activity.isPublicActivity &&
+        !activity.isArchived &&
+        !activity.cancelledAt && <SendUpdate activityId={activity._id} />}
+
+      <Modal
+        confirmButtonProps={{ isLoading: busy, isDisabled: busy }}
+        confirmText={tc('event.tools.cancel')}
+        id="event-cancel-confirm"
+        open={isCancelling}
+        title={tc('event.tools.cancel')}
+        onClose={() => setIsCancelling(false)}
+        onConfirm={() => setCancelled(true)}
+      >
+        <p>{tc('event.tools.cancelIntro')}</p>
+        <Textarea
+          maxLength={2000}
+          placeholder={tc('event.tools.cancelMessage')}
+          rows={3}
+          value={cancelText}
+          onChange={(event) => setCancelText(event.target.value)}
+        />
+        {activity.isPublicActivity && audience !== null && (
+          <Muted css={{ marginTop: '0.5rem' }}>
+            {tc('event.tools.cancelAudience', { count: audience })}
+          </Muted>
+        )}
+      </Modal>
 
       <DeleteEntryHandler context="activities" item={activity as any} />
     </Section>

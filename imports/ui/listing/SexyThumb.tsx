@@ -12,6 +12,7 @@ import {
   getWeeklyPattern,
 } from '/imports/api/activities/recurrence';
 import { locationsAtom } from '/imports/state';
+import { Badge } from '/imports/ui/core';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
@@ -108,6 +109,9 @@ const Title = styled('h3', {
   letterSpacing: '-0.005em',
   lineHeight: 1.15,
   margin: 0,
+  variants: {
+    cancelled: { true: { textDecoration: 'line-through' } },
+  },
 });
 
 const SubTitle = styled('p', {
@@ -165,6 +169,14 @@ const More = styled('span', {
   fontFamily: 'var(--cocoso-font-ui)',
   fontSize: '0.8rem',
   fontWeight: 700,
+});
+
+// Called off: said in the corner the date leaves free
+const TopLeft = styled('div', {
+  left: '0.7rem',
+  position: 'absolute',
+  top: '0.7rem',
+  zIndex: 1,
 });
 
 const TopRight = styled('div', {
@@ -292,6 +304,7 @@ interface Activity {
   kinds?: string[] | null;
   resource?: string;
   place?: string;
+  cancelledAt?: Date;
 }
 
 export interface SexyThumbProps {
@@ -308,6 +321,7 @@ function SexyThumb({
   tags,
 }: SexyThumbProps) {
   const locations = useAtomValue(locationsAtom);
+  const [tc] = useTranslation('common');
 
   if (!activity) {
     return null;
@@ -359,6 +373,14 @@ function SexyThumb({
         )}
       </Picture>
 
+      {activity.cancelledAt && (
+        <TopLeft>
+          <Badge colorScheme="red" size="md" variant="solid">
+            {tc('event.cancelled.tag')}
+          </Badge>
+        </TopLeft>
+      )}
+
       {headline && (
         <TopRight>
           <AlmanacDate occurrence={headline} />
@@ -366,7 +388,7 @@ function SexyThumb({
       )}
 
       <Body>
-        <Title>{title}</Title>
+        <Title cancelled={Boolean(activity.cancelledAt)}>{title}</Title>
         {/* The rhythm right under the title; the description stays on the
             event's own page */}
         {isWeekly && (

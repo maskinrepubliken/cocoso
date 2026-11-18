@@ -114,6 +114,18 @@ const SubTitle = styled('p', {
   margin: '0 0 0.6rem',
 });
 
+// Called off: lingon, above the description, with the organizer's words
+const Cancelled = styled('div', {
+  background: 'var(--cocoso-lingon-100)',
+  borderLeft: '4px solid var(--cocoso-lingon)',
+  borderRadius: '0.5rem',
+  color: 'var(--cocoso-lingon)',
+  margin: '1rem 0',
+  padding: '0.75rem 1rem',
+  '& strong': { display: 'block', fontSize: '1.125rem' },
+  '& p': { margin: '0.25rem 0 0', whiteSpace: 'pre-line' },
+});
+
 const Tags = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
@@ -167,6 +179,8 @@ interface Activity {
   images?: string[];
   isPublicActivity?: boolean;
   isArchived?: boolean;
+  cancelledAt?: Date;
+  cancelMessage?: string;
   isRegistrationDisabled?: boolean;
   isRegistrationEnabled?: boolean;
   capacity?: number;
@@ -363,7 +377,7 @@ export default function ActivityHybrid({
                 locationName,
                 address: activity.placeAddress || activity.address,
                 organizer,
-                isArchived: activity.isArchived,
+                isCancelled: Boolean(activity.cancelledAt),
               })
             : null
         }
@@ -397,16 +411,25 @@ export default function ActivityHybrid({
         <HeroText>
           <Title>{activity.title}</Title>
           {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
-          {(locationName || activity.isArchived) && (
+          {(locationName || activity.isArchived || activity.cancelledAt) && (
             <Tags>
               <LocationTag
                 isMunicipalityOnly={activity.isMunicipalityOnly}
                 locationId={activity.locationId}
               />
+              {activity.cancelledAt && (
+                <Tag colorScheme="red">{tc('event.cancelled.tag')}</Tag>
+              )}
               {activity.isArchived && (
                 <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
               )}
             </Tags>
+          )}
+          {activity.cancelledAt && (
+            <Cancelled role="status">
+              <strong>{tc('event.cancelled.notice')}</strong>
+              {activity.cancelMessage && <p>{activity.cancelMessage}</p>}
+            </Cancelled>
           )}
           {activity.isArchived && (
             <Notice>{tc('event.archived.onlyYou')}</Notice>

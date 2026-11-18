@@ -503,6 +503,18 @@ event:
     archiveFirst: "An event has to be archived before it can be deleted."
     archived: "The event is archived and no longer listed."
     unarchived: "The event is back in the listings."
+    cancel: "Cancel event"
+    uncancel: "Resume event"
+    cancelIntro: "The event stays listed, marked as cancelled, and sign-up closes. You can resume it later."
+    cancelMessage: "Why is it cancelled? (optional, shown on the page and in the email)"
+    cancelAudience_one: "{{count}} person signed up or following gets an email in a few minutes."
+    cancelAudience_other: "{{count}} people signed up or following get an email in a few minutes."
+    cancelled: "The event is cancelled."
+    uncancelled: "The event is no longer cancelled."
+  cancelled:
+    tag: "Cancelled"
+    notice: "This event is cancelled"
+    registration: "The event is cancelled, so sign-up is closed."
   archived:
     tag: "Archived"
     notFound: "This event is not available."

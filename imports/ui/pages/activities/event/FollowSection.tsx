@@ -43,7 +43,7 @@ interface Update {
 }
 
 interface FollowSectionProps {
-  activity: { _id: string; isArchived?: boolean };
+  activity: { _id: string; isArchived?: boolean; cancelledAt?: Date };
   // Every date is behind us: nothing left to follow
   isOver: boolean;
 }
@@ -92,7 +92,7 @@ export default function FollowSection({
     }
   };
 
-  const canFollow = !activity.isArchived && !isOver;
+  const canFollow = !activity.isArchived && !activity.cancelledAt && !isOver;
   if (!canFollow && updates.length === 0) {
     return null;
   }

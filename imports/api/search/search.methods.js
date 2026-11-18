@@ -85,6 +85,7 @@ async function searchActivities(words, locationId, user, limit = PER_KIND) {
         groupId: 1,
         locationId: 1,
         isMunicipalityOnly: 1,
+        cancelledAt: 1,
         images: { $slice: 1 },
         resource: 1,
         place: 1,

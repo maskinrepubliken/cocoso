@@ -29,6 +29,7 @@ interface CalendarActivity {
   ink?: string;
   tint?: string;
   isRecurring?: boolean;
+  isCancelled?: boolean;
 }
 
 interface CalendarViewProps {
@@ -41,12 +42,20 @@ interface CalendarViewProps {
 // How an event reads in a cell or a list row: a repeat mark for the weekly
 // ones, then the title. The place's colour comes from the wrapper.
 function EventContent({ event }: { event: CalendarActivity }) {
+  const [tc] = useTranslation('common');
   return (
     <span className="cal-event-title">
       {event.isRecurring && (
         <RepeatIcon className="cal-event-repeat" width={12} height={12} />
       )}
-      <span className="cal-event-text">{event.title}</span>
+      {event.isCancelled && (
+        <span className="cal-event-cancelled">{tc('event.cancelled.tag')}</span>
+      )}
+      <span
+        className={`cal-event-text${event.isCancelled ? ' is-cancelled' : ''}`}
+      >
+        {event.title}
+      </span>
     </span>
   );
 }

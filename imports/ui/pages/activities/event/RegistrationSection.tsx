@@ -148,6 +148,7 @@ interface RegistrationSectionProps {
     capacity?: number;
     isRegistrationDisabled?: boolean;
     isRegistrationEnabled?: boolean;
+    cancelledAt?: Date;
   };
   occurrence: Occurrence;
   occurrenceIndex: number;
@@ -291,12 +292,14 @@ export default function RegistrationSection({
   const registrationClosed =
     Boolean(activity.isRegistrationDisabled) ||
     activity.isRegistrationEnabled === false;
-  const canSignUp = !registrationClosed && !isPast && !isFull;
+  // Called off: no new sign-ups, but one made can still be undone below
+  const isCancelled = Boolean(activity.cancelledAt);
+  const canSignUp = !isCancelled && !registrationClosed && !isPast && !isFull;
 
   return (
     <Section
       aside={
-        left !== null && !isPast
+        left !== null && !isPast && !isCancelled
           ? tc('event.attendees.left', { count: left, capacity })
           : null
       }
@@ -304,7 +307,9 @@ export default function RegistrationSection({
       order={3}
       title={tc('event.sections.register')}
     >
-      {registrationClosed ? (
+      {isCancelled ? (
+        <Status>{tc('event.cancelled.registration')}</Status>
+      ) : registrationClosed ? (
         <Status>{tc('event.register.closed')}</Status>
       ) : isPast ? (
         <Status>{tc('event.register.past')}</Status>

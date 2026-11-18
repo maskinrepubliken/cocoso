@@ -500,6 +500,18 @@ event:
     archiveFirst: "Ett evenemang måste arkiveras innan det kan tas bort."
     archived: "Evenemanget är arkiverat och visas inte längre i listorna."
     unarchived: "Evenemanget är tillbaka i listorna."
+    cancel: "Ställ in evenemang"
+    uncancel: "Återuppta evenemang"
+    cancelIntro: "Evenemanget ligger kvar i listorna, märkt som inställt, och anmälan stängs. Du kan återuppta det senare."
+    cancelMessage: "Varför är det inställt? (valfritt, visas på sidan och i mejlet)"
+    cancelAudience_one: "{{count}} person som är anmäld eller följer får ett mejl om några minuter."
+    cancelAudience_other: "{{count}} personer som är anmälda eller följer får ett mejl om några minuter."
+    cancelled: "Evenemanget är inställt."
+    uncancelled: "Evenemanget är inte längre inställt."
+  cancelled:
+    tag: "Inställt"
+    notice: "Det här evenemanget är inställt"
+    registration: "Evenemanget är inställt, så anmälan är stängd."
   archived:
     tag: "Arkiverat"
     notFound: "Det här evenemanget är inte tillgängligt."

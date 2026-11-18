@@ -67,7 +67,7 @@ export interface EventData {
   locationName?: string | null;
   address?: Partial<Address> | null;
   organizer?: { name: string; url?: string } | null;
-  isArchived?: boolean;
+  isCancelled?: boolean;
 }
 
 // One Event per date still to come (at most ten), or the last one once
@@ -105,7 +105,7 @@ export function eventStructuredData(event: EventData): object[] | null {
     ...(event.images.length ? { image: event.images } : {}),
     startDate: zonedDateTime(d.startDate, d.startTime),
     endDate: zonedDateTime(d.endDate || d.startDate, d.endTime || d.startTime),
-    eventStatus: event.isArchived
+    eventStatus: event.isCancelled
       ? 'https://schema.org/EventCancelled'
       : 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
