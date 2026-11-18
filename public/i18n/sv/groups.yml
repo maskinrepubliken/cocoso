@@ -201,7 +201,8 @@ groupForm:
     privateHelp: Bara medlemmar ser gruppen, och man går med genom en inbjudan från en gruppägare. En privat grupp kan inte göras öppen senare.
     locked: Gruppen är privat och kan inte göras öppen.
   where: Var
-  contactHelp: Hur allmänheten når gruppen. En e-postadress eller ett telefonnummer krävs.
+  contactHelp: Hur allmänheten når gruppen – via en av gruppägarna och kontaktuppgifterna i deras profil, eller andra uppgifter. En e-postadress eller ett telefonnummer krävs.
+  ownerContactMissing: Gruppägaren har ingen e-postadress eller telefon i sin profil. Välj en annan, eller ange andra uppgifter.
 
 # Inviting to a private group (pages/groups/InviteManager.tsx)
 inviteDialog:

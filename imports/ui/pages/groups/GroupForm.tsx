@@ -21,8 +21,25 @@ import { message } from '/imports/ui/generic/message';
 import { currentUserAtom } from '/imports/state';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { call } from '/imports/api/_utils/shared';
 import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
 import FormCard from '/imports/ui/pages/activities/form/FormCard';
+import {
+  ContactPreview,
+  OWN_CONTACT,
+} from '/imports/ui/pages/activities/form/OrganizerFields';
+import { PersonAvatar } from '/imports/ui/pages/activities/form/PersonCard';
+import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
+
+// An owner, as getGroupOwnerContacts gives them
+interface OwnerContact {
+  _id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string | null;
+  publicContact?: Contact | null;
+}
 
 import groupFormFields from './groupFormFields';
 
@@ -35,6 +52,8 @@ interface GroupFormValues {
 interface GroupData extends GroupFormValues {
   isPrivate?: boolean;
   contact?: Contact | null;
+  // The owner whose profile's contact details the group shows
+  contactUserId?: string | null;
   imageUrl?: string;
   locationId?: string | null;
   isMunicipalityOnly?: boolean;
@@ -60,6 +79,7 @@ const DRAFT_FIELDS = [
   'isPrivate',
   'locationId',
   'isMunicipalityOnly',
+  'contactChoice',
   'contact',
 ] as const;
 const TEXT_FIELDS = ['title', 'readingMaterial', 'description'] as const;
@@ -84,6 +104,7 @@ export default function GroupForm(props: GroupFormProps) {
 
 function GroupEntryForm({
   group,
+  groupId,
   onFinalize,
   draftKey,
   onDiscard,
@@ -91,13 +112,20 @@ function GroupEntryForm({
   const currentUser = useAtomValue(currentUserAtom);
   const [t] = useTranslation('groups');
   const [tc] = useTranslation('common');
+  // The event form's words for the same choice
+  const [ta] = useTranslation('activities');
   const [pristine] = useState<any>(() => ({
     isPrivate: Boolean(group?.isPrivate),
     locationId: group?.locationId || null,
     isMunicipalityOnly: Boolean(group?.isMunicipalityOnly),
-    // A new group starts from its author's own public contact details
-    contact: (group?.contact ||
-      (currentUser as any)?.publicContact ||
+    // Whose contact details the group shows, as in the event form: an
+    // owner's (their user id; a new group's creator to begin with) or the
+    // group's own
+    contactChoice:
+      group?.contactUserId ||
+      (group ? OWN_CONTACT : (currentUser as any)?._id || OWN_CONTACT),
+    // Its own details; a group shown through an owner has none
+    contact: ((!group?.contactUserId && group?.contact) ||
       emptyContact) as Contact,
   }));
   // Editing: the group as saved, so a draft from before it was saved again
@@ -133,6 +161,20 @@ function GroupEntryForm({
   // A private group cannot be made open again
   const isLockedPrivate = Boolean(group?.isPrivate);
 
+  // The owners who may be its contact, with their profiles' details
+  const [owners, setOwners] = useState<OwnerContact[]>([]);
+  useEffect(() => {
+    call('getGroupOwnerContacts', groupId || null)
+      .then((found) => setOwners((found as OwnerContact[]) || []))
+      .catch(() => setOwners([]));
+  }, [groupId]);
+  // An owner no longer an owner falls back to the group's own details
+  const isOwnContact =
+    state.contactChoice === OWN_CONTACT ||
+    (owners.length > 0 &&
+      !owners.some((owner) => owner._id === state.contactChoice));
+  const contactOwner = owners.find((o) => o._id === state.contactChoice);
+
   useEffect(() => {
     if (!loaders || !loaders.isCreating) {
       return;
@@ -144,9 +186,17 @@ function GroupEntryForm({
   }, [loaders?.isCreating]);
 
   const handleSubmit = (formValues: GroupFormValues) => {
-    // Every group can be reached by email or phone.
-    if (!isReachable(state.contact)) {
-      message.formError(tc('contact.errors.required'));
+    // Every group can be reached by email or phone: its own details, or the
+    // chosen owner's profile
+    const reachable = isOwnContact
+      ? isReachable(state.contact)
+      : isReachable(contactOwner?.publicContact);
+    if (!reachable) {
+      message.formError(
+        isOwnContact
+          ? tc('contact.errors.required')
+          : t('groupForm.ownerContactMissing')
+      );
       return;
     }
     set({ formValues });
@@ -160,7 +210,8 @@ function GroupEntryForm({
     const newGroup: GroupData = {
       ...state.formValues,
       isPrivate: state.isPrivate,
-      contact: state.contact,
+      contact: isOwnContact ? state.contact : null,
+      contactUserId: isOwnContact ? null : state.contactChoice,
       imageUrl,
       locationId: state.locationId,
       isMunicipalityOnly: state.isMunicipalityOnly,
@@ -242,11 +293,42 @@ function GroupEntryForm({
           />
         </FormCard>
 
+        {/* As in the event form: one of the owners, shown with their
+          profile's details, or details of the group's own */}
         <FormCard title={tc('contact.title')}>
           <p className="form-preview-note">{t('groupForm.contactHelp')}</p>
-          <ContactFields
-            value={state.contact}
-            onChange={(contact) => set({ contact })}
+          <ChoiceChips
+            label={tc('contact.title')}
+            value={isOwnContact ? OWN_CONTACT : state.contactChoice}
+            choices={[
+              ...owners.map((owner) => ({
+                value: owner._id,
+                label:
+                  owner._id === currentUser?._id
+                    ? ta('form.contact.standard')
+                    : owner.firstName || owner.username,
+                icon: <PersonAvatar person={owner} size={26} />,
+                content: (
+                  <ContactPreview
+                    contact={owner.publicContact}
+                    empty={ta('form.contact.none')}
+                    person={owner}
+                  />
+                ),
+              })),
+              {
+                value: OWN_CONTACT,
+                label: ta('form.contact.own'),
+                icon: <PencilLineIcon aria-hidden />,
+                content: (
+                  <ContactFields
+                    value={state.contact}
+                    onChange={(contact) => set({ contact })}
+                  />
+                ),
+              },
+            ]}
+            onChange={(contactChoice) => set({ contactChoice })}
           />
         </FormCard>
       </GenericEntryForm>

@@ -16,9 +16,11 @@ Groups.schema = new SimpleSchema({
   title: { type: String },
   description: { type: String },
   readingMaterial: { type: String },
-  // How to reach the group. Every group has an email or a phone
-  // (requireContact in _utils/contact.ts).
-  contact: { type: new SimpleSchema(Schemas.PublicContact) },
+  // How to reach the group: one of its owners, whose public contact details
+  // are shown (contactUserId), or details of its own (contact) that have an
+  // email or a phone. See group.contact.js.
+  contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
+  contactUserId: { type: String, optional: true },
   imageUrl: { type: String },
   imageUrlLegacy: { type: String, optional: true },
   imagesLegacy: { type: Array, optional: true },

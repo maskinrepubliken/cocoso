@@ -201,7 +201,8 @@ groupForm:
     privateHelp: Only members see the group, and one joins through an invitation from an admin. A private group cannot be made open later.
     locked: The group is private and cannot be made open.
   where: Where
-  contactHelp: How the public reaches the group. An email address or a phone number is required.
+  contactHelp: How the public reaches the group – through one of its owners and the contact details in their profile, or other details. An email address or a phone number is required.
+  ownerContactMissing: The owner has no email or phone in their profile. Choose another, or give other details.
 
 # Inviting to a private group (pages/groups/InviteManager.tsx)
 inviteDialog:

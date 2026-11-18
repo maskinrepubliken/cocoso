@@ -37,6 +37,7 @@ export default function EditGroup() {
   const groupFields = (({
     capacity,
     contact,
+    contactUserId,
     description,
     imageUrl,
     locationId,
@@ -47,6 +48,7 @@ export default function EditGroup() {
   }) => ({
     capacity,
     contact,
+    contactUserId,
     description,
     imageUrl,
     locationId,

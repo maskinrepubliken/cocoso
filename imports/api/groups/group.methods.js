@@ -9,7 +9,11 @@ import {
 
 import { isAdmin, isContributorOrAdmin, isMember } from '../users/user.roles';
 import { getSite } from '../site/site';
-import { requireContact } from '../_utils/contact';
+import {
+  attachGroupContact,
+  cleanGroupContact,
+  ownerIdsOf,
+} from './group.contact';
 import { featureMethods } from '../_utils/features';
 import Groups from './group';
 import Activities from '../activities/activity';
@@ -68,7 +72,7 @@ const groupMethods = {
         }
       }
 
-      return group;
+      return await attachGroupContact(group);
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch group");
     }
@@ -106,7 +110,7 @@ const groupMethods = {
       groupId
     );
 
-    return {
+    return attachGroupContact({
       ...group,
       meetings: groupActivities
         .map((a) => ({
@@ -120,7 +124,7 @@ const groupMethods = {
           address: a.address,
         }))
         .sort(compareDatesWithStartDateForSort),
-    };
+    });
   },
 
   async getGroupsWithMeetings(locationId) {
@@ -233,14 +237,20 @@ const groupMethods = {
       throw new Meteor.Error('Not allowed!');
     }
 
-    const contact = requireContact(formValues.contact);
+    // Its creator, its first owner, or details of its own
+    const contactFields = await cleanGroupContact(formValues, [user._id]);
+    const {
+      contact: _contact,
+      contactUserId: _contactUserId,
+      ...groupValues
+    } = formValues;
 
     const userAvatar = user.avatar ? user.avatar.src : null;
 
     try {
       const newGroupId = await Groups.insertAsync({
-        ...formValues,
-        contact,
+        ...groupValues,
+        ...contactFields,
         locationId: formValues.locationId || undefined,
         isMunicipalityOnly:
           !formValues.locationId && Boolean(formValues.isMunicipalityOnly),
@@ -296,19 +306,32 @@ const groupMethods = {
       throw new Meteor.Error('You are not allowed!');
     }
 
-    const contact = requireContact(values.contact);
-    const { locationId, ...safeValues } = values;
+    // One of its owners, or details of its own; the other one goes
+    const contactFields = await cleanGroupContact(
+      values,
+      ownerIdsOf(theGroup)
+    );
+    const {
+      locationId,
+      contact: _contact,
+      contactUserId: _contactUserId,
+      ...safeValues
+    } = values;
+    const unset = {
+      ...(locationId ? {} : { locationId: 1 }),
+      ...(contactFields.contactUserId ? { contact: 1 } : { contactUserId: 1 }),
+    };
 
     try {
       await Groups.updateAsync(groupId, {
         $set: {
           ...safeValues,
-          contact,
+          ...contactFields,
           ...(locationId ? { locationId } : {}),
           isMunicipalityOnly:
             !locationId && Boolean(safeValues.isMunicipalityOnly),
         },
-        ...(locationId ? {} : { $unset: { locationId: 1 } }),
+        $unset: unset,
       });
 
       await Activities.updateAsync(

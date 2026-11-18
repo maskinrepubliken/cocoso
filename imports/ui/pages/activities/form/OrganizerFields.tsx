@@ -67,7 +67,7 @@ function OrganizerRow({ organizer }: { organizer: OrganizerOption }) {
 
 // A person and their public contact details, as the event page will show
 // them: a card like the chosen place's
-function ContactPreview({
+export function ContactPreview({
   person,
   contact,
   empty,
