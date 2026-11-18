@@ -899,6 +899,8 @@ contact:
 # Eat/shop/stay; in common because SSR only loads common
 # What a place offers (imports/api/offerings): Äta, handla & bo
 offerings:
+  # A commercial place offering nothing yet, on Äta, handla & bo
+  other: More places
   kinds:
     eat: Food & coffee
     stay: Accommodation
@@ -906,28 +908,41 @@ offerings:
     shop: For sale
   form:
     title: "Eat, shop & stay – {{place}}"
-    helper: "What the place offers. A place that offers something is listed under Eat, shop & stay instead of Places, and is the same place in every other way."
-    switch:
-      eat: The place offers food or coffee
-      stay: The place offers accommodation
-      service: The place offers services
-      shop: The place sells something
-    switchHelper: "Shown on the place's page and under Eat, shop & stay."
+    general: Commercial place
+    offeringsTitle: Offerings
+    none: No offerings yet.
+    add: Add an offering
+    addKind: What kind?
+    remove: Remove the offering
+    commercial: A commercial place with offerings
+    commercialHelper: "Listed under Eat, shop & stay."
+    consequences: "A commercial place is listed under Eat, shop & stay instead of Places, with what it offers on its page. Otherwise it stays the same place: the same page, managers and events. Switched off, its offerings are removed when you save."
+    tagline: Tagline
+    taglineHelper: "A line under the place's name."
+    taglineHolder: Sourdough bakery and café
+    defaultContact: Website and contact
+    defaultContactHelper: "Optional. Used by every offering that has none of its own."
+    defaultHours: Opening hours
+    defaultHoursHelper: "Optional. Used by every offering that has none of its own."
+    kind: Kind of offering
+    offeringTitle: Name
+    offeringTitleHelper: "E.g. Café or The farm shop. Without one, the kind is shown."
+    offeringTitleHolder: Café
     description: Info
-    descriptionHelper: "What is offered, such as the menu, rooms, services or range, and prices."
+    descriptionHelper: "What is offered, e.g. a menu, rooms, services or a range, and prices."
     contact: Website and contact
-    contactHelper: "Optional. When it differs from the place's, such as the restaurant's bookings or the hotel's reception."
-    hours: Opening hours
-    hoursHelper: "Optional. Opening hours for this offering."
+    contactHelper: "Optional. Leave empty to use the place's, or give e.g. the restaurant's booking."
+    ownHours: Own opening hours
+    ownHoursHelper: "Otherwise the place's opening hours apply. Without any times, no hours are shown for it."
     hoursNote: About the hours
-    hoursNoteHelper: "What the week does not say, such as holidays or summer closing."
+    hoursNoteHelper: "What the week does not say, e.g. holidays."
     hoursNoteHolder: Closed weeks 29–31
     opens: Opens
     closes: Closes
     removeOpening: Remove the time
     addOpening: Open
     addOpeningMore: More times
-    saved: The offerings are saved
+    saved: Eat, shop & stay is saved
 
 businesses:
   hours: Opening hours

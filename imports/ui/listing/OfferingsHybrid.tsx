@@ -256,16 +256,25 @@ const StatusLine = styled('div', {
   '&:empty': { display: 'none' },
 });
 
-// Whether an offering is open, worked out only in the browser (see
-// useNow); null on the server and for one without opening hours.
-function useOpenState(offering: any) {
+// An offering's own hours and note, or else its place's
+const hoursOf = (offering: any, place: any) =>
+  Array.isArray(offering?.openingHours)
+    ? { hours: offering.openingHours, note: offering.hoursNote }
+    : {
+        hours: place.commerce?.openingHours || [],
+        note: place.commerce?.hoursNote,
+      };
+
+// Whether it is open by these hours, worked out only in the browser (see
+// useNow); null on the server and without opening hours.
+function useOpenState(hours: any[]) {
   const now = useNow();
-  if (!now || !offering?.openingHours?.length) {
+  if (!now || !hours?.length) {
     return null;
   }
   return {
-    state: openState(offering.openingHours, now),
-    today: formatDay(offering.openingHours, isoDay(now)),
+    state: openState(hours, now),
+    today: formatDay(hours, isoDay(now)),
   };
 }
 
@@ -323,7 +332,8 @@ function PlaceCard({
   showPlace,
 }: {
   place: any;
-  kind: Kind;
+  // A kind it offers, or "other" for a place offering nothing yet
+  kind: string;
   // The place's tag on the picture, when the page is not already one place
   showPlace: boolean;
 }) {
@@ -335,8 +345,12 @@ function PlaceCard({
   const prefix = place ? `/${place.slug}` : '';
   const excerpt = excerptOf(offering, business);
   const address = formatAddress(business.address);
-  const phone = offering?.contact?.phone || business.contact?.phone;
-  const open = useOpenState(offering);
+  const phone =
+    offering?.contact?.phone ||
+    business.commerce?.contact?.phone ||
+    business.contact?.phone;
+  const { hours, note } = hoursOf(offering, business);
+  const open = useOpenState(hours);
 
   return (
     <Card style={kindVars(kind)} to={`${prefix}/resources/${business._id}`}>
@@ -367,6 +381,7 @@ function PlaceCard({
         )}
         <Overlay>
           <h3>{business.label}</h3>
+          {business.commerce?.tagline && <p>{business.commerce.tagline}</p>}
         </Overlay>
       </Picture>
       <Body>
@@ -374,7 +389,7 @@ function PlaceCard({
           <OpenStatus open={open} />
         </StatusLine>
         {excerpt && <Excerpt>{excerpt}</Excerpt>}
-        {(address || phone || offering?.hoursNote) && (
+        {(address || phone || note) && (
           <Facts>
             {address && (
               <span>
@@ -388,7 +403,7 @@ function PlaceCard({
                 {phone}
               </span>
             )}
-            {offering?.hoursNote && <span>{offering?.hoursNote}</span>}
+            {note && <span>{note}</span>}
           </Facts>
         )}
       </Body>
@@ -424,29 +439,38 @@ export default function OfferingsHybrid({
   // order by name holds within each step. It needs the clock, so the
   // server renders by name and the browser reorders once mounted.
   const now = useNow();
-  const rank = (offering: any) => {
+  const rank = (offering: any, place: any) => {
+    const { hours } = hoursOf(offering, place);
     if (!now) {
       return 0;
     }
-    if (!offering?.openingHours?.length) {
+    if (!hours.length) {
       return 2;
     }
-    const state = openState(offering.openingHours, now);
+    const state = openState(hours, now);
     if (state.open) {
       return 0;
     }
     return state.next?.day === isoDay(now) ? 1 : 3;
   };
 
-  const sections = OFFERING_KINDS.map((kind) => ({
-    kind,
-    items: shown
-      .map((b) => ({ b, o: b.offerings?.find((o: any) => o.kind === kind) }))
-      .filter(({ o }) => o)
-      .map(({ b, o }) => ({ b, r: rank(o) }))
-      .sort((x, y) => x.r - y.r)
-      .map(({ b }) => b),
-  })).filter(({ items }) => items.length > 0);
+  const sections = OFFERING_KINDS.map(
+    (kind): { kind: string; items: any[] } => ({
+      kind,
+      items: shown
+        .map((b) => ({ b, o: b.offerings?.find((o: any) => o.kind === kind) }))
+        .filter(({ o }) => o)
+        .map(({ b, o }) => ({ b, r: rank(o, b) }))
+        .sort((x, y) => x.r - y.r)
+        .map(({ b }) => b),
+    })
+  )
+    // A commercial place offering nothing yet, last
+    .concat({
+      kind: 'other',
+      items: shown.filter((b) => !b.offerings?.length),
+    })
+    .filter(({ items }) => items.length > 0);
 
   return (
     <>
@@ -470,7 +494,9 @@ export default function OfferingsHybrid({
         {sections.map(({ kind, items }) => (
           <Section key={kind} style={kindVars(kind)}>
             <SectionHead>
-              {t(`offerings.kinds.${kind}`)}
+              {kind === 'other'
+                ? t('offerings.other')
+                : t(`offerings.kinds.${kind}`)}
               <span className="count">
                 {t('businesses.count', { count: items.length })}
               </span>

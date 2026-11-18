@@ -8494,10 +8494,150 @@ body {
   margin: -24px 0 12px;
 }
 
-/* --- What a place offers: the editor's opening hours (OpeningHoursFields) --- */
+/* --- What a place offers: the Äta, handla & bo editor (OfferingsEditor) and its opening hours (OpeningHoursFields) --- */
 
-.offering-tab {
-  padding-top: 18px;
+/* The editor itself: what is chosen on the left, the place and its
+   offerings listed on the right (above it on a phone) */
+.commerce-editor {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  align-items: start;
+}
+
+.commerce-pane {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.commerce-list {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+  padding: 10px;
+  border-radius: var(--cocoso-radius-kort, 12px);
+  background: color-mix(in srgb, var(--cocoso-linje) 25%, var(--cocoso-papper));
+  font-family: var(--cocoso-font-ui);
+}
+
+.commerce-list-title {
+  margin: 12px 6px 2px;
+  color: var(--cocoso-tegel);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.commerce-list-empty {
+  margin: 2px 6px;
+  color: var(--cocoso-mylla-soft);
+  font-size: 13px;
+}
+
+.commerce-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.commerce-item,
+.commerce-item-select {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.commerce-item-select {
+  display: grid;
+}
+
+.commerce-item-select span {
+  color: var(--cocoso-mylla-soft);
+  font-size: 12px;
+}
+
+.commerce-item:hover {
+  background: color-mix(in srgb, var(--cocoso-linje) 35%, transparent);
+}
+
+.commerce-item.is-selected {
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
+}
+
+.commerce-add {
+  justify-self: start;
+  margin-top: 6px;
+}
+
+.commerce-kinds {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.commerce-kinds > span {
+  margin: 0 6px 2px;
+  color: var(--cocoso-mylla-soft);
+}
+
+.commerce-kind-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.commerce-kind-choice button {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--cocoso-linje);
+  border-radius: 999px;
+  background: var(--cocoso-papper);
+  font-family: var(--cocoso-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.commerce-kind-choice button.is-selected {
+  border-color: var(--cocoso-colors-theme-700);
+  background: var(--cocoso-colors-theme-700);
+  color: white;
+}
+
+@media (max-width: 760px) {
+  .commerce-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .commerce-list {
+    grid-column: 1;
+    position: static;
+  }
+
+  .commerce-pane {
+    grid-row: 2;
+  }
 }
 
 .opening-hours-fields {

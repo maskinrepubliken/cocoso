@@ -3,11 +3,12 @@ import SimpleSchema from 'simpl-schema';
 import { Schemas } from '../_utils/schemas';
 import { OFFERING_KINDS } from './offeringKinds';
 
-// What a place offers commercially: food and coffee, rooms, services or
-// things for sale, one of each at most. A place with an offering is shown
-// under Äta, handla & bo instead of Platser, and is a place in every other
-// way (its page, its managers, events held there). Edited from the gear on
-// the place's page, by those who may change the place.
+// What a commercial place (resource.isCommercial) offers: food and coffee,
+// rooms, services or things for sale, as many of each as it likes, e.g. a
+// café and a restaurant. The place is shown under Äta, handla & bo instead
+// of Platser, and is a place in every other way (its page, its managers,
+// events held there). Edited from the gear on the place's page, by those
+// who may change the place.
 const Offerings = new Mongo.Collection('offerings');
 
 Offerings.schema = new SimpleSchema({
@@ -15,16 +16,21 @@ Offerings.schema = new SimpleSchema({
   // The place it is at
   resourceId: { type: String },
   kind: { type: String, allowedValues: [...OFFERING_KINDS] },
+  // Its name, e.g. "Kafé" or "Gårdsbutiken"; without one, the kind's name
+  title: { type: String, optional: true },
+  // Its place in the place's list, from 0
+  order: { type: SimpleSchema.Integer, optional: true },
 
   // What is offered, as rich text
   description: { type: String, optional: true },
   // Website, email, phone and a name for this offering, e.g. the hotel's
-  // reception rather than the place as a whole
+  // reception; without one, the place's (resource.commerce.contact)
   contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
 
-  // Weekly hours, optional: one entry per opening, `day` 1 (Monday) to
-  // 7 (Sunday). A day without an entry is closed.
-  openingHours: { type: Array, optional: true, defaultValue: [] },
+  // Its own weekly hours: one entry per opening, `day` 1 (Monday) to
+  // 7 (Sunday). A day without an entry is closed. Absent: the place's
+  // (resource.commerce.openingHours); empty: no hours (e.g. rooms).
+  openingHours: { type: Array, optional: true },
   'openingHours.$': new SimpleSchema({
     day: { type: SimpleSchema.Integer, min: 1, max: 7 },
     opens: { type: String, regEx: /^\d{2}:\d{2}$/ },
@@ -51,6 +57,8 @@ Offerings.publicFields = {
   _id: 1,
   resourceId: 1,
   kind: 1,
+  title: 1,
+  order: 1,
   description: 1,
   contact: 1,
   openingHours: 1,

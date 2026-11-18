@@ -120,20 +120,12 @@ async function updateParts(resourceId, address, locationId) {
 Meteor.methods({
   async getResources(locationId) {
     check(locationId, Match.Maybe(String));
-    const fields = Resources.publicFields;
-    const [places, commercialIds] = await Promise.all([
-      Resources.find(locationSelector(locationId), {
-        fields,
-        sort: { createdAt: -1 },
-      }).fetchAsync(),
-      Offerings.rawCollection().distinct('resourceId'),
-    ]);
-    // A place that offers something is listed under Äta, handla & bo
+    // A commercial place (isCommercial) is listed under Äta, handla & bo
     // instead of Platser (see the loaders)
-    const commercial = new Set(commercialIds);
-    return places.map((place) =>
-      commercial.has(place._id) ? { ...place, isCommercial: true } : place
-    );
+    return await Resources.find(locationSelector(locationId), {
+      fields: Resources.publicFields,
+      sort: { createdAt: -1 },
+    }).fetchAsync();
   },
 
   async getResourcesDry() {
@@ -195,7 +187,7 @@ Meteor.methods({
     // What it offers, shown on its page
     const offerings = await Offerings.find(
       { resourceId: resource._id },
-      { fields: Offerings.publicFields }
+      { fields: Offerings.publicFields, sort: { order: 1 } }
     ).fetchAsync();
     return { ...resource, partOf: partOf || null, parts, offerings };
   },

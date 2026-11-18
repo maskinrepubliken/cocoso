@@ -896,6 +896,8 @@ contact:
 # Äta/handla/bo; in common because SSR only loads common
 # What a place offers (imports/api/offerings): Äta, handla & bo
 offerings:
+  # A commercial place offering nothing yet, on Äta, handla & bo
+  other: Fler ställen
   kinds:
     eat: Mat & fika
     stay: Boende
@@ -903,19 +905,32 @@ offerings:
     shop: Försäljning
   form:
     title: "Äta, handla & bo – {{place}}"
-    helper: "Vad platsen erbjuder. En plats som erbjuder något visas under Äta, handla & bo i stället för under Platser, och är i övrigt samma plats."
-    switch:
-      eat: Platsen erbjuder mat eller fika
-      stay: Platsen erbjuder boende
-      service: Platsen erbjuder tjänster
-      shop: Platsen säljer något
-    switchHelper: "Visas på platsens sida och under Äta, handla & bo."
+    general: Kommersiell plats
+    offeringsTitle: Erbjudanden
+    none: Inga erbjudanden än.
+    add: Lägg till erbjudande
+    addKind: Vilken sort?
+    remove: Ta bort erbjudandet
+    commercial: Kommersiell plats med erbjudanden
+    commercialHelper: "Visas under Äta, handla & bo."
+    consequences: "En kommersiell plats visas under Äta, handla & bo i stället för under Platser, med det den erbjuder på sin sida. I övrigt är den samma plats: samma sida, förvaltare och evenemang. Stänger du av det tas erbjudandena bort när du sparar."
+    tagline: Tagline
+    taglineHelper: "En rad under platsens namn."
+    taglineHolder: Surdegsbageri och kafé
+    defaultContact: Hemsida och kontakt
+    defaultContactHelper: "Valfritt. Gäller alla erbjudanden som inte har egna."
+    defaultHours: Öppettider
+    defaultHoursHelper: "Valfritt. Gäller alla erbjudanden som inte har egna."
+    kind: Sorts erbjudande
+    offeringTitle: Namn
+    offeringTitleHelper: "Till exempel Kafé eller Gårdsbutiken. Annars visas sorten."
+    offeringTitleHolder: Kafé
     description: Info
     descriptionHelper: "Vad som erbjuds, till exempel meny, rum, tjänster eller sortiment, och priser."
     contact: Hemsida och kontakt
-    contactHelper: "Valfritt. Om det skiljer sig från platsens, till exempel restaurangens bokning eller hotellets reception."
-    hours: Öppettider
-    hoursHelper: "Valfritt. Öppettider för just det här erbjudandet."
+    contactHelper: "Valfritt. Lämna tomt för platsens, eller ange till exempel restaurangens bokning."
+    ownHours: Egna öppettider
+    ownHoursHelper: "Annars gäller platsens öppettider. Utan några tider visas inga öppettider för erbjudandet."
     hoursNote: Om öppettiderna
     hoursNoteHelper: "Det veckan inte säger, till exempel helgdagar eller semester."
     hoursNoteHolder: Stängt vecka 29–31
@@ -924,7 +939,7 @@ offerings:
     removeOpening: Ta bort tiden
     addOpening: Öppet
     addOpeningMore: Fler tider
-    saved: Erbjudandena är sparade
+    saved: Äta, handla & bo är sparat
 
 businesses:
   hours: Öppettider

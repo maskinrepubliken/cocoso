@@ -72,6 +72,33 @@ Resources.schema = new SimpleSchema({
     optional: true,
   },
 
+  // A commercial place: listed under Äta, handla & bo instead of Platser,
+  // with what it offers in the offerings collection. Set from the gear's
+  // "Äta, handla & bo" (savePlaceCommerce in offering.methods.js).
+  isCommercial: { type: Boolean, optional: true },
+  // What a commercial place says of itself, and the defaults its
+  // offerings use when they say nothing of their own
+  commerce: {
+    type: new SimpleSchema({
+      // A line under its name, e.g. "Surdegsbageri och kafé"
+      tagline: { type: String, optional: true },
+      // Phone, email and website
+      contact: {
+        type: new SimpleSchema(Schemas.PublicContact),
+        optional: true,
+      },
+      // Weekly hours, one entry per opening, day 1 (Monday) to 7 (Sunday)
+      openingHours: { type: Array, optional: true },
+      'openingHours.$': new SimpleSchema({
+        day: { type: SimpleSchema.Integer, min: 1, max: 7 },
+        opens: { type: String, regEx: /^\d{2}:\d{2}$/ },
+        closes: { type: String, regEx: /^\d{2}:\d{2}$/ },
+      }),
+      hoursNote: { type: String, optional: true },
+    }),
+    optional: true,
+  },
+
   createdBy: { type: String, optional: true },
   createdAt: { type: Date, optional: true },
   updatedBy: { type: String, optional: true },
@@ -91,6 +118,8 @@ Resources.publicFields = {
   description: 1,
   images: 1,
   isUnlisted: 1,
+  isCommercial: 1,
+  commerce: 1,
   label: 1,
   managerIds: 1,
   locationId: 1,

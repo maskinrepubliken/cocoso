@@ -16,13 +16,13 @@ import {
   openState,
   useNow,
 } from '/imports/ui/pages/businesses/hours';
-import { OFFERING_KINDS } from '/imports/api/offerings/offeringKinds';
 
 import { EntryColumn, Panel, RichText, SectionHead } from './EntryHero';
 
 export interface PlaceOffering {
   _id: string;
   kind: string;
+  title?: string;
   description?: string;
   contact?: Contact | null;
   openingHours?: Opening[];
@@ -158,32 +158,33 @@ export function OfferingHours({
   );
 }
 
-// What the place offers, as part of its page: a section for each, headed
-// by what it is (Mat & fika, Boende …), with what is offered and how to
-// reach it beside its opening hours.
+// What the place offers, as part of its page and in its order: a section
+// for each, headed by its name or else its kind (Mat & fika, Boende …),
+// with what is offered and how to reach it beside its own opening hours.
+// One without hours or contact of its own goes by the place's, shown
+// beside the page.
 export default function PlaceOfferings({
   offerings,
 }: {
   offerings?: PlaceOffering[];
 }) {
   const [tc] = useTranslation('common');
-  const sorted = [...(offerings || [])].sort(
-    (a, b) =>
-      OFFERING_KINDS.indexOf(a.kind as never) -
-      OFFERING_KINDS.indexOf(b.kind as never)
-  );
+  const sorted = offerings || [];
 
   return (
     <>
       {sorted.map((offering) => {
         const withHours = Boolean(
-          offering.openingHours?.length || offering.hoursNote
+          Array.isArray(offering.openingHours) &&
+            (offering.openingHours.length || offering.hoursNote)
         );
         const withContact = hasContact(offering.contact);
         return (
           <EntryColumn key={offering._id}>
             <SectionHead>
-              <h2>{tc(`offerings.kinds.${offering.kind}`)}</h2>
+              <h2>
+                {offering.title || tc(`offerings.kinds.${offering.kind}`)}
+              </h2>
             </SectionHead>
             <Panel>
               <Layout

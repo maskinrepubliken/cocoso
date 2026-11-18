@@ -39,7 +39,11 @@ import { shareText } from '/imports/ui/layout/ShareMeta';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { placeStructuredData } from '/imports/ui/utils/structuredData';
 
-import PlaceOfferings, { type PlaceOffering } from './PlaceOfferings';
+import PlaceOfferings, {
+  OfferingHours,
+  type PlaceOffering,
+} from './PlaceOfferings';
+import type { Opening } from '/imports/ui/pages/businesses/hours';
 import EntryHero, {
   Chip,
   EntryColumn,
@@ -69,7 +73,15 @@ interface Resource {
   // The place it is part of, and the places that are part of it
   partOf?: PlaceLink | null;
   parts?: PlaceLink[];
-  // What it offers: food, a bed, services, things for sale
+  // A commercial place (Äta, handla & bo): its tagline and the defaults
+  // of what it offers, and what it offers
+  isCommercial?: boolean;
+  commerce?: {
+    tagline?: string;
+    contact?: Contact | null;
+    openingHours?: Opening[];
+    hoursNote?: string;
+  } | null;
   offerings?: PlaceOffering[];
 }
 
@@ -345,7 +357,7 @@ export default function ResourceHybrid({
   ).filter((img): img is string => Boolean(img));
 
   // Back to the list it is in: Äta, handla & bo when it offers something
-  const listing = resource.offerings?.length ? 'businesses' : 'resources';
+  const listing = resource.isCommercial ? 'businesses' : 'resources';
   const listingInMenu = siteDoc?.settings?.menu?.find(
     (item) => item.name === listing
   );
@@ -356,6 +368,17 @@ export default function ResourceHybrid({
   const shareImage = resourceShareImageUrl(resource) || undefined;
 
   const withContact = hasContact(resource.contact);
+  // A commercial place's own hours and contact, which its offerings use
+  // unless they have their own
+  const commerce = resource.isCommercial ? resource.commerce : null;
+  const withCommerce = Boolean(
+    commerce?.openingHours?.length ||
+      commerce?.hoursNote ||
+      hasContact(commerce?.contact)
+  );
+  const kinds = [
+    ...new Set((resource.offerings || []).map((offering) => offering.kind)),
+  ];
   // A part of another place is where that place is: the card says so, and
   // the sidebar has no address or map of its own, only who to ask
   const { partOf } = resource;
@@ -400,14 +423,15 @@ export default function ResourceHybrid({
             <>
               <LocationTag locationId={resource.locationId} />
               <BookableChip place={resource} />
-              {resource.offerings?.map((offering) => (
-                <Chip accent key={offering._id}>
-                  {tc(`offerings.kinds.${offering.kind}`)}
+              {kinds.map((kind) => (
+                <Chip accent key={kind}>
+                  {tc(`offerings.kinds.${kind}`)}
                 </Chip>
               ))}
             </>
           }
           html={resource.description}
+          subtitle={commerce?.tagline}
           meta={
             resource.capacity ? (
               <span>
@@ -440,12 +464,13 @@ export default function ResourceHybrid({
       {withAddress ||
       partOf ||
       withContact ||
+      withCommerce ||
       resource.booking ||
       organizers.length ? (
         <Sidebar
           css={
             // Only the part-of card, which a phone shows last
-            partOf && !resource.booking && !organizers.length
+            partOf && !resource.booking && !organizers.length && !withCommerce
               ? { display: 'none', [SIDEBAR]: { display: 'block' } }
               : undefined
           }
@@ -468,6 +493,31 @@ export default function ResourceHybrid({
                 }
                 label={resource.label}
               />
+            </Panel>
+          )}
+          {/* A commercial place: when it is open, and how to reach it */}
+          {withCommerce && (
+            <Panel css={{ marginBottom: '1.25rem' }}>
+              {(commerce?.openingHours?.length || commerce?.hoursNote) && (
+                <OfferingHours
+                  hours={commerce.openingHours}
+                  note={commerce.hoursNote}
+                />
+              )}
+              {hasContact(commerce?.contact) && (
+                <>
+                  <SideTitle
+                    css={
+                      commerce?.openingHours?.length || commerce?.hoursNote
+                        ? { margin: '1.5rem 0 1rem' }
+                        : undefined
+                    }
+                  >
+                    {tc('contact.title')}
+                  </SideTitle>
+                  <ContactDetails contact={commerce?.contact} />
+                </>
+              )}
             </Panel>
           )}
           {/* How to book it, under where it is */}
