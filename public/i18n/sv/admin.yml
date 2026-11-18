@@ -248,7 +248,7 @@ locations:
 mirrors:
   title: Speglingar
   description: Evenemang som hämtas från en annan kalender och hålls uppdaterade, som bibliotekets på Knallebiblioteken
-  info: "En spegling hämtar evenemangen på en plats i en annan kalender till Cocoso, varje halvtimme: nya läggs till, ändringar följer med, inställda markeras och borttagna tas bort. Anmälan sker hos källan, som varje evenemang länkar till. Prova en spegling med \"Förhandsgranska\" innan du slår på den."
+  info: "En spegling hämtar evenemangen på en plats i en annan kalender till Cocoso, varje timme: nya läggs till, ändringar följer med, inställda markeras och borttagna tas bort. Anmälan sker hos källan, som varje evenemang länkar till. Prova en spegling med \"Förhandsgranska\" innan du slår på den."
   new: Ny spegling
   edit: Ändra spegling
   none: Inga speglingar ännu
@@ -301,7 +301,7 @@ mirrors:
       label: Kategori när källan inte anger någon
       helper: De flesta evenemang får sin kategori från källans taggar
     enabled:
-      label: Synka varje halvtimme
+      label: Synka varje timme
       helper: Avslagen körs speglingen bara när du trycker "Synka nu"
     choose: Välj…
   message:

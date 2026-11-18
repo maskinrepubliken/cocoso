@@ -522,7 +522,7 @@ event:
   mirror:
     registration: "Sign up at {{source}}:"
     registrationLink: "to the event there"
-    tools: "This event is copied from {{source}} and kept like it every half hour: changes to its title, text, time and picture here are overwritten. Detach it to make it your own."
+    tools: "This event is copied from {{source}} and kept like it every hour: changes to its title, text, time and picture here are overwritten. Detach it to make it your own."
     detach: "Detach"
     detached: "The event is yours now and no longer copied."
   cancelled:

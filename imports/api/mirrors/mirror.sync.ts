@@ -30,12 +30,12 @@ import { fetchAxiellEvents, type SourceEvent } from './axiell';
  * - Gone from the source while still to come: deleted.
  * - Detached by its organizer (mirror.isDetached): left alone.
  *
- * Runs every half hour for each enabled mirror, and from Admin →
+ * Runs every hour for each enabled mirror, and from Admin →
  * Speglingar ("Synka nu"). Server only.
  */
 
 const ZONE = 'Europe/Stockholm';
-const INTERVAL_MS = 30 * 60 * 1000;
+const INTERVAL_MS = 60 * 60 * 1000;
 const FIRST_RUN_MS = 60 * 1000;
 
 // The source's tags (Knallebiblioteken's) to Cocoso's kinds

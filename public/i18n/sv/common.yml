@@ -519,7 +519,7 @@ event:
   mirror:
     registration: "Anmälan sker hos {{source}}:"
     registrationLink: "till evenemanget där"
-    tools: "Evenemanget hämtas från {{source}} och hålls lika varje halvtimme: ändringar i titel, text, tid och bild här skrivs över. Koppla loss det för att göra det till ditt eget."
+    tools: "Evenemanget hämtas från {{source}} och hålls lika varje timme: ändringar i titel, text, tid och bild här skrivs över. Koppla loss det för att göra det till ditt eget."
     detach: "Koppla loss"
     detached: "Evenemanget är ditt nu och hämtas inte längre."
   cancelled:

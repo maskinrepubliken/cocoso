@@ -248,7 +248,7 @@ locations:
 mirrors:
   title: Mirrors
   description: Events copied from another calendar and kept up to date, such as the library's at Knallebiblioteken
-  info: "A mirror copies the events of one place in another calendar into Cocoso, every half hour: new ones are added, changes follow, cancelled ones are marked and removed ones deleted. Sign-up happens at the source, which each event links to. Try a mirror with \"Preview\" before you switch it on."
+  info: "A mirror copies the events of one place in another calendar into Cocoso, every hour: new ones are added, changes follow, cancelled ones are marked and removed ones deleted. Sign-up happens at the source, which each event links to. Try a mirror with \"Preview\" before you switch it on."
   new: New mirror
   edit: Edit mirror
   none: No mirrors yet
@@ -301,7 +301,7 @@ mirrors:
       label: Kinds when the source gives none
       helper: Most events get their kind from the source's tags
     enabled:
-      label: Sync every half hour
+      label: Sync every hour
       helper: Switched off, the mirror only runs when you press "Sync now"
     choose: Choose…
   message:
