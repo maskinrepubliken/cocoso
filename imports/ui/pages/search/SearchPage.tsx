@@ -11,7 +11,6 @@ import SexyThumb from '/imports/ui/listing/SexyThumb';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 import GroupCard from '/imports/ui/listing/GroupCard';
 import { People, PersonTile } from '/imports/ui/listing/UsersHybrid';
-import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import {
@@ -247,16 +246,8 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
 
       {groups.map((group) => (
         <section className={`search-section is-${group.key}`} key={group.key}>
-          {/* The section as its page heads itself: its 3D icon and name */}
+          {/* The section's name; headings have no icons */}
           <h2 className="search-section-head">
-            <ThreeDIcon
-              name={
-                group.key === 'locations'
-                  ? 'location'
-                  : sectionIcons[group.key] || 'star'
-              }
-              size={40}
-            />
             {group.label}
             {/* the events' counts are in their switch */}
             {group.key !== 'activities' && (

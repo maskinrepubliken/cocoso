@@ -3359,7 +3359,7 @@ body {
   margin-left: auto;
 }
 
-/* A section as its page heads itself: the 3D icon, the name, the count */
+/* A section as its page heads itself: the name, the count */
 .search-section {
   margin-bottom: 40px;
 }
@@ -3374,13 +3374,6 @@ body {
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-}
-
-.search-section-head .threed-icon {
-  width: 40px;
-  height: 40px;
-  flex: none;
-  filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.18));
 }
 
 .search-section .search-page-hits {
@@ -4157,18 +4150,11 @@ body {
   text-decoration: underline;
 }
 
-/* A section heading on an entry page with the section's 3D icon */
+/* A section heading on an entry page */
 .entry-section-title {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-}
-
-.entry-section-title .threed-icon {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  filter: drop-shadow(0 4px 6px rgba(30, 50, 25, 0.18));
 }
 
 .page-heading-place:hover {
@@ -4191,29 +4177,6 @@ body {
 
 .page-heading-place:hover .page-heading-clear {
   color: var(--cocoso-colors-theme-800);
-}
-
-/* The listing icon sits a little below the header and bobs slowly. */
-.page-heading-icon {
-  flex: 0 0 auto;
-  margin-top: 16px;
-  position: relative;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .page-heading-icon {
-    animation: heading-float 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  }
-}
-
-@keyframes heading-float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -6px;
-  }
 }
 
 /* Start page hero: a small cluster of icons, lifted off the page */
@@ -5720,10 +5683,6 @@ body {
   margin-bottom: 16px;
 }
 
-.landing-head-icon {
-  flex: 0 0 auto;
-}
-
 .landing-title {
   flex: 1 1 auto;
   font-family: var(--cocoso-font-display);
@@ -5783,11 +5742,6 @@ body {
 
   .landing-head {
     gap: 10px;
-  }
-
-  .landing-head-icon {
-    width: 36px;
-    height: 36px;
   }
 
   .landing-title {

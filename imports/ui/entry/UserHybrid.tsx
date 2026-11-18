@@ -13,7 +13,6 @@ import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import { displayName } from '/imports/ui/listing/UsersHybrid';
 import Notice from '/imports/ui/generic/Notice';
-import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { currentUserAtom, locationsAtom, roleAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
@@ -172,10 +171,7 @@ function OrganizerEvents({ events, name }: OrganizerEventsProps) {
   return (
     <EntryColumn>
       <SectionHead>
-        <h2 className="entry-section-title">
-          <ThreeDIcon name={sectionIcons.activities} size={40} />
-          {tc('people.events')}
-        </h2>
+        <h2 className="entry-section-title">{tc('people.events')}</h2>
         <div className="seg" role="group">
           {views.map((option) => (
             <button

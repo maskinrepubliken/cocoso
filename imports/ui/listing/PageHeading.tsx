@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { Box, Center, Heading, Text } from '/imports/ui/core';
 import type { Site } from '/imports/ui/types';
 
-import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import ShareMeta from '/imports/ui/layout/ShareMeta';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
@@ -94,7 +93,6 @@ export default function PageHeading({
   // What a link to this page shows elsewhere: the menu's description when
   // the admin wrote one, else the site's own line; the site's social image.
   const metaDescription = description || tc('home.hero.tagline');
-  const icon = sectionIcons[listing];
 
   return (
     <>
@@ -107,13 +105,6 @@ export default function PageHeading({
         <Box px="2" w="100%">
           <div className="page-heading-row page-wrap">
             <div className="page-heading">
-              {icon && (
-                <ThreeDIcon
-                  className="page-heading-icon"
-                  name={icon}
-                  size={56}
-                />
-              )}
               <Heading as="h1" size="lg" textAlign="center">
                 {heading}
               </Heading>

@@ -12,7 +12,6 @@ import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 import GroupCard from '/imports/ui/listing/GroupCard';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import Stamp from '/imports/ui/generic/Stamp';
-import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { locationsAtom } from '/imports/state';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
@@ -24,18 +23,16 @@ import { placeStructuredData } from '/imports/ui/utils/structuredData';
 
 import type { SlugData } from './SlugHandler';
 
-// A section of the place page: the section's 3D icon, its name with the
-// place as a quieter suffix, and the way to the full listing kept on the
+// A section of the place page: its name with the place as a quieter
+// suffix (headings have no icons), and the way to the full listing kept on the
 // same line at every width.
 function Section({
-  icon,
   title,
   place,
   seeAllTo,
   seeAllLabel,
   children,
 }: {
-  icon: string;
   title: string;
   place: string;
   seeAllTo: string;
@@ -45,7 +42,6 @@ function Section({
   return (
     <section className="page-wrap landing-section">
       <div className="landing-head">
-        <ThreeDIcon className="landing-head-icon" name={icon} size={44} />
         <h2 className="landing-title">
           {title} <span className="landing-title-place">{place}</span>
         </h2>
@@ -162,7 +158,6 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
 
       {isVisible('activities') && (
         <Section
-          icon={sectionIcons.activities}
           title={tc('locations.landing.activities')}
           place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/activities`}
@@ -189,7 +184,6 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
 
       {isVisible('resources') && (
         <Section
-          icon={sectionIcons.resources}
           title={tc('locations.landing.resources')}
           place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/resources`}
@@ -225,7 +219,6 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
 
       {isVisible('groups') && groups?.length > 0 && (
         <Section
-          icon={sectionIcons.groups}
           title={tc('locations.landing.groups')}
           place={tc('locations.landing.inPlace', { name: location.name })}
           seeAllTo={`${prefix}/groups`}
