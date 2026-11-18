@@ -43,6 +43,11 @@ const towns = [
 
 const ZOOM_MS = 320;
 
+// The page is also rendered on the server, where a layout effect only
+// earns a warning; the zoom is measured in the browser alone.
+const useBrowserLayoutEffect =
+  typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
 export interface KommunMapProps {
   // The width of the small map, in pixels
   size?: number;
@@ -109,7 +114,7 @@ export default function KommunMap({
     };
   }, [zoom]);
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (open) {
       zoom(false);
     }
