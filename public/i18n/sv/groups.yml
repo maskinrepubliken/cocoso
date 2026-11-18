@@ -162,3 +162,10 @@ membership:
   leave: Lämna gruppen
   attend: Anmäl dig till träffar
   manage: Hantera träffar
+  count_one: "{{count}} medlem"
+  count_other: "{{count}} medlemmar"
+  joined: "Gick med {{date}}"
+  admin: Admin
+  makeAdmin: Gör till admin
+  makeAdminAsk: "Göra {{name}} till admin? Hen kan sedan göra allt med gruppen."
+  yes: Ja, gör till admin

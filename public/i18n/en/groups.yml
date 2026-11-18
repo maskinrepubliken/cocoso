@@ -162,3 +162,10 @@ membership:
   leave: Leave the group
   attend: Sign up for meetings
   manage: Manage meetings
+  count_one: "{{count}} member"
+  count_other: "{{count}} members"
+  joined: "Joined {{date}}"
+  admin: Admin
+  makeAdmin: Make admin
+  makeAdminAsk: "Make {{name}} an admin? They can then do anything with the group."
+  yes: Yes, make admin
