@@ -575,6 +575,8 @@ function PlaceForm({
 
         <FormCard title={t('form.booking.label')}>
           <BookingFields
+            currentUserId={currentUser?._id}
+            managers={managers}
             value={state.booking}
             onChange={(booking) =>
               setState((prevState: any) => ({ ...prevState, booking }))

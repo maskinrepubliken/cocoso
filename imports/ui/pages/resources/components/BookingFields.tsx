@@ -2,29 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
-import UserRoundIcon from 'lucide-react/dist/esm/icons/user-round';
 
 import { Input, Textarea } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
 import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
-import { ContactDetails } from '/imports/ui/generic/ContactDetails';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
 import { call } from '/imports/api/_utils/shared';
 import ChoiceChips, {
   type Choice,
 } from '/imports/ui/pages/activities/form/ChoiceChips';
-import PersonCard, {
-  PersonAvatar,
-  personName,
-} from '/imports/ui/pages/activities/form/PersonCard';
-import PickerPopover from '/imports/ui/pages/activities/form/PickerPopover';
+import { PersonAvatar } from '/imports/ui/pages/activities/form/PersonCard';
 import ToggleSwitch from '/imports/ui/pages/activities/form/ToggleSwitch';
-import type {
-  OrganizerDefaults,
-  OrganizerOption,
+import {
+  ContactPreview,
+  type OrganizerDefaults,
 } from '/imports/ui/pages/activities/form/OrganizerFields';
 
-// How a bookable place is booked: through an organizer (their public
+// How a bookable place is booked: through a person (their public
 // contact details), details of its own, or a link.
 export type BookingVia = 'organizer' | 'own' | 'link';
 
@@ -77,38 +71,44 @@ export const bookingValue = (state: BookingState): Booking | null => {
     : info;
 };
 
-const searchText = (o: OrganizerOption) =>
-  [o.firstName, o.lastName, o.username].filter(Boolean).join(' ');
-
 interface BookingFieldsProps {
   value: BookingState;
   onChange: (value: BookingState) => void;
+  // The place's managers with their profiles, to book through one of them
+  managers: OrganizerDefaults[];
+  currentUserId?: string;
 }
 
+const OWN = 'own';
+const LINK = 'link';
+
 // Whether the place can be booked and how: a switch, a few words about
-// booking it, and who to turn to, chosen as on an event: an organizer or
-// details of its own; or a link to where it is booked.
-export default function BookingFields({ value, onChange }: BookingFieldsProps) {
+// booking it, and who to turn to, chosen as its contact is: one of its
+// managers (their profile's details) or details of its own; or a link to
+// where it is booked.
+export default function BookingFields({
+  value,
+  onChange,
+  managers,
+  currentUserId,
+}: BookingFieldsProps) {
   const [t] = useTranslation('resources');
-  const [options, setOptions] = useState<OrganizerOption[]>([]);
+  const [ta] = useTranslation('activities');
   const [person, setPerson] = useState<OrganizerDefaults | null>(null);
-  const [picking, setPicking] = useState(false);
 
   const set = (patch: Partial<BookingState>) =>
     onChange({ ...value, ...patch });
 
+  // Booked through someone who is not (or no longer) among its managers:
+  // they stay a choice, with their profile's details
+  const isOtherPerson =
+    value.via === 'organizer' &&
+    Boolean(value.contactUserId) &&
+    !managers.some((m) => m._id === value.contactUserId);
   useEffect(() => {
-    call<OrganizerOption[]>('getOrganizerOptions', true)
-      .then((list) => setOptions(list || []))
-      .catch(() => setOptions([]));
-  }, []);
-
-  // The chosen organizer's public contact details, to show what the page
-  // will show
-  useEffect(() => {
-    if (!value.contactUserId) {
+    if (!isOtherPerson) {
       setPerson(null);
-      return;
+      return undefined;
     }
     let cancelled = false;
     call<OrganizerDefaults>('getOrganizerDefaults', value.contactUserId)
@@ -117,74 +117,26 @@ export default function BookingFields({ value, onChange }: BookingFieldsProps) {
     return () => {
       cancelled = true;
     };
-  }, [value.contactUserId]);
+  }, [isOtherPerson, value.contactUserId]);
 
-  const picker = (
-    <PickerPopover
-      inline={!value.contactUserId}
-      emptyText={t('form.booking.organizerEmpty')}
-      getKey={(o) => o._id}
-      getSearchText={searchText}
-      items={options}
-      placeholder={t('form.booking.organizerSearch')}
-      renderItem={(o) => (
-        <>
-          <PersonAvatar person={o} size={32} />
-          <span className="picker-row-text">
-            <span className="picker-row-title">{personName(o)}</span>
-            {(o.firstName || o.lastName) && (
-              <span className="picker-row-detail">@{o.username}</span>
-            )}
-          </span>
-        </>
-      )}
-      selectedKey={value.contactUserId}
-      onClose={() => setPicking(false)}
-      onPick={(o) => {
-        set({ contactUserId: o._id });
-        setPicking(false);
-      }}
-    />
-  );
+  const people = [...managers, ...(isOtherPerson && person ? [person] : [])];
 
-  const chosen = options.find((o) => o._id === value.contactUserId) || person;
-
-  const choices: Choice<BookingVia>[] = [
-    {
-      value: 'organizer',
-      label: t('form.booking.organizer'),
-      icon: <UserRoundIcon aria-hidden />,
-      content: value.contactUserId ? (
-        <div className="picker-anchor">
-          <PersonCard
-            action={
-              <button
-                type="button"
-                className="person-card-button"
-                aria-expanded={picking}
-                onClick={() => setPicking(!picking)}
-              >
-                {t('form.booking.organizerChange')}
-              </button>
-            }
-            person={chosen}
-          />
-          {picking && picker}
-          {person &&
-            (hasContact(person.publicContact) ? (
-              <ContactDetails contact={person.publicContact} />
-            ) : (
-              <p className="form-preview-note">
-                {t('form.booking.organizerNoContact')}
-              </p>
-            ))}
-        </div>
-      ) : (
-        picker
+  const choices: Choice<string>[] = [
+    ...people.map((p) => ({
+      value: p._id,
+      label:
+        p._id === currentUserId ? ta('form.contact.standard') : p.firstName || p.username,
+      icon: <PersonAvatar person={p} size={26} />,
+      content: (
+        <ContactPreview
+          contact={p.publicContact}
+          empty={ta('form.contact.none')}
+          person={p}
+        />
       ),
-    },
+    })),
     {
-      value: 'own',
+      value: OWN,
       label: t('form.booking.own'),
       icon: <PencilLineIcon aria-hidden />,
       content: (
@@ -195,7 +147,7 @@ export default function BookingFields({ value, onChange }: BookingFieldsProps) {
       ),
     },
     {
-      value: 'link',
+      value: LINK,
       label: t('form.booking.link'),
       icon: <LinkIcon aria-hidden />,
       content: (
@@ -213,6 +165,9 @@ export default function BookingFields({ value, onChange }: BookingFieldsProps) {
       ),
     },
   ];
+
+  const chosen =
+    value.via === 'organizer' ? value.contactUserId : value.via === 'own' ? OWN : LINK;
 
   return (
     <>
@@ -237,8 +192,14 @@ export default function BookingFields({ value, onChange }: BookingFieldsProps) {
           <ChoiceChips
             choices={choices}
             label={t('form.booking.how')}
-            value={value.via}
-            onChange={(via) => set({ via })}
+            value={chosen}
+            onChange={(choice) =>
+              choice === OWN
+                ? set({ via: 'own' })
+                : choice === LINK
+                  ? set({ via: 'link' })
+                  : set({ via: 'organizer', contactUserId: choice })
+            }
           />
         </>
       )}
