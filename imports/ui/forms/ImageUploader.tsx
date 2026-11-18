@@ -7,18 +7,15 @@ import SortableList, { SortableItem } from 'react-easy-sort';
 import { arrayMoveImmutable } from 'array-move';
 import toast from 'react-hot-toast';
 
-import { Center } from '/imports/ui/core';
 import {
   acceptedImageFormatsForUploads,
   maximumDocumentSizeForUploads,
 } from '/imports/ui/utils/constants/general';
 
-import FileDropper from './FileDropper';
 import {
   resizeBeforeUpload,
   uploadImage,
 } from '../../api/_utils/services/clientUpload';
-import DocumentUploadHelper from './UploadHelpers';
 import useSaveFailed from './useSaveFailed';
 
 // A little line drawing of a framed landscape, sun and hills, with a plus:
@@ -54,13 +51,15 @@ const acceptImages = {
 function ImageDrop({
   onFiles,
   compact,
+  multiple = true,
 }: {
   onFiles: (files: File[]) => void;
   compact?: boolean;
+  multiple?: boolean;
 }) {
   const [tc] = useTranslation('common');
   return (
-    <Dropzone accept={acceptImages} multiple onDrop={onFiles}>
+    <Dropzone accept={acceptImages} multiple={multiple} onDrop={onFiles}>
       {({ getRootProps, getInputProps, isDragActive }) => (
         <div
           {...getRootProps({
@@ -208,38 +207,35 @@ export default function ImageUploader({
     );
   };
 
-  // One picture (an avatar, a logo): the dropper shows it
-  if (!isMultiple && localImages.length === 0) {
-    return (
-      <>
-        <Center>
-          <FileDropper
-            setUploadableImage={setUploadableImages}
-            isMultiple={false}
-          />
-        </Center>
-        <DocumentUploadHelper />
-      </>
-    );
-  }
-
-  if (!isMultiple) {
-    return (
-      <>
-        <Center>
-          <FileDropper
-            imageUrl={localImages?.length > 0 ? localImages[0].src : null}
-            setUploadableImage={setUploadableImages}
-            isMultiple={false}
-          />
-        </Center>
-        <DocumentUploadHelper />
-      </>
-    );
-  }
-
   if (localImages.length === 0) {
-    return <ImageDrop onFiles={setUploadableImages} />;
+    return (
+      <ImageDrop multiple={isMultiple} onFiles={setUploadableImages} />
+    );
+  }
+
+  // One picture (a group's, a place's on the map): shown as a tile, taken
+  // away with its cross to drop another
+  if (!isMultiple) {
+    const [image] = localImages;
+    return (
+      <div className="image-uploader">
+        <div className="image-grid">
+          <div
+            className="image-thumb"
+            style={{ backgroundImage: `url('${image.src}')` }}
+          >
+            <button
+              type="button"
+              className="image-thumb-remove"
+              aria-label={tc('plugins.images.remove', { n: 1 })}
+              onClick={() => handleRemoveImage(0)}
+            >
+              <XIcon aria-hidden width={14} height={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // The pictures in the order they are shown, the first as the main one;

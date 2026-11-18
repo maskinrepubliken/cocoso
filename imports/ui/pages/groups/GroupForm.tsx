@@ -19,7 +19,7 @@ import {
 import { Contact, isReachable } from '/imports/api/_utils/contact';
 import { message } from '/imports/ui/generic/message';
 import { currentUserAtom } from '/imports/state';
-import { loaderAtom } from '/imports/ui/utils/loaderHandler';
+import { initialLoader, loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { call } from '/imports/api/_utils/shared';
 import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
@@ -222,11 +222,17 @@ function GroupEntryForm({
   };
 
   const handleUploadedImages = (images: string[]) => {
+    // A group always has a picture; taking it away leaves the form open
+    if (!images?.length) {
+      setLoaders({ ...initialLoader });
+      message.formError(t('groupForm.image.missing'));
+      return;
+    }
     setLoaders((prevState) => ({
       ...prevState,
       isSendingForm: true,
     }));
-    parseGroup(images?.length && (getImageUrl(images[0], 'full') || images[0]));
+    parseGroup(getImageUrl(images[0], 'full') || images[0]);
   };
 
   return (

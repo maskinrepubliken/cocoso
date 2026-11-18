@@ -193,6 +193,7 @@ groupForm:
   image:
     label: Bild
     helper: En bild som visar gruppen.
+    missing: Välj en bild till gruppen.
   visibility:
     title: Vem kan se gruppen?
     open: Öppen

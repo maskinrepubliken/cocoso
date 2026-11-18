@@ -193,6 +193,7 @@ groupForm:
   image:
     label: Picture
     helper: A picture that shows the group.
+    missing: Choose a picture for the group.
   visibility:
     title: Who can see the group?
     open: Open
