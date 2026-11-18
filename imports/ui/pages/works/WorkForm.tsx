@@ -26,11 +26,13 @@ import { REQUEST_KINDS, findRequestKind } from './requestKinds';
 
 interface WorkFormValues {
   longDescription: string;
-  shortDescription: string;
   title: string;
 }
 
 interface WorkData extends WorkFormValues {
+  // No longer written: what an older request has in it is folded into
+  // the description when it is edited (EditWork)
+  shortDescription?: string;
   contactInfo?: string;
   showAvatar?: boolean;
   category?: Partial<CategoryItem> & { label: string };
@@ -49,7 +51,6 @@ interface WorkFormProps {
 
 export const emptyFormValues: WorkFormValues = {
   longDescription: '',
-  shortDescription: '',
   title: '',
 };
 
@@ -62,7 +63,7 @@ const DRAFT_FIELDS = [
   'contactInfo',
   'showAvatar',
 ] as const;
-const TEXT_FIELDS = ['title', 'shortDescription', 'longDescription'] as const;
+const TEXT_FIELDS = ['title', 'longDescription'] as const;
 
 // The request form, laid out like the event and place forms: what it is
 // and its pictures in the wide column, the details as cards beside it. It
@@ -158,6 +159,7 @@ function RequestForm({
     const category = categories.find((c) => c.label === kind.label);
     const newWork: WorkData = {
       ...state.formValues,
+      shortDescription: '',
       category: { label: kind.label, ...(category ? { _id: category._id } : {}) },
       contactInfo: state.contactInfo,
       showAvatar: state.showAvatar,
@@ -182,7 +184,7 @@ function RequestForm({
     <>
       <DraftNotice draft={draft} onDiscard={onDiscard} />
       <GenericEntryForm
-        childrenIndex={2}
+        childrenIndex={1}
         defaultValues={defaultValues}
         formFields={workFormFields(t)}
         onSubmit={handleSubmit}

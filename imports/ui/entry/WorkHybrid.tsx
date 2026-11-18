@@ -26,6 +26,7 @@ import EntryHero, {
   MorePictures,
   Panel,
   SectionHead,
+  plainText,
 } from './EntryHero';
 
 interface Work {
@@ -120,7 +121,9 @@ export default function WorkHybrid({
     <LightboxProvider alt={work.title} images={images}>
       <EntryPage>
         <EntryMeta
-          description={work.shortDescription}
+          description={
+            work.shortDescription || plainText(work.longDescription)
+          }
           image={images[0]}
           path={`/@${work.authorUsername}/works/${work._id}`}
           title={work.title}

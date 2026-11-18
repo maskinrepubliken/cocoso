@@ -45,14 +45,16 @@ export default function EditWork() {
     shortDescription,
     showAvatar,
     title,
-  }) => ({
+  }: any) => ({
     category,
     contactInfo,
     images,
     locationId,
     isMunicipalityOnly,
-    longDescription,
-    shortDescription,
+    // A request has one description now: an older one's short
+    // description becomes its first paragraph, and is saved empty
+    longDescription: withShortDescription(shortDescription, longDescription),
+    shortDescription: '',
     showAvatar,
     title,
   }))(work);
@@ -66,4 +68,13 @@ export default function EditWork() {
       />
     </SuccessRedirector>
   );
+}
+
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// The description with an older request's short description before it
+function withShortDescription(short?: string, long?: string) {
+  const text = (short || '').trim();
+  return text ? `<p>${escapeHtml(text)}</p>${long || ''}` : long || '';
 }

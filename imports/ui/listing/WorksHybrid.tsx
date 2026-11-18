@@ -266,6 +266,13 @@ function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
   const world = worldForLocation(locations, work.locationId);
   const Icon = kind?.icon;
   const image = work.images?.[0];
+  // Older requests have a short description; the rest show their own
+  const text =
+    work.shortDescription ||
+    (work.longDescription || '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   const author =
     work.showAvatar !== false ? work.authorName || work.authorUsername : null;
   const posted = dayjs(work.creationDate);
@@ -282,9 +289,7 @@ function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
       <CardBody>
         <div>
           <CardTitle>{work.title}</CardTitle>
-          {work.shortDescription && (
-            <CardText>{work.shortDescription}</CardText>
-          )}
+          {text && <CardText>{text}</CardText>}
         </div>
         {image && (
           <Thumb

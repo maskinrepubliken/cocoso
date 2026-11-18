@@ -12,13 +12,6 @@ const workFormFields = (t) => [
     },
   },
   {
-    helper: t('works.shortDescription.helper'),
-    label: t('works.shortDescription.label'),
-    placeholder: t('works.shortDescription.holder'),
-    type: 'textarea',
-    value: 'shortDescription',
-  },
-  {
     helper: t('works.longDescription.helper'),
     label: t('works.longDescription.label'),
     placeholder: t('works.longDescription.holder'),
