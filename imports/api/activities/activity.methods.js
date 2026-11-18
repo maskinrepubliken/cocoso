@@ -23,7 +23,6 @@ import { warmShareImage } from '../share/shareImage.server';
 import { formatAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { cleanKinds } from '../_utils/kinds';
-import { isFeatureEnabled } from '../_utils/features';
 import { EVENT_KIND_KEYS } from '../../ui/pages/activities/eventKinds';
 import {
   compareDatesForSortActivities,
@@ -527,101 +526,6 @@ Meteor.methods({
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't fetch activities");
     }
-  },
-
-  async checkDatesForConflict(
-    { startDate, endDate, startTime, endTime, resourceId },
-    currentActivityId = null
-  ) {
-    // Without bookings a place is never taken.
-    if (!resourceId || !isFeatureEnabled('bookings')) {
-      return null;
-    }
-
-    const resourcesInQuestion = await Resources.find(
-      {
-        $or: [
-          {
-            _id: resourceId,
-          },
-          {
-            'resourcesForCombo._id': resourceId,
-          },
-        ],
-      },
-      {
-        fields: {
-          _id: 1,
-        },
-      }
-    ).fetchAsync();
-
-    const resourcesIds = resourcesInQuestion.map((resource) => resource._id);
-
-    const activityWithConflict = await Activities.findOneAsync(
-      {
-        _id: { $ne: currentActivityId },
-        $and: [
-          {
-            $or: [
-              {
-                resourceId: {
-                  $in: resourcesIds,
-                },
-              },
-            ],
-          },
-          {
-            $or: [
-              {
-                datesAndTimes: {
-                  $elemMatch: {
-                    startDate: {
-                      $lt: endDate,
-                    },
-                    endDate: {
-                      $gt: startDate,
-                    },
-                  },
-                },
-              },
-              {
-                datesAndTimes: {
-                  $elemMatch: {
-                    startDate: endDate,
-                    startTime: { $lt: endTime },
-                    endTime: { $gt: startTime },
-                  },
-                },
-              },
-              {
-                datesAndTimes: {
-                  $elemMatch: {
-                    endDate: startDate,
-                    startTime: { $lt: endTime },
-                    endTime: { $gt: startTime },
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      },
-      {
-        fields: {
-          _id: 1,
-          datesAndTimes: 1,
-          isExclusiveActivity: 1,
-          title: 1,
-        },
-      }
-    );
-
-    if (!activityWithConflict) {
-      return null;
-    }
-
-    return activityWithConflict;
   },
 
   async createActivity(values) {

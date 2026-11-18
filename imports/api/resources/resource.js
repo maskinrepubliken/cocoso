@@ -69,20 +69,6 @@ Resources.schema = new SimpleSchema({
     optional: true,
   },
 
-  // Bookable in the calendar; only read with the `bookings` feature on.
-  isBookable: { type: Boolean, defaultValue: true },
-  isCombo: { type: Boolean, defaultValue: false },
-
-  resourcesForCombo: { type: Array, defaultValue: [] },
-  'resourcesForCombo.$': {
-    type: new SimpleSchema({
-      _id: { type: String },
-      label: { type: String },
-      description: { type: String, optional: true },
-    }),
-    optional: true,
-  },
-
   createdBy: { type: String, optional: true },
   createdAt: { type: Date, optional: true },
   updatedBy: { type: String, optional: true },
@@ -100,14 +86,11 @@ Resources.publicFields = {
   contact: 1,
   description: 1,
   images: 1,
-  isBookable: 1,
-  isCombo: 1,
   isUnlisted: 1,
   label: 1,
   managerIds: 1,
   locationId: 1,
   parentId: 1,
-  resourcesForCombo: 1,
   createdAt: 1,
   userId: 1,
 };

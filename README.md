@@ -28,10 +28,10 @@ with your own data.
 
 - **Activities** — public events with one or many dates, RSVP with email
   confirmation, attendee lists for the door, CSV export.
-- **Calendar** — month, week, day and agenda views combining activities and
-  resource bookings.
-- **Resources** — bookable shared things (rooms, tools, vehicles) with
-  conflict checking and combined resources.
+- **Calendar** — month, week, day and agenda views of the activities.
+- **Places** — the municipality's places (halls, rooms, lakes, trails), which
+  can be part of one another, each saying how it is booked, looked after by
+  the organizers who manage it.
 - **Groups** — a page per working group: description, members, meetings,
   documents and a discussion thread with email notifications.
 - **Works** — portfolio entries for members: text, images, media.

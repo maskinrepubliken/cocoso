@@ -14,8 +14,6 @@ export interface PlaceOption {
   locationId?: string | null;
   images?: string[];
   imageUrl?: string;
-  isCombo?: boolean;
-  isBookable?: boolean;
   // Part of another place and left out of the list (a room in the library)
   parentId?: string | null;
   isUnlisted?: boolean;

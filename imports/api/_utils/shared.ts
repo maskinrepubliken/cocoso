@@ -3,7 +3,6 @@ import Resizer from 'react-image-file-resizer';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import { kindsOf } from './kinds';
-import { isFeatureEnabled } from './features';
 
 dayjs.extend(isBetween);
 
@@ -41,7 +40,6 @@ interface Activity {
   resource?: string;
   authorName?: string;
   longDescription?: string;
-  isExclusiveActivity?: boolean;
   isPublicActivity?: boolean;
   isGroupMeeting?: boolean;
   groupId?: string;
@@ -49,17 +47,9 @@ interface Activity {
   images?: string[];
 }
 
-interface ResourceForCombo {
-  _id: string;
-  label: string;
-}
-
 interface Resource {
   _id: string;
   label: string;
-  isCombo?: boolean;
-  isBookable?: boolean;
-  resourcesForCombo?: ResourceForCombo[];
   color?: string;
 }
 
@@ -79,26 +69,14 @@ interface Booking {
   authorName?: string;
   longDescription?: string;
   isMultipleDay: boolean;
-  isExclusiveActivity?: boolean;
   isPublicActivity?: boolean;
   isGroupMeeting?: boolean;
   groupId?: string;
   isGroupPrivate?: boolean;
   images?: string[];
   isNoResource?: boolean;
-  isWithComboResource?: boolean;
   resource?: string;
   resourceId?: string;
-  comboResource?: string;
-  comboResourceId?: string;
-  conflict?: Booking | null;
-}
-
-interface SelectedBooking {
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
 }
 
 interface Group {
@@ -226,7 +204,7 @@ const resizeImage = (
 function helper_parseAllBookingsWithResources(
   activity: Activity,
   recurrence: DateTimeOccurrence | undefined
-): Omit<Booking, 'conflict'> | undefined {
+): Booking | undefined {
   if (!recurrence) {
     return;
   }
@@ -249,7 +227,6 @@ function helper_parseAllBookingsWithResources(
     authorName: activity.authorName,
     longDescription: activity.longDescription,
     isMultipleDay: isMultipleDay || startDate !== endDate,
-    isExclusiveActivity: activity.isExclusiveActivity,
     isPublicActivity: activity.isPublicActivity,
     isGroupMeeting: activity.isGroupMeeting,
     groupId: activity.groupId,
@@ -258,11 +235,8 @@ function helper_parseAllBookingsWithResources(
   };
 }
 
-// With bookings on, only bookable places have a calendar; with them off,
-// every event is in it, wherever it is.
-const isInCalendar = (resource: Resource): boolean =>
-  !isFeatureEnabled('bookings') || Boolean(resource.isBookable);
-
+// Every occasion of every event, with the place it is at (if any), for the
+// calendar.
 function parseAllBookingsWithResources(
   activities: Activity[] | undefined,
   resources: Resource[] | undefined
@@ -281,144 +255,23 @@ function parseAllBookingsWithResources(
       const resourceSelected = resources.find(
         (res) => res?._id === effectiveResourceId
       );
-      if (!resourceSelected) {
-        const parsed = helper_parseAllBookingsWithResources(
-          activity,
-          recurrence
-        );
-        if (parsed) {
-          allBookings.push({
-            ...parsed,
-            isNoResource: true,
-            conflict: null,
-          });
-        }
+      const parsed = helper_parseAllBookingsWithResources(activity, recurrence);
+      if (!parsed) {
         return;
       }
-      // A combo books its parts; without bookings it is one place
-      if (resourceSelected.isCombo && isFeatureEnabled('bookings')) {
-        resourceSelected.resourcesForCombo?.forEach((resourceForCombo) => {
-          if (!resourceForCombo) {
-            return;
-          }
-          const resourceForComboReal = resources.find(
-            (r) => r._id === resourceForCombo._id
-          );
-          if (!resourceForComboReal || !isInCalendar(resourceForComboReal)) {
-            return;
-          }
-          const parsed = helper_parseAllBookingsWithResources(
-            activity,
-            recurrence
-          );
-          if (parsed) {
-            allBookings.push({
+      allBookings.push(
+        resourceSelected
+          ? {
               ...parsed,
-              isWithComboResource: true,
-              resource: resourceForCombo.label,
-              resourceId: resourceForCombo._id,
-              comboResource: recurrence.resource ?? activity.resource,
-              comboResourceId: resourceSelected._id,
-              conflict: null,
-            });
-          }
-        });
-      } else {
-        if (!isInCalendar(resourceSelected)) {
-          return;
-        }
-        const parsed = helper_parseAllBookingsWithResources(
-          activity,
-          recurrence
-        );
-        if (parsed) {
-          allBookings.push({
-            ...parsed,
-            isWithComboResource: false,
-            resource: resourceSelected.label,
-            resourceId: resourceSelected._id,
-            conflict: null,
-          });
-        }
-      }
+              resource: resourceSelected.label,
+              resourceId: resourceSelected._id,
+            }
+          : { ...parsed, isNoResource: true }
+      );
     });
   });
 
   return allBookings;
-}
-
-function getAllBookingsWithSelectedResource(
-  selectedResource: Resource | undefined,
-  allBookings: Booking[]
-): Booking[] {
-  return allBookings.filter((booking) => {
-    if (!selectedResource) {
-      return true;
-    }
-    if (selectedResource.isCombo) {
-      return selectedResource.resourcesForCombo?.some(
-        (resourceForCombo) => resourceForCombo._id === booking.resourceId
-      );
-    }
-    return booking.resourceId === selectedResource._id;
-  });
-}
-
-function isDatesInConflict(
-  existingStart: string,
-  existingEnd: string,
-  selectedStart: string,
-  selectedEnd: string
-): boolean {
-  const dateTimeFormat = 'YYYY-MM-DD HH:mm';
-
-  if (existingStart === selectedStart && existingEnd === selectedEnd) {
-    return true;
-  }
-
-  return (
-    dayjs(selectedStart, dateTimeFormat).isBetween(
-      existingStart,
-      existingEnd
-    ) ||
-    dayjs(selectedEnd, dateTimeFormat).isBetween(existingStart, existingEnd) ||
-    dayjs(existingStart, dateTimeFormat).isBetween(
-      selectedStart,
-      selectedEnd
-    ) ||
-    dayjs(existingEnd, dateTimeFormat).isBetween(selectedStart, selectedEnd)
-  );
-}
-
-function checkAndSetBookingsWithConflict(
-  selectedBookings: SelectedBooking[],
-  allBookingsWithSelectedResource: Booking[],
-  selfBookingIdForEdit?: string
-): (SelectedBooking & { conflict: Booking | null })[] {
-  return selectedBookings.map((selectedBooking) => {
-    const bookingWithConflict = allBookingsWithSelectedResource
-      .filter(
-        (item) =>
-          !selfBookingIdForEdit || item.activityId !== selfBookingIdForEdit
-      )
-      .find((occurence) => {
-        const selectedStart = `${selectedBooking.startDate} ${selectedBooking.startTime}`;
-        const selectedEnd = `${selectedBooking.endDate} ${selectedBooking.endTime}`;
-        const existingStart = `${occurence.startDate} ${occurence.startTime}`;
-        const existingEnd = `${occurence.endDate} ${occurence.endTime}`;
-        return isDatesInConflict(
-          existingStart,
-          existingEnd,
-          selectedStart,
-          selectedEnd
-        );
-      });
-
-    return {
-      ...selectedBooking,
-      conflict: bookingWithConflict || null,
-    };
-  });
 }
 
 function appendLeadingZeroes(n: number): string {
@@ -437,6 +290,7 @@ function formatDate(date: Date): string {
   return formattedDate;
 }
 
+// Evenly spread colours, one per item (the works' categories)
 function getHslValuesFromLength(length: number): string[] | null {
   if (typeof length !== 'number') {
     return null;
@@ -454,50 +308,6 @@ function getHslValuesFromLength(length: number): string[] | null {
   }
 
   return colorValues;
-}
-
-function getNonComboResourcesWithColor(
-  nonComboResources: Resource[] | undefined
-): (Resource & { color: string })[] | undefined {
-  if (!nonComboResources) {
-    return;
-  }
-  const hslValues = getHslValuesFromLength(nonComboResources.length);
-  if (!hslValues) return;
-  return nonComboResources.sort(localeSort).map((res, i) => {
-    return {
-      ...res,
-      color: hslValues[i],
-    };
-  });
-}
-
-function getComboResourcesWithColor(
-  comboResources: Resource[],
-  nonComboResourcesWithColor: (Resource & { color: string })[]
-): (Resource & { color: string })[] {
-  return comboResources.sort(localeSort).map((res) => {
-    const colors: string[] = [];
-    res.resourcesForCombo?.forEach((resCo) => {
-      const resWithColor = nonComboResourcesWithColor.find(
-        (nRes) => resCo._id === nRes._id
-      );
-      if (!resWithColor) {
-        return;
-      }
-      colors.push(resWithColor.color);
-    });
-    let color = 'linear-gradient(to right, ';
-    colors.forEach((c, i) => {
-      color += c;
-      if (i < colors.length - 1) {
-        color += ', ';
-      } else {
-        color += ')';
-      }
-    });
-    return { ...res, color, label: res.label };
-  });
 }
 
 function getFullName(user: UserProfile): string {
@@ -654,11 +464,7 @@ export {
   resizeImage,
   dataURLtoFile,
   parseAllBookingsWithResources,
-  getAllBookingsWithSelectedResource,
-  checkAndSetBookingsWithConflict,
   formatDate,
-  getNonComboResourcesWithColor,
-  getComboResourcesWithColor,
   getFullName,
   parseHtmlEntities,
   parseGroupsWithMeetings,
@@ -673,7 +479,6 @@ export {
 export type {
   Activity,
   Resource,
-  ResourceForCombo,
   Booking,
   DateTimeOccurrence,
   Group,

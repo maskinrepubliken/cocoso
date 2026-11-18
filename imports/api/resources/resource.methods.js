@@ -156,12 +156,11 @@ Meteor.methods({
           category: 1,
           kinds: 1,
           label: 1,
-          isBookable: 1,
-          isCombo: 1,
+          // how to book it, for "Bokningsbar" in the place picker
+          booking: 1,
           locationId: 1,
           parentId: 1,
           isUnlisted: 1,
-          resourcesForCombo: 1,
           // a picture for the place picker in the event form
           images: { $slice: 1 },
           imageUrl: 1,
@@ -185,7 +184,6 @@ Meteor.methods({
       _id: 1,
       label: 1,
       images: { $slice: 1 },
-      isBookable: 1,
       booking: 1,
       isUnlisted: 1,
       // the parent's address shows under "Del av"
@@ -274,7 +272,6 @@ Meteor.methods({
           _id: 1,
           label: 1,
           images: { $slice: 1 },
-          isBookable: 1,
           booking: 1,
         },
         sort: { label: 1 },
@@ -299,44 +296,6 @@ Meteor.methods({
       main: main ? { ...main, parts } : null,
       others: linked.filter((place) => place._id !== home._id),
     };
-  },
-
-  async getResourceBookingsForUser(resourceId) {
-    const user = await Meteor.userAsync();
-
-    if (!(await isContributorOrAdmin(user._id))) {
-      throw new Meteor.Error('Not valid user!');
-    }
-
-    try {
-      const bookings = await Activities.find(
-        {
-          resourceId,
-          authorId: user._id,
-        },
-        {
-          fields: {
-            title: 1,
-            longDescription: 1,
-            datesAndTimes: 1,
-          },
-        }
-      ).fetchAsync();
-
-      const userBookings = bookings.map((booking) => ({
-        _id: booking._id,
-        startDate: booking.datesAndTimes[0].startDate,
-        startTime: booking.datesAndTimes[0].startTime,
-        endDate: booking.datesAndTimes[0].endDate,
-        endTime: booking.datesAndTimes[0].endTime,
-        title: booking.title,
-        description: booking.longDescription,
-      }));
-
-      return userBookings;
-    } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch bookings");
-    }
   },
 
   async createResource(values) {
@@ -489,24 +448,6 @@ Meteor.methods({
         { multi: true }
       );
       await updateParts(resourceId, address, locationId);
-      if (
-        !resource.isCombo &&
-        (await Resources.findOneAsync({
-          'resourcesForCombo._id': resource._id,
-        }))
-      ) {
-        await Resources.updateAsync(
-          { 'resourcesForCombo._id': resource._id },
-          {
-            $set: {
-              'resourcesForCombo.$.label': values.label,
-            },
-          },
-          {
-            multi: true,
-          }
-        );
-      }
     } catch (error) {
       throw new Meteor.Error(error, "Couldn't add to Collection");
     }

@@ -30,7 +30,8 @@ export type BookingVia = 'organizer' | 'own' | 'link';
 
 // What the form edits; bookingValue() turns it into what is saved.
 export interface BookingState {
-  isBookable: boolean;
+  // "Platsen går att boka": the place says how it is booked (`booking`)
+  canBeBooked: boolean;
   info: string;
   via: BookingVia;
   contactUserId: string;
@@ -47,7 +48,7 @@ export interface Booking {
 }
 
 export const bookingState = (booking?: Booking | null): BookingState => ({
-  isBookable: Boolean(booking),
+  canBeBooked: Boolean(booking),
   info: booking?.info || '',
   via: booking?.url
     ? 'link'
@@ -61,7 +62,7 @@ export const bookingState = (booking?: Booking | null): BookingState => ({
 
 // Only the chosen way to book is sent; null when the place is not bookable.
 export const bookingValue = (state: BookingState): Booking | null => {
-  if (!state.isBookable) {
+  if (!state.canBeBooked) {
     return null;
   }
   const info = state.info.trim() ? { info: state.info } : {};
@@ -216,12 +217,12 @@ export default function BookingFields({ value, onChange }: BookingFieldsProps) {
   return (
     <>
       <ToggleSwitch
-        checked={value.isBookable}
+        checked={value.canBeBooked}
         helper={t('form.booking.switchHelper')}
         label={t('form.booking.switch')}
-        onChange={(isBookable) => set({ isBookable })}
+        onChange={(canBeBooked) => set({ canBeBooked })}
       />
-      {value.isBookable && (
+      {value.canBeBooked && (
         <>
           <FormField
             label={t('form.booking.info')}

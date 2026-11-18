@@ -1,13 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import XIcon from 'lucide-react/dist/esm/icons/x';
-import TriangleAlertIcon from 'lucide-react/dist/esm/icons/triangle-alert';
 import { useTranslation } from 'react-i18next';
 
-import { Box, Text } from '/imports/ui/core';
 import type { DateAndTime } from '/imports/ui/types';
-
-import { call } from '../../api/_utils/shared';
 
 const today = new Date().toISOString().substring(0, 10);
 
@@ -20,52 +16,7 @@ export const emptyDateAndTime: DateAndTime = {
   endTime: '10:00',
   attendees: [],
   isRange: false,
-  conflict: null,
 };
-
-interface ConflictMarkerProps {
-  occurrence: any;
-  t: (key: string) => string;
-}
-
-export function ConflictMarker({ occurrence, t }: ConflictMarkerProps) {
-  if (!occurrence) {
-    return null;
-  }
-
-  return (
-    <Box>
-      <Text
-        color="red.600"
-        fontSize="sm"
-        fontWeight="bold"
-        my="4"
-        textAlign="center"
-      >
-        {t('form.conflict.alert')}
-        <br />
-      </Text>
-      {/* <Code
-        colorScheme={occurrence.isConflictHard ? 'tomato' : 'orange'}
-        mx="auto"
-        display="block"
-        width="fit-content"
-        mt="4"
-      >
-        {occurrence.conflict.startDate === occurrence.conflict.endDate
-          ? occurrence.conflict.startDate
-          : `${occurrence.conflict.startDate}-${occurrence.conflict.endDate}`}
-        {', '}
-        {`${occurrence.conflict.startTime} – ${occurrence.conflict.endTime}`}
-      </Code> */}
-      {!occurrence.isConflictHard && (
-        <Text fontSize="sm" fontWeight="bold" mt="2" textAlign="center">
-          {t('form.conflict.notExclusiveInfo')}
-        </Text>
-      )}
-    </Box>
-  );
-}
 
 // Times as minutes of the day, and back
 const toMinutes = (time?: string) => {
@@ -91,10 +42,7 @@ const isRangeOf = (o: DateAndTime) =>
   Boolean(o?.isRange || o?.startDate !== o?.endDate);
 
 interface DatesAndTimesProps {
-  activityId?: string;
   datesAndTimes: DateAndTime[];
-  isExclusiveActivity?: boolean;
-  resourceId?: string;
   onDatesAndTimesChange: (datesAndTimes: DateAndTime[]) => void;
 }
 
@@ -102,54 +50,17 @@ interface DatesAndTimesProps {
 // or dates, and its times, in the browser's own pickers; another occasion
 // starts a week after the last, at the same times.
 export default function DatesAndTimes({
-  activityId,
   datesAndTimes,
-  isExclusiveActivity,
-  resourceId,
   onDatesAndTimesChange,
 }: DatesAndTimesProps) {
   const [t, i18n] = useTranslation('activities');
 
-  const withConflict = async (occurrence: DateAndTime) => {
-    if (!resourceId) {
-      return { ...occurrence, conflict: null, isConflictHard: false };
-    }
-    const conflict = await call(
-      'checkDatesForConflict',
-      { ...occurrence, resourceId },
-      activityId
+  const change = (index: number, patch: Partial<DateAndTime>) =>
+    onDatesAndTimesChange(
+      datesAndTimes.map((item, i) =>
+        i === index ? { ...item, ...patch } : item
+      )
     );
-    return {
-      ...occurrence,
-      conflict,
-      isConflictHard: Boolean(
-        conflict && (isExclusiveActivity || conflict?.isExclusiveActivity)
-      ),
-    };
-  };
-
-  useEffect(() => {
-    if (!resourceId || !datesAndTimes) {
-      return;
-    }
-    Promise.all(datesAndTimes.map(withConflict)).then(onDatesAndTimesChange);
-  }, [resourceId, isExclusiveActivity]);
-
-  // The change shows at once; a clash with another booking follows.
-  const change = (index: number, patch: Partial<DateAndTime>) => {
-    const occurrence = { ...datesAndTimes[index], ...patch };
-    const next = datesAndTimes.map((item, i) =>
-      i === index ? occurrence : item
-    );
-    onDatesAndTimesChange(next);
-    if (resourceId) {
-      withConflict(occurrence).then((checked) =>
-        onDatesAndTimesChange(
-          next.map((item, i) => (i === index ? checked : item))
-        )
-      );
-    }
-  };
 
   const setStartDate = (index: number, startDate: string) => {
     if (!startDate) {
@@ -202,13 +113,7 @@ export default function DatesAndTimes({
       endDate: addDays(startDate, Math.max(0, length || 0)),
       attendees: [],
     };
-    const next = [...datesAndTimes, added];
-    onDatesAndTimesChange(next);
-    if (resourceId) {
-      withConflict(added).then((checked) =>
-        onDatesAndTimesChange([...datesAndTimes, checked])
-      );
-    }
+    onDatesAndTimesChange([...datesAndTimes, added]);
   };
 
   const removeOccurrence = (index: number) =>
@@ -238,14 +143,9 @@ export default function DatesAndTimes({
     <div className="occurrences">
       {datesAndTimes.map((occurrence, index) => {
         const isRange = isRangeOf(occurrence);
-        const status = !occurrence.conflict
-          ? ''
-          : occurrence.isConflictHard
-          ? 'is-conflict'
-          : 'is-warning';
         const id = `occurrence-${index}`;
         return (
-          <div key={index} className={`occurrence ${status}`}>
+          <div key={index} className="occurrence">
             <div className="occurrence-head">
               <span className="occurrence-title">
                 {t('form.occurrence.title', { n: index + 1 })}
@@ -347,17 +247,6 @@ export default function DatesAndTimes({
                 />
               </label>
             </div>
-
-            {occurrence.conflict && (
-              <p className="occurrence-conflict">
-                <TriangleAlertIcon aria-hidden width={15} height={15} />
-                <span>
-                  {t('form.conflict.alert')}
-                  {!occurrence.isConflictHard &&
-                    `. ${t('form.conflict.notExclusiveInfo')}`}
-                </span>
-              </p>
-            )}
           </div>
         );
       })}

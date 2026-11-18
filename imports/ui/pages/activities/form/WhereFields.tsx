@@ -93,8 +93,6 @@ export default function WhereFields({
                   onSelectResource({
                     _id: place._id,
                     label: place.label,
-                    isCombo: place.isCombo,
-                    isBookable: place.isBookable,
                   })
                 }
               >

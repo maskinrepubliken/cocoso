@@ -24,8 +24,6 @@ form:
     send: "Save and tell them"
     skip: "Save without telling"
   booking:
-    exclusive: "The place is taken"
-    exclusiveHelper: "Nobody else can book the place in the calendar while the event is on."
     rsvp: "Registration is open"
     rsvpHelper: "Visitors register and book a spot on the event page."
     capacityHelper: "How many can register for each occasion."
@@ -146,9 +144,6 @@ form:
     holder: Select
   submit: 'Confirm and Create'
   waiting: 'Creating your booking...'
-  conflict:
-    alert: "There's already a booking at this date & time"
-    notExclusiveInfo: 'Since both bookings are not exclusive, you may go ahead and finalise it'
 
 members:
   label: My Activities

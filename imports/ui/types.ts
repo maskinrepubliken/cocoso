@@ -122,8 +122,6 @@ export interface SelectedResource {
   _id: string;
   label: string;
   value?: string;
-  isCombo?: boolean;
-  isBookable?: boolean;
 }
 
 /**
@@ -160,8 +158,6 @@ export interface DateAndTime {
   endTime: string;
   attendees?: string[];
   isRange?: boolean;
-  conflict?: any;
-  isConflictHard?: boolean;
 }
 
 /**
@@ -211,7 +207,6 @@ export type Role = 'admin' | 'contributor' | 'participant' | null;
 export type {
   Activity,
   Resource,
-  ResourceForCombo,
   Booking,
   DateTimeOccurrence,
   Group,

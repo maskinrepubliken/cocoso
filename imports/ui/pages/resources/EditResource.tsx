@@ -43,13 +43,10 @@ export default function EditResource() {
     label,
     description,
     images,
-    isCombo,
-    isBookable,
     locationId,
     parentId,
     isUnlisted,
     managerIds,
-    resourcesForCombo,
     title,
   }) => ({
     address,
@@ -60,13 +57,10 @@ export default function EditResource() {
     label,
     description,
     images,
-    isCombo,
-    isBookable,
     locationId,
     parentId,
     isUnlisted,
     managerIds,
-    resourcesForCombo,
     title,
   }))(resource);
 

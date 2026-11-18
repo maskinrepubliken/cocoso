@@ -14,11 +14,6 @@ import { Meteor } from 'meteor/meteor';
 export const DEFAULT_FEATURES = {
   groups: false, // Grupper
   works: false, // Förfrågningar
-  // Booking places in the calendar: the bookable flag and combos (places
-  // made up of others) on places, the book button, new bookings from the
-  // calendar, an event blocking its place and the clash checks. Places
-  // still say how to book them (`booking`).
-  bookings: false,
   // Documents on places and requests: adding them from the gear, the list
   // on the page, and the methods behind them. A group's documents are not
   // covered.

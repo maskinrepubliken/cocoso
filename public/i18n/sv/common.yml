@@ -45,7 +45,6 @@ labels:
   archived: Arkiverade
   activity: Aktiviteten
   all: Alla
-  book: Boka
   booked: bokad
   author: författare
   contact: Kontakt
@@ -784,8 +783,6 @@ entry:
   members_one: '{{ count }} medlem'
   members_other: '{{ count }} medlemmar'
   capacity: 'Plats för {{ count }}'
-  combo: Består av flera platser
-  comboParts: Ingår
   partOf: Del av
   parts: Här finns
   pictures: Bilder

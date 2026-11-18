@@ -46,7 +46,6 @@ labels:
   activity: Activity
   all: All
   author: author
-  book: Book
   booked: booked
   contact: Contact
   content: Content
@@ -787,8 +786,6 @@ entry:
   members_one: '{{ count }} member'
   members_other: '{{ count }} members'
   capacity: 'Room for {{ count }}'
-  combo: Made up of several places
-  comboParts: Includes
   partOf: Part of
   parts: Here you find
   pictures: Pictures

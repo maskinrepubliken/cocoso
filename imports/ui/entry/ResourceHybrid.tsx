@@ -2,7 +2,6 @@ import { Link, type To } from 'react-router';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
-import LayersIcon from 'lucide-react/dist/esm/icons/layers';
 import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
@@ -10,7 +9,7 @@ import DocumentsField from '/imports/ui/pages/resources/components/DocumentsFiel
 import BookingInfo, {
   type BookingWithPerson,
 } from '/imports/ui/pages/resources/components/BookingInfo';
-import type { Document, Site, ResourceForCombo } from '/imports/ui/types';
+import type { Document, Site } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import AddressBlock from '/imports/ui/generic/AddressBlock';
@@ -31,7 +30,6 @@ import {
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
-import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 import LocationTag from '/imports/ui/generic/LocationTag';
 import BookableChip from '/imports/ui/generic/BookableChip';
@@ -42,7 +40,6 @@ import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { placeStructuredData } from '/imports/ui/utils/structuredData';
 
 import EntryHero, {
-  Chip,
   EntryColumn,
   EntryMeta,
   EntryPage,
@@ -63,11 +60,8 @@ interface Resource {
   imageUrl?: string;
   images?: string[];
   capacity?: number;
-  isBookable?: boolean;
   booking?: BookingWithPerson | null;
-  isCombo?: boolean;
   locationId?: string;
-  resourcesForCombo?: ResourceForCombo[];
   kinds?: string[] | null;
   category?: { key?: string } | null;
   // The place it is part of, and the places that are part of it
@@ -79,7 +73,6 @@ interface PlaceLink {
   _id: string;
   label: string;
   images?: string[];
-  isBookable?: boolean;
   booking?: object | null;
   isUnlisted?: boolean;
   address?: Partial<Address> | null;
@@ -158,24 +151,6 @@ function PlaceEvents({ events }: { events: any[] }) {
     </EntryColumn>
   );
 }
-
-const Parts = styled('div', {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.5rem',
-  '& a': {
-    border: '1.5px solid var(--cocoso-colors-theme-800)',
-    borderRadius: '999px',
-    color: 'var(--cocoso-colors-theme-800)',
-    fontWeight: 600,
-    padding: '0.4rem 0.9rem',
-    textDecoration: 'none',
-  },
-  '& a:hover': {
-    backgroundColor: 'var(--cocoso-colors-theme-800)',
-    color: 'white',
-  },
-});
 
 // A place inside this one: its name, and its picture at the right
 const PartCard = styled(Link, {
@@ -372,8 +347,6 @@ export default function ResourceHybrid({
   const { partOf } = resource;
   const withAddress = !partOf && hasAddress(resource.address);
   const parts = resource.parts || [];
-  // Places made up of others are for booking in the calendar too
-  const isCombo = isFeatureEnabled('bookings') && resource.isCombo;
 
   // The place's own cards: on its page, or (embedded) at the end of the
   // page of an organizer linked to it, with "Läs mer" to its page
@@ -384,12 +357,6 @@ export default function ResourceHybrid({
           chips={
             <>
               <LocationTag locationId={resource.locationId} />
-              {isCombo && (
-                <Chip>
-                  <LayersIcon aria-hidden />
-                  {tc('entry.combo')}
-                </Chip>
-              )}
               <BookableChip place={resource} />
             </>
           }
@@ -505,21 +472,6 @@ export default function ResourceHybrid({
       ) : null}
 
       <RestArea>
-        {isCombo && resource.resourcesForCombo?.length ? (
-          <EntryColumn>
-            <SectionHead>
-              <h2>{tc('entry.comboParts')}</h2>
-            </SectionHead>
-            <Parts>
-              {resource.resourcesForCombo.map((part) => (
-                <Link key={part._id} to={`${prefix}/resources/${part._id}`}>
-                  {part.label}
-                </Link>
-              ))}
-            </Parts>
-          </EntryColumn>
-        ) : null}
-
         {/* The places in it, listed or not, a card each */}
         {parts.length > 0 && (
           <EntryColumn>

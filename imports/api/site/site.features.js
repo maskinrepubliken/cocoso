@@ -5,7 +5,6 @@ import Site, { getSite } from './site';
 import { isAdmin } from '../users/user.roles';
 import Groups from '../groups/group';
 import Works from '../works/work';
-import Resources from '../resources/resource';
 import Documents from '../documents/document';
 import {
   DEFAULT_FEATURES,
@@ -47,24 +46,20 @@ Meteor.methods({
     const site = await getSite({ features: 1, featuresLog: 1 });
     const stored = site?.features || {};
     const log = site?.featuresLog || [];
-    const [groups, works, bookablePlaces, combos, documents] =
-      await Promise.all([
-        Groups.find({}).countAsync(),
-        Works.find({}).countAsync(),
-        Resources.find({ isBookable: true }).countAsync(),
-        Resources.find({ isCombo: true }).countAsync(),
-        Documents.find({
-          contextType: { $in: ['resources', 'works'] },
-        }).countAsync(),
-      ]);
-    const counts = { groups, works, bookings: bookablePlaces, documents };
+    const [groups, works, documents] = await Promise.all([
+      Groups.find({}).countAsync(),
+      Works.find({}).countAsync(),
+      Documents.find({
+        contextType: { $in: ['resources', 'works'] },
+      }).countAsync(),
+    ]);
+    const counts = { groups, works, documents };
     return FEATURE_NAMES.map((name) => ({
       name,
       enabled: isFeatureEnabled(name),
       isDefault: typeof stored[name] !== 'boolean',
       defaultEnabled: DEFAULT_FEATURES[name],
       count: counts[name],
-      combos: name === 'bookings' ? combos : undefined,
       lastChange: [...log].reverse().find((entry) => entry.feature === name),
     }));
   },

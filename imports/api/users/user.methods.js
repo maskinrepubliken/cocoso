@@ -136,7 +136,7 @@ async function findHomePlace(homePlaceId) {
   }
   const place = await Resources.findOneAsync(
     { _id: homePlaceId },
-    { fields: { _id: 1, label: 1, isUnlisted: 1, isBookable: 1, isCombo: 1 } }
+    { fields: { _id: 1, label: 1, isUnlisted: 1 } }
   );
   if (!place || place.isUnlisted) {
     throw new Meteor.Error('not-found', 'No such place');
@@ -414,8 +414,6 @@ Meteor.methods({
         ? {
             _id: homePlace._id,
             label: homePlace.label,
-            isBookable: homePlace.isBookable,
-            isCombo: homePlace.isCombo,
           }
         : null,
       avatar: organizer.avatar?.src || null,

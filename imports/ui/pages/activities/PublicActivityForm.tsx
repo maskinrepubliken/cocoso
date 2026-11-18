@@ -9,7 +9,6 @@ import { currentUserAtom, roleAtom } from '/imports/state';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { call } from '/imports/api/_utils/shared';
 import { kindsOf } from '/imports/api/_utils/kinds';
-import { isFeatureEnabled } from '/imports/api/_utils/features';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
@@ -66,7 +65,6 @@ interface ActivityData extends ActivityFormValues {
   resourceId?: string;
   locationId?: string | null;
   isMunicipalityOnly?: boolean;
-  isExclusiveActivity?: boolean;
   isRegistrationEnabled?: boolean;
   isRegistrationDisabled?: boolean;
   kinds?: string[] | null;
@@ -129,7 +127,6 @@ const DRAFT_FIELDS = [
   'contact',
   'contactChoice',
   'datesAndTimes',
-  'isExclusiveActivity',
   'isRegistrationEnabled',
   'kinds',
   'locationId',
@@ -211,7 +208,6 @@ function ActivityForm({
     selectedResource: activity?.resourceId
       ? { label: activity.resource, _id: activity.resourceId }
       : null,
-    isExclusiveActivity: activity ? activity.isExclusiveActivity : true,
     isRegistrationEnabled: activity ? activity.isRegistrationEnabled : false,
     locationId: activity?.locationId || null,
     // An event being edited has its place in the municipality already
@@ -464,9 +460,6 @@ function ActivityForm({
 
   const isFormValid = () => {
     const { datesAndTimes } = state;
-    const isConflictHard = datesAndTimes?.some((occurrence) => {
-      return Boolean(occurrence.conflict) && occurrence.isConflictHard;
-    });
 
     const regex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
     const isTimesInValid = datesAndTimes?.some(
@@ -474,12 +467,12 @@ function ActivityForm({
         !regex.test(dateTime.startTime) || !regex.test(dateTime.endTime)
     );
 
-    setIsSubmitButtonDisabled(isTimesInValid || isConflictHard);
+    setIsSubmitButtonDisabled(isTimesInValid);
   };
 
   useEffect(() => {
     isFormValid();
-  }, [state.datesAndTimes, state.selectedResource, state.isExclusiveActivity]);
+  }, [state.datesAndTimes]);
 
   useEffect(() => {
     if (!loaders || !loaders.isCreating) {
@@ -610,7 +603,6 @@ function ActivityForm({
       images,
       isPublicActivity: true,
       isRegistrationEnabled: state.isRegistrationEnabled,
-      isExclusiveActivity: state.isExclusiveActivity,
       kinds: state.kinds,
       ...(isAdmin && state.authorId ? { authorId: state.authorId } : {}),
       organizers: state.organizers.filter(
@@ -794,36 +786,12 @@ function ActivityForm({
           required
         >
           <DatesAndTimes
-            activityId={activity?._id}
             datesAndTimes={state.datesAndTimes}
-            isExclusiveActivity={state.isExclusiveActivity}
-            resourceId={
-              // a clash with another booking only matters with bookings on
-              whereMode === 'place' && isFeatureEnabled('bookings')
-                ? state.selectedResource?._id
-                : undefined
-            }
             onDatesAndTimesChange={handleDatesAndTimesChange}
           />
         </FormField>
 
         <FormCard title={t('form.cards.booking')}>
-          {/* Blocking the place only means something at a place */}
-          {isFeatureEnabled('bookings') &&
-            whereMode === 'place' &&
-            state.selectedResource && (
-              <ToggleSwitch
-                checked={Boolean(state.isExclusiveActivity)}
-                helper={t('form.booking.exclusiveHelper')}
-                label={t('form.booking.exclusive')}
-                onChange={(isExclusiveActivity) =>
-                  setState((prevState: any) => ({
-                    ...prevState,
-                    isExclusiveActivity,
-                  }))
-                }
-              />
-            )}
           <ToggleSwitch
             checked={Boolean(state.isRegistrationEnabled)}
             helper={t('form.booking.rsvpHelper')}

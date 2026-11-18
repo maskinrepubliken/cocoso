@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Checkbox, Text } from '/imports/ui/core';
 import { useTranslation } from 'react-i18next';
-import AutoCompleteSelect from 'react-select';
-import makeAnimated from 'react-select/animated';
 import { useAtom, useAtomValue } from 'jotai';
 
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
@@ -15,7 +13,6 @@ import { Address, isCompleteAddress } from '/imports/api/_utils/address';
 import { Contact, isReachable } from '/imports/api/_utils/contact';
 import { call } from '/imports/api/_utils/shared';
 import { kindsOf } from '/imports/api/_utils/kinds';
-import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { loaderAtom } from '/imports/ui/utils/loaderHandler';
 import {
   DraftNotice,
@@ -47,7 +44,6 @@ import type { OrganizerOption } from '/imports/ui/pages/activities/form/Organize
 interface ResourceFormValues {
   label: string;
   description: string;
-  isBookable?: boolean;
 }
 
 interface ResourceData extends ResourceFormValues {
@@ -60,15 +56,12 @@ interface ResourceData extends ResourceFormValues {
   parentId?: string | null;
   isUnlisted?: boolean;
   managerIds?: string[];
-  isCombo?: boolean;
-  resourcesForCombo?: ResourceOption[];
   booking?: Booking | null;
 }
 
 interface ResourceOption {
   _id: string;
   label: string;
-  isCombo?: boolean;
   parentId?: string | null;
   isUnlisted?: boolean;
 }
@@ -86,10 +79,7 @@ interface ResourceFormProps {
 export const emptyFormValues: ResourceFormValues = {
   label: '',
   description: '',
-  isBookable: true,
 };
-
-const animatedComponents = makeAnimated();
 
 // The places a place can be part of: any listed one but itself and its
 // own parts, all the way down. A place left out of the list (a room) has
@@ -153,14 +143,11 @@ const DRAFT_FIELDS = [
   'address',
   'booking',
   'contact',
-  'isBookable',
-  'isCombo',
   'isUnlisted',
   'kinds',
   'locationId',
   'parentId',
   'placement',
-  'resourcesForCombo',
   'managerIds',
 ] as const;
 const TEXT_FIELDS = ['label', 'description'] as const;
@@ -195,8 +182,6 @@ function PlaceForm({
     []
   );
   const [pristine] = useState<any>(() => ({
-    isBookable: resource ? resource.isBookable : true,
-    isCombo: resource ? resource.isCombo : false,
     kinds: kindsOf(resource),
     address: resource?.address || emptyAddress,
     contact: resource?.contact || emptyContact,
@@ -207,7 +192,6 @@ function PlaceForm({
     placement: defaultParentId ? 'parent' : placementOf(resource),
     parentId: resource?.parentId || defaultParentId || null,
     isUnlisted: Boolean(resource?.isUnlisted),
-    resourcesForCombo: resource ? resource.resourcesForCombo : [],
     // Who looks after it: an organizer adding a place does, to begin with
     managerIds:
       resource?.managerIds ||
@@ -302,7 +286,7 @@ function PlaceForm({
     // A bookable place says how: an organizer, an email or phone, or a link.
     const { booking } = state;
     if (
-      booking.isBookable &&
+      booking.canBeBooked &&
       ((booking.via === 'organizer' && !booking.contactUserId) ||
         (booking.via === 'own' && !isReachable(booking.contact)) ||
         (booking.via === 'link' && !booking.url.trim()))
@@ -329,12 +313,9 @@ function PlaceForm({
       contact: state.contact,
       booking: bookingValue(state.booking),
       images,
-      isBookable: state.isBookable,
-      isCombo: state.isCombo,
       locationId: state.locationId,
       parentId: isPart ? state.parentId : null,
       isUnlisted: Boolean(isPart && state.parentId && state.isUnlisted),
-      resourcesForCombo: state.resourcesForCombo,
       managerIds: state.managerIds,
     };
     if ((await onFinalize(newResource)) === true) {
@@ -351,24 +332,10 @@ function PlaceForm({
     parseResource(images);
   };
 
-  const handleAutoCompleteSelectChange = (newValue: ResourceOption[]) => {
-    setState((prevState) => ({
-      ...prevState,
-      resourcesForCombo: newValue,
-    }));
-  };
-
   const parentOptions = possibleParents(state.resources || [], resourceId);
   const parent =
     state.resources?.find((r: ResourceOption) => r._id === state.parentId) ||
     null;
-
-  const autoCompleteOptions = state.resources
-    ?.filter((r: ResourceOption) => !r.isCombo)
-    .map((r: ResourceOption) => ({
-      _id: r._id,
-      label: r.label,
-    }));
 
   return (
     <>
@@ -518,72 +485,6 @@ function PlaceForm({
             }
           />
         </FormCard>
-
-        {/* Combos and the bookable flag are for booking in the calendar;
-          while it is off they are kept as they are */}
-        {isFeatureEnabled('bookings') && (
-          <FormField
-            helper={t('form.combo.switch.helper')}
-            label={t('form.combo.switch.label')}
-            mt="6"
-            mb="12"
-          >
-            <Checkbox
-              checked={state.isCombo}
-              id="is-combo"
-              size="lg"
-              onChange={(e) =>
-                setState((prevState) => ({
-                  ...prevState,
-                  isCombo: e.target.checked,
-                }))
-              }
-            >
-              {t('form.combo.switch.label')}
-            </Checkbox>
-            {state.isCombo && (
-              <Box w="100%" pt="2">
-                <Text fontSize="sm" mb="2">
-                  {t('form.combo.select.helper')}
-                </Text>
-                <AutoCompleteSelect
-                  isMulti
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  defaultValue={state.resourcesForCombo}
-                  options={autoCompleteOptions}
-                  placeholder={t('form.combo.select.holder')}
-                  style={{ width: '100%', marginTop: '1rem' }}
-                  getOptionValue={(option) => option._id}
-                  onChange={handleAutoCompleteSelectChange}
-                />
-              </Box>
-            )}
-          </FormField>
-        )}
-
-        {isFeatureEnabled('bookings') && (
-          <FormField
-            helper={t('form.bookable.helper')}
-            label={t('form.bookable.label')}
-            mt="6"
-            mb="12"
-          >
-            <Checkbox
-              checked={state.isBookable}
-              id="is-bookable"
-              size="lg"
-              onChange={(e) =>
-                setState((prevState) => ({
-                  ...prevState,
-                  isBookable: e.target.checked,
-                }))
-              }
-            >
-              {t('form.bookable.label')}
-            </Checkbox>
-          </FormField>
-        )}
       </GenericEntryForm>
     </>
   );

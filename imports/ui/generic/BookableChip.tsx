@@ -3,19 +3,15 @@ import { useTranslation } from 'react-i18next';
 import CalendarCheckIcon from 'lucide-react/dist/esm/icons/calendar-check';
 
 import { Chip } from '/imports/ui/entry/EntryHero';
-import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 interface Place {
-  isBookable?: boolean;
   booking?: object | null;
 }
 
-// Booked in the calendar (the `bookings` feature), or else a place that
-// says how to book it (`booking`).
+// A place that says how to book it (`booking`: info and a link, an
+// organizer or contact details of its own).
 export const isBookablePlace = (place?: Place | null): boolean =>
-  isFeatureEnabled('bookings')
-    ? Boolean(place?.isBookable)
-    : Boolean(place?.booking);
+  Boolean(place?.booking);
 
 // "Bokningsbar", in tegel like the other accent chips, on a place's page
 // and its card in the gallery.

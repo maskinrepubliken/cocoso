@@ -24,8 +24,6 @@ interface Resource {
   _id: string;
   label: string;
   color?: string;
-  isBookable: boolean;
-  isCombo?: boolean;
   locationId?: string;
 }
 
@@ -37,7 +35,6 @@ interface Activity {
   startTime: string;
   endTime: string;
   resourceId?: string;
-  comboResourceId?: string;
   resource?: string;
   authorName: string;
   activityId: string;

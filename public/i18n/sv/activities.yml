@@ -24,8 +24,6 @@ form:
     send: "Spara och meddela"
     skip: "Spara utan att meddela"
   booking:
-    exclusive: "Platsen är upptagen"
-    exclusiveHelper: "Ingen annan kan boka platsen i kalendern medan evenemanget pågår."
     rsvp: "Anmälan är möjlig"
     rsvpHelper: "Besökare anmäler sig och bokar plats på evenemangssidan."
     capacityHelper: "Hur många som kan anmäla sig till varje tillfälle."
@@ -146,9 +144,6 @@ form:
     holder: Välj
   submit: Bekräfta och Skapa
   waiting: Skapar din aktivitet...
-  conflict:
-    alert: 'Det finns redan en bokning för den här resursen vid detta datum och tid'
-    notExclusiveInfo: 'Eftersom båda bokningarna tillåter att fler bokar samma tid kan du gå vidare och slutföra din bokning'
 
 members:
   label: Mina aktiviteter

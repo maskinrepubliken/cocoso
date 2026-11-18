@@ -505,13 +505,6 @@ features:
       count_other: "{{count}} förfrågningar finns"
       offEffect: Alla förfrågningar och listan över dem blir "sidan finns inte", och ingen kan lägga upp nya. Förfrågningarna finns kvar i databasen.
       onEffect: Förfrågningarna och listan över dem blir synliga igen, med allt som fanns när funktionen stängdes av.
-    bookings:
-      label: Bokningar
-      about: Att boka platser i kalendern, Boka-knappen på platser, platser som består av flera andra och kontrollen av krockande bokningar.
-      count_one: "{{count}} plats är bokningsbar"
-      count_other: "{{count}} platser är bokningsbara"
-      offEffect: Det går inte längre att boka platser, Boka-knappen försvinner, platser som består av flera andra visas som vanliga platser och krockar kontrolleras inte. Bokningar som redan finns ligger kvar i kalendern. Platserna visar fortfarande hur man bokar dem.
-      onEffect: Platser kan bokas i kalendern igen och Boka-knappen syns på bokningsbara platser.
     documents:
       label: Dokument
       about: Dokument på platser och förfrågningar – att lägga till dem från kugghjulet och listan på sidan. Gruppernas dokument påverkas inte.

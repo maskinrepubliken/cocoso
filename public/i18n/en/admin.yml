@@ -505,13 +505,6 @@ features:
       count_other: "{{count}} requests exist"
       offEffect: Every request and their list become "page not found", and nobody can post new ones. The requests stay in the database.
       onEffect: The requests and their list become visible again, with everything they had when the feature was switched off.
-    bookings:
-      label: Bookings
-      about: Booking places in the calendar, the Book button on places, places made up of others, and the check for clashing bookings.
-      count_one: "{{count}} place is bookable"
-      count_other: "{{count}} places are bookable"
-      offEffect: Places can no longer be booked, the Book button disappears, places made up of others show as plain places and clashes are not checked. Existing bookings stay in the calendar. Places still say how to book them.
-      onEffect: Places can be booked in the calendar again and the Book button shows on bookable places.
     documents:
       label: Documents
       about: Documents on places and requests – adding them from the gear, and the list on the page. Groups' documents are not affected.

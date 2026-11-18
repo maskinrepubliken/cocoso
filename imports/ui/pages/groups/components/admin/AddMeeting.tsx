@@ -16,7 +16,6 @@ import {
   Textarea,
 } from '/imports/ui/core';
 import DateTimePicker from '/imports/ui/forms/DateTimePicker';
-import { ConflictMarker } from '/imports/ui/forms/DatesAndTimes';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 
@@ -35,7 +34,6 @@ const emptyDateAndTime = {
 
 function AddMeetingForm({
   buttonDisabled,
-  conflictingBooking,
   hostname,
   newMeeting,
   resources,
@@ -45,7 +43,6 @@ function AddMeetingForm({
 }) {
   const [isLocal, setIsLocal] = useState(true);
   const [t] = useTranslation('groups');
-  const [ta] = useTranslation('activities');
 
   return (
     <>
@@ -81,10 +78,6 @@ function AddMeetingForm({
         )}
       </Box>
 
-      {conflictingBooking && (
-        <ConflictMarker occurrence={conflictingBooking} t={ta} />
-      )}
-
       <Flex justify="flex-end" pt="4">
         <Button isDisabled={buttonDisabled} onClick={handleSubmit}>
           {t('meeting.form.submit')}
@@ -98,7 +91,6 @@ export default function AddMeeting({ onClose }) {
   const site = useAtomValue(siteAtom);
   const [state, setState] = useState({
     activities: [],
-    conflictingBooking: null,
     isFormValid: false,
     isSubmitted: false,
     newMeeting: emptyDateAndTime,
@@ -109,7 +101,7 @@ export default function AddMeeting({ onClose }) {
   const [tc] = useTranslation('common');
   const revalidator = useRevalidator();
 
-  const { conflictingBooking, isFormValid, newMeeting, resources } = state;
+  const { isFormValid, newMeeting, resources } = state;
 
   const getData = async () => {
     try {
@@ -129,47 +121,15 @@ export default function AddMeeting({ onClose }) {
     getData();
   }, []);
 
-  const checkDatesForConflict = async () => {
-    const { resourceId, resource, startDate, startTime, endTime } =
-      state.newMeeting;
-    if (!resourceId || !startDate || !startTime || !endTime) {
-      if (resource) {
-        setState((prevState) => ({
-          ...prevState,
-          conflictingBooking: null,
-          isFormValid: true,
-        }));
-      } else {
-        setState((prevState) => ({
-          ...prevState,
-          isFormValid: false,
-        }));
-      }
-      return;
-    }
-
-    const params = {
-      startDate,
-      startTime,
-      endDate: startDate,
-      endTime,
-      resourceId,
-      resource,
-    };
-
-    const conflictingBooking = await call('checkDatesForConflict', params);
-
+  // A meeting needs a time and a place, one of the places or a written one
+  useEffect(() => {
+    const { resourceId, resource, startDate, startTime, endTime } = newMeeting;
     setState((prevState) => ({
       ...prevState,
-      conflictingBooking: conflictingBooking
-        ? { ...conflictingBooking, isConflictHard: true }
-        : null,
-      isFormValid: Boolean(!conflictingBooking),
+      isFormValid: Boolean(
+        (resourceId || resource) && startDate && startTime && endTime
+      ),
     }));
-  };
-
-  useEffect(() => {
-    checkDatesForConflict();
   }, [newMeeting]);
 
   const handleDateAndTimeChange = (selectedDates) => {
@@ -258,10 +218,9 @@ export default function AddMeeting({ onClose }) {
     >
       <AddMeetingForm
         buttonDisabled={!isFormValid}
-        conflictingBooking={conflictingBooking}
         hostname={site?.settings?.name}
         newMeeting={newMeeting}
-        resources={resources?.filter((r) => r.isBookable)}
+        resources={resources}
         handleDateChange={handleDateAndTimeChange}
         handleResourceChange={handleResourceChange}
         handleSubmit={createActivity}

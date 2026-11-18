@@ -5,7 +5,6 @@ all: Alla
 
 messages:
   notfound: Ingen objekt hittades
-  comborequires:
 
 form:
   managers:
@@ -53,16 +52,6 @@ form:
       own: Ange en e-postadress eller ett telefonnummer för bokning.
       link: Ange länken dit platsen bokas.
   holder: skriv
-  bookable:
-    label: Bokningsbart
-    helper: Aktivera detta om du vill att resursen ska kunna bokas i kalendern
-  combo:
-    switch:
-      label: Combo
-      helper: Combo innebär att du skapar en kombination av flera resurser. Det kommer göra det enklare för användare att boka flera objekt samtidigt.
-    select:
-      holder: Välj alternativ
-      helper: Välj flera objekt för att skapa en kombinationsobjekt
   name:
     label: Namn
     holder: Smultronstället

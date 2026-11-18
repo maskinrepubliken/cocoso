@@ -88,7 +88,6 @@ export default function useEventFilters(
     category?: { key?: string } | null;
     locationId?: string | null;
     isMunicipalityOnly?: boolean;
-    isBookable?: boolean;
     booking?: object | null;
   }) =>
     (!onlyBookable || isBookablePlace(item)) &&
