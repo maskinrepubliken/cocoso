@@ -99,7 +99,11 @@ Meteor.methods({
       }
     } else if (contextType === 'works') {
       const work = await Works.findOneAsync({ _id: itemId });
-      if (!work || work.authorId !== user._id) {
+      // Its author, and the site's admins
+      if (
+        !work ||
+        (work.authorId !== user._id && !(await isAdmin(user._id)))
+      ) {
         throw new Meteor.Error(
           'not-found',
           'You must be author of the work to upload documents'

@@ -5,7 +5,7 @@ import { locationSelector } from '../_utils/shared';
 import { featureMethods } from '../_utils/features';
 
 import Works from './work';
-import { isContributorOrAdmin } from '../users/user.roles';
+import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import methodError from '../_utils/methodError';
 
 // The author's display name on each work: first and last name when set,
@@ -116,7 +116,11 @@ const workMethods = {
 
     const theWork = await Works.findOneAsync(workId);
 
-    if (user._id !== theWork.authorId) {
+    // Its author, and the site's admins
+    if (!theWork) {
+      throw new Meteor.Error('not-found', 'Request not found');
+    }
+    if (user._id !== theWork.authorId && !(await isAdmin(user._id))) {
       throw new Meteor.Error('You are not allowed');
     }
 
@@ -148,7 +152,11 @@ const workMethods = {
     const userId = user._id;
 
     const work = await Works.findOneAsync(workId);
-    if (work.authorId !== userId) {
+    // Its author, and the site's admins
+    if (!work) {
+      throw new Meteor.Error('not-found', 'Request not found');
+    }
+    if (work.authorId !== userId && !(await isAdmin(userId))) {
       throw new Meteor.Error('You are not allowed!');
     }
 

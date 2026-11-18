@@ -107,7 +107,8 @@ function useEditable(): Editable | null {
       : null;
   }
   if (data.work?._id) {
-    return data.work.authorId === userId
+    // A request: its author, and admins
+    return isAdmin || data.work.authorId === userId
       ? { context: 'works', id: data.work._id, item: data.work }
       : null;
   }
