@@ -17,6 +17,8 @@ import { currentUserAtom, locationsAtom, roleAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
+import { styled } from '/stitches.config';
+
 import EventCards from './EventCards';
 import ResourceHybrid, {
   PartCards,
@@ -75,6 +77,12 @@ interface PublicContact {
   phone?: string;
   website?: string;
 }
+
+// As wide as a place's page: the card and the sections use the page's
+// full width, not the narrower column of other entry pages
+const OrganizerPage = styled(EntryPage, {
+  '& > header, & > section': { maxWidth: 'none' },
+});
 
 // The ways to reach them they chose to make public.
 function ContactLinks({ contact }: { contact?: PublicContact | null }) {
@@ -312,7 +320,7 @@ export default function UserHybrid({
   );
 
   return (
-    <EntryPage>
+    <OrganizerPage>
       <EntryMeta
         description={plainText(user.bio)}
         image={user.avatar?.src}
@@ -395,6 +403,6 @@ export default function UserHybrid({
           ) : null}
         </>
       )}
-    </EntryPage>
+    </OrganizerPage>
   );
 }

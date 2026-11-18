@@ -576,7 +576,7 @@ export default function ResourceHybrid({
   if (embedded) {
     return (
       <LightboxProvider alt={resource.label} images={images}>
-        <div style={{ margin: '0 auto', maxWidth: '980px' }}>{body}</div>
+        {body}
       </LightboxProvider>
     );
   }
