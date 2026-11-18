@@ -89,7 +89,8 @@ Meteor.methods({
       const member = group.members.find(
         (member) => member.memberId === user._id
       );
-      if (!member || !member.isAdmin) {
+      // The group's admins, and the site's
+      if (!member?.isAdmin && !(await isAdmin(user._id))) {
         throw new Meteor.Error(
           'not-authorized',
           'You must be an admin of the group to upload documents'

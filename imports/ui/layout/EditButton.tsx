@@ -95,7 +95,8 @@ function useEditable(): Editable | null {
     const isGroupAdmin = (group.members || []).some(
       (member: any) => member.memberId === userId && member.isAdmin
     );
-    return isGroupAdmin
+    // The site's admins run any group as its owner would
+    return isGroupAdmin || isAdmin
       ? { context: 'groups', id: group._id, item: group }
       : null;
   }

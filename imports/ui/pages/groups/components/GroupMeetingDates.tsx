@@ -17,7 +17,7 @@ import {
 import FancyDate from '/imports/ui/entry/FancyDate';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
-import { currentUserAtom } from '/imports/state';
+import { currentUserAtom, roleAtom } from '/imports/state';
 
 import { groupAtom } from '../groupAtom';
 
@@ -190,18 +190,20 @@ export default function GroupMeetingDates() {
   const [modalOpen, setModalOpen] = useState(false);
   const [t] = useTranslation('groups');
   const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
   const group = useAtomValue(groupAtom) as any;
 
   const me = currentUser
     ? group?.members?.find((m: any) => m.memberId === currentUser._id)
     : null;
   const hasUpcoming = Boolean(group?.meetings?.some(isFutureMeeting));
+  // The site's admins manage any group's meetings, member or not
+  const isAdmin = Boolean(me?.isAdmin) || role === 'admin';
 
-  if (!group || !me || !hasUpcoming) {
+  if (!group || (!me && !isAdmin) || !hasUpcoming) {
     return null;
   }
 
-  const isAdmin = Boolean(me.isAdmin);
   const props = { currentUser, group, isAdmin, isMember: true };
 
   return (

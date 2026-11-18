@@ -47,6 +47,10 @@ const filterPrivateGroups = async (activities, user) => {
       }
       const group = await Groups.findOneAsync({ _id: act.groupId });
       const userId = user?._id;
+      // The site's admins see private groups' meetings too
+      if (await isAdmin(userId)) {
+        return true;
+      }
       return (
         group.adminId === userId ||
         group.members.some((member) => member.memberId === userId) ||
@@ -882,7 +886,16 @@ Meteor.methods({
     }
 
     const userIsAdmin = await isAdmin(user._id);
-    if (user._id !== theActivity.authorId && !userIsAdmin) {
+    // A group's meeting may also go by the hand of the group's admins
+    const group = theActivity.isGroupMeeting
+      ? await Groups.findOneAsync(theActivity.groupId, {
+          fields: { members: 1 },
+        })
+      : null;
+    const isGroupsAdmin = Boolean(
+      group?.members?.some((m) => m.memberId === user._id && m.isAdmin)
+    );
+    if (user._id !== theActivity.authorId && !userIsAdmin && !isGroupsAdmin) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
 

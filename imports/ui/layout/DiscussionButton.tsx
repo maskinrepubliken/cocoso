@@ -55,7 +55,10 @@ function useDiscussion(): { context: Context; item: any } | null {
     const isMember = (group.members || []).some(
       (member: any) => member.memberId === currentUser._id
     );
-    return isMember ? { context: 'groups', item: group } : null;
+    // The site's admins take part in any group's discussion too
+    return isMember || role === 'admin'
+      ? { context: 'groups', item: group }
+      : null;
   }
   if (data.resource?._id) {
     return role === 'admin' || canCreateContent

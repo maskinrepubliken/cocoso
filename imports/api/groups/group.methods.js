@@ -30,6 +30,12 @@ const isUserGroupAdmin = (group, userId) => {
   );
 };
 
+// Who may run a group: its own admins, and the site's admins, who can do
+// everything a group's owner can on any group.
+const isGroupManager = async (group, userId) =>
+  Boolean(group && userId) &&
+  (isUserGroupAdmin(group, userId) || (await isAdmin(userId)));
+
 const groupMethods = {
   async getGroup(groupId) {
     check(groupId, String);
@@ -44,11 +50,13 @@ const groupMethods = {
 
       if (group.isPrivate) {
         const currentUser = await Meteor.userAsync();
-        const currentUserId = currentUser._id;
         if (!currentUser) {
           return null;
         }
+        const currentUserId = currentUser._id;
+        // The site's admins see private groups too
         if (
+          !(await isAdmin(currentUserId)) &&
           group.adminId !== currentUserId &&
           !group.members.some((member) => member.memberId === currentUserId) &&
           !group.peopleInvited.some(
@@ -79,7 +87,9 @@ const groupMethods = {
       }
 
       const currentUserId = currentUser._id;
+      // The site's admins see private groups too
       if (
+        !(await isAdmin(currentUserId)) &&
         group.adminId !== currentUserId &&
         !group.members?.some((member) => member.memberId === currentUserId) &&
         !group.peopleInvited?.some(
@@ -130,8 +140,10 @@ const groupMethods = {
     const allGroups = await Groups.find(locationSelector(locationId), {
       sort: { creationDate: -1 },
     }).fetchAsync();
+    // The site's admins see private groups too
+    const userIsAdmin = Boolean(user && (await isAdmin(user._id)));
     const groupsFiltered = allGroups.filter((group) => {
-      if (!group.isPrivate) {
+      if (!group.isPrivate || userIsAdmin) {
         return true;
       }
       if (!user) {
@@ -273,7 +285,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You are not allowed!');
     }
 
@@ -323,7 +335,7 @@ const groupMethods = {
 
     const groupToDelete = await Groups.findOneAsync(groupId);
 
-    if (!isUserGroupAdmin(groupToDelete, user._id)) {
+    if (!(await isGroupManager(groupToDelete, user._id))) {
       throw new Meteor.Error('You are not allowed!');
     }
 
@@ -438,7 +450,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You are not admin!');
     }
 
@@ -461,7 +473,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You are not admin!');
     }
 
@@ -491,7 +503,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You are not admin!');
     }
 
@@ -536,7 +548,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You do not have admin privileges!');
     }
 
@@ -559,7 +571,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You are not admin!');
     }
 
@@ -583,7 +595,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You are not admin!');
     }
 
@@ -633,7 +645,7 @@ const groupMethods = {
     }
 
     const theGroup = await Groups.findOneAsync(groupId);
-    if (!isUserGroupAdmin(theGroup, user._id)) {
+    if (!(await isGroupManager(theGroup, user._id))) {
       throw new Meteor.Error('You are not admin!');
     }
 

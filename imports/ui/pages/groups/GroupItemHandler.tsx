@@ -8,6 +8,7 @@ import {
   canCreateContentAtom,
   currentUserAtom,
   renderedAtom,
+  roleAtom,
 } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
@@ -33,6 +34,7 @@ export default function GroupItemHandler({ siteDoc }) {
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const currentUser = useAtomValue(currentUserAtom);
+  const role = useAtomValue(roleAtom);
 
   useEffect(() => {
     setGroup(group);
@@ -44,12 +46,15 @@ export default function GroupItemHandler({ siteDoc }) {
   }
 
   const current = groupItem || group;
-  const isGroupAdmin = Boolean(
-    currentUser &&
-      current.members?.some(
-        (m: any) => m.memberId === currentUser._id && m.isAdmin
-      )
-  );
+  // The group's admins, and the site's, who run any group as its owner
+  const isGroupAdmin =
+    role === 'admin' ||
+    Boolean(
+      currentUser &&
+        current.members?.some(
+          (m: any) => m.memberId === currentUser._id && m.isAdmin
+        )
+    );
 
   return (
     <>
