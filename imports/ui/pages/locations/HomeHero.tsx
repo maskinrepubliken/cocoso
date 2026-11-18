@@ -5,7 +5,6 @@ import { useAtomValue } from 'jotai';
 
 import { seasonAtom, siteAtom } from '/imports/state';
 import type { Season } from '/imports/api/_utils/season';
-import KommunMap from '/imports/ui/generic/KommunMap';
 import ThreeDIcon, {
   type ThreeDIconName,
 } from '/imports/ui/generic/ThreeDIcon';
@@ -130,7 +129,6 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
             </span>
           </p>
         </div>
-        <KommunMap className="home-hero-map" />
       </div>
     </section>
   );

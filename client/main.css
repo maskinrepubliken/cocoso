@@ -8439,7 +8439,15 @@ body {
   text-decoration: underline;
 }
 
-/* On the start page's welcome band, beside the text */
-.home-hero-map {
-  align-self: center;
+/* On the start page, at the right end of the places' heading: the map
+   reaches up above the row, so it does not push the cards down */
+.home-places-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.home-places-head .kommun-map-trigger {
+  margin: -24px 0 12px;
 }

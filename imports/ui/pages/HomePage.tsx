@@ -6,6 +6,7 @@ import { useAtomValue } from 'jotai';
 import { Box } from '/imports/ui/core';
 import { locationsAtom } from '/imports/state';
 import HomeHero from '/imports/ui/pages/locations/HomeHero';
+import KommunMap from '/imports/ui/generic/KommunMap';
 import { LocationCards } from '/imports/ui/pages/locations/LocationsGrid';
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
@@ -43,10 +44,17 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
 
         {locations.length > 0 && (
           <section className="home-places" aria-labelledby="home-places-title">
-            <h2 id="home-places-title" className="home-sections-title">
-              {tc('locations.grid.title')}
-            </h2>
-            <p className="home-sections-intro">{tc('locations.grid.intro')}</p>
+            <div className="home-places-head">
+              <div>
+                <h2 id="home-places-title" className="home-sections-title">
+                  {tc('locations.grid.title')}
+                </h2>
+                <p className="home-sections-intro">
+                  {tc('locations.grid.intro')}
+                </p>
+              </div>
+              <KommunMap size={92} />
+            </div>
             <LocationCards
               locations={locations}
               all={{
