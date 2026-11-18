@@ -39,7 +39,9 @@ import { shareText } from '/imports/ui/layout/ShareMeta';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { placeStructuredData } from '/imports/ui/utils/structuredData';
 
+import PlaceOfferings, { type PlaceOffering } from './PlaceOfferings';
 import EntryHero, {
+  Chip,
   EntryColumn,
   EntryMeta,
   EntryPage,
@@ -67,6 +69,8 @@ interface Resource {
   // The place it is part of, and the places that are part of it
   partOf?: PlaceLink | null;
   parts?: PlaceLink[];
+  // What it offers: food, a bed, services, things for sale
+  offerings?: PlaceOffering[];
 }
 
 interface PlaceLink {
@@ -358,6 +362,11 @@ export default function ResourceHybrid({
             <>
               <LocationTag locationId={resource.locationId} />
               <BookableChip place={resource} />
+              {resource.offerings?.map((offering) => (
+                <Chip accent key={offering._id}>
+                  {tc(`offerings.kinds.${offering.kind}`)}
+                </Chip>
+              ))}
             </>
           }
           html={resource.description}
@@ -472,6 +481,9 @@ export default function ResourceHybrid({
       ) : null}
 
       <RestArea>
+        {/* What it offers, first, as part of the place */}
+        <PlaceOfferings offerings={resource.offerings} />
+
         {/* The places in it, listed or not, a card each */}
         {parts.length > 0 && (
           <EntryColumn>
