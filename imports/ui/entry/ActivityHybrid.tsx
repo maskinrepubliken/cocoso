@@ -454,9 +454,14 @@ export default function ActivityHybrid({
             />
           )}
 
-          {isPublicActivity && occurrence && (
-            <AttendeesSection attendees={occurrence.attendees} />
-          )}
+          {/* A mirrored event's sign-ups are kept at its source */}
+          {isPublicActivity &&
+            occurrence &&
+            !(
+              activity.mirror &&
+              activity.isRegistrationEnabled === false &&
+              !occurrence.attendees?.length
+            ) && <AttendeesSection attendees={occurrence.attendees} />}
 
           {isPublicActivity && (
             <FollowSection

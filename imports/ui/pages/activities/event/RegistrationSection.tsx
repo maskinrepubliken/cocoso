@@ -305,7 +305,7 @@ export default function RegistrationSection({
   return (
     <Section
       aside={
-        left !== null && !isPast && !isCancelled
+        left !== null && !isPast && !isCancelled && !sourceUrl
           ? tc('event.attendees.left', { count: left, capacity })
           : null
       }
