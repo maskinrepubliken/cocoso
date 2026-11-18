@@ -26,6 +26,10 @@ Documents.attachSchema(Documents.schema);
 Documents.publicFields = {
   documentLabel: 1,
   documentUrl: 1,
+  // For the list's preview: what kind of file, where and when
+  contentType: 1,
+  contextType: 1,
+  creationDate: 1,
 };
 
 export default Documents;

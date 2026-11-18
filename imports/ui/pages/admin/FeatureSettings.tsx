@@ -14,7 +14,7 @@ import { message } from '/imports/ui/generic/message';
 // typed out before the change can be made.
 
 interface FeatureStatus {
-  name: 'groups' | 'works' | 'bookings';
+  name: 'groups' | 'works' | 'bookings' | 'documents';
   enabled: boolean;
   isDefault: boolean;
   defaultEnabled: boolean;
@@ -216,7 +216,7 @@ export default function FeatureSettings() {
                 })
               : t('features.default')}
           </Line>
-          {feature.name !== 'bookings' && (
+          {(feature.name === 'groups' || feature.name === 'works') && (
             <Line quiet>{t('features.menuNote')}</Line>
           )}
         </Card>

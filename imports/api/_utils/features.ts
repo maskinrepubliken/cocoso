@@ -19,6 +19,10 @@ export const DEFAULT_FEATURES = {
   // calendar, an event blocking its place and the clash checks. Places
   // still say how to book them (`booking`).
   bookings: false,
+  // Documents on places and requests: adding them from the gear, the list
+  // on the page, and the methods behind them. A group's documents are not
+  // covered.
+  documents: false,
 };
 
 export type Feature = keyof typeof DEFAULT_FEATURES;

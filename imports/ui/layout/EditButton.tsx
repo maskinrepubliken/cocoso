@@ -12,6 +12,7 @@ import SettingsIcon from 'lucide-react/dist/esm/icons/settings';
 import { useAtomValue } from 'jotai';
 
 import { parseTitle } from '/imports/api/_utils/shared';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { managesPlace } from '/imports/api/resources/placeAccess';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import {
@@ -142,6 +143,8 @@ function useGearItems(editable: Editable | null): GearItem[] {
   }
   const { context, item } = editable;
   const isAdmin = role === 'admin';
+  // Documents on places and requests (not groups') are a feature
+  const documentsOn = isFeatureEnabled('documents');
   const edit = { param: 'edit', label: tc('entryMenu.edit') };
   const addDocument = {
     param: 'addDocument',
@@ -172,10 +175,13 @@ function useGearItems(editable: Editable | null): GearItem[] {
         ...(isAdmin || item.authorId === currentUser._id ? [remove] : []),
       ];
     case 'resources':
-      // Documents and deleting stay with the admins, as before
-      return isAdmin ? [addDocument, edit, remove] : [edit];
+      // Documents and deleting stay with the admins, as before; documents
+      // only while that feature is on
+      return isAdmin
+        ? [...(documentsOn ? [addDocument] : []), edit, remove]
+        : [edit];
     case 'works':
-      return [addDocument, edit, remove];
+      return [...(documentsOn ? [addDocument] : []), edit, remove];
     case 'info':
       return [{ param: 'new', label: tc('entryMenu.newPage') }, edit, remove];
     default:

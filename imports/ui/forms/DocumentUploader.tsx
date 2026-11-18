@@ -15,7 +15,7 @@ import {
 import DocumentUploadHelper from '/imports/ui/forms/UploadHelpers';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
-import Documents from '/imports/ui/generic/Documents';
+import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
 
 export default function DocumentUploader({
   active,
@@ -118,7 +118,8 @@ export default function DocumentUploader({
           <Heading size="xs" css={{ marginBottom: '1rem' }}>
             {tc('documents.labelExisting')}
           </Heading>
-          <Documents documents={documents} />
+          {/* With a preview and, for those who may, a bin */}
+          <DocumentsField contextId={itemId} />
         </Box>
       ) : null}
     </Modal>

@@ -3,6 +3,7 @@ import { useLoaderData, useSearchParams } from 'react-router';
 
 import DeleteEntryHandler from '/imports/ui/entry/DeleteEntryHandler';
 import DocumentUploader from '/imports/ui/forms/DocumentUploader';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 // The dialogs a request's author opens from the gear in the header
 // (layout/EditButton.tsx), each through its search parameter.
@@ -17,7 +18,10 @@ export default function WorkAdminFunctions() {
     }));
   };
 
-  const addDocument = searchParams.get('addDocument') === 'true';
+  // Only while documents on places and requests are switched on
+  const addDocument =
+    isFeatureEnabled('documents') &&
+    searchParams.get('addDocument') === 'true';
 
   return (
     <>

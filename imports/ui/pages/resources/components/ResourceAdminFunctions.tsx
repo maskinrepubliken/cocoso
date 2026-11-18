@@ -2,6 +2,7 @@ import React from 'react';
 import { useLoaderData, useSearchParams } from 'react-router';
 
 import DocumentUploader from '/imports/ui/forms/DocumentUploader';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import DeleteEntryHandler from '/imports/ui/entry/DeleteEntryHandler';
 
 // The dialogs an admin opens from the gear in the header
@@ -17,7 +18,10 @@ export default function ResourceAdminFunctions() {
     }));
   };
 
-  const addDocument = searchParams.get('addDocument') === 'true';
+  // Only while documents on places and requests are switched on
+  const addDocument =
+    isFeatureEnabled('documents') &&
+    searchParams.get('addDocument') === 'true';
 
   return (
     <>
