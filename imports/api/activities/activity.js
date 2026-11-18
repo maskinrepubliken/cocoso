@@ -88,6 +88,11 @@ Activities.schema = new SimpleSchema({
   // Archived events leave every public listing and can only then be deleted.
   isArchived: { type: Boolean, optional: true },
   archivedAt: { type: Date, optional: true },
+  // Cancelled events stay listed, marked, until their date has passed;
+  // sign-up and following close. See activity.cancel.ts.
+  cancelledAt: { type: Date, optional: true },
+  // The organizer's words on why, shown on the page and in the mail
+  cancelMessage: { type: String, optional: true },
 
   groupId: { type: String, regEx: SimpleSchema.RegEx.Id, optional: true },
   isGroupMeeting: { type: Boolean, optional: true },

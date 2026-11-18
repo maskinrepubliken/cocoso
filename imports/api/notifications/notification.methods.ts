@@ -213,10 +213,13 @@ Meteor.methods({
     const user = await requireUser();
     const activity = await Activities.findOneAsync(
       { _id: activityId, isArchived: { $ne: true } },
-      { fields: { _id: 1 } }
+      { fields: { _id: 1, cancelledAt: 1 } }
     );
     if (!activity) {
       throw new Meteor.Error('not-found', 'Activity not found');
+    }
+    if (activity.cancelledAt) {
+      throw new Meteor.Error('cancelled', 'The event is cancelled');
     }
     await ActivityFollows.upsertAsync(
       { activityId, userId: user._id },

@@ -31,6 +31,7 @@ import {
 } from './activity.helpers';
 import { sendEmail } from '../_utils/services/mails/mail.methods';
 import { scheduleChangeNotice } from '../notifications/notify';
+import { setActivityCancelled } from './activity.cancel';
 
 const filterPrivateGroups = async (activities, user) => {
   if (!activities) {
@@ -638,6 +639,9 @@ Meteor.methods({
       authorName,
       isArchived,
       archivedAt,
+      // Set only by cancelActivity and uncancelActivity
+      cancelledAt,
+      cancelMessage,
       // Not stored: whether to tell those signed up and following, and
       // the organizer's words to them (asked when saving in the form)
       notify,
@@ -873,6 +877,37 @@ Meteor.methods({
     }
   },
 
+  // The organizer or an admin calls the event off. It stays listed, marked
+  // as cancelled with their words if any, until its date has passed.
+  async cancelActivity(activityId, message) {
+    check(activityId, String);
+    check(message, Match.Maybe(String));
+    const user = await Meteor.userAsync();
+    const theActivity = await Activities.findOneAsync({ _id: activityId });
+    if (!theActivity) {
+      throw new Meteor.Error('not-found', 'Activity not found');
+    }
+    if (!(await canManage(theActivity, user))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    await setActivityCancelled(theActivity, { cancelled: true, message });
+    return true;
+  },
+
+  async uncancelActivity(activityId) {
+    check(activityId, String);
+    const user = await Meteor.userAsync();
+    const theActivity = await Activities.findOneAsync({ _id: activityId });
+    if (!theActivity) {
+      throw new Meteor.Error('not-found', 'Activity not found');
+    }
+    if (!(await canManage(theActivity, user))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    await setActivityCancelled(theActivity, { cancelled: false });
+    return true;
+  },
+
   async registerAttendance(activityId, values, occurenceIndex = 0) {
     check(activityId, String);
     check(occurenceIndex, Match.Integer);
@@ -892,6 +927,9 @@ Meteor.methods({
       theActivity.isRegistrationEnabled === false
     ) {
       throw new Meteor.Error('registration-closed', 'Registration is closed');
+    }
+    if (theActivity.cancelledAt) {
+      throw new Meteor.Error('cancelled', 'The event is cancelled');
     }
     const theOccurrence = theActivity.datesAndTimes[occurenceIndex];
     if (findAttendeeIndex(theOccurrence, values.email, values.lastName) > -1) {
