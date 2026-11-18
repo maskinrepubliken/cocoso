@@ -8,7 +8,7 @@ import LocationTag from '/imports/ui/generic/LocationTag';
 import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
-import { Status } from '/imports/ui/listing/BusinessesHybrid';
+import { Status } from '/imports/ui/entry/PlaceOfferings';
 import {
   Opening,
   WEEK,

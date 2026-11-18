@@ -1,10 +1,10 @@
 import React from 'react';
 import { useLoaderData } from 'react-router';
 
-import BusinessesHybrid from '/imports/ui/listing/BusinessesHybrid';
+import OfferingsHybrid from '/imports/ui/listing/OfferingsHybrid';
 
 export default function BusinessListHandler({ siteDoc }: { siteDoc: any }) {
-  const { businesses } = useLoaderData();
+  const { places } = useLoaderData();
 
-  return <BusinessesHybrid businesses={businesses} siteDoc={siteDoc} />;
+  return <OfferingsHybrid places={places} siteDoc={siteDoc} />;
 }

@@ -134,12 +134,12 @@ export async function getResource({ params }) {
   };
 }
 
-// Äta/handla/bo: cafés, restaurants, shops and inns.
+// Äta, handla & bo: the places that offer something, with what they offer
 export async function getBusinesses({ locationId } = {}) {
-  const businesses = await call('getBusinesses', locationId || undefined);
+  const places = await call('getCommercialPlaces', locationId || undefined);
 
   return {
-    businesses: localFirst(businesses, locationId),
+    places: localFirst(places, locationId),
   };
 }
 

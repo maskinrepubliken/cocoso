@@ -15,6 +15,11 @@ import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { LocationCards } from '/imports/ui/pages/locations/LocationsGrid';
 import {
+  OFFERING_KINDS,
+  type OfferingKind,
+} from '/imports/api/offerings/offeringKinds';
+import { Status } from '/imports/ui/entry/PlaceOfferings';
+import {
   formatDay,
   formatTime,
   isoDay,
@@ -24,27 +29,24 @@ import {
 
 import PageHeading from './PageHeading';
 
-// Äta/handla/bo: cafés, restaurants, shops and inns. Where something is
-// matters most, so the page opens with the start page's place cards as a
-// picker; below it the places come under Äta, Handla and Bo. The cards
-// speak the same picture language as the place cards — a photo with the
-// name over a dark fade — and say enough to decide without opening them:
-// whether it is open, a few lines about it and a taste of the menu, range
-// or rooms. The kind is said by the label over each group.
+// Äta, handla & bo: the places that offer something — food, a bed,
+// services, things for sale. Where something is matters most, so the page
+// opens with the start page's place cards as a picker; below it the places
+// come under what they offer, in the order of the editor's tabs. A place
+// offering several things is under each. The cards speak the same picture
+// language as the place cards — a photo with the name over a dark fade —
+// and say enough to decide without opening them: whether it is open and a
+// few lines about what it offers. Each opens the place's own page.
 
-// Menu lines shown on a card.
-const TASTE = 3;
-
-const KINDS = ['eat', 'shop', 'stay'] as const;
-
-type Kind = (typeof KINDS)[number];
+type Kind = OfferingKind;
 
 // Each kind's colour, from the letters of the logo, and the light end of
 // the gradient behind a card without a photo.
 const KIND_LOOK: Record<Kind, { ink: string; light: string }> = {
   eat: { ink: '#c4512f', light: '#f3cdb8' },
-  shop: { ink: '#2f6fa3', light: '#c4dbee' },
   stay: { ink: '#7a4f9a', light: '#dccbe8' },
+  service: { ink: '#4f7a3a', light: '#d3e3c4' },
+  shop: { ink: '#2f6fa3', light: '#c4dbee' },
 };
 
 const lookOf = (kind?: string) => KIND_LOOK[kind as Kind] || KIND_LOOK.eat;
@@ -53,7 +55,7 @@ const kindVars = (kind?: string) =>
   ({
     '--kind': lookOf(kind).ink,
     '--kind-light': lookOf(kind).light,
-  }) as React.CSSProperties;
+  } as React.CSSProperties);
 
 const Page = styled('div', {
   boxSizing: 'border-box',
@@ -237,22 +239,6 @@ const Excerpt = styled('p', {
   WebkitLineClamp: 2,
 });
 
-// A few lines from the menu on one line: "Lantbröd 65 kr · Rågbröd 70 kr".
-const Taste = styled('p', {
-  fontSize: '0.78rem',
-  lineHeight: 1.45,
-  margin: 0,
-  '& .title': {
-    color: 'var(--kind)',
-    fontWeight: 700,
-    marginRight: '0.4rem',
-  },
-  // An item keeps its price on its own line.
-  '& .item': { whiteSpace: 'nowrap' },
-  '& .price': { color: 'var(--cocoso-mylla-soft)' },
-  '& .sep': { color: 'var(--cocoso-mylla-soft)', margin: '0 0.1rem' },
-});
-
 const Facts = styled('div', {
   borderTop: '1px solid rgba(60, 40, 20, 0.1)',
   color: 'var(--cocoso-mylla-soft)',
@@ -265,46 +251,21 @@ const Facts = styled('div', {
   '& span': { alignItems: 'center', display: 'inline-flex', gap: '0.3rem' },
 });
 
-export const Status = styled('span', {
-  alignItems: 'center',
-  display: 'inline-flex',
-  fontWeight: 600,
-  gap: '0.35rem',
-  '&::before': {
-    borderRadius: '50%',
-    content: '""',
-    height: '0.55rem',
-    width: '0.55rem',
-  },
-  variants: {
-    open: {
-      true: {
-        color: 'var(--cocoso-colors-theme-800)',
-        '&::before': { backgroundColor: '#3c9a4a' },
-      },
-      false: {
-        color: 'var(--cocoso-mylla-soft)',
-        '&::before': { backgroundColor: '#b9b0a2' },
-      },
-    },
-  },
-});
-
 const StatusLine = styled('div', {
   fontSize: '0.78rem',
   '&:empty': { display: 'none' },
 });
 
-// Whether a business is open, worked out only in the browser (see useNow);
-// null on the server and for a place without opening hours.
-function useOpenState(business: any) {
+// Whether an offering is open, worked out only in the browser (see
+// useNow); null on the server and for one without opening hours.
+function useOpenState(offering: any) {
   const now = useNow();
-  if (!now || !business.openingHours?.length) {
+  if (!now || !offering?.openingHours?.length) {
     return null;
   }
   return {
-    state: openState(business.openingHours, now),
-    today: formatDay(business.openingHours, isoDay(now)),
+    state: openState(offering.openingHours, now),
+    today: formatDay(offering.openingHours, isoDay(now)),
   };
 }
 
@@ -324,7 +285,9 @@ function OpenStatus({ open }: { open: ReturnType<typeof useOpenState> }) {
   return (
     <Status open={false}>
       {today
-        ? `${t('businesses.closedNow')} · ${t('businesses.todayHours', { hours: today })}`
+        ? `${t('businesses.closedNow')} · ${t('businesses.todayHours', {
+            hours: today,
+          })}`
         : t('businesses.closedToday')}
     </Status>
   );
@@ -340,35 +303,31 @@ const firstParagraph = (html?: string) => {
     .trim();
 };
 
-// A few lines from the menu, preferring ones with a price.
-const tasteOf = (menu?: any[]) => {
-  const items = (menu || []).flatMap((section) => section.items || []);
-  const priced = items.filter((item) => item.price);
-  return (priced.length >= TASTE ? priced : items).slice(0, TASTE);
-};
-
-function BusinessCard({
-  business,
+// A place under one of the kinds it offers, with that offering's words,
+// phone and hours, the place's own when the offering has none.
+function PlaceCard({
+  place: business,
+  kind,
   showPlace,
 }: {
-  business: any;
+  place: any;
+  kind: Kind;
   // The place's tag on the picture, when the page is not already one place
   showPlace: boolean;
 }) {
   const { t } = useTranslation('common');
   const locations = useAtomValue(locationsAtom);
-  const kind = business.kinds?.[0];
+  const offering = business.offerings?.find((o: any) => o.kind === kind);
   const image = business.images?.[0];
   const place = locations.find((l: any) => l._id === business.locationId);
   const prefix = place ? `/${place.slug}` : '';
-  const excerpt = firstParagraph(business.description);
-  const taste = tasteOf(business.menu);
+  const excerpt = firstParagraph(offering?.description || business.description);
   const address = formatAddress(business.address);
-  const phone = business.contact?.phone;
-  const open = useOpenState(business);
+  const phone = offering?.contact?.phone || business.contact?.phone;
+  const open = useOpenState(offering);
 
   return (
-    <Card style={kindVars(kind)} to={`${prefix}/businesses/${business._id}`}>
+    <Card style={kindVars(kind)} to={`${prefix}/resources/${business._id}`}>
       <Picture>
         {image ? (
           <img
@@ -396,7 +355,6 @@ function BusinessCard({
         )}
         <Overlay>
           <h3>{business.label}</h3>
-          {business.tagline && <p>{business.tagline}</p>}
         </Overlay>
       </Picture>
       <Body>
@@ -404,29 +362,7 @@ function BusinessCard({
           <OpenStatus open={open} />
         </StatusLine>
         {excerpt && <Excerpt>{excerpt}</Excerpt>}
-        {taste.length > 0 && (
-          <Taste>
-            <span className="title">
-              {t(`businesses.menu.${kind || 'eat'}`)}
-            </span>
-            {taste.map((item: any, i: number) => (
-              <React.Fragment key={`${item.name}-${i}`}>
-                {/* The dot keeps to the item before it; the line breaks after it */}
-                {i > 0 && (
-                  <>
-                    {'\u00a0'}
-                    <span className="sep">·</span>{' '}
-                  </>
-                )}
-                <span className="item">
-                  {item.name}
-                  {item.price && <span className="price"> {item.price}</span>}
-                </span>
-              </React.Fragment>
-            ))}
-          </Taste>
-        )}
-        {(address || phone || business.hoursNote) && (
+        {(address || phone || offering?.hoursNote) && (
           <Facts>
             {address && (
               <span>
@@ -440,7 +376,7 @@ function BusinessCard({
                 {phone}
               </span>
             )}
-            {business.hoursNote && <span>{business.hoursNote}</span>}
+            {offering?.hoursNote && <span>{offering?.hoursNote}</span>}
           </Facts>
         )}
       </Body>
@@ -448,26 +384,26 @@ function BusinessCard({
   );
 }
 
-export interface BusinessesHybridProps {
+export interface OfferingsHybridProps {
   siteDoc: any;
-  businesses: any[];
+  places: any[];
 }
 
-export default function BusinessesHybrid({
+export default function OfferingsHybrid({
   siteDoc,
-  businesses,
-}: BusinessesHybridProps) {
+  places,
+}: OfferingsHybridProps) {
   const { t } = useTranslation('common');
   const site = useAtomValue(siteAtom);
   const locations = useAtomValue(locationsAtom);
   const current = useCurrentLocation();
 
-  const all = businesses || [];
+  const all = places || [];
   const inPlace = (id: string) => all.filter((b) => b.locationId === id);
 
-  // The picker chooses the place; below it the cards come in Äta, Handla
-  // and Bo order. Something that is several kinds, like a manor with a
-  // restaurant and rooms, is shown once, under its first kind.
+  // The picker chooses the place; below it the cards come in the order of
+  // the kinds. A place offering several, like a manor with a restaurant
+  // and rooms, is under each.
   const shown = current ? inPlace(current._id) : all;
 
   // Within a kind, what is open now comes first, then what opens later
@@ -476,25 +412,26 @@ export default function BusinessesHybrid({
   // order by name holds within each step. It needs the clock, so the
   // server renders by name and the browser reorders once mounted.
   const now = useNow();
-  const rank = (business: any) => {
+  const rank = (offering: any) => {
     if (!now) {
       return 0;
     }
-    if (!business.openingHours?.length) {
+    if (!offering?.openingHours?.length) {
       return 2;
     }
-    const state = openState(business.openingHours, now);
+    const state = openState(offering.openingHours, now);
     if (state.open) {
       return 0;
     }
     return state.next?.day === isoDay(now) ? 1 : 3;
   };
 
-  const sections = KINDS.map((kind) => ({
+  const sections = OFFERING_KINDS.map((kind) => ({
     kind,
     items: shown
-      .filter((b) => (b.kinds?.[0] || 'eat') === kind)
-      .map((b) => ({ b, r: rank(b) }))
+      .map((b) => ({ b, o: b.offerings?.find((o: any) => o.kind === kind) }))
+      .filter(({ o }) => o)
+      .map(({ b, o }) => ({ b, r: rank(o) }))
       .sort((x, y) => x.r - y.r)
       .map(({ b }) => b),
   })).filter(({ items }) => items.length > 0);
@@ -521,16 +458,17 @@ export default function BusinessesHybrid({
         {sections.map(({ kind, items }) => (
           <Section key={kind} style={kindVars(kind)}>
             <SectionHead>
-              {t(`businesses.kinds.${kind}`)}
+              {t(`offerings.kinds.${kind}`)}
               <span className="count">
                 {t('businesses.count', { count: items.length })}
               </span>
             </SectionHead>
             <Cards>
               {items.map((business) => (
-                <BusinessCard
+                <PlaceCard
                   key={business._id}
-                  business={business}
+                  kind={kind}
+                  place={business}
                   showPlace={!current}
                 />
               ))}
