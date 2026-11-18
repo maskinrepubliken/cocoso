@@ -35,7 +35,6 @@ interface Work {
   authorAvatar?: string;
   shortDescription?: string;
   longDescription?: string;
-  additionalInfo?: string;
   contactInfo?: string;
   creationDate?: Date | string;
   imageUrl?: string;
@@ -198,17 +197,6 @@ export default function WorkHybrid({
         </EntryHero>
 
         {actions}
-
-        {work.additionalInfo && work.additionalInfo.length > 2 && (
-          <EntryColumn>
-            <SectionHead>
-              <h2>
-                <Trans i18nKey="common:labels.extra">Extra</Trans>
-              </h2>
-            </SectionHead>
-            <Panel>{work.additionalInfo}</Panel>
-          </EntryColumn>
-        )}
 
         {images.length > 1 && (
           <EntryColumn>

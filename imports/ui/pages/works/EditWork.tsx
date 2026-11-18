@@ -39,7 +39,6 @@ export default function EditWork() {
   }
 
   const workFields = (({
-    additionalInfo,
     category,
     contactInfo,
     images,
@@ -50,7 +49,6 @@ export default function EditWork() {
     showAvatar,
     title,
   }) => ({
-    additionalInfo,
     category,
     contactInfo,
     images,

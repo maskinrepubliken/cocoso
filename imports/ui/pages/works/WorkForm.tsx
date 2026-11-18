@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAtom } from 'jotai';
 
 import { call } from '/imports/api/_utils/shared';
-import { Checkbox, Input, Textarea } from '/imports/ui/core';
+import { Checkbox, Textarea } from '/imports/ui/core';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
@@ -31,7 +31,6 @@ interface WorkFormValues {
 }
 
 interface WorkData extends WorkFormValues {
-  additionalInfo?: string;
   contactInfo?: string;
   showAvatar?: boolean;
   category?: Partial<CategoryItem> & { label: string };
@@ -61,7 +60,6 @@ const DRAFT_FIELDS = [
   'locationId',
   'isMunicipalityOnly',
   'contactInfo',
-  'additionalInfo',
   'showAvatar',
 ] as const;
 const TEXT_FIELDS = ['title', 'shortDescription', 'longDescription'] as const;
@@ -92,7 +90,6 @@ function RequestForm({
     locationId: work?.locationId || null,
     isMunicipalityOnly: Boolean(work?.isMunicipalityOnly),
     contactInfo: work?.contactInfo || '',
-    additionalInfo: work?.additionalInfo || '',
     showAvatar: work ? work.showAvatar !== false : true,
   }));
   // Editing: the request as saved, so a draft from before it was saved
@@ -163,7 +160,6 @@ function RequestForm({
       ...state.formValues,
       category: { label: kind.label, ...(category ? { _id: category._id } : {}) },
       contactInfo: state.contactInfo,
-      additionalInfo: state.additionalInfo,
       showAvatar: state.showAvatar,
       images,
       locationId: state.locationId,
@@ -186,7 +182,7 @@ function RequestForm({
     <>
       <DraftNotice draft={draft} onDiscard={onDiscard} />
       <GenericEntryForm
-        childrenIndex={3}
+        childrenIndex={2}
         defaultValues={defaultValues}
         formFields={workFormFields(t)}
         onSubmit={handleSubmit}
@@ -222,18 +218,6 @@ function RequestForm({
           />
         </FormCard>
 
-        <FormCard title={t('works.form.where')}>
-          <p className="form-preview-note">
-            {tc('locations.form.helperWork')}
-          </p>
-          <LocationSelect
-            allowMunicipalityOnly
-            isMunicipalityOnly={state.isMunicipalityOnly}
-            value={state.locationId}
-            onChange={(choice) => set(choice)}
-          />
-        </FormCard>
-
         <FormCard title={t('works.form.contact')}>
           <p className="form-preview-note">{t('works.form.contactHelper')}</p>
           <Textarea
@@ -257,13 +241,15 @@ function RequestForm({
           </div>
         </FormCard>
 
-        <FormCard title={t('works.form.extra')}>
-          <p className="form-preview-note">{t('works.form.extraHelper')}</p>
-          <Input
-            aria-label={t('works.form.extra')}
-            placeholder={t('works.extra.holder')}
-            value={state.additionalInfo}
-            onChange={(event) => set({ additionalInfo: event.target.value })}
+        <FormCard title={t('works.form.where')}>
+          <p className="form-preview-note">
+            {tc('locations.form.helperWork')}
+          </p>
+          <LocationSelect
+            allowMunicipalityOnly
+            isMunicipalityOnly={state.isMunicipalityOnly}
+            value={state.locationId}
+            onChange={(choice) => set(choice)}
           />
         </FormCard>
       </GenericEntryForm>
