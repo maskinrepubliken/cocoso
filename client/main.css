@@ -4927,6 +4927,43 @@ body {
   margin: 4.5rem 0 0;
 }
 
+/* On the start page the places do not scroll sideways: a grid of smaller
+   cards that share the row and wrap onto more rows when it is full */
+.home-places .location-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 10px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.home-places .location-card {
+  width: auto;
+  height: 96px;
+}
+
+.home-places .location-card-name {
+  padding: 24px 10px 8px;
+  font-size: 17px;
+}
+
+@media (max-width: 640px) {
+  .home-places .location-cards {
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 8px;
+  }
+
+  .home-places .location-card {
+    height: 80px;
+  }
+
+  .home-places .location-card-name {
+    font-size: 16px;
+  }
+}
+
 /* the weekly schedule that follows the places on the start page */
 .home-places + section {
   margin-top: 3.5rem;
