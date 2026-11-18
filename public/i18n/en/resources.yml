@@ -30,7 +30,8 @@ form:
     unlisted: Don't show on the places page
     unlistedHelper: "Then it is only shown on {{place}}'s page and in search results."
   contact:
-    helper: "Optional. Who to ask about the place, for example about booking it."
+    helper: "Optional. Who to ask about the place, for example about booking it – one of its managers, with the contact details in their profile, or other details."
+    managerMissing: The manager has no email or phone in their profile. Choose another, or give other details.
   booking:
     label: Booking
     switch: The place can be booked

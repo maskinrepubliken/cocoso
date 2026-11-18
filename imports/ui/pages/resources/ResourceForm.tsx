@@ -39,7 +39,14 @@ import BookingFields, {
 import { RESOURCE_KINDS } from './resourceKinds';
 import ManagerFields from './components/ManagerFields';
 import { currentUserAtom, roleAtom } from '/imports/state';
-import type { OrganizerOption } from '/imports/ui/pages/activities/form/OrganizerFields';
+import {
+  ContactPreview,
+  OWN_CONTACT,
+  type OrganizerDefaults,
+  type OrganizerOption,
+} from '/imports/ui/pages/activities/form/OrganizerFields';
+import { PersonAvatar } from '/imports/ui/pages/activities/form/PersonCard';
+import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 
 interface ResourceFormValues {
   label: string;
@@ -52,6 +59,8 @@ interface ResourceData extends ResourceFormValues {
   category?: { key?: string } | null;
   address?: Partial<Address> | null;
   contact?: Contact | null;
+  // The manager whose profile's contact details the place shows
+  contactUserId?: string | null;
   locationId?: string | null;
   parentId?: string | null;
   isUnlisted?: boolean;
@@ -142,6 +151,7 @@ const addressFor = (
 const DRAFT_FIELDS = [
   'address',
   'booking',
+  'contactChoice',
   'contact',
   'isUnlisted',
   'kinds',
@@ -184,7 +194,11 @@ function PlaceForm({
   const [pristine] = useState<any>(() => ({
     kinds: kindsOf(resource),
     address: resource?.address || emptyAddress,
-    contact: resource?.contact || emptyContact,
+    // Whose contact details the place shows, as in the event form: one of
+    // its managers' (their user id) or its own
+    contactChoice: resource?.contactUserId || OWN_CONTACT,
+    // Its own details; a place shown through a manager has none
+    contact: (!resource?.contactUserId && resource?.contact) || emptyContact,
     booking: bookingState(resource?.booking),
     locationId: resource?.locationId || null,
     // An address of its own, or part of another place (and at its address)
@@ -228,6 +242,8 @@ function PlaceForm({
   const [loaders, setLoaders] = useAtom(loaderAtom);
   const [t] = useTranslation('resources');
   const [tc] = useTranslation('common');
+  // The event form's words for the same choice
+  const [ta] = useTranslation('activities');
 
   const getResources = async () => {
     try {
@@ -258,7 +274,40 @@ function PlaceForm({
     }));
   }, [loaders?.isCreating]);
 
+  // The managers' profiles, for choosing one of them as the contact
+  const [managerProfiles, setManagerProfiles] = useState<
+    Record<string, OrganizerDefaults>
+  >({});
+  useEffect(() => {
+    (state.managerIds || [])
+      .filter((id: string) => !managerProfiles[id])
+      .forEach((id: string) =>
+        call('getOrganizerDefaults', id)
+          .then((profile) =>
+            setManagerProfiles((prev) => ({
+              ...prev,
+              [id]: profile as OrganizerDefaults,
+            }))
+          )
+          .catch(() => {})
+      );
+  }, [state.managerIds]);
+  const managers: OrganizerDefaults[] = (state.managerIds || [])
+    .map((id: string) => managerProfiles[id])
+    .filter(Boolean);
+  // A manager taken off the list falls back to the place's own details
+  const isOwnContact =
+    state.contactChoice === OWN_CONTACT ||
+    !(state.managerIds || []).includes(state.contactChoice);
+  const contactManager = managerProfiles[state.contactChoice];
+
   const handleSubmit = (formValues: ResourceFormValues) => {
+    // A manager chosen as the contact has an email or a phone in their
+    // profile (the server insists too)
+    if (!isOwnContact && !isReachable(contactManager?.publicContact)) {
+      message.formError(t('form.contact.managerMissing'));
+      return;
+    }
     // An organizer adding a place looks after it (the server insists too)
     if (
       !resource &&
@@ -310,7 +359,8 @@ function PlaceForm({
       ...state.formValues,
       address: addressFor(state.placement, state.address),
       kinds: state.kinds,
-      contact: state.contact,
+      contact: isOwnContact ? state.contact : null,
+      contactUserId: isOwnContact ? null : state.contactChoice,
       booking: bookingValue(state.booking),
       images,
       locationId: state.locationId,
@@ -467,14 +517,60 @@ function PlaceForm({
           />
         </FormCard>
 
+        {/* As in the event form: one of the managers, shown with their
+          profile's details, or details of the place's own. Without
+          managers, only its own. */}
         <FormCard title={tc('contact.title')}>
           <p className="form-preview-note">{t('form.contact.helper')}</p>
-          <ContactFields
-            value={state.contact}
-            onChange={(contact) =>
-              setState((prevState: any) => ({ ...prevState, contact }))
-            }
-          />
+          {managers.length === 0 ? (
+            <ContactFields
+              value={state.contact}
+              onChange={(contact) =>
+                setState((prevState: any) => ({ ...prevState, contact }))
+              }
+            />
+          ) : (
+            <ChoiceChips
+              label={tc('contact.title')}
+              value={isOwnContact ? OWN_CONTACT : state.contactChoice}
+              choices={[
+                ...managers.map((manager) => ({
+                  value: manager._id,
+                  label:
+                    manager._id === currentUser?._id
+                      ? ta('form.contact.standard')
+                      : manager.firstName || manager.username,
+                  icon: <PersonAvatar person={manager} size={26} />,
+                  content: (
+                    <ContactPreview
+                      contact={manager.publicContact}
+                      empty={ta('form.contact.none')}
+                      person={manager}
+                    />
+                  ),
+                })),
+                {
+                  value: OWN_CONTACT,
+                  label: ta('form.contact.own'),
+                  icon: <PencilLineIcon aria-hidden />,
+                  content: (
+                    <ContactFields
+                      value={state.contact}
+                      onChange={(contact) =>
+                        setState((prevState: any) => ({
+                          ...prevState,
+                          contact,
+                        }))
+                      }
+                    />
+                  ),
+                },
+              ]}
+              onChange={(contactChoice) =>
+                setState((prevState: any) => ({ ...prevState, contactChoice }))
+              }
+            />
+          )}
         </FormCard>
 
         <FormCard title={t('form.booking.label')}>

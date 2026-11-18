@@ -40,6 +40,9 @@ Resources.schema = new SimpleSchema({
   address: { type: new SimpleSchema(Schemas.Address) },
   // Who to ask about the place, e.g. bookings. Optional.
   contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
+  // Or one of its managers, whose profile's details are shown instead
+  // (resource.contact.js)
+  contactUserId: { type: String, optional: true },
   documents: { type: Array, optional: true, defaultValue: [] },
   'documents.$': {
     type: new SimpleSchema({
@@ -84,6 +87,7 @@ Resources.publicFields = {
   category: 1,
   kinds: 1,
   contact: 1,
+  contactUserId: 1,
   description: 1,
   images: 1,
   isUnlisted: 1,

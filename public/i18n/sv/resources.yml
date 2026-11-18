@@ -30,7 +30,8 @@ form:
     unlisted: Visa inte på plats-sidan
     unlistedHelper: "Då visas den bara på sidan för {{place}} och i sökresultat."
   contact:
-    helper: "Valfritt. Vem man frågar om platsen, till exempel om bokning."
+    helper: "Valfritt. Vem man frågar om platsen, till exempel om bokning – en av förvaltarna, med kontaktuppgifterna i sin profil, eller andra uppgifter."
+    managerMissing: Förvaltaren har ingen e-postadress eller telefon i sin profil. Välj en annan, eller ange andra uppgifter.
   booking:
     label: Bokning
     switch: Platsen går att boka

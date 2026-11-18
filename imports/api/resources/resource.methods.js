@@ -3,13 +3,13 @@ import dayjs from 'dayjs';
 import { check, Match } from 'meteor/check';
 import { locationSelector } from '../_utils/shared';
 import { requireAddress } from '../_utils/address';
-import { cleanContact } from '../_utils/contact';
 import { withCoordinates } from '../_utils/geocode';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
 import Memberships from '../memberships/membership';
 import { attachBookingPerson, cleanBooking } from './resource.booking';
+import { attachPlaceContact, cleanPlaceContact } from './resource.contact';
 import Activities from '../activities/activity';
 import { cleanKinds } from '../_utils/kinds';
 import { RESOURCE_KIND_KEYS } from '../../ui/pages/resources/resourceKinds';
@@ -172,8 +172,10 @@ Meteor.methods({
 
   async getResourceById(resourceId) {
     const fields = Resources.publicFields;
-    const resource = await attachBookingPerson(
-      await Resources.findOneAsync(resourceId, { fields })
+    const resource = await attachPlaceContact(
+      await attachBookingPerson(
+        await Resources.findOneAsync(resourceId, { fields })
+      )
     );
     if (!resource) {
       return resource;
@@ -283,10 +285,12 @@ Meteor.methods({
     if (!home) {
       return { main: null, others: linked };
     }
-    const main = await attachBookingPerson(
-      await Resources.findOneAsync(home._id, {
-        fields: Resources.publicFields,
-      })
+    const main = await attachPlaceContact(
+      await attachBookingPerson(
+        await Resources.findOneAsync(home._id, {
+          fields: Resources.publicFields,
+        })
+      )
     );
     const parts = await Resources.find(
       { parentId: home._id },
@@ -312,7 +316,6 @@ Meteor.methods({
       ? parent.address
       : await withCoordinates(requireAddress(values.address));
     const locationId = parent ? parent.locationId : values.locationId;
-    const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
     const booking = await cleanBooking(values.booking);
     // An organizer who adds a place must look after it, so no one adds
@@ -327,8 +330,11 @@ Meteor.methods({
         'An organizer adding a place must be one of its managers'
       );
     }
+    // One of its managers, details of its own, or none
+    const contactFields = await cleanPlaceContact(values, managerIds);
     const {
       contact: _contact,
+      contactUserId: _contactUserId,
       category: _category,
       kinds: _kinds,
       booking: _booking,
@@ -341,7 +347,7 @@ Meteor.methods({
       const newResourceId = await Resources.insertAsync({
         ...rest,
         address,
-        ...(contact ? { contact } : {}),
+        ...contactFields,
         ...(booking ? { booking } : {}),
         ...(parent ? { parentId: parent._id } : {}),
         ...(parent && values.isUnlisted ? { isUnlisted: true } : {}),
@@ -389,13 +395,17 @@ Meteor.methods({
       : await withCoordinates(requireAddress(values.address));
     const locationId = parent ? parent.locationId : values.locationId;
     const isUnlisted = Boolean(parent && values.isUnlisted);
-    const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
     const booking = await cleanBooking(values.booking);
     const managerIds =
       values.managerIds === undefined
         ? undefined
         : await cleanManagers(values.managerIds);
+    // One of its managers (as they will be), details of its own, or none
+    const contactFields = await cleanPlaceContact(
+      values,
+      managerIds || resource.managerIds || []
+    );
     const {
       _id,
       userId,
@@ -407,6 +417,7 @@ Meteor.methods({
       partOf: _partOf,
       parts: _parts,
       contact: _contact,
+      contactUserId: _contactUserId,
       category: _category,
       kinds: _kinds,
       booking: _booking,
@@ -414,7 +425,8 @@ Meteor.methods({
     } = values;
 
     const unset = {
-      ...(contact ? {} : { contact: 1 }),
+      ...(contactFields.contact ? {} : { contact: 1 }),
+      ...(contactFields.contactUserId ? {} : { contactUserId: 1 }),
       ...(booking ? {} : { booking: 1 }),
       // the single kind from before kinds
       category: 1,
@@ -428,7 +440,7 @@ Meteor.methods({
         $set: {
           ...safeValues,
           address,
-          ...(contact ? { contact } : {}),
+          ...contactFields,
           ...(booking ? { booking } : {}),
           ...(parent ? { parentId: parent._id } : {}),
           ...(isUnlisted ? { isUnlisted } : {}),
