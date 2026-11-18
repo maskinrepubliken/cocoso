@@ -52,6 +52,16 @@ interface NewMember {
   joinDate: Date;
 }
 
+interface NewPlace {
+  _id: string;
+  label: string;
+  createdAt: Date;
+  createdBy: string | null;
+  managers: string[];
+  isPart: boolean;
+  isUnlisted: boolean;
+}
+
 interface Overview {
   activityCount: number;
   upcoming: Occasion[];
@@ -59,6 +69,7 @@ interface Overview {
   recentRegistrations: Registration[];
   recentRegistrationCount: number;
   newMembers: NewMember[];
+  newPlaces?: NewPlace[];
 }
 
 // Set-up pages an admin visits now and then; kept below the daily overview.
@@ -258,7 +269,9 @@ function StatusBar({ items }: { items: StatItem[] }) {
                 ? 'var(--cocoso-colors-theme-700)'
                 : 'transparent',
               borderRadius: 'var(--cocoso-radius-falt)',
-              boxShadow: isActive ? 'var(--cocoso-skugga-kort)' : 'var(--cocoso-skugga)',
+              boxShadow: isActive
+                ? 'var(--cocoso-skugga-kort)'
+                : 'var(--cocoso-skugga)',
               fontFamily: 'var(--cocoso-font-ui)',
               cursor: 'pointer',
               flex: '1 1 0',
@@ -356,7 +369,11 @@ function Upcoming({ overview, dateLocale }: ListProps) {
       {days.map((day) => (
         <Box key={day.date} mb="3">
           <Flex align="center" gap="2">
-            <Text fontSize="sm" fontWeight="bold" css={{ color: 'var(--cocoso-mylla-soft)' }}>
+            <Text
+              fontSize="sm"
+              fontWeight="bold"
+              css={{ color: 'var(--cocoso-mylla-soft)' }}
+            >
               {capitalize(
                 dayjs(day.date).locale(dateLocale).format('dddd D MMMM')
               )}
@@ -480,15 +497,61 @@ function NewMembers({ overview, dateLocale }: ListProps) {
   );
 }
 
+// Places added lately: by whom and who looks after them, to spot misuse
+function NewPlaces({ overview, dateLocale }: ListProps) {
+  const [t] = useTranslation('admin');
+  const places = overview.newPlaces || [];
+
+  return (
+    <Box>
+      {places.length === 0 && <Text>{t('overview.places.empty')}</Text>}
+      {places.map((place) => (
+        <Link
+          key={place._id}
+          style={{ display: 'block' }}
+          to={`/resources/${place._id}`}
+        >
+          <Flex align="center" css={rowCss} justify="space-between" wrap="wrap">
+            <Text>
+              <strong>{place.label}</strong>
+              {place.isUnlisted && ` · ${t('overview.places.unlisted')}`}
+              {place.isPart &&
+                !place.isUnlisted &&
+                ` · ${t('overview.places.part')}`}
+            </Text>
+            <Text fontSize="sm">
+              {[
+                place.createdBy &&
+                  t('overview.places.by', { username: place.createdBy }),
+                place.managers.length
+                  ? t('overview.places.managers', {
+                      usernames: place.managers.join(', '),
+                    })
+                  : t('overview.places.noManagers'),
+                dayjs(place.createdAt).locale(dateLocale).format('D MMM'),
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </Text>
+          </Flex>
+        </Link>
+      ))}
+      <Link to="/resources">
+        <Text css={underlineCss} fontSize="sm">
+          {t('overview.places.all')}
+        </Text>
+      </Link>
+    </Box>
+  );
+}
+
 function Settings() {
   const navigate = useNavigate();
   const [t] = useTranslation('admin');
 
   return (
     <Box mt="8">
-      <Heading size="sm">
-        {t('overview.settings.title')}
-      </Heading>
+      <Heading size="sm">{t('overview.settings.title')}</Heading>
       <Text css={{ display: 'block', marginBottom: '0.75rem' }} fontSize="sm">
         {t('overview.settings.helper')}
       </Text>
@@ -608,6 +671,11 @@ export default function AdminHome() {
                       value: overview.newMembers.length,
                       label: t('overview.stats.members'),
                     },
+                    {
+                      id: 'places',
+                      value: overview.newPlaces?.length || 0,
+                      label: t('overview.stats.places'),
+                    },
                   ]
                 : []),
             ]}
@@ -624,6 +692,12 @@ export default function AdminHome() {
           {isAdmin && (
             <Section id="members" title={t('overview.members.title')}>
               <NewMembers dateLocale={dateLocale} overview={overview} />
+            </Section>
+          )}
+
+          {isAdmin && (
+            <Section id="places" title={t('overview.places.title')}>
+              <NewPlaces dateLocale={dateLocale} overview={overview} />
             </Section>
           )}
         </>

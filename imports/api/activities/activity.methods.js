@@ -394,6 +394,43 @@ Meteor.methods({
         .filter(Boolean);
     }
 
+    // Places added lately, by whom and who looks after them, so misuse of
+    // organizers' right to add places is easy to spot
+    let newPlaces = [];
+    if (userIsAdmin) {
+      const places = await Resources.find(
+        { createdAt: { $gte: dayjs().subtract(14, 'day').toDate() } },
+        {
+          sort: { createdAt: -1 },
+          limit: 10,
+          fields: {
+            label: 1,
+            createdAt: 1,
+            createdBy: 1,
+            managerIds: 1,
+            parentId: 1,
+            isUnlisted: 1,
+          },
+        }
+      ).fetchAsync();
+      const managers = await Meteor.users
+        .find(
+          { _id: { $in: places.flatMap((place) => place.managerIds || []) } },
+          { fields: { username: 1 } }
+        )
+        .fetchAsync();
+      const usernameOf = (id) => managers.find((u) => u._id === id)?.username;
+      newPlaces = places.map((place) => ({
+        _id: place._id,
+        label: place.label,
+        createdAt: place.createdAt,
+        createdBy: place.createdBy || null,
+        managers: (place.managerIds || []).map(usernameOf).filter(Boolean),
+        isPart: Boolean(place.parentId),
+        isUnlisted: Boolean(place.isUnlisted),
+      }));
+    }
+
     return {
       activityCount: activities.length,
       upcoming: upcoming.slice(0, 15),
@@ -401,6 +438,7 @@ Meteor.methods({
       recentRegistrations: recentRegistrations.slice(0, 10),
       recentRegistrationCount: recentRegistrations.length,
       newMembers,
+      newPlaces,
     };
   },
 

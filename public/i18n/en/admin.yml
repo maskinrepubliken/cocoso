@@ -438,6 +438,7 @@ overview:
     registrations: 'New sign-ups'
     activities: 'Activities'
     members: 'New members'
+    places: 'New places'
   upcoming:
     title: 'Coming up the next two weeks'
     empty: 'Nothing planned the next two weeks.'
@@ -456,6 +457,15 @@ overview:
     title: 'New members'
     empty: 'No new members the last 14 days.'
     all: 'See all users'
+  places:
+    title: 'New places'
+    empty: 'No new places the last 14 days.'
+    by: 'by {{username}}'
+    managers: 'managed by {{usernames}}'
+    noManagers: 'no manager'
+    unlisted: 'unlisted'
+    part: 'part of another place'
+    all: 'See all places'
   settings:
     title: 'Settings and appearance'
     helper: 'Things you set up once and change now and then.'
@@ -502,6 +512,13 @@ features:
       count_other: "{{count}} places are bookable"
       offEffect: Places can no longer be booked, the Book button disappears, places made up of others show as plain places and clashes are not checked. Existing bookings stay in the calendar. Places still say how to book them.
       onEffect: Places can be booked in the calendar again and the Book button shows on bookable places.
+    documents:
+      label: Documents
+      about: Documents on places and requests – adding them from the gear, and the list on the page. Groups' documents are not affected.
+      count_one: "{{count}} document on places and requests"
+      count_other: "{{count}} documents on places and requests"
+      offEffect: The document list disappears from places and requests, and "Add document" leaves the gear. The documents are kept and come back when the feature is switched on again.
+      onEffect: Places and requests show their documents again, and those allowed to add documents see the choice in the gear.
   confirm:
     titleOff: "Switch off {{name}}?"
     titleOn: "Switch on {{name}}?"
