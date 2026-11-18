@@ -156,7 +156,7 @@ export async function notifyActivity({
   authorId,
 }: {
   activityId: string;
-  kind: 'message' | 'changed';
+  kind: 'message' | 'changed' | 'cancelled' | 'resumed';
   message?: string;
   changes?: string[];
   authorId?: string;
@@ -168,7 +168,7 @@ export async function notifyActivity({
   const activity = await attachPlaceAddress(stored);
   const site = await getSite();
   const recipients = await recipientsOf(activity, authorId);
-  if (recipients.length === 0 && kind === 'changed') {
+  if (recipients.length === 0 && kind !== 'message') {
     return { emails: 0, pushes: 0, recipients: 0 };
   }
   const from = await fromAddress();
@@ -215,16 +215,30 @@ export async function notifyActivity({
 
         if (recipient.user && prefs.eventPush) {
           const sv = lang !== 'en';
-          pushes += await pushToUser(recipient.user._id, {
-            title:
-              kind === 'changed'
-                ? `${sv ? 'Ändrat' : 'Changed'}: ${activity.title}`
-                : activity.title,
-            body:
-              message ||
-              (sv
+          const push = {
+            message: [activity.title, ''],
+            changed: [
+              `${sv ? 'Ändrat' : 'Changed'}: ${activity.title}`,
+              sv
                 ? 'Tid eller plats är ändrad. Tryck för att se.'
-                : 'The time or place has changed. Tap to see.'),
+                : 'The time or place has changed. Tap to see.',
+            ],
+            cancelled: [
+              `${sv ? 'Inställt' : 'Cancelled'}: ${activity.title}`,
+              sv
+                ? 'Arrangören har ställt in evenemanget.'
+                : 'The organizer has cancelled the event.',
+            ],
+            resumed: [
+              `${sv ? 'Blir av ändå' : 'On after all'}: ${activity.title}`,
+              sv
+                ? 'Evenemanget blir av som planerat.'
+                : 'The event takes place as planned.',
+            ],
+          }[kind];
+          pushes += await pushToUser(recipient.user._id, {
+            title: push[0],
+            body: message || push[1],
             url: `/activities/${activityId}`,
             tag: `activity-${activityId}`,
           });
@@ -322,6 +336,39 @@ export async function scheduleChangeNotice(
   );
 }
 
+// Called off, or on again: told after the same wait, so that a cancel
+// undone within it tells no one. A resume is told only when the cancel
+// already was; while it still waits, the two cancel out.
+export async function scheduleCancelNotice(
+  before: any,
+  cancelled: boolean,
+  { editorId }: { editorId?: string } = {}
+) {
+  const id = before?._id;
+  if (!id) {
+    return;
+  }
+  const waiting = await ActivityChangeNotices.findOneAsync({ _id: id });
+  if (waiting?.[cancelled ? 'resumed' : 'cancelled']) {
+    await ActivityChangeNotices.updateAsync(
+      { _id: id },
+      { $unset: { cancelled: 1, resumed: 1 } }
+    );
+    return;
+  }
+  await ActivityChangeNotices.upsertAsync(
+    { _id: id },
+    {
+      $set: {
+        [cancelled ? 'cancelled' : 'resumed']: true,
+        dueAt: new Date(Date.now() + WAIT_MS),
+        ...(editorId ? { editorId } : {}),
+      },
+      $setOnInsert: { before: snapshotOf(before), createdAt: new Date() },
+    }
+  );
+}
+
 async function sendChangeNotice(notice: ActivityChangeNoticeDoc) {
   const id = notice._id;
   const after = await Activities.findOneAsync(id);
@@ -331,6 +378,27 @@ async function sendChangeNotice(notice: ActivityChangeNoticeDoc) {
     !after.isPublished ||
     !after.isPublicActivity
   ) {
+    return;
+  }
+  if (after.cancelledAt) {
+    // Called off: that is the one news, with the organizer's words why;
+    // edits to a cancelled event tell no one
+    if (notice.cancelled) {
+      await notifyActivity({
+        activityId: id,
+        kind: 'cancelled',
+        message: after.cancelMessage,
+        authorId: notice.editorId,
+      });
+    }
+    return;
+  }
+  if (notice.resumed) {
+    await notifyActivity({
+      activityId: id,
+      kind: 'resumed',
+      authorId: notice.editorId,
+    });
     return;
   }
   const words = notice.message;

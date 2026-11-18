@@ -47,7 +47,7 @@ export const ActivityFollows = new Mongo.Collection<ActivityFollowDoc>(
 export interface ActivityUpdateDoc {
   _id: string;
   activityId: string;
-  kind: 'message' | 'changed';
+  kind: 'message' | 'changed' | 'cancelled' | 'resumed';
   message?: string;
   changes?: string[];
   authorId?: string;
@@ -70,6 +70,10 @@ export interface ActivityChangeNoticeDoc {
   before: any;
   message?: string;
   editorId?: string;
+  // The event was called off, or on again after a cancellation had been
+  // told (setActivityCancelled)
+  cancelled?: boolean;
+  resumed?: boolean;
   dueAt: Date;
   createdAt: Date;
 }

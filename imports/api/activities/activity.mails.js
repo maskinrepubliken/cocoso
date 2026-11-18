@@ -52,6 +52,16 @@ const STRINGS = {
         subject: (title) => `Ändrat: ${title}`,
         kicker: { time: 'Ny tid', place: 'Ny plats', both: 'Ny tid och plats' },
       },
+      cancelled: {
+        subject: (title) => `Inställt: ${title}`,
+        kicker: 'Inställt',
+        none: 'Arrangören har ställt in evenemanget.',
+      },
+      resumed: {
+        subject: (title) => `Blir av ändå: ${title}`,
+        kicker: 'Blir av ändå',
+        none: 'Evenemanget är inte längre inställt, utan blir av som planerat.',
+      },
       stop: 'Sluta få uppdateringar om evenemanget',
     },
   },
@@ -89,6 +99,16 @@ const STRINGS = {
           place: 'New place',
           both: 'New time and place',
         },
+      },
+      cancelled: {
+        subject: (title) => `Cancelled: ${title}`,
+        kicker: 'Cancelled',
+        none: 'The organizer has cancelled the event.',
+      },
+      resumed: {
+        subject: (title) => `On after all: ${title}`,
+        kicker: 'On after all',
+        none: 'The event is no longer cancelled and takes place as planned.',
       },
       stop: 'Stop updates about this event',
     },
@@ -306,7 +326,9 @@ export function unregistrationEmail({
  * An update about an event, to everyone signed up for or following it:
  * a message from its organizer (`kind: 'message'`) or, after the organizer
  * changed its time or place, what it is now (`kind: 'changed'`; `changes`
- * holds 'time' and/or 'place'). `lang` is the reader's language, `stopUrl`
+ * holds 'time' and/or 'place'), that it is called off (`kind: 'cancelled'`,
+ * `message` the organizer's words why) or on again after all
+ * (`kind: 'resumed'`). `lang` is the reader's language, `stopUrl`
  * the signed link that ends updates about this event for them.
  */
 export function activityUpdateEmail({
@@ -351,6 +373,22 @@ export function activityUpdateEmail({
         </table>
         ${message ? messageBlock(message, c, 20) : ''}`;
     bodyText = [rows.text, message].filter(Boolean).join('\n\n');
+  } else if (kind === 'cancelled' || kind === 'resumed') {
+    kicker = u[kind].kicker;
+    subject = u[kind].subject(activity.title);
+    // The organizer's words, or a plain line, then when and where it was
+    // (or is again) to be
+    const rows = facts([
+      [s.when, dates],
+      [s.where, [place].filter(Boolean)],
+    ]);
+    body = `${messageBlock(message || u[kind].none, c, 0)}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 0;">
+          <tr><td style="padding:14px 18px;background:${
+            c.tint
+          };border-radius:12px;">${rows.html}</td></tr>
+        </table>`;
+    bodyText = [message || u[kind].none, rows.text].join('\n\n');
   } else {
     const meta = [dates[0], activity.resource || activity.place]
       .filter(Boolean)
@@ -372,8 +410,9 @@ export function activityUpdateEmail({
     theme: site?.theme,
     preheader: message ? message.slice(0, 120) : dates[0] || '',
     hero: heroOf(activity, dates),
-    // A new time or place is the news; a message's news is the message
-    ...(kind === 'changed' ? { status: kicker } : { kicker }),
+    // A new time or place, or a cancellation, is the news; a message's news
+    // is the message
+    ...(kind === 'message' ? { kicker } : { status: kicker }),
     title: activity.title,
     content: body,
     button: { href: url, label: s.button },

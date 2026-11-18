@@ -890,7 +890,11 @@ Meteor.methods({
     if (!(await canManage(theActivity, user))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
-    await setActivityCancelled(theActivity, { cancelled: true, message });
+    await setActivityCancelled(theActivity, {
+      cancelled: true,
+      message,
+      editorId: user._id,
+    });
     return true;
   },
 
@@ -904,7 +908,10 @@ Meteor.methods({
     if (!(await canManage(theActivity, user))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
-    await setActivityCancelled(theActivity, { cancelled: false });
+    await setActivityCancelled(theActivity, {
+      cancelled: false,
+      editorId: user._id,
+    });
     return true;
   },
 
