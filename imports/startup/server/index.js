@@ -9,6 +9,7 @@ import {
   getSmtpSettings,
   mailUrlFor,
 } from '../../api/_utils/services/mails/smtp';
+import './safeErrors';
 import './api';
 import './media';
 import './shareImages';
