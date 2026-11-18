@@ -6,7 +6,7 @@ import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
 import useSaveFailed from '/imports/ui/forms/useSaveFailed';
 
 import GroupForm from './GroupForm';
-import { groupAtom } from './GroupItemHandler';
+import { groupAtom } from './groupAtom';
 
 export default function EditGroup() {
   const saveFailed = useSaveFailed();
@@ -14,7 +14,7 @@ export default function EditGroup() {
   const [group, setGroup] = useAtom(groupAtom);
 
   const updateGroup = async (newGroup: any) => {
-    if (!group) return;
+    if (!group) return false;
     const groupId = group._id;
     try {
       await call('updateGroup', groupId, newGroup);
@@ -23,8 +23,10 @@ export default function EditGroup() {
       setTimeout(() => {
         setUpdated(null);
       }, 1000);
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 
@@ -56,7 +58,11 @@ export default function EditGroup() {
 
   return (
     <SuccessRedirector forEdit ping={updated}>
-      <GroupForm group={groupFields} onFinalize={updateGroup} />
+      <GroupForm
+        group={groupFields}
+        groupId={group._id}
+        onFinalize={updateGroup}
+      />
     </SuccessRedirector>
   );
 }

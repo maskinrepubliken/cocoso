@@ -72,7 +72,7 @@ export default function GroupItemHandler({ siteDoc }) {
           {isGroupAdmin && <GroupAdminFunctions />}
 
           {canCreateContent && (
-            <EditEntryHandler context="groups">
+            <EditEntryHandler keepsDraft context="groups">
               <EditGroup />
             </EditEntryHandler>
           )}

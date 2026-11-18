@@ -1,15 +1,10 @@
+// The group form's typed fields, in the wide column; the details are cards
+// beside them (GroupForm.tsx).
 const groupFormFields = (t) => [
   {
-    helper: t('form.private.helper'),
-    label: t('form.private.label'),
-    placeholder: t('form.private.holder'),
-    type: 'checkbox',
-    value: 'isPrivate',
-  },
-  {
-    helper: t('form.title.helper'),
-    label: t('form.title.label'),
-    placeholder: t('form.title.holder'),
+    helper: t('groupForm.title.helper'),
+    label: t('groupForm.title.label'),
+    placeholder: t('groupForm.title.holder'),
     type: 'input',
     value: 'title',
     props: {
@@ -17,32 +12,24 @@ const groupFormFields = (t) => [
     },
   },
   {
-    helper: t('form.subtitle.helper'),
-    label: t('form.subtitle.label'),
-    placeholder: t('form.subtitle.holder'),
+    helper: t('groupForm.lead.helper'),
+    label: t('groupForm.lead.label'),
+    placeholder: t('groupForm.lead.holder'),
     type: 'input',
-    area: 'side',
     value: 'readingMaterial',
     props: {
       required: true,
     },
   },
   {
-    helper: t('form.description.helper'),
-    label: t('form.description.label'),
-    placeholder: t('form.description.holder'),
+    helper: t('groupForm.description.helper'),
+    label: t('groupForm.description.label'),
+    placeholder: t('groupForm.description.holder'),
     type: 'quill',
     value: 'description',
     props: {
       required: true,
     },
-  },
-  {
-    helper: t('form.capacity.helper'),
-    label: t('form.capacity.label'),
-    placeholder: t('form.capacity.holder'),
-    type: 'number',
-    value: 'capacity',
   },
 ];
 

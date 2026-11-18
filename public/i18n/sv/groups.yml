@@ -169,3 +169,35 @@ membership:
   makeAdmin: Gör till admin
   makeAdminAsk: "Göra {{name}} till admin? Hen kan sedan göra allt med gruppen."
   yes: Ja, gör till admin
+
+# The group form (pages/groups/GroupForm.tsx), laid out like the event,
+# place and request forms
+groupForm:
+  title:
+    label: Namn
+    helper: Vad gruppen heter.
+    holder: t.ex. Tranemo schackklubb
+  lead:
+    label: Kort beskrivning
+    helper: En mening om vad gruppen gör. Visas under namnet.
+    holder: t.ex. Vi spelar schack varje tisdag på biblioteket
+  description:
+    label: Beskrivning
+    helper: Berätta om gruppen – vad ni gör, när ni ses och vem som är välkommen.
+    holder: Om gruppen…
+  image:
+    label: Bild
+    helper: En bild som visar gruppen.
+  visibility:
+    title: Vem kan se gruppen?
+    open: Öppen
+    openHelp: Alla kan se gruppen och gå med.
+    private: Privat
+    privateHelp: Bara medlemmar ser gruppen, och man går med genom en inbjudan från en admin. En privat grupp kan inte göras öppen senare.
+    locked: Gruppen är privat och kan inte göras öppen.
+  where: Var
+  contactHelp: Hur allmänheten når gruppen. En e-postadress eller ett telefonnummer krävs.
+  meetings:
+    title: Träffar
+    capacity: Max antal på en träff
+    capacityHelp: Hur många som kan anmäla sig till en träff.

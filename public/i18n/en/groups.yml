@@ -169,3 +169,35 @@ membership:
   makeAdmin: Make admin
   makeAdminAsk: "Make {{name}} an admin? They can then do anything with the group."
   yes: Yes, make admin
+
+# The group form (pages/groups/GroupForm.tsx), laid out like the event,
+# place and request forms
+groupForm:
+  title:
+    label: Name
+    helper: What the group is called.
+    holder: e.g. Tranemo chess club
+  lead:
+    label: Short description
+    helper: One sentence about what the group does. Shown under the name.
+    holder: e.g. We play chess every Tuesday at the library
+  description:
+    label: Description
+    helper: Tell about the group – what you do, when you meet and who is welcome.
+    holder: About the group…
+  image:
+    label: Picture
+    helper: A picture that shows the group.
+  visibility:
+    title: Who can see the group?
+    open: Open
+    openHelp: Anyone can see the group and join.
+    private: Private
+    privateHelp: Only members see the group, and one joins through an invitation from an admin. A private group cannot be made open later.
+    locked: The group is private and cannot be made open.
+  where: Where
+  contactHelp: How the public reaches the group. An email address or a phone number is required.
+  meetings:
+    title: Meetings
+    capacity: Most people at a meeting
+    capacityHelp: How many can sign up for one meeting.

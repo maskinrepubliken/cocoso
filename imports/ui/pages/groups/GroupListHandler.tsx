@@ -18,7 +18,7 @@ export default function GroupListHandler({ siteDoc }) {
       <GroupsHybrid groups={groups} siteDoc={siteDoc} />
 
       {rendered && canCreateContent ? (
-        <NewEntryHandler context="groups">
+        <NewEntryHandler keepsDraft publishes context="groups">
           <NewGroup />
         </NewEntryHandler>
       ) : null}

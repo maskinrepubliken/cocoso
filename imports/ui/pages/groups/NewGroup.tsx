@@ -14,8 +14,10 @@ export default function NewGroup() {
     try {
       const respond = await call('createGroup', newGroup);
       setNewEntryId(respond);
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 
