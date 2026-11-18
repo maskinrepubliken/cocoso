@@ -8346,7 +8346,7 @@ body {
   cursor: pointer;
 }
 
-/* The glow of the town pointed at: a halo that is brightest at the ball's
+/* The glow of the town pointed at, red as the ball: a halo that is brightest at the ball's
    edge and fades outwards, and downwards too, since the ball is sunk into
    the ground and has no lower edge to follow. The halo reaches 45% of the
    ball's width outside it, so the ball's edge is at 100 / 190 of it. */
@@ -8358,9 +8358,9 @@ body {
   background: radial-gradient(
     circle closest-side,
     transparent 51%,
-    rgba(255, 255, 255, 0.95) 53.5%,
-    rgba(255, 250, 225, 0.45) 68%,
-    rgba(255, 250, 225, 0) 100%
+    rgba(255, 96, 72, 0.95) 53.5%,
+    rgba(255, 72, 52, 0.5) 68%,
+    rgba(255, 72, 52, 0) 100%
   );
   -webkit-mask-image: linear-gradient(180deg, #000 42%, transparent 74%);
   mask-image: linear-gradient(180deg, #000 42%, transparent 74%);
@@ -8405,6 +8405,12 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.12s ease-out, translate 0.12s ease-out;
+}
+
+/* a town with a page of its own: a green pill, as a button */
+.kommun-map-town.is-link .kommun-map-label {
+  background: var(--cocoso-colors-theme-700);
+  color: #fff;
 }
 
 .kommun-map-town.is-link .kommun-map-label::after {
