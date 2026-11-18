@@ -2,38 +2,19 @@ import { useAtomValue } from 'jotai';
 import React from 'react';
 
 import { currentUserAtom } from '/imports/state';
-import { EntryActions } from '/imports/ui/entry/EntryHero';
 
 import { workAtom } from '../WorkItemHandler';
 import WorkAdminFunctions from './WorkAdminFunctions';
-import ContactInfo from '../../profile/ContactInfo';
 
+// A request's page has no card of its own: one reaches the author through
+// the link to their profile. The author's choices are in the header's
+// gear, and their dialogs are here.
 export default function WorkInteractionHandler() {
   const currentUser = useAtomValue(currentUserAtom);
   const work = useAtomValue(workAtom) as any;
 
-  if (!work) {
+  if (!work || !currentUser || currentUser._id !== work.authorId) {
     return null;
   }
-
-  if (!currentUser || currentUser._id !== work.authorId) {
-    return (
-      <EntryActions>
-        <ContactInfo username={work.authorUsername} />
-      </EntryActions>
-    );
-  } else {
-    // The author's choices are in the header's gear; their dialogs are here
-    return (
-      <>
-        <WorkAdminFunctions />
-        <EntryActions>
-          <ContactInfo
-            username={work.authorUsername}
-            value={work.contactInfo}
-          />
-        </EntryActions>
-      </>
-    );
-  }
+  return <WorkAdminFunctions />;
 }
