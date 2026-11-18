@@ -42,8 +42,8 @@ export interface GroupHybridProps {
   group: Group;
   documents?: Document[];
   siteDoc: Site;
-  // Beside the heading of its meetings: the members' way to them
-  meetingsAction?: React.ReactNode;
+  // At the end of each meeting: coming or not, or removing it
+  meetingActions?: (meeting: GroupMeeting) => React.ReactNode;
 }
 
 // A group's page: the card with its picture, framed like a place's, what
@@ -52,7 +52,7 @@ export default function GroupHybrid({
   group,
   documents,
   siteDoc,
-  meetingsAction,
+  meetingActions,
 }: GroupHybridProps) {
   const [tc] = useTranslation('common');
   if (!group) {
@@ -136,11 +136,11 @@ export default function GroupHybrid({
           <EntryColumn>
             <SectionHead>
               <h2>{tc('entry.meetings')}</h2>
-              {meetingsAction}
             </SectionHead>
             <Panel>
               <GroupMeetingList
                 groupTitle={group.title}
+                actions={meetingActions}
                 meetings={group.meetings || []}
               />
             </Panel>

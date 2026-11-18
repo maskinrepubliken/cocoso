@@ -168,7 +168,6 @@ function useGearItems(editable: Editable | null): GearItem[] {
       return [
         addDocument,
         { param: 'addMeeting', label: t('admin.add_meeting') },
-        { param: 'meetings', label: t('admin.manage_meetings') },
         { param: 'members', label: t('admin.manage_members') },
         ...(item.isPrivate
           ? [{ param: 'invite', label: t('actions.invite') }]

@@ -15,6 +15,7 @@ export interface GroupMeeting {
   resource?: string;
   place?: string;
   address?: Partial<Address> | null;
+  attendees?: { username?: string }[];
 }
 
 const List = styled('ul', {
@@ -28,6 +29,7 @@ const List = styled('ul', {
 
 const Row = styled('li', {
   alignItems: 'center',
+  flexWrap: 'wrap',
   display: 'flex',
   gap: '1rem',
 });
@@ -58,6 +60,7 @@ const Day = styled('span', {
 });
 
 const What = styled('div', {
+  flex: '1 1 auto',
   minWidth: 0,
   '& strong': {
     color: 'var(--cocoso-colors-theme-900)',
@@ -80,11 +83,14 @@ const whereOf = (meeting: GroupMeeting) =>
 // A group's coming meetings on its page: each one's day, its name, its
 // time and where it is.
 export default function GroupMeetingList({
+  actions,
   meetings,
   groupTitle,
 }: {
   meetings: GroupMeeting[];
   groupTitle?: string;
+  // At the end of each row, e.g. joining it or removing it
+  actions?: (meeting: GroupMeeting) => React.ReactNode;
 }) {
   const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
   const coming = meetings.filter(
@@ -120,6 +126,7 @@ export default function GroupMeetingList({
                 </span>
               )}
             </What>
+            {actions?.(meeting)}
           </Row>
         );
       })}

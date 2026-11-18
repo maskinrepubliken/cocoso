@@ -88,7 +88,13 @@ interface TimePickerProps {
   TimePickerComponent: any;
 }
 
-function TimePicker({ label, value, onChange, TimePickerComponent }: TimePickerProps) {
+function TimePicker({
+  label,
+  value,
+  onChange,
+  TimePickerComponent,
+  optional = false,
+}: TimePickerProps & { optional?: boolean }) {
   if (!TimePickerComponent) {
     return (
       <Box>
@@ -101,14 +107,59 @@ function TimePicker({ label, value, onChange, TimePickerComponent }: TimePickerP
     <Box>
       <Text mb="2">{label}</Text>
       <TimePickerComponent
+        allowClear={optional}
         format="HH:mm"
         minuteStep={5}
         needConfirm={false}
         size="large"
-        value={dayjs(value, 'HH:mm')}
+        value={value ? dayjs(value, 'HH:mm') : null}
         onChange={onChange}
       />
     </Box>
+  );
+}
+
+// Over the open month: the month's name between two arrows, no year
+function MonthHeader({ value, onChange }: { value: any; onChange: (d: any) => void }) {
+  const button = {
+    background: 'none',
+    border: 0,
+    borderRadius: '999px',
+    cursor: 'pointer',
+    fontSize: '1.2rem',
+    height: '2rem',
+    lineHeight: 1,
+    width: '2rem',
+  };
+  return (
+    <div
+      style={{
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '0.5rem 0.5rem 0.25rem',
+      }}
+    >
+      <button
+        aria-label={value.subtract(1, 'month').format('MMMM')}
+        style={button}
+        type="button"
+        onClick={() => onChange(value.subtract(1, 'month'))}
+      >
+        ‹
+      </button>
+      <strong style={{ textTransform: 'capitalize' }}>
+        {value.format('MMMM')}
+      </strong>
+      <button
+        aria-label={value.add(1, 'month').format('MMMM')}
+        style={button}
+        type="button"
+        onClick={() => onChange(value.add(1, 'month'))}
+      >
+        ›
+      </button>
+    </div>
   );
 }
 
@@ -123,9 +174,17 @@ interface DateTimeValue {
 export interface DateTimePickerProps {
   value: DateTimeValue;
   onChange: (value: DateTimeValue) => void;
+  // The end time may be left out (it can then be cleared); its label
+  endOptional?: boolean;
+  endLabel?: string;
 }
 
-export default function DateTimePicker({ value, onChange }: DateTimePickerProps) {
+export default function DateTimePicker({
+  value,
+  onChange,
+  endOptional = false,
+  endLabel,
+}: DateTimePickerProps) {
   const [t] = useTranslation('activities');
   const { i18n } = useTranslation();
   const [locale, setLocale] = useState<any>(null);
@@ -163,21 +222,31 @@ export default function DateTimePicker({ value, onChange }: DateTimePickerProps)
     onChange(parsedValue);
   };
 
-  const handleTimeChange = (time: any, entity: string) => {
-    if (!time) {
-      return;
-    }
-
+  const handleTimeChange = (time: any, entity: 'startTime' | 'endTime') => {
     const parsedValue = {
       ...value,
     };
 
+    if (!time) {
+      // Only an optional end time can be cleared
+      if (entity !== 'endTime' || !endOptional) {
+        return;
+      }
+      parsedValue.endTime = '';
+      onChange(parsedValue);
+      return;
+    }
+
     parsedValue[entity] = time.format('HH:mm');
+    // Ending before it starts on the same day: the end moves along, or,
+    // when it may be left out, is left out
     if (
       !isRange &&
-      dayjs(parsedValue.startTime).isAfter(dayjs(parsedValue.endTime))
+      parsedValue.endTime &&
+      parsedValue.startTime &&
+      parsedValue.endTime < parsedValue.startTime
     ) {
-      parsedValue.endTime = time.format('HH:mm');
+      parsedValue.endTime = endOptional ? '' : parsedValue.startTime;
     }
 
     onChange(parsedValue);
@@ -214,6 +283,9 @@ export default function DateTimePicker({ value, onChange }: DateTimePickerProps)
                   date && date.isBefore(dayjs(), 'day')
                 }
                 fullscreen={false}
+                headerRender={({ value: shown, onChange: show }: any) => (
+                  <MonthHeader value={shown} onChange={show} />
+                )}
                 value={dayjs(value?.startDate, 'YYYY-MM-DD')}
                 onSelect={(date: any) => handleDateChange(date, 'startDate')}
               />
@@ -258,7 +330,8 @@ export default function DateTimePicker({ value, onChange }: DateTimePickerProps)
           <Box w="170px">
             <TimePicker
               TimePickerComponent={AntTimePicker}
-              label={t('form.time.finish')}
+              label={endLabel || t('form.time.finish')}
+              optional={endOptional}
               value={value?.endTime}
               onChange={(time) => handleTimeChange(time, 'endTime')}
             />

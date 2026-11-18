@@ -350,7 +350,7 @@ locations:
     helperResource: Which part of the municipality the place is in; helps people find the place here on the site.
     helperActivity: Pick a place when the activity is not held at one of the resources. Leave empty when it concerns the whole municipality.
     helperFromResource: The place follows the chosen resource.
-    helperGroup: Optionally tie this group to a place. Leave empty when it is open to the whole municipality.
+    helperGroup: Choose a place if you like, so that people who live there find the group more easily.
     helperWork: Optionally tie this post to a place.
 
 domains:

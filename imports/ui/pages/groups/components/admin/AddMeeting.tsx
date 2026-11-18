@@ -14,7 +14,7 @@ import { formatAddress, type Address } from '/imports/api/_utils/address';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
-import FormCard from '/imports/ui/pages/activities/form/FormCard';
+import { styled } from '/stitches.config';
 import PlacePicker, {
   type PlaceOption,
 } from '/imports/ui/pages/activities/form/PlacePicker';
@@ -26,9 +26,38 @@ type WhereMode = 'place' | 'address' | 'text';
 
 const today = dayjs().format('YYYY-MM-DD');
 
-// A group's new meeting: its name, when, and where, as cards like those of
-// the event form. Where is one of the site's places, picked as in the event
-// form, an address, or written out.
+const Sections = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1.5rem',
+});
+
+const SectionTitle = styled('h3', {
+  fontFamily: 'var(--cocoso-font-display)',
+  fontSize: '1.1rem',
+  fontWeight: 600,
+  margin: '0 0 0.6rem',
+});
+
+// A part of the dialog under a small heading; the dialog is the card, so
+// no card of its own
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section>
+      <SectionTitle>{title}</SectionTitle>
+      {children}
+    </section>
+  );
+}
+
+// A group's new meeting: its name, when, and where. Where is one of the
+// site's places, picked as in the event form, an address, or written out.
 export default function AddMeeting({ onClose }: { onClose: () => void }) {
   const [t] = useTranslation('groups');
   const [tc] = useTranslation('common');
@@ -40,7 +69,8 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
     startDate: today,
     endDate: today,
     startTime: '18:00',
-    endTime: '20:00',
+    // Left out, it ends an hour after it starts
+    endTime: '',
   });
   const [mode, setMode] = useState<WhereMode>('place');
   const [placeId, setPlaceId] = useState<string | null>(null);
@@ -63,8 +93,11 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
       : mode === 'address'
         ? formatAddress(address) && { address: address as Address }
         : placeText.trim() && { place: placeText.trim() };
+  const endTime =
+    when.endTime ||
+    dayjs(`2000-01-01 ${when.startTime}`).add(1, 'hour').format('HH:mm');
   const isValid = Boolean(
-    title.trim() && where && when.startDate && when.startTime && when.endTime
+    title.trim() && where && when.startDate && when.startTime
   );
 
   const createMeeting = async () => {
@@ -86,7 +119,7 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
             startDate: when.startDate,
             endDate: when.startDate,
             startTime: when.startTime,
-            endTime: when.endTime,
+            endTime,
             attendees: [],
           },
         ],
@@ -120,21 +153,26 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
       onClose={onClose}
       onConfirm={createMeeting}
     >
-      <div className="entry-form-side">
-        <FormCard title={t('meeting.form.name')}>
+      <Sections>
+        <Section title={t('meeting.form.name')}>
           <Input
             aria-label={t('meeting.form.name')}
             placeholder={t('meeting.form.nameHolder')}
             value={title}
             onChange={(event) => setTitle(event.target.value)}
           />
-        </FormCard>
+        </Section>
 
-        <FormCard title={t('meeting.form.when')}>
-          <DateTimePicker value={when} onChange={setWhen} />
-        </FormCard>
+        <Section title={t('meeting.form.when')}>
+          <DateTimePicker
+            endOptional
+            endLabel={t('meeting.form.endOptional')}
+            value={when}
+            onChange={setWhen}
+          />
+        </Section>
 
-        <FormCard title={t('meeting.form.where')}>
+        <Section title={t('meeting.form.where')}>
           <ChoiceChips
             label={t('meeting.form.where')}
             value={mode}
@@ -180,8 +218,8 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
             ]}
             onChange={setMode}
           />
-        </FormCard>
-      </div>
+        </Section>
+      </Sections>
     </Modal>
   );
 }

@@ -104,7 +104,9 @@ export default function GroupMembers({ group }) {
                   <CLink fontWeight={member.isAdmin ? '700' : '400'}>
                     {member.username}
                   </CLink>
-                  <Text ml="1">{member.isAdmin && '(admin)'}</Text>
+                  <Text ml="1">
+                    {member.isAdmin && `(${t('membership.admin').toLowerCase()})`}
+                  </Text>
                 </Flex>
               </Link>
             )}

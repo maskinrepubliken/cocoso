@@ -347,7 +347,7 @@ locations:
     helperResource: Vilken del av kommunen platsen finns, hjälper användaren hitta platsen här på sidan.
     helperActivity: Välj en ort när aktiviteten inte hålls på någon av resurserna. Lämna tomt när den gäller hela kommunen.
     helperFromResource: Orten följer den valda resursen.
-    helperGroup: Koppla gruppen till en ort om du vill. Lämna tomt när den är öppen för hela kommunen.
+    helperGroup: Välj en ort om du vill, så hittar de som bor där gruppen lättare.
     helperWork: Koppla inlägget till en ort om du vill.
 
 domains:

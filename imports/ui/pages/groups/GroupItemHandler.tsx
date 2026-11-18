@@ -20,16 +20,14 @@ import { groupAtom } from './groupAtom';
 const GroupAdminFunctions = loadable(
   () => import('./components/GroupAdminFunctions')
 );
-const GroupMeetingDates = loadable(
-  () => import('./components/GroupMeetingDates')
-);
+const MeetingActions = loadable(() => import('./components/MeetingActions'));
 const EditGroup = loadable(() => import('./EditGroup'));
 
 export { groupAtom };
 
 // A group's page. Joining and leaving are in the header
-// (layout/GroupMembershipButton.tsx), the admins' choices in its gear;
-// members reach the meetings from beside their heading.
+// (layout/GroupMembershipButton.tsx), the owners' choices in its gear;
+// each meeting has its own buttons in the list.
 export default function GroupItemHandler({ siteDoc }) {
   const { group, documents } = useLoaderData();
   const [groupItem, setGroup] = useAtom(groupAtom);
@@ -72,9 +70,9 @@ export default function GroupItemHandler({ siteDoc }) {
     return isAsking ? <Loader /> : <NotFoundPage />;
   }
 
-  const current = groupItem || group;
-  // The group's admins, and the site's, who run any group as its owner
-  const isGroupAdmin =
+  const current = groupItem?._id === group._id ? groupItem : group;
+  // The group's owners, and the site's admins, who run any group
+  const isGroupOwner =
     role === 'admin' ||
     Boolean(
       currentUser &&
@@ -89,14 +87,18 @@ export default function GroupItemHandler({ siteDoc }) {
         group={current}
         documents={documents}
         siteDoc={siteDoc}
-        meetingsAction={rendered && <GroupMeetingDates />}
+        meetingActions={
+          rendered && currentUser
+            ? (meeting) => <MeetingActions meeting={meeting} />
+            : undefined
+        }
       />
 
       {rendered && (
         <>
           {/* The gear's dialogs: documents, meetings, members, invite,
             delete */}
-          {isGroupAdmin && <GroupAdminFunctions />}
+          {isGroupOwner && <GroupAdminFunctions />}
 
           {canCreateContent && (
             <EditEntryHandler keepsDraft context="groups">

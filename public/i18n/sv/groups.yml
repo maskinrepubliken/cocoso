@@ -22,7 +22,7 @@ form:
     helper: "Hur allmänheten når gruppen. En e-postadress eller ett telefonnummer krävs."
   private:
     label: Sluten grupp (endast för inbjudna)
-    helper: Slutna grupper är endast synliga för deras medlemmar, och deltagande är endast möjligt via inbjudningar från deras administratörer. Du kan inte ändra den till offentlig efter att du har skapat den. Du kommer hantera inbjudningarna efter att du har skapat gruppen.
+    helper: Slutna grupper är endast synliga för deras medlemmar, och deltagande är endast möjligt via inbjudningar från deras gruppägare. Du kan inte ändra den till offentlig efter att du har skapat den. Du kommer hantera inbjudningarna efter att du har skapat gruppen.
     holder: Välj
   title:
     label: Titel
@@ -75,10 +75,10 @@ meeting:
     add: Mötet har lagts till!
     remove: Mötet har tagits bort
     fileDropper: har laddats upp till den här gruppen!
-    admin: Ny admin har lagts till
+    admin: Ny gruppägare har lagts till
   actions:
     remove: Ta bort det här mötet
-    makeAdmin: Gör till admin
+    makeAdmin: Gör till gruppägare
   isAttending:
     false: Avanmäl mig
     true: Registrera närvaro
@@ -88,6 +88,7 @@ meeting:
     admin: Öppna datumen för att se deltagarna
   form:
     label: Lägg till ett möte
+    endOptional: Sluttid (valfritt)
     name: Mötets namn
     nameHolder: t.ex. Höstmöte, Övning eller Årsmöte
     modeAddress: En adress
@@ -121,8 +122,8 @@ confirm:
       leave: lämnar
       join: Gå med
   admin:
-    title: Bekräfta att du vill göra {{ admin }} till administratör.
-    body: När du bekräftar kommer du att dela administratörsrollen och alla dess behörigheter med {{ admin }}.
+    title: Bekräfta att du vill göra {{ admin }} till gruppägare.
+    body: När du bekräftar delar du rollen som gruppägare och allt den får göra med {{ admin }}.
 
 invite:
   info: Vänligen lägg till data för den person du vill bjuda in
@@ -150,10 +151,10 @@ modal:
 
 private:
   title: privat
-  info: Privata grupper är endast synliga för deras medlemmar, och deltagande är endast möjligt via inbjudningar från deras administratörer.
+  info: Privata grupper är endast synliga för deras medlemmar, och deltagande är endast möjligt via inbjudningar från deras gruppägare.
 
 admin:
-  admin: Admin
+  admin: Gruppägare
   add_document: Lägg till dokument
   add_meeting: Lägg till möte
   manage_members: Hantera medlemmar
@@ -169,10 +170,10 @@ membership:
   count_one: "{{count}} medlem"
   count_other: "{{count}} medlemmar"
   joined: "Gick med {{date}}"
-  admin: Admin
-  makeAdmin: Gör till admin
-  makeAdminAsk: "Göra {{name}} till admin? Hen kan sedan göra allt med gruppen."
-  yes: Ja, gör till admin
+  admin: Gruppägare
+  makeAdmin: Gör till gruppägare
+  makeAdminAsk: "Göra {{name}} till gruppägare? Hen kan sedan göra allt med gruppen."
+  yes: Ja, gör till gruppägare
 
 # The group form (pages/groups/GroupForm.tsx), laid out like the event,
 # place and request forms
@@ -197,7 +198,28 @@ groupForm:
     open: Öppen
     openHelp: Alla kan se gruppen och gå med.
     private: Privat
-    privateHelp: Bara medlemmar ser gruppen, och man går med genom en inbjudan från en admin. En privat grupp kan inte göras öppen senare.
+    privateHelp: Bara medlemmar ser gruppen, och man går med genom en inbjudan från en gruppägare. En privat grupp kan inte göras öppen senare.
     locked: Gruppen är privat och kan inte göras öppen.
   where: Var
   contactHelp: Hur allmänheten når gruppen. En e-postadress eller ett telefonnummer krävs.
+
+# Inviting to a private group (pages/groups/InviteManager.tsx)
+inviteDialog:
+  title: Bjud in till gruppen
+  intro: Gruppen är privat. Bjud in någon med namn och e-post – hen får ett mejl med en länk till gruppen och kan sedan gå med.
+  firstName: Förnamn
+  firstNameHolder: t.ex. Samuel
+  email: E-post
+  emailHolder: t.ex. samuel@exempel.se
+  send: Skicka inbjudan
+  invited: Inbjudna
+  empty: Ingen är inbjuden än.
+  remove: "Ta bort inbjudan till {{name}}"
+
+# Beside each meeting in the group's list (components/MeetingActions.tsx)
+meetingList:
+  come: Jag kommer
+  notComing: Jag kommer inte
+  coming_one: "{{count}} anmäld"
+  coming_other: "{{count}} anmälda"
+  remove: "Ta bort mötet {{name}}"

@@ -88,6 +88,7 @@ meeting:
     admin: Open the dates to see the attendees
   form:
     label: Add a meeting
+    endOptional: End time (optional)
     name: Name of the meeting
     nameHolder: e.g. Autumn meeting, Rehearsal or Annual meeting
     modeAddress: An address
@@ -153,7 +154,7 @@ private:
   info: Private groups are only visible by their members, and participation is possible only via invites by their admins.
 
 admin:
-  admin: Admin
+  admin: Group owner
   add_document: Add Document
   add_meeting: Add Meeting
   manage_members: Manage Members
@@ -169,10 +170,10 @@ membership:
   count_one: "{{count}} member"
   count_other: "{{count}} members"
   joined: "Joined {{date}}"
-  admin: Admin
-  makeAdmin: Make admin
-  makeAdminAsk: "Make {{name}} an admin? They can then do anything with the group."
-  yes: Yes, make admin
+  admin: Group owner
+  makeAdmin: Make group owner
+  makeAdminAsk: "Make {{name}} a group owner? They can then do anything with the group."
+  yes: Yes, make group owner
 
 # The group form (pages/groups/GroupForm.tsx), laid out like the event,
 # place and request forms
@@ -201,3 +202,24 @@ groupForm:
     locked: The group is private and cannot be made open.
   where: Where
   contactHelp: How the public reaches the group. An email address or a phone number is required.
+
+# Inviting to a private group (pages/groups/InviteManager.tsx)
+inviteDialog:
+  title: Invite to the group
+  intro: The group is private. Invite someone by name and email – they get an email with a link to the group and can then join.
+  firstName: First name
+  firstNameHolder: e.g. Samuel
+  email: Email
+  emailHolder: e.g. samuel@example.com
+  send: Send invitation
+  invited: Invited
+  empty: Nobody is invited yet.
+  remove: "Remove the invitation to {{name}}"
+
+# Beside each meeting in the group's list (components/MeetingActions.tsx)
+meetingList:
+  come: I'm coming
+  notComing: I'm not coming
+  coming_one: "{{count}} signed up"
+  coming_other: "{{count}} signed up"
+  remove: "Remove the meeting {{name}}"
