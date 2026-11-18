@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Meteor } from 'meteor/meteor';
 import loadable from '@loadable/component';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useRevalidator } from 'react-router';
 import { useAtomValue, useAtom } from 'jotai';
 
 import GroupHybrid from '/imports/ui/entry/GroupHybrid';
@@ -10,6 +11,7 @@ import {
   renderedAtom,
   roleAtom,
 } from '/imports/state';
+import { Loader } from '/imports/ui/core';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
@@ -35,14 +37,39 @@ export default function GroupItemHandler({ siteDoc }) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
+  const revalidator = useRevalidator();
 
   useEffect(() => {
     setGroup(group);
   }, [group, documents]);
 
-  // An unknown or removed group comes back as a shell without an id.
+  // The server renders a page logged out, so a private group comes back
+  // as not found when its page is loaded afresh. Once this browser is
+  // logged in, ask again as the member one is; until then, wait rather
+  // than say the group does not exist.
+  const [askedAgain, setAskedAgain] = useState(false);
+  const [waitingForLogin, setWaitingForLogin] = useState(false);
+  useEffect(() => {
+    if (group?._id) return;
+    if (currentUser && !askedAgain) {
+      setAskedAgain(true);
+      revalidator.revalidate();
+    } else if (!currentUser) {
+      setWaitingForLogin(Boolean(Meteor.userId() || Meteor.loggingIn()));
+    }
+  }, [group?._id, currentUser]);
+  // Logging in may also come to nothing: then it is not found after all
+  useEffect(() => {
+    if (!waitingForLogin) return undefined;
+    const timer = setTimeout(() => setWaitingForLogin(false), 5000);
+    return () => clearTimeout(timer);
+  }, [waitingForLogin]);
+
   if (!group?._id) {
-    return <NotFoundPage />;
+    const isAsking =
+      (askedAgain && revalidator.state === 'loading') ||
+      (waitingForLogin && !askedAgain);
+    return isAsking ? <Loader /> : <NotFoundPage />;
   }
 
   const current = groupItem || group;
