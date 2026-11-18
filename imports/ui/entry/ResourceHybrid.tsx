@@ -289,6 +289,14 @@ const Layout = styled('div', {
 });
 
 const CardArea = styled('div', { gridArea: 'card', minWidth: 0 });
+const DesktopOnly = styled('div', {
+  display: 'none',
+  [SIDEBAR]: { display: 'block' },
+});
+const MobileOnly = styled('div', {
+  marginTop: '2.5rem',
+  [SIDEBAR]: { display: 'none' },
+});
 const RestArea = styled('div', { gridArea: 'rest', minWidth: 0 });
 
 const Sidebar = styled('aside', {
@@ -354,6 +362,34 @@ export default function ResourceHybrid({
   const withAddress = !partOf && hasAddress(resource.address);
   const parts = resource.parts || [];
 
+  const partOfPanel = partOf ? (
+    <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
+      <ParentLink to={`${prefix}/resources/${partOf._id}`}>
+        <ParentPicture>
+          {partOf.images?.[0] ? (
+            <img alt="" src={getImageUrl(partOf.images[0], 'medium') || ''} />
+          ) : (
+            <PlaceholderImage seed={partOf._id} />
+          )}
+        </ParentPicture>
+        <SideTitle as="p">{tc('entry.partOf')}</SideTitle>
+        <h3>{partOf.label}</h3>
+      </ParentLink>
+      {/* Its address is this place's too */}
+      <div style={{ marginTop: '0.75rem' }}>
+        <AddressDetails address={partOf.address} />
+      </div>
+      {withContact && (
+        <>
+          <SideTitle css={{ margin: '1.5rem 0 1rem' }}>
+            {tc('contact.title')}
+          </SideTitle>
+          <ContactDetails contact={resource.contact} />
+        </>
+      )}
+    </Panel>
+  ) : null;
+
   // The place's own cards: on its page, or (embedded) at the end of the
   // page of an organizer linked to it, with "Läs mer" to its page
   const body = (
@@ -406,39 +442,17 @@ export default function ResourceHybrid({
       withContact ||
       resource.booking ||
       organizers.length ? (
-        <Sidebar>
-          {/* A part: the place it is in stands for the address, in
-                one card with who to ask */}
-          {partOf && (
-            <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
-              <ParentLink to={`${prefix}/resources/${partOf._id}`}>
-                <ParentPicture>
-                  {partOf.images?.[0] ? (
-                    <img
-                      alt=""
-                      src={getImageUrl(partOf.images[0], 'medium') || ''}
-                    />
-                  ) : (
-                    <PlaceholderImage seed={partOf._id} />
-                  )}
-                </ParentPicture>
-                <SideTitle as="p">{tc('entry.partOf')}</SideTitle>
-                <h3>{partOf.label}</h3>
-              </ParentLink>
-              {/* Its address is this place's too */}
-              <div style={{ marginTop: '0.75rem' }}>
-                <AddressDetails address={partOf.address} />
-              </div>
-              {withContact && (
-                <>
-                  <SideTitle css={{ margin: '1.5rem 0 1rem' }}>
-                    {tc('contact.title')}
-                  </SideTitle>
-                  <ContactDetails contact={resource.contact} />
-                </>
-              )}
-            </Panel>
-          )}
+        <Sidebar
+          css={
+            // Only the part-of card, which a phone shows last
+            partOf && !resource.booking && !organizers.length
+              ? { display: 'none', [SIDEBAR]: { display: 'block' } }
+              : undefined
+          }
+        >
+          {/* A part: the place it is in stands for the address, in one
+              card with who to ask. On a phone it comes last on the page. */}
+          {partOf && <DesktopOnly>{partOfPanel}</DesktopOnly>}
           {withAddress && (
             <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
               <AddressBlock
@@ -535,6 +549,7 @@ export default function ResourceHybrid({
         )}
         {/* Last, what is on here */}
         {upcoming.length > 0 && <PlaceEvents events={upcoming} />}
+        {partOf && <MobileOnly>{partOfPanel}</MobileOnly>}
       </RestArea>
     </Layout>
   );

@@ -817,7 +817,7 @@ entry:
   members_one: '{{ count }} medlem'
   members_other: '{{ count }} medlemmar'
   capacity: 'Plats för {{ count }}'
-  partOf: Del av
+  partOf: En del av
   parts: Här finns
   pictures: Bilder
   postedBy: 'Upplagd av {{ name }}'
