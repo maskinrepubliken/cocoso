@@ -1,10 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { useAtomValue } from 'jotai';
 
-import { Box, Center, Heading, Grid } from '/imports/ui/core';
-
-import { isDesktopAtom } from '../../state';
+import { styled } from '/stitches.config';
 
 export interface TemplateProps {
   heading?: string;
@@ -14,6 +11,45 @@ export interface TemplateProps {
   children?: React.ReactNode;
 }
 
+const WIDE = '@media (min-width: 960px)';
+
+// One column centred on a phone; from 960px three, the content in the
+// middle. Decided by CSS, not by the screen size the browser reports: the
+// server cannot know it, and a page loaded later (a 404, the terms) would
+// otherwise hydrate with other markup than the server sent.
+const Layout = styled('div', {
+  display: 'grid',
+  gridTemplateColumns: 'minmax(0, 1fr)',
+  justifyItems: 'center',
+  padding: '0 1rem',
+  [WIDE]: {
+    gridTemplateColumns: '3fr 4fr 3fr',
+    justifyItems: 'stretch',
+    padding: '0.75rem',
+  },
+});
+
+const Middle = styled('div', {
+  minWidth: 0,
+  width: '100%',
+  maxWidth: '520px',
+  [WIDE]: { maxWidth: 'none' },
+});
+
+const Title = styled('h1', {
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontWeight: 600,
+  fontSize: '1.4rem',
+  margin: '1rem 0 0.5rem',
+  [WIDE]: { fontSize: '1.9rem', margin: '0 0 1rem' },
+  variants: {
+    centered: { true: { textAlign: 'center' } },
+  },
+});
+
+const Content = styled('div', { maxWidth: '520px' });
+
 export default function Template({
   heading,
   leftContent,
@@ -21,58 +57,20 @@ export default function Template({
   titleCentered = false,
   children,
 }: TemplateProps) {
-  const isDesktop = useAtomValue(isDesktopAtom);
-
   return (
     <>
       <Helmet>
         {/* HelmetHybrid adds " | <site name>" */}
         {heading && <title>{String(heading)}</title>}
       </Helmet>
-      {isDesktop ? (
-        <Grid columns={{ md: 1, lg: 3 }} p="3" templateColumns="3fr 4fr 3fr">
-          <Box>{leftContent}</Box>
-
-          <Box>
-            {heading && (
-              <Box>
-                <Heading
-                  as="h1"
-                  mb="4"
-                  size="lg"
-                  textAlign={titleCentered ? 'center' : 'left'}
-                >
-                  {heading}
-                </Heading>
-              </Box>
-            )}
-            <Box css={{ maxWidth: '520px' }}>{children}</Box>
-          </Box>
-
-          <Box>{rightContent}</Box>
-        </Grid>
-      ) : (
-        <Center px="4">
-          <Box>
-            <Box>{leftContent}</Box>
-            <Box>
-              {heading && (
-                <Box mb="2" mt="4">
-                  <Heading
-                    as="h3"
-                    size="md"
-                    textAlign={titleCentered ? 'center' : 'left'}
-                  >
-                    {heading}
-                  </Heading>
-                </Box>
-              )}
-              <Box css={{ maxWidth: '520px' }}>{children}</Box>
-            </Box>
-            <Box>{rightContent}</Box>
-          </Box>
-        </Center>
-      )}
+      <Layout>
+        <div>{leftContent}</div>
+        <Middle>
+          {heading && <Title centered={titleCentered}>{heading}</Title>}
+          <Content>{children}</Content>
+        </Middle>
+        <div>{rightContent}</div>
+      </Layout>
     </>
   );
 }
