@@ -906,6 +906,7 @@ offerings:
     stay: Accommodation
     service: Services
     shop: For sale
+  visitWebsite: Visit the website
   form:
     title: "Eat, shop & stay – {{place}}"
     general: Commercial place
@@ -914,26 +915,36 @@ offerings:
     add: Add an offering
     addKind: What kind?
     remove: Remove the offering
-    commercial: A commercial place with offerings
-    commercialHelper: "Listed under Eat, shop & stay."
-    consequences: "A commercial place is listed under Eat, shop & stay instead of Places, with what it offers on its page. Otherwise it stays the same place: the same page, managers and events. Switched off, its offerings are removed when you save."
+    commercial: Activate Eat, shop & stay
+    consequences:
+      intro: "Activated, the place becomes part of Eat, shop & stay:"
+      move: "It moves from Places to Eat, shop & stay, under what it offers: Food & coffee, Accommodation, Services or For sale."
+      show: "Its tagline, website, opening hours and offerings are shown on its page and its card, with whether it is open right now."
+      same: "Otherwise it stays the same place, with the same page, pictures, managers and events."
+      website: "A website is enough: those who keep their details there need only link to it."
+      off: "Switched off, the place moves back to Places and its offerings are removed when you save."
     tagline: Tagline
     taglineHelper: "A line under the place's name."
     taglineHolder: Sourdough bakery and café
-    defaultContact: Website and contact
-    defaultContactHelper: "Optional. Used by every offering that has none of its own."
-    defaultHours: Opening hours
-    defaultHoursHelper: "Optional. Used by every offering that has none of its own."
+    website: Website
+    websiteHelper: "Shown as a button on the place's page."
+    contact: Contact person
+    contactHelper: "Name, email and phone."
+    contactName: Name
+    hours: Opening hours
+    hoursHelper: "The place's week."
     kind: Kind of offering
     offeringTitle: Name
     offeringTitleHelper: "E.g. Café or The farm shop. Without one, the kind is shown."
     offeringTitleHolder: Café
     description: Info
     descriptionHelper: "What is offered, e.g. a menu, rooms, services or a range, and prices."
-    contact: Website and contact
-    contactHelper: "Optional. Leave empty to use the place's, or give e.g. the restaurant's booking."
-    ownHours: Own opening hours
-    ownHoursHelper: "Otherwise the place's opening hours apply. Without any times, no hours are shown for it."
+    ownWebsite: Website
+    ownWebsiteHelper: "A page of its own, e.g. for booking a room."
+    ownContact: Contact person
+    ownContactHelper: "Someone of its own, e.g. the restaurant's booking."
+    ownHours: Opening hours
+    ownHoursHelper: "Hours of its own. With no times, none are shown."
     hoursNote: About the hours
     hoursNoteHelper: "What the week does not say, e.g. holidays."
     hoursNoteHolder: Closed weeks 29–31

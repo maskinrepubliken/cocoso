@@ -23,8 +23,9 @@ Offerings.schema = new SimpleSchema({
 
   // What is offered, as rich text
   description: { type: String, optional: true },
-  // Website, email, phone and a name for this offering, e.g. the hotel's
-  // reception; without one, the place's (resource.commerce.contact)
+  // Its own website and contact person (name, email, phone), e.g. the
+  // hotel's booking; without them, the place's (resource.commerce)
+  website: { type: String, optional: true },
   contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
 
   // Its own weekly hours: one entry per opening, `day` 1 (Monday) to
@@ -60,6 +61,7 @@ Offerings.publicFields = {
   title: 1,
   order: 1,
   description: 1,
+  website: 1,
   contact: 1,
   openingHours: 1,
   hoursNote: 1,

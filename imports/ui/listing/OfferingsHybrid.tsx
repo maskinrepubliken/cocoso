@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
+import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
 import { styled } from '/stitches.config';
 import { locationsAtom, siteAtom } from '/imports/state';
 import { formatAddress } from '/imports/api/_utils/address';
+import { websiteLabel } from '/imports/api/_utils/contact';
 import PlaceTag from '/imports/ui/generic/PlaceTag';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
@@ -349,6 +351,7 @@ function PlaceCard({
     offering?.contact?.phone ||
     business.commerce?.contact?.phone ||
     business.contact?.phone;
+  const website = offering?.website || business.commerce?.website;
   const { hours, note } = hoursOf(offering, business);
   const open = useOpenState(hours);
 
@@ -389,7 +392,7 @@ function PlaceCard({
           <OpenStatus open={open} />
         </StatusLine>
         {excerpt && <Excerpt>{excerpt}</Excerpt>}
-        {(address || phone || note) && (
+        {(address || phone || website || note) && (
           <Facts>
             {address && (
               <span>
@@ -401,6 +404,12 @@ function PlaceCard({
               <span>
                 <PhoneIcon width={13} height={13} />
                 {phone}
+              </span>
+            )}
+            {website && (
+              <span>
+                <GlobeIcon width={13} height={13} />
+                {websiteLabel(website).replace(/^www\./, '')}
               </span>
             )}
             {note && <span>{note}</span>}

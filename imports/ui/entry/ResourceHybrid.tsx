@@ -2,6 +2,7 @@ import { Link, type To } from 'react-router';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import UsersIcon from 'lucide-react/dist/esm/icons/users';
+import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
@@ -45,7 +46,9 @@ import PlaceOfferings, {
 } from './PlaceOfferings';
 import type { Opening } from '/imports/ui/pages/businesses/hours';
 import EntryHero, {
+  Actions,
   Chip,
+  PillLink,
   EntryColumn,
   EntryMeta,
   EntryPage,
@@ -78,6 +81,7 @@ interface Resource {
   isCommercial?: boolean;
   commerce?: {
     tagline?: string;
+    website?: string;
     contact?: Contact | null;
     openingHours?: Opening[];
     hoursNote?: string;
@@ -453,6 +457,20 @@ export default function ResourceHybrid({
           }
           title={resource.label}
         >
+          {/* A commercial place's website, enough on its own */}
+          {commerce?.website && (
+            <Actions>
+              <PillLink
+                href={commerce.website}
+                primary
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <GlobeIcon aria-hidden />
+                {tc('offerings.visitWebsite')}
+              </PillLink>
+            </Actions>
+          )}
           {embedded && (
             <ReadMore to={`${prefix}/resources/${resource._id}`}>
               {tc('entry.readMore')}
@@ -510,7 +528,7 @@ export default function ResourceHybrid({
                     css={
                       commerce?.openingHours?.length || commerce?.hoursNote
                         ? { margin: '1.5rem 0 1rem' }
-                        : undefined
+                        : { margin: '0 0 1rem' }
                     }
                   >
                     {tc('contact.title')}

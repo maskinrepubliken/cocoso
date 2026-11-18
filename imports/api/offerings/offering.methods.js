@@ -17,24 +17,29 @@ const OpeningPattern = {
   closes: String,
 };
 
+// Absent, null or the pattern. (Match.Maybe alone lets no null through
+// here.)
+const nullable = (pattern) => Match.Maybe(Match.OneOf(null, pattern));
+
 const CommercePattern = {
   isCommercial: Boolean,
-  tagline: Match.Maybe(String),
+  tagline: nullable(String),
+  website: nullable(String),
   contact: ContactPattern,
-  openingHours: Match.Maybe([OpeningPattern]),
-  hoursNote: Match.Maybe(String),
+  openingHours: nullable([OpeningPattern]),
+  hoursNote: nullable(String),
 };
 
 const OfferingPattern = {
-  _id: Match.Maybe(String),
+  _id: nullable(String),
   kind: String,
-  title: Match.Maybe(String),
-  description: Match.Maybe(String),
+  title: nullable(String),
+  description: nullable(String),
+  // null: the place's website, contact and hours
+  website: nullable(String),
   contact: ContactPattern,
-  // null: the place's hours. (OneOf: Maybe alone lets no null through
-  // around an array.)
-  openingHours: Match.Maybe(Match.OneOf(null, [OpeningPattern])),
-  hoursNote: Match.Maybe(String),
+  openingHours: nullable([OpeningPattern]),
+  hoursNote: nullable(String),
 };
 
 // Only whole, sensible openings: a weekday, and a time that closes after
@@ -48,6 +53,14 @@ const cleanHours = (hours) =>
       TIME.test(o.closes) &&
       o.opens < o.closes
   );
+
+// A website as an address, https:// added when left out; null when empty
+const cleanWebsite = (website) =>
+  website ? cleanContact({ website })?.website || null : null;
+
+// Name, email and phone; the website is kept apart
+const cleanPerson = (contact) =>
+  contact ? cleanContact({ ...contact, website: '' }) : null;
 
 // An empty editor counts as nothing written
 const cleanText = (html) => {
@@ -149,7 +162,8 @@ Meteor.methods({
       }
 
       const tagline = (commerce.tagline || '').trim();
-      const contact = cleanContact(commerce.contact);
+      const website = cleanWebsite(commerce.website);
+      const contact = cleanPerson(commerce.contact);
       const openingHours = cleanHours(commerce.openingHours);
       const hoursNote = (commerce.hoursNote || '').trim();
       await Resources.updateAsync(
@@ -159,6 +173,7 @@ Meteor.methods({
             isCommercial: true,
             commerce: {
               ...(tagline ? { tagline } : {}),
+              ...(website ? { website } : {}),
               ...(contact ? { contact } : {}),
               ...(openingHours.length ? { openingHours } : {}),
               ...(hoursNote ? { hoursNote } : {}),
@@ -173,7 +188,8 @@ Meteor.methods({
       for (const [order, offering] of offerings.entries()) {
         const title = (offering.title || '').trim();
         const description = cleanText(offering.description);
-        const ownContact = cleanContact(offering.contact);
+        const ownWebsite = cleanWebsite(offering.website);
+        const ownContact = cleanPerson(offering.contact);
         // null: the place's hours; an array (even empty): its own
         const ownHours = Array.isArray(offering.openingHours)
           ? cleanHours(offering.openingHours)
@@ -190,6 +206,7 @@ Meteor.methods({
           order,
           ...(title ? { title } : {}),
           ...(description ? { description } : {}),
+          ...(ownWebsite ? { website: ownWebsite } : {}),
           ...(ownContact ? { contact: ownContact } : {}),
           ...(ownHours ? { openingHours: ownHours } : {}),
           ...(ownNote ? { hoursNote: ownNote } : {}),
@@ -201,6 +218,7 @@ Meteor.methods({
           isExample: 1,
           ...(title ? {} : { title: 1 }),
           ...(description ? {} : { description: 1 }),
+          ...(ownWebsite ? {} : { website: 1 }),
           ...(ownContact ? {} : { contact: 1 }),
           ...(ownHours ? {} : { openingHours: 1 }),
           ...(ownNote ? {} : { hoursNote: 1 }),

@@ -3,6 +3,7 @@ import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
+import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 
 import { styled } from '/stitches.config';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
@@ -17,13 +18,21 @@ import {
   useNow,
 } from '/imports/ui/pages/businesses/hours';
 
-import { EntryColumn, Panel, RichText, SectionHead } from './EntryHero';
+import {
+  Actions,
+  EntryColumn,
+  Panel,
+  PillLink,
+  RichText,
+  SectionHead,
+} from './EntryHero';
 
 export interface PlaceOffering {
   _id: string;
   kind: string;
   title?: string;
   description?: string;
+  website?: string;
   contact?: Contact | null;
   openingHours?: Opening[];
   hoursNote?: string;
@@ -202,6 +211,18 @@ export default function PlaceOfferings({
                     <div style={{ marginTop: '1rem' }}>
                       <ContactDetails contact={offering.contact} />
                     </div>
+                  )}
+                  {offering.website && (
+                    <Actions css={{ marginTop: '1rem' }}>
+                      <PillLink
+                        href={offering.website}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        <GlobeIcon aria-hidden />
+                        {tc('offerings.visitWebsite')}
+                      </PillLink>
+                    </Actions>
                   )}
                 </div>
                 {withHours && (

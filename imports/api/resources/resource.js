@@ -82,7 +82,10 @@ Resources.schema = new SimpleSchema({
     type: new SimpleSchema({
       // A line under its name, e.g. "Surdegsbageri och kafé"
       tagline: { type: String, optional: true },
-      // Phone, email and website
+      // Its website, shown as a button: enough on its own for a place
+      // that keeps its details there
+      website: { type: String, optional: true },
+      // A contact person: name, email and phone
       contact: {
         type: new SimpleSchema(Schemas.PublicContact),
         optional: true,

@@ -25,14 +25,16 @@ export interface Offering {
   kind: OfferingKind;
   title?: string;
   description?: string;
+  // Absent: the place's website, contact and hours
+  website?: string;
   contact?: Contact | null;
-  // Absent: the place's hours
   openingHours?: Opening[] | null;
   hoursNote?: string;
 }
 
 interface Commerce {
   tagline?: string;
+  website?: string;
   contact?: Contact | null;
   openingHours?: Opening[];
   hoursNote?: string;
@@ -42,6 +44,7 @@ interface Commerce {
 interface GeneralDraft {
   isCommercial: boolean;
   tagline: string;
+  website: string;
   contact: Contact;
   withHours: boolean;
   openingHours: Opening[];
@@ -55,6 +58,9 @@ interface OfferingDraft {
   kind: OfferingKind;
   title: string;
   description: string;
+  ownWebsite: boolean;
+  website: string;
+  ownContact: boolean;
   contact: Contact;
   ownHours: boolean;
   openingHours: Opening[];
@@ -70,6 +76,7 @@ const generalOf = (
 ): GeneralDraft => ({
   isCommercial: Boolean(isCommercial),
   tagline: commerce?.tagline || '',
+  website: commerce?.website || '',
   contact: { ...emptyContact, ...(commerce?.contact || {}) },
   withHours: Boolean(commerce?.openingHours?.length || commerce?.hoursNote),
   openingHours: commerce?.openingHours || [],
@@ -82,6 +89,9 @@ const draftOf = (offering: Offering): OfferingDraft => ({
   kind: offering.kind,
   title: offering.title || '',
   description: offering.description || '',
+  ownWebsite: Boolean(offering.website),
+  website: offering.website || '',
+  ownContact: Boolean(offering.contact),
   contact: { ...emptyContact, ...(offering.contact || {}) },
   ownHours: Array.isArray(offering.openingHours),
   openingHours: offering.openingHours || [],
@@ -98,13 +108,14 @@ interface OfferingsEditorProps {
   };
 }
 
-// A place's Äta, handla & bo, from the gear: on the right a list with the
+// A place's Äta, handla & bo, from the gear: on the left a list with the
 // place itself first and then its offerings, to add to and take from; on
-// the left what is chosen there. The place's part says whether it is a
-// commercial place, and holds its tagline and the contact and opening
-// hours its offerings use unless they have their own. An offering is a
-// kind (Mat & fika, Boende, Tjänster, Försäljning), and a place can have
-// several of a kind. Opened by ?offerings=true.
+// the right what is chosen there. The place's part switches Äta, handla &
+// bo on and says what that means, and holds its tagline, website, contact
+// person and opening hours, which its offerings go by unless switched to
+// their own. A website alone is enough. An offering is a kind (Mat & fika,
+// Boende, Tjänster, Försäljning), and a place can have several of a kind.
+// Opened by ?offerings=true.
 export default function OfferingsEditor({ place }: OfferingsEditorProps) {
   const [tc] = useTranslation('common');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -175,7 +186,8 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
         {
           isCommercial: general.isCommercial,
           tagline: general.tagline,
-          contact: general.contact,
+          website: general.website,
+          contact: { ...general.contact, website: '' },
           openingHours: general.withHours ? general.openingHours : [],
           hoursNote: general.withHours ? general.hoursNote : '',
         },
@@ -185,7 +197,8 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
               kind: o.kind,
               title: o.title,
               description: o.description,
-              contact: o.contact,
+              website: o.ownWebsite ? o.website : null,
+              contact: o.ownContact ? { ...o.contact, website: '' } : null,
               openingHours: o.ownHours ? o.openingHours : null,
               hoursNote: o.ownHours ? o.hoursNote : '',
             }))
@@ -298,13 +311,19 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
             <>
               <ToggleSwitch
                 checked={general.isCommercial}
-                helper={tc('offerings.form.commercialHelper')}
                 label={tc('offerings.form.commercial')}
                 onChange={(isCommercial) => setGen({ isCommercial })}
               />
-              <p className="form-preview-note">
-                {tc('offerings.form.consequences')}
-              </p>
+              <div className="commerce-consequences">
+                <p>{tc('offerings.form.consequences.intro')}</p>
+                <ul>
+                  <li>{tc('offerings.form.consequences.move')}</li>
+                  <li>{tc('offerings.form.consequences.show')}</li>
+                  <li>{tc('offerings.form.consequences.same')}</li>
+                  <li>{tc('offerings.form.consequences.website')}</li>
+                </ul>
+                <p>{tc('offerings.form.consequences.off')}</p>
+              </div>
               {general.isCommercial && (
                 <>
                   <FormField
@@ -320,20 +339,37 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
                     />
                   </FormField>
                   <FormField
-                    helper={tc('offerings.form.defaultContactHelper')}
-                    label={tc('offerings.form.defaultContact')}
+                    helper={tc('offerings.form.websiteHelper')}
+                    label={tc('offerings.form.website')}
                     mt="6"
+                    optional
+                  >
+                    <Input
+                      autoComplete="url"
+                      placeholder="https://"
+                      type="url"
+                      value={general.website}
+                      onChange={(e) => setGen({ website: e.target.value })}
+                    />
+                  </FormField>
+                  <FormField
+                    helper={tc('offerings.form.contactHelper')}
+                    label={tc('offerings.form.contact')}
+                    mt="6"
+                    optional
                   >
                     <ContactFields
                       value={general.contact}
+                      nameLabel={tc('offerings.form.contactName')}
+                      withWebsite={false}
                       onChange={(contact) => setGen({ contact })}
                     />
                   </FormField>
                   <div style={{ marginTop: '1.5rem' }}>
                     <ToggleSwitch
                       checked={general.withHours}
-                      helper={tc('offerings.form.defaultHoursHelper')}
-                      label={tc('offerings.form.defaultHours')}
+                      helper={tc('offerings.form.hoursHelper')}
+                      label={tc('offerings.form.hours')}
                       onChange={(withHours) => setGen({ withHours })}
                     />
                     {general.withHours && (
@@ -390,17 +426,40 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
                   onChange={(description) => setOffering({ description })}
                 />
               </FormField>
-              <FormField
-                helper={tc('offerings.form.contactHelper')}
-                label={tc('offerings.form.contact')}
-                mt="6"
-              >
-                <ContactFields
-                  value={current.contact}
-                  onChange={(contact) => setOffering({ contact })}
+              <div className="commerce-own">
+                <ToggleSwitch
+                  checked={current.ownWebsite}
+                  helper={tc('offerings.form.ownWebsiteHelper')}
+                  label={tc('offerings.form.ownWebsite')}
+                  onChange={(ownWebsite) => setOffering({ ownWebsite })}
                 />
-              </FormField>
-              <div style={{ marginTop: '1.5rem' }}>
+                {current.ownWebsite && (
+                  <Input
+                    autoComplete="url"
+                    placeholder="https://"
+                    type="url"
+                    value={current.website}
+                    onChange={(e) => setOffering({ website: e.target.value })}
+                  />
+                )}
+              </div>
+              <div className="commerce-own">
+                <ToggleSwitch
+                  checked={current.ownContact}
+                  helper={tc('offerings.form.ownContactHelper')}
+                  label={tc('offerings.form.ownContact')}
+                  onChange={(ownContact) => setOffering({ ownContact })}
+                />
+                {current.ownContact && (
+                  <ContactFields
+                    value={current.contact}
+                    nameLabel={tc('offerings.form.contactName')}
+                    withWebsite={false}
+                    onChange={(contact) => setOffering({ contact })}
+                  />
+                )}
+              </div>
+              <div className="commerce-own">
                 <ToggleSwitch
                   checked={current.ownHours}
                   helper={tc('offerings.form.ownHoursHelper')}

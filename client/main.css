@@ -8496,23 +8496,23 @@ body {
 
 /* --- What a place offers: the Äta, handla & bo editor (OfferingsEditor) and its opening hours (OpeningHoursFields) --- */
 
-/* The editor itself: what is chosen on the left, the place and its
-   offerings listed on the right (above it on a phone) */
+/* The editor itself: the place and its offerings listed on the left
+   (above on a phone), what is chosen on the right */
 .commerce-editor {
   display: grid;
   gap: 24px;
-  grid-template-columns: minmax(0, 1fr) 230px;
+  grid-template-columns: 230px minmax(0, 1fr);
   align-items: start;
 }
 
 .commerce-pane {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
   min-width: 0;
 }
 
 .commerce-list {
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 1;
   display: grid;
   gap: 4px;
@@ -8601,6 +8601,34 @@ button.commerce-item,
   color: var(--cocoso-mylla-soft);
 }
 
+.commerce-consequences {
+  margin-top: 12px;
+  color: var(--cocoso-mylla-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.commerce-consequences p {
+  margin: 0 0 6px;
+}
+
+.commerce-consequences ul {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.commerce-consequences li {
+  margin-bottom: 4px;
+}
+
+/* An offering's own website, contact person or hours, each behind its
+   switch */
+.commerce-own {
+  display: grid;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
 .commerce-kind-choice {
   display: flex;
   flex-wrap: wrap;
@@ -8636,6 +8664,7 @@ button.commerce-item,
   }
 
   .commerce-pane {
+    grid-column: 1;
     grid-row: 2;
   }
 }

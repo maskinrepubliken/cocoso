@@ -28,6 +28,11 @@ interface ContactFieldsProps {
   onChange: (contact: Contact) => void;
   // Ask for a contact person or function (resources, groups, events).
   withName?: boolean;
+  // Ask for a website too; left out where it is asked for on its own
+  withWebsite?: boolean;
+  // The name field's label, where the group is already headed
+  // "Kontaktperson"
+  nameLabel?: string;
 }
 
 // Name, email, phone and website as one controlled value. Whether an email
@@ -37,6 +42,8 @@ export default function ContactFields({
   value,
   onChange,
   withName = true,
+  withWebsite = true,
+  nameLabel,
 }: ContactFieldsProps) {
   const [tc] = useTranslation('common');
   const contact = value || emptyContact;
@@ -49,7 +56,7 @@ export default function ContactFields({
       {withName && (
         <FormField
           css={{ gridColumn: '1 / -1' }}
-          label={tc('contact.form.name.label')}
+          label={nameLabel || tc('contact.form.name.label')}
           my="2"
           optional
         >
@@ -78,20 +85,22 @@ export default function ContactFields({
           onChange={(e) => set('phone', e.target.value)}
         />
       </FormField>
-      <FormField
-        css={{ gridColumn: '1 / -1' }}
-        label={tc('contact.form.website')}
-        my="2"
-        optional
-      >
-        <Input
-          autoComplete="url"
-          placeholder="https://"
-          type="url"
-          value={contact.website || ''}
-          onChange={(e) => set('website', e.target.value)}
-        />
-      </FormField>
+      {withWebsite && (
+        <FormField
+          css={{ gridColumn: '1 / -1' }}
+          label={tc('contact.form.website')}
+          my="2"
+          optional
+        >
+          <Input
+            autoComplete="url"
+            placeholder="https://"
+            type="url"
+            value={contact.website || ''}
+            onChange={(e) => set('website', e.target.value)}
+          />
+        </FormField>
+      )}
     </Grid>
   );
 }

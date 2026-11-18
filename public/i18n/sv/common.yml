@@ -903,6 +903,7 @@ offerings:
     stay: Boende
     service: Tjänster
     shop: Försäljning
+  visitWebsite: Besök hemsidan
   form:
     title: "Äta, handla & bo – {{place}}"
     general: Kommersiell plats
@@ -911,26 +912,36 @@ offerings:
     add: Lägg till erbjudande
     addKind: Vilken sort?
     remove: Ta bort erbjudandet
-    commercial: Kommersiell plats med erbjudanden
-    commercialHelper: "Visas under Äta, handla & bo."
-    consequences: "En kommersiell plats visas under Äta, handla & bo i stället för under Platser, med det den erbjuder på sin sida. I övrigt är den samma plats: samma sida, förvaltare och evenemang. Stänger du av det tas erbjudandena bort när du sparar."
+    commercial: Aktivera Äta, handla & bo
+    consequences:
+      intro: "Aktiverat blir platsen en del av Äta, handla & bo:"
+      move: "Den flyttar från Platser till Äta, handla & bo, under det den erbjuder: Mat & fika, Boende, Tjänster eller Försäljning."
+      show: "Taglinen, hemsidan, öppettiderna och erbjudandena visas på platsens sida och på dess kort, med om det är öppet just nu."
+      same: "I övrigt är den samma plats, med samma sida, bilder, förvaltare och evenemang."
+      website: "En hemsida räcker: den som har sina uppgifter där behöver bara länka dit."
+      off: "Stänger du av flyttar platsen tillbaka till Platser och erbjudandena tas bort när du sparar."
     tagline: Tagline
     taglineHelper: "En rad under platsens namn."
     taglineHolder: Surdegsbageri och kafé
-    defaultContact: Hemsida och kontakt
-    defaultContactHelper: "Valfritt. Gäller alla erbjudanden som inte har egna."
-    defaultHours: Öppettider
-    defaultHoursHelper: "Valfritt. Gäller alla erbjudanden som inte har egna."
+    website: Hemsida
+    websiteHelper: "Visas som en knapp på platsens sida."
+    contact: Kontaktperson
+    contactHelper: "Namn, e-post och telefon."
+    contactName: Namn
+    hours: Öppettider
+    hoursHelper: "Platsens vecka."
     kind: Sorts erbjudande
     offeringTitle: Namn
     offeringTitleHelper: "Till exempel Kafé eller Gårdsbutiken. Annars visas sorten."
     offeringTitleHolder: Kafé
     description: Info
     descriptionHelper: "Vad som erbjuds, till exempel meny, rum, tjänster eller sortiment, och priser."
-    contact: Hemsida och kontakt
-    contactHelper: "Valfritt. Lämna tomt för platsens, eller ange till exempel restaurangens bokning."
-    ownHours: Egna öppettider
-    ownHoursHelper: "Annars gäller platsens öppettider. Utan några tider visas inga öppettider för erbjudandet."
+    ownWebsite: Hemsida
+    ownWebsiteHelper: "En egen sida, till exempel för att boka rum."
+    ownContact: Kontaktperson
+    ownContactHelper: "Någon egen, till exempel restaurangens bokning."
+    ownHours: Öppettider
+    ownHoursHelper: "Egna tider. Utan några tider visas inga."
     hoursNote: Om öppettiderna
     hoursNoteHelper: "Det veckan inte säger, till exempel helgdagar eller semester."
     hoursNoteHolder: Stängt vecka 29–31
