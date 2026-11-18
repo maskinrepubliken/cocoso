@@ -23,6 +23,8 @@ The short version:
   are switched off. New code touching a section checks `isFeatureEnabled`
   (or `isMenuItemShown` for menu items), not just the menu's `isVisible`.
 - Escape user input with `imports/api/_utils/escapeHtml.js` inside email HTML.
+- Headings have no icons: no 3D icon (or other icon) beside a page title or
+  a section heading. Icons belong on buttons, chips and link tiles.
 
 Before finishing any change run:
 
