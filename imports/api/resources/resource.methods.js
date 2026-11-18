@@ -189,7 +189,16 @@ Meteor.methods({
       { resourceId: resource._id },
       { fields: Offerings.publicFields, sort: { order: 1 } }
     ).fetchAsync();
-    return { ...resource, partOf: partOf || null, parts, offerings };
+    // A commercial place and its offerings with a chosen manager's details
+    const reached = (item) =>
+      item?.contactUserId ? attachPlaceContact(item) : item;
+    return {
+      ...resource,
+      commerce: await reached(resource.commerce),
+      partOf: partOf || null,
+      parts,
+      offerings: await Promise.all(offerings.map(reached)),
+    };
   },
 
   // The organizers linked to a place, for "Se även" on its page: those who

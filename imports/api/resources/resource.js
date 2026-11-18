@@ -82,14 +82,17 @@ Resources.schema = new SimpleSchema({
     type: new SimpleSchema({
       // A line under its name, e.g. "Surdegsbageri och kafé"
       tagline: { type: String, optional: true },
-      // Its website, shown as a button: enough on its own for a place
-      // that keeps its details there
-      website: { type: String, optional: true },
-      // A contact person: name, email and phone
+      // How it is reached, one of: a manager (contactUserId, their
+      // profile's details), details of its own (contact), its website
+      // (shown as a button; enough for a place that keeps its details
+      // there) or a free note. See cleanReach in offering.methods.js.
+      contactUserId: { type: String, optional: true },
       contact: {
         type: new SimpleSchema(Schemas.PublicContact),
         optional: true,
       },
+      website: { type: String, optional: true },
+      contactNote: { type: String, optional: true },
       // Weekly hours, one entry per opening, day 1 (Monday) to 7 (Sunday)
       openingHours: { type: Array, optional: true },
       'openingHours.$': new SimpleSchema({

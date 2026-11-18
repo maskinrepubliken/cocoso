@@ -34,6 +34,7 @@ export interface PlaceOffering {
   description?: string;
   website?: string;
   contact?: Contact | null;
+  contactNote?: string;
   openingHours?: Opening[];
   hoursNote?: string;
 }
@@ -211,6 +212,11 @@ export default function PlaceOfferings({
                     <div style={{ marginTop: '1rem' }}>
                       <ContactDetails contact={offering.contact} />
                     </div>
+                  )}
+                  {offering.contactNote && (
+                    <p style={{ margin: '1rem 0 0', whiteSpace: 'pre-line' }}>
+                      {offering.contactNote}
+                    </p>
                   )}
                   {offering.website && (
                     <Actions css={{ marginTop: '1rem' }}>

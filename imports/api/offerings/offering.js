@@ -23,10 +23,12 @@ Offerings.schema = new SimpleSchema({
 
   // What is offered, as rich text
   description: { type: String, optional: true },
-  // Its own website and contact person (name, email, phone), e.g. the
-  // hotel's booking; without them, the place's (resource.commerce)
-  website: { type: String, optional: true },
+  // How it is reached, if not as the place is (resource.commerce): a
+  // manager, details of its own, a website or a free note, one of them
+  contactUserId: { type: String, optional: true },
   contact: { type: new SimpleSchema(Schemas.PublicContact), optional: true },
+  website: { type: String, optional: true },
+  contactNote: { type: String, optional: true },
 
   // Its own weekly hours: one entry per opening, `day` 1 (Monday) to
   // 7 (Sunday). A day without an entry is closed. Absent: the place's
@@ -61,8 +63,10 @@ Offerings.publicFields = {
   title: 1,
   order: 1,
   description: 1,
-  website: 1,
+  contactUserId: 1,
   contact: 1,
+  website: 1,
+  contactNote: 1,
   openingHours: 1,
   hoursNote: 1,
   isExample: 1,

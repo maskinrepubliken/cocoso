@@ -6,6 +6,10 @@ import { cleanContact, ContactPattern } from '../_utils/contact';
 import methodError from '../_utils/methodError';
 import Resources from '../resources/resource';
 import canManagePlace from '../resources/resource.access';
+import {
+  attachPlaceContact,
+  cleanPlaceContact,
+} from '../resources/resource.contact';
 import Offerings from './offering';
 import { isOfferingKind } from './offeringKinds';
 
@@ -21,11 +25,18 @@ const OpeningPattern = {
 // here.)
 const nullable = (pattern) => Match.Maybe(Match.OneOf(null, pattern));
 
+// How it is reached: one of them filled in, or none
+const ReachPattern = {
+  contactUserId: nullable(String),
+  contact: ContactPattern,
+  website: nullable(String),
+  contactNote: nullable(String),
+};
+
 const CommercePattern = {
   isCommercial: Boolean,
   tagline: nullable(String),
-  website: nullable(String),
-  contact: ContactPattern,
+  ...ReachPattern,
   openingHours: nullable([OpeningPattern]),
   hoursNote: nullable(String),
 };
@@ -35,9 +46,9 @@ const OfferingPattern = {
   kind: String,
   title: nullable(String),
   description: nullable(String),
-  // null: the place's website, contact and hours
-  website: nullable(String),
-  contact: ContactPattern,
+  // None of them: reached as the place is
+  ...ReachPattern,
+  // null: the place's hours
   openingHours: nullable([OpeningPattern]),
   hoursNote: nullable(String),
 };
@@ -58,9 +69,41 @@ const cleanHours = (hours) =>
 const cleanWebsite = (website) =>
   website ? cleanContact({ website })?.website || null : null;
 
-// Name, email and phone; the website is kept apart
-const cleanPerson = (contact) =>
-  contact ? cleanContact({ ...contact, website: '' }) : null;
+// How it is reached, as chosen: a manager of the place who can be
+// reached, its website, a free note, or details of its own (name, email
+// and phone). An empty object for none.
+async function cleanReach(values, managerIds) {
+  if (values.contactUserId) {
+    return cleanPlaceContact(
+      { contactUserId: values.contactUserId },
+      managerIds
+    );
+  }
+  const website = cleanWebsite(values.website);
+  if (website) {
+    return { website };
+  }
+  const contactNote = (values.contactNote || '').trim();
+  if (contactNote) {
+    return { contactNote };
+  }
+  const contact = values.contact
+    ? cleanContact({ ...values.contact, website: '' })
+    : null;
+  return contact ? { contact } : {};
+}
+
+const REACH = ['contactUserId', 'contact', 'website', 'contactNote'];
+
+// The fields of REACH not chosen, to $unset
+const unsetOthers = (reach) =>
+  Object.fromEntries(
+    REACH.filter((key) => !(key in reach)).map((key) => [key, 1])
+  );
+
+// A chosen manager's details in `contact`, as on the place's own page
+const withReach = (item) =>
+  item?.contactUserId ? attachPlaceContact(item) : item;
 
 // An empty editor counts as nothing written
 const cleanText = (html) => {
@@ -92,10 +135,15 @@ async function commercialPlaces(selector = {}) {
     { resourceId: { $in: places.map((place) => place._id) } },
     { fields: Offerings.publicFields, sort: { order: 1 } }
   ).fetchAsync();
-  return places.map((place) => ({
-    ...place,
-    offerings: offerings.filter((o) => o.resourceId === place._id),
-  }));
+  return Promise.all(
+    places.map(async (place) => ({
+      ...place,
+      commerce: await withReach(place.commerce),
+      offerings: await Promise.all(
+        offerings.filter((o) => o.resourceId === place._id).map(withReach)
+      ),
+    }))
+  );
 }
 
 Meteor.methods({
@@ -162,8 +210,7 @@ Meteor.methods({
       }
 
       const tagline = (commerce.tagline || '').trim();
-      const website = cleanWebsite(commerce.website);
-      const contact = cleanPerson(commerce.contact);
+      const reach = await cleanReach(commerce, resource.managerIds);
       const openingHours = cleanHours(commerce.openingHours);
       const hoursNote = (commerce.hoursNote || '').trim();
       await Resources.updateAsync(
@@ -173,8 +220,7 @@ Meteor.methods({
             isCommercial: true,
             commerce: {
               ...(tagline ? { tagline } : {}),
-              ...(website ? { website } : {}),
-              ...(contact ? { contact } : {}),
+              ...reach,
               ...(openingHours.length ? { openingHours } : {}),
               ...(hoursNote ? { hoursNote } : {}),
             },
@@ -188,8 +234,7 @@ Meteor.methods({
       for (const [order, offering] of offerings.entries()) {
         const title = (offering.title || '').trim();
         const description = cleanText(offering.description);
-        const ownWebsite = cleanWebsite(offering.website);
-        const ownContact = cleanPerson(offering.contact);
+        const ownReach = await cleanReach(offering, resource.managerIds);
         // null: the place's hours; an array (even empty): its own
         const ownHours = Array.isArray(offering.openingHours)
           ? cleanHours(offering.openingHours)
@@ -206,8 +251,7 @@ Meteor.methods({
           order,
           ...(title ? { title } : {}),
           ...(description ? { description } : {}),
-          ...(ownWebsite ? { website: ownWebsite } : {}),
-          ...(ownContact ? { contact: ownContact } : {}),
+          ...ownReach,
           ...(ownHours ? { openingHours: ownHours } : {}),
           ...(ownNote ? { hoursNote: ownNote } : {}),
           updatedBy: user.username,
@@ -218,8 +262,7 @@ Meteor.methods({
           isExample: 1,
           ...(title ? {} : { title: 1 }),
           ...(description ? {} : { description: 1 }),
-          ...(ownWebsite ? {} : { website: 1 }),
-          ...(ownContact ? {} : { contact: 1 }),
+          ...unsetOthers(ownReach),
           ...(ownHours ? {} : { openingHours: 1 }),
           ...(ownNote ? {} : { hoursNote: 1 }),
         };

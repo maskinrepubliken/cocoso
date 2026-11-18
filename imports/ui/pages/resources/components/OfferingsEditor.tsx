@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useAtomValue } from 'jotai';
 import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 
 import { Input, Modal } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
-import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
 import Quill from '/imports/ui/forms/Quill';
 import ToggleSwitch from '/imports/ui/pages/activities/form/ToggleSwitch';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
-import type { Contact } from '/imports/api/_utils/contact';
+import { currentUserAtom } from '/imports/state';
+import type { OrganizerDefaults } from '/imports/ui/pages/activities/form/OrganizerFields';
 import type { Opening } from '/imports/ui/pages/businesses/hours';
 import {
   OFFERING_KINDS,
@@ -19,23 +20,26 @@ import {
 } from '/imports/api/offerings/offeringKinds';
 
 import OpeningHoursFields from './OpeningHoursFields';
+import ReachFields, {
+  type Reach,
+  type ReachState,
+  reachState,
+  reachValue,
+} from './ReachFields';
 
-export interface Offering {
+// How it is reached (Reach) when not as the place is, and its own hours
+// when not the place's
+export interface Offering extends Reach {
   _id?: string;
   kind: OfferingKind;
   title?: string;
   description?: string;
-  // Absent: the place's website, contact and hours
-  website?: string;
-  contact?: Contact | null;
   openingHours?: Opening[] | null;
   hoursNote?: string;
 }
 
-interface Commerce {
+interface Commerce extends Reach {
   tagline?: string;
-  website?: string;
-  contact?: Contact | null;
   openingHours?: Opening[];
   hoursNote?: string;
 }
@@ -44,8 +48,7 @@ interface Commerce {
 interface GeneralDraft {
   isCommercial: boolean;
   tagline: string;
-  website: string;
-  contact: Contact;
+  reach: ReachState;
   withHours: boolean;
   openingHours: Opening[];
   hoursNote: string;
@@ -58,10 +61,8 @@ interface OfferingDraft {
   kind: OfferingKind;
   title: string;
   description: string;
-  ownWebsite: boolean;
-  website: string;
-  ownContact: boolean;
-  contact: Contact;
+  ownReach: boolean;
+  reach: ReachState;
   ownHours: boolean;
   openingHours: Opening[];
   hoursNote: string;
@@ -76,8 +77,7 @@ const generalOf = (
 ): GeneralDraft => ({
   isCommercial: Boolean(isCommercial),
   tagline: commerce?.tagline || '',
-  website: commerce?.website || '',
-  contact: { ...emptyContact, ...(commerce?.contact || {}) },
+  reach: reachState(commerce),
   withHours: Boolean(commerce?.openingHours?.length || commerce?.hoursNote),
   openingHours: commerce?.openingHours || [],
   hoursNote: commerce?.hoursNote || '',
@@ -89,10 +89,13 @@ const draftOf = (offering: Offering): OfferingDraft => ({
   kind: offering.kind,
   title: offering.title || '',
   description: offering.description || '',
-  ownWebsite: Boolean(offering.website),
-  website: offering.website || '',
-  ownContact: Boolean(offering.contact),
-  contact: { ...emptyContact, ...(offering.contact || {}) },
+  ownReach: Boolean(
+    offering.contactUserId ||
+      offering.contact ||
+      offering.website ||
+      offering.contactNote
+  ),
+  reach: reachState(offering),
   ownHours: Array.isArray(offering.openingHours),
   openingHours: offering.openingHours || [],
   hoursNote: offering.hoursNote || '',
@@ -105,15 +108,17 @@ interface OfferingsEditorProps {
     isCommercial?: boolean;
     commerce?: Commerce | null;
     offerings?: Offering[];
+    managerIds?: string[];
   };
 }
 
 // A place's Äta, handla & bo, from the gear: on the left a list with the
 // place itself first and then its offerings, to add to and take from; on
 // the right what is chosen there. The place's part switches Äta, handla &
-// bo on and says what that means, and holds its tagline, website, contact
-// person and opening hours, which its offerings go by unless switched to
-// their own. A website alone is enough. An offering is a kind (Mat & fika,
+// bo on and says what that means, and holds its tagline, how it is reached
+// (a manager, details of its own, its website or a free note, as a place's
+// contact is chosen; a website alone is enough) and its opening hours,
+// which its offerings go by unless switched to their own. An offering is a kind (Mat & fika,
 // Boende, Tjänster, Försäljning), and a place can have several of a kind.
 // Opened by ?offerings=true.
 export default function OfferingsEditor({ place }: OfferingsEditorProps) {
@@ -131,6 +136,29 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
   const [selected, setSelected] = useState('general');
   const [picking, setPicking] = useState(false);
   const [saving, setSaving] = useState(false);
+  const currentUser = useAtomValue(currentUserAtom);
+
+  // The place's managers with their profiles, to be reached through one
+  const [managers, setManagers] = useState<OrganizerDefaults[]>([]);
+  const managerKey = (place.managerIds || []).join(',');
+  useEffect(() => {
+    if (!open) {
+      return undefined;
+    }
+    let cancelled = false;
+    Promise.all(
+      (place.managerIds || []).map((id) =>
+        call<OrganizerDefaults>('getOrganizerDefaults', id).catch(() => null)
+      )
+    ).then(
+      (people) =>
+        !cancelled &&
+        setManagers(people.filter((p): p is OrganizerDefaults => Boolean(p)))
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [open, managerKey]);
 
   // Each time it opens, from what is saved
   useEffect(() => {
@@ -186,8 +214,7 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
         {
           isCommercial: general.isCommercial,
           tagline: general.tagline,
-          website: general.website,
-          contact: { ...general.contact, website: '' },
+          ...reachValue(general.reach),
           openingHours: general.withHours ? general.openingHours : [],
           hoursNote: general.withHours ? general.hoursNote : '',
         },
@@ -197,8 +224,14 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
               kind: o.kind,
               title: o.title,
               description: o.description,
-              website: o.ownWebsite ? o.website : null,
-              contact: o.ownContact ? { ...o.contact, website: '' } : null,
+              ...(o.ownReach
+                ? reachValue(o.reach)
+                : {
+                    contactUserId: null,
+                    contact: null,
+                    website: null,
+                    contactNote: null,
+                  }),
               openingHours: o.ownHours ? o.openingHours : null,
               hoursNote: o.ownHours ? o.hoursNote : '',
             }))
@@ -339,30 +372,17 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
                     />
                   </FormField>
                   <FormField
-                    helper={tc('offerings.form.websiteHelper')}
-                    label={tc('offerings.form.website')}
+                    helper={tc('offerings.form.reach.helper')}
+                    label={tc('offerings.form.reach.label')}
                     mt="6"
                     optional
                   >
-                    <Input
-                      autoComplete="url"
-                      placeholder="https://"
-                      type="url"
-                      value={general.website}
-                      onChange={(e) => setGen({ website: e.target.value })}
-                    />
-                  </FormField>
-                  <FormField
-                    helper={tc('offerings.form.contactHelper')}
-                    label={tc('offerings.form.contact')}
-                    mt="6"
-                    optional
-                  >
-                    <ContactFields
-                      value={general.contact}
-                      nameLabel={tc('offerings.form.contactName')}
-                      withWebsite={false}
-                      onChange={(contact) => setGen({ contact })}
+                    <ReachFields
+                      currentUserId={currentUser?._id}
+                      label={tc('offerings.form.reach.label')}
+                      managers={managers}
+                      value={general.reach}
+                      onChange={(reach) => setGen({ reach })}
                     />
                   </FormField>
                   <div style={{ marginTop: '1.5rem' }}>
@@ -428,34 +448,18 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
               </FormField>
               <div className="commerce-own">
                 <ToggleSwitch
-                  checked={current.ownWebsite}
-                  helper={tc('offerings.form.ownWebsiteHelper')}
-                  label={tc('offerings.form.ownWebsite')}
-                  onChange={(ownWebsite) => setOffering({ ownWebsite })}
+                  checked={current.ownReach}
+                  helper={tc('offerings.form.ownReachHelper')}
+                  label={tc('offerings.form.reach.label')}
+                  onChange={(ownReach) => setOffering({ ownReach })}
                 />
-                {current.ownWebsite && (
-                  <Input
-                    autoComplete="url"
-                    placeholder="https://"
-                    type="url"
-                    value={current.website}
-                    onChange={(e) => setOffering({ website: e.target.value })}
-                  />
-                )}
-              </div>
-              <div className="commerce-own">
-                <ToggleSwitch
-                  checked={current.ownContact}
-                  helper={tc('offerings.form.ownContactHelper')}
-                  label={tc('offerings.form.ownContact')}
-                  onChange={(ownContact) => setOffering({ ownContact })}
-                />
-                {current.ownContact && (
-                  <ContactFields
-                    value={current.contact}
-                    nameLabel={tc('offerings.form.contactName')}
-                    withWebsite={false}
-                    onChange={(contact) => setOffering({ contact })}
+                {current.ownReach && (
+                  <ReachFields
+                    currentUserId={currentUser?._id}
+                    label={tc('offerings.form.reach.label')}
+                    managers={managers}
+                    value={current.reach}
+                    onChange={(reach) => setOffering({ reach })}
                   />
                 )}
               </div>

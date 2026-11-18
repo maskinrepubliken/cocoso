@@ -926,11 +926,16 @@ offerings:
     tagline: Tagline
     taglineHelper: "A line under the place's name."
     taglineHolder: Sourdough bakery and café
-    website: Website
-    websiteHelper: "Shown as a button on the place's page."
-    contact: Contact person
-    contactHelper: "Name, email and phone."
-    contactName: Name
+    reach:
+      label: Contact
+      helper: "One of the place's managers, details of its own, its website or a note."
+      own: Details of its own
+      website: Website
+      websiteHelper: "Shown as a button, \"Visit the website\"."
+      note: Note
+      noteHelper: "Anything about how to get in touch."
+      noteHolder: Booked directly with Lena, by phone or email.
+    ownReachHelper: "Someone or something of its own, e.g. the restaurant's booking."
     hours: Opening hours
     hoursHelper: "The place's week."
     kind: Kind of offering
@@ -939,10 +944,6 @@ offerings:
     offeringTitleHolder: Café
     description: Info
     descriptionHelper: "What is offered, e.g. a menu, rooms, services or a range, and prices."
-    ownWebsite: Website
-    ownWebsiteHelper: "A page of its own, e.g. for booking a room."
-    ownContact: Contact person
-    ownContactHelper: "Someone of its own, e.g. the restaurant's booking."
     ownHours: Opening hours
     ownHoursHelper: "Hours of its own. With no times, none are shown."
     hoursNote: About the hours

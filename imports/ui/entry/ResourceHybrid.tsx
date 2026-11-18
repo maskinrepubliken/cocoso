@@ -83,6 +83,7 @@ interface Resource {
     tagline?: string;
     website?: string;
     contact?: Contact | null;
+    contactNote?: string;
     openingHours?: Opening[];
     hoursNote?: string;
   } | null;
@@ -305,6 +306,8 @@ const Layout = styled('div', {
 });
 
 const CardArea = styled('div', { gridArea: 'card', minWidth: 0 });
+// How to reach a commercial place, in its own words
+const ContactNote = styled('p', { margin: 0, whiteSpace: 'pre-line' });
 const DesktopOnly = styled('div', {
   display: 'none',
   [SIDEBAR]: { display: 'block' },
@@ -378,7 +381,8 @@ export default function ResourceHybrid({
   const withCommerce = Boolean(
     commerce?.openingHours?.length ||
       commerce?.hoursNote ||
-      hasContact(commerce?.contact)
+      hasContact(commerce?.contact) ||
+      commerce?.contactNote
   );
   const kinds = [
     ...new Set((resource.offerings || []).map((offering) => offering.kind)),
@@ -534,6 +538,20 @@ export default function ResourceHybrid({
                     {tc('contact.title')}
                   </SideTitle>
                   <ContactDetails contact={commerce?.contact} />
+                </>
+              )}
+              {commerce?.contactNote && (
+                <>
+                  <SideTitle
+                    css={
+                      commerce?.openingHours?.length || commerce?.hoursNote
+                        ? { margin: '1.5rem 0 1rem' }
+                        : { margin: '0 0 1rem' }
+                    }
+                  >
+                    {tc('contact.title')}
+                  </SideTitle>
+                  <ContactNote>{commerce.contactNote}</ContactNote>
                 </>
               )}
             </Panel>
