@@ -407,12 +407,14 @@ async function buildKommun() {
   group.add(new THREE.Mesh(water, glossy({ vertexColors: true, roughness: 0.38, clearcoat: 0.3 })));
   // the towns: a ball of radius k·√share, a third of it sunk into the ground
   const k = P('town', 0.42), red = glossy({ vertexColors: true, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.2 });
-  data.towns.forEach(({ x, y, share }) => {
+  group.userData.marks = [];
+  data.towns.forEach(({ name, slug, x, y, share }) => {
     const r = Math.max(k * Math.sqrt(share), P('minTown', 0.5));
     const ball = new THREE.SphereGeometry(r, 64, 48);
     ball.translate(x, y, r * P('lift', 0.3));
     gradient(ball, params.get('redFrom') || '#c2362c', params.get('redTo') || '#ff7a5c', new THREE.Vector3(-0.4, 0.5, 1).normalize());
     group.add(new THREE.Mesh(ball, red));
+    group.userData.marks.push({ name, slug, share, centre: new THREE.Vector3(x, y, r * P('lift', 0.3)), r });
   });
   group.scale.setScalar(0.06);
   group.rotation.set(P('rx', -0.72), P('ry', 0), P('rz', 0.12));
@@ -432,6 +434,18 @@ camera.position.set(sphere.center.x, sphere.center.y, sphere.center.z + dist);
 camera.lookAt(sphere.center);
 
 renderer.render(scene, camera);
+// Where each town's ball landed in the picture (centre and radius in
+// pixels), for the site's map to lay links over them
+if (object.userData.marks) {
+  camera.updateMatrixWorld(true);
+  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+  const px = (v) => { const p = v.clone().project(camera); return [(p.x + 1) / 2 * SIZE, (1 - p.y) / 2 * SIZE]; };
+  window.MARKS = object.userData.marks.map(({ name, slug, share, centre, r }) => {
+    const c = object.localToWorld(centre.clone());
+    const [x, y] = px(c), [ex] = px(c.clone().addScaledVector(right, r * object.scale.x));
+    return { name, slug, share, x, y, r: ex - x };
+  });
+}
 window.RENDERED = true;
 </script>
 </body></html>

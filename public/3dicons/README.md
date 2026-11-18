@@ -15,6 +15,7 @@ render pipeline are in `docs/design/trana/`.
 3dicons.co either: they are
 rendered with three.js to match the set; see `docs/design/egna-ikoner/`.
 
-`tranemo-kommun.webp` (640 px) is the municipality as a 3D map with a red
+`tranemo-kommun.webp` (640 px) and `tranemo-kommun-stor.webp` (1400 px, what
+`KommunMap` zooms up to) are the municipality as a 3D map with a red
 ball per town, rendered the same way from OpenStreetMap's boundary and
 lakes (© OpenStreetMap contributors, ODbL); see `docs/design/egna-ikoner/`.

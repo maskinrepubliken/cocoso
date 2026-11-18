@@ -1,0 +1,109 @@
+{
+ "aspect": 0.8593,
+ "marks": [
+  {
+   "name": "Tranemo",
+   "slug": "tranemo",
+   "share": 29.62,
+   "x": 0.4229,
+   "y": 0.4891,
+   "r": 0.0739
+  },
+  {
+   "name": "Limmared",
+   "slug": "limmared",
+   "share": 12.45,
+   "x": 0.4139,
+   "y": 0.3584,
+   "r": 0.046
+  },
+  {
+   "name": "Länghem",
+   "slug": "langhem",
+   "share": 8.66,
+   "x": 0.1918,
+   "y": 0.226,
+   "r": 0.0368
+  },
+  {
+   "name": "Dalstorp",
+   "slug": "dalstorp",
+   "share": 6.11,
+   "x": 0.6624,
+   "y": 0.1778,
+   "r": 0.0304
+  },
+  {
+   "name": "Grimsås",
+   "slug": "grimsas",
+   "share": 5.62,
+   "x": 0.8035,
+   "y": 0.463,
+   "r": 0.0318
+  },
+  {
+   "name": "Ambjörnarp",
+   "slug": "ambjornarp",
+   "share": 2.53,
+   "x": 0.3313,
+   "y": 0.6892,
+   "r": 0.0227
+  },
+  {
+   "name": "Uddebo",
+   "slug": "uddebo",
+   "share": 2.26,
+   "x": 0.2594,
+   "y": 0.5444,
+   "r": 0.0206
+  },
+  {
+   "name": "Sjötofta",
+   "slug": "sjotofta",
+   "share": 1.92,
+   "x": 0.3358,
+   "y": 0.8904,
+   "r": 0.0208
+  },
+  {
+   "name": "Nittorp",
+   "slug": "nittorp",
+   "share": 1.81,
+   "x": 0.6513,
+   "y": 0.3175,
+   "r": 0.0172
+  },
+  {
+   "name": "Ljungsarp",
+   "slug": "ljungsarp",
+   "share": 1.67,
+   "x": 0.8119,
+   "y": 0.2636,
+   "r": 0.0163
+  },
+  {
+   "name": "Ölsremma",
+   "slug": "olsremma",
+   "share": 1.03,
+   "x": 0.8401,
+   "y": 0.1348,
+   "r": 0.0144
+  },
+  {
+   "name": "Månstad",
+   "slug": "manstad",
+   "share": 0.67,
+   "x": 0.3749,
+   "y": 0.2063,
+   "r": 0.0147
+  },
+  {
+   "name": "Hulared",
+   "slug": "hulared",
+   "share": 0.51,
+   "x": 0.507,
+   "y": 0.2162,
+   "r": 0.0148
+  }
+ ]
+}

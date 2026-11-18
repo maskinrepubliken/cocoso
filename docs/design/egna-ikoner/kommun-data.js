@@ -116,6 +116,8 @@ const lakes = pc.intersection(outline, pc.union(...big)).filter((p) => polyArea(
 // too small to carry the slab's rounded edge and are left as water)
 const land = pc.difference(outline, lakes).filter((p) => polyArea(p) >= 0.05);
 
+// as the locations' slugs on the site: "Länghem" is /langhem
+const slug = (name) => name.toLowerCase().replace(/[åä]/g, 'a').replace(/ö/g, 'o');
 const round = (multi) => multi.map((poly) => poly.map((ring) => ring.map(([x, y]) => [Math.round(x * 1e4) / 1e4, Math.round(y * 1e4) / 1e4])));
 const out = {
   source: '© OpenStreetMap contributors (ODbL): boundary relation 935584, natural=water; shares: SCB 2025',
@@ -124,7 +126,7 @@ const out = {
   outline: round(outline),
   land: round(land),
   lakes: round(lakes),
-  towns: towns.map(([name, lat, lon, share]) => { const [x, y] = project([lon, lat]); return { name, x: Math.round(x * 1e3) / 1e3, y: Math.round(y * 1e3) / 1e3, share }; }),
+  towns: towns.map(([name, lat, lon, share]) => { const [x, y] = project([lon, lat]); return { name, slug: slug(name), x: Math.round(x * 1e3) / 1e3, y: Math.round(y * 1e3) / 1e3, share }; }),
 };
 fs.writeFileSync(path.join(__dirname, 'tranemo-kommun.json'), JSON.stringify(out));
 const count = (multi) => multi.reduce((sum, poly) => sum + poly.reduce((k, ring) => k + ring.length, 0), 0);

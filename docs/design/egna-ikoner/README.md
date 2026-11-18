@@ -55,10 +55,19 @@ the circles on SCB's map. No town names yet.
   balls (`thick`, `bevel`, `shore`, `town`, `lift`, `rx`/`rz`,
   `from`/`to`, `lakeFrom`/`lakeTo`, `redFrom`/`redTo`).
 
-To re-render (the fourth argument is the WebP's longest side):
+To re-render (the fourth argument is the WebP's longest side, `SIZE` the
+render's): the small map, and the large one the site zooms up to.
 
     node render.js kommun tranemo-kommun "" 640
-    cp tranemo-kommun.webp ../../../public/3dicons/
+    SIZE=2560 node render.js kommun tranemo-kommun-stor "" 1400
+    cp tranemo-kommun.webp tranemo-kommun-stor.webp ../../../public/3dicons/
+    mv tranemo-kommun-stor-marks.json tranemo-kommun-marks.json
+
+`tranemo-kommun-marks.json` is where each town's ball landed in the large
+picture (centre and radius as fractions of its width, and the picture's
+width / height). The site's map, `imports/ui/generic/KommunMap.tsx`, lays
+the towns' names and links over the balls from a copy of these numbers:
+paste them in there after a re-render that moves anything.
 
 To rebuild the geometry, download the boundary and the water (send a
 User-Agent; any Overpass server will do) and run the script:
