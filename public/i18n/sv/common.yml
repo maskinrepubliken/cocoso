@@ -181,6 +181,7 @@ entrySheet:
 entryMenu:
   label: Hantera
   edit: Redigera
+  offerings: Äta, handla & bo
   addDocument: Lägg till dokument
   newPage: Ny infosida
   delete:
@@ -888,6 +889,38 @@ contact:
     required: "Fyll i en e-postadress eller ett telefonnummer."
 
 # Äta/handla/bo; in common because SSR only loads common
+# What a place offers (imports/api/offerings): Äta, handla & bo
+offerings:
+  kinds:
+    eat: Mat & fika
+    stay: Boende
+    service: Tjänster
+    shop: Försäljning
+  form:
+    title: "Äta, handla & bo – {{place}}"
+    helper: "Vad platsen erbjuder. En plats som erbjuder något visas under Äta, handla & bo i stället för under Platser, och är i övrigt samma plats."
+    switch:
+      eat: Platsen erbjuder mat eller fika
+      stay: Platsen erbjuder boende
+      service: Platsen erbjuder tjänster
+      shop: Platsen säljer något
+    switchHelper: "Visas på platsens sida och under Äta, handla & bo."
+    description: Info
+    descriptionHelper: "Vad som erbjuds, till exempel meny, rum, tjänster eller sortiment, och priser."
+    contact: Hemsida och kontakt
+    contactHelper: "Valfritt. Om det skiljer sig från platsens, till exempel restaurangens bokning eller hotellets reception."
+    hours: Öppettider
+    hoursHelper: "Valfritt. Öppettider för just det här erbjudandet."
+    hoursNote: Om öppettiderna
+    hoursNoteHelper: "Det veckan inte säger, till exempel helgdagar eller semester."
+    hoursNoteHolder: Stängt vecka 29–31
+    opens: Öppnar
+    closes: Stänger
+    removeOpening: Ta bort tiden
+    addOpening: Öppet
+    addOpeningMore: Fler tider
+    saved: Erbjudandena är sparade
+
 businesses:
   all: Alla
   kinds:

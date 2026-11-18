@@ -8493,3 +8493,67 @@ body {
 .home-places-head .kommun-map-trigger {
   margin: -24px 0 12px;
 }
+
+/* --- What a place offers: the editor's opening hours (OpeningHoursFields) --- */
+
+.offering-tab {
+  padding-top: 18px;
+}
+
+.opening-hours-fields {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.opening-day {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cocoso-linje) 60%, transparent);
+  font-family: var(--cocoso-font-ui);
+  font-size: 14px;
+}
+
+.opening-day-name {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.opening-day-times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+
+.opening-day-closed {
+  color: var(--cocoso-mylla-soft);
+}
+
+.opening-interval {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.opening-interval input {
+  width: 7rem;
+  padding: 4px 6px;
+  border: 1px solid var(--cocoso-linje);
+  border-radius: var(--cocoso-radius-falt);
+  background: var(--cocoso-papper);
+  font: inherit;
+}
+
+@media (max-width: 560px) {
+  .opening-day {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .opening-day-times {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

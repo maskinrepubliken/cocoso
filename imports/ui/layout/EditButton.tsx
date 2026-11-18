@@ -176,12 +176,18 @@ function useGearItems(editable: Editable | null): GearItem[] {
         edit,
         ...(isAdmin || item.authorId === currentUser._id ? [remove] : []),
       ];
-    case 'resources':
-      // Documents and deleting stay with the admins, as before; documents
-      // only while that feature is on
+    case 'resources': {
+      // What it offers (Äta, handla & bo), for everyone who may change it;
+      // documents and deleting stay with the admins, documents only while
+      // that feature is on
+      const offerings = {
+        param: 'offerings',
+        label: tc('entryMenu.offerings'),
+      };
       return isAdmin
-        ? [...(documentsOn ? [addDocument] : []), edit, remove]
-        : [edit];
+        ? [...(documentsOn ? [addDocument] : []), edit, offerings, remove]
+        : [edit, offerings];
+    }
     case 'works':
       return [...(documentsOn ? [addDocument] : []), edit, remove];
     case 'info':

@@ -183,6 +183,7 @@ entrySheet:
 entryMenu:
   label: Manage
   edit: Edit
+  offerings: Eat, shop & stay
   addDocument: Add document
   newPage: New info page
   delete:
@@ -891,6 +892,38 @@ contact:
     required: "Enter an email address or a phone number."
 
 # Eat/shop/stay; in common because SSR only loads common
+# What a place offers (imports/api/offerings): Äta, handla & bo
+offerings:
+  kinds:
+    eat: Food & coffee
+    stay: Accommodation
+    service: Services
+    shop: For sale
+  form:
+    title: "Eat, shop & stay – {{place}}"
+    helper: "What the place offers. A place that offers something is listed under Eat, shop & stay instead of Places, and is the same place in every other way."
+    switch:
+      eat: The place offers food or coffee
+      stay: The place offers accommodation
+      service: The place offers services
+      shop: The place sells something
+    switchHelper: "Shown on the place's page and under Eat, shop & stay."
+    description: Info
+    descriptionHelper: "What is offered, such as the menu, rooms, services or range, and prices."
+    contact: Website and contact
+    contactHelper: "Optional. When it differs from the place's, such as the restaurant's bookings or the hotel's reception."
+    hours: Opening hours
+    hoursHelper: "Optional. Opening hours for this offering."
+    hoursNote: About the hours
+    hoursNoteHelper: "What the week does not say, such as holidays or summer closing."
+    hoursNoteHolder: Closed weeks 29–31
+    opens: Opens
+    closes: Closes
+    removeOpening: Remove the time
+    addOpening: Open
+    addOpeningMore: More times
+    saved: The offerings are saved
+
 businesses:
   all: All
   kinds:

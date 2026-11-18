@@ -4,7 +4,13 @@ import { useLoaderData } from 'react-router';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 
 import ResourceHybrid from '/imports/ui/entry/ResourceHybrid';
-import { canCreateContentAtom, renderedAtom, roleAtom } from '/imports/state';
+import {
+  canCreateContentAtom,
+  currentUserAtom,
+  renderedAtom,
+  roleAtom,
+} from '/imports/state';
+import { managesPlace } from '/imports/api/resources/placeAccess';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
@@ -15,6 +21,7 @@ const ResourceAdminFunctions = loadable(
 const EditResource = loadable(() => import('./EditResource'));
 const NewResource = loadable(() => import('./NewResource'));
 const PartModal = loadable(() => import('/imports/ui/entry/PartModal'));
+const OfferingsEditor = loadable(() => import('./components/OfferingsEditor'));
 
 export const resourceAtom = atom(null);
 
@@ -26,6 +33,7 @@ export default function ResourceItemHandler({ siteDoc }) {
   const rendered = useAtomValue(renderedAtom);
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const role = useAtomValue(roleAtom);
+  const currentUser = useAtomValue(currentUserAtom);
 
   useEffect(() => {
     setResource(resource);
@@ -51,6 +59,13 @@ export default function ResourceItemHandler({ siteDoc }) {
 
           {/* The gear's dialogs: add document and delete */}
           {role === 'admin' && <ResourceAdminFunctions />}
+
+          {/* The gear's "Äta, handla & bo": what the place offers */}
+          {(role === 'admin' ||
+            (role === 'contributor' &&
+              managesPlace(currentUser?._id, resource))) && (
+            <OfferingsEditor place={resource} />
+          )}
 
           {/* The header's plus here: a new place, part of this one */}
           {canCreateContent && (
