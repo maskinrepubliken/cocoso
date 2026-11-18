@@ -40,8 +40,6 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
       <HomeHero siteDoc={siteDoc} />
       <Box className="page-wrap" pt="1" pb="8">
         <DayAgenda activities={activities} placeOf={locationNameOf} />
-        <WeeklySchedule activities={activities} placeOf={locationNameOf} />
-
         {locations.length > 0 && (
           <section className="home-places" aria-labelledby="home-places-title">
             <div className="home-places-head">
@@ -64,6 +62,8 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
             />
           </section>
         )}
+
+        <WeeklySchedule activities={activities} placeOf={locationNameOf} />
 
         {sections.length > 0 && (
           <section
