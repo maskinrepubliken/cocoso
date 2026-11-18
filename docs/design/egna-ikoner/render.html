@@ -379,8 +379,48 @@ function buildTalt() {
   return group;
 }
 
-const builders = { sevardhet: buildSevardhet, fotboll: buildFotboll, badring: buildBadring, kanga: buildKanga, gran: buildGran, talt: buildTalt };
-const object = (builders[ICON] || buildSevardhet)();
+// Tranemo kommun as a slab of land: the municipal boundary point for point
+// (tranemo-kommun.json, written by kommun-data.js), the lakes sunk into it,
+// and a red ball per town whose area follows the town's share of the
+// population, like the circles on SCB's map.
+async function buildKommun() {
+  const P = (k, d) => Number(params.get(k) || d);
+  const data = await (await fetch('./tranemo-kommun.json')).json();
+  const path = (ring, Type) => new Type(ring.slice(0, -1).map(([x, y]) => new THREE.Vector2(x, y)));
+  const shape = (poly) => { const s = path(poly[0], THREE.Shape); poly.slice(1).forEach((hole) => s.holes.push(path(hole, THREE.Path))); return s; };
+  const glossy = (o) => new THREE.MeshPhysicalMaterial({ roughness: P('rough', 0.42), metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.3, ...o });
+  const group = new THREE.Group();
+  // in kilometres: the slab's thickness, its rounded edge, how far the
+  // water lies below the grass
+  const T = P('thick', 2.2), bevel = P('bevel', 0.2), shore = P('shore', 0.22);
+  // bevelOffset pulls the rounded edge in, so the slab is as wide as the
+  // boundary at its widest and never wider
+  const land = new THREE.ExtrudeGeometry(data.land.map(shape), {
+    depth: T - 2 * bevel, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelOffset: -bevel, bevelSegments: 6,
+  });
+  land.translate(0, 0, bevel - T);
+  gradient(land, params.get('from') || '#3f9447', params.get('to') || '#a6d667', new THREE.Vector3(0.5, 1, 0.6).normalize());
+  group.add(new THREE.Mesh(land, glossy({ vertexColors: true })));
+  const water = new THREE.ExtrudeGeometry(data.lakes.map(shape), { depth: T - shore, bevelEnabled: false });
+  water.translate(0, 0, -T);
+  gradient(water, params.get('lakeFrom') || '#3d8fe0', params.get('lakeTo') || '#7cc6f5', new THREE.Vector3(0.5, 1, 0).normalize());
+  group.add(new THREE.Mesh(water, glossy({ vertexColors: true, roughness: 0.38, clearcoat: 0.3 })));
+  // the towns: a ball of radius k·√share, a third of it sunk into the ground
+  const k = P('town', 0.42), red = glossy({ vertexColors: true, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.2 });
+  data.towns.forEach(({ x, y, share }) => {
+    const r = Math.max(k * Math.sqrt(share), P('minTown', 0.5));
+    const ball = new THREE.SphereGeometry(r, 64, 48);
+    ball.translate(x, y, r * P('lift', 0.3));
+    gradient(ball, params.get('redFrom') || '#c2362c', params.get('redTo') || '#ff7a5c', new THREE.Vector3(-0.4, 0.5, 1).normalize());
+    group.add(new THREE.Mesh(ball, red));
+  });
+  group.scale.setScalar(0.06);
+  group.rotation.set(P('rx', -0.72), P('ry', 0), P('rz', 0.12));
+  return group;
+}
+
+const builders = { sevardhet: buildSevardhet, fotboll: buildFotboll, badring: buildBadring, kanga: buildKanga, gran: buildGran, talt: buildTalt, kommun: buildKommun };
+const object = await (builders[ICON] || buildSevardhet)();
 scene.add(object);
 
 // Frame the object: fit its bounding sphere in the view

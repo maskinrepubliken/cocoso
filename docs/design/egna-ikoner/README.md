@@ -37,6 +37,41 @@ To re-render (Playwright installed, `require('playwright')` resolvable):
     node render.js talt talt
     cp sevardhet.webp fotboll.webp badring.webp talt.webp ../../../public/3dicons/
 
+## Tranemo kommun as a 3D map
+
+`public/3dicons/tranemo-kommun.webp` (640 px) is the municipality as a green
+slab in the same style: the municipal boundary point for point, the lakes
+sunk into it, and a red ball per town whose area follows the town's share
+of the population (SCB, "Befolkningens andel per tätort (%) 2025"), like
+the circles on SCB's map. No town names yet.
+
+- `kommun-data.js`: turns two OpenStreetMap downloads into
+  `tranemo-kommun.json` (kilometres east and north of the centre): the
+  outline, the land with the lakes cut out, the lakes (0.08 km² and up,
+  clipped to the boundary) and the towns with their shares. Lakes on the
+  boundary become bays, so the outline stays exact.
+- `buildKommun` in `render.html`: extrudes the land with a rounded edge
+  that never reaches outside the boundary, fills the lakes, places the
+  balls (`thick`, `bevel`, `shore`, `town`, `lift`, `rx`/`rz`,
+  `from`/`to`, `lakeFrom`/`lakeTo`, `redFrom`/`redTo`).
+
+To re-render (the fourth argument is the WebP's longest side):
+
+    node render.js kommun tranemo-kommun "" 640
+    cp tranemo-kommun.webp ../../../public/3dicons/
+
+To rebuild the geometry, download the boundary and the water (send a
+User-Agent; any Overpass server will do) and run the script:
+
+    curl -A cocoso-map-icon -o nom.json 'https://nominatim.openstreetmap.org/search?q=Tranemo+kommun&format=json&polygon_geojson=1'
+    curl -A cocoso-map-icon -o water.json https://overpass-api.de/api/interpreter --data-urlencode \
+      'data=[out:json][timeout:150];area(3600935584)->.a;(way["natural"="water"](area.a);relation["natural"="water"](area.a););out geom;'
+    npm install --no-save polygon-clipping
+    node kommun-data.js .
+
+The geometry is © OpenStreetMap contributors (ODbL): credit OpenStreetMap
+where the map is shown.
+
 Shape and colour can be tried from the command line without editing:
 `node render.js sevardhet test "&s=0.72&r=0.56&w=0.18&from=%235a2a12&to=%23e8a050&env=0.45"`
 (`s` half the centre square, `r` the loops' radius, `w` half the stroke,
