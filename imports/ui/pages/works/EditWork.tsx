@@ -18,7 +18,7 @@ export default function EditWork() {
   const username = usernameSlug?.replace('@', '') || '';
 
   const updateWork = async (newWork: any) => {
-    if (!work) return;
+    if (!work) return false;
     const workId = work._id;
     try {
       await call('updateWork', workId, newWork);
@@ -27,8 +27,10 @@ export default function EditWork() {
       setTimeout(() => {
         setUpdated(null);
       }, 1000);
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 
@@ -62,7 +64,11 @@ export default function EditWork() {
 
   return (
     <SuccessRedirector forEdit ping={updated}>
-      <WorkForm work={workFields} onFinalize={updateWork} />
+      <WorkForm
+        work={workFields}
+        workId={work._id}
+        onFinalize={updateWork}
+      />
     </SuccessRedirector>
   );
 }

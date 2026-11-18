@@ -17,8 +17,10 @@ export default function NewWork() {
     try {
       const respond = await call('createWork', newWork);
       setNewEntryId(respond);
+      return true;
     } catch (error: any) {
       saveFailed(error);
+      return false;
     }
   };
 

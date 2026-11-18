@@ -84,6 +84,18 @@ profile:
 
 works:
   label: My Works
+  # The request form's cards (pages/works/WorkForm.tsx)
+  form:
+    kind: What is it about?
+    kindHelper: Choose the one that fits best – it decides where the request shows and the picture it gets.
+    kindMissing: Choose what the request is about
+    where: Where
+    contact: Contact
+    contactHelper: Optional. How others reach you about this, for instance a phone number. Shown under the title.
+    profile: Show a link to my profile
+    profileHelper: Others can then go to your profile and reach you from there.
+    extra: Good to know
+    extraHelper: Optional, e.g. when, where and for how long.
   title:
     label: Title
     holder: Mango Juice in Bottles...

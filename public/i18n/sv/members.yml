@@ -84,6 +84,18 @@ profile:
 
 works:
   label: Mina förfrågningar
+  # The request form's cards (pages/works/WorkForm.tsx)
+  form:
+    kind: Vad gäller det?
+    kindHelper: Välj det som passar bäst – det avgör var förfrågan syns och vilken bild den får.
+    kindMissing: Välj vad förfrågan gäller
+    where: Var
+    contact: Kontakt
+    contactHelper: Valfritt. Hur andra når dig om just det här, till exempel ett telefonnummer. Visas under rubriken.
+    profile: Visa länk till min profil
+    profileHelper: Andra kan då gå till din profil och nå dig därifrån.
+    extra: Bra att veta
+    extraHelper: Valfritt, t.ex. när, var och hur länge.
 
   title:
     label: Titel

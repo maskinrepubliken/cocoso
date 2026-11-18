@@ -36,7 +36,7 @@ export default function WorkItemHandler({ siteDoc }) {
       {rendered && (
         <>
           {canCreateContent && (
-            <EditEntryHandler context="works">
+            <EditEntryHandler keepsDraft context="works">
               <EditWork />
             </EditEntryHandler>
           )}

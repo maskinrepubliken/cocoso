@@ -1,4 +1,6 @@
-const workFormFields = (t, tc) => [
+// The request form's typed fields, in the wide column; the details are
+// cards beside them (WorkForm.tsx).
+const workFormFields = (t) => [
   {
     helper: t('works.title.helper'),
     label: t('works.title.label'),
@@ -25,29 +27,6 @@ const workFormFields = (t, tc) => [
     props: {
       required: true,
     },
-  },
-  {
-    helper: t('works.extra.helper'),
-    label: t('works.extra.label'),
-    placeholder: t('works.extra.holder'),
-    type: 'input',
-    area: 'side',
-    value: 'additionalInfo',
-  },
-  {
-    helper: t('works.contact.helper'),
-    label: t('works.contact.label'),
-    placeholder: t('works.contact.holder'),
-    type: 'textarea',
-    area: 'side',
-    value: 'contactInfo',
-  },
-  {
-    helper: t('works.avatar.helper'),
-    label: t('works.avatar.label'),
-    placeholder: tc('labels.select'),
-    type: 'checkbox',
-    value: 'showAvatar',
   },
 ];
 

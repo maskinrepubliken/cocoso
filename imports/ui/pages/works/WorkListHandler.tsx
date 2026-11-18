@@ -19,7 +19,7 @@ export default function WorkListHandler({ siteDoc }) {
       <WorksHybrid siteDoc={siteDoc} documents={documents} works={works} />
 
       {rendered && canCreateContent ? (
-        <NewEntryHandler context="works">
+        <NewEntryHandler keepsDraft publishes context="works">
           <NewWork />
         </NewEntryHandler>
       ) : null}
