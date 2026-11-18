@@ -35,6 +35,7 @@ import BookingFields, {
   type Booking,
   bookingState,
   bookingValue,
+  bookingVia,
 } from './components/BookingFields';
 import { RESOURCE_KINDS } from './resourceKinds';
 import ManagerFields from './components/ManagerFields';
@@ -332,15 +333,16 @@ function PlaceForm({
       message.formError(tc('address.errors.required'));
       return;
     }
-    // A bookable place says how: an organizer, an email or phone, or a link.
+    // A bookable place says how: a manager, an email or phone, or a link.
+    // Without a manager chosen (none to choose from), its own details.
     const { booking } = state;
+    const via = bookingVia(booking);
     if (
       booking.canBeBooked &&
-      ((booking.via === 'organizer' && !booking.contactUserId) ||
-        (booking.via === 'own' && !isReachable(booking.contact)) ||
-        (booking.via === 'link' && !booking.url.trim()))
+      ((via === 'own' && !isReachable(booking.contact)) ||
+        (via === 'link' && !booking.url.trim()))
     ) {
-      message.formError(t(`form.booking.errors.${booking.via}`));
+      message.formError(t(`form.booking.errors.${via}`));
       return;
     }
     setState((prevState) => ({

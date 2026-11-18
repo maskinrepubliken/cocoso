@@ -54,21 +54,26 @@ export const bookingState = (booking?: Booking | null): BookingState => ({
   url: booking?.url || '',
 });
 
+// How the place is booked: through a person only when one is chosen, else
+// by details of its own, which must then be filled in (a place without
+// managers has no one to choose)
+export const bookingVia = (state: BookingState): BookingVia =>
+  state.via === 'organizer' && !state.contactUserId ? 'own' : state.via;
+
 // Only the chosen way to book is sent; null when the place is not bookable.
 export const bookingValue = (state: BookingState): Booking | null => {
   if (!state.canBeBooked) {
     return null;
   }
   const info = state.info.trim() ? { info: state.info } : {};
-  if (state.via === 'link') {
+  const via = bookingVia(state);
+  if (via === 'link') {
     return { ...info, url: state.url };
   }
-  if (state.via === 'own') {
+  if (via === 'own') {
     return { ...info, contact: state.contact };
   }
-  return state.contactUserId
-    ? { ...info, contactUserId: state.contactUserId }
-    : info;
+  return { ...info, contactUserId: state.contactUserId };
 };
 
 interface BookingFieldsProps {
@@ -166,8 +171,25 @@ export default function BookingFields({
     },
   ];
 
+  const via = bookingVia(value);
   const chosen =
-    value.via === 'organizer' ? value.contactUserId : value.via === 'own' ? OWN : LINK;
+    via === 'organizer' ? value.contactUserId : via === 'own' ? OWN : LINK;
+
+  // Made bookable: through oneself if a manager, else the first manager;
+  // with no managers, details of its own
+  const switchOn = (canBeBooked: boolean) => {
+    if (!canBeBooked || bookingVia(value) !== 'own' || value.via === 'own') {
+      set({ canBeBooked });
+      return;
+    }
+    const first =
+      managers.find((m) => m._id === currentUserId) || managers[0];
+    set(
+      first
+        ? { canBeBooked, via: 'organizer', contactUserId: first._id }
+        : { canBeBooked, via: 'own' }
+    );
+  };
 
   return (
     <>
@@ -175,7 +197,7 @@ export default function BookingFields({
         checked={value.canBeBooked}
         helper={t('form.booking.switchHelper')}
         label={t('form.booking.switch')}
-        onChange={(canBeBooked) => set({ canBeBooked })}
+        onChange={switchOn}
       />
       {value.canBeBooked && (
         <>
