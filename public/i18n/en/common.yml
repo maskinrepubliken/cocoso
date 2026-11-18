@@ -182,7 +182,12 @@ entrySheet:
 # The gear in the header on a page one may manage (layout/EditButton.tsx)
 entryMenu:
   label: Manage
-  edit: Edit
+  edit:
+    activities: Edit event
+    groups: Edit group
+    resources: Edit place
+    works: Edit request
+    info: Edit page
   offerings: Eat, shop & stay
   addDocument: Add document
   newPage: New info page

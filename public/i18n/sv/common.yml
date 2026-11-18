@@ -180,7 +180,12 @@ entrySheet:
 # The gear in the header on a page one may manage (layout/EditButton.tsx)
 entryMenu:
   label: Hantera
-  edit: Redigera
+  edit:
+    activities: Redigera evenemang
+    groups: Redigera grupp
+    resources: Redigera plats
+    works: Redigera förfrågan
+    info: Redigera sida
   offerings: Äta, handla & bo
   addDocument: Lägg till dokument
   newPage: Ny infosida

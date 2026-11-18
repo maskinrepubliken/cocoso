@@ -147,7 +147,7 @@ function useGearItems(editable: Editable | null): GearItem[] {
   const isAdmin = role === 'admin';
   // Documents are a feature
   const documentsOn = isFeatureEnabled('documents');
-  const edit = { param: 'edit', label: tc('entryMenu.edit') };
+  const edit = { param: 'edit', label: tc(`entryMenu.edit.${context}`) };
   const addDocument = {
     param: 'addDocument',
     label: tc('entryMenu.addDocument'),
