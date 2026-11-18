@@ -7,6 +7,7 @@ import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import { getSite } from '../site/site';
 import Activities from './activity';
 import Groups from '../groups/group';
+import { meetingTitleOf } from '../groups/meetingTitle';
 import Memberships from '../memberships/membership';
 import Resources from '../resources/resource';
 import { registrationEmail, unregistrationEmail } from './activity.mails';
@@ -544,9 +545,20 @@ Meteor.methods({
     const author = await chooseAuthor(user, values.authorId);
     delete values.authorId;
     delete values.authorName;
-    // A group's meeting is reached through the group's own contact details
+    // A group's meeting is reached through the group's own contact details,
+    // and is titled after the group with its own name after it
     if (!values.isGroupMeeting) {
       await requireOrganizerContact([author.authorId]);
+    } else if (values.groupId) {
+      const group = await Groups.findOneAsync(values.groupId, {
+        fields: { title: 1 },
+      });
+      if (values.meetingTitle) {
+        values.meetingTitle = String(values.meetingTitle).trim();
+      }
+      if (group) {
+        values.title = meetingTitleOf(group.title, values.meetingTitle);
+      }
     }
 
     const images = values.images;

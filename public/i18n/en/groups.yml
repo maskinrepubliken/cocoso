@@ -88,6 +88,9 @@ meeting:
     admin: Open the dates to see the attendees
   form:
     label: Add a meeting
+    name: Name of the meeting
+    nameHolder: e.g. Autumn meeting, Rehearsal or Annual meeting
+    modeAddress: An address
     when: When
     where: Where
     modePlace: A place
@@ -154,6 +157,7 @@ admin:
   add_document: Add Document
   add_meeting: Add Meeting
   manage_members: Manage Members
+  manage_meetings: Manage meetings
 
 # The header's join button and the meetings' button (layout/GroupMembershipButton.tsx,
 # components/GroupMeetingDates.tsx)
@@ -197,7 +201,3 @@ groupForm:
     locked: The group is private and cannot be made open.
   where: Where
   contactHelp: How the public reaches the group. An email address or a phone number is required.
-  meetings:
-    title: Meetings
-    capacity: Most people at a meeting
-    capacityHelp: How many can sign up for one meeting.

@@ -493,7 +493,7 @@ features:
   items:
     groups:
       label: Grupper
-      about: Gruppsidor, listan över grupper, att gå med i grupper och gruppernas träffar och diskussioner.
+      about: Gruppsidor, listan över grupper, att gå med i grupper och gruppernas möten och diskussioner.
       count_one: "{{count}} grupp finns"
       count_other: "{{count}} grupper finns"
       offEffect: Alla gruppsidor och listan över grupper blir "sidan finns inte". Ingen kan skapa grupper eller gå med i dem. Grupperna och deras medlemmar finns kvar i databasen.

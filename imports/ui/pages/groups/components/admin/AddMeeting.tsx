@@ -4,10 +4,13 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useAtom } from 'jotai';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import HouseIcon from 'lucide-react/dist/esm/icons/house';
 import PencilIcon from 'lucide-react/dist/esm/icons/pencil-line';
 
 import { Input, Modal } from '/imports/ui/core';
 import DateTimePicker from '/imports/ui/forms/DateTimePicker';
+import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
+import { formatAddress, type Address } from '/imports/api/_utils/address';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
@@ -19,19 +22,20 @@ import activityErrorText from '/imports/ui/pages/activities/form/activityError';
 
 import { groupAtom } from '../../groupAtom';
 
-type WhereMode = 'place' | 'text';
+type WhereMode = 'place' | 'address' | 'text';
 
 const today = dayjs().format('YYYY-MM-DD');
 
-// A group's new meeting: when, and where, as cards like those of the event
-// form. Where is one of the site's places, picked as in the event form, or
-// written out.
+// A group's new meeting: its name, when, and where, as cards like those of
+// the event form. Where is one of the site's places, picked as in the event
+// form, an address, or written out.
 export default function AddMeeting({ onClose }: { onClose: () => void }) {
   const [t] = useTranslation('groups');
   const [tc] = useTranslation('common');
   const revalidator = useRevalidator();
   const [group, setGroup] = useAtom(groupAtom) as [any, (g: any) => void];
   const [places, setPlaces] = useState<PlaceOption[]>([]);
+  const [title, setTitle] = useState('');
   const [when, setWhen] = useState<any>({
     startDate: today,
     endDate: today,
@@ -40,6 +44,7 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
   });
   const [mode, setMode] = useState<WhereMode>('place');
   const [placeId, setPlaceId] = useState<string | null>(null);
+  const [address, setAddress] = useState<Partial<Address>>(emptyAddress);
   const [placeText, setPlaceText] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -49,13 +54,17 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
       .catch((error: any) => message.error(error?.reason || error?.error));
   }, []);
 
+  // As an event keeps it: a place of the site by its id, else an address
+  // of its own, else a place written out (activity.place.js)
   const place = places.find((p) => p._id === placeId);
   const where =
     mode === 'place'
-      ? { resource: place?.label, resourceId: place?._id }
-      : { resource: placeText.trim() || undefined, resourceId: null };
+      ? place && { resource: place.label, resourceId: place._id }
+      : mode === 'address'
+        ? formatAddress(address) && { address: address as Address }
+        : placeText.trim() && { place: placeText.trim() };
   const isValid = Boolean(
-    where.resource && when.startDate && when.startTime && when.endTime
+    title.trim() && where && when.startDate && when.startTime && when.endTime
   );
 
   const createMeeting = async () => {
@@ -65,7 +74,9 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
     setSaving(true);
     try {
       await call('createActivity', {
+        // The server titles it after the group, with this name after it
         title: group.title,
+        meetingTitle: title.trim(),
         subTitle: group.readingMaterial,
         longDescription: group.description,
         images: [group.imageUrl],
@@ -77,7 +88,6 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
             startTime: when.startTime,
             endTime: when.endTime,
             attendees: [],
-            capacity: group.capacity,
           },
         ],
         isPublicActivity: false,
@@ -104,12 +114,22 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
       confirmText={t('meeting.form.submit')}
       id="group-add-meeting"
       open
+      size="lg"
       title={t('meeting.form.label')}
       onCancel={onClose}
       onClose={onClose}
       onConfirm={createMeeting}
     >
       <div className="entry-form-side">
+        <FormCard title={t('meeting.form.name')}>
+          <Input
+            aria-label={t('meeting.form.name')}
+            placeholder={t('meeting.form.nameHolder')}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+          />
+        </FormCard>
+
         <FormCard title={t('meeting.form.when')}>
           <DateTimePicker value={when} onChange={setWhen} />
         </FormCard>
@@ -128,6 +148,18 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
                     places={places}
                     selectedId={placeId}
                     onPick={(picked) => setPlaceId(picked._id)}
+                  />
+                ),
+              },
+              {
+                value: 'address',
+                label: t('meeting.form.modeAddress'),
+                icon: <HouseIcon aria-hidden />,
+                content: (
+                  <AddressFields
+                    mode="street"
+                    value={address}
+                    onChange={setAddress}
                   />
                 ),
               },

@@ -87,7 +87,10 @@ meeting:
     member: Klicka och öppna datumet för att OSA
     admin: Öppna datumen för att se deltagarna
   form:
-    label: Lägg till en träff
+    label: Lägg till ett möte
+    name: Mötets namn
+    nameHolder: t.ex. Höstmöte, Övning eller Årsmöte
+    modeAddress: En adress
     when: När
     where: Var
     modePlace: En plats
@@ -101,7 +104,7 @@ meeting:
     switch: På {{ place }}?
     resource: Välj lokal eller resurs
     location: Plats
-    submit: Lägg till träffen
+    submit: Lägg till mötet
   errors:
     noresource: Välj en resurs eller ange en plats för mötet (minst 4 tecken)
 
@@ -154,14 +157,15 @@ admin:
   add_document: Lägg till dokument
   add_meeting: Lägg till möte
   manage_members: Hantera medlemmar
+  manage_meetings: Hantera möten
 
 # The header's join button and the meetings' button (layout/GroupMembershipButton.tsx,
 # components/GroupMeetingDates.tsx)
 membership:
   you: Du är medlem
   leave: Lämna gruppen
-  attend: Anmäl dig till träffar
-  manage: Hantera träffar
+  attend: Anmäl dig till möten
+  manage: Hantera möten
   count_one: "{{count}} medlem"
   count_other: "{{count}} medlemmar"
   joined: "Gick med {{date}}"
@@ -197,7 +201,3 @@ groupForm:
     locked: Gruppen är privat och kan inte göras öppen.
   where: Var
   contactHelp: Hur allmänheten når gruppen. En e-postadress eller ett telefonnummer krävs.
-  meetings:
-    title: Träffar
-    capacity: Max antal på en träff
-    capacityHelp: Hur många som kan anmäla sig till en träff.

@@ -18,6 +18,9 @@ const AntDatePicker = loadable(() => import('antd/lib/date-picker'), {
 const ConfigProvider = loadable(() => import('antd/lib/config-provider'), {
   ssr: false,
 });
+const AntCalendar = loadable(() => import('antd/lib/calendar'), {
+  ssr: false,
+});
 
 // Lazy load locales
 const loadLocale = async (lang: string) => {
@@ -192,15 +195,42 @@ export default function DateTimePicker({ value, onChange }: DateTimePickerProps)
   return (
     <Box w="100%" py="2">
       <ConfigProvider locale={locale} theme={antTheme}>
-        <Flex>
-          <Box w="170px" mr="2">
-            <DatePicker
-              DatePickerComponent={AntDatePicker}
-              label={isRange ? t('form.date.start') : t('form.days.single')}
-              value={value?.startDate}
-              onChange={(date) => handleDateChange(date, 'startDate')}
-            />
+        {/* One day: the month laid open, the day picked with one tap;
+          days already past are off */}
+        {!isRange && (
+          <Box mb="4">
+            <Text mb="2">{t('form.days.single')}</Text>
+            <div
+              style={{
+                background: '#fff',
+                border: '1px solid var(--cocoso-linje)',
+                borderRadius: '12px',
+                maxWidth: '22rem',
+                overflow: 'hidden',
+              }}
+            >
+              <AntCalendar
+                disabledDate={(date: any) =>
+                  date && date.isBefore(dayjs(), 'day')
+                }
+                fullscreen={false}
+                value={dayjs(value?.startDate, 'YYYY-MM-DD')}
+                onSelect={(date: any) => handleDateChange(date, 'startDate')}
+              />
+            </div>
           </Box>
+        )}
+        <Flex>
+          {isRange && (
+            <Box w="170px" mr="2">
+              <DatePicker
+                DatePickerComponent={AntDatePicker}
+                label={t('form.date.start')}
+                value={value?.startDate}
+                onChange={(date) => handleDateChange(date, 'startDate')}
+              />
+            </Box>
+          )}
 
           {isRange && (
             <Box w="170px" mr="2">

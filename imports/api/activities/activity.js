@@ -96,6 +96,9 @@ Activities.schema = new SimpleSchema({
 
   groupId: { type: String, regEx: SimpleSchema.RegEx.Id, optional: true },
   isGroupMeeting: { type: Boolean, optional: true },
+  // A group meeting's own name ("Höstmöte"); its title is the group's
+  // name followed by it, so lists and the calendar show both
+  meetingTitle: { type: String, optional: true },
   isGroupPrivate: { type: Boolean, optional: true },
 
   latestUpdate: { type: Date, optional: true },

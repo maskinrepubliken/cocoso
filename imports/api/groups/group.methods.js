@@ -18,6 +18,7 @@ import {
   getInviteToPrivateGroupEmailBody,
 } from './group.mails';
 import { sendEmail } from '../_utils/services/mails/mail.methods';
+import { meetingTitleOf } from './meetingTitle';
 
 const publicSettings = Meteor.settings.public;
 
@@ -111,6 +112,12 @@ const groupMethods = {
         .map((a) => ({
           ...a.datesAndTimes[0],
           meetingId: a._id,
+          // What the meeting is called and where, for the group's page
+          meetingTitle: a.meetingTitle,
+          resource: a.resource,
+          resourceId: a.resourceId,
+          place: a.place,
+          address: a.address,
         }))
         .sort(compareDatesWithStartDateForSort),
     };
@@ -310,7 +317,6 @@ const groupMethods = {
         },
         {
           $set: {
-            title: values.title,
             subTitle: values.readingMaterial,
             longDescription: values.description,
             images: [values.imageUrl],
@@ -319,6 +325,18 @@ const groupMethods = {
         {
           multi: true,
         }
+      );
+      // Each meeting's title follows the group's name, keeping its own
+      const meetings = await Activities.find(
+        { groupId },
+        { fields: { meetingTitle: 1 } }
+      ).fetchAsync();
+      await Promise.all(
+        meetings.map((meeting) =>
+          Activities.updateAsync(meeting._id, {
+            $set: { title: meetingTitleOf(values.title, meeting.meetingTitle) },
+          })
+        )
       );
       return groupId;
     } catch (e) {

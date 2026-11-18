@@ -642,7 +642,7 @@ calendarFilter:
 groupCard:
   members_one: '{{count}} medlem'
   members_other: '{{count}} medlemmar'
-  nextMeeting: Nästa träff {{date}}
+  nextMeeting: Nästa möte {{date}}
 
 a11y:
   skipToContent: Hoppa till innehållet
@@ -794,7 +794,7 @@ entry:
   readMore: Läs mer
   group: Grupp
   place: Plats
-  meetings: Träffar
+  meetings: Möten
   members_one: '{{ count }} medlem'
   members_other: '{{ count }} medlemmar'
   capacity: 'Plats för {{ count }}'

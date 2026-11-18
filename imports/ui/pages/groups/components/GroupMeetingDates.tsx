@@ -126,7 +126,15 @@ function MeetingDatesContent({
             .includes(currentUser.username);
         return {
           key: meeting.meetingId,
-          header: <FancyDate occurrence={meeting} />,
+          // The meeting's name over its date
+          header: (
+            <Box>
+              <Text fontWeight="bold">
+                {meeting.meetingTitle || group.title}
+              </Text>
+              <FancyDate occurrence={meeting} />
+            </Box>
+          ),
           content: isAdmin ? (
             <Box>
               <Text fontWeight="bold" mt="1">
@@ -183,9 +191,60 @@ function MeetingDatesContent({
   return <Accordion options={getAccordionOptions()} />;
 }
 
-// Beside the heading of a group's meetings, for its members: a button to
-// the meetings, where a member signs up for them and an admin sees who is
-// coming and removes a meeting. Others see the dates in the section itself.
+// The group's coming meetings in a dialog: a member signs up for them, an
+// admin sees who is coming and removes a meeting. Admins open it from the
+// gear ("Hantera möten"), members from beside the meetings' heading.
+export function MeetingsDialog({
+  open,
+  isAdmin,
+  onClose,
+}: {
+  open: boolean;
+  isAdmin: boolean;
+  onClose: () => void;
+}) {
+  const [t] = useTranslation('groups');
+  const currentUser = useAtomValue(currentUserAtom);
+  const group = useAtomValue(groupAtom) as any;
+
+  if (!group) {
+    return null;
+  }
+  const hasUpcoming = Boolean(group.meetings?.some(isFutureMeeting));
+
+  return (
+    <Modal
+      hideFooter
+      id="group-meeting-dates"
+      open={open}
+      title={t(isAdmin ? 'membership.manage' : 'labels.meetings')}
+      onClose={onClose}
+    >
+      {!hasUpcoming ? (
+        <Text textAlign="center">{t('meeting.info.empty')}</Text>
+      ) : (
+        <>
+          {!isAdmin && (
+            <Text mb="4" textAlign="center">
+              {t('meeting.info.member')}
+            </Text>
+          )}
+          <MeetingDatesContent
+            currentUser={currentUser}
+            group={group}
+            isAdmin={isAdmin}
+            isMember
+            onClose={onClose}
+          />
+        </>
+      )}
+    </Modal>
+  );
+}
+
+// Beside the heading of a group's meetings, for its members: "Anmäl dig
+// till möten". The group's admins, and the site's, have "Hantera möten" in
+// the gear instead. Others see the meetings in the section itself.
 export default function GroupMeetingDates() {
   const [modalOpen, setModalOpen] = useState(false);
   const [t] = useTranslation('groups');
@@ -197,35 +256,22 @@ export default function GroupMeetingDates() {
     ? group?.members?.find((m: any) => m.memberId === currentUser._id)
     : null;
   const hasUpcoming = Boolean(group?.meetings?.some(isFutureMeeting));
-  // The site's admins manage any group's meetings, member or not
-  const isAdmin = Boolean(me?.isAdmin) || role === 'admin';
+  const isManager = Boolean(me?.isAdmin) || role === 'admin';
 
-  if (!group || (!me && !isAdmin) || !hasUpcoming) {
+  if (!group || !me || isManager || !hasUpcoming) {
     return null;
   }
-
-  const props = { currentUser, group, isAdmin, isMember: true };
 
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setModalOpen(true)}>
-        {t(isAdmin ? 'membership.manage' : 'membership.attend')}
+        {t('membership.attend')}
       </Button>
-
-      <Modal
-        hideFooter
-        id="group-meeting-dates"
+      <MeetingsDialog
+        isAdmin={false}
         open={modalOpen}
-        title={t('labels.meetings')}
         onClose={() => setModalOpen(false)}
-      >
-        {!isAdmin && (
-          <Text mb="4" textAlign="center">
-            {t('meeting.info.member')}
-          </Text>
-        )}
-        <MeetingDatesContent {...props} onClose={() => setModalOpen(false)} />
-      </Modal>
+      />
     </>
   );
 }

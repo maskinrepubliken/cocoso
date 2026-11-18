@@ -10,7 +10,7 @@ import type { Document, Site } from '/imports/ui/types';
 import { ContactDetails } from '/imports/ui/generic/ContactDetails';
 import { hasContact, type Contact } from '/imports/api/_utils/contact';
 
-import ActionDates, { DateOccurrence } from './ActionDates';
+import GroupMeetingList, { type GroupMeeting } from './GroupMeetingList';
 import LocationTag from '/imports/ui/generic/LocationTag';
 
 import EntryHero, {
@@ -34,7 +34,7 @@ interface Group {
   readingMaterial?: string;
   imageUrl?: string;
   isPrivate?: boolean;
-  meetings?: DateOccurrence[];
+  meetings?: GroupMeeting[];
   members?: any[];
 }
 
@@ -63,7 +63,6 @@ export default function GroupHybrid({
     (item: any) => item.name === 'groups'
   );
   const memberCount = group.members?.length || 0;
-  const meetings = { ...group, datesAndTimes: group.meetings };
   const hasMeetings = Boolean(group.meetings?.length);
 
   return (
@@ -140,7 +139,10 @@ export default function GroupHybrid({
               {meetingsAction}
             </SectionHead>
             <Panel>
-              <ActionDates activity={meetings} />
+              <GroupMeetingList
+                groupTitle={group.title}
+                meetings={group.meetings || []}
+              />
             </Panel>
           </EntryColumn>
         )}

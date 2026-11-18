@@ -4,7 +4,6 @@ import { useAtom, useAtomValue } from 'jotai';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 import LockIcon from 'lucide-react/dist/esm/icons/lock';
 
-import { NumberInput } from '/imports/ui/core';
 import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
@@ -35,7 +34,6 @@ interface GroupFormValues {
 
 interface GroupData extends GroupFormValues {
   isPrivate?: boolean;
-  capacity?: number;
   contact?: Contact | null;
   imageUrl?: string;
   locationId?: string | null;
@@ -63,7 +61,6 @@ const DRAFT_FIELDS = [
   'locationId',
   'isMunicipalityOnly',
   'contact',
-  'capacity',
 ] as const;
 const TEXT_FIELDS = ['title', 'readingMaterial', 'description'] as const;
 
@@ -102,7 +99,6 @@ function GroupEntryForm({
     contact: (group?.contact ||
       (currentUser as any)?.publicContact ||
       emptyContact) as Contact,
-    capacity: group?.capacity ?? 40,
   }));
   // Editing: the group as saved, so a draft from before it was saved again
   // is dropped rather than undoing that
@@ -164,7 +160,6 @@ function GroupEntryForm({
     const newGroup: GroupData = {
       ...state.formValues,
       isPrivate: state.isPrivate,
-      capacity: Number(state.capacity) || 0,
       contact: state.contact,
       imageUrl,
       locationId: state.locationId,
@@ -252,18 +247,6 @@ function GroupEntryForm({
           <ContactFields
             value={state.contact}
             onChange={(contact) => set({ contact })}
-          />
-        </FormCard>
-
-        <FormCard title={t('groupForm.meetings.title')}>
-          <p className="form-preview-note">
-            {t('groupForm.meetings.capacityHelp')}
-          </p>
-          <NumberInput
-            aria-label={t('groupForm.meetings.capacity')}
-            min={1}
-            value={state.capacity}
-            onChange={(event) => set({ capacity: event.target.value })}
           />
         </FormCard>
       </GenericEntryForm>
