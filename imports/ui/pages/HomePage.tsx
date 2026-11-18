@@ -16,9 +16,9 @@ import {
   WeeklySchedule,
 } from '/imports/ui/listing/RecurringOverview';
 
-// The start page: the welcome band, what happens today and tomorrow, the
-// week's recurring activities, then the places to choose from and a guide
-// to the site's sections. The events themselves live under /activities.
+// The start page: the welcome band, what happens today and the days after,
+// the places to choose from, what recurs every week, and a guide to the
+// site's sections. The events themselves live under /activities.
 export default function HomePage({ siteDoc }: { siteDoc: any }) {
   const { activities = [] } = (useLoaderData() as { activities?: any[] }) || {};
   const locations = useAtomValue(locationsAtom);

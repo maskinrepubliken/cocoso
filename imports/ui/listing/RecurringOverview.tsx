@@ -1,29 +1,29 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 
 import { styled } from '/stitches.config';
-import SegmentedToggle from '/imports/ui/generic/SegmentedToggle';
 import { renderedAtom } from '/imports/state';
 import {
   getWeeklyPattern,
   WeeklyPattern,
 } from '/imports/api/activities/recurrence';
+import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import { getEntryPath } from './useOpenEntry';
-import { describeDays, timeSpan, weekdayName } from './recurringText';
+import { describeDays, timeSpan } from './recurringText';
 
-// Two compact views for the front of the activities listing: what happens
-// on one day (one line per activity), and the weekly rhythm of everything
-// that recurs, shown once per weekday instead of one card per date.
+// Two compact views for the start page: what happens on one day (a note
+// per event, leafed through day by day), and the weekly rhythm of
+// everything that recurs, shown once per weekday instead of one card per
+// date.
 
-// Each weekday has an earthy colour of its own and today is green; the
-// text stays black and the details green.
+// Each weekday has an earthy colour of its own; the text stays black and
+// the details green.
 const ink = '#151515';
-const today = '#b9dba0'; // a light leaf green, as light as the other days
 const earth: Record<number, string> = {
   1: '#e9dcc4', // sand
   2: '#e2c6a8', // clay
@@ -33,8 +33,7 @@ const earth: Record<number, string> = {
   6: '#d8bfa9', // terracotta
   0: '#cdc3b4', // stone
 };
-export const dayColor = (weekday: number, isToday = false) =>
-  isToday ? today : earth[weekday];
+export const dayColor = (weekday: number) => earth[weekday];
 
 // The notice board: woven texture in the season's colour, every event a
 // paper note held by a tegel pin.
@@ -93,9 +92,10 @@ const Row = styled(Link, {
   borderRadius: '8px',
   boxShadow: 'var(--cocoso-skugga-kort)',
   color: 'inherit',
-  display: 'grid',
+  boxSizing: 'border-box',
+  display: 'flex',
+  flexDirection: 'column',
   gap: '0.15rem',
-  gridTemplateRows: 'auto auto auto',
   height: '100%',
   padding: '0.9rem 0.9rem 0.75rem',
   position: 'relative',
@@ -118,6 +118,19 @@ const Row = styled(Link, {
     transform: 'translateY(-2px)',
     boxShadow: '0 14px 26px -14px rgba(60, 40, 20, 0.5)',
   },
+});
+
+// The event's main picture across the top of its note, under the pin
+const Picture = styled('img', {
+  aspectRatio: '16 / 9',
+  background: 'var(--cocoso-colors-theme-100)',
+  borderRadius: '8px 8px 0 0',
+  display: 'block',
+  margin: '-0.9rem -0.9rem 0.6rem',
+  // past the site's max-width for pictures, out to the note's edges
+  maxWidth: 'none',
+  objectFit: 'cover',
+  width: 'calc(100% + 1.8rem)',
 });
 
 const Time = styled('span', {
@@ -148,7 +161,7 @@ const What = styled('span', {
 });
 
 const Pill = styled('span', {
-  alignSelf: 'start',
+  alignSelf: 'flex-start',
   background: 'var(--cocoso-colors-theme-100)',
   borderRadius: '999px',
   color: 'var(--cocoso-colors-theme-700)',
@@ -192,23 +205,17 @@ const Empty = styled('p', {
   margin: '0.75rem 0 0',
 });
 
-// The week heads with its title and intro on one line to save height.
 const SectionHead = styled('div', {
-  alignItems: 'baseline',
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.25rem 0.75rem',
   margin: '0 0 0.5rem',
 });
 
-const WeekArrows = styled('div', {
+// Back and forward between the days of the agenda
+const DayArrows = styled('div', {
   display: 'flex',
   gap: '4px',
-  marginLeft: 'auto',
-  '@media (max-width: 900px)': { display: 'none' },
 });
 
-const WeekArrow = styled('button', {
+const DayArrow = styled('button', {
   all: 'unset',
   alignItems: 'center',
   background: 'var(--cocoso-papper)',
@@ -218,9 +225,9 @@ const WeekArrow = styled('button', {
   cursor: 'pointer',
   display: 'inline-flex',
   fontSize: '1.1rem',
-  height: '32px',
+  height: '36px',
   justifyContent: 'center',
-  width: '32px',
+  width: '36px',
   '&:hover': { background: 'var(--cocoso-colors-theme-50)' },
   '&:focus-visible': {
     outline: '2px solid var(--cocoso-colors-theme-500)',
@@ -237,29 +244,18 @@ const SectionTitle = styled('h2', {
   margin: 0,
 });
 
-const SectionIntro = styled('p', {
-  color: 'var(--cocoso-mylla-soft)',
-  fontSize: '0.9rem',
-  margin: 0,
-});
-
-// A strip of days you scroll sideways, today first, a week in view on a
-// wide screen and more weeks added as you go. Each day snaps into place.
-const WEEK_GAP = 6;
-
+// The seven weekdays side by side, Monday first; on a narrower screen
+// they wrap onto more rows instead of scrolling sideways.
 const Week = styled('div', {
-  display: 'flex',
-  gap: `${WEEK_GAP}px`,
+  display: 'grid',
+  gap: '6px',
+  gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
   margin: '0 0 1.25rem',
-  overflowX: 'auto',
-  paddingBottom: '0.5rem',
-  scrollSnapType: 'x mandatory',
-  scrollbarWidth: 'none',
-  '&::-webkit-scrollbar': { display: 'none' },
-  '@media (max-width: 900px)': {
-    margin: '0 calc(-1 * var(--cocoso-gutter)) 1.25rem',
-    padding: '0 var(--cocoso-gutter) 0.5rem',
-    scrollPadding: '0 var(--cocoso-gutter)',
+  '@media (max-width: 1100px)': {
+    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+  },
+  '@media (max-width: 700px)': {
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
   },
 });
 
@@ -268,51 +264,17 @@ const Day = styled('div', {
   boxShadow: 'var(--cocoso-skugga-kort)',
   boxSizing: 'border-box',
   color: ink,
-  flex: `0 0 calc((100% - ${6 * WEEK_GAP}px) / 7)`,
   minWidth: 0,
   padding: '0.55rem',
-  scrollSnapAlign: 'start',
-  '@media (max-width: 1100px)': {
-    flex: `0 0 calc((100% - ${4 * WEEK_GAP}px) / 5)`,
-  },
-  '@media (max-width: 900px)': {
-    flex: '0 0 68%',
-  },
-  variants: {
-    today: {
-      true: {
-        outline: '2px solid var(--cocoso-season-accent, var(--cocoso-tegel))',
-        outlineOffset: '-2px',
-      },
-    },
-  },
 });
 
 const DayName = styled('h3', {
   color: ink,
-  display: 'flex',
   fontSize: '0.8rem',
-  justifyContent: 'space-between',
   letterSpacing: '0.06em',
   margin: '0 0 0.35rem',
   textTransform: 'uppercase',
   fontFamily: 'var(--cocoso-font-ui)',
-  '& small': {
-    fontWeight: 500,
-    letterSpacing: 0,
-    marginLeft: '0.4rem',
-    opacity: 0.7,
-    textTransform: 'none',
-  },
-  variants: {
-    today: {
-      true: {
-        '& span:last-child': {
-          color: 'var(--cocoso-season-accent, var(--cocoso-tegel))',
-        },
-      },
-    },
-  },
 });
 
 const Slot = styled(Link, {
@@ -432,20 +394,61 @@ function rowsForDate(activities: Activity[], date: string) {
   );
 }
 
+// The dates from today on with something on them, in order. A long event
+// counts on each of its days; nothing further ahead than the horizon.
+const HORIZON_DAYS = 120;
+
+function eventDates(activities: Activity[], from: string) {
+  const until = dayjs(from).add(HORIZON_DAYS, 'day').format('YYYY-MM-DD');
+  const dates = new Set<string>();
+  activities.forEach((activity) => {
+    activity.datesAndTimes?.forEach((occurrence) => {
+      const end = occurrence.endDate || occurrence.startDate;
+      if (!occurrence.startDate || end < from || occurrence.startDate > until) {
+        return;
+      }
+      const last = end > until ? until : end;
+      let date = occurrence.startDate < from ? from : occurrence.startDate;
+      while (date <= last) {
+        dates.add(date);
+        date = dayjs(date).add(1, 'day').format('YYYY-MM-DD');
+      }
+    });
+  });
+  return [...dates].sort();
+}
+
+const capitalize = (text: string) =>
+  text.charAt(0).toUpperCase() + text.slice(1);
+
+// One day's events as notes on the board, today to begin with. The arrows
+// leaf to the next and the previous day that has something on it: never
+// back past today, and days with nothing are skipped.
 export function DayAgenda({ activities, placeOf }: OverviewProps) {
   const [t, i18n] = useTranslation('common');
   const entryLink = useEntryLink();
   const rendered = useAtomValue(renderedAtom);
-  const [offset, setOffset] = useState(0);
-  const day = dayjs().add(offset, 'day');
-  const date = day.format('YYYY-MM-DD');
+  const todayKey = dayjs().format('YYYY-MM-DD');
+  const [chosen, setChosen] = useState<string | null>(null);
+  const date = chosen && chosen > todayKey ? chosen : todayKey;
+  const day = dayjs(date);
+  const isToday = date === todayKey;
+  const isTomorrow =
+    date === dayjs(todayKey).add(1, 'day').format('YYYY-MM-DD');
   const now = dayjs().format('HH:mm');
+
+  const dates = eventDates(activities, todayKey);
+  const next = dates.find((d) => d > date);
+  // back from a later day: the nearest earlier day with events, or today
+  const previous = isToday
+    ? undefined
+    : dates.filter((d) => d < date).pop() || todayKey;
 
   const rows = rowsForDate(activities, date);
 
   const isOngoing = (o: Occurrence) =>
     rendered &&
-    offset === 0 &&
+    isToday &&
     (o.startTime || '') <= now &&
     (!o.endTime || o.endTime > now);
 
@@ -455,18 +458,36 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
       css={{ backgroundColor: 'var(--cocoso-season-tavla)' }}
     >
       <PanelHead>
-        <PanelTitle id="day-agenda-title">
-          {offset === 0 ? t('recurring.today') : t('recurring.tomorrow')}
-          <small>{day.format('dddd D MMMM')}</small>
+        <PanelTitle id="day-agenda-title" aria-live="polite">
+          {isToday
+            ? t('recurring.today')
+            : isTomorrow
+            ? t('recurring.tomorrow')
+            : capitalize(day.format('dddd'))}
+          <small>
+            {day.format(isToday || isTomorrow ? 'dddd D MMMM' : 'D MMMM')}
+          </small>
         </PanelTitle>
-        <SegmentedToggle
-          choices={[
-            { value: 'today', label: t('recurring.today') },
-            { value: 'tomorrow', label: t('recurring.tomorrow') },
-          ]}
-          value={offset === 0 ? 'today' : 'tomorrow'}
-          onChange={(day) => setOffset(day === 'today' ? 0 : 1)}
-        />
+        <DayArrows>
+          <DayArrow
+            aria-label={t('recurring.earlier')}
+            disabled={!previous}
+            title={t('recurring.earlier')}
+            type="button"
+            onClick={() => previous && setChosen(previous)}
+          >
+            ‹
+          </DayArrow>
+          <DayArrow
+            aria-label={t('recurring.later')}
+            disabled={!next}
+            title={t('recurring.later')}
+            type="button"
+            onClick={() => next && setChosen(next)}
+          >
+            ›
+          </DayArrow>
+        </DayArrows>
       </PanelHead>
 
       {rows.length === 0 ? (
@@ -477,11 +498,13 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
             const multiDay =
               occurrence.endDate && occurrence.endDate !== occurrence.startDate;
             const ongoing = isOngoing(occurrence);
+            const picture = getImageUrl(activity.images?.[0], 'small');
             return (
               <li
                 key={activity._id + occurrence.startDate + occurrence.startTime}
               >
                 <Row to={entryLink(activity, occurrence)}>
+                  {picture && <Picture alt="" loading="lazy" src={picture} />}
                   <Time>
                     {multiDay
                       ? occurrence.startTime
@@ -507,9 +530,7 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
                     <Pill kind="recurring">
                       {describeDays(pattern, t, i18n.language)}
                     </Pill>
-                  ) : (
-                    <span />
-                  )}
+                  ) : null}
                 </Row>
               </li>
             );
@@ -520,53 +541,48 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
   );
 }
 
-// The days from today on: each repeats its weekday's activities, within
-// the span of their pattern and skipping the dates it skips. Seven days
-// to begin with, seven more whenever the end comes into view.
-const INITIAL_DAYS = 14;
-const MORE_DAYS = 7;
+// What happens every week: the seven weekdays, Monday first, each with the
+// recurring activities of that weekday. No dates and no today: it is the
+// rhythm of a week, not a calendar.
+const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
 
 export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
   const [t] = useTranslation('common');
   const entryLink = useEntryLink();
-  const recurring = useMemo(() => withPatterns(activities), [activities]);
-  const weekRef = useRef<HTMLDivElement>(null);
-  const [dayCount, setDayCount] = useState(INITIAL_DAYS);
-  const [atStart, setAtStart] = useState(true);
   const todayKey = dayjs().format('YYYY-MM-DD');
-
-  const days = useMemo(
+  // the patterns that are still running
+  const recurring = useMemo(
     () =>
-      Array.from({ length: dayCount }, (_, i) => dayjs(todayKey).add(i, 'day')),
-    [dayCount, todayKey]
+      withPatterns(activities).filter(
+        ({ pattern }) => pattern.until >= todayKey
+      ),
+    [activities, todayKey]
   );
-
-  useEffect(() => {
-    const week = weekRef.current;
-    if (!week) return undefined;
-    const onScroll = () => {
-      setAtStart(week.scrollLeft < 8);
-      const column = week.firstElementChild as HTMLElement | null;
-      const width = column?.offsetWidth || 160;
-      if (week.scrollLeft + week.clientWidth > week.scrollWidth - width * 3) {
-        setDayCount((count) => count + MORE_DAYS);
-      }
-    };
-    week.addEventListener('scroll', onScroll, { passive: true });
-    return () => week.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const step = (direction: 1 | -1) => {
-    const week = weekRef.current;
-    if (!week) return;
-    const column = week.firstElementChild as HTMLElement | null;
-    const width = (column?.offsetWidth || 160) + WEEK_GAP;
-    week.scrollBy({ left: direction * width * 3, behavior: 'smooth' });
-  };
 
   if (recurring.length === 0) {
     return null;
   }
+
+  // A slot leads to the activity's next time on that weekday, when it has
+  // one then; otherwise to the activity as it is.
+  const linkFor = (
+    activity: Activity,
+    pattern: WeeklyPattern,
+    weekday: number,
+    startTime: string
+  ) => {
+    const today = dayjs(todayKey);
+    const date = today
+      .add((weekday - today.day() + 7) % 7, 'day')
+      .format('YYYY-MM-DD');
+    const happens =
+      pattern.from <= date &&
+      pattern.until >= date &&
+      !pattern.skipped.includes(date);
+    return happens
+      ? entryLink(activity, { startDate: date, startTime })
+      : entryLink(activity);
+  };
 
   return (
     <section aria-labelledby="weekly-title">
@@ -574,68 +590,28 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
         <SectionTitle id="weekly-title">
           {t('recurring.weekTitle')}
         </SectionTitle>
-        <SectionIntro>{t('recurring.weekIntro')}</SectionIntro>
-        <WeekArrows>
-          <WeekArrow
-            aria-label={t('recurring.earlier')}
-            disabled={atStart}
-            type="button"
-            onClick={() => step(-1)}
-          >
-            ‹
-          </WeekArrow>
-          <WeekArrow
-            aria-label={t('recurring.later')}
-            type="button"
-            onClick={() => step(1)}
-          >
-            ›
-          </WeekArrow>
-        </WeekArrows>
       </SectionHead>
-      <Week ref={weekRef}>
-        {days.map((day, offset) => {
-          const date = day.format('YYYY-MM-DD');
-          const weekday = day.day();
+      <Week>
+        {WEEKDAYS.map((weekday) => {
           const slots = recurring
-            .filter(
-              ({ pattern }) =>
-                pattern.from <= date &&
-                pattern.until >= date &&
-                !pattern.skipped.includes(date)
-            )
             .flatMap(({ activity, pattern }) =>
               pattern.slots
                 .filter((slot) => slot.weekday === weekday)
                 .map((slot) => ({ activity, pattern, slot }))
             )
             .sort((a, b) => a.slot.startTime.localeCompare(b.slot.startTime));
-          const isToday = offset === 0;
           return (
-            <Day
-              key={date}
-              css={{ background: dayColor(weekday, isToday) }}
-              today={isToday}
-            >
-              <DayName today={isToday}>
-                <span>
-                  {weekdayName(weekday, 'ddd')}
-                  <small>{day.format('D MMM')}</small>
-                </span>
-                {isToday && <span>{t('recurring.today')}</span>}
-              </DayName>
+            <Day key={weekday} css={{ background: dayColor(weekday) }}>
+              <DayName>{t(`recurring.weekdays.${weekday}`)}</DayName>
               {slots.length === 0 && (
                 <Empty css={{ fontSize: '0.9rem', margin: '0.3rem 0 0' }}>
-                  {t('recurring.nothing')}
+                  {t('recurring.nothingWeekly')}
                 </Empty>
               )}
               {slots.map(({ activity, pattern, slot }) => (
                 <Slot
-                  key={activity._id}
-                  to={entryLink(activity, {
-                    startDate: date,
-                    startTime: slot.startTime,
-                  })}
+                  key={activity._id + slot.startTime}
+                  to={linkFor(activity, pattern, weekday, slot.startTime)}
                 >
                   <b>{timeSpan(slot.startTime, slot.endTime)}</b>
                   <strong

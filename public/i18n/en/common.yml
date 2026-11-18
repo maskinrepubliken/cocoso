@@ -431,10 +431,18 @@ recurring:
   tomorrow: "Tomorrow"
   now: "On now"
   nothing: "Nothing planned for this day."
-  earlier: "Earlier days"
-  later: "More days"
-  weekTitle: "Every week"
-  weekIntro: "Recurring activities, shown once on their weekday"
+  earlier: "Previous day"
+  later: "Next day with events"
+  weekTitle: "Happens every week"
+  nothingWeekly: "Nothing recurring."
+  weekdays:
+    "0": "Sundays"
+    "1": "Mondays"
+    "2": "Tuesdays"
+    "3": "Wednesdays"
+    "4": "Thursdays"
+    "5": "Fridays"
+    "6": "Saturdays"
   next: "Next {{date}}"
 
 # The event page (the strings are in common because SSR only loads common)

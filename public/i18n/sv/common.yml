@@ -428,10 +428,18 @@ recurring:
   tomorrow: "Imorgon"
   now: "Pågår nu"
   nothing: "Inget på tavlan den här dagen."
-  earlier: "Tidigare dagar"
-  later: "Fler dagar"
-  weekTitle: "Varje vecka"
-  weekIntro: "Återkommande aktiviteter, visade en gång per veckodag"
+  earlier: "Föregående dag"
+  later: "Nästa dag med evenemang"
+  weekTitle: "Sker varje vecka"
+  nothingWeekly: "Inget återkommande."
+  weekdays:
+    "0": "söndagar"
+    "1": "måndagar"
+    "2": "tisdagar"
+    "3": "onsdagar"
+    "4": "torsdagar"
+    "5": "fredagar"
+    "6": "lördagar"
   next: "Nästa {{date}}"
 
 # The event page (the strings are in common because SSR only loads common)
