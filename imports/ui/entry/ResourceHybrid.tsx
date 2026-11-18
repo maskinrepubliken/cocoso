@@ -307,19 +307,6 @@ const Layout = styled('div', {
     gridTemplateColumns: 'minmax(0, 1fr) 360px',
     gridTemplateRows: 'auto 1fr',
   },
-  variants: {
-    // On an organizer's page: one column as wide as theirs, the side
-    // cards under the place's own
-    embedded: {
-      true: {
-        [SIDEBAR]: {
-          gridTemplateAreas: '"card" "side" "rest"',
-          gridTemplateColumns: 'minmax(0, 1fr)',
-          gridTemplateRows: 'auto',
-        },
-      },
-    },
-  },
 });
 
 const CardArea = styled('div', { gridArea: 'card', minWidth: 0 });
@@ -391,7 +378,7 @@ export default function ResourceHybrid({
   // The place's own cards: on its page, or (embedded) at the end of the
   // page of an organizer linked to it, with "Läs mer" to its page
   const body = (
-    <Layout embedded={embedded}>
+    <Layout>
       <CardArea>
         <EntryHero
           chips={
