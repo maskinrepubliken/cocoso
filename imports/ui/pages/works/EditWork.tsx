@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router';
 import { useAtom } from 'jotai';
 
 import SuccessRedirector from '/imports/ui/forms/SuccessRedirector';
@@ -13,16 +12,14 @@ export default function EditWork() {
   const saveFailed = useSaveFailed();
   const [updated, setUpdated] = useState<string | null>(null);
   const [work, setWork] = useAtom(workAtom);
-  const { usernameSlug } = useParams<{ usernameSlug: string }>();
-
-  const username = usernameSlug?.replace('@', '') || '';
 
   const updateWork = async (newWork: any) => {
     if (!work) return false;
     const workId = work._id;
     try {
       await call('updateWork', workId, newWork);
-      setWork(await call('getWorkById', workId, username));
+      // Read back under its author, whoever edited it
+      setWork(await call('getWorkById', workId, (work as any).authorUsername));
       setUpdated(workId);
       setTimeout(() => {
         setUpdated(null);
