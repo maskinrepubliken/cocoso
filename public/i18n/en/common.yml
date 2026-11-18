@@ -925,11 +925,6 @@ offerings:
     saved: The offerings are saved
 
 businesses:
-  all: All
-  kinds:
-    eat: Eat
-    shop: Shop
-    stay: Stay
   hours: Opening hours
   today: Today
   closed: Closed
@@ -940,13 +935,8 @@ businesses:
   until: 'until {{ time }}'
   closedNow: Closed now
   opensAt: 'opens {{ day }} {{ time }}'
-  menu:
-    eat: Menu
-    shop: Range
-    stay: Rooms and prices
   empty: Nothing here yet.
   emptyIn: 'Nothing in {{ name }} yet. Pick another place above.'
-  around: Around the municipality
   count_one: '{{ count }} place'
   count_other: '{{ count }} places'
 

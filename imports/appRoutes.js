@@ -25,7 +25,6 @@ import ActivityItemHandler from '/imports/ui/pages/activities/ActivityItemHandle
 import GroupItemHandler from '/imports/ui/pages/groups/GroupItemHandler';
 import ResourceItemHandler from '/imports/ui/pages/resources/ResourceItemHandler';
 import BusinessListHandler from '/imports/ui/pages/businesses/BusinessListHandler';
-import BusinessItemHandler from '/imports/ui/pages/businesses/BusinessItemHandler';
 import WorkItemHandler from '/imports/ui/pages/works/WorkItemHandler';
 import PageItemHandler from '/imports/ui/pages/pages/PageItemHandler';
 import SlugHandler, {
@@ -196,7 +195,7 @@ import {
   getResources,
   getResource,
   getBusinesses,
-  getBusiness,
+  getPlaceOfLegacyBusiness,
   getUser,
   getWorks,
   getWork,
@@ -644,10 +643,21 @@ export default function appRoutes(props) {
             shouldRevalidate: revalidateOn(),
           },
           {
+            // An old link to an item: to the place it became
             path: ':businessId',
-            element: el(BusinessItemHandler),
-            loader: ld(({ params }) => getBusiness({ params })),
-            shouldRevalidate: revalidateOn(),
+            loader: ld(async ({ params, request }) => {
+              const resourceId = await getPlaceOfLegacyBusiness({ params });
+              const url = new URL(request.url);
+              const base = url.pathname.slice(
+                0,
+                url.pathname.indexOf('/businesses/')
+              );
+              return redirect(
+                resourceId
+                  ? `${base}/resources/${resourceId}`
+                  : `${base}/businesses`
+              );
+            }),
           },
         ],
       },

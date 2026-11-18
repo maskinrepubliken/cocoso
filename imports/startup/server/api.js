@@ -45,8 +45,6 @@ import '../../api/resources/resource.methods';
 import '../../api/offerings/offering';
 import '../../api/offerings/offering.methods';
 
-import '../../api/businesses/business';
-import '../../api/businesses/business.methods';
 
 import '../../api/locations/location';
 import '../../api/locations/location.methods';

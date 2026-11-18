@@ -922,11 +922,6 @@ offerings:
     saved: Erbjudandena är sparade
 
 businesses:
-  all: Alla
-  kinds:
-    eat: Äta
-    shop: Handla
-    stay: Bo
   hours: Öppettider
   today: Idag
   closed: Stängt
@@ -937,13 +932,8 @@ businesses:
   until: 'till {{ time }}'
   closedNow: Stängt nu
   opensAt: 'öppnar {{ day }} {{ time }}'
-  menu:
-    eat: Meny
-    shop: Sortiment
-    stay: Rum och priser
   empty: Inget här än.
   emptyIn: 'Inget i {{ name }} än. Välj en annan ort ovan.'
-  around: Runt om i kommunen
   count_one: '{{ count }} ställe'
   count_other: '{{ count }} ställen'
 

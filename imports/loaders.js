@@ -143,14 +143,13 @@ export async function getBusinesses({ locationId } = {}) {
   };
 }
 
-export async function getBusiness({ params }) {
+// The place an old Äta/handla/bo item became, or null
+export async function getPlaceOfLegacyBusiness({ params }) {
   if (!params) {
     return null;
   }
 
-  const business = await call('getBusinessById', params.businessId);
-
-  return { business };
+  return await call('getPlaceOfLegacyBusiness', params.businessId);
 }
 
 export async function getUser({ params }) {
