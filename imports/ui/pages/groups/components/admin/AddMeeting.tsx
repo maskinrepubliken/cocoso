@@ -2,229 +2,154 @@ import React, { useEffect, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import PencilIcon from 'lucide-react/dist/esm/icons/pencil-line';
 
-import { siteAtom } from '/imports/state';
-import {
-  Box,
-  Button,
-  Checkbox,
-  Flex,
-  FormControl,
-  Modal,
-  Select,
-  Textarea,
-} from '/imports/ui/core';
+import { Input, Modal } from '/imports/ui/core';
 import DateTimePicker from '/imports/ui/forms/DateTimePicker';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
+import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
+import FormCard from '/imports/ui/pages/activities/form/FormCard';
+import PlacePicker, {
+  type PlaceOption,
+} from '/imports/ui/pages/activities/form/PlacePicker';
+import activityErrorText from '/imports/ui/pages/activities/form/activityError';
 
-import { groupAtom } from '../../GroupItemHandler';
+import { groupAtom } from '../../groupAtom';
 
-const today = dayjs();
+type WhereMode = 'place' | 'text';
 
-const emptyDateAndTime = {
-  endDate: today,
-  endTime: '23:59',
-  resource: null,
-  resourceId: null,
-  startDate: today,
-  startTime: '00:00',
-};
+const today = dayjs().format('YYYY-MM-DD');
 
-function AddMeetingForm({
-  buttonDisabled,
-  hostname,
-  newMeeting,
-  resources,
-  handleDateChange,
-  handleResourceChange,
-  handleSubmit,
-}) {
-  const [isLocal, setIsLocal] = useState(true);
-  const [t] = useTranslation('groups');
-
-  return (
-    <>
-      <Box bg="theme.50" borderRadius="lg" p="4">
-        <DateTimePicker value={newMeeting} onChange={handleDateChange} />
-
-        <FormControl alignItems="center" display="flex" my="4">
-          <Checkbox
-            id="is-local-switch"
-            checked={isLocal}
-            onChange={({ target: { checked } }) => setIsLocal(checked)}
-          >
-            {t('meeting.form.switch', { place: hostname })}
-          </Checkbox>
-        </FormControl>
-
-        {isLocal ? (
-          <Select
-            name="resource"
-            placeholder={t('meeting.form.resource')}
-            onChange={({ target: { value } }) => handleResourceChange(value)}
-          >
-            {resources.map((r) => (
-              <option key={r._id}>{r.label}</option>
-            ))}
-          </Select>
-        ) : (
-          <Textarea
-            placeholder={t('meeting.form.location')}
-            size="sm"
-            onChange={(event) => handleResourceChange(event.target.value)}
-          />
-        )}
-      </Box>
-
-      <Flex justify="flex-end" pt="4">
-        <Button isDisabled={buttonDisabled} onClick={handleSubmit}>
-          {t('meeting.form.submit')}
-        </Button>
-      </Flex>
-    </>
-  );
-}
-
-export default function AddMeeting({ onClose }) {
-  const site = useAtomValue(siteAtom);
-  const [state, setState] = useState({
-    activities: [],
-    isFormValid: false,
-    isSubmitted: false,
-    newMeeting: emptyDateAndTime,
-    resources: [],
-  });
-  const [group, setGroup] = useAtom(groupAtom);
+// A group's new meeting: when, and where, as cards like those of the event
+// form. Where is one of the site's places, picked as in the event form, or
+// written out.
+export default function AddMeeting({ onClose }: { onClose: () => void }) {
   const [t] = useTranslation('groups');
   const [tc] = useTranslation('common');
   const revalidator = useRevalidator();
-
-  const { isFormValid, newMeeting, resources } = state;
-
-  const getData = async () => {
-    try {
-      const activitiesReceived = await call('getAllActivities');
-      const resourcesReceived = await call('getResources');
-      setState({
-        ...state,
-        activities: activitiesReceived,
-        resources: resourcesReceived,
-      });
-    } catch (error: any) {
-      message.error(error?.reason || error?.error);
-    }
-  };
+  const [group, setGroup] = useAtom(groupAtom) as [any, (g: any) => void];
+  const [places, setPlaces] = useState<PlaceOption[]>([]);
+  const [when, setWhen] = useState<any>({
+    startDate: today,
+    endDate: today,
+    startTime: '18:00',
+    endTime: '20:00',
+  });
+  const [mode, setMode] = useState<WhereMode>('place');
+  const [placeId, setPlaceId] = useState<string | null>(null);
+  const [placeText, setPlaceText] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    getData();
+    call('getResourcesDry')
+      .then((found) => setPlaces((found as PlaceOption[]) || []))
+      .catch((error: any) => message.error(error?.reason || error?.error));
   }, []);
 
-  // A meeting needs a time and a place, one of the places or a written one
-  useEffect(() => {
-    const { resourceId, resource, startDate, startTime, endTime } = newMeeting;
-    setState((prevState) => ({
-      ...prevState,
-      isFormValid: Boolean(
-        (resourceId || resource) && startDate && startTime && endTime
-      ),
-    }));
-  }, [newMeeting]);
+  const place = places.find((p) => p._id === placeId);
+  const where =
+    mode === 'place'
+      ? { resource: place?.label, resourceId: place?._id }
+      : { resource: placeText.trim() || undefined, resourceId: null };
+  const isValid = Boolean(
+    where.resource && when.startDate && when.startTime && when.endTime
+  );
 
-  const handleDateAndTimeChange = (selectedDates) => {
-    setState((prevState) => ({
-      ...prevState,
-      newMeeting: {
-        ...prevState.newMeeting,
-        startDate: selectedDates.startDate,
-        endDate: selectedDates.endDate,
-        startTime: selectedDates.startTime,
-        endTime: selectedDates.endTime,
-      },
-    }));
-  };
-
-  const handleResourceChange = (resourceLabel) => {
-    const selectedResource = resources.find((r) => r?.label === resourceLabel);
-
-    setState((prevState) => ({
-      ...prevState,
-      newMeeting: {
-        ...prevState.newMeeting,
-        resource: resourceLabel,
-        resourceId: selectedResource ? selectedResource._id : null,
-      },
-    }));
-  };
-
-  const createActivity = async () => {
-    if (!isFormValid) {
+  const createMeeting = async () => {
+    if (!isValid || !group) {
       return;
     }
-
-    setState((prevState) => ({
-      ...prevState,
-      isSubmitted: true,
-    }));
-
-    const activityValues = {
-      title: group.title,
-      subTitle: group.readingMaterial,
-      longDescription: group.description,
-      images: [group.imageUrl],
-      resource: newMeeting.resource,
-      resourceId: newMeeting.resourceId,
-      datesAndTimes: [
-        {
-          startDate: newMeeting.startDate,
-          endDate: newMeeting.startDate,
-          startTime: newMeeting.startTime,
-          endTime: newMeeting.endTime,
-          attendees: [],
-          capacity: group.capacity,
-        },
-      ],
-      isPublicActivity: false,
-      isRegistrationDisabled: false,
-      isGroupMeeting: true,
-      isGroupPrivate: group.isPrivate,
-      groupId: group._id,
-    };
-
+    setSaving(true);
     try {
-      await call('createActivity', activityValues);
-      const groupId = group?._id;
-      setGroup(await call('getGroupWithMeetings', groupId));
+      await call('createActivity', {
+        title: group.title,
+        subTitle: group.readingMaterial,
+        longDescription: group.description,
+        images: [group.imageUrl],
+        ...where,
+        datesAndTimes: [
+          {
+            startDate: when.startDate,
+            endDate: when.startDate,
+            startTime: when.startTime,
+            endTime: when.endTime,
+            attendees: [],
+            capacity: group.capacity,
+          },
+        ],
+        isPublicActivity: false,
+        isRegistrationDisabled: false,
+        isGroupMeeting: true,
+        isGroupPrivate: group.isPrivate,
+        groupId: group._id,
+      });
+      setGroup(await call('getGroupWithMeetings', group._id));
       revalidator.revalidate();
-      setState((prevState) => ({
-        ...prevState,
-        isSubmitted: false,
-      }));
-      onClose();
       message.success(tc('message.success.create'));
-    } catch (error) {
-      message.error(error.reason || error.error);
+      onClose();
+    } catch (error: any) {
+      message.error(activityErrorText(error));
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
     <Modal
-      hideFooter
+      cancelText={tc('actions.cancel')}
+      confirmButtonProps={{ disabled: !isValid || saving, loading: saving }}
+      confirmText={t('meeting.form.submit')}
       id="group-add-meeting"
       open
       title={t('meeting.form.label')}
+      onCancel={onClose}
       onClose={onClose}
+      onConfirm={createMeeting}
     >
-      <AddMeetingForm
-        buttonDisabled={!isFormValid}
-        hostname={site?.settings?.name}
-        newMeeting={newMeeting}
-        resources={resources}
-        handleDateChange={handleDateAndTimeChange}
-        handleResourceChange={handleResourceChange}
-        handleSubmit={createActivity}
-      />
+      <div className="entry-form-side">
+        <FormCard title={t('meeting.form.when')}>
+          <DateTimePicker value={when} onChange={setWhen} />
+        </FormCard>
+
+        <FormCard title={t('meeting.form.where')}>
+          <ChoiceChips
+            label={t('meeting.form.where')}
+            value={mode}
+            choices={[
+              {
+                value: 'place',
+                label: t('meeting.form.modePlace'),
+                icon: <MapPinIcon aria-hidden />,
+                content: (
+                  <PlacePicker
+                    places={places}
+                    selectedId={placeId}
+                    onPick={(picked) => setPlaceId(picked._id)}
+                  />
+                ),
+              },
+              {
+                value: 'text',
+                label: t('meeting.form.modeText'),
+                icon: <PencilIcon aria-hidden />,
+                description: t('meeting.form.textHelper'),
+                content: (
+                  <Input
+                    aria-label={t('meeting.form.where')}
+                    placeholder={t('meeting.form.textHolder')}
+                    value={placeText}
+                    onChange={(event) => setPlaceText(event.target.value)}
+                  />
+                ),
+              },
+            ]}
+            onChange={setMode}
+          />
+        </FormCard>
+      </div>
     </Modal>
   );
 }

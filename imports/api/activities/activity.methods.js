@@ -543,7 +543,10 @@ Meteor.methods({
     const author = await chooseAuthor(user, values.authorId);
     delete values.authorId;
     delete values.authorName;
-    await requireOrganizerContact([author.authorId]);
+    // A group's meeting is reached through the group's own contact details
+    if (!values.isGroupMeeting) {
+      await requireOrganizerContact([author.authorId]);
+    }
 
     const images = values.images;
 

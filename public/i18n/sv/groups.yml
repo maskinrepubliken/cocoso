@@ -87,7 +87,13 @@ meeting:
     member: Klicka och öppna datumet för att OSA
     admin: Öppna datumen för att se deltagarna
   form:
-    label: Lägg till ett möte
+    label: Lägg till en träff
+    when: När
+    where: Var
+    modePlace: En plats
+    modeText: Skriv själv
+    textHolder: t.ex. Församlingshemmet, Storgatan 4
+    textHelper: Skriv var ni ses, så att medlemmarna hittar dit.
     date: Välj dag
     time:
       start: Starttid
@@ -95,7 +101,7 @@ meeting:
     switch: På {{ place }}?
     resource: Välj lokal eller resurs
     location: Plats
-    submit: Lägg till möte
+    submit: Lägg till träffen
   errors:
     noresource: Välj en resurs eller ange en plats för mötet (minst 4 tecken)
 

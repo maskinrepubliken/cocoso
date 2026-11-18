@@ -87,7 +87,13 @@ meeting:
     member: Click and open the date to RSVP
     admin: Open the dates to see the attendees
   form:
-    label: Add a Meeting
+    label: Add a meeting
+    when: When
+    where: Where
+    modePlace: A place
+    modeText: Write it
+    textHolder: e.g. The parish hall, Main Street 4
+    textHelper: Write where you meet, so the members find it.
     date: Select Day
     time:
       start: Start time
@@ -95,7 +101,7 @@ meeting:
     switch: At {{ place }}?
     resource: Select resource
     location: Location
-    submit: Add Meeting
+    submit: Add the meeting
   errors:
     noresource: Please select a resource or enter a location for the meeting (minimum 3 characters)
 
