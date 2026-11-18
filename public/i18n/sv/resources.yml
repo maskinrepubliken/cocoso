@@ -10,6 +10,7 @@ messages:
 form:
   managers:
     label: Förvaltare
+    mustInclude: "Du behöver själv vara förvaltare av platsen du lägger upp."
     helper: "Arrangörerna som tar hand om platsen och kan ändra den. Administratörer kan alltid ändra."
     add: Lägg till förvaltare
     search: Sök efter en arrangör

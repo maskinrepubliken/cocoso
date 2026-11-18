@@ -355,11 +355,18 @@ Meteor.methods({
     const contact = cleanContact(values.contact);
     const kinds = cleanResourceKinds(values.kinds);
     const booking = await cleanBooking(values.booking);
-    // An organizer who adds a place looks after it (unless they hand it to
-    // others right away); admins need not be named
+    // An organizer who adds a place must look after it, so no one adds
+    // places nobody answers for; admins need not be named
+    const userIsAdmin = await isAdmin(user._id);
     const managerIds = await cleanManagers(
-      values.managerIds || ((await isAdmin(user._id)) ? [] : [user._id])
+      values.managerIds || (userIsAdmin ? [] : [user._id])
     );
+    if (!userIsAdmin && !managerIds.includes(user._id)) {
+      throw new Meteor.Error(
+        'must-manage',
+        'An organizer adding a place must be one of its managers'
+      );
+    }
     const {
       contact: _contact,
       category: _category,

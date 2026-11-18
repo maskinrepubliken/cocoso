@@ -10,6 +10,7 @@ messages:
 form:
   managers:
     label: Managers
+    mustInclude: "You need to be a manager of the place you add yourself."
     helper: "The organizers who look after the place and may change it. Admins can always change it."
     add: Add a manager
     search: Search for an organizer

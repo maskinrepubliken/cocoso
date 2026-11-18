@@ -275,6 +275,16 @@ function PlaceForm({
   }, [loaders?.isCreating]);
 
   const handleSubmit = (formValues: ResourceFormValues) => {
+    // An organizer adding a place looks after it (the server insists too)
+    if (
+      !resource &&
+      role !== 'admin' &&
+      currentUser &&
+      !state.managerIds?.includes(currentUser._id)
+    ) {
+      message.formError(t('form.managers.mustInclude'));
+      return;
+    }
     // A place is where something happens: no saving it without an address,
     // or the place it is part of (and so at its address).
     const isPart = state.placement === 'parent';
