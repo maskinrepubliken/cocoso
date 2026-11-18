@@ -7,6 +7,8 @@ import { withCoordinates } from '../_utils/geocode';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
+import canManagePlace from './resource.access';
+import Offerings from '../offerings/offering';
 import Memberships from '../memberships/membership';
 import { attachBookingPerson, cleanBooking } from './resource.booking';
 import { attachPlaceContact, cleanPlaceContact } from './resource.contact';
@@ -78,28 +80,6 @@ async function findParent(parentId, resourceId) {
   return parent;
 }
 
-// Who may change a place: admins, its managers, and the managers of the
-// place it is part of (the library's look after its rooms).
-async function canManagePlace(userId, resource) {
-  if (await isAdmin(userId)) {
-    return true;
-  }
-  if (!(await isContributorOrAdmin(userId))) {
-    return false;
-  }
-  if ((resource.managerIds || []).includes(userId)) {
-    return true;
-  }
-  if (!resource.parentId) {
-    return false;
-  }
-  const parent = await Resources.findOneAsync(
-    { _id: resource.parentId },
-    { fields: { managerIds: 1 } }
-  );
-  return Boolean(parent?.managerIds?.includes(userId));
-}
-
 // The managers as given: organizers or admins, each once.
 async function cleanManagers(managerIds) {
   check(managerIds, Match.Maybe([String]));
@@ -141,10 +121,19 @@ Meteor.methods({
   async getResources(locationId) {
     check(locationId, Match.Maybe(String));
     const fields = Resources.publicFields;
-    return await Resources.find(locationSelector(locationId), {
-      fields,
-      sort: { createdAt: -1 },
-    }).fetchAsync();
+    const [places, commercialIds] = await Promise.all([
+      Resources.find(locationSelector(locationId), {
+        fields,
+        sort: { createdAt: -1 },
+      }).fetchAsync(),
+      Offerings.rawCollection().distinct('resourceId'),
+    ]);
+    // A place that offers something is listed under Äta, handla & bo
+    // instead of Platser (see the loaders)
+    const commercial = new Set(commercialIds);
+    return places.map((place) =>
+      commercial.has(place._id) ? { ...place, isCommercial: true } : place
+    );
   },
 
   async getResourcesDry() {
@@ -203,7 +192,12 @@ Meteor.methods({
         { fields: card, sort: { label: 1 } }
       ).fetchAsync(),
     ]);
-    return { ...resource, partOf: partOf || null, parts };
+    // What it offers, shown on its page
+    const offerings = await Offerings.find(
+      { resourceId: resource._id },
+      { fields: Offerings.publicFields }
+    ).fetchAsync();
+    return { ...resource, partOf: partOf || null, parts, offerings };
   },
 
   // The organizers linked to a place, for "Se även" on its page: those who

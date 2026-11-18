@@ -20,7 +20,7 @@ Resources.schema = new SimpleSchema({
   isUnlisted: { type: Boolean, optional: true },
   // The organizers who look after the place and may change it, besides the
   // admins (and the managers of the place it is part of); see
-  // canManagePlace in resource.methods.js. userId is who added it.
+  // canManagePlace in resource.access.js. userId is who added it.
   managerIds: { type: Array, optional: true, defaultValue: [] },
   'managerIds.$': { type: String },
 

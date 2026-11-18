@@ -101,9 +101,12 @@ export async function getResources({ locationId } = {}) {
   const resources = await call('getResources', locationId || undefined);
 
   return {
-    // Parts of other places can be left out of the list (isUnlisted)
+    // Parts of other places can be left out of the list (isUnlisted);
+    // places that offer something are under Äta, handla & bo instead
     resources: localFirst(
-      resources.filter((resource) => !resource.isUnlisted),
+      resources.filter(
+        (resource) => !resource.isUnlisted && !resource.isCommercial
+      ),
       locationId
     ),
   };
@@ -205,7 +208,7 @@ export async function getLocationLanding({ location }) {
   return {
     activities: own(activities).slice(0, 6),
     resources: own(resources)
-      .filter((resource) => !resource.isUnlisted)
+      .filter((resource) => !resource.isUnlisted && !resource.isCommercial)
       .slice(0, 8),
     groups: own(groups).slice(0, 6),
     composablePage,

@@ -5,7 +5,7 @@ interface ManagedPlace {
 }
 
 // Whether this organizer looks after the place, or the place it is part of:
-// the browser's side of canManagePlace in resource.methods.js, to show the
+// the browser's side of canManagePlace in resource.access.js, to show the
 // pens. Admins may change every place besides.
 export const managesPlace = (
   userId: string | null | undefined,

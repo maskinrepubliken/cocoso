@@ -42,6 +42,9 @@ import '../../api/documents/document.methods';
 import '../../api/resources/resource';
 import '../../api/resources/resource.methods';
 
+import '../../api/offerings/offering';
+import '../../api/offerings/offering.methods';
+
 import '../../api/businesses/business';
 import '../../api/businesses/business.methods';
 
