@@ -807,6 +807,11 @@ entry:
   booking: Går att boka
   bookingLink: Boka här
 
+# 3D-kartan över kommunen med dess orter (KommunMap)
+kommunMap:
+  open: Visa kartan över kommunen
+  label: Karta över kommunen och dess orter
+
 lightbox:
   label: Bilder
   open: Visa bilden större

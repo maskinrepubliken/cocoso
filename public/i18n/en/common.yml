@@ -810,6 +810,11 @@ entry:
   booking: Can be booked
   bookingLink: Book here
 
+# The 3D map of the municipality with its towns (KommunMap)
+kommunMap:
+  open: Show the map of the municipality
+  label: Map of the municipality and its towns
+
 lightbox:
   label: Pictures
   open: Show the picture larger
