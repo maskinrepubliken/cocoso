@@ -19,8 +19,11 @@ import type { Site } from '/imports/ui/types';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import EventCards from './EventCards';
-import PlaceSummary, { type SummaryPlace } from './PlaceSummary';
-import { PartCards, PlaceCard } from './ResourceHybrid';
+import ResourceHybrid, {
+  PartCards,
+  PlaceCard,
+  type ResourceHybridProps,
+} from './ResourceHybrid';
 
 import EntryHero, {
   Actions,
@@ -241,7 +244,7 @@ interface User {
 // The places an organizer is linked to (getPlacesOfOrganizer): one shown
 // whole, the rest as small cards
 interface OrganizerPlaces {
-  main: SummaryPlace | null;
+  main: ResourceHybridProps['resource'] | null;
   others: { _id: string; label: string; images?: string[] }[];
 }
 
@@ -372,8 +375,11 @@ export default function UserHybrid({
         </Center>
       ) : (
         <>
-          {/* The place they are at, much as its own page shows it */}
-          {places?.main && <PlaceSummary place={places.main} />}
+          <OrganizerEvents events={events} name={name} />
+          {/* Last, the place they are at: its own page's cards */}
+          {places?.main && (
+            <ResourceHybrid embedded resource={places.main} siteDoc={siteDoc} />
+          )}
           {places?.others?.length ? (
             <EntryColumn>
               <PartCards>
@@ -387,7 +393,6 @@ export default function UserHybrid({
               </PartCards>
             </EntryColumn>
           ) : null}
-          <OrganizerEvents events={events} name={name} />
         </>
       )}
     </EntryPage>

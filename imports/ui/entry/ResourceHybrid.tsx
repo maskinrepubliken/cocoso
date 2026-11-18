@@ -93,7 +93,20 @@ export interface ResourceHybridProps {
   organizers?: Person[];
   // What is coming up here and in the places in it
   upcoming?: any[];
+  // Shown on another page (an organizer's): the cards only, without "Se
+  // även" and events, and with "Läs mer" to the place's page
+  embedded?: boolean;
 }
+
+// On an organizer's page: on to the place's own page
+const ReadMore = styled(Link, {
+  color: 'var(--cocoso-colors-theme-800)',
+  display: 'inline-block',
+  fontWeight: 700,
+  marginTop: '1rem',
+  textDecorationThickness: '1.5px',
+  textUnderlineOffset: '3px',
+});
 
 // "Se även": the organizers linked to the place, each a link to their page
 const SeeAlso = styled('ul', {
@@ -294,6 +307,19 @@ const Layout = styled('div', {
     gridTemplateColumns: 'minmax(0, 1fr) 360px',
     gridTemplateRows: 'auto 1fr',
   },
+  variants: {
+    // On an organizer's page: one column as wide as theirs, the side
+    // cards under the place's own
+    embedded: {
+      true: {
+        [SIDEBAR]: {
+          gridTemplateAreas: '"card" "side" "rest"',
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gridTemplateRows: 'auto',
+        },
+      },
+    },
+  },
 });
 
 const CardArea = styled('div', { gridArea: 'card', minWidth: 0 });
@@ -332,6 +358,7 @@ export default function ResourceHybrid({
   siteDoc,
   organizers = [],
   upcoming = [],
+  embedded = false,
 }: ResourceHybridProps) {
   const [tc] = useTranslation('common');
   const prefix = useLocationPrefix();
@@ -361,6 +388,212 @@ export default function ResourceHybrid({
   // Places made up of others are for booking in the calendar too
   const isCombo = isFeatureEnabled('bookings') && resource.isCombo;
 
+  // The place's own cards: on its page, or (embedded) at the end of the
+  // page of an organizer linked to it, with "Läs mer" to its page
+  const body = (
+    <Layout embedded={embedded}>
+      <CardArea>
+        <EntryHero
+          chips={
+            <>
+              <LocationTag locationId={resource.locationId} />
+              {isCombo && (
+                <Chip>
+                  <LayersIcon aria-hidden />
+                  {tc('entry.combo')}
+                </Chip>
+              )}
+              <BookableChip place={resource} />
+            </>
+          }
+          html={resource.description}
+          meta={
+            resource.capacity ? (
+              <span>
+                <UsersIcon aria-hidden />
+                {tc('entry.capacity', { count: resource.capacity })}
+              </span>
+            ) : null
+          }
+          picture={
+            partOf && !images.length ? (
+              <NoPicture data-filled="" />
+            ) : (
+              <FilledPicture
+                alt={resource.label}
+                seed={resource._id}
+                src={images[0]}
+              />
+            )
+          }
+          title={resource.label}
+        >
+          {embedded && (
+            <ReadMore to={`${prefix}/resources/${resource._id}`}>
+              {tc('entry.readMore')}
+            </ReadMore>
+          )}
+        </EntryHero>
+      </CardArea>
+
+      {withAddress ||
+      partOf ||
+      withContact ||
+      resource.booking ||
+      organizers.length ? (
+        <Sidebar>
+          {/* A part: the place it is in stands for the address, in
+                one card with who to ask */}
+          {partOf && (
+            <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
+              <ParentLink to={`${prefix}/resources/${partOf._id}`}>
+                <ParentPicture>
+                  {partOf.images?.[0] ? (
+                    <img
+                      alt=""
+                      src={getImageUrl(partOf.images[0], 'medium') || ''}
+                    />
+                  ) : (
+                    <PlaceholderImage seed={partOf._id} />
+                  )}
+                </ParentPicture>
+                <SideTitle as="p">{tc('entry.partOf')}</SideTitle>
+                <h3>{partOf.label}</h3>
+              </ParentLink>
+              {/* Its address is this place's too */}
+              <div style={{ marginTop: '0.75rem' }}>
+                <AddressDetails address={partOf.address} />
+              </div>
+              {withContact && (
+                <>
+                  <SideTitle css={{ margin: '1.5rem 0 1rem' }}>
+                    {tc('contact.title')}
+                  </SideTitle>
+                  <ContactDetails contact={resource.contact} />
+                </>
+              )}
+            </Panel>
+          )}
+          {withAddress && (
+            <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
+              <AddressBlock
+                address={resource.address}
+                contact={resource.contact}
+                edge="top"
+                heading={
+                  <SideTitle>
+                    {tc(
+                      withContact ? 'address.titleWithContact' : 'address.title'
+                    )}
+                  </SideTitle>
+                }
+                label={resource.label}
+              />
+            </Panel>
+          )}
+          {/* How to book it, under where it is */}
+          {resource.booking && (
+            <Panel>
+              <SideTitle>{tc('entry.booking')}</SideTitle>
+              <BookingInfo booking={resource.booking} label={resource.label} />
+            </Panel>
+          )}
+          {/* The organizers linked to it: just "Se även" */}
+          {organizers.length > 0 && (
+            <Panel css={{ marginTop: resource.booking ? '1.25rem' : 0 }}>
+              <SideTitle>{tc('entry.seeAlso')}</SideTitle>
+              <SeeAlso>
+                {organizers.map((person) => (
+                  <li key={person._id}>
+                    <Link to={`/@${person.username}`}>
+                      <PersonAvatar person={person} size={40} />
+                      <span>{personName(person)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </SeeAlso>
+            </Panel>
+          )}
+        </Sidebar>
+      ) : null}
+
+      <RestArea>
+        {isCombo && resource.resourcesForCombo?.length ? (
+          <EntryColumn>
+            <SectionHead>
+              <h2>{tc('entry.comboParts')}</h2>
+            </SectionHead>
+            <Parts>
+              {resource.resourcesForCombo.map((part) => (
+                <Link key={part._id} to={`${prefix}/resources/${part._id}`}>
+                  {part.label}
+                </Link>
+              ))}
+            </Parts>
+          </EntryColumn>
+        ) : null}
+
+        {upcoming.length > 0 && <PlaceEvents events={upcoming} />}
+
+        {/* The places in it, listed or not, a card each */}
+        {parts.length > 0 && (
+          <EntryColumn>
+            <SectionHead>
+              <h2>{tc('entry.parts')}</h2>
+            </SectionHead>
+            <PartCards>
+              {parts.map((part) => (
+                <PlaceCard
+                  key={part._id}
+                  place={part}
+                  to={
+                    // Not in the list: it opens over this page
+                    part.isUnlisted
+                      ? { search: `?part=${part._id}` }
+                      : `${prefix}/resources/${part._id}`
+                  }
+                />
+              ))}
+            </PartCards>
+          </EntryColumn>
+        )}
+
+        {images.length > 1 && (
+          <EntryColumn>
+            <SectionHead>
+              <h2>{tc('entry.pictures')}</h2>
+            </SectionHead>
+            <MorePictures alt={resource.label} images={images} />
+          </EntryColumn>
+        )}
+
+        {documents && documents[0] && (
+          <EntryColumn>
+            <SectionHead>
+              <h2>
+                <Trans i18nKey="common:documents.label">Documents</Trans>
+              </h2>
+            </SectionHead>
+            <Panel>
+              <DocumentsField
+                contextType="resources"
+                contextId={resource._id}
+              />
+            </Panel>
+          </EntryColumn>
+        )}
+      </RestArea>
+    </Layout>
+  );
+
+  if (embedded) {
+    return (
+      <LightboxProvider alt={resource.label} images={images}>
+        <div style={{ margin: '0 auto', maxWidth: '980px' }}>{body}</div>
+      </LightboxProvider>
+    );
+  }
+
   return (
     <LightboxProvider alt={resource.label} images={images}>
       <EntryPage>
@@ -386,198 +619,7 @@ export default function ResourceHybrid({
           backLink={{ value: '/resources', label: resourcesInMenu?.label }}
         />
 
-        <Layout>
-          <CardArea>
-            <EntryHero
-              chips={
-                <>
-                  <LocationTag locationId={resource.locationId} />
-                  {isCombo && (
-                    <Chip>
-                      <LayersIcon aria-hidden />
-                      {tc('entry.combo')}
-                    </Chip>
-                  )}
-                  <BookableChip place={resource} />
-                </>
-              }
-              html={resource.description}
-              meta={
-                resource.capacity ? (
-                  <span>
-                    <UsersIcon aria-hidden />
-                    {tc('entry.capacity', { count: resource.capacity })}
-                  </span>
-                ) : null
-              }
-              picture={
-                partOf && !images.length ? (
-                  <NoPicture data-filled="" />
-                ) : (
-                  <FilledPicture
-                    alt={resource.label}
-                    seed={resource._id}
-                    src={images[0]}
-                  />
-                )
-              }
-              title={resource.label}
-            />
-          </CardArea>
-
-          {withAddress ||
-          partOf ||
-          withContact ||
-          resource.booking ||
-          organizers.length ? (
-            <Sidebar>
-              {/* A part: the place it is in stands for the address, in
-                  one card with who to ask */}
-              {partOf && (
-                <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
-                  <ParentLink to={`${prefix}/resources/${partOf._id}`}>
-                    <ParentPicture>
-                      {partOf.images?.[0] ? (
-                        <img
-                          alt=""
-                          src={getImageUrl(partOf.images[0], 'medium') || ''}
-                        />
-                      ) : (
-                        <PlaceholderImage seed={partOf._id} />
-                      )}
-                    </ParentPicture>
-                    <SideTitle as="p">{tc('entry.partOf')}</SideTitle>
-                    <h3>{partOf.label}</h3>
-                  </ParentLink>
-                  {/* Its address is this place's too */}
-                  <div style={{ marginTop: '0.75rem' }}>
-                    <AddressDetails address={partOf.address} />
-                  </div>
-                  {withContact && (
-                    <>
-                      <SideTitle css={{ margin: '1.5rem 0 1rem' }}>
-                        {tc('contact.title')}
-                      </SideTitle>
-                      <ContactDetails contact={resource.contact} />
-                    </>
-                  )}
-                </Panel>
-              )}
-              {withAddress && (
-                <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
-                  <AddressBlock
-                    address={resource.address}
-                    contact={resource.contact}
-                    edge="top"
-                    heading={
-                      <SideTitle>
-                        {tc(
-                          withContact
-                            ? 'address.titleWithContact'
-                            : 'address.title'
-                        )}
-                      </SideTitle>
-                    }
-                    label={resource.label}
-                  />
-                </Panel>
-              )}
-              {/* How to book it, under where it is */}
-              {resource.booking && (
-                <Panel>
-                  <SideTitle>{tc('entry.booking')}</SideTitle>
-                  <BookingInfo
-                    booking={resource.booking}
-                    label={resource.label}
-                  />
-                </Panel>
-              )}
-              {/* The organizers linked to it: just "Se även" */}
-              {organizers.length > 0 && (
-                <Panel css={{ marginTop: resource.booking ? '1.25rem' : 0 }}>
-                  <SideTitle>{tc('entry.seeAlso')}</SideTitle>
-                  <SeeAlso>
-                    {organizers.map((person) => (
-                      <li key={person._id}>
-                        <Link to={`/@${person.username}`}>
-                          <PersonAvatar person={person} size={40} />
-                          <span>{personName(person)}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </SeeAlso>
-                </Panel>
-              )}
-            </Sidebar>
-          ) : null}
-
-          <RestArea>
-            {isCombo && resource.resourcesForCombo?.length ? (
-              <EntryColumn>
-                <SectionHead>
-                  <h2>{tc('entry.comboParts')}</h2>
-                </SectionHead>
-                <Parts>
-                  {resource.resourcesForCombo.map((part) => (
-                    <Link key={part._id} to={`${prefix}/resources/${part._id}`}>
-                      {part.label}
-                    </Link>
-                  ))}
-                </Parts>
-              </EntryColumn>
-            ) : null}
-
-            {upcoming.length > 0 && <PlaceEvents events={upcoming} />}
-
-            {/* The places in it, listed or not, a card each */}
-            {parts.length > 0 && (
-              <EntryColumn>
-                <SectionHead>
-                  <h2>{tc('entry.parts')}</h2>
-                </SectionHead>
-                <PartCards>
-                  {parts.map((part) => (
-                    <PlaceCard
-                      key={part._id}
-                      place={part}
-                      to={
-                        // Not in the list: it opens over this page
-                        part.isUnlisted
-                          ? { search: `?part=${part._id}` }
-                          : `${prefix}/resources/${part._id}`
-                      }
-                    />
-                  ))}
-                </PartCards>
-              </EntryColumn>
-            )}
-
-            {images.length > 1 && (
-              <EntryColumn>
-                <SectionHead>
-                  <h2>{tc('entry.pictures')}</h2>
-                </SectionHead>
-                <MorePictures alt={resource.label} images={images} />
-              </EntryColumn>
-            )}
-
-            {documents && documents[0] && (
-              <EntryColumn>
-                <SectionHead>
-                  <h2>
-                    <Trans i18nKey="common:documents.label">Documents</Trans>
-                  </h2>
-                </SectionHead>
-                <Panel>
-                  <DocumentsField
-                    contextType="resources"
-                    contextId={resource._id}
-                  />
-                </Panel>
-              </EntryColumn>
-            )}
-          </RestArea>
-        </Layout>
+        {body}
       </EntryPage>
     </LightboxProvider>
   );
