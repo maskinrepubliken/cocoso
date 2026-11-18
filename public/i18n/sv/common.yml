@@ -431,7 +431,6 @@ recurring:
   earlier: "Föregående dag"
   later: "Nästa dag med evenemang"
   weekTitle: "Sker varje vecka"
-  nothingWeekly: "Inget återkommande."
   weekdays:
     "0": "söndagar"
     "1": "måndagar"

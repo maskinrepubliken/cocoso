@@ -434,7 +434,6 @@ recurring:
   earlier: "Previous day"
   later: "Next day with events"
   weekTitle: "Happens every week"
-  nothingWeekly: "Nothing recurring."
   weekdays:
     "0": "Sundays"
     "1": "Mondays"

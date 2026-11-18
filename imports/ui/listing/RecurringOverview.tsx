@@ -543,7 +543,7 @@ export function DayAgenda({ activities, placeOf }: OverviewProps) {
 
 // What happens every week: the seven weekdays, Monday first, each with the
 // recurring activities of that weekday. No dates and no today: it is the
-// rhythm of a week, not a calendar.
+// rhythm of a week, not a calendar. A weekday with nothing is just its name.
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
 
 export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
@@ -603,11 +603,6 @@ export function WeeklySchedule({ activities, placeOf }: OverviewProps) {
           return (
             <Day key={weekday} css={{ background: dayColor(weekday) }}>
               <DayName>{t(`recurring.weekdays.${weekday}`)}</DayName>
-              {slots.length === 0 && (
-                <Empty css={{ fontSize: '0.9rem', margin: '0.3rem 0 0' }}>
-                  {t('recurring.nothingWeekly')}
-                </Empty>
-              )}
               {slots.map(({ activity, pattern, slot }) => (
                 <Slot
                   key={activity._id + slot.startTime}
