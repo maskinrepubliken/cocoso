@@ -336,8 +336,10 @@ export default function ResourceHybrid({
     resource.images?.length ? resource.images : [resource.imageUrl]
   ).filter((img): img is string => Boolean(img));
 
-  const resourcesInMenu = siteDoc?.settings?.menu?.find(
-    (item) => item.name === 'resources'
+  // Back to the list it is in: Äta, handla & bo when it offers something
+  const listing = resource.offerings?.length ? 'businesses' : 'resources';
+  const listingInMenu = siteDoc?.settings?.menu?.find(
+    (item) => item.name === listing
   );
 
   // A shared link shows the generated picture with the name, kind,
@@ -567,7 +569,7 @@ export default function ResourceHybrid({
         />
 
         <EntryTopBar
-          backLink={{ value: '/resources', label: resourcesInMenu?.label }}
+          backLink={{ value: `/${listing}`, label: listingInMenu?.label }}
         />
 
         {body}

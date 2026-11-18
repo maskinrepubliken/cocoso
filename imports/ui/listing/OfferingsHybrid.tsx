@@ -303,6 +303,18 @@ const firstParagraph = (html?: string) => {
     .trim();
 };
 
+// What an offering says of itself, unless it starts with a heading (a
+// menu or a list of rooms): then what the place says.
+const excerptOf = (offering: any, place: any) => {
+  const html = offering?.description || '';
+  const heading = /^\s*<p[^>]*>\s*<(strong|b|h\d)>[^<]*<\/\1>\s*<\/p>/i.test(
+    html
+  );
+  return (
+    (!heading && firstParagraph(html)) || firstParagraph(place.description)
+  );
+};
+
 // A place under one of the kinds it offers, with that offering's words,
 // phone and hours, the place's own when the offering has none.
 function PlaceCard({
@@ -321,7 +333,7 @@ function PlaceCard({
   const image = business.images?.[0];
   const place = locations.find((l: any) => l._id === business.locationId);
   const prefix = place ? `/${place.slug}` : '';
-  const excerpt = firstParagraph(offering?.description || business.description);
+  const excerpt = excerptOf(offering, business);
   const address = formatAddress(business.address);
   const phone = offering?.contact?.phone || business.contact?.phone;
   const open = useOpenState(offering);
