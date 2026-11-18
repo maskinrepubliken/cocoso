@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { Box } from '/imports/ui/core';
+import { isMenuItemShown } from '/imports/api/_utils/features';
 import { locationsAtom } from '/imports/state';
 import HomeHero from '/imports/ui/pages/locations/HomeHero';
 import KommunMap from '/imports/ui/generic/KommunMap';
@@ -26,9 +27,10 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
   const prefix = useLocationPrefix();
 
   // The site's sections, in the menu's order, each with the menu's label,
-  // a line about what it is for (home.sections.<name>) and a link.
+  // a line about what it is for (home.sections.<name>) and a link. Those
+  // hidden from the menu or whose feature is off are left out.
   const sections = (siteDoc?.settings?.menu || [])
-    .filter((item: any) => item.isVisible && !item.isComposablePage)
+    .filter((item: any) => isMenuItemShown(item) && !item.isComposablePage)
     .filter((item: any) => sectionIcons[item.name]);
 
   const locationNameOf = (item: any) =>
