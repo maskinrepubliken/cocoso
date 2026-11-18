@@ -14,9 +14,10 @@ import PlaceholderImage from '../generic/PlaceholderImage';
 import PlaceTag from '../generic/PlaceTag';
 import { getImageUrl } from '../utils/imageHelper';
 
-// A förening as a paper card: its picture on top with the place's tag,
-// then the name, one line about it, and who and when underneath. The same
-// shape as the place cards, so the two listings read as one site.
+// A förening as a paper card: its picture on top, then the name with the
+// place's tag under it (as on the place and request cards), one line about
+// it, and who and when underneath. The same shape as the place cards, so
+// the two listings read as one site.
 const Card = styled('article', {
   background: 'var(--cocoso-papper)',
   borderRadius: 'var(--cocoso-radius-kort)',
@@ -65,11 +66,10 @@ const Shapes = styled('div', {
   position: 'absolute',
 });
 
-const TopRight = styled('div', {
-  position: 'absolute',
-  right: '0.7rem',
-  top: '0.7rem',
-  zIndex: 1,
+const TagRow = styled('div', {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.4rem',
 });
 
 const Body = styled('div', {
@@ -173,14 +173,14 @@ export default function GroupCard({
             />
           </Shapes>
         )}
-        {placeName && !hideLocation && (
-          <TopRight>
-            <PlaceTag name={placeName} world={world} onImage />
-          </TopRight>
-        )}
       </Picture>
       <Body>
         <Title>{group.title}</Title>
+        {placeName && !hideLocation && (
+          <TagRow>
+            <PlaceTag name={placeName} world={world} />
+          </TagRow>
+        )}
         {group.readingMaterial && <Blurb>{group.readingMaterial}</Blurb>}
         <Meta>
           {memberCount > 0 && (
