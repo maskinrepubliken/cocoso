@@ -94,6 +94,21 @@ Activities.schema = new SimpleSchema({
   // The organizer's words on why, shown on the page and in the mail
   cancelMessage: { type: String, optional: true },
 
+  // Copied from another calendar by a mirror (imports/api/mirrors): which
+  // one, and which event there. The mirror rewrites the title, text, time,
+  // picture and kinds on every run until the event is detached.
+  mirror: { type: Object, optional: true },
+  'mirror.mirrorId': { type: String },
+  'mirror.externalId': { type: String },
+  // The event's own page at the source
+  'mirror.sourceUrl': { type: String, optional: true },
+  'mirror.sourceModifiedAt': { type: Date, optional: true },
+  // The source's picture the stored one was made from
+  'mirror.imageSource': { type: String, optional: true },
+  'mirror.syncedAt': { type: Date, optional: true },
+  // Left alone by the mirror from now on, with its own edits kept
+  'mirror.isDetached': { type: Boolean, optional: true },
+
   groupId: { type: String, regEx: SimpleSchema.RegEx.Id, optional: true },
   isGroupMeeting: { type: Boolean, optional: true },
   // A group meeting's own name ("Höstmöte"); its title is the group's

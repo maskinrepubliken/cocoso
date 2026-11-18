@@ -654,6 +654,8 @@ Meteor.methods({
       // Set only by cancelActivity and uncancelActivity
       cancelledAt,
       cancelMessage,
+      // Set only by a mirror, and detachMirroredActivity
+      mirror,
       // Not stored: whether to tell those signed up and following, and
       // the organizer's words to them (asked when saving in the form)
       notify,
@@ -924,6 +926,25 @@ Meteor.methods({
       cancelled: false,
       editorId: user._id,
     });
+    return true;
+  },
+
+  // A mirrored event (imports/api/mirrors) becomes the organizer's own: the
+  // mirror leaves it alone from now on, and edits to it stay.
+  async detachMirroredActivity(activityId) {
+    check(activityId, String);
+    const user = await Meteor.userAsync();
+    const theActivity = await Activities.findOneAsync({ _id: activityId });
+    if (!theActivity?.mirror) {
+      throw new Meteor.Error('not-found', 'Mirrored activity not found');
+    }
+    if (!(await canManage(theActivity, user))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    await Activities.updateAsync(
+      { _id: activityId },
+      { $set: { 'mirror.isDetached': true } }
+    );
     return true;
   },
 
