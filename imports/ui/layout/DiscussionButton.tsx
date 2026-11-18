@@ -11,6 +11,7 @@ import {
   roleAtom,
 } from '/imports/state';
 import { groupAtom } from '/imports/ui/pages/groups/groupAtom';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 
 // The chat pulls in browser-only styles, so it is loaded on the client.
 const ChatUI = loadable(() =>
@@ -100,7 +101,7 @@ export default function DiscussionButton() {
     return () => clearTimeout(timer);
   }, [animState]);
 
-  if (!discussion) {
+  if (!discussion || !isFeatureEnabled('discussions')) {
     return null;
   }
 

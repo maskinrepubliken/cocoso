@@ -577,6 +577,13 @@ features:
       count_other: "{{count}} documents on places, requests and groups"
       offEffect: The document list disappears from places, requests and groups, and "Add document" leaves the gear. The documents are kept and come back when the feature is switched on again.
       onEffect: Places, requests and groups show their documents again, and those allowed to add documents see the choice in the gear.
+    discussions:
+      label: Discussions
+      about: The discussions on events, groups and places – the button in the header and unread messages in the account menu.
+      count_one: "{{count}} discussion"
+      count_other: "{{count}} discussions"
+      offEffect: The discussion button leaves every page and unread messages leave the account menu, and no one can write in the discussions. The messages are kept in the database.
+      onEffect: The discussions become visible again, with every message they had when the feature was switched off.
   confirm:
     titleOff: "Switch off {{name}}?"
     titleOn: "Switch on {{name}}?"

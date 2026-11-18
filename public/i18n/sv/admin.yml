@@ -577,6 +577,13 @@ features:
       count_other: "{{count}} dokument finns på platser, förfrågningar och grupper"
       offEffect: Dokumentlistan försvinner från platser, förfrågningar och grupper, och "Lägg till dokument" försvinner ur kugghjulet. Dokumenten finns kvar och kommer tillbaka när funktionen slås på igen.
       onEffect: Platser, förfrågningar och grupper visar sina dokument igen, och de som får lägga till dokument ser valet i kugghjulet.
+    discussions:
+      label: Diskussioner
+      about: Diskussionerna på evenemang, grupper och platser – knappen i sidhuvudet och olästa meddelanden i kontomenyn.
+      count_one: "{{count}} diskussion finns"
+      count_other: "{{count}} diskussioner finns"
+      offEffect: Diskussionsknappen försvinner från alla sidor och olästa meddelanden från kontomenyn, och ingen kan skriva i diskussionerna. Meddelandena finns kvar i databasen.
+      onEffect: Diskussionerna blir synliga igen, med alla meddelanden som fanns när funktionen stängdes av.
   confirm:
     titleOff: "Stäng av {{name}}?"
     titleOn: "Slå på {{name}}?"

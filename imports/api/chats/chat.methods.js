@@ -8,6 +8,7 @@ import Groups from '../groups/group';
 import Chats from './chat';
 import { sendEmail } from '../_utils/services/mails/mail.methods';
 import methodError from '../_utils/methodError';
+import { featureMethods } from '../_utils/features';
 
 /**
  * Bump the unread-notification counters of every member of the group a chat
@@ -83,7 +84,7 @@ async function createGroupNotification(user, values, unSeenIndex) {
   }
 }
 
-Meteor.methods({
+const chatMethods = {
   async getChatByContextId(contextId) {
     const chat = await Chats.findOneAsync({ contextId });
     return chat;
@@ -206,4 +207,13 @@ Meteor.methods({
       throw methodError(error);
     }
   },
+};
+
+// Behind the `discussions` feature (api/_utils/features.ts). Not
+// createChat: events, groups and places still get their discussion when
+// made, so it is there once discussions are switched on.
+const { createChat, ...discussionMethods } = chatMethods;
+Meteor.methods({
+  createChat,
+  ...featureMethods('discussions', [], discussionMethods),
 });

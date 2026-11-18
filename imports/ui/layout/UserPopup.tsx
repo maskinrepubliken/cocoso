@@ -11,6 +11,7 @@ import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { siteAtom, currentUserAtom, roleAtom } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import LanguageSwitch from './LanguageSwitch';
 import useLogout from './useLogout';
 
@@ -81,7 +82,10 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
     return null;
   }
 
-  const notifications = currentUser?.notifications;
+  // Unread messages in discussions, while those are switched on
+  const notifications = isFeatureEnabled('discussions')
+    ? currentUser?.notifications
+    : null;
 
   const isNotification = notifications && notifications.length > 0;
   let notificationsCounter = 0;

@@ -17,6 +17,10 @@ export const DEFAULT_FEATURES = {
   // Documents on places, requests and groups: adding them from the gear,
   // the list on the page, and the methods behind them.
   documents: false,
+  // Diskussioner: the discussion (chat) on events, groups and places, its
+  // button in the header, its unread counts in the account menu, and the
+  // methods and publication behind it.
+  discussions: false,
 };
 
 export type Feature = keyof typeof DEFAULT_FEATURES;

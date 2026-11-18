@@ -6,6 +6,7 @@ import { isAdmin } from '../users/user.roles';
 import Groups from '../groups/group';
 import Works from '../works/work';
 import Documents from '../documents/document';
+import Chats from '../chats/chat';
 import {
   DEFAULT_FEATURES,
   FEATURE_NAMES,
@@ -46,14 +47,15 @@ Meteor.methods({
     const site = await getSite({ features: 1, featuresLog: 1 });
     const stored = site?.features || {};
     const log = site?.featuresLog || [];
-    const [groups, works, documents] = await Promise.all([
+    const [groups, works, documents, discussions] = await Promise.all([
       Groups.find({}).countAsync(),
       Works.find({}).countAsync(),
       Documents.find({
         contextType: { $in: ['resources', 'works', 'groups'] },
       }).countAsync(),
+      Chats.find({}).countAsync(),
     ]);
-    const counts = { groups, works, documents };
+    const counts = { groups, works, documents, discussions };
     return FEATURE_NAMES.map((name) => ({
       name,
       enabled: isFeatureEnabled(name),

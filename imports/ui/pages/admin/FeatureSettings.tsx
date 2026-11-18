@@ -14,7 +14,7 @@ import { message } from '/imports/ui/generic/message';
 // typed out before the change can be made.
 
 interface FeatureStatus {
-  name: 'groups' | 'works' | 'documents';
+  name: 'groups' | 'works' | 'documents' | 'discussions';
   enabled: boolean;
   isDefault: boolean;
   defaultEnabled: boolean;
