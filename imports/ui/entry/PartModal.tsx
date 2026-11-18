@@ -8,6 +8,7 @@ import PenIcon from 'lucide-react/dist/esm/icons/pen-line';
 
 import { styled } from '/stitches.config';
 import { Modal } from '/imports/ui/core';
+import { modalHeaderButton } from '/imports/ui/core/Modal';
 import { currentUserAtom, roleAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
 import { hasContact } from '/imports/api/_utils/contact';
@@ -42,6 +43,8 @@ const SectionTitle = styled('h3', {
   margin: '0 0 0.75rem',
   textTransform: 'uppercase',
 });
+
+const EditLink = styled(Link, modalHeaderButton);
 
 // A place left out of the list of places (a room in the library, say)
 // opens over the page of the place it is in, from ?part=<id>, instead of
@@ -96,17 +99,14 @@ export default function PartModal() {
       hideFooter
       headerActions={
         canEdit ? (
-          // The white pen of the header (EditButton), beside the close
-          <Link
+          // The site's pen, looking and behaving like the close beside it
+          <EditLink
             aria-label={tc('labels.update.resources', tc('actions.update'))}
-            className="site-new-button"
             title={tc('labels.update.resources', tc('actions.update'))}
             to={`${prefix}/resources/${part._id}?edit=true`}
           >
-            <span aria-hidden className="site-new site-edit">
-              <PenIcon height={16} width={16} />
-            </span>
-          </Link>
+            <PenIcon aria-hidden />
+          </EditLink>
         ) : null
       }
       id="part-modal"

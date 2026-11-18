@@ -70,19 +70,30 @@ const Body = (
   );
 };
 
-const CloseButton = styled('button', {
+// The close button's look, shared with anything set beside it in the
+// header (headerActions), e.g. a pen to edit what the modal shows: a round
+// 36px button with a 20px icon, the same hover
+export const modalHeaderButton = {
+  alignItems: 'center',
   background: 'transparent',
   border: 'none',
   borderRadius: '9999px',
   color: 'var(--cocoso-mylla-soft)',
   cursor: 'pointer',
-  padding: '0.5rem',
+  display: 'inline-flex',
+  height: '36px',
+  justifyContent: 'center',
+  padding: 0,
   transition: 'all 0.2s',
+  width: '36px',
+  '& svg': { flex: 'none', height: '20px', width: '20px' },
   '&:hover': {
     backgroundColor: 'var(--cocoso-colors-theme-100)',
     color: 'var(--cocoso-mylla)',
   },
-});
+} as const;
+
+const CloseButton = styled('button', modalHeaderButton);
 
 // No lines between the parts: the spacing alone keeps them apart
 const Footer = styled('div', {
