@@ -110,7 +110,8 @@ export default function OfferingsEditor({ place }: OfferingsEditorProps) {
         }))
       );
       message.success(tc('offerings.form.saved'));
-      revalidate();
+      // Closing changes the URL, which would cancel a reload still running
+      await revalidate();
       close();
     } catch (error: any) {
       message.error(error.reason || error.error);
