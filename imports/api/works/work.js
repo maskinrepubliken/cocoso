@@ -34,7 +34,7 @@ Works.schema = new SimpleSchema({
   imagesLegacy: { type: Array, optional: true },
   'imagesLegacy.$': { type: String, optional: true },
   latestUpdate: { type: Date, optional: true },
-  longDescription: { type: String, defaultValue: '' },
+  longDescription: { type: String, defaultValue: '', optional: true },
   shortDescription: { type: String, defaultValue: '', optional: true },
   showAvatar: { type: Boolean, defaultValue: true, optional: true },
   title: { type: String },

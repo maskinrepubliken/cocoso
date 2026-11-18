@@ -24,9 +24,6 @@ const workFormFields = (t) => [
     placeholder: t('works.longDescription.holder'),
     type: 'quill',
     value: 'longDescription',
-    props: {
-      required: true,
-    },
   },
 ];
 
