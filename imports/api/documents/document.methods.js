@@ -13,10 +13,10 @@ import {
 } from '../_utils/services/mediaStorage';
 import methodError from '../_utils/methodError';
 
-// Documents on places and requests are behind the `documents` feature
-// (api/_utils/features.ts); a group's are not.
+// Documents on places, requests and groups are behind the `documents`
+// feature (api/_utils/features.ts)
 const isSwitchedOff = (contextType) =>
-  ['resources', 'works'].includes(contextType) &&
+  ['resources', 'works', 'groups'].includes(contextType) &&
   !isFeatureEnabled('documents');
 
 // Who may take a document away: an admin, whoever uploaded it, the

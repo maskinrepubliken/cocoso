@@ -145,7 +145,7 @@ function useGearItems(editable: Editable | null): GearItem[] {
   }
   const { context, item } = editable;
   const isAdmin = role === 'admin';
-  // Documents on places and requests (not groups') are a feature
+  // Documents are a feature
   const documentsOn = isFeatureEnabled('documents');
   const edit = { param: 'edit', label: tc('entryMenu.edit') };
   const addDocument = {
@@ -167,7 +167,7 @@ function useGearItems(editable: Editable | null): GearItem[] {
         : [edit];
     case 'groups':
       return [
-        addDocument,
+        ...(documentsOn ? [addDocument] : []),
         { param: 'addMeeting', label: t('admin.add_meeting') },
         { param: 'members', label: t('admin.manage_members') },
         ...(item.isPrivate

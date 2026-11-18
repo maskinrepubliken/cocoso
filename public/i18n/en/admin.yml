@@ -572,11 +572,11 @@ features:
       onEffect: The requests and their list become visible again, with everything they had when the feature was switched off.
     documents:
       label: Documents
-      about: Documents on places and requests – adding them from the gear, and the list on the page. Groups' documents are not affected.
-      count_one: "{{count}} document on places and requests"
-      count_other: "{{count}} documents on places and requests"
-      offEffect: The document list disappears from places and requests, and "Add document" leaves the gear. The documents are kept and come back when the feature is switched on again.
-      onEffect: Places and requests show their documents again, and those allowed to add documents see the choice in the gear.
+      about: Documents on places, requests and groups – adding them from the gear, and the list on the page.
+      count_one: "{{count}} document on places, requests and groups"
+      count_other: "{{count}} documents on places, requests and groups"
+      offEffect: The document list disappears from places, requests and groups, and "Add document" leaves the gear. The documents are kept and come back when the feature is switched on again.
+      onEffect: Places, requests and groups show their documents again, and those allowed to add documents see the choice in the gear.
   confirm:
     titleOff: "Switch off {{name}}?"
     titleOn: "Switch on {{name}}?"

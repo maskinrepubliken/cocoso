@@ -572,11 +572,11 @@ features:
       onEffect: Förfrågningarna och listan över dem blir synliga igen, med allt som fanns när funktionen stängdes av.
     documents:
       label: Dokument
-      about: Dokument på platser och förfrågningar – att lägga till dem från kugghjulet och listan på sidan. Gruppernas dokument påverkas inte.
-      count_one: "{{count}} dokument finns på platser och förfrågningar"
-      count_other: "{{count}} dokument finns på platser och förfrågningar"
-      offEffect: Dokumentlistan försvinner från platser och förfrågningar, och "Lägg till dokument" försvinner ur kugghjulet. Dokumenten finns kvar och kommer tillbaka när funktionen slås på igen.
-      onEffect: Platser och förfrågningar visar sina dokument igen, och de som får lägga till dokument ser valet i kugghjulet.
+      about: Dokument på platser, förfrågningar och grupper – att lägga till dem från kugghjulet och listan på sidan.
+      count_one: "{{count}} dokument finns på platser, förfrågningar och grupper"
+      count_other: "{{count}} dokument finns på platser, förfrågningar och grupper"
+      offEffect: Dokumentlistan försvinner från platser, förfrågningar och grupper, och "Lägg till dokument" försvinner ur kugghjulet. Dokumenten finns kvar och kommer tillbaka när funktionen slås på igen.
+      onEffect: Platser, förfrågningar och grupper visar sina dokument igen, och de som får lägga till dokument ser valet i kugghjulet.
   confirm:
     titleOff: "Stäng av {{name}}?"
     titleOn: "Slå på {{name}}?"

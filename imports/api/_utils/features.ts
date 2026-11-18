@@ -14,9 +14,8 @@ import { Meteor } from 'meteor/meteor';
 export const DEFAULT_FEATURES = {
   groups: false, // Grupper
   works: false, // Förfrågningar
-  // Documents on places and requests: adding them from the gear, the list
-  // on the page, and the methods behind them. A group's documents are not
-  // covered.
+  // Documents on places, requests and groups: adding them from the gear,
+  // the list on the page, and the methods behind them.
   documents: false,
 };
 

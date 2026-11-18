@@ -2,6 +2,7 @@ import React from 'react';
 import { useLoaderData, useSearchParams } from 'react-router';
 
 import DeleteEntryHandler from '/imports/ui/entry/DeleteEntryHandler';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import DocumentUploader from '/imports/ui/forms/DocumentUploader';
 
 import AddMeeting from './admin/AddMeeting';
@@ -18,7 +19,10 @@ export default function GroupAdminFunctions() {
     setSearchParams({});
   };
 
-  const addDocument = searchParams.get('addDocument') === 'true';
+  // Only while documents are switched on
+  const addDocument =
+    isFeatureEnabled('documents') &&
+    searchParams.get('addDocument') === 'true';
   const addMeeting = searchParams.get('addMeeting') === 'true';
   const members = searchParams.get('members') === 'true';
   const invite = searchParams.get('invite') === 'true';

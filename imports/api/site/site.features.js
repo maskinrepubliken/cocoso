@@ -50,7 +50,7 @@ Meteor.methods({
       Groups.find({}).countAsync(),
       Works.find({}).countAsync(),
       Documents.find({
-        contextType: { $in: ['resources', 'works'] },
+        contextType: { $in: ['resources', 'works', 'groups'] },
       }).countAsync(),
     ]);
     const counts = { groups, works, documents };
