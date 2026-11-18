@@ -138,7 +138,7 @@ function PlaceEvents({ events }: { events: any[] }) {
   return (
     <EntryColumn>
       <SectionHead>
-        <h2>{tc('entry.upcomingHere')}</h2>
+        <h2>{tc('entry.events')}</h2>
       </SectionHead>
       <EventCards>
         {events.map((item, index) => (
@@ -533,8 +533,6 @@ export default function ResourceHybrid({
           </EntryColumn>
         ) : null}
 
-        {upcoming.length > 0 && <PlaceEvents events={upcoming} />}
-
         {/* The places in it, listed or not, a card each */}
         {parts.length > 0 && (
           <EntryColumn>
@@ -582,6 +580,8 @@ export default function ResourceHybrid({
             </Panel>
           </EntryColumn>
         )}
+        {/* Last, what is on here */}
+        {upcoming.length > 0 && <PlaceEvents events={upcoming} />}
       </RestArea>
     </Layout>
   );

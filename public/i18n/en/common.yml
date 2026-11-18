@@ -778,7 +778,7 @@ search:
 # loads common
 entry:
   seeAlso: See also
-  upcomingHere: Coming up here
+  events: Events
   readMore: Read more
   group: Group
   place: Place

@@ -775,7 +775,7 @@ search:
 # loads common
 entry:
   seeAlso: Se även
-  upcomingHere: Kommande här
+  events: Evenemang
   readMore: Läs mer
   group: Grupp
   place: Plats
