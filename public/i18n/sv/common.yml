@@ -305,6 +305,7 @@ people:
   editProfile: Redigera profilen
   organizer: Arrangör
   events: Evenemang
+  places: Platser
   upcoming_one: '{{ count }} kommande evenemang'
   upcoming_other: '{{ count }} kommande evenemang'
   upcomingShort_one: '{{ count }} kommande'

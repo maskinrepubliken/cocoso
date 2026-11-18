@@ -308,6 +308,7 @@ people:
   editProfile: Edit profile
   organizer: Organizer
   events: Events
+  places: Places
   upcoming_one: '{{ count }} upcoming event'
   upcoming_other: '{{ count }} upcoming events'
   upcomingShort_one: '{{ count }} upcoming'

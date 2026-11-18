@@ -378,6 +378,10 @@ export default function UserHybrid({
           )}
           {places?.others?.length ? (
             <EntryColumn>
+              {/* The places they look after or are booked through */}
+              <SectionHead>
+                <h2>{tc('people.places')}</h2>
+              </SectionHead>
               <PartCards>
                 {places.others.map((place) => (
                   <PlaceCard
