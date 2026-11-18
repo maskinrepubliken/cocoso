@@ -51,6 +51,10 @@ import '../../api/locations/location.methods';
 import '../../api/activities/activity';
 import '../../api/activities/activity.methods';
 
+import '../../api/mirrors/mirror';
+import '../../api/mirrors/mirror.methods';
+import '../../api/mirrors/mirror.sync';
+
 import '../../api/keywords/keyword';
 import '../../api/keywords/keywords.methods';
 
