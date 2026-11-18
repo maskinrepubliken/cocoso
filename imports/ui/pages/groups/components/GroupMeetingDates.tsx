@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import {
   Accordion,
   Box,
   Button,
   Center,
-  Flex,
-  Link,
   List,
   ListItem,
   Modal,
@@ -19,9 +17,9 @@ import {
 import FancyDate from '/imports/ui/entry/FancyDate';
 import { message } from '/imports/ui/generic/message';
 import { call } from '/imports/api/_utils/shared';
-import ActionButton from '/imports/ui/generic/ActionButton';
+import { currentUserAtom } from '/imports/state';
 
-import { groupAtom } from '../GroupItemHandler';
+import { groupAtom } from '../groupAtom';
 
 const yesterday = dayjs(new Date()).add(-1, 'days');
 const isFutureMeeting = (meeting) => dayjs(meeting.endDate).isAfter(yesterday);
@@ -185,68 +183,32 @@ function MeetingDatesContent({
   return <Accordion options={getAccordionOptions()} />;
 }
 
-export default function GroupMeetingDates(props) {
+// Beside the heading of a group's meetings, for its members: a button to
+// the meetings, where a member signs up for them and an admin sees who is
+// coming and removes a meeting. Others see the dates in the section itself.
+export default function GroupMeetingDates() {
   const [modalOpen, setModalOpen] = useState(false);
   const [t] = useTranslation('groups');
+  const currentUser = useAtomValue(currentUserAtom);
+  const group = useAtomValue(groupAtom) as any;
 
-  const { group, isMember } = props;
+  const me = currentUser
+    ? group?.members?.find((m: any) => m.memberId === currentUser._id)
+    : null;
+  const hasUpcoming = Boolean(group?.meetings?.some(isFutureMeeting));
 
-  if (!group) {
+  if (!group || !me || !hasUpcoming) {
     return null;
   }
 
-  const isFutureMeetings =
-    group.meetings &&
-    group.meetings.length > 0 &&
-    group.meetings.filter((meeting) =>
-      dayjs(meeting.endDate).isAfter(yesterday)
-    ).length > 0;
-
-  if (!isFutureMeetings) {
-    return (
-      <Text color="var(--cocoso-mylla-soft)" my="2" textAlign="center">
-        {t('meeting.info.empty')}
-      </Text>
-    );
-  }
+  const isAdmin = Boolean(me.isAdmin);
+  const props = { currentUser, group, isAdmin, isMember: true };
 
   return (
     <>
-      <Box color="var(--cocoso-mylla)">
-        <Box>
-          <Center>
-            {isMember && (
-              <ActionButton
-                label={t('actions.register')}
-                onClick={() => setModalOpen(true)}
-              />
-            )}
-          </Center>
-          <Center>
-            <Flex mt="2">
-              <Text color="var(--cocoso-mylla-soft)" fontSize="sm" mr="2" mt="-1px">
-                {t('labels.next_meeting')}
-              </Text>
-
-              <Text color="var(--cocoso-mylla)" fontSize="sm" fontWeight="bold">
-                {dayjs(group.meetings[0]?.startDate).format('DD')}{' '}
-                {dayjs(group.meetings[0]?.startDate).format('MMM')}
-              </Text>
-            </Flex>
-          </Center>
-          <Center py="1">
-            {!isMember && (
-              <Link
-                color="theme.700"
-                variant="outline"
-                onClick={() => setModalOpen(true)}
-              >
-                {t('labels.meeting_dates')}
-              </Link>
-            )}
-          </Center>
-        </Box>
-      </Box>
+      <Button size="sm" variant="outline" onClick={() => setModalOpen(true)}>
+        {t(isAdmin ? 'membership.manage' : 'membership.attend')}
+      </Button>
 
       <Modal
         hideFooter
@@ -255,7 +217,7 @@ export default function GroupMeetingDates(props) {
         title={t('labels.meetings')}
         onClose={() => setModalOpen(false)}
       >
-        {isMember && (
+        {!isAdmin && (
           <Text mb="4" textAlign="center">
             {t('meeting.info.member')}
           </Text>

@@ -17,6 +17,7 @@ import { currentUserAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 import BookButton from './BookButton';
 import DiscussionButton from './DiscussionButton';
+import GroupMembershipButton from './GroupMembershipButton';
 import EditButton from './EditButton';
 import LanguageSwitch from './LanguageSwitch';
 import LocationSwitcher from './LocationSwitcher';
@@ -503,6 +504,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           <SiteSearch site={site} />
           <NewButton site={site} />
           <EditButton />
+          <GroupMembershipButton />
           <DiscussionButton />
           <BookButton />
         </div>

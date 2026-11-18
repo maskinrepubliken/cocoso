@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
 
 import { styled } from '/stitches.config';
@@ -305,22 +305,6 @@ export const Panel = styled('div', {
   padding: '1.25rem 1.5rem',
   wordBreak: 'break-word',
 });
-
-// The page's own actions — join, book, contact, discussion, admin — in a
-// section under the card.
-export function EntryActions({ children }: { children: React.ReactNode }) {
-  const [tc] = useTranslation('common');
-  return (
-    <EntryColumn>
-      <SectionHead>
-        <h2>{tc('entry.actions')}</h2>
-      </SectionHead>
-      <Panel>
-        <Actions css={{ gap: '1.5rem', marginTop: 0 }}>{children}</Actions>
-      </Panel>
-    </EntryColumn>
-  );
-}
 
 const Gallery = styled('div', {
   display: 'grid',

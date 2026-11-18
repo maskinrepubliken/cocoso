@@ -148,3 +148,11 @@ admin:
   add_document: Lägg till dokument
   add_meeting: Lägg till möte
   manage_members: Hantera medlemmar
+
+# The header's join button and the meetings' button (layout/GroupMembershipButton.tsx,
+# components/GroupMeetingDates.tsx)
+membership:
+  you: Du är medlem
+  leave: Lämna gruppen
+  attend: Anmäl dig till träffar
+  manage: Hantera träffar

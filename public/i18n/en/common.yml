@@ -796,7 +796,6 @@ entry:
   seeProfile: 'Go to {{ name }}'
   booking: Can be booked
   bookingLink: Book here
-  actions: Actions
 
 lightbox:
   label: Pictures

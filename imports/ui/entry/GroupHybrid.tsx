@@ -42,16 +42,17 @@ export interface GroupHybridProps {
   group: Group;
   documents?: Document[];
   siteDoc: Site;
-  actions?: React.ReactNode;
+  // Beside the heading of its meetings: the members' way to them
+  meetingsAction?: React.ReactNode;
 }
 
-// A förening's page: the card with its picture, framed like a place's, what
+// A group's page: the card with its picture, framed like a place's, what
 // it is and who is in it, then its meetings and documents.
 export default function GroupHybrid({
   group,
   documents,
   siteDoc,
-  actions,
+  meetingsAction,
 }: GroupHybridProps) {
   const [tc] = useTranslation('common');
   if (!group) {
@@ -121,8 +122,6 @@ export default function GroupHybrid({
           )}
         </EntryHero>
 
-        {actions}
-
         {hasContact(group.contact) && (
           <EntryColumn>
             <SectionHead>
@@ -138,6 +137,7 @@ export default function GroupHybrid({
           <EntryColumn>
             <SectionHead>
               <h2>{tc('entry.meetings')}</h2>
+              {meetingsAction}
             </SectionHead>
             <Panel>
               <ActionDates activity={meetings} />

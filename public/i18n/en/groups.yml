@@ -148,3 +148,11 @@ admin:
   add_document: Add Document
   add_meeting: Add Meeting
   manage_members: Manage Members
+
+# The header's join button and the meetings' button (layout/GroupMembershipButton.tsx,
+# components/GroupMeetingDates.tsx)
+membership:
+  you: You are a member
+  leave: Leave the group
+  attend: Sign up for meetings
+  manage: Manage meetings
