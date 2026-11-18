@@ -45,6 +45,7 @@ interface OrganizerToolsSectionProps {
     isPublicActivity?: boolean;
     isArchived?: boolean;
     cancelledAt?: Date;
+    mirror?: { sourceUrl?: string; isDetached?: boolean };
   };
   occurrence?: Occurrence | null;
 }
@@ -101,6 +102,17 @@ export default function OrganizerToolsSection({
       message.error(error.reason || error.error);
     } finally {
       setBusy(false);
+    }
+  };
+
+  // A mirrored event becomes the organizer's own, left alone by the mirror
+  const detach = async () => {
+    try {
+      await call('detachMirroredActivity', activity._id);
+      message.success(tc('event.mirror.detached'));
+      revalidator.revalidate();
+    } catch (error: any) {
+      message.error(error.reason || error.error);
     }
   };
 
@@ -244,6 +256,22 @@ export default function OrganizerToolsSection({
       {!activity.isArchived && !isAdmin && (
         <Muted css={{ marginTop: '0.5rem' }}>
           {tc('event.tools.archiveFirst')}
+        </Muted>
+      )}
+
+      {activity.mirror && !activity.mirror.isDetached && (
+        <Muted css={{ marginTop: '1rem' }}>
+          {tc('event.mirror.tools', {
+            source: activity.mirror.sourceUrl
+              ? new URL(activity.mirror.sourceUrl).hostname.replace(
+                  /^www\./,
+                  ''
+                )
+              : '',
+          })}{' '}
+          <Button size="sm" variant="ghost" onClick={detach}>
+            {tc('event.mirror.detach')}
+          </Button>
         </Muted>
       )}
 

@@ -511,6 +511,12 @@ event:
     cancelAudience_other: "{{count}} people signed up or following get an email in a few minutes."
     cancelled: "The event is cancelled."
     uncancelled: "The event is no longer cancelled."
+  mirror:
+    registration: "Sign up at {{source}}:"
+    registrationLink: "to the event there"
+    tools: "This event is copied from {{source}} and kept like it every half hour: changes to its title, text, time and picture here are overwritten. Detach it to make it your own."
+    detach: "Detach"
+    detached: "The event is yours now and no longer copied."
   cancelled:
     tag: "Cancelled"
     notice: "This event is cancelled"

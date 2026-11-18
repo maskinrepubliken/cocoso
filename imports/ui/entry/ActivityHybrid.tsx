@@ -179,6 +179,7 @@ interface Activity {
   images?: string[];
   isPublicActivity?: boolean;
   isArchived?: boolean;
+  mirror?: { sourceUrl?: string; isDetached?: boolean };
   cancelledAt?: Date;
   cancelMessage?: string;
   isRegistrationDisabled?: boolean;

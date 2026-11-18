@@ -508,6 +508,12 @@ event:
     cancelAudience_other: "{{count}} personer som är anmälda eller följer får ett mejl om några minuter."
     cancelled: "Evenemanget är inställt."
     uncancelled: "Evenemanget är inte längre inställt."
+  mirror:
+    registration: "Anmälan sker hos {{source}}:"
+    registrationLink: "till evenemanget där"
+    tools: "Evenemanget hämtas från {{source}} och hålls lika varje halvtimme: ändringar i titel, text, tid och bild här skrivs över. Koppla loss det för att göra det till ditt eget."
+    detach: "Koppla loss"
+    detached: "Evenemanget är ditt nu och hämtas inte längre."
   cancelled:
     tag: "Inställt"
     notice: "Det här evenemanget är inställt"

@@ -149,6 +149,7 @@ interface RegistrationSectionProps {
     isRegistrationDisabled?: boolean;
     isRegistrationEnabled?: boolean;
     cancelledAt?: Date;
+    mirror?: { sourceUrl?: string; isDetached?: boolean };
   };
   occurrence: Occurrence;
   occurrenceIndex: number;
@@ -295,6 +296,11 @@ export default function RegistrationSection({
   // Called off: no new sign-ups, but one made can still be undone below
   const isCancelled = Boolean(activity.cancelledAt);
   const canSignUp = !isCancelled && !registrationClosed && !isPast && !isFull;
+  // Copied from another calendar (a mirror): sign-up is there
+  const sourceUrl = registrationClosed ? activity.mirror?.sourceUrl : null;
+  const sourceHost = sourceUrl
+    ? new URL(sourceUrl).hostname.replace(/^www\./, '')
+    : '';
 
   return (
     <Section
@@ -309,6 +315,13 @@ export default function RegistrationSection({
     >
       {isCancelled ? (
         <Status>{tc('event.cancelled.registration')}</Status>
+      ) : sourceUrl && !isPast ? (
+        <Status>
+          {tc('event.mirror.registration', { source: sourceHost })}{' '}
+          <a href={sourceUrl} rel="noopener noreferrer" target="_blank">
+            {tc('event.mirror.registrationLink')}
+          </a>
+        </Status>
       ) : registrationClosed ? (
         <Status>{tc('event.register.closed')}</Status>
       ) : isPast ? (
@@ -334,7 +347,7 @@ export default function RegistrationSection({
         </form>
       )}
 
-      {!isPast && (
+      {!isPast && !(sourceUrl && !occurrence.attendees?.length) && (
         <ChangeBox css={canSignUp ? undefined : { borderTop: 'none' }}>
           <LinkButton
             aria-expanded={changeOpen}
