@@ -24,6 +24,9 @@ export interface EntryFormHandlerProps {
   // Saving makes a new entry public (events, places): "Publicera", not
   // "Spara". Editing always says "Uppdatera".
   publishes?: boolean;
+  // What the form is for (activities, resources, info …): the status says
+  // what was saved, "Platsen är publicerad"
+  context?: string;
   children?: React.ReactNode;
 }
 
@@ -51,6 +54,7 @@ export default function EntryFormHandler({
   onClose,
   keepsDraft = false,
   publishes = false,
+  context: entryContext,
   children,
 }: EntryFormHandlerProps) {
   const loaders = useAtomValue(loaderAtom);
@@ -122,7 +126,15 @@ export default function EntryFormHandler({
 
   let statusText: string | null = null;
   if (status === 'success') {
-    statusText = tc(`message.success.${forEdit ? 'update' : 'create'}`);
+    const general = tc(`message.success.${forEdit ? 'update' : 'create'}`);
+    statusText = entryContext
+      ? tc(
+          `message.success.${forEdit ? 'updated' : 'created'}.${entryContext}`,
+          {
+            defaultValue: general,
+          }
+        )
+      : general;
   } else if (status) {
     statusText = tc(`message.loading.${status}`);
   } else if (submitDisabled) {
@@ -200,8 +212,8 @@ export default function EntryFormHandler({
                 forEdit
                   ? 'actions.saveChanges'
                   : publishes
-                    ? 'actions.publish'
-                    : 'actions.save'
+                  ? 'actions.publish'
+                  : 'actions.save'
               )}
             </Button>
           </div>

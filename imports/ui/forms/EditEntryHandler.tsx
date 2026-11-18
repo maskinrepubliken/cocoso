@@ -49,6 +49,7 @@ export default function EditEntryHandler({
     onClose: handleClose,
     keepsDraft,
     publishes,
+    context,
     children,
   };
 

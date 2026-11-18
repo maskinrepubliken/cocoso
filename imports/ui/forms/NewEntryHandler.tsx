@@ -48,6 +48,7 @@ export default function NewEntryHandler({
     onClose: handleClose,
     keepsDraft,
     publishes,
+    context,
     children,
   };
 

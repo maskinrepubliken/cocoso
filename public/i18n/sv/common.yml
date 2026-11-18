@@ -120,6 +120,21 @@ message:
     sending: Skickar...
 
   success:
+    # what was saved, by form (EntryFormHandler)
+    created:
+      activities: Evenemanget är publicerat
+      calendar: Evenemanget är publicerat
+      resources: Platsen är publicerad
+      info: Sidan är skapad
+      groups: Gruppen är skapad
+      works: Förfrågan är publicerad
+    updated:
+      activities: Evenemanget är uppdaterat
+      calendar: Evenemanget är uppdaterat
+      resources: Platsen är uppdaterad
+      info: Sidan är sparad
+      groups: Gruppen är uppdaterad
+      works: Förfrågan är uppdaterad
     create: Ditt objekt har skapats
     update: Ditt objekt har uppdaterats
     remove: Ditt objekt har raderats

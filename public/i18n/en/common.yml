@@ -120,6 +120,21 @@ message:
     sending: Sending the form...
 
   success:
+    # what was saved, by form (EntryFormHandler)
+    created:
+      activities: The event is published
+      calendar: The event is published
+      resources: The place is published
+      info: The page is created
+      groups: The group is created
+      works: The request is published
+    updated:
+      activities: The event is updated
+      calendar: The event is updated
+      resources: The place is updated
+      info: The page is saved
+      groups: The group is updated
+      works: The request is updated
     create: Your entry is successfully created
     update: Your entry is successfully updated
     remove: Your entry is successfully deleted
