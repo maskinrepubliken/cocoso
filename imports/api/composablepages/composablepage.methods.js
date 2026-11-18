@@ -3,6 +3,7 @@ import { check, Match } from 'meteor/check';
 
 import ComposablePages from './composablepage';
 import { isAdmin } from '../users/user.roles';
+import methodError from '../_utils/methodError';
 
 Meteor.methods({
   async getComposablePageById(composablePageId) {
@@ -26,7 +27,7 @@ Meteor.methods({
         }
       );
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -36,7 +37,7 @@ Meteor.methods({
       return await ComposablePages.find({
       }).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -63,7 +64,7 @@ Meteor.methods({
         }
       ).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -91,7 +92,7 @@ Meteor.methods({
       });
       return newId;
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -130,7 +131,7 @@ Meteor.methods({
       });
       return formValues.title;
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -147,7 +148,7 @@ Meteor.methods({
         { $set: { isPublished: true } }
       );
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -164,7 +165,7 @@ Meteor.methods({
         { $set: { isPublished: false } }
       );
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -186,7 +187,7 @@ Meteor.methods({
     try {
       await ComposablePages.removeAsync(composablePageId);
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 });

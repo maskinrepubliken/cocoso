@@ -9,6 +9,7 @@ import {
   sendNewAdminEmail,
   sendNewContributorEmail,
 } from '../_utils/services/mails/mail.methods';
+import methodError from '../_utils/methodError';
 
 Meteor.methods({
   // Lets an admin see the site as another (non-admin) member: a fresh login
@@ -78,7 +79,7 @@ Meteor.methods({
         console.error('[roles] could not send the role email', error);
       });
     } catch (error) {
-      throw new Meteor.Error(error, 'Did not work! :/');
+      throw methodError(error, 'Did not work! :/');
     }
   },
 
@@ -118,7 +119,7 @@ Meteor.methods({
         console.error('[roles] could not send the role email', error);
       });
     } catch (error) {
-      throw new Meteor.Error(error, 'Did not work! :/');
+      throw methodError(error, 'Did not work! :/');
     }
   },
 
@@ -159,7 +160,7 @@ Meteor.methods({
       //   `Hi,\n\nWe're sorry to inform you that you're removed as an active member at ${site.name}. You are, however, still welcome to participate to the events and groups here.\n\n For questions, please contact the admin.\n\nKind regards,\n${site.name} Team`
       // );
     } catch (error) {
-      throw new Meteor.Error(error, 'Did not work! :/');
+      throw methodError(error, 'Did not work! :/');
     }
   },
 
@@ -203,7 +204,7 @@ Meteor.methods({
     try {
       return await Activities.find({ authorId: userId }).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 });

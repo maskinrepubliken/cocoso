@@ -23,6 +23,7 @@ import {
 } from './group.mails';
 import { sendEmail } from '../_utils/services/mails/mail.methods';
 import { meetingTitleOf } from './meetingTitle';
+import methodError from '../_utils/methodError';
 
 const publicSettings = Meteor.settings.public;
 
@@ -74,7 +75,7 @@ const groupMethods = {
 
       return await attachGroupContact(group);
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch group");
+      throw methodError(error, "Couldn't fetch group");
     }
   },
 
@@ -140,7 +141,7 @@ const groupMethods = {
       );
       return parsedGroups;
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -198,7 +199,7 @@ const groupMethods = {
         'datesAndTimes.startDate': { $gte: dateNow },
       }).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch data");
+      throw methodError(error, "Couldn't fetch data");
     }
   },
 
@@ -226,7 +227,7 @@ const groupMethods = {
         $or: [{ authorUsername: username }, { 'members.username': username }],
       }).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch groups");
+      throw methodError(error, "Couldn't fetch groups");
     }
   },
 
@@ -290,7 +291,7 @@ const groupMethods = {
       });
       return newGroupId;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't add group to the collection");
+      throw methodError(error, "Couldn't add group to the collection");
     }
   },
 
@@ -363,7 +364,7 @@ const groupMethods = {
       );
       return groupId;
     } catch (e) {
-      throw new Meteor.Error(e, "Couldn't update the group");
+      throw methodError(e, "Couldn't update the group");
     }
   },
 
@@ -384,7 +385,7 @@ const groupMethods = {
       await Groups.removeAsync(groupId);
       return true;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't remove from collection");
+      throw methodError(error, "Couldn't remove from collection");
     }
   },
 
@@ -438,7 +439,7 @@ const groupMethods = {
         emailBody
       );
     } catch (error) {
-      throw new Meteor.Error(error, 'Could not join the circle');
+      throw methodError(error, 'Could not join the circle');
     }
   },
 
@@ -674,7 +675,7 @@ const groupMethods = {
         emailBody
       );
     } catch (error) {
-      throw new Meteor.Error(error, 'Could not send the invite to the person');
+      throw methodError(error, 'Could not send the invite to the person');
     }
   },
 
@@ -710,7 +711,7 @@ const groupMethods = {
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error, 'Could not remove the invite');
+      throw methodError(error, 'Could not remove the invite');
     }
   },
 };

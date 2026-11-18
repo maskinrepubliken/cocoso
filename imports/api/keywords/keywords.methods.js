@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import Keywords from './keyword';
 import { getSite } from '../site/site';
+import methodError from '../_utils/methodError';
 
 Meteor.methods({
   async getKeywords() {
@@ -22,7 +23,7 @@ Meteor.methods({
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -47,7 +48,7 @@ Meteor.methods({
       });
       return keywordId;
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 });

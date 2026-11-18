@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 
 import { attachMembershipsToUsers } from '../memberships/membership.helpers';
 import Activities from '../activities/activity';
+import methodError from '../_utils/methodError';
 
 // The name as the listing shows it: first and last name, else username.
 const displayName = (user) =>
@@ -145,7 +146,7 @@ Meteor.methods({
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -157,7 +158,7 @@ Meteor.methods({
     try {
       await Site.updateAsync(site._id, { $set: { theme } });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -174,7 +175,7 @@ Meteor.methods({
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -195,7 +196,7 @@ Meteor.methods({
     try {
       await Site.updateAsync(site._id, { $set: { emails: newEmails } });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 });

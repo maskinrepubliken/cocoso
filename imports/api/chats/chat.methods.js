@@ -7,6 +7,7 @@ import { isContributorOrAdmin } from '../users/user.roles';
 import Groups from '../groups/group';
 import Chats from './chat';
 import { sendEmail } from '../_utils/services/mails/mail.methods';
+import methodError from '../_utils/methodError';
 
 /**
  * Bump the unread-notification counters of every member of the group a chat
@@ -78,7 +79,7 @@ async function createGroupNotification(user, values, unSeenIndex) {
     );
   } catch (error) {
     console.log('error', error);
-    throw new Meteor.Error(error);
+    throw methodError(error);
   }
 }
 
@@ -156,7 +157,7 @@ Meteor.methods({
         await createGroupNotification(user, values, unSeenIndex);
       }
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -202,7 +203,7 @@ Meteor.methods({
       });
     } catch (error) {
       console.log('error', error);
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 });

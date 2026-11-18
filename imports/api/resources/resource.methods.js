@@ -14,6 +14,7 @@ import Activities from '../activities/activity';
 import { cleanKinds } from '../_utils/kinds';
 import { RESOURCE_KIND_KEYS } from '../../ui/pages/resources/resourceKinds';
 import { warmShareImage } from '../share/shareImage.server';
+import methodError from '../_utils/methodError';
 
 async function validateLabel(label, resourceId) {
   // set resource query
@@ -367,7 +368,7 @@ Meteor.methods({
       warmShareImage('resource', newResourceId);
       return newResourceId;
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -461,7 +462,7 @@ Meteor.methods({
       );
       await updateParts(resourceId, address, locationId);
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't add to Collection");
+      throw methodError(error, "Couldn't add to Collection");
     }
   },
 
@@ -523,7 +524,7 @@ Meteor.methods({
     try {
       await Resources.removeAsync({ _id: resourceId });
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't remove from collection");
+      throw methodError(error, "Couldn't remove from collection");
     }
   },
 });

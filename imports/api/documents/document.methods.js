@@ -11,6 +11,7 @@ import {
   deleteMedia,
   sanitizeSegment,
 } from '../_utils/services/mediaStorage';
+import methodError from '../_utils/methodError';
 
 // Documents on places and requests are behind the `documents` feature
 // (api/_utils/features.ts); a group's are not.
@@ -133,7 +134,7 @@ Meteor.methods({
       });
     } catch (error) {
       console.log('Error creating document:', error);
-      throw new Meteor.Error(error, "Couldn't create the document");
+      throw methodError(error, "Couldn't create the document");
     }
   },
 
@@ -154,7 +155,7 @@ Meteor.methods({
     try {
       await Documents.removeAsync(documentId);
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't delete the document");
+      throw methodError(error, "Couldn't delete the document");
     }
 
     if (document?.documentUrl) {

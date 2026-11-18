@@ -3,6 +3,7 @@ import { check, Match } from 'meteor/check';
 
 import Pages from './page';
 import { isAdmin } from '../users/user.roles';
+import methodError from '../_utils/methodError';
 
 Meteor.methods({
   async getPages() {
@@ -14,7 +15,7 @@ Meteor.methods({
         { sort: { order: 1 } }
       ).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't get pages");
+      throw methodError(error, "Couldn't get pages");
     }
   },
 
@@ -34,7 +35,7 @@ Meteor.methods({
         }
       ).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't get pages");
+      throw methodError(error, "Couldn't get pages");
     }
   },
 
@@ -62,7 +63,7 @@ Meteor.methods({
       });
       return formValues.title;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't add to Collection");
+      throw methodError(error, "Couldn't add to Collection");
     }
   },
 
@@ -102,7 +103,7 @@ Meteor.methods({
       });
       return formValues.title;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't add to Collection");
+      throw methodError(error, "Couldn't add to Collection");
     }
   },
 
@@ -131,7 +132,7 @@ Meteor.methods({
         })
       );
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't update collection");
+      throw methodError(error, "Couldn't update collection");
     }
   },
 
@@ -162,7 +163,7 @@ Meteor.methods({
         )
       );
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't remove from collection");
+      throw methodError(error, "Couldn't remove from collection");
     }
   },
 });

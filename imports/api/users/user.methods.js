@@ -24,6 +24,7 @@ import {
   ActivityFollows,
   PushSubscriptions,
 } from '../notifications/notification';
+import methodError from '../_utils/methodError';
 
 // How long a deleted account's user document is kept after the answer
 const DELETE_AFTER_MS = 2000;
@@ -112,7 +113,7 @@ async function applyAvatar(userId, avatar) {
       }
     );
   } catch (error) {
-    throw new Meteor.Error(error);
+    throw methodError(error);
   }
 }
 
@@ -195,7 +196,7 @@ async function writeProfile(userId, values) {
       ...(Object.keys(unset).length > 0 ? { $unset: unset } : {}),
     });
   } catch (error) {
-    throw new Meteor.Error(error);
+    throw methodError(error);
   }
 }
 
@@ -273,7 +274,7 @@ Meteor.methods({
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -425,7 +426,7 @@ Meteor.methods({
       const user = await Meteor.users.findOneAsync({ username });
       return user?.contactInfo;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't retrieve the contact info");
+      throw methodError(error, "Couldn't retrieve the contact info");
     }
   },
 
@@ -450,7 +451,7 @@ Meteor.methods({
       );
       await Meteor.callAsync('setProfilePublic', isPublic);
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't update");
+      throw methodError(error, "Couldn't update");
     }
   },
 
@@ -465,7 +466,7 @@ Meteor.methods({
     try {
       await Memberships.updateAsync({ userId }, { $set: { isPublic } });
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't update");
+      throw methodError(error, "Couldn't update");
     }
   },
 
@@ -489,7 +490,7 @@ Meteor.methods({
     try {
       await Meteor.callAsync('forgotPassword', email);
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -526,7 +527,7 @@ Meteor.methods({
       return true;
     } catch (error) {
       console.error(error);
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 });

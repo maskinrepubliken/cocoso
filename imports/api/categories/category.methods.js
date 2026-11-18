@@ -3,6 +3,7 @@ import { check } from 'meteor/check';
 
 import Categories from './category';
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
+import methodError from '../_utils/methodError';
 
 Meteor.methods({
   async getCategories() {
@@ -48,7 +49,7 @@ Meteor.methods({
         addedDate: new Date(),
       });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -63,7 +64,7 @@ Meteor.methods({
     try {
       await Categories.removeAsync({ _id: categoryId });
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 });

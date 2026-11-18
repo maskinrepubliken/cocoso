@@ -6,6 +6,7 @@ import { featureMethods } from '../_utils/features';
 
 import Works from './work';
 import { isContributorOrAdmin } from '../users/user.roles';
+import methodError from '../_utils/methodError';
 
 // The author's display name on each work: first and last name when set,
 // else the username.
@@ -35,7 +36,7 @@ const workMethods = {
       }).fetchAsync();
       return await withAuthorNames(works);
     } catch (error) {
-      throw new Meteor.Error(error, 'Could not retrieve data');
+      throw methodError(error, 'Could not retrieve data');
     }
   },
 
@@ -50,7 +51,7 @@ const workMethods = {
       }).fetchAsync();
       return await withAuthorNames(works);
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch works");
+      throw methodError(error, "Couldn't fetch works");
     }
   },
 
@@ -65,7 +66,7 @@ const workMethods = {
         authorId: user._id,
       }).fetchAsync();
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch works");
+      throw methodError(error, "Couldn't fetch works");
     }
   },
 
@@ -77,7 +78,7 @@ const workMethods = {
       }
       return work;
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -103,7 +104,7 @@ const workMethods = {
       });
       return newWorkId;
     } catch (error) {
-      throw new Meteor.Error(error);
+      throw methodError(error);
     }
   },
 
@@ -134,7 +135,7 @@ const workMethods = {
       });
       return values.title;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't add to Collection");
+      throw methodError(error, "Couldn't add to Collection");
     }
   },
 
@@ -154,7 +155,7 @@ const workMethods = {
     try {
       await Works.removeAsync(workId);
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't remove from collection");
+      throw methodError(error, "Couldn't remove from collection");
     }
   },
 };

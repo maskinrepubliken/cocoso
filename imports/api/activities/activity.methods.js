@@ -33,6 +33,7 @@ import {
 import { sendEmail } from '../_utils/services/mails/mail.methods';
 import { scheduleChangeNotice } from '../notifications/notify';
 import { setActivityCancelled } from './activity.cancel';
+import methodError from '../_utils/methodError';
 
 const filterPrivateGroups = async (activities, user) => {
   if (!activities) {
@@ -242,7 +243,7 @@ Meteor.methods({
         user
       );
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch data");
+      throw methodError(error, "Couldn't fetch data");
     }
   },
 
@@ -260,7 +261,7 @@ Meteor.methods({
         user
       );
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch data");
+      throw methodError(error, "Couldn't fetch data");
     }
   },
 
@@ -277,7 +278,7 @@ Meteor.methods({
         await attachOrganizerProfiles(await redactAttendees(activity, user))
       );
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch data");
+      throw methodError(error, "Couldn't fetch data");
     }
   },
 
@@ -293,7 +294,7 @@ Meteor.methods({
       ).fetchAsync();
       return activities;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch data");
+      throw methodError(error, "Couldn't fetch data");
     }
   },
 
@@ -464,7 +465,7 @@ Meteor.methods({
         user
       );
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch activities");
+      throw methodError(error, "Couldn't fetch activities");
     }
   },
 
@@ -526,7 +527,7 @@ Meteor.methods({
           : [],
       };
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't fetch activities");
+      throw methodError(error, "Couldn't fetch activities");
     }
   },
 
@@ -620,7 +621,7 @@ Meteor.methods({
       warmShareImage('activity', activityId);
       return activityId;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't add to Collection");
+      throw methodError(error, "Couldn't add to Collection");
     }
   },
 
@@ -842,7 +843,7 @@ Meteor.methods({
       await Activities.removeAsync(activityId);
       return true;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't remove from collection");
+      throw methodError(error, "Couldn't remove from collection");
     }
   },
 
@@ -866,7 +867,7 @@ Meteor.methods({
       );
       return true;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't archive activity");
+      throw methodError(error, "Couldn't archive activity");
     }
   },
 
@@ -887,7 +888,7 @@ Meteor.methods({
       );
       return true;
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't unarchive activity");
+      throw methodError(error, "Couldn't unarchive activity");
     }
   },
 
@@ -1010,7 +1011,7 @@ Meteor.methods({
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't register attendance");
+      throw methodError(error, "Couldn't register attendance");
     }
     await sendConfirmation(rsvpValues.email, email);
   },
@@ -1095,7 +1096,7 @@ Meteor.methods({
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't update attendance");
+      throw methodError(error, "Couldn't update attendance");
     }
     await sendConfirmation(rsvpValues.email, email);
   },
@@ -1166,7 +1167,7 @@ Meteor.methods({
         },
       });
     } catch (error) {
-      throw new Meteor.Error(error, "Couldn't update document");
+      throw methodError(error, "Couldn't update document");
     }
     await sendConfirmation(
       email,
