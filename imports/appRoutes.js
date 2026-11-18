@@ -113,6 +113,9 @@ const EditUserProfile = loadable(() =>
   import('/imports/ui/pages/admin/EditUserProfile')
 );
 const Locations = loadable(() => import('/imports/ui/pages/admin/Locations'));
+const AdminMirrors = loadable(() =>
+  import('/imports/ui/pages/admin/AdminMirrors')
+);
 const Emails = loadable(() => import('/imports/ui/pages/admin/Emails'));
 const EmailNewsletter = loadable(() =>
   import('/imports/ui/pages/admin/EmailNewsletter')
@@ -201,6 +204,7 @@ import {
   getHostMembersForAdmin,
   getUserProfileForAdmin,
   getLocationsForAdmin,
+  getMirrorsForAdmin,
   getEmails,
   getComposablePageTitles,
   getActivitiesByUser,
@@ -426,6 +430,11 @@ const getAdminRoutes = (props) => [
     path: 'locations',
     element: createRouteElement(Locations, props),
     loader: async () => await getLocationsForAdmin(),
+  },
+  {
+    path: 'mirrors',
+    element: createRouteElement(AdminMirrors, props),
+    loader: async () => await getMirrorsForAdmin(),
   },
   {
     path: 'users',

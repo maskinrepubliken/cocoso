@@ -271,6 +271,15 @@ export async function getLocationsForAdmin() {
   }
 }
 
+export async function getMirrorsForAdmin() {
+  try {
+    const mirrors = await call('getMirrorsForAdmin');
+    return { mirrors };
+  } catch {
+    return { mirrors: null };
+  }
+}
+
 export async function getEmails() {
   try {
     const emails = await call('getEmails');

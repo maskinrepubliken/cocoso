@@ -245,6 +245,71 @@ locations:
       label: Published
       helper: Unpublished places are hidden from visitors but can still be assigned to content
 
+mirrors:
+  title: Mirrors
+  description: Events copied from another calendar and kept up to date, such as the library's at Knallebiblioteken
+  info: "A mirror copies the events of one place in another calendar into Cocoso, every half hour: new ones are added, changes follow, cancelled ones are marked and removed ones deleted. Sign-up happens at the source, which each event links to. Try a mirror with \"Preview\" before you switch it on."
+  new: New mirror
+  edit: Edit mirror
+  none: No mirrors yet
+  "on": "On"
+  "off": "Off"
+  enable: Switch on
+  disable: Switch off
+  runNow: Sync now
+  route: "{{ source }} → {{ place }}, organized by {{ organizer }}"
+  count_one: "{{ count }} event in Cocoso"
+  count_other: "{{ count }} events in Cocoso"
+  lastRun:
+    never: Not run yet
+    done: "Last run {{ at }}: {{ created }} new, {{ updated }} changed, {{ removed }} removed"
+    failed: "Last run {{ at }} failed: {{ error }}"
+  preview:
+    button: Preview
+    title: What a sync would do now
+    summary: "{{ created }} new, {{ updated }} changed and {{ removed }} removed. Nothing has been saved."
+    action:
+      create: New
+      update: Changed
+      keep: Unchanged
+      detached: Detached
+  form:
+    name:
+      label: Name
+    source: From
+    sourceName:
+      label: Name of the source
+      helper: Shown to visitors, as in "Read more and sign up at Knallebiblioteken"
+    customerId:
+      label: Axiell customer id
+      helper: The library group's id in Axiell's event calendar
+    sourceLocation:
+      label: Place at the source
+      helper: Only events at this place are mirrored
+      option: "{{ name }} ({{ count }} coming)"
+    eventUrl:
+      label: Address of an event at the source
+      helper: "{id} is replaced by the event's id"
+    target: To
+    resource:
+      label: Place in Cocoso
+      helper: The events are held here, with its address and village
+    organizer:
+      label: Organizer
+      helper: The account that organizes the events. It needs an email or phone in its profile.
+    kinds:
+      label: Kinds when the source gives none
+      helper: Most events get their kind from the source's tags
+    enabled:
+      label: Sync every half hour
+      helper: Switched off, the mirror only runs when you press "Sync now"
+    choose: Choose…
+  message:
+    saved: The mirror is saved
+    removed: The mirror is removed. Its events stay, as the organizer's own.
+    ran: "Synced: {{ created }} new, {{ updated }} changed, {{ removed }} removed"
+  removeTitle: Remove mirror
+  removeBody: Remove {{ name }}? The events it made stay, and are no longer kept like the source.
 composable:
   title: Composable Pages
   existing: Existing ones

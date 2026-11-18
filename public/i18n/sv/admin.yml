@@ -245,6 +245,71 @@ locations:
       label: Publicerad
       helper: Opublicerade orter är dolda för besökare men kan fortfarande kopplas till innehåll
 
+mirrors:
+  title: Speglingar
+  description: Evenemang som hämtas från en annan kalender och hålls uppdaterade, som bibliotekets på Knallebiblioteken
+  info: "En spegling hämtar evenemangen på en plats i en annan kalender till Cocoso, varje halvtimme: nya läggs till, ändringar följer med, inställda markeras och borttagna tas bort. Anmälan sker hos källan, som varje evenemang länkar till. Prova en spegling med \"Förhandsgranska\" innan du slår på den."
+  new: Ny spegling
+  edit: Ändra spegling
+  none: Inga speglingar ännu
+  "on": "På"
+  "off": "Av"
+  enable: Slå på
+  disable: Slå av
+  runNow: Synka nu
+  route: "{{ source }} → {{ place }}, arrangör {{ organizer }}"
+  count_one: "{{ count }} evenemang i Cocoso"
+  count_other: "{{ count }} evenemang i Cocoso"
+  lastRun:
+    never: Inte körd ännu
+    done: "Senast {{ at }}: {{ created }} nya, {{ updated }} ändrade, {{ removed }} borttagna"
+    failed: "Senast {{ at }} misslyckades: {{ error }}"
+  preview:
+    button: Förhandsgranska
+    title: Det här skulle en synkning göra nu
+    summary: "{{ created }} nya, {{ updated }} ändrade och {{ removed }} borttagna. Inget är sparat."
+    action:
+      create: Ny
+      update: Ändrad
+      keep: Oförändrad
+      detached: Lossnad
+  form:
+    name:
+      label: Namn
+    source: Från
+    sourceName:
+      label: Källans namn
+      helper: Visas för besökare, som i "Läs mer och anmäl dig hos Knallebiblioteken"
+    customerId:
+      label: Axiell-kund-id
+      helper: Biblioteksgruppens id i Axiells evenemangskalender
+    sourceLocation:
+      label: Plats hos källan
+      helper: Bara evenemang på den här platsen speglas
+      option: "{{ name }} ({{ count }} kommande)"
+    eventUrl:
+      label: Adress till ett evenemang hos källan
+      helper: "{id} byts mot evenemangets id"
+    target: Till
+    resource:
+      label: Plats i Cocoso
+      helper: Evenemangen hålls här, med platsens adress och ort
+    organizer:
+      label: Arrangör
+      helper: Kontot som arrangerar evenemangen. Det behöver e-post eller telefon i sin profil.
+    kinds:
+      label: Kategori när källan inte anger någon
+      helper: De flesta evenemang får sin kategori från källans taggar
+    enabled:
+      label: Synka varje halvtimme
+      helper: Avslagen körs speglingen bara när du trycker "Synka nu"
+    choose: Välj…
+  message:
+    saved: Speglingen är sparad
+    removed: Speglingen är borttagen. Dess evenemang finns kvar, som arrangörens egna.
+    ran: "Synkat: {{ created }} nya, {{ updated }} ändrade, {{ removed }} borttagna"
+  removeTitle: Ta bort spegling
+  removeBody: Ta bort {{ name }}? Evenemangen den har skapat finns kvar, men hålls inte längre lika som källan.
 composable:
   title: Komponerbara sidor
   existing: Befintliga
