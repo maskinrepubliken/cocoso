@@ -4,7 +4,7 @@ import UsersIcon from 'lucide-react/dist/esm/icons/users';
 import LockIcon from 'lucide-react/dist/esm/icons/lock';
 import { LightboxProvider } from '/imports/ui/generic/Lightbox';
 
-import GroupDocuments from '../generic/Documents';
+import DocumentsField from '/imports/ui/pages/resources/components/DocumentsField';
 import GroupMembers from '/imports/ui/pages/groups/components/GroupMembers';
 import type { Document, Site } from '/imports/ui/types';
 import { ContactDetails } from '/imports/ui/generic/ContactDetails';
@@ -153,7 +153,8 @@ export default function GroupHybrid({
               </h2>
             </SectionHead>
             <Panel>
-              <GroupDocuments documents={documents} />
+              {/* With previews and a bin, as on a place */}
+              <DocumentsField contextType="groups" contextId={group._id} />
             </Panel>
           </EntryColumn>
         )}

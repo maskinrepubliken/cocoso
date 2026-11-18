@@ -392,6 +392,9 @@ documents:
   newNotice: For document upload, please first create the entry, and then go to edit page to upload documents
   empty: No document assigned
   drop: Drop document or click for file upload
+  choose: Choose a document
+  orDrop: or drop it here
+  sizeEach: "at most {{size}}"
   up: uploading
   remove: The document is successfully removed
   uploaded: The document is successfully uploaded

@@ -389,6 +389,9 @@ documents:
   newNotice: För dokumentuppladdning, skapa först posten och gå sedan till redigeringssidan för att ladda upp dokument
   empty: Här finns inget dokument uppladdat
   drop: Släpp dokument eller klicka för filuppladdning
+  choose: Välj ett dokument
+  orDrop: eller släpp det här
+  sizeEach: "högst {{size}}"
   up: laddar upp
   remove: Dokumentet har tagits bort
   uploaded: Dokumentet har laddats upp
