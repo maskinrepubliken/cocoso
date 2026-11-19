@@ -930,6 +930,14 @@ offerings:
     stay: Boende
     service: Tjänster
     shop: Försäljning
+  pageTitle: Äta, handla och bo
+  chooseKind: Välj vad du letar efter
+  noneOfKind: "Inget med {{kind}} här än."
+  kindTexts:
+    eat: Kaféer, restauranger och gårdskaféer.
+    stay: Hotell, vandrarhem och stugor att bo i.
+    service: Hantverk, reparationer och annat man kan få hjälp med.
+    shop: Butiker, gårdsbutiker och second hand.
   visitWebsite: Besök hemsidan
   form:
     title: "Äta, handla & bo – {{place}}"
@@ -992,7 +1000,7 @@ businesses:
   closedNow: Stängt nu
   opensAt: 'öppnar {{ day }} {{ time }}'
   empty: Inget här än.
-  emptyIn: 'Inget i {{ name }} än. Välj en annan ort ovan.'
+  emptyIn: 'Inget i {{ name }} än.'
   count_one: '{{ count }} ställe'
   count_other: '{{ count }} ställen'
 

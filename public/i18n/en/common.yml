@@ -933,6 +933,14 @@ offerings:
     stay: Accommodation
     service: Services
     shop: For sale
+  pageTitle: Eat, shop and stay
+  chooseKind: Choose what you are looking for
+  noneOfKind: "Nothing for {{kind}} here yet."
+  kindTexts:
+    eat: Cafés, restaurants and farm cafés.
+    stay: Hotels, hostels and cottages to stay in.
+    service: Crafts, repairs and other help to be had.
+    shop: Shops, farm shops and second hand.
   visitWebsite: Visit the website
   form:
     title: "Eat, shop & stay – {{place}}"
@@ -995,7 +1003,7 @@ businesses:
   closedNow: Closed now
   opensAt: 'opens {{ day }} {{ time }}'
   empty: Nothing here yet.
-  emptyIn: 'Nothing in {{ name }} yet. Pick another place above.'
+  emptyIn: 'Nothing in {{ name }} yet.'
   count_one: '{{ count }} place'
   count_other: '{{ count }} places'
 

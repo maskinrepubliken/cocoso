@@ -309,7 +309,7 @@ mirrors:
       helper: "{id} byts mot evenemangets id"
     target: Till
     resource:
-      label: Plats i Cocoso
+      label: Plats
       helper: Evenemangen hålls här, med platsens adress och ort
     organizer:
       label: Arrangör

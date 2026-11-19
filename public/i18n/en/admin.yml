@@ -309,7 +309,7 @@ mirrors:
       helper: "{id} is replaced by the event's id"
     target: To
     resource:
-      label: Place in Cocoso
+      label: Place
       helper: The events are held here, with its address and village
     organizer:
       label: Organizer
