@@ -33,6 +33,7 @@ browser ──HTTP/DDP──▶ Meteor (Node 22)
 | `imports/ui/layout/`                                               | App shell: header, menus, footer, wrapper, helmet.                                                                                               |
 | `imports/ui/listing/` and `imports/ui/entry/`                      | Index pages and detail pages for each content type. Components suffixed `Hybrid` render identically on server and client.                        |
 | `imports/ui/forms/`                                                | Schema-driven form engine and uploaders.                                                                                                         |
+| `imports/ui/pages/help/`, `public/i18n/<lang>/help.yml`           | The help section: Om tjänsten, terms and privacy policy, accessibility statement (`/about`) and the guidebook (`/guide`). The text is the `help` translation namespace, loaded only on those pages; update it when what the site stores or how it works changes. |
 | `imports/ui/pages/`                                                | Route components grouped by feature, including `admin/` and `locations/`.                                                                        |
 | `public/i18n/<lang>/<ns>.yml`                                      | Translations (en, sv, tr), nine namespaces.                                                                                                      |
 

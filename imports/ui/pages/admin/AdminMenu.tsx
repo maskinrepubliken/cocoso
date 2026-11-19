@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left';
+import BookOpen from 'lucide-react/dist/esm/icons/book-open';
 import { useAtomValue } from 'jotai';
 
 import { Avatar, Box, Flex, List, ListItem, Text } from '/imports/ui/core';
@@ -244,6 +245,11 @@ export default function AdminMenu({ routes, onItemClick }) {
             flexGrow: '0',
           }}
         >
+          {/* The guidebook for organizers and administrators (/guide) */}
+          <Link className="admin-menu-guide" to="/guide">
+            <BookOpen aria-hidden width={18} height={18} />
+            {t('guide')}
+          </Link>
           <Box
             css={{
               borderTop: '1px solid var(--cocoso-linje)',

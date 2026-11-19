@@ -9032,3 +9032,21 @@ button.commerce-item,
 [role='dialog']:focus {
   outline: none;
 }
+
+/* The guidebook link at the foot of the admin sidebar */
+.admin-menu-guide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--cocoso-linje);
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-menu-guide:hover {
+  background: var(--cocoso-colors-theme-50);
+}

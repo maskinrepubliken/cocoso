@@ -1,6 +1,7 @@
 # ADMIN SETTINGS PAGE
 label: Admin
 panel: Admin Panel
+guide: Guidebook
 menulabel: Admin Menu
 site: Site
 home: Home
