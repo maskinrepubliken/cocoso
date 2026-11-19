@@ -148,10 +148,11 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
         )}
 
         <MenuItem style={{ padding: 0 }}>
-          <Link className="site-info-menu-link" to="/admin/my-profile">
-            <Trans i18nKey="common:menu.member.settings">
-              Profile Settings
-            </Trans>
+          <Link
+            className="site-info-menu-link"
+            to={`/@${currentUser.username}?edit=true`}
+          >
+            <Trans i18nKey="common:entryMenu.edit.profile">Edit profile</Trans>
           </Link>
         </MenuItem>
 

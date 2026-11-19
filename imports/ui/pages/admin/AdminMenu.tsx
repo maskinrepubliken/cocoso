@@ -4,14 +4,7 @@ import { useTranslation } from 'react-i18next';
 import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left';
 import { useAtomValue } from 'jotai';
 
-import {
-  Avatar,
-  Box,
-  Flex,
-  List,
-  ListItem,
-  Text,
-} from '/imports/ui/core';
+import { Avatar, Box, Flex, List, ListItem, Text } from '/imports/ui/core';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import {
   siteAtom,
@@ -56,14 +49,12 @@ export function AdminMenuHeader({ site }) {
 }
 
 export function AdminUserThumb() {
-  const location = useLocation();
   const currentUser = useAtomValue(currentUserAtom);
 
   if (!currentUser) {
     return null;
   }
 
-  const isCurrentRoute = location?.pathname?.includes('my-profile');
   const avatarSrc = getImageUrl(currentUser.avatar?.src, 'medium') || undefined;
 
   const fullName = getFullName(currentUser);
@@ -73,9 +64,7 @@ export function AdminUserThumb() {
       p="3"
       px="4"
       css={{
-        backgroundColor: isCurrentRoute
-          ? 'var(--cocoso-colors-theme-100)'
-          : 'transparent',
+        backgroundColor: 'transparent',
         '&:hover': {
           backgroundColor: 'var(--cocoso-colors-theme-50)',
         },
@@ -186,7 +175,8 @@ export default function AdminMenu({ routes, onItemClick }) {
   }
 
   const handleUserThumbClick = () => {
-    onItemClick({ value: '/admin/my-profile' });
+    // one's own page, with the profile form open
+    onItemClick({ value: `/@${currentUser.username}?edit=true` });
   };
 
   return (
@@ -255,7 +245,10 @@ export default function AdminMenu({ routes, onItemClick }) {
           }}
         >
           <Box
-            css={{ borderTop: '1px solid var(--cocoso-linje)', cursor: 'pointer' }}
+            css={{
+              borderTop: '1px solid var(--cocoso-linje)',
+              cursor: 'pointer',
+            }}
             onClick={handleUserThumbClick}
           >
             <AdminUserThumb />

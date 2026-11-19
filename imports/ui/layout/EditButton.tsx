@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   useLocation,
   useMatches,
-  useNavigate,
   useParams,
   useSearchParams,
 } from 'react-router';
@@ -135,7 +134,7 @@ interface GearItem {
   param: string;
   label: string;
   isDanger?: boolean;
-  action?: 'settings' | 'viewAs';
+  action?: 'viewAs';
 }
 
 // What the gear offers on each kind of page: the same choices as the old
@@ -154,8 +153,8 @@ function useGearItems(editable: Editable | null): GearItem[] {
   }
   const { context, item } = editable;
   const isAdmin = role === 'admin';
-  // A profile: its form, then one's own settings, or (an admin on someone
-  // else's page) the site as that person sees it. Admins cannot be viewed
+  // A profile: its form, which has the settings too, and (an admin on
+  // someone else's page) the site as that person sees it. Admins cannot be viewed
   // as, and one borrowed session at a time.
   if (context === 'profile' || context === 'userProfile') {
     const editProfile = {
@@ -163,14 +162,7 @@ function useGearItems(editable: Editable | null): GearItem[] {
       label: tc(`entryMenu.edit.${context}`),
     };
     if (context === 'profile') {
-      return [
-        editProfile,
-        {
-          param: 'settings',
-          label: tc('menu.member.settings'),
-          action: 'settings',
-        },
-      ];
+      return [editProfile];
     }
     const canViewAs =
       item?._id &&
@@ -255,7 +247,6 @@ function useGearItems(editable: Editable | null): GearItem[] {
 // or profile shown.
 export default function EditButton() {
   const [tc] = useTranslation('common');
-  const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
   const editable = useEditable();
   const gearItems = useGearItems(editable);
@@ -307,8 +298,6 @@ export default function EditButton() {
   const select = (item: GearItem) => {
     if (item.action === 'viewAs') {
       viewAs();
-    } else if (item.action === 'settings') {
-      navigate('/admin/my-profile');
     } else {
       open(item.param);
     }

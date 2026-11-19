@@ -144,7 +144,7 @@ export default function FollowSection({
               </Link>
             )}
             {currentUser && (
-              <Link to="/admin/my-profile/notifications">
+              <Link to={`/@${currentUser.username}?edit=true`}>
                 <Muted as="span">{tc('event.follow.settings')}</Muted>
               </Link>
             )}

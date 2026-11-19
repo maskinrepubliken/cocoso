@@ -4,6 +4,7 @@ dashboard: Admin Panel
 super: Superadmin Panel
 all: All
 organizer: Organizer
+hidden: Hidden profile
 
 joinedAt: joined {{ date }}
 
@@ -26,6 +27,8 @@ actions:
   usageReport: See usage report
   organizer: Make organizer
   notOrganizer: Remove as organizer
+  showProfile: Show the profile to others
+  hideProfile: Hide the profile from others
   visit: Visit Profile
   visithost: Visit profile in {{ host }}
   viewAs: View site as this user
@@ -37,6 +40,8 @@ message:
     admin: '{{ username }} is now set as admin'
     organizer: '{{ username }} is now an organizer'
     notOrganizer: '{{ username }} is no longer an organizer'
+    shown: 'The profile of {{ username }} is now shown to others'
+    hidden: 'The profile of {{ username }} is now hidden from others'
   contact:
     empty: No contact info registered for {{ username }}
   activity:
@@ -57,6 +62,14 @@ profile:
   form:
     name:
       label: Name
+    settings:
+      title: Settings
+      language: Language
+      notify: Notifications
+      notifyHelper: When an event followed or signed up for changes, or its organizer has news.
+      eventEmail: Email about events
+      eventPush: Push notification about events
+      newsletter: Newsletter by email
     avatar:
       helper: Click the picture, or drag a file onto it, to change it. Saved along with the rest.
     firstname:
@@ -64,7 +77,7 @@ profile:
     lastname:
       label: Last name
     bio:
-      label: Bio
+      label: Description
     contact:
       label: Contact Info
     publicContact:

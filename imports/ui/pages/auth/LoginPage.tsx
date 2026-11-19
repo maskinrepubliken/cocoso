@@ -69,7 +69,8 @@ export default function LoginPage({
     }
     // Everyone with an account belongs to the site (the server sees to the
     // membership on login), so there is no "join" question any more
-    navigate('/admin/my-profile/general');
+    // on to one's own page, where the gear opens the profile form
+    navigate(`/@${currentUser.username}`);
   }, [currentUser]);
 
   const links =

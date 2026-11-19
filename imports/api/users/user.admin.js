@@ -183,6 +183,28 @@ Meteor.methods({
     }
   },
 
+  // Whether a profile shows to others (its page, and for an organizer the
+  // listing on /people). An admin's to decide, from the members list.
+  async setProfilePublicAsAdmin(memberId, isPublic) {
+    check(memberId, String);
+    check(isPublic, Boolean);
+    const user = await Meteor.userAsync();
+
+    if (!(await isAdmin(user?._id))) {
+      throw new Meteor.Error('not-allowed', 'You are not allowed');
+    }
+
+    const updated = await Memberships.updateAsync(
+      { userId: memberId },
+      { $set: { isPublic } }
+    );
+    if (!updated) {
+      throw new Meteor.Error('not-a-member', 'User is not a member');
+    }
+    // the user's own copy of it, kept in step
+    await Meteor.users.updateAsync({ _id: memberId }, { $set: { isPublic } });
+  },
+
   async getActivitiesbyUserId(userId) {
     const currentUser = await Meteor.userAsync();
 

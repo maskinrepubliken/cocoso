@@ -6645,6 +6645,38 @@ body {
   font-weight: 600;
 }
 
+/* --- the profile form: its settings card, and deleting the account --- */
+
+.profile-settings-heading {
+  margin: 14px 0 2px !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.profile-settings-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-block: 8px;
+}
+
+/* small and out of the way on purpose */
+.profile-delete-link {
+  display: block;
+  margin: 28px 0 4px auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cocoso-mylla-soft);
+  font-size: 11px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.profile-delete-link:hover {
+  color: var(--cocoso-colors-red-600, #b3261e);
+}
+
 @container entry-sheet (min-width: 900px) {
   .entry-form-grid[data-columns='two'] {
     grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr);

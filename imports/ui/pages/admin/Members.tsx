@@ -59,6 +59,11 @@ function MemberItem({ member }) {
             {t('organizer').toLowerCase()}
           </Badge>
         )}
+        {!member.isPublic && (
+          <Badge size="sm" css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}>
+            {t('hidden').toLowerCase()}
+          </Badge>
+        )}
       </Heading>
       <Code size="sm">{member && member.email}</Code>
       <br />
@@ -85,7 +90,6 @@ function MemberList({ members }) {
     </NiceList>
   );
 }
-
 
 export default function Members() {
   const currentUser = useAtomValue(currentUserAtom);
@@ -181,6 +185,20 @@ export default function Members() {
     }
   };
 
+  const setPublic = async (user: any, isPublic: boolean) => {
+    try {
+      await call('setProfilePublicAsAdmin', user.id, isPublic);
+      revalidator.revalidate();
+      message.success(
+        t(`message.success.${isPublic ? 'shown' : 'hidden'}`, {
+          username: user.username,
+        })
+      );
+    } catch (error: any) {
+      message.error(error.reason || error.error);
+    }
+  };
+
   const safeMembers = members || [];
 
   const membersList = useMemo(
@@ -212,6 +230,13 @@ export default function Members() {
               member.isOrganizer ? 'actions.notOrganizer' : 'actions.organizer'
             ),
             handleClick: () => setOrganizer(member, !member.isOrganizer),
+            isDisabled: role !== 'admin',
+          },
+          {
+            content: t(
+              member.isPublic ? 'actions.hideProfile' : 'actions.showProfile'
+            ),
+            handleClick: () => setPublic(member, !member.isPublic),
             isDisabled: role !== 'admin',
           },
           {
@@ -295,7 +320,7 @@ export default function Members() {
       <Tabs tabs={tabs} index={tabIndex} />
 
       <Boxling mb="4" mt="8">
-        <Heading size="md" css={{ marginBottom: "0.5rem" }}>
+        <Heading size="md" css={{ marginBottom: '0.5rem' }}>
           <span
             style={{
               fontSize: '150%',

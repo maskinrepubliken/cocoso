@@ -75,7 +75,7 @@ export default function WelcomePage() {
               rightIcon={<ArrowRight width={18} height={18} aria-hidden />}
               size="lg"
               css={{ width: '100%', minHeight: '3rem' }}
-              onClick={() => navigate('/admin/my-profile/general')}
+              onClick={() => navigate(`/@${currentUser?.username}?edit=true`)}
             >
               {t('welcome.toProfile')}
             </Button>

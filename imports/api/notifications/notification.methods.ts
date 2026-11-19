@@ -35,6 +35,47 @@ async function requireUser() {
   return user;
 }
 
+const PrefsPattern = {
+  newsletter: Match.Maybe(Boolean),
+  eventEmail: Match.Maybe(Boolean),
+  eventPush: Match.Maybe(Boolean),
+};
+
+// The notification choices given, as a $set on the user
+function prefsToSet(prefs: Record<string, unknown>) {
+  const set: Record<string, unknown> = {};
+  for (const key of ['newsletter', 'eventEmail', 'eventPush'] as const) {
+    if (typeof prefs[key] === 'boolean') {
+      set[`notificationPrefs.${key}`] = prefs[key];
+    }
+  }
+  // When they joined or left the mailing list: their consent, on record
+  if ('notificationPrefs.newsletter' in set) {
+    set['notificationPrefs.newsletterChangedAt'] = new Date();
+  }
+  return set;
+}
+
+// Whose settings the profile form shows and saves: one's own, or (an
+// admin helping someone) anyone's
+async function settingsOwner(userId: string) {
+  const user = await requireUser();
+  if (user._id === userId) {
+    return user;
+  }
+  if (!(await isAdmin(user._id))) {
+    throw new Meteor.Error('not-allowed', 'You are not allowed');
+  }
+  const owner = (await Meteor.users.findOneAsync(
+    { _id: userId },
+    { fields: { lang: 1, notificationPrefs: 1 } }
+  )) as any;
+  if (!owner) {
+    throw new Meteor.Error('not-found', 'No such user');
+  }
+  return owner;
+}
+
 async function manageableActivity(activityId: string, user: any) {
   const activity = await Activities.findOneAsync({ _id: activityId });
   if (!activity) {
@@ -134,7 +175,7 @@ Meteor.methods({
       body: sv
         ? 'Så här ser en notis från oss ut.'
         : 'This is what a notification from us looks like.',
-      url: '/admin/my-profile/notifications',
+      url: `/@${user.username}?edit=true`,
       tag: 'test',
     });
     if (reached === 0) {
@@ -146,7 +187,33 @@ Meteor.methods({
     return reached;
   },
 
-  // The profile's notification page
+  // The "Inställningar" card of the profile form: language and what the
+  // person hears from the site. Push in a browser and the events followed
+  // are one's own to handle (getMyNotificationSettings).
+  async getProfileSettings(userId) {
+    check(userId, String);
+    const owner = await settingsOwner(userId);
+    return { lang: owner.lang || null, prefs: prefsOf(owner) };
+  },
+
+  async setProfileSettings(userId, settings) {
+    check(userId, String);
+    check(settings, {
+      lang: Match.Maybe(Match.OneOf('sv', 'en')),
+      prefs: Match.Maybe(PrefsPattern),
+    });
+    const owner = await settingsOwner(userId);
+    const set = prefsToSet(settings.prefs || {});
+    if (settings.lang) {
+      set.lang = settings.lang;
+    }
+    if (Object.keys(set).length > 0) {
+      await Meteor.users.updateAsync({ _id: owner._id }, { $set: set });
+    }
+    return true;
+  },
+
+  // The push and followed events of the profile form's settings
   async getMyNotificationSettings() {
     const user = await requireUser();
     const follows = await ActivityFollows.find(
@@ -171,22 +238,9 @@ Meteor.methods({
   },
 
   async setNotificationPrefs(prefs) {
-    check(prefs, {
-      newsletter: Match.Maybe(Boolean),
-      eventEmail: Match.Maybe(Boolean),
-      eventPush: Match.Maybe(Boolean),
-    });
+    check(prefs, PrefsPattern);
     const user = await requireUser();
-    const set: Record<string, unknown> = {};
-    for (const key of ['newsletter', 'eventEmail', 'eventPush'] as const) {
-      if (typeof prefs[key] === 'boolean') {
-        set[`notificationPrefs.${key}`] = prefs[key];
-      }
-    }
-    // When they joined or left the mailing list: their consent, on record
-    if ('notificationPrefs.newsletter' in set) {
-      set['notificationPrefs.newsletterChangedAt'] = new Date();
-    }
+    const set = prefsToSet(prefs);
     if (Object.keys(set).length > 0) {
       await Meteor.users.updateAsync(user._id, { $set: set });
     }

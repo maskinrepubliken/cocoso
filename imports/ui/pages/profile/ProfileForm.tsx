@@ -4,7 +4,8 @@ import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 import { useTranslation } from 'react-i18next';
 
-import { Box, Button, Flex, Input } from '/imports/ui/core';
+import { Box, Button, Checkbox, Flex, Input, Select } from '/imports/ui/core';
+import { allLangs } from '/imports/startup/i18n';
 import { isReachable } from '/imports/api/_utils/contact';
 import {
   Address,
@@ -26,6 +27,8 @@ import PlacePicker, {
 
 import FormField from '../../forms/FormField';
 import Quill from '../../forms/Quill';
+import DeleteAccount from './DeleteAccount';
+import OwnNotifications from './OwnNotifications';
 
 export interface ProfileFormValues {
   // One name, a person's or a group's. Kept in firstName, with lastName
@@ -42,9 +45,21 @@ export interface ProfileFormValues {
   homePlaceId?: string | null;
   address?: Partial<Address> | null;
   locationId?: string | null;
+  // "Inställningar": the language they read the site and its emails in,
+  // and what they hear from it
+  lang?: string;
+  prefs?: ProfilePrefs;
 }
 
-// The profile as the form gets it (getProfileToEdit)
+export interface ProfilePrefs {
+  newsletter: boolean;
+  eventEmail: boolean;
+  eventPush: boolean;
+}
+
+const PREFS = ['eventEmail', 'eventPush', 'newsletter'] as const;
+
+// The profile as the form gets it (getProfileToEdit, getProfileSettings)
 export interface EditableProfile
   extends Partial<Omit<ProfileFormValues, 'name'>> {
   _id: string;
@@ -63,6 +78,9 @@ export interface ProfileExtras {
 
 interface ProfileFormProps {
   profile: EditableProfile;
+  // One's own profile: push in this browser, the events followed, and
+  // deleting the account
+  isSelf?: boolean;
   onSubmit: (
     data: Partial<ProfileFormValues>,
     extras: ProfileExtras
@@ -73,7 +91,7 @@ interface ProfileFormProps {
 // are (name, picture, text) in the wide column, the details as cards
 // beside it.
 // Inside the entry sheet, Save is the sheet's.
-function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
+function ProfileForm({ profile, isSelf = false, onSubmit }: ProfileFormProps) {
   // Organizers must give an email or a phone (see _utils/contact.ts), and
   // say where they usually are
   const contactRequired = Boolean(profile.isOrganizer);
@@ -323,8 +341,49 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
               />
             </FormCard>
           )}
+
+          <FormCard title={t('profile.form.settings.title')}>
+            <FormField label={t('profile.form.settings.language')} my="2">
+              <Select {...register('lang')}>
+                {allLangs.map((lang) => (
+                  <option key={lang.value} value={lang.value}>
+                    {lang.label}
+                  </option>
+                ))}
+              </Select>
+            </FormField>
+
+            <h4 className="profile-settings-heading">
+              {t('profile.form.settings.notify')}
+            </h4>
+            <p className="form-preview-note">
+              {t('profile.form.settings.notifyHelper')}
+            </p>
+            <div className="profile-settings-checks">
+              {PREFS.map((pref) => (
+                <Controller
+                  key={pref}
+                  control={control}
+                  name={`prefs.${pref}`}
+                  render={({ field }) => (
+                    <Checkbox
+                      checked={Boolean(field.value)}
+                      id={`profile-notify-${pref}`}
+                      onChange={(event) => field.onChange(event.target.checked)}
+                    >
+                      {t(`profile.form.settings.${pref}`)}
+                    </Checkbox>
+                  )}
+                />
+              ))}
+            </div>
+
+            {isSelf && <OwnNotifications />}
+          </FormCard>
         </div>
       </div>
+
+      {isSelf && <DeleteAccount username={profile.username} />}
 
       {!sheet && (
         <Flex justify="flex-end" mt="8" mb="12">

@@ -4,6 +4,7 @@ dashboard: Adminpanel
 super: Superadminpanel
 all: Alla
 organizer: Arrangör
+hidden: Dold profil
 
 joinedAt: Gick med {{ date }}
 
@@ -26,6 +27,8 @@ actions:
   usageReport: Se bokningsrapport
   organizer: Gör till arrangör
   notOrganizer: Ta bort som arrangör
+  showProfile: Visa profilen för andra
+  hideProfile: Dölj profilen för andra
   visit: Besök profilen
   visithost: Besök profilen i {{ host }}
   viewAs: Visa sajten som den här användaren
@@ -37,6 +40,8 @@ message:
     admin: '{{ username }} är nu admin'
     organizer: '{{ username }} är nu arrangör'
     notOrganizer: '{{ username }} är inte längre arrangör'
+    shown: 'Profilen för {{ username }} visas nu för andra'
+    hidden: 'Profilen för {{ username }} är nu dold för andra'
   contact:
     empty: Ingen kontaktinformation registrerad för {{ username }}
   activity:
@@ -57,6 +62,14 @@ profile:
   form:
     name:
       label: Namn
+    settings:
+      title: Inställningar
+      language: Språk
+      notify: Notiser
+      notifyHelper: Om evenemang som följs eller är anmälda till ändras, eller arrangören har något nytt att berätta.
+      eventEmail: E-post om evenemang
+      eventPush: Pushnotis om evenemang
+      newsletter: Nyhetsbrev via e-post
     avatar:
       helper: Klicka på bilden, eller dra en fil till den, för att byta bild. Sparas tillsammans med resten.
     firstname:
@@ -64,7 +77,7 @@ profile:
     lastname:
       label: Efternamn
     bio:
-      label: Bio
+      label: Beskrivning
     contact:
       label: Kontaktinfo
     publicContact:

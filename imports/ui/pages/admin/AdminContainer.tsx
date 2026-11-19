@@ -103,11 +103,6 @@ export default function AdminContainer({ siteDoc }) {
     });
 
     allRoutes.push({
-      label: ta('profile.settings'),
-      value: 'my-profile',
-    });
-
-    allRoutes.push({
       description: ta('messages.description'),
       label: (
         <Flex gap="4" align="flex-start">

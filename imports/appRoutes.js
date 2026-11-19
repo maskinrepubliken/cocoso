@@ -145,20 +145,8 @@ const WorksAdmin = loadable(() =>
 );
 const Reports = loadable(() => import('/imports/ui/pages/admin/Reports'));
 
-const EditProfile = loadable(() =>
-  import('/imports/ui/pages/profile/EditProfile')
-);
-const EditProfileGeneral = loadable(() =>
-  import('/imports/ui/pages/profile/EditProfileGeneral')
-);
-const EditProfileLanguage = loadable(() =>
-  import('/imports/ui/pages/profile/EditProfileLanguage')
-);
-const EditProfilePrivacy = loadable(() =>
-  import('/imports/ui/pages/profile/EditProfilePrivacy')
-);
-const EditProfileNotifications = loadable(() =>
-  import('/imports/ui/pages/profile/EditProfileNotifications')
+const MyProfileRedirect = loadable(() =>
+  import('/imports/ui/pages/profile/MyProfileRedirect')
 );
 const Unsubscribe = loadable(() =>
   import('/imports/ui/pages/profile/Unsubscribe')
@@ -293,26 +281,9 @@ const getAdminRoutes = (props) => [
     element: createRouteElement(AdminHome, props),
   },
   {
-    path: 'my-profile',
-    element: createRouteElement(EditProfile, props),
-    children: [
-      {
-        path: 'general',
-        element: createRouteElement(EditProfileGeneral, props),
-      },
-      {
-        path: 'language',
-        element: createRouteElement(EditProfileLanguage, props),
-      },
-      {
-        path: 'privacy',
-        element: createRouteElement(EditProfilePrivacy, props),
-      },
-      {
-        path: 'notifications',
-        element: createRouteElement(EditProfileNotifications, props),
-      },
-    ],
+    // The old profile settings: now the profile form on one's own page
+    path: 'my-profile/*',
+    element: createRouteElement(MyProfileRedirect, props),
   },
   {
     path: 'settings',
