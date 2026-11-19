@@ -5,6 +5,7 @@ import { WebAppInternals } from 'meteor/webapp';
 
 import serverRenderer from './serverRenderer';
 import { bootstrapSite } from './bootstrap';
+import { localizeExternalImages } from './localImages';
 import {
   getSmtpSettings,
   mailUrlFor,
@@ -55,6 +56,13 @@ Meteor.startup(async () => {
   } catch (error) {
     console.error('[bootstrap] failed:', error);
   }
+
+  // In the background: it fetches pictures, and the site can serve meanwhile
+  Meteor.defer(() => {
+    localizeExternalImages().catch((error) =>
+      console.error('[local-images] failed:', error)
+    );
+  });
 
   if (cdnServer) {
     WebAppInternals.setBundledJsCssPrefix(cdnServer);
