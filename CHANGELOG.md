@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.11.0](https://github.com/maskinrepubliken/cocoso/compare/v5.10.0...v5.11.0) (2026-11-19)
+
+
+### Features
+
+* **admin:** let admins show or hide their own profile in the settings ([3e60919](https://github.com/maskinrepubliken/cocoso/commit/3e6091977a2cb60b829e8af8f6d036a7098b1308))
+* **admin:** list admins who show their profile among the organizers ([ef67d4e](https://github.com/maskinrepubliken/cocoso/commit/ef67d4e0c394019585a9136b4ce221b7064ba926))
+* **admin:** list new events on the control panel ([2541383](https://github.com/maskinrepubliken/cocoso/commit/254138329df8f603d33441c94e1faec33c824316))
+* **admin:** set up bio.se cinema mirrors under Speglingar ([c2d1248](https://github.com/maskinrepubliken/cocoso/commit/c2d1248404448588cc774671d75c156e54621077))
+* **admin:** show a logbook of mirror runs on the control panel ([8983f90](https://github.com/maskinrepubliken/cocoso/commit/8983f902444bf9a8b2f93ac0a3f03fb3f3f96890))
+* **mirrors:** mirror cinema screenings from bio.se ([50dfec4](https://github.com/maskinrepubliken/cocoso/commit/50dfec482854c57d35517fc30dab4d5440e87b0c))
+* **offerings:** a website of its own, and switches for an offering's own ([bd0dce8](https://github.com/maskinrepubliken/cocoso/commit/bd0dce8aa54919964add663b3b4c21c2b59f7156))
+* **offerings:** choose how a place or offering is reached, as elsewhere ([f2aa84b](https://github.com/maskinrepubliken/cocoso/commit/f2aa84b1a0c88aec24489cbb005b3082840602f0))
+* **offerings:** filter Äta, handla och bo by kind, as Förfrågningar ([00f497c](https://github.com/maskinrepubliken/cocoso/commit/00f497cab54ebe8ea17520124d1909a69e1a9ea8))
+* **offerings:** list the places that offer something on Äta, handla & bo ([eec52cf](https://github.com/maskinrepubliken/cocoso/commit/eec52cf7b22bae7791a58850b987dbb20b32ff03))
+* **offerings:** make a place commercial, with any number of offerings ([6460b16](https://github.com/maskinrepubliken/cocoso/commit/6460b16c015064d1028a0617daa3e7843cdeb56c))
+* **offerings:** put Äta, handla & bo behind a feature switch ([b40f553](https://github.com/maskinrepubliken/cocoso/commit/b40f55351c0ccfd064f502a6a45b3ecc8a16ca16))
+* **offerings:** smaller kind tiles to tick, Tjänster last ([4dac0bf](https://github.com/maskinrepubliken/cocoso/commit/4dac0bf5716475482c2d7b94bf821e413146271f))
+* **offerings:** turn the Äta, handla & bo items into places ([c2c529c](https://github.com/maskinrepubliken/cocoso/commit/c2c529cfe5906f182deee7b8ef8c8adf477d38c5))
+* **people:** an organizer's Ort follows their address ([1446ba6](https://github.com/maskinrepubliken/cocoso/commit/1446ba63c11187f06e71e4cbdf0d06d4b4fba225))
+* **people:** call an organizer's place "Hemvist", and let it be removed ([a1133d9](https://github.com/maskinrepubliken/cocoso/commit/a1133d904d6b33b5f155bef51541728e02949f5e))
+* **people:** choose "Ingen" as an organizer's Hemvist ([c60ce6d](https://github.com/maskinrepubliken/cocoso/commit/c60ce6d82819bb685f282d7803ac30743bbbc657))
+* **people:** delete the account from the settings, not the profile form ([589a5df](https://github.com/maskinrepubliken/cocoso/commit/589a5df1102f8c79d49e7c65227aff8343bff06c))
+* **people:** drop the note beside "Radera mitt konto" ([5d73c66](https://github.com/maskinrepubliken/cocoso/commit/5d73c6622051e9a1172f9c1675b581bb1af52a38))
+* **people:** edit a profile in a sheet, from a gear on the page ([01073bc](https://github.com/maskinrepubliken/cocoso/commit/01073bc8f97143a0b66afb91babdb591bdb7a854))
+* **people:** make deleting one's account easier to find in the settings ([eb1c047](https://github.com/maskinrepubliken/cocoso/commit/eb1c047f1f4d27020af20e8f62fb30c2251f2d56))
+* **people:** move the profile settings into the profile form ([01a197d](https://github.com/maskinrepubliken/cocoso/commit/01a197d7b092d40a791ae11d3c27b3f5369d25ad))
+* **people:** one name on a profile, without keywords and contact info ([fe30007](https://github.com/maskinrepubliken/cocoso/commit/fe30007a2e83158ff1b1bfa3d87b3e3d49d205db))
+* **people:** put the profile picture under the name in the form ([d9b79dc](https://github.com/maskinrepubliken/cocoso/commit/d9b79dce05b1c72d2c693af77d82f570f831064e))
+* **people:** say in the profile form what creating events needs ([987c4bd](https://github.com/maskinrepubliken/cocoso/commit/987c4bdb55a8c639a9b9988c612c92c7914e9e10))
+* **people:** the settings card first in the profile form, and explained ([01b25bc](https://github.com/maskinrepubliken/cocoso/commit/01b25bc01e3ba292b1ae38c224314cb17bd8a609))
+* **people:** the settings in a dialog of their own ([c5785dd](https://github.com/maskinrepubliken/cocoso/commit/c5785dd37ba7a8b9b1d1b1aad8081d2df767d3c5))
+* **resources:** add offerings to places ([0bae404](https://github.com/maskinrepubliken/cocoso/commit/0bae404eca5434127bcfc1205a1d1c2e17ca5e1c))
+* **resources:** choose a place's Ort from its address ([000c6e3](https://github.com/maskinrepubliken/cocoso/commit/000c6e32cdfc37e6568c2981d37d309801395c99))
+* **resources:** edit what a place offers from the gear ([9080f15](https://github.com/maskinrepubliken/cocoso/commit/9080f151b4f65d893c85513db8fd418a23a3e0b2))
+* **resources:** keep a place's address, coordinates and map in step ([47a445e](https://github.com/maskinrepubliken/cocoso/commit/47a445ef6c6f86393b16077e49ea7e6dd121fcd5))
+* **resources:** keep a written address when the pin moves, find more ([a6a3423](https://github.com/maskinrepubliken/cocoso/commit/a6a342315e2461651cbbcb3bdf3f17c53e326469))
+* **resources:** put "En del av" last on a phone ([403a6af](https://github.com/maskinrepubliken/cocoso/commit/403a6afe933ed1a5b3b4b1be853a6db01b9441e2))
+* **resources:** put a place's pin on the map by hand ([57cd6bc](https://github.com/maskinrepubliken/cocoso/commit/57cd6bc7e0d114d5855b4ab3f227f6dee828b3bb))
+* **resources:** show what a place offers on its page ([30796ac](https://github.com/maskinrepubliken/cocoso/commit/30796ac054de6edb9e791a8cdd156410350503d2))
+* **resources:** the place form's map follows the address as it is typed ([ac9a001](https://github.com/maskinrepubliken/cocoso/commit/ac9a0014ce39547e90518e911829814414ead296))
+* **ui:** say what is edited in the gear menu ([96d237a](https://github.com/maskinrepubliken/cocoso/commit/96d237a84fe4936a977487eca8149d4494bd5c81))
+* **ui:** small icons on the links of the account menu ([db59bbd](https://github.com/maskinrepubliken/cocoso/commit/db59bbd7e4ad748be87f23f2f334a0c7f06f193a))
+* **ui:** the address picker with its map in every form that asks for one ([305a62c](https://github.com/maskinrepubliken/cocoso/commit/305a62cca81796e31092ada1c20a56538b3e13d3))
+
+
+### Bug Fixes
+
+* **admin:** call the mirror's place just "Plats" ([cc66102](https://github.com/maskinrepubliken/cocoso/commit/cc6610297fcd65adb132c51201c16d89a3f6dfde))
+* **admin:** clearer wording in the mirror form ([aff5b90](https://github.com/maskinrepubliken/cocoso/commit/aff5b90ffb097d49c51a6c06f173e25e4c181926))
+* **admin:** let the Diskussioner switch be saved ([02b6fc9](https://github.com/maskinrepubliken/cocoso/commit/02b6fc930a1876348e45b143907860a792301775))
+* **admin:** say "the site" and "the calendar" instead of Cocoso on Speglingar ([a1948dc](https://github.com/maskinrepubliken/cocoso/commit/a1948dc39338d5ebf6a2f78d3c92aba6ef665a8e))
+* **offerings:** back to Äta, handla & bo, and a real excerpt on cards ([933b921](https://github.com/maskinrepubliken/cocoso/commit/933b9216d7d441e37c139e5f00f313433c4296f6))
+* **offerings:** show saved offerings on the place page at once ([13b597e](https://github.com/maskinrepubliken/cocoso/commit/13b597e43bb1eae6992012e6255370b4eeec94dc))
+* **people:** keep the profile picture when Enter is pressed in the form ([1bbdb95](https://github.com/maskinrepubliken/cocoso/commit/1bbdb95f1e7e25c8fe53c490b0be42c2b19b6082))
+* **resources:** find the map point for places that have none ([1dda6d7](https://github.com/maskinrepubliken/cocoso/commit/1dda6d7bc73331af3805cc52da25a792bccae113))
+* **ui:** fit tall pictures in the lightbox ([54dfd70](https://github.com/maskinrepubliken/cocoso/commit/54dfd7060dd5bd9729724da6d52e3983f42fa783))
+* **ui:** hide switched-off sections from the start page's guide ([a971c73](https://github.com/maskinrepubliken/cocoso/commit/a971c73905989f6dbb45c0cb360463d72c9f6df9))
+
 ## [5.10.0](https://github.com/maskinrepubliken/cocoso/compare/v5.9.0...v5.10.0) (2026-11-18)
 
 
