@@ -2574,6 +2574,22 @@ body {
   color: color-mix(in oklab, var(--cocoso-colors-theme-500) 62%, #8c8571);
 }
 
+/* A phone has no room for the whole name beside the menu button: the
+   initials ("TK") stand for it there */
+.site-brand-name-short {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .site-brand-name-full {
+    display: none;
+  }
+
+  .site-brand-name-short {
+    display: inline;
+  }
+}
+
 /* Logged in: the avatar right beside the mark, a little over its edge,
    with a paper rim so the two read as a pair */
 .site-brand .site-user {

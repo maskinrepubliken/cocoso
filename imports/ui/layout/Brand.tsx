@@ -35,8 +35,19 @@ export default function Brand({ site }: BrandProps) {
       {/* The same link once more, so the avatar can stand between mark and
           name; the mark's link is the one read out and tabbed to */}
       <Link className="site-brand-name" to="/" aria-hidden tabIndex={-1}>
-        {first}
-        {rest && <span className="site-brand-name-rest">{rest}</span>}
+        <span className="site-brand-name-full">
+          {first}
+          {rest && <span className="site-brand-name-rest">{rest}</span>}
+        </span>
+        {/* On the smallest screens the initials stand for the name: "TK" */}
+        <span className="site-brand-name-short">
+          {first.charAt(0).toUpperCase()}
+          {rest && (
+            <span className="site-brand-name-rest">
+              {rest.charAt(0).toUpperCase()}
+            </span>
+          )}
+        </span>
       </Link>
     </div>
   );
