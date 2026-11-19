@@ -438,6 +438,36 @@ Meteor.methods({
       }));
     }
 
+    // Events added lately by people. Those a mirror fetched are left out:
+    // the mirrors' logbook below tells of them.
+    let newActivities = [];
+    if (userIsAdmin) {
+      const added = dayjs().subtract(14, 'day').toDate();
+      newActivities = activities
+        .filter(
+          (activity) =>
+            activity.creationDate >= added &&
+            (!activity.mirror || activity.mirror.isDetached)
+        )
+        .sort((a, b) => b.creationDate - a.creationDate)
+        .map((activity) => {
+          const first = (activity.datesAndTimes || [])[0];
+          return {
+            _id: activity._id,
+            title: activity.title,
+            author: activity.authorName || null,
+            place:
+              activity.resource ||
+              activity.place ||
+              formatAddress(activity.address),
+            startDate: first?.startDate || null,
+            startTime: first?.startTime || null,
+            createdAt: activity.creationDate,
+            isPublished: Boolean(activity.isPublished),
+          };
+        });
+    }
+
     // The mirrors' logbook: what their runs brought, and which failed
     let mirrorRuns = [];
     if (userIsAdmin) {
@@ -454,6 +484,8 @@ Meteor.methods({
       recentRegistrations: recentRegistrations.slice(0, 10),
       recentRegistrationCount: recentRegistrations.length,
       newMembers,
+      newActivities: newActivities.slice(0, 10),
+      newActivityCount: newActivities.length,
       newPlaces,
       mirrorRuns,
     };

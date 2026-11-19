@@ -522,6 +522,7 @@ overview:
     members: 'Nya medlemmar'
     places: 'Nya platser'
     mirrors: 'Hämtade evenemang'
+    newActivities: 'Nya evenemang'
   upcoming:
     title: 'På gång de närmaste två veckorna'
     empty: 'Inget inplanerat de närmaste två veckorna.'
@@ -549,6 +550,15 @@ overview:
     unlisted: 'olistad'
     part: 'del av en annan plats'
     all: 'Se alla platser'
+  activities:
+    title: 'Nya evenemang'
+    empty: 'Inga evenemang har lagts in de senaste 14 dagarna.'
+    by: 'av {{username}}'
+    draft: 'Utkast'
+    added: 'inlagt {{at}}'
+    more_one: 'och {{count}} till'
+    more_other: 'och {{count}} till'
+    all: 'Se alla evenemang'
   mirrors:
     title: 'Hämtat från andra kalendrar'
     empty: 'Inget har hämtats de senaste 14 dagarna.'

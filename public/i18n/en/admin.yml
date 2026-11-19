@@ -522,6 +522,7 @@ overview:
     members: 'New members'
     places: 'New places'
     mirrors: 'Fetched events'
+    newActivities: 'New events'
   upcoming:
     title: 'Coming up the next two weeks'
     empty: 'Nothing planned the next two weeks.'
@@ -549,6 +550,15 @@ overview:
     unlisted: 'unlisted'
     part: 'part of another place'
     all: 'See all places'
+  activities:
+    title: 'New events'
+    empty: 'No events have been added in the last 14 days.'
+    by: 'by {{username}}'
+    draft: 'Draft'
+    added: 'added {{at}}'
+    more_one: 'and {{count}} more'
+    more_other: 'and {{count}} more'
+    all: 'See all events'
   mirrors:
     title: 'Fetched from other calendars'
     empty: 'Nothing has been fetched in the last 14 days.'

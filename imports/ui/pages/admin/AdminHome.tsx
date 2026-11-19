@@ -52,6 +52,17 @@ interface NewMember {
   joinDate: Date;
 }
 
+interface NewActivity {
+  _id: string;
+  title: string;
+  author: string | null;
+  place?: string;
+  startDate: string | null;
+  startTime: string | null;
+  createdAt: Date;
+  isPublished: boolean;
+}
+
 interface NewPlace {
   _id: string;
   label: string;
@@ -83,6 +94,8 @@ interface Overview {
   recentRegistrations: Registration[];
   recentRegistrationCount: number;
   newMembers: NewMember[];
+  newActivities?: NewActivity[];
+  newActivityCount?: number;
   newPlaces?: NewPlace[];
   mirrorRuns?: MirrorRun[];
 }
@@ -512,6 +525,79 @@ function NewMembers({ overview, dateLocale }: ListProps) {
   );
 }
 
+// Events added lately by people (not those a mirror fetched): what, by
+// whom, where and when
+function NewActivities({ overview, dateLocale }: ListProps) {
+  const [t] = useTranslation('admin');
+  const activities = overview.newActivities || [];
+  const count = overview.newActivityCount || 0;
+
+  return (
+    <Box>
+      {activities.length === 0 && <Text>{t('overview.activities.empty')}</Text>}
+      {activities.map((activity) => (
+        <Link
+          key={activity._id}
+          style={{ display: 'block' }}
+          to={`/activities/${activity._id}`}
+        >
+          <Flex
+            align="center"
+            css={rowCss}
+            gap="3"
+            justify="space-between"
+            wrap="wrap"
+          >
+            <Box css={{ flex: '1 1 220px', minWidth: 0 }}>
+              <Text css={{ display: 'block' }}>
+                <strong>{activity.title}</strong>
+                {!activity.isPublished && (
+                  <>
+                    {' '}
+                    <Badge colorScheme="gray" size="sm" variant="subtle">
+                      {t('overview.activities.draft')}
+                    </Badge>
+                  </>
+                )}
+              </Text>
+              <Text css={{ display: 'block' }} fontSize="sm">
+                {[
+                  activity.author &&
+                    t('overview.activities.by', { username: activity.author }),
+                  activity.place,
+                  activity.startDate &&
+                    `${dayjs(activity.startDate)
+                      .locale(dateLocale)
+                      .format('ddd D MMM')} ${activity.startTime || ''}`.trim(),
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </Text>
+            </Box>
+            <Text fontSize="sm">
+              {t('overview.activities.added', {
+                at: dayjs(activity.createdAt)
+                  .locale(dateLocale)
+                  .format('D MMM'),
+              })}
+            </Text>
+          </Flex>
+        </Link>
+      ))}
+      {count > activities.length && (
+        <Text css={{ display: 'block', marginTop: '0.5rem' }} fontSize="sm">
+          {t('overview.activities.more', { count: count - activities.length })}
+        </Text>
+      )}
+      <Link to="/activities">
+        <Text css={underlineCss} fontSize="sm">
+          {t('overview.activities.all')}
+        </Text>
+      </Link>
+    </Box>
+  );
+}
+
 // Places added lately: by whom and who looks after them, to spot misuse
 function NewPlaces({ overview, dateLocale }: ListProps) {
   const [t] = useTranslation('admin');
@@ -765,6 +851,11 @@ export default function AdminHome() {
               ...(isAdmin
                 ? [
                     {
+                      id: 'activities',
+                      value: overview.newActivityCount || 0,
+                      label: t('overview.stats.newActivities'),
+                    },
+                    {
                       id: 'members',
                       value: overview.newMembers.length,
                       label: t('overview.stats.members'),
@@ -794,6 +885,12 @@ export default function AdminHome() {
           <Section id="upcoming" title={t('overview.upcoming.title')}>
             <Upcoming dateLocale={dateLocale} overview={overview} />
           </Section>
+
+          {isAdmin && (
+            <Section id="activities" title={t('overview.activities.title')}>
+              <NewActivities dateLocale={dateLocale} overview={overview} />
+            </Section>
+          )}
 
           {isAdmin && (
             <Section id="members" title={t('overview.members.title')}>
