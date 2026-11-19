@@ -266,6 +266,7 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
                           <PlacePicker
                             places={places}
                             selectedId={field.value}
+                            onClear={() => field.onChange(null)}
                             onPick={(place) => field.onChange(place._id)}
                           />
                         )}

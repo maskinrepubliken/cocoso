@@ -67,6 +67,7 @@ form:
     organizerHelper: "Adressen och orten hämtas från arrangörens profil."
     placeRequired: "Välj en plats, eller byt till en adress."
     change: "Byt"
+    remove: "Ta bort platsen"
     pick: "Välj en plats"
     search: "Sök bland platserna…"
     empty: "Ingen plats matchar."

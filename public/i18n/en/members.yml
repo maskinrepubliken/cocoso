@@ -80,7 +80,7 @@ profile:
       website: Website
       required: "As an organizer you must give an email address or a phone number."
     address:
-      title: "Where you are based"
+      title: "Home"
       helper: "Where you or your group usually are: one of the places here, or an address of your own. New events you create start from it; you can always choose something else for a single event."
       place: "A place"
       own: "Own address"

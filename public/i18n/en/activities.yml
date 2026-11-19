@@ -67,6 +67,7 @@ form:
     organizerHelper: "The address and place come from the organizer's profile."
     placeRequired: "Choose a place, or switch to an address."
     change: "Change"
+    remove: "Remove the place"
     pick: "Choose a place"
     search: "Search the places…"
     empty: "No place matches."

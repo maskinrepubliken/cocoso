@@ -80,7 +80,7 @@ profile:
       website: Webbplats
       required: "Som arrangör måste du ange en e-postadress eller ett telefonnummer."
     address:
-      title: "Var ni håller till"
+      title: "Hemvist"
       helper: "Där du eller gruppen brukar hålla till: en av platserna här, eller en egen adress. Nya evenemang du skapar utgår från den, och du kan alltid välja något annat för ett enskilt evenemang."
       place: "En plats"
       own: "Egen adress"

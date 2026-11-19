@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
+import XIcon from 'lucide-react/dist/esm/icons/x';
 
 import { formatAddress, type Address } from '/imports/api/_utils/address';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
@@ -85,6 +86,9 @@ interface PlacePickerProps {
   // The place chosen, if any: shown as a card with "Byt"
   selectedId?: string | null;
   onPick: (place: PlaceOption) => void;
+  // Where no place is a choice too (an organizer's home): the chosen
+  // place's card gets a cross that takes it away
+  onClear?: () => void;
   // Under the chosen place's card, e.g. its map
   children?: React.ReactNode;
 }
@@ -96,6 +100,7 @@ export default function PlacePicker({
   places,
   selectedId,
   onPick,
+  onClear,
   children,
 }: PlacePickerProps) {
   const [t] = useTranslation('activities');
@@ -131,6 +136,17 @@ export default function PlacePicker({
             >
               {t('form.where.change')}
             </button>
+            {onClear && (
+              <button
+                type="button"
+                aria-label={t('form.where.remove')}
+                className="person-card-remove"
+                title={t('form.where.remove')}
+                onClick={onClear}
+              >
+                <XIcon aria-hidden width={16} height={16} />
+              </button>
+            )}
           </span>
         </div>
         {children}
