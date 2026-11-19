@@ -20,10 +20,8 @@ form:
     label: Where the place is
     address: Address
     parent: Part of another place
-    coordinates: Coordinates
     details:
-      address: "Street, postal code and town. The map point is looked up from it."
-      coordinates: "A point on the map, for a lake or a trail, say."
+      address: "Type the address or put the place on the map, and the rest is filled in."
       parent: "Inside another place, like a room in the library. Gets that place's address."
   parent:
     required: Choose the place it is part of.

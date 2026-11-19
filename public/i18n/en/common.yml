@@ -880,13 +880,15 @@ address:
     coordinates:
       label: "Coordinates"
       helper: "Latitude and longitude, as copied from a map."
+      helperLinked: "Filled in from the address or the map. Paste your own if you have them."
       invalid: "That does not look like coordinates (latitude, longitude)."
     map:
       label: "On the map"
-      helper: "Click the map or drag the pin to where the place is."
-      helperStreet: "Click the map or drag the pin to where the place is. Without a pin, it is found from the address when you save."
       searching: "Looking up the address …"
       notFound: "Could not find the address. Click the map where the place is."
+      helperLinked: "Click the map or drag the pin to where the place is, and the address is filled in."
+      findingAddress: "Getting the address from the map …"
+      noAddress: "No address here. Type it above if you like."
   errors:
     required: "Give a street address and town, or coordinates."
 contact:

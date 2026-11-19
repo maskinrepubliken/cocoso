@@ -5,6 +5,7 @@ import { locationSelector } from '../_utils/shared';
 import { requireAddress } from '../_utils/address';
 import {
   geocodeAddress,
+  geocodePoint,
   geocodeTown,
   withCoordinates,
 } from '../_utils/geocode';
@@ -193,6 +194,17 @@ Meteor.methods({
       city,
     });
     return point ? { point } : { town: await geocodeTown(city) };
+  },
+
+  // The other way, for the place form's map: the address at a point put
+  // on it, or null. For those who may add places.
+  async findPointAddress(coordinates) {
+    check(coordinates, { lat: Number, lng: Number });
+    const user = await Meteor.userAsync();
+    if (!user || !(await isContributorOrAdmin(user._id))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    return await geocodePoint(coordinates);
   },
 
   async getResourceById(resourceId) {

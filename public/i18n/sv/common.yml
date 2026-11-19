@@ -877,13 +877,15 @@ address:
     coordinates:
       label: "Koordinater"
       helper: "Latitud och longitud, som du kopierar från en karta."
+      helperLinked: "Fylls i från adressen eller kartan. Klistra in egna om du har dem."
       invalid: "Det ser inte ut som koordinater (latitud, longitud)."
     map:
       label: "Plats på kartan"
-      helper: "Klicka på kartan eller dra nålen dit platsen är."
-      helperStreet: "Klicka på kartan eller dra nålen dit platsen är. Utan nål hittas den från adressen när du sparar."
       searching: "Letar upp adressen …"
       notFound: "Hittade inte adressen. Klicka på kartan där platsen är."
+      helperLinked: "Klicka på kartan eller dra nålen dit platsen är, så fylls adressen i."
+      findingAddress: "Hämtar adressen från kartan …"
+      noAddress: "Ingen adress här. Skriv den gärna själv ovan."
   errors:
     required: "Fyll i gatuadress och ort, eller koordinater."
 contact:

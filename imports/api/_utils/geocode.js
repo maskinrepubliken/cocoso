@@ -8,6 +8,7 @@
 // coordinates and can be given them by hand.
 
 const ENDPOINT = 'https://nominatim.openstreetmap.org/search';
+const REVERSE_ENDPOINT = 'https://nominatim.openstreetmap.org/reverse';
 const USER_AGENT = `cocoso (${process.env.ROOT_URL || 'cocoso'})`;
 const TIMEOUT_MS = 4000;
 const SPACING_MS = 1100;
@@ -136,6 +137,57 @@ export async function geocodeAddress(address) {
       bounded: '1',
     })
   );
+}
+
+// The other way: the address at a point on the map, as street (with its
+// number when there is one), postal code and town; null when there is
+// none near. Asked as precisely as a house.
+export async function geocodePoint({ lat, lng }) {
+  const params = new URLSearchParams({
+    format: 'jsonv2',
+    lat: String(lat),
+    lon: String(lng),
+    zoom: '18',
+    addressdetails: '1',
+  });
+  const key = `reverse|${params}`;
+  if (answers.has(key)) {
+    return answers.get(key);
+  }
+  const found = await inTurn(async () => {
+    try {
+      const response = await fetch(`${REVERSE_ENDPOINT}?${params}`, {
+        headers: { 'User-Agent': USER_AGENT },
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (!response.ok) {
+        return null;
+      }
+      const { address } = await response.json();
+      const road =
+        address?.road || address?.pedestrian || address?.footway || '';
+      const city =
+        address?.town ||
+        address?.village ||
+        address?.city ||
+        address?.hamlet ||
+        address?.suburb ||
+        '';
+      if (!road && !city) {
+        return null;
+      }
+      return {
+        street: [road, address?.house_number].filter(Boolean).join(' '),
+        postalCode: address?.postcode || '',
+        city,
+      };
+    } catch (error) {
+      console.warn('[geocode]', error.message);
+      return null;
+    }
+  });
+  answers.set(key, found);
+  return found;
 }
 
 // The address with coordinates added when it has none and they can be found.

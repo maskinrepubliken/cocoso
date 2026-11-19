@@ -20,10 +20,8 @@ form:
     label: Var platsen finns
     address: Adress
     parent: Del av en annan plats
-    coordinates: Koordinater
     details:
-      address: "Gata, postnummer och ort. Kartpunkten tas fram ur adressen."
-      coordinates: "En punkt på kartan, för till exempel en sjö eller ett spår."
+      address: "Skriv adressen eller sätt ut platsen på kartan, så fylls resten i."
       parent: "Ligger i en annan plats, som ett rum i biblioteket. Får den platsens adress."
   parent:
     required: Välj platsen den är en del av.

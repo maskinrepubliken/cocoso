@@ -7,7 +7,8 @@ import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
 import LocationSelect from '/imports/ui/forms/LocationSelect';
-import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
+import { emptyAddress } from '/imports/ui/forms/AddressFields';
+import PlaceAddressFields from '/imports/ui/forms/PlaceAddressFields';
 import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
 import { Address, isCompleteAddress } from '/imports/api/_utils/address';
 import { Contact, isReachable } from '/imports/api/_utils/contact';
@@ -24,7 +25,6 @@ import {
 import { message } from '/imports/ui/generic/message';
 import KindPicker from '/imports/ui/pages/activities/form/KindPicker';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
-import CrosshairIcon from 'lucide-react/dist/esm/icons/crosshair';
 import BuildingIcon from 'lucide-react/dist/esm/icons/building-2';
 import ChoiceChips from '/imports/ui/pages/activities/form/ChoiceChips';
 import FormCard from '/imports/ui/pages/activities/form/FormCard';
@@ -118,34 +118,19 @@ function possibleParents(
     .sort((a, b) => a.label.localeCompare(b.label, 'sv'));
 }
 
-// How a place is given: part of another, a map point with no street, or
-// a street address.
-type Placement = 'address' | 'coordinates' | 'parent';
-const placementOf = (resource?: ResourceData): Placement => {
-  if (resource?.parentId) {
-    return 'parent';
-  }
-  if (resource?.address?.coordinates && !resource.address.street?.trim()) {
-    return 'coordinates';
-  }
-  return 'address';
-};
+// How a place is given: part of another, or where it is, as an address
+// and a point on the map kept in step (PlaceAddressFields).
+type Placement = 'address' | 'parent';
+const placementOf = (resource?: ResourceData): Placement =>
+  resource?.parentId ? 'parent' : 'address';
 
 const PLACEMENTS: {
   value: Placement;
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }[] = [
   { value: 'address', Icon: MapPinIcon },
-  { value: 'coordinates', Icon: CrosshairIcon },
   { value: 'parent', Icon: BuildingIcon },
 ];
-
-// Only what the chosen way uses: a map point alone, or the street address.
-const addressFor = (
-  placement: Placement,
-  address: Partial<Address>
-): Partial<Address> =>
-  placement === 'coordinates' ? { coordinates: address.coordinates } : address;
 
 // What a draft keeps (see useFormDraft): the typed name and description,
 // and everything chosen outside them. Pictures not yet uploaded are not.
@@ -326,10 +311,7 @@ function PlaceForm({
       message.formError(t('form.parent.required'));
       return;
     }
-    if (
-      !isPart &&
-      !isCompleteAddress(addressFor(state.placement, state.address))
-    ) {
+    if (!isPart && !isCompleteAddress(state.address)) {
       message.formError(tc('address.errors.required'));
       return;
     }
@@ -359,7 +341,7 @@ function PlaceForm({
     const isPart = state.placement === 'parent';
     const newResource: ResourceData = {
       ...state.formValues,
-      address: addressFor(state.placement, state.address),
+      address: state.address,
       kinds: state.kinds,
       contact: isOwnContact ? state.contact : null,
       contactUserId: isOwnContact ? null : state.contactChoice,
@@ -482,12 +464,7 @@ function PlaceForm({
             </>
           ) : (
             <>
-              <AddressFields
-                required
-                withMapPicker
-                mode={
-                  state.placement === 'coordinates' ? 'coordinates' : 'street'
-                }
+              <PlaceAddressFields
                 value={state.address}
                 onChange={(address) =>
                   setState((prevState: any) => ({ ...prevState, address }))
