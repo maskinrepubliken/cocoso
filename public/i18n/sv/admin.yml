@@ -570,6 +570,13 @@ features:
       count_other: "{{count}} förfrågningar finns"
       offEffect: Alla förfrågningar och listan över dem blir "sidan finns inte", och ingen kan lägga upp nya. Förfrågningarna finns kvar i databasen.
       onEffect: Förfrågningarna och listan över dem blir synliga igen, med allt som fanns när funktionen stängdes av.
+    businesses:
+      label: Äta, handla & bo
+      about: Sidan Äta, handla & bo och de kommersiella platsernas erbjudanden, tagline, kontakt och öppettider, med redigeringen i kugghjulet.
+      count_one: "{{count}} kommersiell plats finns"
+      count_other: "{{count}} kommersiella platser finns"
+      offEffect: Sidan Äta, handla & bo blir "sidan finns inte" och valet försvinner ur kugghjulet. De kommersiella platserna visas som vanliga platser under Platser, utan erbjudanden, tagline och öppettider. Allt finns kvar i databasen.
+      onEffect: Sidan Äta, handla & bo blir synlig igen, och de kommersiella platserna flyttar dit från Platser med sina erbjudanden.
     documents:
       label: Dokument
       about: Dokument på platser, förfrågningar och grupper – att lägga till dem från kugghjulet och listan på sidan.

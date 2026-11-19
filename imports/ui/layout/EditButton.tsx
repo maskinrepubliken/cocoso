@@ -184,9 +184,15 @@ function useGearItems(editable: Editable | null): GearItem[] {
         param: 'offerings',
         label: tc('entryMenu.offerings'),
       };
+      const offeringsOn = isFeatureEnabled('businesses');
       return isAdmin
-        ? [...(documentsOn ? [addDocument] : []), edit, offerings, remove]
-        : [edit, offerings];
+        ? [
+            ...(documentsOn ? [addDocument] : []),
+            edit,
+            ...(offeringsOn ? [offerings] : []),
+            remove,
+          ]
+        : [edit, ...(offeringsOn ? [offerings] : [])];
     }
     case 'works':
       return [...(documentsOn ? [addDocument] : []), edit, remove];

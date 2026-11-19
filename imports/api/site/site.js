@@ -107,6 +107,7 @@ Site.schema = new SimpleSchema({
   features: { type: Object, optional: true },
   'features.groups': { type: Boolean, optional: true },
   'features.works': { type: Boolean, optional: true },
+  'features.businesses': { type: Boolean, optional: true },
   'features.bookings': { type: Boolean, optional: true },
   'features.documents': { type: Boolean, optional: true },
   'features.discussions': { type: Boolean, optional: true },

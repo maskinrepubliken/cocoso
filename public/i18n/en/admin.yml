@@ -570,6 +570,13 @@ features:
       count_other: "{{count}} requests exist"
       offEffect: Every request and their list become "page not found", and nobody can post new ones. The requests stay in the database.
       onEffect: The requests and their list become visible again, with everything they had when the feature was switched off.
+    businesses:
+      label: Eat, shop & stay
+      about: The Eat, shop & stay page and the commercial places' offerings, tagline, contact and opening hours, with their editing from the gear.
+      count_one: "{{count}} commercial place"
+      count_other: "{{count}} commercial places"
+      offEffect: The Eat, shop & stay page becomes "page not found" and its choice leaves the gear. The commercial places are shown as ordinary places under Places, without offerings, tagline or opening hours. Everything stays in the database.
+      onEffect: The Eat, shop & stay page is visible again, and the commercial places move back there from Places with their offerings.
     documents:
       label: Documents
       about: Documents on places, requests and groups – adding them from the gear, and the list on the page.

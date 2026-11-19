@@ -632,35 +632,38 @@ export default function appRoutes(props) {
           },
         ],
       },
-      {
-        path: 'businesses',
-        children: [
-          {
-            index: true,
-            element: el(BusinessListHandler),
-            // Every place, so the place picker can count them all.
-            loader: ld(() => getBusinesses()),
-            shouldRevalidate: revalidateOn(),
-          },
-          {
-            // An old link to an item: to the place it became
-            path: ':businessId',
-            loader: ld(async ({ params, request }) => {
-              const resourceId = await getPlaceOfLegacyBusiness({ params });
-              const url = new URL(request.url);
-              const base = url.pathname.slice(
-                0,
-                url.pathname.indexOf('/businesses/')
-              );
-              return redirect(
-                resourceId
-                  ? `${base}/resources/${resourceId}`
-                  : `${base}/businesses`
-              );
-            }),
-          },
-        ],
-      },
+      // Äta, handla & bo
+      ...ifFeature('businesses', [
+        {
+          path: 'businesses',
+          children: [
+            {
+              index: true,
+              element: el(BusinessListHandler),
+              // Every place, so the place picker can count them all.
+              loader: ld(() => getBusinesses()),
+              shouldRevalidate: revalidateOn(),
+            },
+            {
+              // An old link to an item: to the place it became
+              path: ':businessId',
+              loader: ld(async ({ params, request }) => {
+                const resourceId = await getPlaceOfLegacyBusiness({ params });
+                const url = new URL(request.url);
+                const base = url.pathname.slice(
+                  0,
+                  url.pathname.indexOf('/businesses/')
+                );
+                return redirect(
+                  resourceId
+                    ? `${base}/resources/${resourceId}`
+                    : `${base}/businesses`
+                );
+              }),
+            },
+          ],
+        },
+      ]),
       ...ifFeature('works', [
         {
           path: 'works',

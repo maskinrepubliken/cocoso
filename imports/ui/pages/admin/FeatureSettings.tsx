@@ -14,7 +14,7 @@ import { message } from '/imports/ui/generic/message';
 // typed out before the change can be made.
 
 interface FeatureStatus {
-  name: 'groups' | 'works' | 'documents' | 'discussions';
+  name: 'groups' | 'works' | 'businesses' | 'documents' | 'discussions';
   enabled: boolean;
   isDefault: boolean;
   defaultEnabled: boolean;
@@ -200,7 +200,9 @@ export default function FeatureSettings() {
               variant="outline"
               onClick={() => setAsking(feature)}
             >
-              {feature.enabled ? t('features.switchOff') : t('features.switchOn')}
+              {feature.enabled
+                ? t('features.switchOff')
+                : t('features.switchOn')}
             </Button>
           </Head>
           <Line>{t(`features.items.${feature.name}.about`)}</Line>
@@ -216,7 +218,7 @@ export default function FeatureSettings() {
                 })
               : t('features.default')}
           </Line>
-          {(feature.name === 'groups' || feature.name === 'works') && (
+          {['groups', 'works', 'businesses'].includes(feature.name) && (
             <Line quiet>{t('features.menuNote')}</Line>
           )}
         </Card>
@@ -231,9 +233,14 @@ export default function FeatureSettings() {
         }}
         confirmText={
           asking &&
-          t(asking.enabled ? 'features.confirm.yesOff' : 'features.confirm.yesOn', {
-            name: label(asking),
-          })
+          t(
+            asking.enabled
+              ? 'features.confirm.yesOff'
+              : 'features.confirm.yesOn',
+            {
+              name: label(asking),
+            }
+          )
         }
         id="feature-switch"
         open={Boolean(asking)}
@@ -265,9 +272,7 @@ export default function FeatureSettings() {
               })}
             </Line>
             <label htmlFor="feature-switch-name">
-              <Line>
-                {t('features.confirm.type', { name: label(asking) })}
-              </Line>
+              <Line>{t('features.confirm.type', { name: label(asking) })}</Line>
             </label>
             <Input
               autoComplete="off"

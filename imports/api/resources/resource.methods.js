@@ -17,6 +17,7 @@ import { cleanKinds } from '../_utils/kinds';
 import { RESOURCE_KIND_KEYS } from '../../ui/pages/resources/resourceKinds';
 import { warmShareImage } from '../share/shareImage.server';
 import methodError from '../_utils/methodError';
+import { isFeatureEnabled } from '../_utils/features';
 
 async function validateLabel(label, resourceId) {
   // set resource query
@@ -116,16 +117,31 @@ async function updateParts(resourceId, address, locationId) {
   }
 }
 
+// With Äta, handla & bo switched off, a commercial place is an ordinary
+// place: listed under Platser, without its tagline, hours or offerings
+const asFeatureAllows = (place) => {
+  if (!place || isFeatureEnabled('businesses')) {
+    return place;
+  }
+  const {
+    isCommercial: _isCommercial,
+    commerce: _commerce,
+    ...ordinary
+  } = place;
+  return ordinary;
+};
+
 // RESOURCE METHODS
 Meteor.methods({
   async getResources(locationId) {
     check(locationId, Match.Maybe(String));
     // A commercial place (isCommercial) is listed under Äta, handla & bo
-    // instead of Platser (see the loaders)
-    return await Resources.find(locationSelector(locationId), {
+    // instead of Platser (see the loaders), while that is switched on
+    const places = await Resources.find(locationSelector(locationId), {
       fields: Resources.publicFields,
       sort: { createdAt: -1 },
     }).fetchAsync();
+    return places.map(asFeatureAllows);
   },
 
   async getResourcesDry() {
@@ -154,9 +170,11 @@ Meteor.methods({
 
   async getResourceById(resourceId) {
     const fields = Resources.publicFields;
-    const resource = await attachPlaceContact(
-      await attachBookingPerson(
-        await Resources.findOneAsync(resourceId, { fields })
+    const resource = asFeatureAllows(
+      await attachPlaceContact(
+        await attachBookingPerson(
+          await Resources.findOneAsync(resourceId, { fields })
+        )
       )
     );
     if (!resource) {
@@ -185,10 +203,12 @@ Meteor.methods({
       ).fetchAsync(),
     ]);
     // What it offers, shown on its page
-    const offerings = await Offerings.find(
-      { resourceId: resource._id },
-      { fields: Offerings.publicFields, sort: { order: 1 } }
-    ).fetchAsync();
+    const offerings = resource.isCommercial
+      ? await Offerings.find(
+          { resourceId: resource._id },
+          { fields: Offerings.publicFields, sort: { order: 1 } }
+        ).fetchAsync()
+      : [];
     // A commercial place and its offerings with a chosen manager's details
     const reached = (item) =>
       item?.contactUserId ? attachPlaceContact(item) : item;
@@ -281,11 +301,13 @@ Meteor.methods({
     if (!home) {
       return { main: null, others: linked };
     }
-    const main = await attachPlaceContact(
-      await attachBookingPerson(
-        await Resources.findOneAsync(home._id, {
-          fields: Resources.publicFields,
-        })
+    const main = asFeatureAllows(
+      await attachPlaceContact(
+        await attachBookingPerson(
+          await Resources.findOneAsync(home._id, {
+            fields: Resources.publicFields,
+          })
+        )
       )
     );
     const parts = await Resources.find(

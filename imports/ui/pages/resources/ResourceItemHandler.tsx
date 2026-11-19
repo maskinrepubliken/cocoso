@@ -11,6 +11,7 @@ import {
   roleAtom,
 } from '/imports/state';
 import { managesPlace } from '/imports/api/resources/placeAccess';
+import { isFeatureEnabled } from '/imports/api/_utils/features';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
 import NewEntryHandler from '/imports/ui/forms/NewEntryHandler.loadable';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
@@ -60,12 +61,14 @@ export default function ResourceItemHandler({ siteDoc }) {
           {/* The gear's dialogs: add document and delete */}
           {role === 'admin' && <ResourceAdminFunctions />}
 
-          {/* The gear's "Äta, handla & bo": what the place offers */}
-          {(role === 'admin' ||
-            (role === 'contributor' &&
-              managesPlace(currentUser?._id, resource))) && (
-            <OfferingsEditor place={resource} />
-          )}
+          {/* The gear's "Äta, handla & bo": what the place offers, while
+            that is switched on */}
+          {isFeatureEnabled('businesses') &&
+            (role === 'admin' ||
+              (role === 'contributor' &&
+                managesPlace(currentUser?._id, resource))) && (
+              <OfferingsEditor place={resource} />
+            )}
 
           {/* The header's plus here: a new place, part of this one */}
           {canCreateContent && (

@@ -12,6 +12,7 @@ import {
 } from '../resources/resource.contact';
 import Offerings from './offering';
 import { isOfferingKind } from './offeringKinds';
+import { featureMethods } from '../_utils/features';
 
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -146,148 +147,152 @@ async function commercialPlaces(selector = {}) {
   );
 }
 
-Meteor.methods({
-  // What a place offers, in its order
-  async getPlaceOfferings(resourceId) {
-    check(resourceId, String);
-    return await Offerings.find(
-      { resourceId },
-      { fields: Offerings.publicFields, sort: { order: 1 } }
-    ).fetchAsync();
-  },
+// With Äta, handla & bo switched off, the lists are empty and the rest
+// answers that it is switched off
+Meteor.methods(
+  featureMethods('businesses', ['getPlaceOfferings', 'getCommercialPlaces'], {
+    // What a place offers, in its order
+    async getPlaceOfferings(resourceId) {
+      check(resourceId, String);
+      return await Offerings.find(
+        { resourceId },
+        { fields: Offerings.publicFields, sort: { order: 1 } }
+      ).fetchAsync();
+    },
 
-  async getCommercialPlaces(locationId) {
-    check(locationId, Match.Maybe(String));
-    return await commercialPlaces(locationSelector(locationId));
-  },
+    async getCommercialPlaces(locationId) {
+      check(locationId, Match.Maybe(String));
+      return await commercialPlaces(locationSelector(locationId));
+    },
 
-  // The old Äta/handla/bo link of an item, to the place it became
-  async getPlaceOfLegacyBusiness(businessId) {
-    check(businessId, String);
-    const offering = await Offerings.findOneAsync(
-      { legacyBusinessId: businessId },
-      { fields: { resourceId: 1 } }
-    );
-    return offering?.resourceId || null;
-  },
+    // The old Äta/handla/bo link of an item, to the place it became
+    async getPlaceOfLegacyBusiness(businessId) {
+      check(businessId, String);
+      const offering = await Offerings.findOneAsync(
+        { legacyBusinessId: businessId },
+        { fields: { resourceId: 1 } }
+      );
+      return offering?.resourceId || null;
+    },
 
-  // A place's Äta, handla & bo, as the editor sends it: whether it is a
-  // commercial place, its tagline and the defaults its offerings use, and
-  // its offerings in order. An offering left out is taken away; a place
-  // that is no longer commercial loses them all. Those who may change the
-  // place may do this.
-  async savePlaceCommerce(resourceId, commerce, offerings) {
-    check(resourceId, String);
-    check(commerce, CommercePattern);
-    check(offerings, [OfferingPattern]);
-    const user = await Meteor.userAsync();
-    const resource = await Resources.findOneAsync(
-      { _id: resourceId },
-      { fields: { managerIds: 1, parentId: 1 } }
-    );
-    if (!resource) {
-      throw new Meteor.Error('not-found', 'Place not found');
-    }
-    if (!user || !(await canManagePlace(user._id, resource))) {
-      throw new Meteor.Error('not-authorized', 'You are not allowed');
-    }
-    if (offerings.some((offering) => !isOfferingKind(offering.kind))) {
-      throw new Meteor.Error('invalid-kind', 'Unknown kind of offering');
-    }
+    // A place's Äta, handla & bo, as the editor sends it: whether it is a
+    // commercial place, its tagline and the defaults its offerings use, and
+    // its offerings in order. An offering left out is taken away; a place
+    // that is no longer commercial loses them all. Those who may change the
+    // place may do this.
+    async savePlaceCommerce(resourceId, commerce, offerings) {
+      check(resourceId, String);
+      check(commerce, CommercePattern);
+      check(offerings, [OfferingPattern]);
+      const user = await Meteor.userAsync();
+      const resource = await Resources.findOneAsync(
+        { _id: resourceId },
+        { fields: { managerIds: 1, parentId: 1 } }
+      );
+      if (!resource) {
+        throw new Meteor.Error('not-found', 'Place not found');
+      }
+      if (!user || !(await canManagePlace(user._id, resource))) {
+        throw new Meteor.Error('not-authorized', 'You are not allowed');
+      }
+      if (offerings.some((offering) => !isOfferingKind(offering.kind))) {
+        throw new Meteor.Error('invalid-kind', 'Unknown kind of offering');
+      }
 
-    try {
-      const now = new Date();
-      if (!commerce.isCommercial) {
+      try {
+        const now = new Date();
+        if (!commerce.isCommercial) {
+          await Resources.updateAsync(
+            { _id: resourceId },
+            {
+              $unset: { isCommercial: 1, commerce: 1 },
+              $set: { updatedBy: user.username, updatedAt: now },
+            }
+          );
+          await Offerings.removeAsync({ resourceId });
+          return;
+        }
+
+        const tagline = (commerce.tagline || '').trim();
+        const reach = await cleanReach(commerce, resource.managerIds);
+        const openingHours = cleanHours(commerce.openingHours);
+        const hoursNote = (commerce.hoursNote || '').trim();
         await Resources.updateAsync(
           { _id: resourceId },
           {
-            $unset: { isCommercial: 1, commerce: 1 },
-            $set: { updatedBy: user.username, updatedAt: now },
+            $set: {
+              isCommercial: true,
+              commerce: {
+                ...(tagline ? { tagline } : {}),
+                ...reach,
+                ...(openingHours.length ? { openingHours } : {}),
+                ...(hoursNote ? { hoursNote } : {}),
+              },
+              updatedBy: user.username,
+              updatedAt: now,
+            },
           }
         );
-        await Offerings.removeAsync({ resourceId });
-        return;
-      }
 
-      const tagline = (commerce.tagline || '').trim();
-      const reach = await cleanReach(commerce, resource.managerIds);
-      const openingHours = cleanHours(commerce.openingHours);
-      const hoursNote = (commerce.hoursNote || '').trim();
-      await Resources.updateAsync(
-        { _id: resourceId },
-        {
-          $set: {
-            isCommercial: true,
-            commerce: {
-              ...(tagline ? { tagline } : {}),
-              ...reach,
-              ...(openingHours.length ? { openingHours } : {}),
-              ...(hoursNote ? { hoursNote } : {}),
-            },
+        const kept = [];
+        for (const [order, offering] of offerings.entries()) {
+          const title = (offering.title || '').trim();
+          const description = cleanText(offering.description);
+          const ownReach = await cleanReach(offering, resource.managerIds);
+          // null: the place's hours; an array (even empty): its own
+          const ownHours = Array.isArray(offering.openingHours)
+            ? cleanHours(offering.openingHours)
+            : null;
+          const ownNote = ownHours ? (offering.hoursNote || '').trim() : '';
+          const existing =
+            offering._id &&
+            (await Offerings.findOneAsync(
+              { _id: offering._id, resourceId },
+              { fields: { _id: 1 } }
+            ));
+          const set = {
+            kind: offering.kind,
+            order,
+            ...(title ? { title } : {}),
+            ...(description ? { description } : {}),
+            ...ownReach,
+            ...(ownHours ? { openingHours: ownHours } : {}),
+            ...(ownNote ? { hoursNote: ownNote } : {}),
             updatedBy: user.username,
             updatedAt: now,
-          },
+          };
+          // An edited offering is no longer made-up example data
+          const unset = {
+            isExample: 1,
+            ...(title ? {} : { title: 1 }),
+            ...(description ? {} : { description: 1 }),
+            ...unsetOthers(ownReach),
+            ...(ownHours ? {} : { openingHours: 1 }),
+            ...(ownNote ? {} : { hoursNote: 1 }),
+          };
+          if (existing) {
+            await Offerings.updateAsync(
+              { _id: existing._id },
+              { $set: set, $unset: unset }
+            );
+            kept.push(existing._id);
+          } else {
+            kept.push(
+              await Offerings.insertAsync({
+                resourceId,
+                ...set,
+                createdBy: user.username,
+                createdAt: now,
+              })
+            );
+          }
         }
-      );
-
-      const kept = [];
-      for (const [order, offering] of offerings.entries()) {
-        const title = (offering.title || '').trim();
-        const description = cleanText(offering.description);
-        const ownReach = await cleanReach(offering, resource.managerIds);
-        // null: the place's hours; an array (even empty): its own
-        const ownHours = Array.isArray(offering.openingHours)
-          ? cleanHours(offering.openingHours)
-          : null;
-        const ownNote = ownHours ? (offering.hoursNote || '').trim() : '';
-        const existing =
-          offering._id &&
-          (await Offerings.findOneAsync(
-            { _id: offering._id, resourceId },
-            { fields: { _id: 1 } }
-          ));
-        const set = {
-          kind: offering.kind,
-          order,
-          ...(title ? { title } : {}),
-          ...(description ? { description } : {}),
-          ...ownReach,
-          ...(ownHours ? { openingHours: ownHours } : {}),
-          ...(ownNote ? { hoursNote: ownNote } : {}),
-          updatedBy: user.username,
-          updatedAt: now,
-        };
-        // An edited offering is no longer made-up example data
-        const unset = {
-          isExample: 1,
-          ...(title ? {} : { title: 1 }),
-          ...(description ? {} : { description: 1 }),
-          ...unsetOthers(ownReach),
-          ...(ownHours ? {} : { openingHours: 1 }),
-          ...(ownNote ? {} : { hoursNote: 1 }),
-        };
-        if (existing) {
-          await Offerings.updateAsync(
-            { _id: existing._id },
-            { $set: set, $unset: unset }
-          );
-          kept.push(existing._id);
-        } else {
-          kept.push(
-            await Offerings.insertAsync({
-              resourceId,
-              ...set,
-              createdBy: user.username,
-              createdAt: now,
-            })
-          );
-        }
+        await Offerings.removeAsync({ resourceId, _id: { $nin: kept } });
+      } catch (error) {
+        throw methodError(error, "Couldn't save Äta, handla & bo");
       }
-      await Offerings.removeAsync({ resourceId, _id: { $nin: kept } });
-    } catch (error) {
-      throw methodError(error, "Couldn't save Äta, handla & bo");
-    }
-  },
-});
+    },
+  })
+);
 
 export { commercialPlaces };

@@ -14,6 +14,10 @@ import { Meteor } from 'meteor/meteor';
 export const DEFAULT_FEATURES = {
   groups: false, // Grupper
   works: false, // Förfrågningar
+  // Äta, handla & bo: its page, a commercial place's offerings, tagline
+  // and hours, and the gear's editor for them. Switched off, commercial
+  // places are ordinary places again, listed under Platser.
+  businesses: true,
   // Documents on places, requests and groups: adding them from the gear,
   // the list on the page, and the methods behind them.
   documents: false,
