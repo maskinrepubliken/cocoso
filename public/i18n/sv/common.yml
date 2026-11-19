@@ -617,7 +617,7 @@ seasons:
 
 cookies:
   title: Innan du fortsätter
-  text: "Vi använder bara de kakor som behövs för att sidan ska fungera: en för att hålla dig inloggad, en för att minnas ditt språk och en för att minnas att du har läst det här. Inga kakor för spårning eller reklam."
+  text: "Vi sparar bara det som behövs för att sidan ska fungera: att du är inloggad, vilket språk du har och att du har läst det här. Det ligger i kakor och i webbläsarens lagring. Inga kakor för spårning eller reklam, och inga från andra företag."
   beta: Tjänsten är ny och byggs fortfarande, så saker kan ändras och något kanske inte fungerar än. Vi vill gärna höra vad du tycker!
   feedbackHint: Knappen "Ge feedback" finns alltid längst ner på varje sida.
   feedbackNow: Ge feedback nu
@@ -693,7 +693,10 @@ termsPage:
         - "Vi sparar inga uppgifter om dig i marknadsföringssyfte och lämnar inte ut dem till någon utanför kommunen. Lagringen sker på servrar inom EU."
     - title: Kakor
       paragraphs:
-        - "Tjänsten använder bara kakor som behövs för att den ska fungera: en för att hålla dig inloggad, en för att minnas vilket språk du valt och en för att minnas att du har sett informationen om kakor. Inga kakor för spårning eller reklam."
+        - "Tjänsten sparar bara det som behövs för att den ska fungera, och inget av det används för spårning eller reklam. Därför frågar vi inte om samtycke, men du ska veta vad det är:"
+        - "Kakor: i18next och cocoso-lang minns ditt språk (den första tills du stänger webbläsaren, den andra i ett år, och bara om du själv väljer språk). cocoso-cookie-notice minns i ett år att du har läst informationen om kakor."
+        - "Webbläsarens lagring (localStorage): inloggningen sparas där när du loggar in och tas bort när du loggar ut. Har du börjat fylla i ett formulär sparas utkastet där i upp till 30 dagar, så att inget går förlorat."
+        - "Inga kakor sätts av andra företag. Bilder och typsnitt hämtas från tjänstens egen server. Kartor hämtas från OpenFreeMap, som inte sätter kakor men ser din IP-adress när en karta visas, som alla webbservrar gör."
     - title: Dina rättigheter
       paragraphs:
         - "Du kan när som helst se och ändra dina uppgifter under din profil, och ta bort ditt konto där. Då raderas dina personuppgifter. Evenemang och inlägg du skapat kan ligga kvar utan ditt namn om andra är beroende av dem."

@@ -620,7 +620,7 @@ seasons:
 
 cookies:
   title: Before you continue
-  text: "We only use the cookies the site needs to work: one to keep you signed in, one to remember your language and one to remember that you have read this. No cookies for tracking or advertising."
+  text: "We only store what the site needs to work: that you are signed in, your language and that you have read this. It is kept in cookies and in your browser's storage. No cookies for tracking or advertising, and none from other companies."
   beta: The service is new and still being built, so things may change and something may not work yet. We would love to hear what you think!
   feedbackHint: The "Give feedback" button is always at the very bottom of every page.
   feedbackNow: Give feedback now
@@ -696,7 +696,10 @@ termsPage:
         - "We keep no data about you for marketing and hand nothing to anyone outside the municipality. Data is stored on servers within the EU."
     - title: Cookies
       paragraphs:
-        - "The service uses only the cookies it needs to work: one to keep you logged in, one to remember your language and one to remember that you have seen the note about cookies. No tracking or advertising cookies."
+        - "The service stores only what it needs to work, and none of it is used for tracking or advertising. That is why we do not ask for consent, but you should know what it is:"
+        - "Cookies: i18next and cocoso-lang remember your language (the first until you close the browser, the second for a year, and only if you choose a language yourself). cocoso-cookie-notice remembers for a year that you have read the note about cookies."
+        - "Browser storage (localStorage): your login is kept there when you log in and removed when you log out. If you have started filling in a form, the draft is kept there for up to 30 days so nothing is lost."
+        - "No cookies are set by other companies. Pictures and fonts come from the service's own server. Maps come from OpenFreeMap, which sets no cookies but sees your IP address when a map is shown, as every web server does."
     - title: Your rights
       paragraphs:
         - "You can see and change your data under your profile at any time, and delete your account there. Your personal data is then erased. Events and posts you created may remain without your name if others depend on them."
