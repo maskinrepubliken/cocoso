@@ -69,7 +69,7 @@ const SignupPage = loadable(() => import('/imports/ui/pages/auth/SignupPage'));
 const WelcomePage = loadable(() =>
   import('/imports/ui/pages/auth/WelcomePage')
 );
-const Terms = loadable(() => import('/imports/ui/entry/Terms'));
+import HelpPage from '/imports/ui/pages/help/HelpPage';
 const NotFoundPage = loadable(() => import('/imports/ui/pages/NotFoundPage'));
 
 const AdminContainer = loadable(() =>
@@ -264,6 +264,16 @@ function LoadingHandler(props) {
     </>
   );
 }
+
+// The help pages' text is a translation namespace of its own, so it is not
+// sent with every other page. The server has it from the start
+// (imports/startup/i18n.js); the browser fetches it on the way in.
+const loadHelpTexts = async () => {
+  if (Meteor.isClient) {
+    await i18n.loadNamespaces('help');
+  }
+  return null;
+};
 
 const createRouteElement = (Component, props) => {
   return (
@@ -740,9 +750,22 @@ export default function appRoutes(props) {
           path,
           element: createRouteElement(LoginPage, props),
         })),
+        // The help section: /about with the terms and the accessibility
+        // statement, /guide with the guidebook. Its text is in the `help`
+        // translations, fetched before the page is shown.
+        ...['about', 'guide'].map((group) => ({
+          path: group,
+          loader: loadHelpTexts,
+          shouldRevalidate: () => false,
+          children: ['', ':helpSlug'].map((path) => ({
+            ...(path ? { path } : { index: true }),
+            element: createRouteElement(HelpPage, { ...props, group }),
+          })),
+        })),
+        // The terms' address until 5.12; old emails and bookmarks point here.
         {
           path: 'terms-&-privacy-policy',
-          element: createRouteElement(Terms, props),
+          loader: () => redirect('/about/terms'),
         },
         // From the link in a newsletter or an event update
         {

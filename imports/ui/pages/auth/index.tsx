@@ -19,7 +19,6 @@ import {
   Text,
 } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
-import Terms from '/imports/ui/entry/Terms';
 import { call } from '/imports/api/_utils/shared';
 
 import {
@@ -264,11 +263,14 @@ const Signup = ({
         open={modalOpen}
         scrollBehavior="inside"
         size="full"
-        title={tc('termsPage.title')}
+        title={tc('terms.title')}
         onConfirm={confirmModal}
         onClose={() => setModalOpen(false)}
       >
-        <Terms />
+        {/* The text has its own page (imports/ui/pages/help) */}
+        <a href="/about/terms" rel="noopener noreferrer" target="_blank">
+          {tc('terms.title')}
+        </a>
       </Modal>
     </>
   );

@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useAtomValue } from 'jotai';
 
-import { pageTitlesAtom } from '/imports/state';
-import { parseTitle } from '/imports/api/_utils/shared';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 
 import FeedbackForm from './FeedbackForm';
@@ -26,7 +23,6 @@ const hasSeen = () =>
 // differs.
 export default function CookieNotice() {
   const [tc] = useTranslation('common');
-  const pageTitles = useAtomValue(pageTitlesAtom);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -41,11 +37,6 @@ export default function CookieNotice() {
     document.cookie = `${COOKIE}=1; max-age=${MAX_AGE}; path=/; SameSite=Lax`;
     setOpen(false);
   };
-
-  const aboutPage = pageTitles?.[0];
-  const aboutTo = aboutPage
-    ? `/info/${parseTitle(aboutPage.title)}`
-    : '/info/about';
 
   // Straight into <body>, so no wrapper's stacking or transform can hide it
   return createPortal(
@@ -74,7 +65,7 @@ export default function CookieNotice() {
         <p className="cookie-notice-cookies">{tc('cookies.text')}</p>
 
         <nav className="cookie-notice-links">
-          <Link to={aboutTo}>{tc('footer.about')}</Link>
+          <Link to="/about">{tc('footer.about')}</Link>
           <FeedbackForm
             trigger={(openFeedback) => (
               <button type="button" onClick={openFeedback}>
@@ -82,7 +73,7 @@ export default function CookieNotice() {
               </button>
             )}
           />
-          <Link to="/terms-&-privacy-policy">{tc('terms.title')}</Link>
+          <Link to="/about/terms">{tc('terms.title')}</Link>
         </nav>
       </div>
 

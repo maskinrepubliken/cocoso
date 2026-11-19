@@ -2,6 +2,7 @@
 // something else at the site root (see imports/appRoutes.js). Usernames are
 // safe because profile URLs always start with '@'.
 export const RESERVED_SLUGS = [
+  'about',
   'activities',
   'businesses',
   'admin',
@@ -9,6 +10,7 @@ export const RESERVED_SLUGS = [
   'cp',
   'forgot-password',
   'groups',
+  'guide',
   'info',
   'login',
   'media',

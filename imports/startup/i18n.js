@@ -89,7 +89,8 @@ const initPromise = i18n
 // on an already-initialized instance would re-register the .use() plugins.
 if (isServer) {
   const ALL_LANGS = allLangs.map((l) => l.value);
-  const REQUIRED_NS = ['common', 'accounts'];
+  // help: the pages under /about and /guide, server-rendered
+  const REQUIRED_NS = ['common', 'accounts', 'help'];
   const MAX_ATTEMPTS = 3;
   const RETRY_DELAY_MS = 500;
 

@@ -1,0 +1,431 @@
+# The help pages under /about and /guide (imports/ui/pages/help).
+# Each page has a title, a lead and sections. A section's `body` is a list
+# where a line of text is a paragraph, `list:` a bulleted list, `steps:`
+# numbered steps and `note:` a box. In the text **bold** and
+# [links](/about) work. {{site}} is the site's name.
+nav:
+  label: About the service and guidebook
+  contents: Contents
+  groups:
+    about: About the service
+    guide: Guidebook
+
+
+pages:
+  about:
+    title: About the service
+    lead: "{{site}} gathers what is going on in Tranemo municipality in one place: events, places to visit and places to eat, shop and stay."
+    sections:
+      - title: "What is {{site}}?"
+        body:
+          - "{{site}} is a shared calendar for the whole municipality. Associations, study associations, businesses and the municipality's own services add their events themselves, so that you who live here or are visiting find them in one place instead of twenty."
+          - "You need no account to read, search or sign up for an event. The calendar is free and carries no advertising."
+          - list:
+              - "**Events** and **Calendar** show what is on, as a list or month by month."
+              - "**Places** are venues, meeting places and places to go, with address, map and what happens there."
+              - "**Organizers** are the associations, services and enthusiasts behind the events."
+              - "**Eat, shop & stay** is cafés, restaurants, shops and places to stay."
+          - "Every town and village in the municipality also has a page of its own with what happens there."
+      - title: The service is new
+        body:
+          - "{{site}} is a beta. We are still building it, and things may look different from one week to the next. Found something that does not work, or missing something? Use the **Give feedback** button at the foot of every page."
+      - title: Who is behind it?
+        body:
+          - "{{site}} is run by **Uddebo Makerspace**, which is also responsible for the service and for the personal data in it. It is developed together with [Maskinrepubliken](https://maskinrepubliken.se/) and in cooperation with [Tranemo municipality](https://www.tranemo.se/)."
+          - "The content comes from the organizers themselves. Whoever added an event or a place is responsible for the details being right."
+      - title: How to become an organizer
+        body:
+          - "Anyone arranging something in the municipality that is open to others can become an organizer: associations, study associations, businesses, the municipality's services and private persons."
+          - steps:
+              - "Create an account under [Log in](/login). All you need is an email address."
+              - "Fill in your profile with a name and contact details, so that visitors see who is arranging."
+              - "Ask to become an organizer with the **Give feedback** button at the foot of the page. Say which association or service you represent and which email address the account has."
+              - "When an administrator has approved you, you get an email, and after that you can add events straight away."
+          - "What to do next is in the [guidebook](/guide)."
+      - title: Authors and licence
+        body:
+          - "The site is made by Uddebo Makerspace and Maskinrepubliken."
+          - "It builds on [Cocoso](https://github.com/eminx/cocoso), free software for associations and communities by Emin Durak and others. The program is licensed under the GNU General Public License version 3 (GPL-3.0), which means anyone may use, inspect and build on it, on the same terms. The source code of this site is at [github.com/maskinrepubliken/cocoso](https://github.com/maskinrepubliken/cocoso)."
+          - list:
+              - "**The 3D icons** come from [3dicons.co](https://3dicons.co/) by Vijay Verma and are free to use (CC0 1.0). The crane, the sight mark, the football, the swim ring and the tent are our own, made in the same style."
+              - "**Photos** of places and events were added by the organizers themselves. Several photos of places come from Wikimedia Commons and are used under the Creative Commons Attribution-ShareAlike licence (CC BY-SA). Photographer and licence are given in the text of the page where the picture is shown."
+              - "**The maps** build on data from [OpenStreetMap](https://www.openstreetmap.org/copyright) (© OpenStreetMap contributors, ODbL) and are shown with OpenFreeMap and MapLibre."
+              - "**The typefaces** Fraunces and Raleway are free (SIL Open Font License)."
+      - title: More to read
+        body:
+          - list:
+              - "[Terms of use and privacy policy](/about/terms): what applies when you use the service and what data we store."
+              - "[Accessibility](/about/accessibility): how the service works for people with disabilities, and known shortcomings."
+              - "[Guidebook](/guide): for organizers and administrators."
+
+  terms:
+    title: Terms of use and privacy policy
+    lead: "What applies when you use {{site}}, what data about you is stored, why, for how long and how you get a copy of it or have it erased."
+    updated: In force from 19 November 2026.
+    sections:
+      - title: Who is responsible?
+        body:
+          - "{{site}} is run by Uddebo Makerspace, in cooperation with Tranemo municipality. Uddebo Makerspace is the data controller: it decides how your personal data is used in the service, and it is who you turn to with questions about it."
+          - "You reach us with the **Give feedback** button at the foot of every page. Include your email address in the message if you want an answer."
+      - title: Using the service
+        body:
+          - "Reading, searching and signing up for events needs no account. With an account you can follow events and get notifications, and as an organizer you can add events and places."
+          - "The account is personal. You log in with a code sent to your email address, so there is no password to keep track of. Whoever has access to your email also has access to your account."
+          - "The service is a beta and is provided as it is. We do our best to keep it working and to lose nothing, but we cannot promise that it is always available."
+      - title: What you publish
+        body:
+          - "What you add is visible to every visitor and can be found through search engines. Write respectfully, keep to the truth and publish only what you have the right to publish, such as pictures you took yourself or have permission to use. Name the photographer and the licence when the licence requires it."
+          - "You keep the rights to what you publish. By adding it you give us the right to show it in the service, in emails and notifications about the event and when the page is shared."
+          - "Do not add details about other people without their knowing. That goes for names, pictures and contact details in particular."
+          - "We may remove content that breaks the law, is offensive or misleading or does not belong in an events calendar, and we may close accounts that are misused. If you see something that should not be here, tell us with **Give feedback**."
+      - title: What data we store
+        body:
+          - "We store only what the service needs to work. Here is what, why, on which basis in the General Data Protection Regulation (GDPR) and for how long."
+          - "**Account.** Your email address, your username, the name you give, your language and when you accepted these terms. Basis: the contract with you about using the service. Kept until you delete the account."
+          - "**Login.** The code emailed to you is stored in hashed form and erased when used, after 15 minutes at the latest. Once you are logged in, a login key is stored in your browser and in hashed form with us. It is valid for 90 days, or until you log out. Basis: contract."
+          - "**Your profile.** What you fill in yourself: name, picture, description, the contact details you choose to show and, if you are an organizer, where you are based. It is visible to every visitor. Basis: contract. Kept until you change it or delete the account."
+          - "**What you publish.** Events, places and pictures, together with your username. Basis: contract. Stays until you or an administrator removes it."
+          - "**Sign-ups.** When you sign up for an event we store first name, last name, email address, number of seats and when you signed up. No account is needed. The organizer and the administrators see all of it and can download the list. Other visitors see only your name, and not even that if you choose to hide it. You get an email if the event changes or is cancelled. Basis: the contract about your seat at the event. The sign-up is kept for as long as the event remains in the calendar, and you can change or remove it at any time on the event's page with your email address and your last name."
+          - "**Events you follow.** Which events your account follows. Basis: your consent. Removed when you stop following or delete the account."
+          - "**Push notifications.** If you turn notifications on we store an address at your browser's push service (Google, Apple or Mozilla), two encryption keys and which browser it is. Notifications pass encrypted through the push service, which cannot read them. Basis: consent. Removed when you turn notifications off, when the push service reports that the address has expired or when you delete the account."
+          - "**Newsletter and emails about events.** Whether you have chosen to get them, and when you chose. Basis: consent. Every email has a link to stop. If you use the link to opt out of emails about a certain event we store your email address with that choice, so that no more are sent."
+          - "**Feedback.** What you write with **Give feedback** is sent as an email to the administrators, together with the page you were on and your username if you are logged in. It is not stored in the service's database. The email address is optional. Basis: our legitimate interest in improving the service and answering you."
+          - "**Mirrored events.** Some events are fetched automatically once an hour from other calendars, today the library's events calendar and bio.se. We copy title, description, time, picture and a link to the source. They hold no personal data beyond what the organizer wrote in the text. If an upcoming event changes or disappears at the source, the same happens here. The log of the fetches holds no personal data and is kept for 90 days."
+          - "**Server logs.** The server notes IP address, time and which page was fetched, as every web server does. The logs are used only to keep the service running and secure and are not linked to accounts. Basis: legitimate interest."
+          - "**Backups.** The whole service is backed up every night, and the copies are kept for up to eight weeks. What you erase therefore leaves the copies only after that time."
+          - "We collect no data for statistics, advertising or tracking, and we do not sell data on."
+      - title: Who receives the data
+        body:
+          - "The data is stored on servers within the EU. We hand it to no one but the suppliers the service needs to work:"
+          - list:
+              - "The supplier of the server and of the backups."
+              - "The email service that sends login codes, confirmations and mailings."
+              - "Your browser's push service, if you have turned notifications on."
+              - "The map services OpenFreeMap and jsDelivr, which see your IP address when a map is shown but receive nothing else."
+              - "OpenStreetMap's address service Nominatim, to which our server sends the address of a place to be able to show it on the map. An address you give in your profile is looked up the same way."
+      - title: Cookies and storage in the browser
+        body:
+          - "The service stores only what it needs to work, and none of it is used for tracking or advertising. That is why we do not ask for consent, but you should know what it is:"
+          - list:
+              - "**Cookies:** i18next and cocoso-lang remember your language (the first until you close the browser, the second for a year and only if you pick a language yourself). cocoso-cookie-notice remembers for a year that you have read the information about cookies."
+              - "**The browser's storage (localStorage):** the login is stored there when you log in and removed when you log out. If you have started filling in a form, the draft is kept there for up to 30 days, so that nothing is lost."
+          - "No cookies are set by other companies. Pictures and typefaces are fetched from the service's own server."
+      - title: Deleting your account
+        body:
+          - "You delete the account yourself: press your profile picture in the header, choose **My settings** and then **Delete my account** at the bottom. It cannot be undone."
+          - "Your account, your profile, your role as organizer, your push notifications and the list of events you follow are then removed at once."
+          - "Events, places and pictures you have published stay with your username, since others may have signed up or linked to them. The same goes for sign-ups you have made to other people's events. Remove them before you delete the account if you do not want them to stay, or ask us to do it for you."
+      - title: Your rights
+        body:
+          - "Under the GDPR you have the right to:"
+          - list:
+              - "know what data we hold about you and get a copy of it,"
+              - "have incorrect data corrected,"
+              - "have data erased,"
+              - "object to or restrict how we use it,"
+              - "get data you provided yourself in a format that can be moved to another service,"
+              - "withdraw a consent at any time, for instance by turning notifications off."
+          - "Most of it you see and change yourself in your profile and under **My settings**. For a full copy, or to have something erased that you cannot reach yourself, write to us with **Give feedback** and give your email address. We answer within a month."
+          - "If you are not content with how we handle your data you can complain to the Swedish Authority for Privacy Protection, [Integritetsskyddsmyndigheten](https://www.imy.se/) (IMY)."
+      - title: If the terms change
+        body:
+          - "If the terms change in a way that affects you as an account holder we announce it on the site or by email before the change takes effect. The date below shows when this text was last changed."
+
+  accessibility:
+    title: Accessibility
+    lead: "Everyone should be able to use {{site}}, whatever their abilities and assistive technology. Here is how the service meets the requirements, which shortcomings we know of and how you report what does not work."
+    updated: The statement was updated on 19 November 2026.
+    sections:
+      - title: How accessible is the service?
+        body:
+          - "Uddebo Makerspace is behind {{site}}. The aim is for the service to meet the WCAG 2.1 guidelines at level AA, which is also what the Swedish act on accessibility of digital public services requires."
+          - "The service is **partially compliant** with those requirements. The shortcomings we know of are listed further down."
+      - title: What works
+        body:
+          - list:
+              - "The public pages can be used with a keyboard alone, and it shows where the focus is. First on every page is the link **Skip to content**."
+              - "Dialogs announce that they open, keep the focus inside and hand it back when they close. They close with Esc."
+              - "The pages have a main heading, and header, content and footer are marked up so that a screen reader can jump between them."
+              - "Text and buttons have a contrast of at least 4.5:1 against the background."
+              - "The pages can be enlarged to 200 per cent and read on a screen 320 points wide without scrolling sideways."
+              - "Form fields have labels, and errors are described in text."
+              - "The language is declared, so that a screen reader pronounces it correctly. The service is available in Swedish and English."
+      - title: Known shortcomings
+        body:
+          - list:
+              - "**The calendar's month view** is built as a table that screen readers do not read out properly. The same events are available as a list on the [Events](/activities) page."
+              - "**The maps** cannot be used fully with a screen reader. The address is always given as text next to the map, with a link that opens it in a map service."
+              - "**Pictures** added by organizers are described only by the name of the event or the place, not by what the picture shows. Posters with text in the picture therefore lack a text alternative, unless the organizer wrote the same in the description."
+              - "**Text written by organizers** may have links with unclear names or headings in the wrong order. The same goes for events fetched automatically from other calendars."
+              - "**The logged-in parts**, that is the forms for events and places and the administrators' panel, have not been reviewed as closely as the public pages."
+          - "We are working on the shortcomings. This page is updated when something changes."
+      - title: How we tested
+        body:
+          - "We made a review of our own in November 2026. The public pages (the start page, events, an event, the calendar, places, a place, organizers, an organizer's profile, eat, shop & stay, a town's page, search, login and these help pages) were checked with the automated tool axe-core against WCAG 2.1 A and AA, on a wide and a narrow screen, with menus and dialogs both closed and open."
+          - "In addition we went through the pages with a keyboard alone, at 200 per cent enlargement and at a width of 320 points. No review with a screen reader and no independent review has been made yet."
+      - title: Reporting shortcomings
+        body:
+          - "Have you found something that does not work for you, or do you need content in another format? Write to us with the **Give feedback** button at the foot of the page and give your email address if you want an answer. Tell us which page it is about and which assistive technology you use, so we can fix it sooner."
+      - title: If you are not content
+        body:
+          - "The Agency for Digital Government (DIGG) supervises the act on accessibility of digital public services. If you think we do not deal with your remarks you can [report it to DIGG](https://www.digg.se/tdosanmalan)."
+
+  guideStart:
+    title: Guidebook
+    lead: "For you who arrange events, look after a place or administer {{site}}. Step by step."
+    sections:
+      - title: Up and running in five minutes
+        body:
+          - steps:
+              - "**Create an account.** Press **Log in** at the foot of the page and type your email address. More under [Account and becoming an organizer](/guide/account)."
+              - "**Become an organizer.** Ask an administrator to approve you, with the **Give feedback** button. You get an email when it is done."
+              - "**Fill in your profile.** Name, picture and an email address or a phone number where visitors can reach you. It is required to publish. More under [Your profile](/guide/your-page)."
+              - "**Add your first event.** Go to **Events** and press the plus button in the header. More under [Creating an event](/guide/events)."
+      - title: The chapters
+        body:
+          - list:
+              - "[Account and becoming an organizer](/guide/account): log in, get approved, get notifications and have the site as an app."
+              - "[Creating an event](/guide/events): the fields of the form, one at a time."
+              - "[Looking after an event](/guide/manage-events): change it, tell those signed up, see the sign-ups, cancel and remove."
+              - "[Places](/guide/places): adding a venue or a place to go, and Eat, shop & stay."
+              - "[Your profile](/guide/your-page): what visitors see about you, your settings and your overview."
+              - "[For administrators](/guide/administrators): users, towns, mirrors, mailings and settings."
+      - title: Three things worth knowing
+        body:
+          - list:
+              - "**What you save is published at once.** Nobody reviews it beforehand. You can always change it afterwards."
+              - "**The forms remember what you wrote.** If you close a form without saving, the draft stays in your browser for up to 30 days. Pictures that were not saved need to be added again."
+              - "**Ask us.** The **Give feedback** button is at the foot of every page and goes to the administrators."
+
+  guideAccount:
+    title: Account and becoming an organizer
+    lead: "You log in with your email address and a code, without a password. To add events an administrator needs to approve you as an organizer."
+    sections:
+      - title: Creating an account and logging in
+        body:
+          - steps:
+              - "Press **Log in** at the foot of the page. On a phone it is also in the menu."
+              - "Type your email address and press **Continue with email**."
+              - "You get an email with a six-digit code. Type the code, or press the button in the email. The code is valid for 15 minutes and works once."
+              - "The first time you are asked whether you want to create an account. Tick that you accept the terms and press **Create my account**."
+          - "No email? Look in the spam folder, or press **send a new code**. Next time you log in the same way with the same address."
+          - note: "Share a postal address, not an account. If several of you in an association are to add events, each creates an account. You can then be co-organizers of the same event."
+      - title: Becoming an organizer
+        body:
+          - "A new account can follow events and get notifications, but not publish. For that an administrator needs to approve you."
+          - steps:
+              - "Press **Give feedback** at the foot of the page."
+              - "Say which association or service you represent and which email address you logged in with."
+              - "When you are approved you get the email **You are now an organizer**, with a button that takes you straight to the form for a new event."
+          - "As an organizer you see a plus button in the header on the Events and Places pages, and you are shown on the **Organizers** page."
+      - title: Notifications and the site as an app
+        body:
+          - "Under **My settings** (press your profile picture in the header) you choose what you want to get:"
+          - list:
+              - "**Events you follow:** email and push notification when time or place changes, or when the organizer sends an update."
+              - "**Newsletter:** news from {{site}} now and then. Off to begin with."
+              - "**This device:** push notifications are turned on for each phone or computer separately, with **Turn on push notifications here**."
+          - "Want {{site}} as an app on your phone? Press **As an app** at the foot of the page and follow the steps. On an iPhone the page must be on the home screen for notifications to work."
+      - title: Logging out and deleting the account
+        body:
+          - "**Log out** is in the menu at your profile picture and at the foot of the page."
+          - "**Delete my account** is last under **My settings**. What is removed and what stays is in the [privacy policy](/about/terms)."
+
+  guideEvents:
+    title: Creating an event
+    lead: "Title, picture, time and place are enough. It takes a couple of minutes, and the event shows in the calendar as soon as you press Publish."
+    sections:
+      - title: Opening the form
+        body:
+          - "Go to **Events** and press the round plus button in the header, next to the search button. The button shows only when you are logged in as an organizer. You can also press **Add** on the card at the end of the list, or **New activity** in your overview."
+      - title: The essentials
+        body:
+          - list:
+              - "**Title.** The name of the event, as it should read in the calendar. Do not write date or place here; they are shown anyway."
+              - "**Subtitle** (optional). A line about what it is."
+              - "**Pictures.** At least one picture is required. The first becomes the main picture, and you drag the pictures to reorder them. Use only pictures you have the right to use, and give the photographer's name in the description if the licence requires it. Avoid pictures with much text in them: write the text in the description instead, so that everyone can read it."
+              - "**Occasions.** Date, when it starts and when it ends. Press **Change to several days** for something that runs over several days."
+              - "**Description.** What happens, who it suits, what it costs and what to bring. Write links so that it is clear where they lead."
+      - title: Events that recur
+        body:
+          - "Press **Add occasion** for every time the event takes place. The new occasion gets the same times as the previous one, a week later, so for something weekly you press once per week."
+          - "If the calendar sees that the occasions come every week or every other week it marks the event by itself, for instance **Every Thursday**."
+      - title: Kind of event
+        body:
+          - "Choose one or more: Culture, Sport, Children & family, Cinema, Seniors, Nature, Learning or Socialising. Visitors filter on them, so choose what really fits."
+      - title: Organizer and contact details
+        body:
+          - "You are the organizer. With **Add co-organizer** you add other organizers who are behind the event. They can also change it and see the sign-ups."
+          - "Under **Contact details** you choose what visitors see: **Default** is the public details in your profile, and with **Other details** you give a contact person, email, phone or website for this event only."
+          - note: "All organizers must have an email address or a phone number in their profile. Otherwise the event cannot be saved."
+      - title: Place
+        body:
+          - list:
+              - "**Choose a place.** Search among the places already in the calendar. This is the best choice: the event then shows on the place's page, and address and map come along."
+              - "**The organizer's address.** The address is taken from your profile."
+              - "**Another address.** Type the address yourself and choose which part of the municipality it is in."
+          - "Is the place missing? Add it first, see [Places](/guide/places)."
+      - title: Booking and sign-up
+        body:
+          - "Turn on **Sign-up is possible** if visitors are to sign up on the event's page, and set **Capacity**: how many can sign up for each occasion. When it is full, sign-up closes by itself."
+          - "Visitors sign up with name and email address, without an account. Only you, your co-organizers and the administrators see the email addresses."
+      - title: Publishing
+        body:
+          - "Press **Publish**. The event shows at once in the calendar, on the place's page and in your profile. If something came out wrong you change it afterwards, see [Looking after an event](/guide/manage-events)."
+
+  guideManage:
+    title: Looking after an event
+    lead: "Change it, tell those who are coming, see who has signed up and cancel or remove it."
+    sections:
+      - title: Changing an event
+        body:
+          - "Open the event's page. Press the cog in the header (**Manage**) and choose **Edit event**, make the change and press **Update**."
+          - "If someone has signed up or follows the event you are asked **Tell those who are coming?** when you save:"
+          - list:
+              - "**Save and tell** sends email and push notification to everyone signed up and everyone following. If you changed time or place the message says so by itself, and you can add a few words of your own."
+              - "**Save without telling** saves quietly. Use it for spelling and small things, not when time or place changes."
+          - "The message goes out a few minutes after you save. If you save several times in a row there is still only one message."
+      - title: Sending an update
+        body:
+          - "Under **Send an update** on the event's page you write a short message, for instance that you gather at another entrance. It goes by email and push notification to everyone signed up or following, and shows on the page under **News from the organizer**."
+      - title: Seeing the sign-ups
+        body:
+          - "The event's page has the section **For the organizer**, which only you, your co-organizers and the administrators see. It lists first name, last name, email and number for each occasion."
+          - "**Download CSV** gives the list for the chosen occasion as a file to open in a spreadsheet. The list holds personal data: do not pass it on, and delete the file when the event is over."
+          - "In your overview (**Home** in the admin panel) you see new sign-ups from the last week and how full the upcoming events are."
+      - title: Cancelling
+        body:
+          - "Press **Cancel event** under **For the organizer**. Preferably say why. The event stays in the lists, marked **Cancelled**, sign-up closes and everyone signed up or following gets an email."
+          - "If it goes ahead after all, press **Resume event**."
+          - "A single occasion cannot be cancelled. Remove the occasion in the form instead (**Remove occasion**), choose **Save and tell** and explain what applies."
+      - title: Archiving and removing
+        body:
+          - "**Archive the event** takes it out of the calendar without erasing it. Archived events are seen only by you and the administrators, under **Archived** in your profile, and you can choose **Restore from the archive**."
+          - "To erase for good, archive first and then choose **Remove the event**. All sign-ups go with it, and it cannot be undone."
+      - title: Events fetched from another calendar
+        body:
+          - "Some events are fetched automatically, for instance from the library and the cinema. They are updated from the source every hour, so changes are to be made there. Sign-up also takes place at the source."
+          - "If you want to take over such an event and change it here, choose **Detach**. It is then no longer updated from the source."
+
+  guidePlaces:
+    title: Places
+    lead: "A place is a venue, a meeting place or a place to go. It has a page of its own with address, map and what happens there, and it can be chosen when someone creates an event."
+    sections:
+      - title: Adding a place
+        body:
+          - "Go to **Places** and press the plus button in the header (**New place**). Search first, so that the place is not already there."
+          - list:
+              - "**Name.** What the place is called in everyday speech."
+              - "**Pictures** (optional). The same rules as for events: only pictures you have the right to use, with photographer and licence in the description when required."
+              - "**Description.** What is there, how to get there, whether it can be entered with a wheelchair, whether there is parking and a toilet."
+              - "**Kind of place.** Culture & meeting places, Sights, Sports halls, Sports grounds, Swimming or Outdoor life."
+      - title: Where the place is
+        body:
+          - list:
+              - "**Address.** Type the address, or click the map and drag the pin to where the place is, and the rest is filled in. A bathing place or a shelter without a street address you set out on the map. Also choose **Town**, the part of the municipality the place belongs to."
+              - "**Part of another place.** For a room or a hall in a larger building, such as a lecture hall in the library. The place then gets the larger building's address."
+      - title: Managers and contact
+        body:
+          - "**Managers** are the organizers who look after the place and can change it. If you add a place you need to be one of the managers yourself. Administrators can always change it."
+          - "Under **Contact** you choose whom to ask about the place: one of the managers, or other details."
+      - title: Places that can be booked
+        body:
+          - "Turn on **The place can be booked** and say how: whom to contact, or a **Link** to a booking system. The place is then marked **Bookable** and can be found with the filter on the Places page. The booking itself is made with you, not in the calendar."
+      - title: Changing a place
+        body:
+          - "Open the place's page, press the cog and choose **Edit place**. If you correct the address it also changes on every event held there."
+          - "Only administrators can remove a place, and only when it has no upcoming events."
+      - title: Eat, shop & stay
+        body:
+          - "Cafés, restaurants, shops and places to stay are shown on the **Eat, shop & stay** page. They are ordinary places with a few more details."
+          - steps:
+              - "Add the business as a place, as above."
+              - "Open the place's page, press the cog and choose **Eat, shop & stay**."
+              - "Turn on **Activate Eat, shop & stay**. Write a **Tagline**, a line under the name, for instance Sourdough bakery and café."
+              - "Fill in the **Opening hours** of the week. Under **About the opening hours** you write exceptions, such as closed for holidays."
+              - "Add one or more **Offerings**: Food & coffee, Accommodation, Services or Sales. An offering can have opening hours of its own."
+              - "Press **Save**."
+          - "The place's page then shows the opening hours and whether it is open right now."
+
+  guideProfile:
+    title: Your profile
+    lead: "Your profile is what visitors see about you or your association: who you are, how to reach you and what you have coming up."
+    sections:
+      - title: Filling in the profile
+        body:
+          - "Press your profile picture in the header and choose **Edit my profile**."
+          - list:
+              - "**Name.** The name of the association or service if you arrange in its name, otherwise your own."
+              - "**Profile picture.** A logo or a photo. Click the picture to change it."
+              - "**Description.** A few lines about who you are and what you do."
+              - "**Public contact details.** Email, phone and website. They are shown in your profile and at every event you arrange. As an organizer you must give an email address or a phone number."
+              - "**Home base.** Where you or the association are usually found: a place in the calendar or an address of your own. New events start from it."
+          - "Press **Update** to save."
+          - note: "Bear in mind that the contact details are public. Use the association's address and number rather than your private ones."
+      - title: What your profile shows
+        body:
+          - "Name, picture, description and contact details, your upcoming and past events and the places you manage. Archived events are seen only by you and the administrators."
+          - "Organizers are shown on the **Organizers** page. If you do not want to appear there an administrator can hide your profile."
+      - title: My settings
+        body:
+          - "Press your profile picture and choose **My settings**. There you find:"
+          - list:
+              - "**Language:** the language you see the site in and get emails in."
+              - "**Events you follow:** whether you want emails and push notifications, and the list of what you follow."
+              - "**Newsletter.**"
+              - "**This device:** push notifications for this very phone or computer, and **Send a test notification**."
+              - "**Delete my account.**"
+      - title: Your overview
+        body:
+          - "Press your name at the foot of the page, after **Signed in as**, and you come to your overview. There you see new sign-ups from the last week and your events of the coming two weeks, with how many have signed up."
+          - "From there you also reach **New activity** and **Open the calendar**."
+
+  guideAdmin:
+    title: For administrators
+    lead: "The admin panel is for the administrators of the municipality and of Uddebo Makerspace. Here you approve organizers, look after towns and mirrors and set how the site looks."
+    sections:
+      - title: Getting there
+        body:
+          - "Press your profile picture in the header and choose **Admin panel**. The menu on the left has the same headings as the sections here. At the top, the site's name takes you back to the public site."
+          - "**Home** is your overview: new events, new members, new places and what has been fetched from other calendars."
+      - title: Users
+        body:
+          - "This is where you approve organizers. Find the person with the search field and choose from the menu on the row:"
+          - list:
+              - "**Verify** gives the right to add events and places. The person gets the email **You are now an organizer**."
+              - "**Make organizer** shows the person on the Organizers page. It gives no rights in itself, so for a new organizer you usually do both."
+              - "**Unverify** takes back the right to publish. What is already published stays."
+              - "**Set as admin** gives full access to the admin panel. Be sparing with it."
+              - "**Hide the profile from others** takes the person off Organizers and makes the profile invisible to visitors."
+              - "**View the site as this user** lets you see what the person sees, for instance to help someone who is stuck. You return with **Back to my account**."
+          - note: "Make sure you know who the person is and which association or service it concerns before you verify. Everything an organizer publishes shows at once, without review."
+      - title: Keeping the content in order
+        body:
+          - "As an administrator you can change and remove every event and place, with the cog on its page. You can also change the organizer of an event."
+          - "Remarks from visitors come with **Give feedback** and go as email to all administrators. Decide who among you answers."
+          - "When someone asks to have their data erased: remove the person's events, places and sign-ups that are not to stay. The account the person deletes under My settings."
+      - title: Towns
+        body:
+          - "Every town in the municipality has a start page of its own. With **New town** you add one, with name, address (the part of the web address after the slash), description, picture and colour. Drag the rows to reorder them."
+          - "A town shows only when it is **Published**. Under **Content of the start page** you can add a composable page with text and pictures of your own. A town can be deleted only when no content belongs to it."
+      - title: Mirrors
+        body:
+          - "A mirror fetches events from another calendar once an hour. Today there are two kinds of sources: the library's events (Axiell calendar) and cinema screenings from bio.se."
+          - "With **New mirror** you give the source, which **Place** the events are held at and which account is the **Organizer**. The account needs an email or a phone number in its profile."
+          - "Press **Preview** before you turn a new mirror on, to see what would be fetched. **Sync now** fetches at once. Every row says how the latest fetch went: how many new, changed and removed, or why it failed."
+      - title: Mailings
+        body:
+          - "**Send a newsletter** goes to those who have chosen the newsletter in their settings. The number is given at the top. Write subject and content, attach events and places if you like, and look at **Preview** before you send. A mailing cannot be undone."
+          - "Under **Automated emails** you change the text of the emails sent when someone is verified or becomes an administrator."
+      - title: Settings
+        body:
+          - list:
+              - "**Organization:** the site's name, logo, contact details, language and the text of the footer."
+              - "**Menu:** the order of the main menu and which pages are in it."
+              - "**Design:** colours and the look of the menu. Keep good contrast between text and background, so that everyone can read."
+              - "**Features:** turns whole parts of the site on and off. A part turned off disappears for every visitor, but the content remains and comes back when you turn it on again."
+          - "Under **Listing pages** you change the name and description of the Events, Calendar, Organizers and Places pages, and under **Composable pages** you build pages of your own from text, pictures and buttons."
+      - title: Personal data and responsibility
+        body:
+          - "As an administrator you see email addresses and sign-up lists. Use them only to look after the calendar, do not hand them out and do not download more than you need."
+          - "What is stored and for how long is in the [privacy policy](/about/terms), and what applies to accessibility in the [accessibility statement](/about/accessibility). If you change how the service works, those texts need changing too."

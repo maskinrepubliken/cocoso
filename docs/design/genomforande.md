@@ -128,7 +128,7 @@ Klustret av 3D-ikoner i hero byts per årstid i `HomeHero.tsx`.
 - Kalenderns dagvy är egen (`DayView.tsx`), rader på papper.
 - Dalstorp och Länghem är orter (`scripts/seed/tranemo-orter.mongosh.js`).
 - Användarvillkoren är kommunens egna, i tre språk
-  (`termsPage` i `common.yml`).
+  (`pages.terms` i `help.yml`).
 - Arrangörer har hjärtat som ikon.
 
 ## Att göra härnäst

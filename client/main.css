@@ -8826,3 +8826,209 @@ button.commerce-item,
     grid-row: 2;
   }
 }
+
+/* === Help section ===
+   Om tjänsten, villkor, tillgänglighet and the guidebook (/about, /guide;
+   imports/ui/pages/help). The links to every page on a sheet of paper to
+   the left, the page on another to the right, like the admin panel. On a
+   phone the links fold into "Innehåll" above the text. */
+
+.help {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  box-sizing: border-box;
+  max-width: calc(var(--cocoso-page) + 2 * var(--cocoso-gutter));
+  margin: 0 auto;
+  padding: 8px var(--cocoso-gutter) 0;
+}
+
+.help-nav {
+  display: none;
+}
+
+.help-nav,
+.help-nav-folded,
+.help-page {
+  border-radius: var(--cocoso-radius-kort);
+  background: var(--cocoso-papper);
+  box-shadow: var(--cocoso-skugga);
+}
+
+.help-nav,
+.help-nav-folded nav {
+  padding: 12px;
+}
+
+.help-nav-folded summary {
+  padding: 12px 16px;
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.help-nav-folded nav {
+  padding-top: 0;
+}
+
+.help-nav-group + .help-nav-group {
+  margin-top: 14px;
+}
+
+.help-nav-heading {
+  margin: 0;
+  padding: 6px 12px 4px;
+  color: var(--cocoso-mylla-soft);
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.help-nav ul,
+.help-nav-folded ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.help-nav-link {
+  display: block;
+  margin-bottom: 2px;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--cocoso-radius-falt);
+  color: var(--cocoso-mylla);
+  font-family: var(--cocoso-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.help-nav-link:hover {
+  background: var(--cocoso-colors-theme-50);
+}
+
+.help-nav-link.active {
+  background: var(--cocoso-colors-theme-100);
+  color: var(--cocoso-colors-theme-800);
+  font-weight: 700;
+}
+
+.help-page {
+  min-width: 0;
+  padding: 20px 18px 28px;
+  color: var(--cocoso-mylla);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.help-page > * {
+  max-width: 68ch;
+}
+
+.help-page h1 {
+  margin: 0 0 0.5rem;
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 60;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.help-page h2 {
+  margin: 2rem 0 0.5rem;
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 60;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.help-page p {
+  margin: 0 0 0.8em;
+}
+
+.help-lead {
+  color: var(--cocoso-mylla-soft);
+  font-size: 1.08rem;
+}
+
+.help-page ul,
+.help-page ol {
+  margin: 0 0 0.9em;
+  padding-left: 1.4em;
+}
+
+.help-page ul {
+  list-style: disc;
+}
+
+.help-page ol {
+  list-style: decimal;
+}
+
+.help-page li {
+  margin: 0.3em 0;
+}
+
+.help-page a {
+  color: var(--cocoso-colors-theme-600);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.help-note {
+  padding: 10px 14px;
+  border-left: 4px solid var(--cocoso-colors-theme-300);
+  border-radius: var(--cocoso-radius-falt);
+  background: var(--cocoso-colors-theme-50);
+}
+
+.help-updated {
+  margin-top: 2rem;
+  color: var(--cocoso-mylla-soft);
+  font-size: 0.9rem;
+}
+
+@media (min-width: 860px) {
+  .help {
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    padding-top: 12px;
+  }
+
+  .help-nav {
+    display: block;
+    position: sticky;
+    top: 84px;
+  }
+
+  .help-nav-folded {
+    display: none;
+  }
+
+  .help-page {
+    padding: 32px 40px 40px;
+  }
+
+  .help-page h1 {
+    font-size: 2rem;
+  }
+}
+
+@media print {
+  .help-nav,
+  .help-nav-folded {
+    display: none;
+  }
+}
+
+/* A dialog takes focus as a whole when it opens; the ring belongs on what
+   is focused inside it */
+[role='dialog']:focus {
+  outline: none;
+}

@@ -1,0 +1,431 @@
+# Hjälpsidorna under /about och /guide (imports/ui/pages/help).
+# Varje sida har en titel, en ingress och avsnitt. Ett avsnitts `body` är en
+# lista där en textrad är ett stycke, `list:` en punktlista, `steps:`
+# numrerade steg och `note:` en ruta. I texten fungerar **fetstil** och
+# [länkar](/about). {{site}} är sajtens namn.
+nav:
+  label: Om tjänsten och guidebok
+  contents: Innehåll
+  groups:
+    about: Om tjänsten
+    guide: Guidebok
+
+
+pages:
+  about:
+    title: Om tjänsten
+    lead: "{{site}} samlar det som händer i Tranemo kommun på ett ställe: evenemang, platser att besöka och ställen att äta, handla och bo på."
+    sections:
+      - title: "Vad är {{site}}?"
+        body:
+          - "{{site}} är en gemensam kalender för hela kommunen. Här lägger föreningar, studieförbund, företag och kommunens verksamheter själva upp sina evenemang, så att du som bor här eller är på besök hittar dem på ett ställe i stället för på tjugo olika."
+          - "Du behöver inget konto för att läsa, söka eller anmäla dig till ett evenemang. Kalendern kostar ingenting och har ingen reklam."
+          - list:
+              - "**Evenemang** och **Kalender** visar vad som händer, som lista eller månad för månad."
+              - "**Platser** är lokaler, mötesplatser och utflyktsmål, med adress, karta och det som händer där."
+              - "**Arrangörer** är föreningarna, verksamheterna och eldsjälarna bakom evenemangen."
+              - "**Äta, handla & bo** är kaféer, restauranger, butiker och boenden."
+          - "Varje ort i kommunen har dessutom en egen sida med det som händer just där."
+      - title: Tjänsten är ny
+        body:
+          - "{{site}} är i betaversion. Vi bygger fortfarande, och saker kan se annorlunda ut från en vecka till nästa. Hittar du något som inte fungerar eller saknar du något? Använd knappen **Ge feedback** längst ner på varje sida."
+      - title: Vem står bakom?
+        body:
+          - "{{site}} drivs av **Uddebo Makerspace**, som också ansvarar för tjänsten och för de personuppgifter som finns i den. Den utvecklas tillsammans med [Maskinrepubliken](https://maskinrepubliken.se/) och i samarbete med [Tranemo kommun](https://www.tranemo.se/)."
+          - "Innehållet kommer från arrangörerna själva. Den som har lagt upp ett evenemang eller en plats ansvarar för att uppgifterna stämmer."
+      - title: Så blir du arrangör
+        body:
+          - "Alla som ordnar något i kommunen som är öppet för andra kan bli arrangörer: föreningar, studieförbund, företag, kommunens verksamheter och privatpersoner."
+          - steps:
+              - "Skapa ett konto under [Logga in](/login). Du behöver bara en e-postadress."
+              - "Fyll i din profil med namn och kontaktuppgifter, så att besökare ser vem som ordnar."
+              - "Be om att bli arrangör med knappen **Ge feedback** längst ner på sidan. Skriv vilken förening eller verksamhet du företräder och vilken e-postadress kontot har."
+              - "När en administratör har godkänt dig får du ett mejl, och sedan kan du lägga upp evenemang direkt."
+          - "Hur du gör sedan står i [guideboken](/guide)."
+      - title: Upphovsman och licens
+        body:
+          - "Sajten är gjord av Uddebo Makerspace och Maskinrepubliken."
+          - "Den bygger på [Cocoso](https://github.com/eminx/cocoso), fri programvara för föreningar och gemenskaper av Emin Durak med flera. Programmet är licensierat under GNU General Public License version 3 (GPL-3.0). Det betyder att vem som helst får använda, granska och bygga vidare på det, på samma villkor. Källkoden till den här sajten finns på [github.com/maskinrepubliken/cocoso](https://github.com/maskinrepubliken/cocoso)."
+          - list:
+              - "**3D-ikonerna** kommer från [3dicons.co](https://3dicons.co/) av Vijay Verma och är fria att använda (CC0 1.0). Tranan, sevärdhetsmärket, fotbollen, badringen och tältet är våra egna, gjorda i samma stil."
+              - "**Foton** på platser och evenemang har arrangörerna själva lagt upp. Flera foton av platser kommer från Wikimedia Commons och används under licensen Creative Commons Erkännande-DelaLika (CC BY-SA). Fotograf och licens står i texten på sidan där bilden visas."
+              - "**Kartorna** bygger på data från [OpenStreetMap](https://www.openstreetmap.org/copyright) (© OpenStreetMaps bidragsgivare, ODbL) och visas med OpenFreeMap och MapLibre."
+              - "**Typsnitten** Fraunces och Raleway är fria (SIL Open Font License)."
+      - title: Mer att läsa
+        body:
+          - list:
+              - "[Användarvillkor och integritetspolicy](/about/terms): vad som gäller när du använder tjänsten och vilka uppgifter vi sparar."
+              - "[Tillgänglighet](/about/accessibility): hur tjänsten fungerar för dig med funktionsnedsättning, och kända brister."
+              - "[Guidebok](/guide): för arrangörer och administratörer."
+
+  terms:
+    title: Användarvillkor och integritetspolicy
+    lead: "Vad som gäller när du använder {{site}}, vilka uppgifter om dig som sparas, varför, hur länge och hur du får ut eller raderar dem."
+    updated: Gäller från den 19 november 2026.
+    sections:
+      - title: Vem ansvarar?
+        body:
+          - "{{site}} drivs av Uddebo Makerspace, i samarbete med Tranemo kommun. Uddebo Makerspace är personuppgiftsansvarig, det vill säga den som bestämmer hur dina personuppgifter används i tjänsten och som du vänder dig till med frågor om dem."
+          - "Du når oss med knappen **Ge feedback** längst ner på varje sida. Skriv din e-postadress i meddelandet om du vill ha svar."
+      - title: Att använda tjänsten
+        body:
+          - "Att läsa, söka och anmäla sig till evenemang kräver inget konto. Med ett konto kan du följa evenemang och få notiser, och som arrangör kan du lägga upp evenemang och platser."
+          - "Kontot är personligt. Du loggar in med en kod som skickas till din e-postadress, så det finns inget lösenord att hålla reda på. Den som kommer åt din e-post kommer också åt ditt konto."
+          - "Tjänsten är i betaversion och tillhandahålls i befintligt skick. Vi gör vårt bästa för att den ska fungera och för att inget ska gå förlorat, men vi kan inte lova att den alltid är tillgänglig."
+      - title: Det du publicerar
+        body:
+          - "Det du lägger upp syns för alla besökare och kan hittas via sökmotorer. Skriv respektfullt, håll dig till sanningen och publicera bara sådant du har rätt att publicera, till exempel bilder du själv har tagit eller har tillstånd att använda. Ange fotograf och licens när licensen kräver det."
+          - "Du behåller rätten till det du publicerar. Genom att lägga upp det ger du oss rätt att visa det i tjänsten, i mejl och notiser om evenemanget och när sidan delas."
+          - "Lägg inte upp uppgifter om andra personer utan att de vet om det. Det gäller särskilt namn, bilder och kontaktuppgifter."
+          - "Vi kan ta bort innehåll som bryter mot lag, som är kränkande eller vilseledande eller som inte hör hemma i en evenemangskalender, och vi kan stänga av konton som missbrukas. Ser du något som inte borde finnas här, hör av dig med **Ge feedback**."
+      - title: Vilka uppgifter vi sparar
+        body:
+          - "Vi sparar bara det som behövs för att tjänsten ska fungera. Här står vad, varför, med vilket stöd i dataskyddsförordningen (GDPR) och hur länge."
+          - "**Konto.** Din e-postadress, ditt användarnamn, det namn du anger, ditt språk och när du godkände de här villkoren. Stöd: avtalet med dig om att använda tjänsten. Sparas tills du raderar kontot."
+          - "**Inloggning.** Koden som mejlas till dig sparas i krypterad form och raderas när den har använts, senast efter 15 minuter. När du har loggat in sparas en inloggningsnyckel i din webbläsare och i krypterad form hos oss. Den gäller i 90 dagar, eller tills du loggar ut. Stöd: avtal."
+          - "**Din profil.** Det du själv fyller i: namn, bild, beskrivning, de kontaktuppgifter du väljer att visa och, om du är arrangör, var du håller till. Det syns för alla besökare. Stöd: avtal. Sparas tills du ändrar det eller raderar kontot."
+          - "**Det du publicerar.** Evenemang, platser och bilder, tillsammans med ditt användarnamn. Stöd: avtal. Ligger kvar tills du eller en administratör tar bort det."
+          - "**Anmälningar.** När du anmäler dig till ett evenemang sparas förnamn, efternamn, e-postadress, antal platser och när du anmälde dig. Det går att göra utan konto. Arrangören och administratörerna ser alla uppgifterna och kan ladda ner listan. Andra besökare ser bara ditt namn, och inte ens det om du väljer att dölja det. Du får mejl om evenemanget ändras eller ställs in. Stöd: avtalet om din plats på evenemanget. Anmälan sparas så länge evenemanget finns kvar i kalendern, och du kan när som helst ändra eller ta bort den på evenemangets sida med din e-postadress och ditt efternamn."
+          - "**Evenemang du följer.** Vilka evenemang ditt konto följer. Stöd: ditt samtycke. Tas bort när du slutar följa eller raderar kontot."
+          - "**Pushnotiser.** Om du slår på notiser sparas en adress hos din webbläsares pushtjänst (Google, Apple eller Mozilla), två krypteringsnycklar och vilken webbläsare det gäller. Notiserna går krypterade genom pushtjänsten, som inte kan läsa dem. Stöd: samtycke. Tas bort när du stänger av notiserna, när pushtjänsten meddelar att adressen har upphört eller när du raderar kontot."
+          - "**Nyhetsbrev och mejl om evenemang.** Om du har valt att få dem, och när du valde det. Stöd: samtycke. Varje mejl har en länk för att sluta. Väljer du via länken bort mejl om ett visst evenemang sparar vi din e-postadress ihop med det valet, så att inga fler mejl skickas."
+          - "**Feedback.** Det du skriver med **Ge feedback** skickas som mejl till administratörerna, tillsammans med sidan du var på och ditt användarnamn om du är inloggad. Det sparas inte i tjänstens databas. E-postadress är frivillig. Stöd: vårt berättigade intresse av att kunna förbättra tjänsten och svara dig."
+          - "**Speglade evenemang.** En del evenemang hämtas automatiskt en gång i timmen från andra kalendrar, i dag bibliotekets evenemangskalender och bio.se. Vi kopierar rubrik, beskrivning, tid, bild och länk till källan. Där finns inga personuppgifter utöver det som arrangören själv har skrivit i texten. Ändras eller försvinner ett kommande evenemang hos källan gör det samma sak här. Loggen över hämtningarna innehåller inga personuppgifter och sparas i 90 dagar."
+          - "**Serverloggar.** Servern antecknar IP-adress, tidpunkt och vilken sida som hämtades, som alla webbservrar gör. Loggarna används bara för att hålla tjänsten igång och säker och kopplas inte ihop med konton. Stöd: berättigat intresse."
+          - "**Säkerhetskopior.** Hela tjänsten säkerhetskopieras varje natt, och kopiorna sparas i upp till åtta veckor. Det du raderar försvinner därför ur kopiorna först efter den tiden."
+          - "Vi samlar inte in några uppgifter för statistik, reklam eller spårning, och vi säljer inte uppgifter vidare."
+      - title: Vilka som tar del av uppgifterna
+        body:
+          - "Uppgifterna lagras på servrar inom EU. Vi lämnar inte ut dem till någon annan än de leverantörer som behövs för att tjänsten ska fungera:"
+          - list:
+              - "Leverantören av servern och av säkerhetskopieringen."
+              - "E-posttjänsten som skickar inloggningskoder, bekräftelser och utskick."
+              - "Din webbläsares pushtjänst, om du har slagit på notiser."
+              - "Karttjänsterna OpenFreeMap och jsDelivr, som ser din IP-adress när en karta visas men inte får några andra uppgifter."
+              - "OpenStreetMaps adresstjänst Nominatim, dit vår server skickar adressen till en plats för att kunna visa den på kartan. Anger du en adress i din profil slås den upp på samma sätt."
+      - title: Kakor och lagring i webbläsaren
+        body:
+          - "Tjänsten sparar bara det som behövs för att den ska fungera, och inget av det används för spårning eller reklam. Därför frågar vi inte om samtycke, men du ska veta vad det är:"
+          - list:
+              - "**Kakor:** i18next och cocoso-lang minns ditt språk (den första tills du stänger webbläsaren, den andra i ett år och bara om du själv väljer språk). cocoso-cookie-notice minns i ett år att du har läst informationen om kakor."
+              - "**Webbläsarens lagring (localStorage):** inloggningen sparas där när du loggar in och tas bort när du loggar ut. Har du börjat fylla i ett formulär sparas utkastet där i upp till 30 dagar, så att inget går förlorat."
+          - "Inga kakor sätts av andra företag. Bilder och typsnitt hämtas från tjänstens egen server."
+      - title: Radera ditt konto
+        body:
+          - "Du raderar kontot själv: tryck på din profilbild uppe i sidhuvudet, välj **Mina inställningar** och sedan **Radera mitt konto** längst ner. Det går inte att ångra."
+          - "Då tas ditt konto, din profil, din roll som arrangör, dina pushnotiser och listan över evenemang du följer bort direkt."
+          - "Evenemang, platser och bilder som du har publicerat ligger kvar med ditt användarnamn, eftersom andra kan ha anmält sig eller hänvisat dit. Detsamma gäller anmälningar du har gjort till andras evenemang. Ta bort dem innan du raderar kontot om du inte vill ha dem kvar, eller be oss göra det åt dig."
+      - title: Dina rättigheter
+        body:
+          - "Enligt dataskyddsförordningen har du rätt att:"
+          - list:
+              - "få veta vilka uppgifter vi har om dig och få en kopia av dem,"
+              - "få felaktiga uppgifter rättade,"
+              - "få uppgifter raderade,"
+              - "invända mot eller begränsa hur vi använder dem,"
+              - "få ut uppgifter du själv har lämnat i ett format som går att flytta till en annan tjänst,"
+              - "när som helst ta tillbaka ett samtycke, till exempel genom att stänga av notiser."
+          - "Det mesta ser och ändrar du själv i din profil och under **Mina inställningar**. För ett fullständigt utdrag, eller för att få något raderat som du inte kommer åt själv, hör av dig med **Ge feedback** och ange din e-postadress. Vi svarar inom en månad."
+          - "Är du inte nöjd med hur vi hanterar dina uppgifter kan du klaga hos [Integritetsskyddsmyndigheten](https://www.imy.se/) (IMY)."
+      - title: Om villkoren ändras
+        body:
+          - "Ändras villkoren på ett sätt som påverkar dig som har ett konto meddelar vi det på sajten eller med mejl innan ändringen börjar gälla. Datumet nedan visar när den här texten senast ändrades."
+
+  accessibility:
+    title: Tillgänglighet
+    lead: "Alla ska kunna använda {{site}}, oavsett funktionsförmåga och hjälpmedel. Här står hur tjänsten uppfyller kraven, vilka brister vi känner till och hur du rapporterar det som inte fungerar."
+    updated: Redogörelsen uppdaterades den 19 november 2026.
+    sections:
+      - title: Hur tillgänglig är tjänsten?
+        body:
+          - "Uddebo Makerspace står bakom {{site}}. Målet är att tjänsten ska uppfylla riktlinjerna WCAG 2.1 på nivå AA, som också är kravet i lagen om tillgänglighet till digital offentlig service."
+          - "Tjänsten är **delvis förenlig** med de kraven. De brister vi känner till står längre ner."
+      - title: Det här fungerar
+        body:
+          - list:
+              - "De publika sidorna går att använda med enbart tangentbord, och det syns var fokus är. Först på varje sida finns länken **Hoppa till innehållet**."
+              - "Dialogrutor meddelar att de öppnas, håller fokus inom sig och lämnar tillbaka det när de stängs. De stängs med Esc."
+              - "Sidorna har en huvudrubrik, och sidhuvud, innehåll och sidfot är uppmärkta så att en skärmläsare kan hoppa mellan dem."
+              - "Text och knappar har en kontrast på minst 4,5:1 mot bakgrunden."
+              - "Sidorna går att förstora till 200 procent och att läsa på en 320 punkter smal skärm utan att man behöver rulla i sidled."
+              - "Formulärfält har etiketter, och fel beskrivs i text."
+              - "Språket är angivet, så att en skärmläsare läser upp med rätt uttal. Tjänsten finns på svenska och engelska."
+      - title: Kända brister
+        body:
+          - list:
+              - "**Kalenderns månadsvy** är uppbyggd som en tabell som skärmläsare inte läser upp på rätt sätt. Samma evenemang finns som lista på sidan [Evenemang](/activities)."
+              - "**Kartorna** går inte att använda fullt ut med skärmläsare. Adressen står alltid som text bredvid kartan, med en länk som öppnar den i en karttjänst."
+              - "**Bilder** som arrangörer lägger upp beskrivs bara med evenemangets eller platsens namn, inte med vad bilden föreställer. Affischer med text i bilden saknar därför textalternativ, om arrangören inte har skrivit samma sak i beskrivningen."
+              - "**Texter som arrangörer skriver** kan ha länkar med otydliga namn eller rubriker i fel ordning. Detsamma gäller evenemang som hämtas automatiskt från andra kalendrar."
+              - "**De inloggade delarna**, det vill säga formulären för evenemang och platser och administratörernas panel, är inte granskade lika noga som de publika sidorna."
+          - "Vi arbetar med att rätta till bristerna. Den här sidan uppdateras när något ändras."
+      - title: Så har vi testat
+        body:
+          - "Vi har gjort en egen granskning i november 2026. De publika sidorna (startsidan, evenemang, ett evenemang, kalendern, platser, en plats, arrangörer, en arrangörs sida, äta, handla & bo, en orts sida, sök, inloggning och de här hjälpsidorna) har kontrollerats med det automatiska verktyget axe-core mot WCAG 2.1 A och AA, på en bred och en smal skärm, med menyer och dialogrutor både stängda och öppna."
+          - "Därutöver har vi gått igenom sidorna med enbart tangentbord, i 200 procents förstoring och på 320 punkters bredd. Ingen granskning med skärmläsare och ingen oberoende granskning har gjorts ännu."
+      - title: Rapportera brister
+        body:
+          - "Upptäcker du något som inte fungerar för dig, eller behöver du innehåll i ett annat format? Skriv till oss med knappen **Ge feedback** längst ner på sidan och ange din e-postadress om du vill ha svar. Berätta vilken sida det gäller och vilket hjälpmedel du använder, så kan vi rätta till det snabbare."
+      - title: Om du inte är nöjd
+        body:
+          - "Myndigheten för digital förvaltning (DIGG) har tillsyn över lagen om tillgänglighet till digital offentlig service. Tycker du att vi inte tar hand om dina synpunkter kan du [anmäla det till DIGG](https://www.digg.se/tdosanmalan)."
+
+  guideStart:
+    title: Guidebok
+    lead: "För dig som arrangerar evenemang, tar hand om en plats eller administrerar {{site}}. Steg för steg, med samma ord som står på knapparna."
+    sections:
+      - title: Kom igång på fem minuter
+        body:
+          - steps:
+              - "**Skapa ett konto.** Tryck på **Logga in** längst ner på sidan och skriv din e-postadress. Mer under [Konto och att bli arrangör](/guide/account)."
+              - "**Bli arrangör.** Be en administratör godkänna dig, med knappen **Ge feedback**. Du får ett mejl när det är klart."
+              - "**Fyll i din profil.** Namn, bild och en e-postadress eller ett telefonnummer som besökare kan nå dig på. Det krävs för att kunna publicera. Mer under [Din profil](/guide/your-page)."
+              - "**Lägg upp ditt första evenemang.** Gå till **Evenemang** och tryck på plusknappen uppe i sidhuvudet. Mer under [Skapa ett evenemang](/guide/events)."
+      - title: Kapitlen
+        body:
+          - list:
+              - "[Konto och att bli arrangör](/guide/account): logga in, bli godkänd, få notiser och ha sajten som app."
+              - "[Skapa ett evenemang](/guide/events): fälten i formuläret, ett i taget."
+              - "[Sköta ett evenemang](/guide/manage-events): ändra, meddela de anmälda, se anmälningar, ställa in och ta bort."
+              - "[Platser](/guide/places): lägga upp en lokal eller ett utflyktsmål, och Äta, handla & bo."
+              - "[Din profil](/guide/your-page): det besökare ser om dig, dina inställningar och din översikt."
+              - "[För administratörer](/guide/administrators): användare, orter, speglingar, utskick och inställningar."
+      - title: Tre saker som är bra att veta
+        body:
+          - list:
+              - "**Det du sparar publiceras direkt.** Ingen granskar i förväg. Du kan alltid ändra efteråt."
+              - "**Formulären minns det du skrivit.** Stänger du ett formulär utan att spara ligger utkastet kvar i din webbläsare i upp till 30 dagar. Bilder som inte hann sparas behöver du lägga till igen."
+              - "**Fråga oss.** Knappen **Ge feedback** finns längst ner på varje sida och går till administratörerna."
+
+  guideAccount:
+    title: Konto och att bli arrangör
+    lead: "Du loggar in med din e-postadress och en kod, utan lösenord. För att lägga upp evenemang behöver en administratör godkänna dig som arrangör."
+    sections:
+      - title: Skapa ett konto och logga in
+        body:
+          - steps:
+              - "Tryck på **Logga in** längst ner på sidan. På en telefon finns den också i menyn."
+              - "Skriv din e-postadress och tryck på **Fortsätt med e-post**."
+              - "Du får ett mejl med en sexsiffrig kod. Skriv in koden, eller tryck på knappen i mejlet. Koden gäller i 15 minuter och fungerar en gång."
+              - "Första gången får du frågan om du vill skapa ett konto. Kryssa i att du godkänner villkoren och tryck på **Skapa mitt konto**."
+          - "Kommer inget mejl? Titta i skräpposten, eller tryck på **skicka en ny kod**. Nästa gång loggar du in på samma sätt med samma adress."
+          - note: "Dela en adress, inte ett konto. Är ni flera i en förening som ska lägga upp evenemang skapar var och en ett eget konto. Ni kan sedan stå som medarrangörer till samma evenemang."
+      - title: Bli arrangör
+        body:
+          - "Ett nytt konto kan följa evenemang och få notiser, men inte publicera. För det behöver en administratör godkänna dig."
+          - steps:
+              - "Tryck på **Ge feedback** längst ner på sidan."
+              - "Skriv vilken förening eller verksamhet du företräder och vilken e-postadress du har loggat in med."
+              - "När du är godkänd får du mejlet **Du är nu arrangör**, med en knapp som tar dig direkt till formuläret för ett nytt evenemang."
+          - "Som arrangör ser du en plusknapp uppe i sidhuvudet på sidorna Evenemang och Platser, och du visas på sidan **Arrangörer**."
+      - title: Notiser och sajten som app
+        body:
+          - "Under **Mina inställningar** (tryck på din profilbild i sidhuvudet) väljer du vad du vill få:"
+          - list:
+              - "**Evenemang du följer:** mejl och pushnotis när tid eller plats ändras, eller när arrangören skickar en uppdatering."
+              - "**Nyhetsbrev:** nyheter från {{site}} då och då. Avstängt från början."
+              - "**Den här enheten:** pushnotiser slås på för varje telefon eller dator för sig, med **Slå på pushnotiser här**."
+          - "Vill du ha {{site}} som en app på telefonen? Tryck på **Som app** längst ner på sidan och följ stegen. På en iPhone måste sidan ligga på hemskärmen för att notiser ska fungera."
+      - title: Logga ut och radera kontot
+        body:
+          - "**Logga ut** finns i menyn vid din profilbild och längst ner på sidan."
+          - "**Radera mitt konto** finns sist under **Mina inställningar**. Vad som tas bort och vad som ligger kvar står i [integritetspolicyn](/about/terms)."
+
+  guideEvents:
+    title: Skapa ett evenemang
+    lead: "Titel, bild, tid och plats räcker. Det tar ett par minuter, och evenemanget syns i kalendern så fort du trycker på Publicera."
+    sections:
+      - title: Öppna formuläret
+        body:
+          - "Gå till **Evenemang** och tryck på den runda plusknappen uppe i sidhuvudet, bredvid sökknappen. Knappen syns bara när du är inloggad som arrangör. Du kan också trycka på **Lägg till** på kortet sist i listan, eller på **Ny aktivitet** i din översikt."
+      - title: Det viktigaste
+        body:
+          - list:
+              - "**Titel.** Evenemangets namn, som det ska stå i kalendern. Skriv inte datum eller plats här, de visas ändå."
+              - "**Undertitel** (valfritt). En rad om vad det handlar om."
+              - "**Bilder.** Minst en bild krävs. Den första blir huvudbild, och du drar bilderna för att ändra ordningen. Använd bara bilder du har rätt att använda, och skriv fotografens namn i beskrivningen om licensen kräver det. Undvik bilder med mycket text: skriv hellre texten i beskrivningen, så kan alla läsa den."
+              - "**Tillfällen.** Datum, när det börjar och när det slutar. Tryck på **Ändra till flera dagar** för något som pågår över flera dagar."
+              - "**Beskrivning.** Vad som händer, vem det passar för, vad det kostar och vad man ska ta med. Skriv länkar så att det framgår vart de leder."
+      - title: Evenemang som återkommer
+        body:
+          - "Tryck på **Lägg till tillfälle** för varje gång evenemanget äger rum. Det nya tillfället får samma tider som det förra, en vecka senare, så för något som sker varje vecka trycker du bara en gång per vecka."
+          - "Ser kalendern att tillfällena kommer varje eller varannan vecka märker den själv evenemanget med till exempel **Varje torsdag**."
+      - title: Typ av evenemang
+        body:
+          - "Välj en eller flera: Kultur, Idrott, Barn & familj, Bio, Senior, Natur, Lärande eller Umgänge. Besökare filtrerar på dem, så välj det som verkligen stämmer."
+      - title: Arrangör och kontaktuppgifter
+        body:
+          - "Du står som arrangör. Med **Lägg till medarrangör** lägger du till andra arrangörer som står bakom evenemanget. De kan också ändra det och se anmälningarna."
+          - "Under **Kontaktuppgifter** väljer du vad besökare ska se: **Standard** är de publika uppgifterna i din profil, och med **Andra uppgifter** skriver du en kontaktperson, e-post, telefon eller webbplats bara för det här evenemanget."
+          - note: "Alla arrangörer måste ha en e-postadress eller ett telefonnummer i sin profil. Annars går evenemanget inte att spara."
+      - title: Plats
+        body:
+          - list:
+              - "**Välj en plats.** Sök bland platserna som redan finns i kalendern. Det är det bästa valet: evenemanget syns då på platsens sida, och adress och karta följer med."
+              - "**Arrangörens adress.** Adressen hämtas från din profil."
+              - "**Annan adress.** Skriv adressen själv och välj vilken ort i kommunen det gäller."
+          - "Saknas platsen? Lägg upp den först, se [Platser](/guide/places)."
+      - title: Bokning och anmälan
+        body:
+          - "Slå på **Anmälan är möjlig** om besökare ska anmäla sig på evenemangets sida, och ange **Kapacitet**: hur många som kan anmäla sig till varje tillfälle. När det är fullt stängs anmälan av sig själv."
+          - "Besökare anmäler sig med namn och e-postadress, utan konto. Bara du, dina medarrangörer och administratörerna ser e-postadresserna."
+      - title: Publicera
+        body:
+          - "Tryck på **Publicera**. Evenemanget syns direkt i kalendern, på platsens sida och i din profil. Blev något fel ändrar du det efteråt, se [Sköta ett evenemang](/guide/manage-events)."
+
+  guideManage:
+    title: Sköta ett evenemang
+    lead: "Ändra, meddela dem som kommer, se vilka som har anmält sig och ställ in eller ta bort."
+    sections:
+      - title: Ändra ett evenemang
+        body:
+          - "Öppna evenemangets sida. Tryck på kugghjulet uppe i sidhuvudet (**Hantera**) och välj **Redigera evenemang**, ändra och tryck på **Uppdatera**."
+          - "Om någon är anmäld eller följer evenemanget får du frågan **Meddela de som kommer?** när du sparar:"
+          - list:
+              - "**Spara och meddela** skickar mejl och pushnotis till alla anmälda och alla som följer. Har du ändrat tid eller plats står det i meddelandet av sig självt, och du kan lägga till några egna ord."
+              - "**Spara utan att meddela** sparar tyst. Använd det för stavfel och småsaker, inte när tid eller plats ändras."
+          - "Meddelandet går iväg några minuter efter att du sparat. Sparar du flera gånger i rad blir det ändå bara ett meddelande."
+      - title: Skicka en uppdatering
+        body:
+          - "Under **Skicka en uppdatering** på evenemangets sida skriver du ett kort meddelande, till exempel att ni samlas vid en annan ingång. Det går med mejl och pushnotis till alla som är anmälda eller följer, och visas på sidan under **Nytt från arrangören**."
+      - title: Se anmälningarna
+        body:
+          - "På evenemangets sida finns avsnittet **För arrangören**, som bara du, dina medarrangörer och administratörerna ser. Där står förnamn, efternamn, e-post och antal för varje tillfälle."
+          - "**Ladda ner CSV** ger listan för det valda tillfället som en fil att öppna i Excel eller ett annat kalkylprogram. Listan innehåller personuppgifter: dela den inte vidare, och radera filen när evenemanget är över."
+          - "I din översikt (**Hem** i adminpanelen) ser du nya anmälningar från den senaste veckan och hur fullt det är på det som är på gång."
+      - title: Ställa in
+        body:
+          - "Tryck på **Ställ in evenemang** under **För arrangören**. Skriv gärna varför. Evenemanget ligger kvar i listorna, märkt **Inställt**, anmälan stängs och alla som är anmälda eller följer får ett mejl."
+          - "Blir det av ändå trycker du på **Återuppta evenemang**."
+          - "Det går inte att ställa in ett enskilt tillfälle. Ta i stället bort tillfället i formuläret (**Ta bort tillfälle**), välj **Spara och meddela** och förklara vad som gäller."
+      - title: Arkivera och ta bort
+        body:
+          - "**Arkivera evenemanget** tar bort det från kalendern utan att radera det. Arkiverade evenemang ser bara du och administratörerna, under **Arkiverade** i din profil, och du kan välja **Återställ från arkivet**."
+          - "För att radera för gott arkiverar du först och väljer sedan **Ta bort evenemanget**. Då försvinner också alla anmälningar, och det går inte att ångra."
+      - title: Evenemang som hämtas från en annan kalender
+        body:
+          - "Vissa evenemang hämtas automatiskt, till exempel från biblioteket och bion. De uppdateras från källan varje timme, så ändringar ska göras där. Anmälan sker också hos källan."
+          - "Vill du ta över ett sådant evenemang och ändra det här väljer du **Koppla loss**. Då uppdateras det inte längre från källan."
+
+  guidePlaces:
+    title: Platser
+    lead: "En plats är en lokal, en mötesplats eller ett utflyktsmål. Den har en egen sida med adress, karta och det som händer där, och den går att välja när någon skapar ett evenemang."
+    sections:
+      - title: Lägga upp en plats
+        body:
+          - "Gå till **Platser** och tryck på plusknappen uppe i sidhuvudet (**Ny plats**). Sök först, så att platsen inte redan finns."
+          - list:
+              - "**Namn.** Det som platsen kallas i dagligt tal."
+              - "**Bilder** (valfritt). Samma regler som för evenemang: bara bilder du har rätt att använda, med fotograf och licens i beskrivningen när det krävs."
+              - "**Beskrivning.** Vad som finns där, hur man tar sig dit, om det går att komma in med rullstol, om det finns parkering och toalett."
+              - "**Typ av plats.** Kultur & mötesplatser, Sevärdheter, Idrottshallar, Idrottsplatser, Bad eller Friluftsliv."
+      - title: Var platsen finns
+        body:
+          - list:
+              - "**Adress.** Skriv adressen, eller klicka på kartan och dra nålen dit platsen är, så fylls resten i. En badplats eller ett vindskydd utan gatuadress sätter du ut på kartan. Välj också **Ort**, den del av kommunen platsen hör till."
+              - "**Del av en annan plats.** För ett rum eller en sal i ett större hus, som en hörsal i biblioteket. Platsen får då det större husets adress."
+      - title: Förvaltare och kontakt
+        body:
+          - "**Förvaltare** är de arrangörer som tar hand om platsen och kan ändra den. Lägger du upp en plats behöver du själv vara en av förvaltarna. Administratörer kan alltid ändra."
+          - "Under **Kontakt** väljer du vem man frågar om platsen: en av förvaltarna, eller andra uppgifter."
+      - title: Platser som går att boka
+        body:
+          - "Slå på **Platsen går att boka** och berätta hur: vem man kontaktar, eller en **Länk** till ett bokningssystem. Platsen märks då **Bokningsbar** och går att hitta med filtret på sidan Platser. Själva bokningen sker hos dig, inte i kalendern."
+      - title: Ändra en plats
+        body:
+          - "Öppna platsens sida, tryck på kugghjulet och välj **Redigera plats**. Rättar du adressen ändras den också på alla evenemang som hålls där."
+          - "Bara administratörer kan ta bort en plats, och bara när den inte har några kommande evenemang."
+      - title: Äta, handla & bo
+        body:
+          - "Kaféer, restauranger, butiker och boenden visas på sidan **Äta, handla & bo**. Det är vanliga platser med några uppgifter till."
+          - steps:
+              - "Lägg upp stället som en plats, som ovan."
+              - "Öppna platsens sida, tryck på kugghjulet och välj **Äta, handla & bo**."
+              - "Slå på **Aktivera Äta, handla & bo**. Skriv en **Tagline**, en rad under namnet, till exempel Surdegsbageri och kafé."
+              - "Fyll i **Öppettider** för veckan. Under **Om öppettiderna** skriver du undantag, som semesterstängt."
+              - "Lägg till ett eller flera **Erbjudanden**: Mat & fika, Boende, Tjänster eller Försäljning. Ett erbjudande kan ha egna öppettider."
+              - "Tryck på **Spara**."
+          - "På platsens sida visas sedan öppettiderna och om det är öppet just nu."
+
+  guideProfile:
+    title: Din profil
+    lead: "Din profil är det besökare ser om dig eller din förening: vem ni är, hur man når er och vad ni har på gång."
+    sections:
+      - title: Fylla i profilen
+        body:
+          - "Tryck på din profilbild uppe i sidhuvudet och välj **Redigera min profil**."
+          - list:
+              - "**Namn.** Föreningens eller verksamhetens namn om du arrangerar i dess namn, annars ditt eget."
+              - "**Profilbild.** En logotyp eller ett foto. Klicka på bilden för att byta."
+              - "**Beskrivning.** Några rader om vilka ni är och vad ni gör."
+              - "**Publika kontaktuppgifter.** E-post, telefon och webbplats. De visas i din profil och vid varje evenemang du arrangerar. Som arrangör måste du ange en e-postadress eller ett telefonnummer."
+              - "**Hemvist.** Där du eller föreningen brukar hålla till: en plats i kalendern eller en egen adress. Nya evenemang utgår från den."
+          - "Tryck på **Uppdatera** för att spara."
+          - note: "Tänk på att kontaktuppgifterna är publika. Använd föreningens adress och nummer hellre än dina privata."
+      - title: Det här visas i din profil
+        body:
+          - "Namn, bild, beskrivning och kontaktuppgifter, dina kommande och tidigare evenemang och de platser du förvaltar. Arkiverade evenemang ser bara du och administratörerna."
+          - "Arrangörer visas på sidan **Arrangörer**. Vill du inte synas där kan en administratör dölja din profil."
+      - title: Mina inställningar
+        body:
+          - "Tryck på din profilbild och välj **Mina inställningar**. Där finns:"
+          - list:
+              - "**Språk:** språket du ser sidan på och får mejl på."
+              - "**Evenemang du följer:** om du vill ha mejl och pushnotiser, och listan över det du följer."
+              - "**Nyhetsbrev.**"
+              - "**Den här enheten:** pushnotiser för just den här telefonen eller datorn, och **Skicka en testnotis**."
+              - "**Radera mitt konto.**"
+      - title: Din översikt
+        body:
+          - "Tryck på ditt namn längst ner på sidan, efter **Inloggad som**, så kommer du till din översikt. Där ser du nya anmälningar från den senaste veckan och dina evenemang de närmaste två veckorna, med hur många som är anmälda."
+          - "Därifrån når du också **Ny aktivitet** och **Öppna kalendern**."
+
+  guideAdmin:
+    title: För administratörer
+    lead: "Adminpanelen är till för kommunens och Uddebo Makerspaces administratörer. Här godkänner du arrangörer, sköter orter och speglingar och ställer in hur sajten ser ut."
+    sections:
+      - title: Hitta dit
+        body:
+          - "Tryck på din profilbild uppe i sidhuvudet och välj **Adminpanel**. Menyn till vänster har samma rubriker som avsnitten här. Överst tar sajtens namn dig tillbaka till den publika sidan."
+          - "**Hem** är din överblick: nya evenemang, nya medlemmar, nya platser och vad som har hämtats från andra kalendrar."
+      - title: Användare
+        body:
+          - "Här godkänner du arrangörer. Leta upp personen med sökfältet och välj i menyn på raden:"
+          - list:
+              - "**Verifiera** ger rätt att lägga upp evenemang och platser. Personen får mejlet **Du är nu arrangör**."
+              - "**Gör till arrangör** visar personen på sidan Arrangörer. Det ger inga rättigheter i sig, så för en ny arrangör gör du oftast båda."
+              - "**Avverifiera** tar tillbaka rätten att publicera. Det som redan är publicerat ligger kvar."
+              - "**Ställ in som admin** ger full tillgång till adminpanelen. Var sparsam med det."
+              - "**Dölj profilen för andra** tar bort personen från Arrangörer och gör profilen osynlig för besökare."
+              - "**Visa sajten som den här användaren** låter dig se det personen ser, till exempel för att hjälpa någon som har kört fast. Du går tillbaka med **Tillbaka till mitt konto**."
+          - note: "Kontrollera att du vet vem personen är och vilken förening eller verksamhet det gäller innan du verifierar. Allt en arrangör publicerar syns direkt, utan granskning."
+      - title: Hålla ordning på innehållet
+        body:
+          - "Som administratör kan du ändra och ta bort alla evenemang och platser, med kugghjulet på respektive sida. Du kan också byta arrangör på ett evenemang."
+          - "Synpunkter från besökare kommer med **Ge feedback** och går som mejl till alla administratörer. Bestäm vem av er som svarar."
+          - "När någon ber om att få sina uppgifter raderade: ta bort personens evenemang, platser och anmälningar som inte ska ligga kvar. Kontot raderar personen själv under Mina inställningar."
+      - title: Orter
+        body:
+          - "Varje ort i kommunen har en egen startsida. Med **Ny ort** lägger du till en, med namn, adress (den del av webbadressen som kommer efter snedstrecket), beskrivning, bild och färg. Dra raderna för att ändra ordningen."
+          - "En ort syns först när den är **Publicerad**. Under **Innehåll på startsidan** kan du lägga till en komponerbar sida med egen text och egna bilder. En ort kan bara raderas när inget innehåll hör till den."
+      - title: Speglingar
+        body:
+          - "En spegling hämtar evenemang från en annan kalender en gång i timmen. I dag finns två sorters källor: bibliotekets evenemang (Axiell-kalender) och bioföreställningar från bio.se."
+          - "Med **Ny spegling** anger du källan, vilken **Plats** evenemangen hålls på och vilket konto som står som **Arrangör**. Kontot behöver e-post eller telefon i sin profil."
+          - "Tryck på **Förhandsgranska** innan du slår på en ny spegling, så ser du vad som skulle hämtas. **Synka nu** hämtar direkt. På varje rad står hur den senaste hämtningen gick: hur många nya, ändrade och borttagna, eller varför den misslyckades."
+      - title: Utskick
+        body:
+          - "**Skicka ett nyhetsbrev** går till dem som har valt nyhetsbrevet i sina inställningar. Antalet står överst. Skriv ämne och innehåll, bifoga gärna evenemang och platser, och titta på **Förhandsvisa** innan du skickar. Det går inte att ångra ett utskick."
+          - "Under **Automatiserade e-postmeddelanden** ändrar du texten i mejlen som går ut när någon verifieras eller blir administratör."
+      - title: Inställningar
+        body:
+          - list:
+              - "**Organisation:** sajtens namn, logotyp, kontaktuppgifter, språk och texten i sidfoten."
+              - "**Meny:** ordningen i huvudmenyn och vilka sidor som finns med."
+              - "**Design:** färger och menyns utseende. Håll god kontrast mellan text och bakgrund, så att alla kan läsa."
+              - "**Funktioner:** slår på och av hela delar av sajten. En avstängd del försvinner för alla besökare, men innehållet finns kvar och kommer tillbaka när du slår på den igen."
+          - "Under **Listningssidor** ändrar du namn och beskrivning på sidorna Evenemang, Kalender, Arrangörer och Platser, och under **Komponerbara sidor** bygger du egna sidor av text, bilder och knappar."
+      - title: Personuppgifter och ansvar
+        body:
+          - "Som administratör ser du e-postadresser och anmälningslistor. Använd dem bara för att sköta kalendern, lämna inte ut dem och ladda inte ner mer än du behöver."
+          - "Vad som sparas och hur länge står i [integritetspolicyn](/about/terms), och vad som gäller för tillgänglighet i [tillgänglighetsredogörelsen](/about/accessibility). Ändrar ni hur tjänsten fungerar behöver de texterna också ändras."

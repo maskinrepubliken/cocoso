@@ -7,9 +7,8 @@ import { useAtomValue } from 'jotai';
 import InfoIcon from 'lucide-react/dist/esm/icons/info';
 import LogInIcon from 'lucide-react/dist/esm/icons/log-in';
 
-import { currentUserAtom, pageTitlesAtom } from '/imports/state';
+import { currentUserAtom } from '/imports/state';
 import { isMenuItemShown } from '/imports/api/_utils/features';
-import { parseTitle } from '/imports/api/_utils/shared';
 
 import FeedbackForm from './FeedbackForm';
 import InstallApp from './InstallApp';
@@ -28,7 +27,6 @@ export interface FooterProps {
 // said once, plainly.
 export function Footer({ site }: FooterProps) {
   const prefix = useLocationPrefix();
-  const pageTitles = useAtomValue(pageTitlesAtom);
   const currentUser = useAtomValue(currentUserAtom);
   const [tc] = useTranslation('common');
   const logout = useLogout();
@@ -39,7 +37,6 @@ export function Footer({ site }: FooterProps) {
 
   const { settings } = site;
   const activeMenu = settings?.menu?.filter(isMenuItemShown);
-  const aboutPage = pageTitles?.[0];
 
   const routeFor = (item: any) =>
     item.name === 'info'
@@ -59,15 +56,10 @@ export function Footer({ site }: FooterProps) {
               and login last when logged out */}
           <div className="site-footer-tools">
             <LanguageSwitch />
-            {aboutPage && (
-              <Link
-                className="site-footer-pill"
-                to={`${prefix}/info/${parseTitle(aboutPage.title)}`}
-              >
-                <InfoIcon width={16} height={16} />
-                {tc('footer.about')}
-              </Link>
-            )}
+            <Link className="site-footer-pill" to="/about">
+              <InfoIcon width={16} height={16} />
+              {tc('footer.about')}
+            </Link>
             <FeedbackForm />
             <InstallApp />
             {!currentUser && (
@@ -110,11 +102,8 @@ export function Footer({ site }: FooterProps) {
                 {item.label}
               </Link>
             ))}
-            <Link to="/terms-&-privacy-policy">
-              <Trans i18nKey="common:terms.title">
-                Terms of Service & Privacy Policy
-              </Trans>
-            </Link>
+            <Link to="/about/terms">{tc('footer.terms')}</Link>
+            <Link to="/about/accessibility">{tc('footer.accessibility')}</Link>
           </nav>
         </div>
 

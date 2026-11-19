@@ -214,7 +214,7 @@ export default function EmailLogin({
       footer={
         <p>
           {t('emailLogin.terms')}{' '}
-          <Link to="/terms-&-privacy-policy">
+          <Link to="/about/terms">
             {t('signup.form.terms.terms')}
           </Link>
           .

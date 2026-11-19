@@ -95,7 +95,7 @@ export default function ConfirmSignup({
             <Link
               rel="noopener noreferrer"
               target="_blank"
-              to="/terms-&-privacy-policy"
+              to="/about/terms"
             >
               {t('signup.form.terms.terms')}
             </Link>
