@@ -91,8 +91,58 @@ const Mirrors = new Mongo.Collection<MirrorDoc>('mirrors');
 
 (Mirrors as any).attachSchema((Mirrors as any).schema);
 
+/**
+ * The logbook of the mirrors' runs, shown to admins on the control panel
+ * (Admin → Hem) in plain words: what a run brought, that there was nothing
+ * new, or that it failed and roughly why. Runs alike and in a row (nothing
+ * new, or the same failure) share one entry, with how many they were, so a
+ * quiet day is one line and not twenty-four.
+ */
+export type MirrorRunProblem =
+  // The source could not be read, or answered with something else
+  | 'source'
+  // The source listed nothing while events here would have been removed
+  | 'empty-source'
+  // The mirror's place or organizer in Cocoso is gone
+  | 'place-gone'
+  | 'organizer-gone';
+
+export interface MirrorRunDoc {
+  _id: string;
+  mirrorId: string;
+  mirrorName: string;
+  outcome: 'changed' | 'unchanged' | 'failed';
+  created: number;
+  updated: number;
+  removed: number;
+  problem?: MirrorRunProblem;
+  // The first and the latest of the runs the entry stands for
+  firstAt: Date;
+  at: Date;
+  times: number;
+}
+
+export const MirrorRuns = new Mongo.Collection<MirrorRunDoc>('mirrorRuns');
+
+(MirrorRuns as any).schema = new SimpleSchema({
+  _id: Schemas.Id,
+  mirrorId: { type: String },
+  mirrorName: { type: String },
+  outcome: { type: String, allowedValues: ['changed', 'unchanged', 'failed'] },
+  created: { type: SimpleSchema.Integer },
+  updated: { type: SimpleSchema.Integer },
+  removed: { type: SimpleSchema.Integer },
+  problem: { type: String, optional: true },
+  firstAt: { type: Date },
+  at: { type: Date },
+  times: { type: SimpleSchema.Integer },
+});
+
+(MirrorRuns as any).attachSchema((MirrorRuns as any).schema);
+
 if (Meteor.isServer) {
   Meteor.startup(async () => {
+    await MirrorRuns.rawCollection().createIndex({ at: -1 });
     // Each run looks every event up by where it came from
     await Activities.rawCollection().createIndex(
       { 'mirror.mirrorId': 1, 'mirror.externalId': 1 },

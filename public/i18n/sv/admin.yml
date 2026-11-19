@@ -521,6 +521,7 @@ overview:
     activities: 'Aktiviteter'
     members: 'Nya medlemmar'
     places: 'Nya platser'
+    mirrors: 'Hämtade evenemang'
   upcoming:
     title: 'På gång de närmaste två veckorna'
     empty: 'Inget inplanerat de närmaste två veckorna.'
@@ -548,6 +549,29 @@ overview:
     unlisted: 'olistad'
     part: 'del av en annan plats'
     all: 'Se alla platser'
+  mirrors:
+    title: 'Hämtat från andra kalendrar'
+    empty: 'Inget har hämtats de senaste 14 dagarna.'
+    outcome:
+      changed: 'Gick bra'
+      unchanged: 'Inget nytt'
+      failed: 'Misslyckades'
+    changed: 'Hämtat: {{what}}.'
+    created_one: '{{count}} nytt evenemang'
+    created_other: '{{count}} nya evenemang'
+    updated_one: '{{count}} ändrat'
+    updated_other: '{{count}} ändrade'
+    removed_one: '{{count}} borttaget'
+    removed_other: '{{count}} borttagna'
+    unchanged: 'Letade efter nyheter, och allt var redan uppdaterat.'
+    several_one: '{{to}}'
+    several_other: '{{count}} gånger i rad, {{from}} – {{to}}'
+    problem:
+      source: 'Den andra sajten gick inte att nå eller svarade inte som vanligt. Inget har ändrats här, och ett nytt försök görs inom en timme.'
+      empty-source: 'Den andra sajten visade inga evenemang alls, vilket ser ut som ett fel där. Inget har tagits bort här.'
+      place-gone: 'Platsen som evenemangen hör till finns inte längre. Välj en ny plats för speglingen.'
+      organizer-gone: 'Kontot som arrangerar evenemangen finns inte längre. Välj en ny arrangör för speglingen.'
+    all: 'Till speglingarna'
   settings:
     title: 'Inställningar och utseende'
     helper: 'Sådant du ställer in en gång och ändrar ibland.'

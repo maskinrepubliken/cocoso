@@ -521,6 +521,7 @@ overview:
     activities: 'Activities'
     members: 'New members'
     places: 'New places'
+    mirrors: 'Fetched events'
   upcoming:
     title: 'Coming up the next two weeks'
     empty: 'Nothing planned the next two weeks.'
@@ -548,6 +549,29 @@ overview:
     unlisted: 'unlisted'
     part: 'part of another place'
     all: 'See all places'
+  mirrors:
+    title: 'Fetched from other calendars'
+    empty: 'Nothing has been fetched in the last 14 days.'
+    outcome:
+      changed: 'Went well'
+      unchanged: 'Nothing new'
+      failed: 'Failed'
+    changed: 'Fetched: {{what}}.'
+    created_one: '{{count}} new event'
+    created_other: '{{count}} new events'
+    updated_one: '{{count}} changed'
+    updated_other: '{{count}} changed'
+    removed_one: '{{count}} removed'
+    removed_other: '{{count}} removed'
+    unchanged: 'Looked for news, and everything was already up to date.'
+    several_one: '{{to}}'
+    several_other: '{{count}} times in a row, {{from}} – {{to}}'
+    problem:
+      source: 'The other site could not be reached or did not answer as usual. Nothing has been changed here, and a new try is made within the hour.'
+      empty-source: 'The other site showed no events at all, which looks like a fault there. Nothing has been removed here.'
+      place-gone: 'The place the events belong to no longer exists. Choose a new place for the mirror.'
+      organizer-gone: 'The account that organizes the events no longer exists. Choose a new organizer for the mirror.'
+    all: 'To the mirrors'
   settings:
     title: 'Settings and appearance'
     helper: 'Things you set up once and change now and then.'

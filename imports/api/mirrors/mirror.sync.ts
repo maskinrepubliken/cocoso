@@ -14,7 +14,11 @@ import {
 } from '../_utils/services/mediaStorage';
 import { warmShareImage } from '../share/shareImage.server';
 import escapeHtml from '../_utils/escapeHtml';
-import Mirrors, { type MirrorDoc } from './mirror';
+import Mirrors, {
+  MirrorRuns,
+  type MirrorDoc,
+  type MirrorRunProblem,
+} from './mirror';
 import { fetchAxiellEvents, type SourceEvent } from './axiell';
 import { fetchBioSeEvents } from './bioSe';
 
@@ -35,12 +39,15 @@ import { fetchBioSeEvents } from './bioSe';
  * - Detached by its organizer (mirror.isDetached): left alone.
  *
  * Runs every hour for each enabled mirror, and from Admin →
- * Speglingar ("Synka nu"). Server only.
+ * Speglingar ("Synka nu"). Every run is written into the logbook
+ * (MirrorRuns) that admins read on the control panel. Server only.
  */
 
 const ZONE = 'Europe/Stockholm';
 const INTERVAL_MS = 60 * 60 * 1000;
 const FIRST_RUN_MS = 60 * 1000;
+// How long the logbook's entries are kept
+const LOG_KEPT_MS = 90 * 24 * 60 * 60 * 1000;
 
 // The source's tags (Knallebiblioteken's) to Cocoso's kinds
 // (imports/ui/pages/activities/eventKinds.ts)
@@ -258,13 +265,17 @@ export async function syncMirror(
     fields: { label: 1, locationId: 1, images: 1 },
   });
   if (!resource) {
-    throw new Meteor.Error('not-found', 'The place in Cocoso is gone');
+    throw new Meteor.Error('not-found', 'The place in Cocoso is gone', 'place');
   }
   const organizer = await Meteor.users.findOneAsync(mirror.organizerId, {
     fields: { username: 1 },
   });
   if (!organizer) {
-    throw new Meteor.Error('not-found', 'The organizer account is gone');
+    throw new Meteor.Error(
+      'not-found',
+      'The organizer account is gone',
+      'organizer'
+    );
   }
 
   const events = await fetchEvents(mirror);
@@ -470,9 +481,73 @@ export async function syncMirror(
 }
 
 // One run of a mirror, with its outcome kept on it for the admin page
+// Why a run failed, as the logbook tells it
+function problemOf(error: any): MirrorRunProblem {
+  if (error?.error === 'empty-source') {
+    return 'empty-source';
+  }
+  if (error?.error === 'not-found') {
+    return error.details === 'organizer' ? 'organizer-gone' : 'place-gone';
+  }
+  return 'source';
+}
+
+// A run written into the logbook: added to the mirror's latest entry when
+// it went the same way (nothing new, or the same failure), otherwise an
+// entry of its own
+async function logRun(
+  mirror: MirrorDoc,
+  result: Pick<MirrorRunResult, 'created' | 'updated' | 'removed'>,
+  problem?: MirrorRunProblem
+) {
+  const at = new Date();
+  const outcome = problem
+    ? 'failed'
+    : result.created + result.updated + result.removed > 0
+    ? 'changed'
+    : 'unchanged';
+  const latest = await MirrorRuns.findOneAsync(
+    { mirrorId: mirror._id },
+    { sort: { at: -1 } }
+  );
+  if (
+    latest &&
+    outcome !== 'changed' &&
+    latest.outcome === outcome &&
+    latest.problem === problem
+  ) {
+    await MirrorRuns.updateAsync(
+      { _id: latest._id },
+      { $set: { at, mirrorName: mirror.name }, $inc: { times: 1 } }
+    );
+    return;
+  }
+  await MirrorRuns.insertAsync({
+    mirrorId: mirror._id,
+    mirrorName: mirror.name,
+    outcome,
+    created: result.created,
+    updated: result.updated,
+    removed: result.removed,
+    ...(problem ? { problem } : {}),
+    firstAt: at,
+    at,
+    times: 1,
+  } as any);
+  await MirrorRuns.removeAsync({
+    at: { $lt: new Date(at.getTime() - LOG_KEPT_MS) },
+  });
+}
+
 export async function runMirror(mirror: MirrorDoc): Promise<MirrorRunResult> {
+  // The logbook is for reading; a run doesn't fail on it
+  const log = (...args: Parameters<typeof logRun>) =>
+    logRun(...args).catch((error) =>
+      console.error('[mirror] logbook:', error?.message)
+    );
   try {
     const result = await syncMirror(mirror);
+    await log(mirror, result);
     await Mirrors.updateAsync(
       { _id: mirror._id },
       { $set: { lastRun: { at: new Date(), ...result } } }
@@ -497,6 +572,7 @@ export async function runMirror(mirror: MirrorDoc): Promise<MirrorRunResult> {
         },
       }
     );
+    await log(mirror, { created: 0, updated: 0, removed: 0 }, problemOf(error));
     console.error(`[mirror] ${mirror.name} failed:`, reason);
     throw error;
   }

@@ -62,6 +62,20 @@ interface NewPlace {
   isUnlisted: boolean;
 }
 
+// An entry in the mirrors' logbook: one run, or several alike in a row
+interface MirrorRun {
+  _id: string;
+  mirrorName: string;
+  outcome: 'changed' | 'unchanged' | 'failed';
+  created: number;
+  updated: number;
+  removed: number;
+  problem?: string;
+  firstAt: Date;
+  at: Date;
+  times: number;
+}
+
 interface Overview {
   activityCount: number;
   upcoming: Occasion[];
@@ -70,6 +84,7 @@ interface Overview {
   recentRegistrationCount: number;
   newMembers: NewMember[];
   newPlaces?: NewPlace[];
+  mirrorRuns?: MirrorRun[];
 }
 
 // Set-up pages an admin visits now and then; kept below the daily overview.
@@ -545,6 +560,89 @@ function NewPlaces({ overview, dateLocale }: ListProps) {
   );
 }
 
+// The mirrors' logbook: what each run of a mirror (Admin → Speglingar)
+// brought or why it failed, in plain words, latest first
+function MirrorLog({ overview, dateLocale }: ListProps) {
+  const [t] = useTranslation('admin');
+  const runs = overview.mirrorRuns || [];
+  const when = (date: Date) =>
+    dayjs(date).locale(dateLocale).format('D MMM HH:mm');
+
+  const tell = (run: MirrorRun) => {
+    if (run.outcome === 'failed') {
+      return t(`overview.mirrors.problem.${run.problem || 'source'}`);
+    }
+    if (run.outcome === 'unchanged') {
+      return t('overview.mirrors.unchanged');
+    }
+    return t('overview.mirrors.changed', {
+      what: [
+        run.created > 0 &&
+          t('overview.mirrors.created', { count: run.created }),
+        run.updated > 0 &&
+          t('overview.mirrors.updated', { count: run.updated }),
+        run.removed > 0 &&
+          t('overview.mirrors.removed', { count: run.removed }),
+      ]
+        .filter(Boolean)
+        .join(', '),
+    });
+  };
+
+  return (
+    <Box>
+      {runs.length === 0 && <Text>{t('overview.mirrors.empty')}</Text>}
+      {runs.map((run) => (
+        <Link key={run._id} style={{ display: 'block' }} to="/admin/mirrors">
+          <Flex
+            align="center"
+            css={rowCss}
+            gap="3"
+            justify="space-between"
+            wrap="wrap"
+          >
+            <Box css={{ flex: '1 1 220px', minWidth: 0 }}>
+              <Text css={{ display: 'block' }} fontWeight="bold">
+                {run.mirrorName}
+              </Text>
+              <Text css={{ display: 'block' }} fontSize="sm">
+                {tell(run)}
+              </Text>
+              <Text css={{ display: 'block' }} fontSize="sm">
+                {run.times > 1
+                  ? t('overview.mirrors.several', {
+                      count: run.times,
+                      from: when(run.firstAt),
+                      to: when(run.at),
+                    })
+                  : when(run.at)}
+              </Text>
+            </Box>
+            <Badge
+              colorScheme={
+                run.outcome === 'failed'
+                  ? 'red'
+                  : run.outcome === 'changed'
+                  ? 'green'
+                  : 'gray'
+              }
+              size="sm"
+              variant="subtle"
+            >
+              {t(`overview.mirrors.outcome.${run.outcome}`)}
+            </Badge>
+          </Flex>
+        </Link>
+      ))}
+      <Link to="/admin/mirrors">
+        <Text css={underlineCss} fontSize="sm">
+          {t('overview.mirrors.all')}
+        </Text>
+      </Link>
+    </Box>
+  );
+}
+
 function Settings() {
   const navigate = useNavigate();
   const [t] = useTranslation('admin');
@@ -676,6 +774,14 @@ export default function AdminHome() {
                       value: overview.newPlaces?.length || 0,
                       label: t('overview.stats.places'),
                     },
+                    {
+                      id: 'mirrors',
+                      value: (overview.mirrorRuns || []).reduce(
+                        (sum, run) => sum + run.created,
+                        0
+                      ),
+                      label: t('overview.stats.mirrors'),
+                    },
                   ]
                 : []),
             ]}
@@ -698,6 +804,12 @@ export default function AdminHome() {
           {isAdmin && (
             <Section id="places" title={t('overview.places.title')}>
               <NewPlaces dateLocale={dateLocale} overview={overview} />
+            </Section>
+          )}
+
+          {isAdmin && (
+            <Section id="mirrors" title={t('overview.mirrors.title')}>
+              <MirrorLog dateLocale={dateLocale} overview={overview} />
             </Section>
           )}
         </>

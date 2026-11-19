@@ -10,6 +10,7 @@ import Groups from '../groups/group';
 import { meetingTitleOf } from '../groups/meetingTitle';
 import Memberships from '../memberships/membership';
 import Resources from '../resources/resource';
+import { MirrorRuns } from '../mirrors/mirror';
 import { registrationEmail, unregistrationEmail } from './activity.mails';
 import {
   attachOrganizerProfiles,
@@ -437,6 +438,15 @@ Meteor.methods({
       }));
     }
 
+    // The mirrors' logbook: what their runs brought, and which failed
+    let mirrorRuns = [];
+    if (userIsAdmin) {
+      mirrorRuns = await MirrorRuns.find(
+        { at: { $gte: dayjs().subtract(14, 'day').toDate() } },
+        { sort: { at: -1 }, limit: 12 }
+      ).fetchAsync();
+    }
+
     return {
       activityCount: activities.length,
       upcoming: upcoming.slice(0, 15),
@@ -445,6 +455,7 @@ Meteor.methods({
       recentRegistrationCount: recentRegistrations.length,
       newMembers,
       newPlaces,
+      mirrorRuns,
     };
   },
 
