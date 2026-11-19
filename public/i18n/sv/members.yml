@@ -55,6 +55,8 @@ profile:
     info: Personlig Info
     avatar: Avatar
   form:
+    avatar:
+      helper: Klicka på bilden, eller dra en fil till den, för att byta bild. Sparas tillsammans med resten.
     firstname:
       label: Förnamn
     lastname:

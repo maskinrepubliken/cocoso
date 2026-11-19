@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Link,
   useLocation,
   useMatches,
+  useNavigate,
   useParams,
   useSearchParams,
 } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import PenIcon from 'lucide-react/dist/esm/icons/pen-line';
 import SettingsIcon from 'lucide-react/dist/esm/icons/settings';
 import { useAtomValue } from 'jotai';
 
@@ -15,10 +14,14 @@ import { parseTitle } from '/imports/api/_utils/shared';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { managesPlace } from '/imports/api/resources/placeAccess';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
+import { message } from '/imports/ui/generic/message';
+import { displayName } from '/imports/ui/listing/UsersHybrid';
+import { startViewAs } from '/imports/utils/viewAs';
 import {
   canCreateContentAtom,
   currentUserAtom,
   roleAtom,
+  viewAsAtom,
 } from '/imports/state';
 
 const BLOOM_MS = 900;
@@ -54,12 +57,16 @@ function useEditable(): Editable | null {
   if (!currentUser) {
     return null;
   }
+  const data = [...matches].reverse().find((match) => match.data)?.data as
+    | any
+    | undefined;
   // One's own profile page: anyone logged in may edit that.
   if (pathname.replace(/\/$/, '') === `/@${currentUser.username}`) {
-    return { context: 'profile', id: currentUser._id };
+    return { context: 'profile', id: currentUser._id, item: currentUser };
   }
   const isAdmin = role === 'admin';
-  // Someone else's organizer page: an admin may edit their profile.
+  // Someone else's organizer page: an admin may edit their profile. The
+  // page has no user when the profile is hidden; it can still be edited.
   const profileSlug = pathname.match(/^\/@([^/]+)\/?$/);
   if (profileSlug) {
     return isAdmin
@@ -67,6 +74,8 @@ function useEditable(): Editable | null {
           context: 'userProfile',
           id: profileSlug[1],
           username: decodeURIComponent(profileSlug[1]),
+          // from the /:slug route, whichever child route is shown under it
+          item: matches.map((match) => (match.data as any)?.user).find(Boolean),
         }
       : null;
   }
@@ -74,9 +83,6 @@ function useEditable(): Editable | null {
     return null;
   }
   const userId = currentUser._id;
-  const data = [...matches].reverse().find((match) => match.data)?.data as
-    | any
-    | undefined;
   if (!data) {
     return null;
   }
@@ -124,10 +130,12 @@ function useEditable(): Editable | null {
 }
 
 interface GearItem {
-  // The search parameter that opens the dialog for it
+  // The search parameter that opens the dialog for it; what is not a
+  // dialog on the page has an action of its own
   param: string;
   label: string;
   isDanger?: boolean;
+  action?: 'settings' | 'viewAs';
 }
 
 // What the gear offers on each kind of page: the same choices as the old
@@ -139,12 +147,51 @@ function useGearItems(editable: Editable | null): GearItem[] {
   const [t] = useTranslation('groups');
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
+  const viewAs = useAtomValue(viewAsAtom);
 
-  if (!editable?.item || !currentUser) {
+  if (!editable || !currentUser) {
     return [];
   }
   const { context, item } = editable;
   const isAdmin = role === 'admin';
+  // A profile: its form, then one's own settings, or (an admin on someone
+  // else's page) the site as that person sees it. Admins cannot be viewed
+  // as, and one borrowed session at a time.
+  if (context === 'profile' || context === 'userProfile') {
+    const editProfile = {
+      param: 'edit',
+      label: tc(`entryMenu.edit.${context}`),
+    };
+    if (context === 'profile') {
+      return [
+        editProfile,
+        {
+          param: 'settings',
+          label: tc('menu.member.settings'),
+          action: 'settings',
+        },
+      ];
+    }
+    const canViewAs =
+      item?._id &&
+      !viewAs &&
+      !(item.memberships || []).some((m: any) => m.role === 'admin');
+    return [
+      editProfile,
+      ...(canViewAs
+        ? [
+            {
+              param: 'viewAs',
+              label: tc('entryMenu.viewAs', { name: displayName(item) }),
+              action: 'viewAs' as const,
+            },
+          ]
+        : []),
+    ];
+  }
+  if (!item) {
+    return [];
+  }
   // Documents are a feature
   const documentsOn = isFeatureEnabled('documents');
   const edit = { param: 'edit', label: tc(`entryMenu.edit.${context}`) };
@@ -203,11 +250,12 @@ function useGearItems(editable: Editable | null): GearItem[] {
   }
 }
 
-// The button in the header next to the plus on a page one may edit: on an
-// event, förening, place, request or info page a gear with what can be done
-// to it; on a profile a pen to its settings.
+// The button in the header next to the plus on a page one may edit: a gear
+// with what can be done to the event, förening, place, request, info page
+// or profile shown.
 export default function EditButton() {
   const [tc] = useTranslation('common');
+  const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
   const editable = useEditable();
   const gearItems = useGearItems(editable);
@@ -234,48 +282,6 @@ export default function EditButton() {
     return null;
   }
 
-  // On one's own profile the pen is the filled, green one and leads to the
-  // profile settings; it is the thing to do there.
-  if (editable.context === 'profile') {
-    const label = tc('menu.member.settings');
-    return (
-      <div className={`new-button-wrapper new-button-${animState}`}>
-        <Link
-          className="site-new-button"
-          to="/admin/my-profile"
-          aria-label={label}
-          title={label}
-        >
-          <span className="site-new" aria-hidden>
-            <PenIcon width={16} height={16} />
-          </span>
-        </Link>
-      </div>
-    );
-  }
-
-  // An admin on an organizer's page: the white pen, to that profile's
-  // admin form.
-  if (editable.context === 'userProfile') {
-    const label = tc('people.editProfile');
-    return (
-      <div className={`new-button-wrapper new-button-${animState}`}>
-        <Link
-          className="site-new-button"
-          to={`/admin/users/${encodeURIComponent(
-            editable.username || ''
-          )}/profile`}
-          aria-label={label}
-          title={label}
-        >
-          <span className="site-new site-edit" aria-hidden>
-            <PenIcon width={16} height={16} />
-          </span>
-        </Link>
-      </div>
-    );
-  }
-
   const label = tc('entryMenu.label');
   const open = (param: string) =>
     setSearchParams((params) => {
@@ -283,6 +289,30 @@ export default function EditButton() {
       next.set(param, 'true');
       return next;
     });
+
+  // An admin borrows the session of the person whose page this is, and
+  // stays on the page: now theirs, with their own gear
+  const viewAs = async () => {
+    const user = editable.item;
+    try {
+      await startViewAs(user._id, user.username);
+      message.success(
+        tc('entryMenu.viewAsStarted', { name: displayName(user) })
+      );
+    } catch (error: any) {
+      message.error(error.reason || error.message || error.error);
+    }
+  };
+
+  const select = (item: GearItem) => {
+    if (item.action === 'viewAs') {
+      viewAs();
+    } else if (item.action === 'settings') {
+      navigate('/admin/my-profile');
+    } else {
+      open(item.param);
+    }
+  };
 
   return (
     <div className={`new-button-wrapper new-button-${animState}`}>
@@ -300,7 +330,7 @@ export default function EditButton() {
             <MenuItem
               key={item.param}
               style={{ padding: 0 }}
-              onClick={() => open(item.param)}
+              onClick={() => select(item)}
             >
               <span
                 className={`site-info-menu-link ${

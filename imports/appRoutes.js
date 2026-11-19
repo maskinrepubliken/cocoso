@@ -108,9 +108,6 @@ const MenuDesign = loadable(() =>
   import('/imports/ui/pages/admin/design/MenuDesign')
 );
 const Members = loadable(() => import('/imports/ui/pages/admin/Members'));
-const EditUserProfile = loadable(() =>
-  import('/imports/ui/pages/admin/EditUserProfile')
-);
 const Locations = loadable(() => import('/imports/ui/pages/admin/Locations'));
 const AdminMirrors = loadable(() =>
   import('/imports/ui/pages/admin/AdminMirrors')
@@ -201,7 +198,6 @@ import {
   getWork,
   getLocationLanding,
   getHostMembersForAdmin,
-  getUserProfileForAdmin,
   getLocationsForAdmin,
   getMirrorsForAdmin,
   getEmails,
@@ -439,11 +435,6 @@ const getAdminRoutes = (props) => [
     path: 'users',
     element: createRouteElement(Members, props),
     loader: async () => await getHostMembersForAdmin(),
-  },
-  {
-    path: 'users/:username/profile',
-    element: createRouteElement(EditUserProfile, props),
-    loader: async ({ params }) => await getUserProfileForAdmin(params.username),
   },
   {
     path: 'emails',

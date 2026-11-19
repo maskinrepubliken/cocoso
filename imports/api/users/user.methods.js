@@ -53,64 +53,34 @@ const userModel = async (user) => ({
 });
 
 // Writes a user's avatar and the copies of it kept on their works and
-// groups. Callers check who may do this.
+// groups; without one (null) the picture is taken away. Callers check who
+// may do this.
 async function applyAvatar(userId, avatar) {
-  const newAvatar = {
-    src: avatar,
-    date: new Date(),
-  };
+  // Set to the new picture, or removed
+  const write = (fields) => ({ [avatar ? '$set' : '$unset']: fields });
 
   try {
-    await Meteor.users.updateAsync(userId, {
-      $set: {
-        avatar: newAvatar,
-      },
-    });
+    await Meteor.users.updateAsync(
+      userId,
+      write({ avatar: avatar ? { src: avatar, date: new Date() } : 1 })
+    );
 
     await Works.updateAsync(
-      {
-        authorId: userId,
-      },
-      {
-        $set: {
-          authorAvatar: avatar,
-        },
-      },
-      {
-        multi: true,
-      }
+      { authorId: userId },
+      write({ authorAvatar: avatar || 1 }),
+      { multi: true }
     );
 
     await Groups.updateAsync(
-      {
-        members: {
-          $elemMatch: {
-            memberId: userId,
-          },
-        },
-      },
-      {
-        $set: {
-          'members.$.avatar': avatar,
-        },
-      },
-      {
-        multi: true,
-      }
+      { members: { $elemMatch: { memberId: userId } } },
+      write({ 'members.$.avatar': avatar || 1 }),
+      { multi: true }
     );
 
     await Groups.updateAsync(
-      {
-        authorId: userId,
-      },
-      {
-        $set: {
-          authorAvatar: avatar,
-        },
-      },
-      {
-        multi: true,
-      }
+      { authorId: userId },
+      write({ authorAvatar: avatar || 1 }),
+      { multi: true }
     );
   } catch (error) {
     throw methodError(error);
@@ -285,18 +255,23 @@ Meteor.methods({
       throw new Meteor.Error('Not allowed!');
     }
 
-    if (!avatar) {
-      throw new Meteor.Error('Not valid file');
-    }
+    // A picture's address, or null to take the picture away
+    check(avatar, Match.OneOf(String, null));
 
     await applyAvatar(user._id, avatar);
   },
 
-  // An admin editing an organizer's profile from the organizer's page:
-  // the same fields the person can edit themself, nothing else.
-  async getUserProfileForAdmin(username) {
+  // What the profile form starts from: one's own profile, or (an admin,
+  // from the organizer's page) anyone's. The same fields either way.
+  async getProfileToEdit(username) {
     check(username, String);
-    await requireAdminUser();
+    const currentUser = await Meteor.userAsync();
+    if (!currentUser) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+    if (currentUser.username !== username) {
+      await requireAdminUser();
+    }
     const user = await Meteor.users.findOneAsync(
       { username },
       {
@@ -311,6 +286,7 @@ Meteor.methods({
           locationId: 1,
           homePlaceId: 1,
           avatar: 1,
+          keywords: 1,
         },
       }
     );
@@ -335,7 +311,7 @@ Meteor.methods({
 
   async setAvatarAsAdmin(userId, avatar) {
     check(userId, String);
-    check(avatar, String);
+    check(avatar, Match.OneOf(String, null));
     await requireAdminUser();
     await applyAvatar(userId, avatar);
   },

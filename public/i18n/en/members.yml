@@ -55,6 +55,8 @@ profile:
     info: Personal Info
     avatar: Avatar
   form:
+    avatar:
+      helper: Click the picture, or drag a file onto it, to change it. Saved along with the rest.
     firstname:
       label: First name
     lastname:

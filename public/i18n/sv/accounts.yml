@@ -64,6 +64,7 @@ profile:
   label: Personlig information
   settings: Profilinställningar
   image: Profilbild
+  summary: Namn, bild, beskrivning och kontaktuppgifter, så som de visas på din sida.
   form:
     avatar:
       label: Profilbild

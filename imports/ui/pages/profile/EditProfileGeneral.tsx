@@ -1,163 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useSearchParams } from 'react-router';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
+import PenIcon from 'lucide-react/dist/esm/icons/pen-line';
 
 import { currentUserAtom } from '/imports/state';
-import { Box, Heading } from '/imports/ui/core';
-import AvatarUploader from '/imports/ui/pages/profile/AvatarUploader';
-import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { Box, Button, Flex, Heading, Text } from '/imports/ui/core';
+import { RoundPicture } from '/imports/ui/entry/EntryHero';
+import { displayName } from '/imports/ui/listing/UsersHybrid';
 import Boxling from '/imports/ui/pages/admin/Boxling';
-import { call } from '/imports/api/_utils/shared';
-import {
-  resizeBeforeUpload,
-  uploadImage,
-} from '/imports/api/_utils/services/clientUpload';
-import { message } from '/imports/ui/generic/message';
 
-import ProfileForm from './ProfileForm';
-import KeywordsManager from './KeywordsManager';
+import ProfileSheet from './ProfileSheet.loadable';
 
+// One's profile in the settings: who one is shown as, and the way into
+// the profile form (ProfileSheet), the same one the gear on one's own
+// page opens.
 export default function EditProfileGeneral() {
   const currentUser = useAtomValue(currentUserAtom);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadableAvatarLocal, setUploadableAvatarLocal] = useState(null);
-  const [uploadableAvatar, setUploadableAvatar] = useState(null);
-  const [contactRequired, setContactRequired] = useState(false);
+  const [, setSearchParams] = useSearchParams();
   const [t] = useTranslation('accounts');
   const [tc] = useTranslation('common');
 
-  useEffect(() => {
-    call('isCurrentUserOrganizer')
-      .then((required) => setContactRequired(Boolean(required)))
-      .catch(() => setContactRequired(false));
-  }, [currentUser?._id]);
+  if (!currentUser?.username) {
+    return null;
+  }
 
-  const handleSubmitInfo = async (values) => {
-    const formValues = {
-      firstName: values.firstName || '',
-      lastName: values.lastName || '',
-      bio: values.bio || '',
-      contactInfo: values.contactInfo || '',
-      publicContact: {
-        email: values.publicContact?.email || '',
-        phone: values.publicContact?.phone || '',
-        website: values.publicContact?.website || '',
-      },
-      // Only organizers have an address and place on their profile
-      ...(contactRequired
-        ? {
-            homePlaceId: values.homePlaceId || null,
-            address: values.address || null,
-            locationId: values.locationId || null,
-          }
-        : {}),
-    };
-    try {
-      await call('saveUserInfo', formValues);
-      message.success(
-        tc('message.success.save', {
-          domain: `${tc('domains.your')} ${tc('domains.data')}`,
-        })
-      );
-    } catch (error: any) {
-      message.error(error.reason || error.error);
-    }
-  };
-
-  const handleSetUploadableAvatar = (files) => {
-    if (!files) {
-      setUploadableAvatar(null);
-      setUploadableAvatarLocal(null);
-      return;
-    }
-
-    const uploadableAvatarFile = files[0];
-
-    const reader = new FileReader();
-    reader.readAsDataURL(uploadableAvatarFile);
-    reader.addEventListener(
-      'load',
-      () => {
-        setUploadableAvatar(uploadableAvatarFile);
-        setUploadableAvatarLocal(reader.result);
-      },
-      false
-    );
-  };
-
-  const uploadAvatar = async () => {
-    setIsUploading(true);
-
-    try {
-      // Client-side resize first pass
-      const resizedAvatar = await resizeBeforeUpload(uploadableAvatar, 1200);
-      // Upload through server: Sharp → WebP variants → local storage
-      const result = await uploadImage(resizedAvatar!, 'avatar');
-      // Store the full variant URL (best quality) for now — schema expects a string
-      // Variants are still generated and stored for future use
-      await call('setAvatar', result.variants.full);
-      message.success(
-        tc('message.success.save', {
-          domain: `${tc('domains.your')} ${tc('domains.avatar')}`,
-        })
-      );
-    } catch (error) {
-      console.log(error);
-      message.error(error.reason || error.error);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const removeAvatar = async () => {
-    try {
-      await call('setAvatar', null);
-      message.success(
-        tc('message.success.save', {
-          domain: `${tc('domains.profile')}`,
-        })
-      );
-    } catch (error) {
-      message.error(error.reason);
-    }
-  };
+  const name = displayName(currentUser);
 
   return (
-    <Box>
+    <>
       <Boxling mb="8">
-        <Heading mb="4" size="md">
-          {t('profile.image')}
-        </Heading>
-        <AvatarUploader
-          imageUrl={
-            uploadableAvatarLocal ||
-            getImageUrl(currentUser?.avatar?.src, 'medium')
-          }
-          isUploading={isUploading}
-          uploadableAvatarLocal={uploadableAvatarLocal}
-          removeAvatar={removeAvatar}
-          uploadAvatar={uploadAvatar}
-          setUploadableAvatar={handleSetUploadableAvatar}
-          setUploadableAvatarLocal={setUploadableAvatarLocal}
-        />
+        <Flex align="center" gap="4" wrap="wrap">
+          {/* smaller than on the page itself */}
+          <Box css={{ '& > div': { width: '96px' } }}>
+            <RoundPicture
+              alt={name}
+              seed={currentUser._id}
+              src={currentUser.avatar?.src}
+            />
+          </Box>
+          <Flex direction="column" gap="1" css={{ flex: '1 1 12rem' }}>
+            <Heading size="md">{name}</Heading>
+            <Text size="sm" css={{ color: 'var(--cocoso-mylla-soft)' }}>
+              {t('profile.summary')}
+            </Text>
+          </Flex>
+          <Button
+            leftIcon={<PenIcon width={16} height={16} aria-hidden />}
+            onClick={() => setSearchParams({ edit: 'true' })}
+          >
+            {tc('entryMenu.edit.profile')}
+          </Button>
+        </Flex>
       </Boxling>
 
-      <Boxling mb="8">
-        <Heading my="2" size="md">
-          {t('profile.label')}
-        </Heading>
-        <Box mb="4">
-          <ProfileForm
-            contactRequired={contactRequired}
-            defaultValues={currentUser}
-            onSubmit={handleSubmitInfo}
-          />
-        </Box>
-      </Boxling>
-
-      <Boxling>
-        <KeywordsManager currentUser={currentUser} />
-      </Boxling>
-    </Box>
+      <ProfileSheet username={currentUser.username} />
+    </>
   );
 }

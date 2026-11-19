@@ -64,6 +64,7 @@ profile:
   label: Personal Info
   settings: Profile Settings
   image: Profile image
+  summary: Your name, picture, description and contact details, as shown on your page.
   form:
     avatar:
       label: Profile image

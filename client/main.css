@@ -6645,6 +6645,13 @@ body {
   font-weight: 600;
 }
 
+/* a person's two names side by side (the profile form) */
+.profile-form-name {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0 16px;
+}
+
 @container entry-sheet (min-width: 900px) {
   .entry-form-grid[data-columns='two'] {
     grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr);

@@ -65,6 +65,7 @@ labels:
     pages: Edit the page
     resources: Edit the place
     works: Edit the request
+    profile: Edit the profile
   event: Event
   bookings: Bookings
   newBooking: New Booking
@@ -134,6 +135,7 @@ message:
       info: The page is saved
       groups: The group is updated
       works: The request is updated
+      profile: The profile is updated
     create: Your entry is successfully created
     update: Your entry is successfully updated
     remove: Your entry is successfully deleted
@@ -188,6 +190,11 @@ entryMenu:
     resources: Edit place
     works: Edit request
     info: Edit page
+    profile: Edit profile
+    userProfile: Edit profile
+  # An admin on someone's page: the site as that person sees it
+  viewAs: 'View the site as {{ name }}'
+  viewAsStarted: 'You now see the site as {{ name }}'
   offerings: Eat, shop & stay
   addDocument: Add document
   newPage: New info page
@@ -310,7 +317,6 @@ plugins:
     helperMultiple: Drop or pick image(s)
 
 people:
-  editProfile: Edit profile
   organizer: Organizer
   events: Events
   places: Places

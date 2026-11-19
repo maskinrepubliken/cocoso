@@ -65,6 +65,7 @@ labels:
     pages: Redigera sidan
     resources: Redigera platsen
     works: Redigera förfrågan
+    profile: Redigera profilen
   event: Arrangemang
   bookings: Bokningar
   newBooking: Nytt bokning
@@ -134,6 +135,7 @@ message:
       info: Sidan är sparad
       groups: Gruppen är uppdaterad
       works: Förfrågan är uppdaterad
+      profile: Profilen är uppdaterad
     create: Ditt objekt har skapats
     update: Ditt objekt har uppdaterats
     remove: Ditt objekt har raderats
@@ -186,6 +188,11 @@ entryMenu:
     resources: Redigera plats
     works: Redigera förfrågan
     info: Redigera sida
+    profile: Redigera profil
+    userProfile: Redigera profil
+  # An admin on someone's page: the site as that person sees it
+  viewAs: 'Visa sajten som {{ name }}'
+  viewAsStarted: 'Du ser nu sajten som {{ name }}'
   offerings: Äta, handla & bo
   addDocument: Lägg till dokument
   newPage: Ny infosida
@@ -307,7 +314,6 @@ plugins:
     helperMultiple: Släpp eller välj bild(er)
 
 people:
-  editProfile: Redigera profilen
   organizer: Arrangör
   events: Evenemang
   places: Platser
