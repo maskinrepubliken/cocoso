@@ -248,7 +248,7 @@ locations:
 mirrors:
   title: Speglingar
   description: Evenemang som hämtas från en annan kalender och hålls uppdaterade, som bibliotekets på Knallebiblioteken eller en biografs program på bio.se
-  info: "En spegling hämtar evenemangen på en plats i en annan kalender till Cocoso, varje timme: nya läggs till, ändringar följer med, inställda markeras och borttagna tas bort. Anmälan eller biljettköp sker hos källan, som varje evenemang länkar till. Prova en spegling med \"Förhandsgranska\" innan du slår på den."
+  info: "En spegling hämtar evenemangen på en plats i en annan kalender hit till sajten, varje timme: nya läggs till, ändringar följer med, inställda markeras och borttagna tas bort. Anmälan eller biljettköp sker hos källan, som varje evenemang länkar till. Prova en spegling med \"Förhandsgranska\" innan du slår på den."
   new: Ny spegling
   edit: Ändra spegling
   none: Inga speglingar ännu
@@ -258,8 +258,8 @@ mirrors:
   disable: Slå av
   runNow: Synka nu
   route: "{{ source }} → {{ place }}, arrangör {{ organizer }}"
-  count_one: "{{ count }} evenemang i Cocoso"
-  count_other: "{{ count }} evenemang i Cocoso"
+  count_one: "{{ count }} evenemang i kalendern"
+  count_other: "{{ count }} evenemang i kalendern"
   lastRun:
     never: Inte körd ännu
     done: "Senast {{ at }}: {{ created }} nya, {{ updated }} ändrade, {{ removed }} borttagna"

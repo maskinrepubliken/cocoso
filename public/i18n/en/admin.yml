@@ -248,7 +248,7 @@ locations:
 mirrors:
   title: Mirrors
   description: Events copied from another calendar and kept up to date, such as the library's at Knallebiblioteken or a cinema's programme at bio.se
-  info: "A mirror copies the events of one place in another calendar into Cocoso, every hour: new ones are added, changes follow, cancelled ones are marked and removed ones deleted. Sign-up or ticket sales happen at the source, which each event links to. Try a mirror with \"Preview\" before you switch it on."
+  info: "A mirror copies the events of one place in another calendar onto this site, every hour: new ones are added, changes follow, cancelled ones are marked and removed ones deleted. Sign-up or ticket sales happen at the source, which each event links to. Try a mirror with \"Preview\" before you switch it on."
   new: New mirror
   edit: Edit mirror
   none: No mirrors yet
@@ -258,8 +258,8 @@ mirrors:
   disable: Switch off
   runNow: Sync now
   route: "{{ source }} → {{ place }}, organized by {{ organizer }}"
-  count_one: "{{ count }} event in Cocoso"
-  count_other: "{{ count }} events in Cocoso"
+  count_one: "{{ count }} event in the calendar"
+  count_other: "{{ count }} events in the calendar"
   lastRun:
     never: Not run yet
     done: "Last run {{ at }}: {{ created }} new, {{ updated }} changed, {{ removed }} removed"
