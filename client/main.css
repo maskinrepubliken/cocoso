@@ -2857,6 +2857,18 @@ body {
   box-shadow: none;
 }
 
+/* a link of the account menu with a small icon before it */
+.site-account-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-account-item > svg {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
 .site-account-logout {
   gap: 8px;
   border: 0;

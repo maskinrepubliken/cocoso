@@ -4,7 +4,11 @@ import { Trans } from 'react-i18next';
 import BellIcon from 'lucide-react/dist/esm/icons/bell';
 import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
 import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
+import LayoutDashboardIcon from 'lucide-react/dist/esm/icons/layout-dashboard';
 import LogOutIcon from 'lucide-react/dist/esm/icons/log-out';
+import PenLineIcon from 'lucide-react/dist/esm/icons/pen-line';
+import SettingsIcon from 'lucide-react/dist/esm/icons/settings';
+import UserRoundIcon from 'lucide-react/dist/esm/icons/user-round';
 import { useAtomValue } from 'jotai';
 
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
@@ -117,7 +121,11 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
 
         {isAdmin && (
           <MenuItem style={{ padding: 0 }}>
-            <Link className="site-info-menu-link" to="/admin/home">
+            <Link
+              className="site-info-menu-link site-account-item"
+              to="/admin/home"
+            >
+              <LayoutDashboardIcon width={16} height={16} aria-hidden />
               <Trans i18nKey="members:dashboard">Admin Panel</Trans>
             </Link>
           </MenuItem>
@@ -139,9 +147,10 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
         {isOrganizer && (
           <MenuItem style={{ padding: 0 }}>
             <Link
-              className="site-info-menu-link"
+              className="site-info-menu-link site-account-item"
               to={`/@${currentUser.username}`}
             >
+              <UserRoundIcon width={16} height={16} aria-hidden />
               <Trans i18nKey="common:menu.member.profile">My Profile</Trans>
             </Link>
           </MenuItem>
@@ -149,16 +158,21 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
 
         <MenuItem style={{ padding: 0 }}>
           <Link
-            className="site-info-menu-link"
+            className="site-info-menu-link site-account-item"
             to={`/@${currentUser.username}?edit=true`}
           >
+            <PenLineIcon width={16} height={16} aria-hidden />
             <Trans i18nKey="common:entryMenu.edit.profile">Edit profile</Trans>
           </Link>
         </MenuItem>
 
         {/* On the page one is on: the settings are a dialog over it */}
         <MenuItem style={{ padding: 0 }}>
-          <Link className="site-info-menu-link" to="?settings=me">
+          <Link
+            className="site-info-menu-link site-account-item"
+            to="?settings=me"
+          >
+            <SettingsIcon width={16} height={16} aria-hidden />
             <Trans i18nKey="common:entryMenu.settings.mine">My settings</Trans>
           </Link>
         </MenuItem>
