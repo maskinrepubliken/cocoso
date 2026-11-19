@@ -881,6 +881,10 @@ address:
       label: "Coordinates"
       helper: "Latitude and longitude, as copied from a map."
       invalid: "That does not look like coordinates (latitude, longitude)."
+    map:
+      label: "On the map"
+      helper: "Click the map or drag the pin to where the place is."
+      helperStreet: "Click the map or drag the pin to where the place is. Without a pin, it is found from the address when you save."
   errors:
     required: "Give a street address and town, or coordinates."
 contact:

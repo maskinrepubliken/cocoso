@@ -484,6 +484,7 @@ function PlaceForm({
             <>
               <AddressFields
                 required
+                withMapPicker
                 mode={
                   state.placement === 'coordinates' ? 'coordinates' : 'street'
                 }

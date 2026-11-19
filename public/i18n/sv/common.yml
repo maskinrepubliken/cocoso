@@ -878,6 +878,10 @@ address:
       label: "Koordinater"
       helper: "Latitud och longitud, som du kopierar från en karta."
       invalid: "Det ser inte ut som koordinater (latitud, longitud)."
+    map:
+      label: "Plats på kartan"
+      helper: "Klicka på kartan eller dra nålen dit platsen är."
+      helperStreet: "Klicka på kartan eller dra nålen dit platsen är. Utan nål hittas den från adressen när du sparar."
   errors:
     required: "Fyll i gatuadress och ort, eller koordinater."
 contact:

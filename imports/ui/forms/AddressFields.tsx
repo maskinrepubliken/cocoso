@@ -10,6 +10,7 @@ import {
 } from '/imports/api/_utils/address';
 
 import PlaceMap from '/imports/ui/generic/PlaceMap';
+import MapPicker from '/imports/ui/generic/MapPicker';
 
 import FormField from './FormField';
 
@@ -36,6 +37,9 @@ interface AddressFieldsProps {
   // Which way the place is given: a street address (coordinates are then
   // looked up from it), a map point alone, or both fields at once.
   mode?: 'street' | 'coordinates' | 'both';
+  // A map to put the pin on by hand (a place's form), instead of only
+  // showing where the coordinates are
+  withMapPicker?: boolean;
 }
 
 // Street, postal code, town and an optional map point, as one controlled
@@ -45,6 +49,7 @@ export default function AddressFields({
   onChange,
   required = false,
   mode = 'both',
+  withMapPicker = false,
 }: AddressFieldsProps) {
   const [tc] = useTranslation('common');
   const address = value || emptyAddress;
@@ -66,6 +71,13 @@ export default function AddressFields({
   };
   const withStreet = mode !== 'coordinates';
   const withCoordinates = mode !== 'street';
+
+  // Put on the map by hand: kept also when given by street, where it then
+  // stands instead of the point found from the address
+  const handlePicked = (coordinates: Address['coordinates']) => {
+    setCoordinatesText(formatCoordinates(coordinates));
+    onChange({ ...address, coordinates });
+  };
 
   const handleCoordinates = (text: string) => {
     setCoordinatesText(text);
@@ -146,8 +158,22 @@ export default function AddressFields({
           {tc('address.form.coordinates.invalid')}
         </Text>
       )}
-      {address.coordinates && (
-        <PlaceMap coordinates={address.coordinates} height={180} />
+      {withMapPicker ? (
+        <FormField
+          helper={tc(
+            mode === 'street'
+              ? 'address.form.map.helperStreet'
+              : 'address.form.map.helper'
+          )}
+          label={tc('address.form.map.label')}
+          my="2"
+        >
+          <MapPicker value={address.coordinates} onChange={handlePicked} />
+        </FormField>
+      ) : (
+        address.coordinates && (
+          <PlaceMap coordinates={address.coordinates} height={180} />
+        )
       )}
     </div>
   );
