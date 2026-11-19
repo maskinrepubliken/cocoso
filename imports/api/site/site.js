@@ -109,6 +109,7 @@ Site.schema = new SimpleSchema({
   'features.works': { type: Boolean, optional: true },
   'features.bookings': { type: Boolean, optional: true },
   'features.documents': { type: Boolean, optional: true },
+  'features.discussions': { type: Boolean, optional: true },
   // Who switched what and when, newest last (the last 50); admins only.
   featuresLog: { type: Array, optional: true },
   'featuresLog.$': { type: Object },
