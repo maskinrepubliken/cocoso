@@ -16,6 +16,7 @@ import './media';
 import './shareImages';
 import './unsubscribe';
 import './manifest';
+import './fonts';
 import './rateLimits';
 
 const { cdnServer } = Meteor.settings;

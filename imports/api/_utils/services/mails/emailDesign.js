@@ -24,6 +24,20 @@ export const UI = "Raleway, 'Helvetica Neue', Helvetica, Arial, sans-serif";
 // every client honours font-variant-numeric, so codes use a plain sans.
 export const DIGITS = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 
+// The site's own font files (public/fonts), not Google Fonts: opening a
+// mail must not hand the reader's IP address to Google. Clients that skip
+// web fonts fall back to the stacks above.
+const fontFaces = () =>
+  [
+    ['Raleway', 'raleway-latin.woff2', '400 800'],
+    ['Fraunces', 'fraunces-latin.woff2', '500 700'],
+  ]
+    .map(
+      ([family, file, weight]) =>
+        `  @font-face { font-family:'${family}'; font-style:normal; font-weight:${weight}; src:url('${publicUrl(`/fonts/${file}`)}') format('woff2'); }`
+    )
+    .join('\n');
+
 // Same as getColor() in globalStylesManager.ts, as hex for email clients
 function hsl(h, s, l) {
   const sat = s / 100;
@@ -111,8 +125,8 @@ export function emailPage({
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
 <title>${escapeHtml(title)}</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
 <style>
+${fontFaces()}
   body { margin:0; padding:0; }
   a { color:${c.strong}; }
   @media (max-width: 480px) {
@@ -239,8 +253,8 @@ export function emailEventPage({
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
 <title>${escapeHtml(title)}</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
 <style>
+${fontFaces()}
   body { margin:0; padding:0; }
   a { color:${c.strong}; }
   @media (max-width: 480px) {

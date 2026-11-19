@@ -69,14 +69,6 @@ const getGroupRegistrationEmailBody = (
       </style>
       <![endif]-->
       
-        <!--[if !mso]><!-->
-          <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700" rel="stylesheet" type="text/css">
-          <style type="text/css">
-            @import url(https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700);
-  @import url(https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700);
-          </style>
-        <!--<![endif]-->
   
       
       
@@ -675,14 +667,6 @@ const getInviteToPrivateGroupEmailBody = (
       </style>
       <![endif]-->
       
-        <!--[if !mso]><!-->
-          <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700" rel="stylesheet" type="text/css">
-          <style type="text/css">
-            @import url(https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700);
-  @import url(https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700);
-          </style>
-        <!--<![endif]-->
   
       
       
