@@ -864,6 +864,7 @@ listing:
   subjects:
     activities: the events
     calendar: the calendar
+    businesses: the places
     groups: the groups
     people: the organizers
     resources: the places

@@ -1,10 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
+import UtensilsIcon from 'lucide-react/dist/esm/icons/utensils';
+import BedIcon from 'lucide-react/dist/esm/icons/bed-double';
+import WrenchIcon from 'lucide-react/dist/esm/icons/wrench';
+import ShoppingBagIcon from 'lucide-react/dist/esm/icons/shopping-bag';
 
 import { styled } from '/stitches.config';
 import { locationsAtom, siteAtom } from '/imports/state';
@@ -15,7 +19,6 @@ import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
-import { LocationCards } from '/imports/ui/pages/locations/LocationsGrid';
 import {
   OFFERING_KINDS,
   type OfferingKind,
@@ -30,15 +33,26 @@ import {
 } from '/imports/ui/pages/businesses/hours';
 
 import PageHeading from './PageHeading';
+import {
+  KindCount,
+  KindHead,
+  KindIcon,
+  KindName,
+  KindText,
+  KindTile,
+  Kinds,
+} from './KindTiles';
 
-// Äta, handla & bo: the places that offer something — food, a bed,
-// services, things for sale. Where something is matters most, so the page
-// opens with the start page's place cards as a picker; below it the places
-// come under what they offer, in the order of the editor's tabs. A place
-// offering several things is under each. The cards speak the same picture
-// language as the place cards — a photo with the name over a dark fade —
-// and say enough to decide without opening them: whether it is open and a
-// few lines about what it offers. Each opens the place's own page.
+// Äta, handla och bo: the places that offer something — food, a bed,
+// services, things for sale. The page opens with the kinds of offering as
+// tiles to filter by, as Förfrågningar does (?kind=eat); below them the
+// places come under what they offer, in the order of the kinds, a place
+// offering several under each. Which part of the municipality is shown
+// follows the address (/uddebo/businesses), as on the other listings. The
+// cards speak the same picture language as the place cards — a photo with
+// the name over a dark fade — and say enough to decide without opening
+// them: whether it is open and a few lines about what it offers. Each
+// opens the place's own page.
 
 type Kind = OfferingKind;
 
@@ -49,6 +63,13 @@ const KIND_LOOK: Record<Kind, { ink: string; light: string }> = {
   stay: { ink: '#7a4f9a', light: '#dccbe8' },
   service: { ink: '#4f7a3a', light: '#d3e3c4' },
   shop: { ink: '#2f6fa3', light: '#c4dbee' },
+};
+
+const KIND_ICON: Record<Kind, typeof UtensilsIcon> = {
+  eat: UtensilsIcon,
+  stay: BedIcon,
+  service: WrenchIcon,
+  shop: ShoppingBagIcon,
 };
 
 const lookOf = (kind?: string) => KIND_LOOK[kind as Kind] || KIND_LOOK.eat;
@@ -65,10 +86,6 @@ const Page = styled('div', {
   maxWidth: 'calc(var(--cocoso-page, 1180px) + 2 * var(--cocoso-gutter, 1rem))',
   padding: '0 var(--cocoso-gutter, 1rem) 3rem',
   width: '100%',
-});
-
-const Picker = styled('nav', {
-  marginBottom: '1.25rem',
 });
 
 const Notice = styled('p', {
@@ -431,16 +448,34 @@ export default function OfferingsHybrid({
 }: OfferingsHybridProps) {
   const { t } = useTranslation('common');
   const site = useAtomValue(siteAtom);
-  const locations = useAtomValue(locationsAtom);
   const current = useCurrentLocation();
 
   const all = places || [];
   const inPlace = (id: string) => all.filter((b) => b.locationId === id);
 
-  // The picker chooses the place; below it the cards come in the order of
-  // the kinds. A place offering several, like a manor with a restaurant
-  // and rooms, is under each.
+  // The places in the part of the municipality shown; below the tiles
+  // they come in the order of the kinds. A place offering several, like a
+  // manor with a restaurant and rooms, is under each.
   const shown = current ? inPlace(current._id) : all;
+
+  // The kind chosen among the tiles, if any
+  const [searchParams, setSearchParams] = useSearchParams();
+  const wanted = searchParams.get('kind');
+  const selected = OFFERING_KINDS.find((kind) => kind === wanted) || null;
+  const choose = (kind: Kind | null) =>
+    setSearchParams(
+      (params) => {
+        if (!kind || kind === selected) {
+          params.delete('kind');
+        } else {
+          params.set('kind', kind);
+        }
+        return params;
+      },
+      { preventScrollReset: true, replace: true }
+    );
+  const countOf = (kind: Kind) =>
+    shown.filter((b) => b.offerings?.some((o: any) => o.kind === kind)).length;
 
   // Within a kind, what is open now comes first, then what opens later
   // today, then places without opening hours (an inn is booked, not
@@ -479,26 +514,44 @@ export default function OfferingsHybrid({
       kind: 'other',
       items: shown.filter((b) => !b.offerings?.length),
     })
-    .filter(({ items }) => items.length > 0);
+    .filter(({ items }) => items.length > 0)
+    .filter(({ kind }) => !selected || kind === selected);
 
   return (
     <>
-      {/* The picker below says which place is chosen. */}
-      <PageHeading site={site || siteDoc} listing="businesses" hidePlace />
+      {/* The feature is "Äta, handla & bo"; the page says it in words */}
+      <PageHeading
+        listing="businesses"
+        site={site || siteDoc}
+        title={t('offerings.pageTitle')}
+      />
 
       <Page>
-        <Picker aria-label={t('locations.switcher.choose')}>
-          <LocationCards
-            all={{ name: t('locations.switcher.whole'), to: '/businesses' }}
-            compact
-            currentId={current?._id ?? null}
-            emptyIds={locations
-              .filter((l: any) => inPlace(l._id).length === 0)
-              .map((l: any) => l._id)}
-            locations={locations}
-            section="businesses"
-          />
-        </Picker>
+        <Kinds role="group" aria-label={t('offerings.chooseKind')}>
+          {OFFERING_KINDS.map((kind) => {
+            const Icon = KIND_ICON[kind];
+            return (
+              <KindTile
+                key={kind}
+                aria-pressed={kind === selected}
+                css={{ background: lookOf(kind).light }}
+                dimmed={Boolean(selected) && kind !== selected}
+                selected={kind === selected}
+                type="button"
+                onClick={() => choose(kind)}
+              >
+                <KindHead>
+                  <KindIcon css={{ background: lookOf(kind).ink }}>
+                    <Icon />
+                  </KindIcon>
+                  <KindCount>{countOf(kind)}</KindCount>
+                </KindHead>
+                <KindName>{t(`offerings.kinds.${kind}`)}</KindName>
+                <KindText>{t(`offerings.kindTexts.${kind}`)}</KindText>
+              </KindTile>
+            );
+          })}
+        </Kinds>
 
         {sections.map(({ kind, items }) => (
           <Section key={kind} style={kindVars(kind)}>
@@ -522,6 +575,14 @@ export default function OfferingsHybrid({
             </Cards>
           </Section>
         ))}
+
+        {selected && sections.length === 0 && shown.length > 0 && (
+          <Notice>
+            {t('offerings.noneOfKind', {
+              kind: t(`offerings.kinds.${selected}`).toLowerCase(),
+            })}
+          </Notice>
+        )}
 
         {shown.length === 0 && (
           <Notice>

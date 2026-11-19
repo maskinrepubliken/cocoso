@@ -861,6 +861,7 @@ listing:
   subjects:
     activities: evenemangen
     calendar: kalendern
+    businesses: ställena
     groups: grupperna
     people: arrangörerna
     resources: platserna
