@@ -113,7 +113,7 @@ delete:
   action: Delete my account
   label: Confirm Deletion
   title: Are you sure?
-  body: You are about to permanently delete your entire account and all data associated with that. This is an irreversible action. Are you sure?
+  body: You are about to delete your account and your profile for good. It cannot be undone. Events and places you have published and sign-ups you have made stay – remove them first if you do not want them to stay. Are you sure?
   write: 'Write your username, {{ username }}, to confirm'
   done: Your account has been deleted and you are logged out. Thanks for being with us!
 

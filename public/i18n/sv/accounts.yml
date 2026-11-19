@@ -113,7 +113,7 @@ delete:
   action: Radera mitt konto
   label: Bekräfta radering
   title: Är du säker?
-  body: Du är på väg att permanent radera hela ditt konto och all data som är kopplad till det. Detta är en oåterkallelig handling. Är du säker?
+  body: Du är på väg att radera ditt konto och din profil för gott. Det går inte att ångra. Evenemang och platser du har publicerat och anmälningar du har gjort ligger kvar – ta bort dem först om du inte vill ha dem kvar. Är du säker?
   write: 'Skriv ditt användarnamn, {{ username }}, för att bekräfta'
   done: Ditt konto är raderat och du är utloggad. Tack för att du varit med!
 
