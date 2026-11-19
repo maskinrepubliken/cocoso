@@ -330,9 +330,15 @@ export default function SiteSearch({ site }: SiteSearchProps) {
           className="site-search-input"
           placeholder={tc('search.placeholder')}
           aria-label={tc('search.placeholder')}
+          role="combobox"
           aria-autocomplete="list"
           aria-controls={listId}
           aria-expanded={showPanel}
+          aria-activedescendant={
+            showPanel && activeIndex >= 0
+              ? `${listId}-${activeIndex}`
+              : undefined
+          }
           autoComplete="off"
           enterKeyHint="search"
           value={query}
@@ -359,7 +365,7 @@ export default function SiteSearch({ site }: SiteSearchProps) {
       </div>
 
       {showPanel && (
-        <div className="site-search-panel" id={listId} role="listbox">
+        <div className="site-search-panel">
           {groups.length === 0 ? (
             <div className="site-search-empty">
               {isSearching || !hasSearched
@@ -367,30 +373,47 @@ export default function SiteSearch({ site }: SiteSearchProps) {
                 : tc('search.noResults', { query: trimmed })}
             </div>
           ) : (
-            groups.map((group) => (
-              <div className="site-search-group" key={group.key}>
-                <div className="site-search-group-label">{group.label}</div>
-                {group.hits.map((hit) => {
-                  const index = hits.indexOf(hit);
-                  const isPast = isPastEvent(hit);
-                  return (
-                    <Link
-                      key={`${hit.kind}-${hit._id}`}
-                      id={`${listId}-${index}`}
-                      className={`site-search-hit ${
-                        index === activeIndex ? 'is-active' : ''
-                      } ${isPast ? 'is-past' : ''}`}
-                      role="option"
-                      aria-selected={index === activeIndex}
-                      to={hitPath(hit, prefix)}
-                      onClick={() => close()}
-                    >
-                      <HitContent hit={hit} />
-                    </Link>
-                  );
-                })}
-              </div>
-            ))
+            <div
+              className="site-search-list"
+              id={listId}
+              role="listbox"
+              aria-label={tc('search.page.title')}
+            >
+              {groups.map((group) => (
+                <div
+                  className="site-search-group"
+                  key={group.key}
+                  role="group"
+                  aria-labelledby={`${listId}-group-${group.key}`}
+                >
+                  <div
+                    className="site-search-group-label"
+                    id={`${listId}-group-${group.key}`}
+                  >
+                    {group.label}
+                  </div>
+                  {group.hits.map((hit) => {
+                    const index = hits.indexOf(hit);
+                    const isPast = isPastEvent(hit);
+                    return (
+                      <Link
+                        key={`${hit.kind}-${hit._id}`}
+                        id={`${listId}-${index}`}
+                        className={`site-search-hit ${
+                          index === activeIndex ? 'is-active' : ''
+                        } ${isPast ? 'is-past' : ''}`}
+                        role="option"
+                        aria-selected={index === activeIndex}
+                        to={hitPath(hit, prefix)}
+                        onClick={() => close()}
+                      >
+                        <HitContent hit={hit} />
+                      </Link>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
           )}
           {hasSearched && hits.length > 0 && (
             <Link

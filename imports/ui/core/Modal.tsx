@@ -1,6 +1,6 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { styled } from '/stitches.config';
 
 import { Box, Button } from '/imports/ui/core';
@@ -388,6 +388,65 @@ const usePortal = (open: boolean, onClose: () => void, portalId: string) => {
   return portalContainer;
 };
 
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+// Keyboard and screen-reader behaviour of a dialog: focus moves into it
+// when it opens (unless a field inside already took it), Tab stays inside
+// while it is open, and focus returns to where it was when it closes.
+const useDialogFocus = (open: boolean) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!open || !dialog) {
+      return undefined;
+    }
+    const opener = document.activeElement as HTMLElement | null;
+    // A moment later: the overlay is still hidden while this runs, and
+    // what is hidden cannot take focus
+    const timer = window.setTimeout(() => {
+      if (!dialog.contains(document.activeElement)) {
+        dialog.focus({ preventScroll: true });
+      }
+    }, 50);
+
+    const keepInside = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab' || !dialog.contains(document.activeElement)) {
+        return;
+      }
+      const items = Array.from(
+        dialog.querySelectorAll<HTMLElement>(FOCUSABLE)
+      ).filter((item) => item.offsetParent !== null && item.tabIndex >= 0);
+      if (items.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || active === dialog)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', keepInside);
+
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener('keydown', keepInside);
+      if (opener && document.contains(opener)) {
+        opener.focus({ preventScroll: true });
+      }
+    };
+  }, [open]);
+
+  return ref;
+};
+
 // Shared content component
 const Content: React.FC<{
   cancelButtonProps?: object;
@@ -404,6 +463,7 @@ const Content: React.FC<{
   onConfirm?: () => void;
   onSecondaryButtonClick?: () => void;
   title?: string;
+  titleId?: string;
 }> = ({
   cancelButtonProps,
   cancelText,
@@ -419,7 +479,11 @@ const Content: React.FC<{
   onConfirm,
   onSecondaryButtonClick,
   title,
+  titleId,
 }) => {
+  const [tc] = useTranslation('common');
+  const closeLabel = tc('actions.close');
+
   // Handle cancel
   const handleCancel = () => {
     if (onSecondaryButtonClick) {
@@ -445,18 +509,18 @@ const Content: React.FC<{
       {/* Header */}
       {!hideHeader ? (
         <Header>
-          {title ? <Title>{title}</Title> : <div></div>}
+          {title ? <Title id={titleId}>{title}</Title> : <div></div>}
           {headerActions ? (
             <Box
               css={{ alignItems: 'center', display: 'flex', gap: '0.25rem' }}
             >
               {headerActions}
-              <CloseButton aria-label="Close" onClick={onClose}>
+              <CloseButton aria-label={closeLabel} onClick={onClose}>
                 <CloseIcon />
               </CloseButton>
             </Box>
           ) : (
-            <CloseButton aria-label="Close" onClick={onClose}>
+            <CloseButton aria-label={closeLabel} onClick={onClose}>
               <CloseIcon />
             </CloseButton>
           )}
@@ -464,7 +528,7 @@ const Content: React.FC<{
       ) : (
         <Box css={{ position: 'relative' }}>
           <CloseButton
-            aria-label="Close"
+            aria-label={closeLabel}
             css={{
               position: 'absolute',
               right: '0.2rem',
@@ -526,6 +590,8 @@ const Modal: React.FC<ModalProps> = ({
   onSecondaryButtonClick,
 }) => {
   const portalContainer = usePortal(open, onClose, id);
+  const dialogRef = useDialogFocus(open);
+  const titleId = useId();
 
   // Handle overlay click
   const handleOverlayClick = (event: React.MouseEvent) => {
@@ -542,7 +608,12 @@ const Modal: React.FC<ModalProps> = ({
   const modalContent = (
     <Overlay visible={open} onClick={handleOverlayClick} centered>
       <ModalContent
+        aria-labelledby={title && !hideHeader ? titleId : undefined}
+        aria-modal="true"
+        ref={dialogRef}
+        role="dialog"
         size={size}
+        tabIndex={-1}
         visible={open}
         onClick={handleModalContentClick}
       >
@@ -556,6 +627,7 @@ const Modal: React.FC<ModalProps> = ({
           headerActions={headerActions}
           noPadding={noPadding}
           title={title}
+          titleId={titleId}
           onCancel={onCancel}
           onClose={onClose}
           onConfirm={onConfirm}
@@ -595,6 +667,8 @@ export const Drawer: React.FC<DrawerProps> = ({
   styles,
 }) => {
   const portalContainer = usePortal(open, onClose, 'drawer-portal');
+  const dialogRef = useDialogFocus(open);
+  const titleId = useId();
 
   // Handle overlay click
   const handleOverlayClick = (event: React.MouseEvent) => {
@@ -611,6 +685,11 @@ export const Drawer: React.FC<DrawerProps> = ({
   const drawerContent = (
     <Overlay visible={open} onClick={handleOverlayClick}>
       <DrawerContent
+        aria-labelledby={title && !hideHeader ? titleId : undefined}
+        aria-modal="true"
+        ref={dialogRef}
+        role="dialog"
+        tabIndex={-1}
         position={position}
         size={size}
         css={styles}
@@ -623,6 +702,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           hideFooter={hideFooter}
           hideHeader={hideHeader}
           title={title}
+          titleId={titleId}
           noPadding={noPadding}
           onCancel={onCancel}
           onClose={onClose}

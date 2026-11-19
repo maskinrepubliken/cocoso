@@ -152,8 +152,7 @@ export default function EventViewMenu({
     <button
       key={key}
       type="button"
-      role="menuitemradio"
-      aria-checked={isActive}
+      aria-pressed={isActive}
       className={`site-menu-row view-menu-row ${isActive ? 'is-active' : ''}`}
       onClick={onClick}
     >
@@ -180,7 +179,7 @@ export default function EventViewMenu({
     <button
       key={key}
       type="button"
-      role="menuitemcheckbox"
+      role="checkbox"
       aria-checked={isChecked}
       className={`view-menu-check-row ${isChecked ? 'is-checked' : ''}`}
       onClick={onClick}
@@ -203,7 +202,6 @@ export default function EventViewMenu({
           type="button"
           className={`view-menu-pill ${open ? 'is-open' : ''}`}
           aria-expanded={open}
-          aria-haspopup="menu"
           onClick={() => setOpen(!open)}
         >
           <FilterSwitch isOn={isNarrowed} size="small" />
@@ -216,7 +214,6 @@ export default function EventViewMenu({
             isNarrowed ? 'is-active' : ''
           }`}
           aria-expanded={open}
-          aria-haspopup="menu"
           onClick={() => setOpen(!open)}
         >
           <span className="view-menu-icon">
@@ -227,7 +224,11 @@ export default function EventViewMenu({
       )}
 
       {open && (
-        <div className="site-menu-panel view-menu-panel" role="menu">
+        <div
+          className="site-menu-panel view-menu-panel"
+          role="group"
+          aria-label={tc('eventView.button')}
+        >
           {/* Past or upcoming as the switch beside the heading was */}
           {withTime && (
             <div className="seg view-menu-seg" role="group">
