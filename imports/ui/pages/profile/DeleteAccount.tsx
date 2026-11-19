@@ -17,8 +17,8 @@ interface DeleteAccountProps {
   username: string;
 }
 
-// Deleting one's account, last in the settings dialog: a line saying
-// what it does and a small red link, kept out of the way, and a dialog that only goes through once the username
+// Deleting one's account, last in the settings dialog: a small red
+// link under a line, kept out of the way, and a dialog that only goes through once the username
 // is written out.
 export default function DeleteAccount({ username }: DeleteAccountProps) {
   const setCurrentUser = useSetAtom(currentUserAtom);
@@ -66,7 +66,6 @@ export default function DeleteAccount({ username }: DeleteAccountProps) {
   return (
     <>
       <div className="settings-delete">
-        <p className="settings-note">{t('delete.note')}</p>
         <button
           type="button"
           className="profile-delete-link"
