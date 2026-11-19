@@ -88,11 +88,9 @@ export async function getPages() {
 }
 
 export async function getPeople() {
-  const keywords = await call('getKeywords');
   const users = await call('getSiteMembers');
 
   return {
-    keywords,
     users,
   };
 }

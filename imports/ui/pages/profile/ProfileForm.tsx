@@ -26,13 +26,12 @@ import PlacePicker, {
 
 import FormField from '../../forms/FormField';
 import Quill from '../../forms/Quill';
-import KeywordsPicker, { type Keyword } from './KeywordsPicker';
 
 export interface ProfileFormValues {
-  firstName: string;
-  lastName: string;
+  // One name, a person's or a group's. Kept in firstName, with lastName
+  // emptied, so that everything showing the two together shows this.
+  name: string;
   bio: string;
-  contactInfo: string;
   publicContact: {
     email?: string;
     phone?: string;
@@ -46,26 +45,24 @@ export interface ProfileFormValues {
 }
 
 // The profile as the form gets it (getProfileToEdit)
-export interface EditableProfile extends Partial<ProfileFormValues> {
+export interface EditableProfile
+  extends Partial<Omit<ProfileFormValues, 'name'>> {
   _id: string;
   username: string;
+  firstName?: string;
+  lastName?: string;
   avatar?: { src?: string } | null;
-  keywords?: { keywordId: string; keywordLabel: string }[];
   isOrganizer?: boolean;
 }
 
-// What is saved beside the fields: the picture and the keywords, each only
-// when changed
+// What is saved beside the fields: the picture, only when changed
 export interface ProfileExtras {
   // A new picture to upload, or null to take the picture away
   avatar?: File | null;
-  keywords?: Keyword[];
 }
 
 interface ProfileFormProps {
   profile: EditableProfile;
-  // One's own profile has keywords to choose
-  withKeywords?: boolean;
   onSubmit: (
     data: Partial<ProfileFormValues>,
     extras: ProfileExtras
@@ -75,16 +72,15 @@ interface ProfileFormProps {
 // The profile form, laid out as the event and place forms are: who they
 // are in the wide column, the picture and the details as cards beside it.
 // Inside the entry sheet, Save is the sheet's.
-function ProfileForm({
-  profile,
-  withKeywords = false,
-  onSubmit,
-}: ProfileFormProps) {
+function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
   // Organizers must give an email or a phone (see _utils/contact.ts), and
   // say where they usually are
   const contactRequired = Boolean(profile.isOrganizer);
   const { control, formState, handleSubmit, register, setValue } = useForm({
-    defaultValues: profile as Partial<ProfileFormValues>,
+    defaultValues: {
+      ...profile,
+      name: [profile.firstName, profile.lastName].filter(Boolean).join(' '),
+    } as Partial<ProfileFormValues>,
   });
   const sheet = useEntryFormSheet();
   // At one of the places, or at an address of their own
@@ -129,12 +125,6 @@ function ProfileForm({
     setAvatarRemoved(true);
   };
 
-  const [keywords, setKeywords] = useState<Keyword[] | null>(null);
-  const savedKeywords: Keyword[] = (profile.keywords || []).map((k) => ({
-    _id: k.keywordId,
-    label: k.keywordLabel,
-  }));
-
   const [t] = useTranslation('members');
   const [ta] = useTranslation('accounts');
   const [tc] = useTranslation('common');
@@ -146,7 +136,6 @@ function ProfileForm({
         : avatarRemoved && profile.avatar?.src
         ? { avatar: null }
         : {}),
-      ...(keywords ? { keywords } : {}),
     };
     if (contactRequired && !isReachable(data.publicContact)) {
       message.formError(tc('contact.errors.required'));
@@ -168,12 +157,9 @@ function ProfileForm({
       <div className="entry-form-grid" data-columns="two">
         <div className="entry-form-main">
           {/* The name, set large like the title it becomes */}
-          <div className="entry-form-lead profile-form-name">
-            <FormField label={t('profile.form.firstname.label')}>
-              <Input {...register('firstName')} autoComplete="off" />
-            </FormField>
-            <FormField label={t('profile.form.lastname.label')}>
-              <Input {...register('lastName')} autoComplete="off" />
+          <div className="entry-form-lead">
+            <FormField label={t('profile.form.name.label')}>
+              <Input {...register('name')} autoComplete="off" />
             </FormField>
           </div>
 
@@ -181,14 +167,6 @@ function ProfileForm({
             <Controller
               control={control}
               name="bio"
-              render={({ field }) => <Quill {...field} />}
-            />
-          </FormField>
-
-          <FormField label={t('profile.form.contact.label')} optional>
-            <Controller
-              control={control}
-              name="contactInfo"
               render={({ field }) => <Quill {...field} />}
             />
           </FormField>
@@ -327,18 +305,6 @@ function ProfileForm({
                     choice === 'own' ? null : profile.homePlaceId || null
                   );
                 }}
-              />
-            </FormCard>
-          )}
-
-          {withKeywords && (
-            <FormCard title={ta('profile.menu.keywords.label')}>
-              <p className="form-preview-note">
-                {ta('profile.menu.keywords.description')}
-              </p>
-              <KeywordsPicker
-                value={keywords || savedKeywords}
-                onChange={setKeywords}
               />
             </FormCard>
           )}

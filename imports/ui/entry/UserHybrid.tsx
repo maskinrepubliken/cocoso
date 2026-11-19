@@ -240,7 +240,6 @@ interface User {
   lastName?: string;
   bio?: string;
   avatar?: { src?: string };
-  keywords?: Array<{ keywordLabel?: string }>;
   memberships?: Array<{ isOrganizer?: boolean }>;
   publicContact?: PublicContact | null;
 }
@@ -309,9 +308,6 @@ export default function UserHybrid({
   const people = menu?.find((item) => item.name === 'people');
   const isOrganizer = user.memberships?.some((m) => m.isOrganizer);
   const name = displayName(user);
-  const keywords = (user.keywords?.map((k) => k.keywordLabel) || []).filter(
-    Boolean
-  ) as string[];
   const upcomingCount = events?.upcoming?.length || 0;
 
   // Groups and works still have their own pages under the profile.
@@ -344,14 +340,7 @@ export default function UserHybrid({
 
       <EntryHero
         chips={
-          isOrganizer || keywords.length > 0 ? (
-            <>
-              {isOrganizer && <Chip accent>{tc('people.organizer')}</Chip>}
-              {keywords.map((keyword) => (
-                <Chip key={keyword}>{keyword}</Chip>
-              ))}
-            </>
-          ) : null
+          isOrganizer ? <Chip accent>{tc('people.organizer')}</Chip> : null
         }
         html={user.bio}
         meta={

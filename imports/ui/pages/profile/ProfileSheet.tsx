@@ -29,7 +29,7 @@ interface ProfileSheetProps {
 
 // Editing a profile, in the same sheet as an event or a place: opened with
 // ?edit=true from the gear on the organizer's page, or from one's profile
-// settings. Picture, fields and keywords are all saved by the sheet's Save.
+// settings. The picture and the fields are all saved by the sheet's Save.
 export default function ProfileSheet({ username }: ProfileSheetProps) {
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
@@ -102,10 +102,10 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
       }
       setLoaders((prevState) => ({ ...prevState, isSendingForm: true }));
       const info = {
-        firstName: values.firstName || '',
-        lastName: values.lastName || '',
+        // The one name, where the two used to be
+        firstName: (values.name || '').trim(),
+        lastName: '',
         bio: values.bio || '',
-        contactInfo: values.contactInfo || '',
         publicContact: {
           email: values.publicContact?.email || '',
           phone: values.publicContact?.phone || '',
@@ -123,9 +123,6 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
       await (asAdmin
         ? call('saveUserInfoAsAdmin', profile._id, info)
         : call('saveUserInfo', info));
-      if (!asAdmin && extras.keywords) {
-        await call('saveKeywords', extras.keywords);
-      }
       setUpdated(profile._id);
       setTimeout(() => setUpdated(null), 1000);
     } catch (error: any) {
@@ -143,12 +140,7 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
     >
       <SuccessRedirector forEdit ping={updated || undefined}>
         {profile ? (
-          <ProfileForm
-            key={profile._id}
-            profile={profile}
-            withKeywords={isSelf}
-            onSubmit={save}
-          />
+          <ProfileForm key={profile._id} profile={profile} onSubmit={save} />
         ) : (
           <Loader />
         )}

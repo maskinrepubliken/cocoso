@@ -280,13 +280,11 @@ Meteor.methods({
           firstName: 1,
           lastName: 1,
           bio: 1,
-          contactInfo: 1,
           publicContact: 1,
           address: 1,
           locationId: 1,
           homePlaceId: 1,
           avatar: 1,
-          keywords: 1,
         },
       }
     );
