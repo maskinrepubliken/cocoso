@@ -1,4 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&family=Fraunces:opsz,wght,SOFT@9..144,500,50;9..144,600,50;9..144,700,50&display=swap');
+/* Raleway and Fraunces, served from public/fonts rather than Google Fonts,
+   so no visitor IP address goes to Google. Variable files (latin and
+   latin-ext), so one file covers every weight; licences beside them. */
+/* fraunces, latin-ext */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url(/fonts/fraunces-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* fraunces, latin */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url(/fonts/fraunces-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* raleway, latin-ext */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(/fonts/raleway-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* raleway, latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(/fonts/raleway-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 /* @import 'react-slideshow-image/dist/styles.css';
 @import 'react-lazy-load-image-component/src/effects/black-and-white.css'; */
 

@@ -104,8 +104,11 @@ export default function HelmetHybrid({
           href={`${iconsBase}/favicon.svg`}
         />
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+        {/* Google only hears from visitors when a Google font is chosen in
+            the design settings; Raleway and Fraunces are served from here */}
+        {fontHref && (
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+        )}
         {fontHref && <link href={fontHref} rel="stylesheet" />}
 
         <link
