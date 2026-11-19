@@ -889,9 +889,14 @@ address:
       label: "Plats på kartan"
       searching: "Letar upp adressen …"
       notFound: "Hittade inte adressen. Klicka på kartan där platsen är."
-      helperLinked: "Klicka på kartan eller dra nålen dit platsen är, så fylls adressen i."
+      helperLinked: "Klicka på kartan eller dra nålen dit platsen är. Saknas adress fylls den i, annars föreslås kartans."
       findingAddress: "Hämtar adressen från kartan …"
       noAddress: "Ingen adress här. Skriv den gärna själv ovan."
+      approx: "Hittade gatan men inte husnumret. Dra nålen till rätt hus."
+    suggest:
+      text: "Kartan har en annan adress vid nålen:"
+      use: "Använd den"
+      keep: "Behåll min"
   errors:
     required: "Fyll i gatuadress och ort, eller koordinater."
 contact:

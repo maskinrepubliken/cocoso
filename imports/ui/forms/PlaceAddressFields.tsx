@@ -36,6 +36,35 @@ const Filling = styled('div', {
 });
 
 // "Hämtar adressen …" with a turning circle, under what is being filled
+// The map's address at the pin, offered instead of the one written
+const Suggestion = styled('div', {
+  backgroundColor: 'var(--cocoso-colors-theme-50, #f3f7ee)',
+  border: '1px solid var(--cocoso-linje)',
+  borderRadius: '12px',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '14px',
+  margin: '0 0 0.75rem',
+  padding: '10px 12px',
+  '& p': { margin: '0 0 8px' },
+  '& strong': { display: 'block', marginTop: '2px' },
+  '& .actions': { display: 'flex', flexWrap: 'wrap', gap: '6px' },
+  '& button': {
+    backgroundColor: 'var(--cocoso-papper)',
+    border: '1px solid var(--cocoso-linje)',
+    borderRadius: '999px',
+    cursor: 'pointer',
+    font: 'inherit',
+    fontSize: '13px',
+    fontWeight: 700,
+    padding: '4px 12px',
+  },
+  '& button.use': {
+    backgroundColor: 'var(--cocoso-colors-theme-700)',
+    borderColor: 'var(--cocoso-colors-theme-700)',
+    color: 'white',
+  },
+});
+
 const Busy = styled('p', {
   alignItems: 'center',
   color: 'var(--cocoso-mylla-soft)',
@@ -60,7 +89,20 @@ type Status =
   | 'pointNotFound'
   // the address of the point on the map is looked up, then not found
   | 'findingAddress'
-  | 'addressNotFound';
+  | 'addressNotFound'
+  // only the street was found, not the house
+  | 'pointApprox'
+  // the map has another address at the pin than the one written
+  | 'suggestAddress';
+
+interface FoundAddress {
+  street: string;
+  postalCode: string;
+  city: string;
+}
+
+const sameText = (a?: string, b?: string) =>
+  (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
 
 const WAIT_MS = 900;
 
@@ -76,7 +118,8 @@ interface PlaceAddressFieldsProps {
 // a map, kept in step whichever is changed. A typed address is looked up,
 // a moment after the typing stops, and its coordinates and the pin follow.
 // A pin put or dragged on the map, or coordinates typed, are looked up the
-// other way, and the address follows. What is being looked up says so, on
+// other way, and the address follows, unless it was written by hand (or
+// saved): then the map's address is only offered, to take or leave. What is being looked up says so, on
 // the map and under the fields being filled; what cannot be found says
 // that too, and the rest stays as it was to be filled in by hand.
 export default function PlaceAddressFields({
@@ -93,6 +136,11 @@ export default function PlaceAddressFields({
   // The point whose address is to be looked up, once given on the map or
   // typed
   const [reverseOf, setReverseOf] = useState<Coordinates | null>(null);
+  // Whether the address came from the map (and so may follow it), and
+  // whether the lookup under way fills it in or only offers
+  const fromMap = useRef(!(address.street || '').trim());
+  const fillOnFound = useRef(true);
+  const [suggestion, setSuggestion] = useState<FoundAddress | null>(null);
 
   const [coordinatesText, setCoordinatesText] = useState(
     formatCoordinates(address.coordinates)
@@ -110,7 +158,9 @@ export default function PlaceAddressFields({
   // Typing the address: the old point goes, to be looked up anew
   const setField = (field: 'street' | 'postalCode' | 'city', text: string) => {
     const { coordinates: _old, ...rest } = address;
+    fromMap.current = false;
     setReverseOf(null);
+    setSuggestion(null);
     setStatus('idle');
     onChange({ ...rest, [field]: text });
   };
@@ -118,6 +168,9 @@ export default function PlaceAddressFields({
   // A point given on the map or typed: it stands, and its address is
   // looked up
   const setPoint = (coordinates: Coordinates) => {
+    fillOnFound.current =
+      fromMap.current || !(latest.current.street || '').trim();
+    setSuggestion(null);
     onChange({ ...latest.current, coordinates });
     setReverseOf(coordinates);
   };
@@ -141,7 +194,11 @@ export default function PlaceAddressFields({
   const hasPoint = Boolean(address.coordinates);
   useEffect(() => {
     if (!street || !city || hasPoint) {
-      if (status === 'findingPoint' || status === 'pointNotFound') {
+      if (
+        status === 'findingPoint' ||
+        status === 'pointNotFound' ||
+        (status === 'pointApprox' && !hasPoint)
+      ) {
         setStatus('idle');
       }
       return undefined;
@@ -149,11 +206,12 @@ export default function PlaceAddressFields({
     let cancelled = false;
     const timer = setTimeout(() => {
       setStatus('findingPoint');
-      call<{ point?: Coordinates; town?: Coordinates | null }>(
-        'findAddressPoint',
-        { street, postalCode, city }
-      )
-        .then(({ point, town: around }) => {
+      call<{
+        point?: Coordinates;
+        precision?: 'known' | 'house' | 'street';
+        town?: Coordinates | null;
+      }>('findAddressPoint', { street, postalCode, city })
+        .then(({ point, precision, town: around }) => {
           const now = latest.current;
           // Only for the address still written, without a point since
           if (
@@ -165,7 +223,8 @@ export default function PlaceAddressFields({
             return;
           }
           if (point) {
-            setStatus('idle');
+            // Only the street: the pin is near, to be dragged to the house
+            setStatus(precision === 'street' ? 'pointApprox' : 'idle');
             onChange({ ...now, coordinates: point });
           } else {
             setTown(around || null);
@@ -188,10 +247,7 @@ export default function PlaceAddressFields({
     let cancelled = false;
     setStatus('findingAddress');
     const timer = setTimeout(() => {
-      call<{ street: string; postalCode: string; city: string } | null>(
-        'findPointAddress',
-        reverseOf
-      )
+      call<FoundAddress | null>('findPointAddress', reverseOf)
         .then((found) => {
           const now = latest.current;
           // Only for the point still there
@@ -199,11 +255,20 @@ export default function PlaceAddressFields({
             return;
           }
           setReverseOf(null);
-          if (found) {
+          if (!found) {
+            setStatus(fillOnFound.current ? 'addressNotFound' : 'idle');
+          } else if (fillOnFound.current) {
+            fromMap.current = true;
             setStatus('idle');
             onChange({ ...now, ...found, coordinates: reverseOf });
+          } else if (
+            sameText(found.street, now.street) &&
+            sameText(found.city, now.city)
+          ) {
+            setStatus('idle');
           } else {
-            setStatus('addressNotFound');
+            setSuggestion(found);
+            setStatus('suggestAddress');
           }
         })
         .catch(() => {
@@ -220,6 +285,21 @@ export default function PlaceAddressFields({
   }, [reverseOf?.lat, reverseOf?.lng]);
 
   const findingAddress = status === 'findingAddress';
+  // Fields faded only when they are about to be filled in
+  const fillingAddress = findingAddress && fillOnFound.current;
+
+  const useSuggestion = () => {
+    if (suggestion) {
+      fromMap.current = true;
+      onChange({ ...latest.current, ...suggestion });
+    }
+    setSuggestion(null);
+    setStatus('idle');
+  };
+  const keepAddress = () => {
+    setSuggestion(null);
+    setStatus('idle');
+  };
   const findingPoint = status === 'findingPoint';
 
   const mapNote =
@@ -240,6 +320,11 @@ export default function PlaceAddressFields({
         <MapPinIcon aria-hidden />
         {tc('address.form.map.notFound')}
       </>
+    ) : status === 'pointApprox' ? (
+      <>
+        <MapPinIcon aria-hidden />
+        {tc('address.form.map.approx')}
+      </>
     ) : status === 'addressNotFound' ? (
       <>
         <MapPinIcon aria-hidden />
@@ -249,7 +334,7 @@ export default function PlaceAddressFields({
 
   return (
     <div aria-busy={findingPoint || findingAddress}>
-      <Filling busy={findingAddress}>
+      <Filling busy={fillingAddress}>
         <FormField
           helper={tc('address.form.street.helper')}
           label={tc('address.form.street.label')}
@@ -286,11 +371,36 @@ export default function PlaceAddressFields({
           </FormField>
         </Row>
       </Filling>
-      {findingAddress && (
+      {fillingAddress && (
         <Busy role="status">
           <LoaderIcon aria-hidden />
           {tc('address.form.map.findingAddress')}
         </Busy>
+      )}
+      {suggestion && (
+        <Suggestion role="status">
+          <p>
+            {tc('address.form.suggest.text')}
+            <strong>
+              {[
+                suggestion.street,
+                [suggestion.postalCode, suggestion.city]
+                  .filter(Boolean)
+                  .join(' '),
+              ]
+                .filter(Boolean)
+                .join(', ')}
+            </strong>
+          </p>
+          <div className="actions">
+            <button className="use" type="button" onClick={useSuggestion}>
+              {tc('address.form.suggest.use')}
+            </button>
+            <button type="button" onClick={keepAddress}>
+              {tc('address.form.suggest.keep')}
+            </button>
+          </div>
+        </Suggestion>
       )}
 
       <Filling busy={findingPoint}>
@@ -329,7 +439,9 @@ export default function PlaceAddressFields({
           focus={town}
           note={mapNote}
           noteTone={
-            status === 'pointNotFound' || status === 'addressNotFound'
+            status === 'pointNotFound' ||
+            status === 'addressNotFound' ||
+            status === 'pointApprox'
               ? 'ask'
               : 'quiet'
           }

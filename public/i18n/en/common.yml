@@ -892,9 +892,14 @@ address:
       label: "On the map"
       searching: "Looking up the address …"
       notFound: "Could not find the address. Click the map where the place is."
-      helperLinked: "Click the map or drag the pin to where the place is, and the address is filled in."
+      helperLinked: "Click the map or drag the pin to where the place is. Without an address it is filled in, otherwise the map's is offered."
       findingAddress: "Getting the address from the map …"
       noAddress: "No address here. Type it above if you like."
+      approx: "Found the street but not the house number. Drag the pin to the right house."
+    suggest:
+      text: "The map has another address at the pin:"
+      use: "Use it"
+      keep: "Keep mine"
   errors:
     required: "Give a street address and town, or coordinates."
 contact:
