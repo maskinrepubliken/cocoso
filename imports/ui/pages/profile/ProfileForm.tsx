@@ -1,5 +1,6 @@
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useRef, useState } from 'react';
+import CircleSlashIcon from 'lucide-react/dist/esm/icons/circle-slash';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 import { useTranslation } from 'react-i18next';
@@ -87,9 +88,10 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
     } as Partial<ProfileFormValues>,
   });
   const sheet = useEntryFormSheet();
-  // At one of the places, or at an address of their own
-  const [where, setWhere] = useState<'place' | 'own'>(
-    profile.homePlaceId ? 'place' : 'own'
+  // At one of the places, at an address of their own, or nowhere in
+  // particular
+  const [where, setWhere] = useState<'place' | 'own' | 'none'>(
+    profile.homePlaceId ? 'place' : hasAddress(profile.address) ? 'own' : 'none'
   );
   const [places, setPlaces] = useState<PlaceOption[]>([]);
   useEffect(() => {
@@ -144,6 +146,13 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
     if (contactRequired && !isReachable(data.publicContact)) {
       message.formError(tc('contact.errors.required'));
       return undefined;
+    }
+    if (where === 'none') {
+      // Whatever was chosen or written before goes
+      return onSubmit(
+        { ...data, homePlaceId: null, address: null, locationId: null },
+        extras
+      );
     }
     if (where === 'place') {
       // A place stands for the address
@@ -266,7 +275,10 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
                           <PlacePicker
                             places={places}
                             selectedId={field.value}
-                            onClear={() => field.onChange(null)}
+                            onClear={() => {
+                              field.onChange(null);
+                              setWhere('none');
+                            }}
                             onPick={(place) => field.onChange(place._id)}
                           />
                         )}
@@ -316,12 +328,20 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
                       </>
                     ),
                   },
+                  {
+                    // Also with an address written: it is then left out,
+                    // and removed on save
+                    value: 'none',
+                    label: t('profile.form.address.none'),
+                    icon: <CircleSlashIcon aria-hidden />,
+                    description: t('profile.form.address.noneHelper'),
+                  },
                 ]}
                 onChange={(choice) => {
                   setWhere(choice);
                   setValue(
                     'homePlaceId',
-                    choice === 'own' ? null : profile.homePlaceId || null
+                    choice === 'place' ? profile.homePlaceId || null : null
                   );
                 }}
               />

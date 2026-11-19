@@ -84,6 +84,8 @@ profile:
       helper: "Where you or your group usually are: one of the places here, or an address of your own. New events you create start from it; you can always choose something else for a single event."
       place: "A place"
       own: "Own address"
+      none: "None"
+      noneHelper: "No home. New events you create start without a place, and a place or address that was here is removed when you save."
       location: "Place"
   message:
     role: You as {{username}} are part of this organisation with the {{role}} role

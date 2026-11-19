@@ -84,6 +84,8 @@ profile:
       helper: "Där du eller gruppen brukar hålla till: en av platserna här, eller en egen adress. Nya evenemang du skapar utgår från den, och du kan alltid välja något annat för ett enskilt evenemang."
       place: "En plats"
       own: "Egen adress"
+      none: "Ingen"
+      noneHelper: "Ingen hemvist. Nya evenemang du skapar börjar utan plats, och en plats eller adress som fanns här tas bort när du sparar."
       location: "Ort"
   message:
     role: Du som {{username}} är en del av denna organisation med rollen {{role}}

@@ -7456,7 +7456,8 @@ body {
   flex: none;
 }
 
-.choice-chip:hover:not(:disabled) {
+/* not the chosen one: it keeps its dark green under the pointer */
+.choice-chip:hover:not(:disabled):not(.is-chosen) {
   background: var(--cocoso-colors-theme-100);
 }
 
