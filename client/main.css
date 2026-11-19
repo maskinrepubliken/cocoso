@@ -2434,8 +2434,8 @@ body {
   padding: 0 14px;
 }
 
-/* The brand pill with the account beside it, leaving the right side for
-   the page's own buttons */
+/* The brand pill, the account inside it, leaving the right side for the
+   page's own buttons */
 .site-header-bar > .site-header-left {
   display: flex;
   align-items: center;
@@ -2504,10 +2504,12 @@ body {
   color: var(--site-ink);
 }
 
+/* The mark is a link home, and so is the name; the account avatar
+   stands between the two */
 .site-brand-home {
   display: inline-flex;
-  align-items: center;
-  gap: 9px;
+  flex: 0 0 auto;
+  border-radius: 999px;
   color: inherit;
   text-decoration: none;
 }
@@ -2553,163 +2555,46 @@ body {
   filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.28));
 }
 
+/* The site's name as in the start page hero: Fraunces in the dark green,
+   what follows the short name ("kalendern") in the softer one */
 .site-brand-name {
-  font-size: 15px;
+  padding: 0 11px 0 9px;
+  color: var(--cocoso-colors-theme-800);
+  font-family: var(--cocoso-font-display);
+  font-variation-settings: 'SOFT' 60;
+  font-size: 18px;
   font-weight: 700;
-  white-space: nowrap;
-}
-
-.site-brand-sep {
-  margin: 0 2px 0 8px;
-  color: var(--cocoso-colors-theme-300);
-  font-size: 20px;
-  font-weight: 300;
+  letter-spacing: -0.01em;
   line-height: 1;
-}
-
-.site-brand .szh-menu-button {
-  all: unset;
-  display: inline-flex;
-  cursor: pointer;
-}
-
-.site-brand-loc {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 32px;
-  padding: 0 8px 0 4px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--site-ink-soft);
+  text-decoration: none;
   white-space: nowrap;
 }
 
-/* The orttag inside the pill and the menu: a little larger than on cards */
-.site-brand-loc .place-tag,
-.site-loc-item .place-tag {
-  height: 28px;
-  font-size: 14px;
+.site-brand-name-rest {
+  color: color-mix(in oklab, var(--cocoso-colors-theme-500) 62%, #8c8571);
 }
 
-.site-loc-item .place-tag {
-  padding-left: 0;
+/* Logged in: the avatar right beside the mark, a little over its edge,
+   with a paper rim so the two read as a pair */
+.site-brand .site-user {
+  position: relative;
+  z-index: 1;
+  margin-left: -6px;
 }
 
-.site-brand-loc .place-tag {
-  padding-left: 6px;
-}
-
-.site-brand-loc:hover,
-.site-brand .szh-menu-button--open .site-brand-loc {
+.site-brand .site-avatar {
+  width: 32px;
+  height: 32px;
   background: var(--cocoso-colors-theme-100);
+  box-shadow: 0 0 0 2px var(--cocoso-papper);
+  font-size: 16px;
 }
 
-.site-brand-loc.is-root {
-  width: 28px;
-  padding: 0;
-  margin-left: 2px;
-  justify-content: center;
-  opacity: 0.7;
-}
-
-/* The cross that leaves the place: bare, no disc of its own */
-.site-brand-clear {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  margin: 0 4px 0 -4px;
-  border-radius: 999px;
-  color: var(--site-ink-soft);
-}
-
-.site-brand-clear:hover {
-  background: var(--cocoso-colors-theme-100);
-  color: var(--site-ink);
-}
-
-/* --- location menu --- */
-
-.site-loc-menu {
-  width: 272px;
-}
-
-/* "Hela kommunen": a row like the places, its mark a dark green disc with
-   the landmark; a check at the end when it is the current choice */
-.site-loc-home {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-  color: var(--site-ink);
-}
-
-.site-loc-home-icon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: var(--cocoso-colors-theme-700);
-  color: #fff;
-}
-
-.site-loc-home-icon svg {
-  width: 13px;
-  height: 13px;
-}
-
-.site-loc-home-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.site-loc-home-text b {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.site-loc-home-text small {
-  color: var(--site-ink-soft);
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.site-loc-home-end {
-  margin-left: auto;
-  flex: 0 0 auto;
-  color: var(--cocoso-colors-theme-500);
-}
-
-.site-loc-home.is-current {
-  background: var(--cocoso-colors-theme-100);
-}
-
-.site-loc-label {
-  padding: 8px 10px 4px;
-  color: var(--site-ink-soft);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.site-loc-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--site-ink);
-}
-
-.site-loc-item.is-current {
-  background: var(--cocoso-colors-theme-100);
-  font-weight: 700;
+.site-brand .site-user-bell {
+  order: 1;
+  width: 32px;
+  height: 32px;
+  box-shadow: none;
 }
 
 /* --- menu pill (desktop) --- */
@@ -3725,13 +3610,8 @@ body {
   }
 
   .site-brand-name {
-    font-size: 14px;
-  }
-
-  .site-brand-loc {
-    height: 26px;
-    padding: 0 8px;
-    font-size: 13px;
+    padding: 0 9px 0 7px;
+    font-size: 16px;
   }
 
   .site-login {
@@ -3751,12 +3631,12 @@ body {
     width: 32px;
     height: 32px;
   }
-}
 
-@media (max-width: 400px) {
-  .site-brand.has-location .site-brand-name,
-  .site-brand.has-location .site-brand-sep {
-    display: none;
+  .site-brand .site-avatar,
+  .site-brand .site-user-bell {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
   }
 }
 
@@ -3767,11 +3647,7 @@ body {
   .site-header-bar:has(.site-header-left .site-user):has(
       .site-header-right > :nth-child(3)
     )
-    .site-brand-name,
-  .site-header-bar:has(.site-header-left .site-user):has(
-      .site-header-right > :nth-child(3)
-    )
-    .site-brand-sep {
+    .site-brand-name {
     display: none;
   }
 }
@@ -4468,8 +4344,7 @@ body {
   box-shadow: none;
 }
 
-/* Keyboard focus on the header's menu buttons (place, info, account) */
-.site-brand .szh-menu-button:focus-visible,
+/* Keyboard focus on the header's menu buttons (info, account) */
 .site-nav .szh-menu-button:focus-visible,
 .site-header-right .szh-menu-button:focus-visible,
 .site-header-left .szh-menu-button:has(.site-user):focus-visible {

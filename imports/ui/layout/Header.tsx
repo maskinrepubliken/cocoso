@@ -15,14 +15,13 @@ import { parseTitle } from '/imports/api/_utils/shared';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
 import { currentUserAtom } from '/imports/state';
 import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import Brand from './Brand';
 import DiscussionButton from './DiscussionButton';
 import GroupMembershipButton from './GroupMembershipButton';
 import EditButton from './EditButton';
 import LanguageSwitch from './LanguageSwitch';
-import LocationSwitcher from './LocationSwitcher';
 import NewButton from './NewButton';
 import SiteSearch from './SiteSearch';
-import UserPopup from './UserPopup';
 
 const isClient = Meteor?.isClient;
 
@@ -31,8 +30,8 @@ if (isClient) {
   import '@szhsin/react-menu/dist/transitions/zoom.css';
 }
 
-// Visible menu entries with their route resolved, so the desktop pill, the
-// mobile chip row and the location switcher all agree on what a section is.
+// Visible menu entries with their route resolved, so the desktop pill and
+// the mobile menu panel agree on what a section is.
 export interface HeaderMenuItem {
   name: string;
   label: string;
@@ -306,8 +305,8 @@ export interface HeaderProps {
   pageTitles: any[];
 }
 
-// The site header: one 56px row with the brand/location pill and the
-// account on the left, the menu as a floating pill in the middle and, on
+// The site header: one 56px row with the brand pill (and in it the
+// account) on the left, the menu as a floating pill in the middle and, on
 // the right, the search, the plus for those who may create content, the
 // pen on a page one may edit, and the page's discussion.
 // Below 960px the menu pill is gone: the brand pill stretches across the
@@ -351,8 +350,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   }, []);
 
   // On a desktop the menu pill sits between the brand and the buttons.
-  // When the three no longer fit on one row (a place chosen, an admin's
-  // plus and pen, a long menu) all three shrink by the same factor until
+  // When the three no longer fit on one row (an admin's plus and pen,
+  // a long menu) all three shrink by the same factor until
   // they do, down to MIN_BAR_ZOOM; only past that does the menu pill drop
   // to a row of its own. Measured, so nothing changes while it fits.
   useEffect(() => {
@@ -459,8 +458,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         style={{ '--bar-zoom': barZoom } as React.CSSProperties}
       >
         <div className="site-header-left">
-          <LocationSwitcher site={site} items={items} section={section} />
-          <UserPopup site={site} />
+          <Brand site={site} />
         </div>
 
         {/* Phone only: the menu button, carrying the page one is on */}

@@ -5,6 +5,7 @@ import { useAtomValue } from 'jotai';
 
 import { seasonAtom, siteAtom } from '/imports/state';
 import type { Season } from '/imports/api/_utils/season';
+import splitSiteName from '/imports/ui/utils/siteName';
 import ThreeDIcon, {
   type ThreeDIconName,
 } from '/imports/ui/generic/ThreeDIcon';
@@ -95,13 +96,7 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
 
   // When the name begins with the short name ("Tranemo" + "kalendern"),
   // the rest is set in a softer green.
-  const short = settings.shortName;
-  const rest =
-    short &&
-    settings.name.startsWith(short) &&
-    settings.name.length > short.length
-      ? settings.name.slice(short.length)
-      : null;
+  const [first, rest] = splitSiteName(settings);
 
   return (
     <section className="home-hero vav is-text">
@@ -109,14 +104,8 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
         <div className="home-hero-text">
           <span className="home-hero-eyebrow">{tc('home.hero.welcome')}</span>
           <h1 className="home-hero-title">
-            {rest ? (
-              <>
-                {short}
-                <span className="home-hero-title-rest">{rest}</span>
-              </>
-            ) : (
-              settings.name
-            )}
+            {first}
+            {rest && <span className="home-hero-title-rest">{rest}</span>}
           </h1>
           {tagline}
           <p className="home-hero-beta">

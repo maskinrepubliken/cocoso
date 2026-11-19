@@ -40,7 +40,7 @@ That writes `trana-hals.webp`, `trana-hals-preview-1024.png` and
 `favicons.py <bust render>` writes the whole set in `public/icons/` (SVG
 with the PNG embedded, 16, 32, 180, 192, 512): the head and upper neck of
 the bust on the site's dark green disc, so the face reads at 16 px. The
-header's brand mark (`LocationSwitcher.tsx`) shows the full crane from
+header's brand mark (`Brand.tsx`) shows the full crane from
 `public/3dicons/trana.webp` when the site has no uploaded logo.
 
 ## The social image
