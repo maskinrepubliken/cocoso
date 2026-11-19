@@ -12,7 +12,7 @@ const WorkInteractionHandler = loadable(
 );
 const EditWork = loadable(() => import('./EditWork'));
 
-export const workAtom = atom(null);
+export const workAtom = atom<any>(null);
 
 export default function WorkItemHandler({ siteDoc }) {
   const { documents, work } = useLoaderData();

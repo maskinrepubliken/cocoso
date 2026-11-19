@@ -57,6 +57,14 @@ export const Tag = (props: any) => {
 
 interface TextProps {
   color?: string;
+  // Margins, as on Box (getPropStyles)
+  m?: string | number;
+  mb?: string | number;
+  ml?: string | number;
+  mr?: string | number;
+  mt?: string | number;
+  mx?: string | number;
+  my?: string | number;
   colorScheme?: string;
   css?: CSSProperties;
   fontSize?: string;

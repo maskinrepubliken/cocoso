@@ -1,5 +1,6 @@
 // The group form's typed fields, in the wide column; the details are cards
 // beside them (GroupForm.tsx).
+/** @returns {import('/imports/ui/forms/GenericEntryForm').FormFieldItem[]} */
 const groupFormFields = (t) => [
   {
     helper: t('groupForm.title.helper'),

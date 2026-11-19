@@ -29,7 +29,7 @@ interface Option {
 // details beside it.
 export type FormArea = 'main' | 'side';
 
-interface FormFieldItem {
+export interface FormFieldItem {
   area?: FormArea;
   type: 'input' | 'textarea' | 'checkbox' | 'select' | 'quill' | 'number';
   value?: string | boolean;
@@ -57,8 +57,8 @@ interface GenericEntryFormProps {
   children?: React.ReactNode;
   defaultValues?: Record<string, any> | null;
   formFields: FormFieldItem[];
-  isSubmitButtonDisabled: boolean;
-  onSubmit: () => void;
+  isSubmitButtonDisabled?: boolean;
+  onSubmit: (values: any) => void;
   // Called with all the field values whenever one of them changes, e.g. to
   // keep a draft
   onValuesChange?: (values: Record<string, any>) => void;

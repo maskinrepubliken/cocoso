@@ -1,5 +1,6 @@
 // The request form's typed fields, in the wide column; the details are
 // cards beside them (WorkForm.tsx).
+/** @returns {import('/imports/ui/forms/GenericEntryForm').FormFieldItem[]} */
 const workFormFields = (t) => [
   {
     helper: t('works.title.helper'),
