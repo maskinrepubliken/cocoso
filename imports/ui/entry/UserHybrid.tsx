@@ -240,7 +240,7 @@ interface User {
   lastName?: string;
   bio?: string;
   avatar?: { src?: string };
-  memberships?: Array<{ isOrganizer?: boolean }>;
+  memberships?: Array<{ isOrganizer?: boolean; role?: string }>;
   publicContact?: PublicContact | null;
 }
 
@@ -306,7 +306,10 @@ export default function UserHybrid({
 
   const menu = siteDoc?.settings?.menu;
   const people = menu?.find((item) => item.name === 'people');
-  const isOrganizer = user.memberships?.some((m) => m.isOrganizer);
+  // Listed among the organizers: those made one, and admins
+  const isOrganizer = user.memberships?.some(
+    (m) => m.isOrganizer || m.role === 'admin'
+  );
   const name = displayName(user);
   const upcomingCount = events?.upcoming?.length || 0;
 

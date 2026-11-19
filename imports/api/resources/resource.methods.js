@@ -15,6 +15,7 @@ import Resources from './resource';
 import canManagePlace from './resource.access';
 import Offerings from '../offerings/offering';
 import Memberships from '../memberships/membership';
+import { LISTED_AS_ORGANIZER } from '../memberships/membership.helpers';
 import { attachBookingPerson, cleanBooking } from './resource.booking';
 import { attachPlaceContact, cleanPlaceContact } from './resource.contact';
 import Activities from '../activities/activity';
@@ -309,7 +310,7 @@ Meteor.methods({
       ]),
     ];
     const shown = await Memberships.find(
-      { userId: { $in: ids }, isPublic: true, isOrganizer: true },
+      { userId: { $in: ids }, ...LISTED_AS_ORGANIZER },
       { fields: { userId: 1 } }
     ).fetchAsync();
     const users = await Meteor.users

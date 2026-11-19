@@ -28,4 +28,12 @@ async function attachMembershipsToUsers(users) {
   }));
 }
 
-export { attachMembershipsToUsers, getUserMemberships };
+// Who is listed among the organizers (/people, the search, a place's
+// organizers): everyone made an organizer whose profile shows, and the
+// admins who have chosen to show theirs.
+const LISTED_AS_ORGANIZER = {
+  isPublic: true,
+  $or: [{ isOrganizer: true }, { role: 'admin' }],
+};
+
+export { LISTED_AS_ORGANIZER, attachMembershipsToUsers, getUserMemberships };

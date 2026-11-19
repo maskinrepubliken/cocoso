@@ -6,7 +6,10 @@ import { isAdmin } from '../users/user.roles';
 import Memberships from '../memberships/membership';
 import dayjs from 'dayjs';
 
-import { attachMembershipsToUsers } from '../memberships/membership.helpers';
+import {
+  LISTED_AS_ORGANIZER,
+  attachMembershipsToUsers,
+} from '../memberships/membership.helpers';
 import Activities from '../activities/activity';
 import methodError from '../_utils/methodError';
 
@@ -116,12 +119,12 @@ Meteor.methods({
     });
   },
 
-  // The public people listing shows only organizers.
+  // The public people listing shows only organizers, and the admins who
+  // show their profile.
   async getSiteMembers() {
-    const memberships = await Memberships.find(
-      { isPublic: true, isOrganizer: true },
-      { fields: { userId: 1 } }
-    ).fetchAsync();
+    const memberships = await Memberships.find(LISTED_AS_ORGANIZER, {
+      fields: { userId: 1 },
+    }).fetchAsync();
     const userIds = memberships.map((m) => m.userId);
 
     const users = await Meteor.users

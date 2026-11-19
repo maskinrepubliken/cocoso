@@ -8,6 +8,7 @@ import Activities from '../activities/activity';
 import Groups from '../groups/group';
 import Locations from '../locations/location';
 import Memberships from '../memberships/membership';
+import { LISTED_AS_ORGANIZER } from '../memberships/membership.helpers';
 import Pages from '../pages/page';
 import Resources from '../resources/resource';
 import Works from '../works/work';
@@ -281,10 +282,9 @@ async function searchPages(words, limit = PER_KIND) {
 
 // Only the organizers listed on /people, matched on name and username.
 async function searchPeople(words, limit = PER_KIND) {
-  const memberships = await Memberships.find(
-    { isPublic: true, isOrganizer: true },
-    { fields: { userId: 1 } }
-  ).fetchAsync();
+  const memberships = await Memberships.find(LISTED_AS_ORGANIZER, {
+    fields: { userId: 1 },
+  }).fetchAsync();
   const userIds = memberships.map((membership) => membership.userId);
   if (userIds.length === 0) {
     return [];

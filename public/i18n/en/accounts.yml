@@ -228,8 +228,8 @@ privacy:
   visibility:
     title: Visibility
     label: Show my profile to others
-    on: Visitors can see your profile page with your name, picture and description. If you are an organizer, you are also listed under Organizers.
-    off: Your profile is not shown to others – only to you and the site's administrators.
+    on: Visitors can see your profile page with your name, picture and description, and you are listed under Organizers.
+    off: Your profile is not shown to others and you are not listed under Organizers – only you and the site's administrators see it.
   role:
     title: Your role
     current: 'Role: <strong>{{role}}</strong>'

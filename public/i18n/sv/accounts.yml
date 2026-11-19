@@ -228,8 +228,8 @@ privacy:
   visibility:
     title: Synlighet
     label: Visa min profil för andra
-    on: Besökare kan se din profilsida med namn, bild och beskrivning. Är du arrangör visas du också under Arrangörer.
-    off: Din profil visas inte för andra – bara för dig och sidans administratörer.
+    on: Besökare kan se din profilsida med namn, bild och beskrivning, och du visas under Arrangörer.
+    off: Din profil visas inte för andra och du listas inte under Arrangörer – bara du och sidans administratörer ser den.
   role:
     title: Din roll
     current: 'Roll: <strong>{{role}}</strong>'
