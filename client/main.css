@@ -2595,7 +2595,7 @@ body {
 .site-brand .site-user {
   position: relative;
   z-index: 1;
-  margin-left: -6px;
+  margin-left: -4px;
 }
 
 .site-brand .site-avatar {
