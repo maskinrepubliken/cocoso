@@ -138,7 +138,16 @@ export function describe(event: SourceEvent, mirror: MirrorDoc) {
 }
 
 export const sourceUrl = (event: SourceEvent, mirror: MirrorDoc) =>
-  mirror.eventUrl.replace('{id}', encodeURIComponent(event.id));
+  event.url || mirror.eventUrl.replace('{id}', encodeURIComponent(event.id));
+
+// The source's events still to come, read as the mirror's kind is read
+function fetchEvents(mirror: MirrorDoc): Promise<SourceEvent[]> {
+  switch (mirror.kind) {
+    case 'axiell-events':
+    default:
+      return fetchAxiellEvents(mirror.customerId, mirror.sourceLocation);
+  }
+}
 
 function datesOf(event: SourceEvent) {
   const start = localDateTime(event.start);
@@ -232,10 +241,7 @@ export async function syncMirror(
     throw new Meteor.Error('not-found', 'The organizer account is gone');
   }
 
-  const events = await fetchAxiellEvents(
-    mirror.customerId,
-    mirror.sourceLocation
-  );
+  const events = await fetchEvents(mirror);
   const existing = await Activities.find({
     'mirror.mirrorId': mirror._id,
   }).fetchAsync();

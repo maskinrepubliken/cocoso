@@ -25,11 +25,21 @@ export interface SourceEvent {
   modifiedAt?: Date;
   imageUrl?: string;
   tags: string[];
+  // The event's own page at the source, when the source gives it whole;
+  // without it the mirror's eventUrl is filled in with the id
+  url?: string;
 }
 
-async function getJson(url: string) {
+// The answer to a GET, or to a POST of the body when there is one
+export async function getJson(url: string, body?: unknown) {
   const response = await fetch(url, {
-    headers: { accept: 'application/json' },
+    headers: {
+      accept: 'application/json',
+      ...(body === undefined ? {} : { 'content-type': 'application/json' }),
+    },
+    ...(body === undefined
+      ? {}
+      : { method: 'POST', body: JSON.stringify(body) }),
     signal: AbortSignal.timeout(30000),
   });
   if (!response.ok) {
