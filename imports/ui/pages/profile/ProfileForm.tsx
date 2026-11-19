@@ -1,5 +1,5 @@
 import { Controller, useForm } from 'react-hook-form';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 import { useTranslation } from 'react-i18next';
@@ -77,6 +77,9 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
   // Organizers must give an email or a phone (see _utils/contact.ts), and
   // say where they usually are
   const contactRequired = Boolean(profile.isOrganizer);
+  // Whether the location (Ort) was picked by hand since the address last
+  // changed; else it follows the address (AddressFields suggests it)
+  const locationByHand = useRef(false);
   const { control, formState, handleSubmit, register, setValue } = useForm({
     defaultValues: {
       ...profile,
@@ -278,7 +281,16 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
                           render={({ field }) => (
                             <AddressFields
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(address) => {
+                                locationByHand.current = false;
+                                field.onChange(address);
+                              }}
+                              onLocationSuggested={(locationId) =>
+                                !locationByHand.current &&
+                                setValue('locationId', locationId, {
+                                  shouldDirty: true,
+                                })
+                              }
                             />
                           )}
                         />
@@ -289,9 +301,10 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
                             render={({ field }) => (
                               <LocationSelect
                                 value={field.value}
-                                onChange={(choice) =>
-                                  field.onChange(choice.locationId)
-                                }
+                                onChange={(choice) => {
+                                  locationByHand.current = true;
+                                  field.onChange(choice.locationId);
+                                }}
                               />
                             )}
                           />
