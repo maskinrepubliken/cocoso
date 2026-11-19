@@ -69,7 +69,7 @@ profile:
       label: Kontaktinfo
     publicContact:
       title: "Publika kontaktuppgifter"
-      helper: "Visas på din sida och vid varje evenemang du arrangerar, så att besökare kan nå dig. Lämna tomt det du inte vill dela."
+      helper: "Visas på din sida och vid varje evenemang du arrangerar, så att besökare kan nå dig."
       email: E-post
       phone: Telefon
       website: Webbplats

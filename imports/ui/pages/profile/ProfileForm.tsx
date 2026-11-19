@@ -70,7 +70,8 @@ interface ProfileFormProps {
 }
 
 // The profile form, laid out as the event and place forms are: who they
-// are in the wide column, the picture and the details as cards beside it.
+// are (name, picture, text) in the wide column, the details as cards
+// beside it.
 // Inside the entry sheet, Save is the sheet's.
 function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
   // Organizers must give an email or a phone (see _utils/contact.ts), and
@@ -163,17 +164,8 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
             </FormField>
           </div>
 
-          <FormField label={t('profile.form.bio.label')}>
-            <Controller
-              control={control}
-              name="bio"
-              render={({ field }) => <Quill {...field} />}
-            />
-          </FormField>
-        </div>
-
-        <div className="entry-form-side">
-          <FormCard title={ta('profile.image')}>
+          {/* The picture, right under the name it goes with */}
+          <FormField label={ta('profile.image')}>
             <Flex align="center" gap="4">
               <Box h="120px" w="120px" css={{ flexShrink: 0 }}>
                 <FileDropper
@@ -200,8 +192,18 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
                 )}
               </div>
             </Flex>
-          </FormCard>
+          </FormField>
 
+          <FormField label={t('profile.form.bio.label')}>
+            <Controller
+              control={control}
+              name="bio"
+              render={({ field }) => <Quill {...field} />}
+            />
+          </FormField>
+        </div>
+
+        <div className="entry-form-side">
           <FormCard title={t('profile.form.publicContact.title')}>
             <p className="form-preview-note">
               {t('profile.form.publicContact.helper')}

@@ -69,7 +69,7 @@ profile:
       label: Contact Info
     publicContact:
       title: "Public contact details"
-      helper: "Shown on your page and on every event you organize, so visitors can reach you. Leave empty what you do not want to share."
+      helper: "Shown on your page and on every event you organize, so visitors can reach you."
       email: Email
       phone: Phone
       website: Website
