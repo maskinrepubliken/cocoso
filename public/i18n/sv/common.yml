@@ -66,6 +66,7 @@ labels:
     resources: Redigera platsen
     works: Redigera förfrågan
     profile: Redigera profilen
+    myProfile: Redigera min profil
   event: Arrangemang
   bookings: Bokningar
   newBooking: Nytt bokning
@@ -188,8 +189,8 @@ entryMenu:
     resources: Redigera plats
     works: Redigera förfrågan
     info: Redigera sida
-    profile: Redigera profil
-    userProfile: Redigera profil
+    profile: Redigera min profil
+    userProfile: Redigera profilen
   # An admin on someone's page: the site as that person sees it
   viewAs: 'Visa sajten som {{ name }}'
   viewAsStarted: 'Du ser nu sajten som {{ name }}'

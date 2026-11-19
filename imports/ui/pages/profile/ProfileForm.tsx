@@ -3,9 +3,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 import { useTranslation } from 'react-i18next';
+import { useAtomValue } from 'jotai';
 
 import { Box, Button, Checkbox, Flex, Input, Select } from '/imports/ui/core';
 import { allLangs } from '/imports/startup/i18n';
+import { siteAtom } from '/imports/state';
 import { isReachable } from '/imports/api/_utils/contact';
 import {
   Address,
@@ -149,6 +151,21 @@ function ProfileForm({ profile, isSelf = false, onSubmit }: ProfileFormProps) {
 
   const [t] = useTranslation('members');
   const [ta] = useTranslation('accounts');
+  const site = useAtomValue(siteAtom);
+
+  // "Mina inställningar", or for an admin "Limmareds fotbollsklubbs
+  // inställningar" (a name ending in s takes no other)
+  const name =
+    [profile.firstName, profile.lastName].filter(Boolean).join(' ') ||
+    profile.username;
+  const settingsTitle = isSelf
+    ? t('profile.form.settings.titleMine')
+    : t(
+        `profile.form.settings.${
+          /[sxz]$/i.test(name) ? 'titleOfS' : 'titleOf'
+        }`,
+        { name }
+      );
   const [tc] = useTranslation('common');
 
   const submit = (data: Partial<ProfileFormValues>) => {
@@ -228,6 +245,60 @@ function ProfileForm({ profile, isSelf = false, onSubmit }: ProfileFormProps) {
         </div>
 
         <div className="entry-form-side">
+          {/* First, and across both columns of cards when there are two:
+              how the site speaks to them. A card of its own kind. */}
+          <section className="form-card profile-settings">
+            <h3 className="form-card-title">{settingsTitle}</h3>
+            <div className="profile-settings-grid">
+              <div>
+                <FormField label={t('profile.form.settings.language')} my="0">
+                  <Select {...register('lang')}>
+                    {allLangs.map((lang) => (
+                      <option key={lang.value} value={lang.value}>
+                        {lang.label}
+                      </option>
+                    ))}
+                  </Select>
+                </FormField>
+                <p className="profile-setting-note">
+                  {t('profile.form.settings.languageHelper')}
+                </p>
+
+                {isSelf && <OwnNotifications />}
+              </div>
+
+              <div>
+                <h4 className="profile-settings-heading">
+                  {t('profile.form.settings.notify')}
+                </h4>
+                {PREFS.map((pref) => (
+                  <div key={pref} className="profile-setting">
+                    <Controller
+                      control={control}
+                      name={`prefs.${pref}`}
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={Boolean(field.value)}
+                          id={`profile-notify-${pref}`}
+                          onChange={(event) =>
+                            field.onChange(event.target.checked)
+                          }
+                        >
+                          {t(`profile.form.settings.${pref}`)}
+                        </Checkbox>
+                      )}
+                    />
+                    <p className="profile-setting-note is-indented">
+                      {t(`profile.form.settings.${pref}Helper`, {
+                        site: site?.settings?.name || '',
+                      })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
           <FormCard title={t('profile.form.publicContact.title')}>
             <p className="form-preview-note">
               {t('profile.form.publicContact.helper')}
@@ -344,45 +415,6 @@ function ProfileForm({ profile, isSelf = false, onSubmit }: ProfileFormProps) {
               />
             </FormCard>
           )}
-
-          <FormCard title={t('profile.form.settings.title')}>
-            <FormField label={t('profile.form.settings.language')} my="2">
-              <Select {...register('lang')}>
-                {allLangs.map((lang) => (
-                  <option key={lang.value} value={lang.value}>
-                    {lang.label}
-                  </option>
-                ))}
-              </Select>
-            </FormField>
-
-            <h4 className="profile-settings-heading">
-              {t('profile.form.settings.notify')}
-            </h4>
-            <p className="form-preview-note">
-              {t('profile.form.settings.notifyHelper')}
-            </p>
-            <div className="profile-settings-checks">
-              {PREFS.map((pref) => (
-                <Controller
-                  key={pref}
-                  control={control}
-                  name={`prefs.${pref}`}
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={Boolean(field.value)}
-                      id={`profile-notify-${pref}`}
-                      onChange={(event) => field.onChange(event.target.checked)}
-                    >
-                      {t(`profile.form.settings.${pref}`)}
-                    </Checkbox>
-                  )}
-                />
-              ))}
-            </div>
-
-            {isSelf && <OwnNotifications />}
-          </FormCard>
         </div>
       </div>
 

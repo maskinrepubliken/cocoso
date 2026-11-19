@@ -66,6 +66,7 @@ labels:
     resources: Edit the place
     works: Edit the request
     profile: Edit the profile
+    myProfile: Edit my profile
   event: Event
   bookings: Bookings
   newBooking: New Booking
@@ -190,8 +191,8 @@ entryMenu:
     resources: Edit place
     works: Edit request
     info: Edit page
-    profile: Edit profile
-    userProfile: Edit profile
+    profile: Edit my profile
+    userProfile: Edit the profile
   # An admin on someone's page: the site as that person sees it
   viewAs: 'View the site as {{ name }}'
   viewAsStarted: 'You now see the site as {{ name }}'
