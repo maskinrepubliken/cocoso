@@ -41,6 +41,7 @@ import '../../api/documents/document.methods';
 
 import '../../api/resources/resource';
 import '../../api/resources/resource.methods';
+import '../../api/resources/resource.geocode';
 
 import '../../api/offerings/offering';
 import '../../api/offerings/offering.methods';
