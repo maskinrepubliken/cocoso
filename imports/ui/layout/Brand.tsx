@@ -39,13 +39,12 @@ export default function Brand({ site }: BrandProps) {
           {first}
           {rest && <span className="site-brand-name-rest">{rest}</span>}
         </span>
-        {/* On the smallest screens the initials stand for the name: "TK" */}
+        {/* On the smallest screens the initials stand for the name, as it
+            is written: "Tk" */}
         <span className="site-brand-name-short">
-          {first.charAt(0).toUpperCase()}
+          {first.charAt(0)}
           {rest && (
-            <span className="site-brand-name-rest">
-              {rest.charAt(0).toUpperCase()}
-            </span>
+            <span className="site-brand-name-rest">{rest.charAt(0)}</span>
           )}
         </span>
       </Link>
