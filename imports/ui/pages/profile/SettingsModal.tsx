@@ -36,6 +36,7 @@ interface Settings {
   name: string;
   lang: string | null;
   prefs: Prefs;
+  isPublic: boolean;
 }
 
 interface Follow {
@@ -212,6 +213,7 @@ export default function SettingsModal() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [lang, setLang] = useState('sv');
   const [prefs, setPrefs] = useState<Prefs | null>(null);
+  const [isPublic, setIsPublic] = useState(false);
   const [saving, setSaving] = useState(false);
   const [t] = useTranslation('accounts');
 
@@ -246,6 +248,7 @@ export default function SettingsModal() {
         // it is shown in
         setLang(found.lang || siteLang(i18n.language));
         setPrefs(found.prefs);
+        setIsPublic(found.isPublic);
       })
       .catch((error: any) => {
         message.error(error?.reason || error?.error);
@@ -256,6 +259,10 @@ export default function SettingsModal() {
   if (!open) {
     return null;
   }
+
+  // Whether a profile shows is the admins' to decide: for others from the
+  // members list, for themselves here
+  const ownVisibility = isSelf && role === 'admin';
 
   const save = async () => {
     if (!settings || !prefs) {
@@ -276,6 +283,10 @@ export default function SettingsModal() {
           ...(newLang ? { lang: newLang } : {}),
           prefs: changed,
         });
+      }
+      // An admin's own profile, shown to others or not
+      if (ownVisibility && isPublic !== settings.isPublic) {
+        await call('setProfilePublicAsAdmin', currentUser?._id, isPublic);
       }
       if (newLang && isSelf) {
         rememberLang(newLang);
@@ -368,6 +379,24 @@ export default function SettingsModal() {
               })}
             </p>
           </section>
+
+          {ownVisibility && (
+            <section className="settings-section">
+              <h3>{t('privacy.visibility.title')}</h3>
+              <div className="settings-checks">
+                <Checkbox
+                  checked={isPublic}
+                  id="settings-is-public"
+                  onChange={(event) => setIsPublic(event.target.checked)}
+                >
+                  {t('privacy.visibility.label')}
+                </Checkbox>
+              </div>
+              <p className="settings-note">
+                {t(`privacy.visibility.${isPublic ? 'on' : 'off'}`)}
+              </p>
+            </section>
+          )}
 
           {isSelf && <ThisDevice />}
 

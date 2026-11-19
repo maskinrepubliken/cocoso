@@ -4,6 +4,7 @@ import { check, Match } from 'meteor/check';
 import Activities from '../activities/activity';
 import { isOrganizerOf } from '../activities/activity.organizers';
 import { isAdmin } from '../users/user.roles';
+import Memberships from '../memberships/membership';
 import {
   ActivityFollows,
   ActivityUpdates,
@@ -208,6 +209,10 @@ Meteor.methods({
         owner.username,
       lang: owner.lang || null,
       prefs: prefsOf(owner),
+      // Whether the profile shows to others, for an admin's own settings
+      isPublic: Boolean(
+        (await Memberships.findOneAsync({ userId: owner._id }))?.isPublic
+      ),
     };
   },
 
