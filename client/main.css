@@ -6549,6 +6549,44 @@ body {
 .entry-sheet-status[data-status='blocked'] .entry-sheet-status-mark {
   background: var(--cocoso-lingon);
 }
+/* something the form wants said while it is filled in; saving still works */
+.entry-sheet-status[data-status='notice'] {
+  color: var(--cocoso-tegel);
+}
+.entry-sheet-status[data-status='notice'] .entry-sheet-status-mark {
+  background: var(--cocoso-tegel);
+}
+
+/* what a card of the form asks for, e.g. an organizer's email or phone:
+   as a warning while missing, quiet once given */
+.form-requirement {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0 4px !important;
+  padding: 8px 10px;
+  border-radius: var(--cocoso-radius-falt);
+  background: color-mix(in srgb, var(--cocoso-tegel) 12%, transparent);
+  color: var(--cocoso-mylla);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.form-requirement > svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--cocoso-tegel);
+}
+
+.form-requirement.is-met {
+  background: color-mix(in srgb, var(--cocoso-colors-theme-500) 12%, transparent);
+  font-weight: 500;
+}
+
+.form-requirement.is-met > svg {
+  color: var(--cocoso-colors-theme-700);
+}
 
 .entry-sheet-actions {
   flex: none;
@@ -6734,14 +6772,10 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 6px 16px;
   padding: 12px 2px 0;
   border-top: 1px solid var(--cocoso-linje);
-}
-
-.settings-delete > .settings-note {
-  margin: 0;
 }
 
 .profile-delete-link {

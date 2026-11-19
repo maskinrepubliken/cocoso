@@ -78,7 +78,8 @@ profile:
       email: E-post
       phone: Telefon
       website: Webbplats
-      required: "Som arrangör måste du ange en e-postadress eller ett telefonnummer."
+      required: "Krävs för att skapa evenemang och platser: en e-postadress eller ett telefonnummer."
+      missing: "E-post eller telefon saknas – krävs för att skapa evenemang och platser"
     address:
       title: "Hemvist"
       helper: "Där du eller gruppen brukar hålla till: en av platserna här, eller en egen adress. Nya evenemang du skapar utgår från den, och du kan alltid välja något annat för ett enskilt evenemang."

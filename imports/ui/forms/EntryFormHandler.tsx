@@ -64,6 +64,7 @@ export default function EntryFormHandler({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const formId = `entry-form-${useId().replace(/:/g, '')}`;
   const titleId = `${formId}-title`;
@@ -86,6 +87,7 @@ export default function EntryFormHandler({
     if (!open) return undefined;
     setSucceeded(false);
     setSubmitDisabled(false);
+    setNotice(null);
     const { overflow } = document.body.style;
     document.body.style.overflow = 'hidden';
     sheetRef.current?.focus({ preventScroll: true });
@@ -122,7 +124,10 @@ export default function EntryFormHandler({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, confirmOpen]);
 
-  const context = useMemo(() => ({ formId, setSubmitDisabled }), [formId]);
+  const context = useMemo(
+    () => ({ formId, setSubmitDisabled, setNotice }),
+    [formId]
+  );
 
   let statusText: string | null = null;
   if (status === 'success') {
@@ -139,6 +144,8 @@ export default function EntryFormHandler({
     statusText = tc(`message.loading.${status}`);
   } else if (submitDisabled) {
     statusText = tc('entrySheet.blocked');
+  } else if (notice) {
+    statusText = notice;
   }
 
   const sheet = (
@@ -188,7 +195,10 @@ export default function EntryFormHandler({
           <div
             aria-live="polite"
             className="entry-sheet-status"
-            data-status={status || (submitDisabled ? 'blocked' : 'idle')}
+            data-status={
+              status ||
+              (submitDisabled ? 'blocked' : notice ? 'notice' : 'idle')
+            }
             role="status"
           >
             {statusText && (

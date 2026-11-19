@@ -1,6 +1,8 @@
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useRef, useState } from 'react';
+import CheckIcon from 'lucide-react/dist/esm/icons/check';
 import CircleSlashIcon from 'lucide-react/dist/esm/icons/circle-slash';
+import TriangleAlertIcon from 'lucide-react/dist/esm/icons/triangle-alert';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import PencilLineIcon from 'lucide-react/dist/esm/icons/pencil-line';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +56,8 @@ export interface EditableProfile
   lastName?: string;
   avatar?: { src?: string } | null;
   isOrganizer?: boolean;
+  // May create events and places: an organizer, or an admin
+  createsContent?: boolean;
 }
 
 // What is saved beside the fields: the picture, only when changed
@@ -81,12 +85,13 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
   // Whether the location (Ort) was picked by hand since the address last
   // changed; else it follows the address (AddressFields suggests it)
   const locationByHand = useRef(false);
-  const { control, formState, handleSubmit, register, setValue } = useForm({
-    defaultValues: {
-      ...profile,
-      name: [profile.firstName, profile.lastName].filter(Boolean).join(' '),
-    } as Partial<ProfileFormValues>,
-  });
+  const { control, formState, handleSubmit, register, setValue, watch } =
+    useForm({
+      defaultValues: {
+        ...profile,
+        name: [profile.firstName, profile.lastName].filter(Boolean).join(' '),
+      } as Partial<ProfileFormValues>,
+    });
   const sheet = useEntryFormSheet();
   // At one of the places, at an address of their own, or nowhere in
   // particular
@@ -132,6 +137,19 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
   };
 
   const [t] = useTranslation('members');
+
+  // An organizer without an email or a phone cannot create events or
+  // places: said on the card, and beside Save while it is missing
+  const reachable = isReachable({
+    email: (watch('publicContact.email') || '').trim(),
+    phone: (watch('publicContact.phone') || '').trim(),
+  });
+  const asksContact = contactRequired || Boolean(profile.createsContent);
+  const missing = asksContact && !reachable;
+  const missingText = t('profile.form.publicContact.missing');
+  useEffect(() => {
+    sheet?.setNotice(missing ? missingText : null);
+  }, [sheet, missing, missingText]);
   const [ta] = useTranslation('accounts');
   const [tc] = useTranslation('common');
 
@@ -222,13 +240,18 @@ function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
           <FormCard title={t('profile.form.publicContact.title')}>
             <p className="form-preview-note">
               {t('profile.form.publicContact.helper')}
-              {contactRequired && (
-                <>
-                  {' '}
-                  <strong>{t('profile.form.publicContact.required')}</strong>
-                </>
-              )}
             </p>
+            {/* What an organizer must give to create events and places */}
+            {asksContact && (
+              <p className={`form-requirement ${reachable ? 'is-met' : ''}`}>
+                {reachable ? (
+                  <CheckIcon aria-hidden width={16} height={16} />
+                ) : (
+                  <TriangleAlertIcon aria-hidden width={16} height={16} />
+                )}
+                <span>{t('profile.form.publicContact.required')}</span>
+              </p>
+            )}
             <FormField label={t('profile.form.publicContact.email')} my="2">
               <Input
                 {...register('publicContact.email')}

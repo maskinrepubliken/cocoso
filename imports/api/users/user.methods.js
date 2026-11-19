@@ -291,7 +291,12 @@ Meteor.methods({
     if (!user) {
       throw new Meteor.Error('not-found', 'No such user');
     }
-    return { ...user, isOrganizer: await isOrganizer(user._id) };
+    return {
+      ...user,
+      isOrganizer: await isOrganizer(user._id),
+      // may create events and places (organizers, and admins who are not)
+      createsContent: await isContributorOrAdmin(user._id),
+    };
   },
 
   // Whether the profile form must insist on an email or a phone.
@@ -404,12 +409,11 @@ Meteor.methods({
     }
   },
 
+  // Whether a profile shows is an admin's to decide (setProfilePublicAsAdmin
+  // in user.admin.js, for anyone); these two are kept for admins' own.
   async setProfilePublicGlobally(isPublic) {
     check(isPublic, Boolean);
-    const currentUser = await Meteor.userAsync();
-    if (!currentUser) {
-      throw new Meteor.Error('Not allowed!');
-    }
+    const currentUser = await requireAdminUser();
     const userId = currentUser._id;
 
     try {
@@ -431,10 +435,7 @@ Meteor.methods({
 
   async setProfilePublic(isPublic) {
     check(isPublic, Boolean);
-    const currentUser = await Meteor.userAsync();
-    if (!currentUser) {
-      throw new Meteor.Error('Not allowed!');
-    }
+    const currentUser = await requireAdminUser();
     const userId = currentUser._id;
 
     try {
