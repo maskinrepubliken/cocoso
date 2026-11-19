@@ -936,11 +936,12 @@ offerings:
     shop: For sale
   pageTitle: Eat, shop and stay
   chooseKind: Choose what you are looking for
+  or: " or "
   noneOfKind: "Nothing for {{kind}} here yet."
   kindTexts:
     eat: Cafés, restaurants and farm cafés.
     stay: Hotels, hostels and cottages to stay in.
-    service: Crafts, repairs and other help to be had.
+    service: Massage, hairdressing, crafts and other help to be had.
     shop: Shops, farm shops and second hand.
   visitWebsite: Visit the website
   form:

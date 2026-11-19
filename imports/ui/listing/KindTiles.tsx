@@ -3,7 +3,9 @@ import { styled } from '/stitches.config';
 // The kinds at the top of a listing as tiles to filter by, each in its own
 // colour with an icon, a count and a line about it: Förfrågningar's kinds,
 // and what is offered on Äta, handla och bo. Pass the tile's colour as
-// its background, and the icon's as KindIcon's.
+// its background, and the icon's as KindIcon's. `compact` makes them
+// smaller, for a page where the tiles are less the point than what is
+// below them.
 
 const ink = '#151515';
 const green = 'var(--cocoso-colors-theme-800)';
@@ -13,6 +15,15 @@ const green = 'var(--cocoso-colors-theme-800)';
 export const Kinds = styled('div', {
   display: 'grid',
   gap: '0.6rem',
+  variants: {
+    compact: {
+      true: {
+        gap: '0.5rem',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+        marginBottom: '1.1rem',
+      },
+    },
+  },
   gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
   marginBottom: '1.5rem',
   '@media (max-width: 600px)': {
@@ -46,6 +57,14 @@ export const KindTile = styled('button', {
   variants: {
     selected: { true: { borderColor: green } },
     dimmed: { true: { opacity: 0.55 } },
+    compact: {
+      true: {
+        borderRadius: '14px',
+        gap: '0.15rem',
+        padding: '0.5rem 0.7rem',
+        '@media (max-width: 600px)': { width: '116px' },
+      },
+    },
   },
   '@media (max-width: 600px)': {
     flex: '0 0 auto',
@@ -77,6 +96,15 @@ export const KindIcon = styled('span', {
     width: '1.8rem',
     '& svg': { height: '1rem', width: '1rem' },
   },
+  variants: {
+    compact: {
+      true: {
+        height: '1.6rem',
+        width: '1.6rem',
+        '& svg': { height: '0.9rem', width: '0.9rem' },
+      },
+    },
+  },
 });
 
 export const KindCount = styled('span', {
@@ -91,6 +119,9 @@ export const KindName = styled('span', {
   fontSize: '1.02rem',
   fontWeight: 700,
   '@media (max-width: 600px)': { fontSize: '0.92rem', whiteSpace: 'nowrap' },
+  variants: {
+    compact: { true: { fontSize: '0.92rem' } },
+  },
 });
 
 export const KindText = styled('span', {
@@ -98,4 +129,7 @@ export const KindText = styled('span', {
   lineHeight: 1.35,
   opacity: 0.85,
   '@media (max-width: 600px)': { display: 'none' },
+  variants: {
+    compact: { true: { fontSize: '0.75rem', lineHeight: 1.3 } },
+  },
 });

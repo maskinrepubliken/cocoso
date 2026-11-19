@@ -1,7 +1,8 @@
-// What a place can offer, in the order of the tabs and of the sections on
-// the Äta, handla & bo page: Mat & fika, Boende, Tjänster, Försäljning.
+// What a place can offer, in the order of the tiles and sections on the
+// Äta, handla och bo page and of the editor's choices: Mat & fika, Boende,
+// Försäljning, Tjänster.
 // Names live in common.yml under offerings.kinds.<key>.
-export const OFFERING_KINDS = ['eat', 'stay', 'service', 'shop'] as const;
+export const OFFERING_KINDS = ['eat', 'stay', 'shop', 'service'] as const;
 
 export type OfferingKind = (typeof OFFERING_KINDS)[number];
 

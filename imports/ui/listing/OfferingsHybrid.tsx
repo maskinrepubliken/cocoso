@@ -7,7 +7,8 @@ import PhoneIcon from 'lucide-react/dist/esm/icons/phone';
 import GlobeIcon from 'lucide-react/dist/esm/icons/globe';
 import UtensilsIcon from 'lucide-react/dist/esm/icons/utensils';
 import BedIcon from 'lucide-react/dist/esm/icons/bed-double';
-import WrenchIcon from 'lucide-react/dist/esm/icons/wrench';
+import HandHeartIcon from 'lucide-react/dist/esm/icons/hand-heart';
+import CheckIcon from 'lucide-react/dist/esm/icons/check';
 import ShoppingBagIcon from 'lucide-react/dist/esm/icons/shopping-bag';
 
 import { styled } from '/stitches.config';
@@ -45,8 +46,8 @@ import {
 
 // Äta, handla och bo: the places that offer something — food, a bed,
 // services, things for sale. The page opens with the kinds of offering as
-// tiles to filter by, as Förfrågningar does (?kind=eat); below them the
-// places come under what they offer, in the order of the kinds, a place
+// tiles to tick, one or more (?kind=eat,shop; none shows all); below
+// them the places come under what they offer, in the order of the kinds, a place
 // offering several under each. Which part of the municipality is shown
 // follows the address (/uddebo/businesses), as on the other listings. The
 // cards speak the same picture language as the place cards — a photo with
@@ -68,7 +69,7 @@ const KIND_LOOK: Record<Kind, { ink: string; light: string }> = {
 const KIND_ICON: Record<Kind, typeof UtensilsIcon> = {
   eat: UtensilsIcon,
   stay: BedIcon,
-  service: WrenchIcon,
+  service: HandHeartIcon,
   shop: ShoppingBagIcon,
 };
 
@@ -458,17 +459,22 @@ export default function OfferingsHybrid({
   // manor with a restaurant and rooms, is under each.
   const shown = current ? inPlace(current._id) : all;
 
-  // The kind chosen among the tiles, if any
+  // The kinds ticked among the tiles (?kind=eat,shop); none ticked shows
+  // them all. A tile ticks and unticks its kind.
   const [searchParams, setSearchParams] = useSearchParams();
-  const wanted = searchParams.get('kind');
-  const selected = OFFERING_KINDS.find((kind) => kind === wanted) || null;
-  const choose = (kind: Kind | null) =>
+  const wanted = (searchParams.get('kind') || '').split(',');
+  const selected = OFFERING_KINDS.filter((kind) => wanted.includes(kind));
+  const isOn = (kind: string) => selected.includes(kind as Kind);
+  const toggle = (kind: Kind) =>
     setSearchParams(
       (params) => {
-        if (!kind || kind === selected) {
-          params.delete('kind');
+        const next = isOn(kind)
+          ? selected.filter((k) => k !== kind)
+          : OFFERING_KINDS.filter((k) => k === kind || isOn(k));
+        if (next.length) {
+          params.set('kind', next.join(','));
         } else {
-          params.set('kind', kind);
+          params.delete('kind');
         }
         return params;
       },
@@ -515,7 +521,7 @@ export default function OfferingsHybrid({
       items: shown.filter((b) => !b.offerings?.length),
     })
     .filter(({ items }) => items.length > 0)
-    .filter(({ kind }) => !selected || kind === selected);
+    .filter(({ kind }) => !selected.length || isOn(kind));
 
   return (
     <>
@@ -527,27 +533,29 @@ export default function OfferingsHybrid({
       />
 
       <Page>
-        <Kinds role="group" aria-label={t('offerings.chooseKind')}>
+        <Kinds compact role="group" aria-label={t('offerings.chooseKind')}>
           {OFFERING_KINDS.map((kind) => {
             const Icon = KIND_ICON[kind];
             return (
               <KindTile
                 key={kind}
-                aria-pressed={kind === selected}
+                aria-pressed={isOn(kind)}
+                compact
                 css={{ background: lookOf(kind).light }}
-                dimmed={Boolean(selected) && kind !== selected}
-                selected={kind === selected}
+                dimmed={selected.length > 0 && !isOn(kind)}
+                selected={isOn(kind)}
                 type="button"
-                onClick={() => choose(kind)}
+                onClick={() => toggle(kind)}
               >
                 <KindHead>
-                  <KindIcon css={{ background: lookOf(kind).ink }}>
-                    <Icon />
+                  {/* Ticked: a tick in place of its icon */}
+                  <KindIcon compact css={{ background: lookOf(kind).ink }}>
+                    {isOn(kind) ? <CheckIcon /> : <Icon />}
                   </KindIcon>
                   <KindCount>{countOf(kind)}</KindCount>
                 </KindHead>
-                <KindName>{t(`offerings.kinds.${kind}`)}</KindName>
-                <KindText>{t(`offerings.kindTexts.${kind}`)}</KindText>
+                <KindName compact>{t(`offerings.kinds.${kind}`)}</KindName>
+                <KindText compact>{t(`offerings.kindTexts.${kind}`)}</KindText>
               </KindTile>
             );
           })}
@@ -576,10 +584,12 @@ export default function OfferingsHybrid({
           </Section>
         ))}
 
-        {selected && sections.length === 0 && shown.length > 0 && (
+        {selected.length > 0 && sections.length === 0 && shown.length > 0 && (
           <Notice>
             {t('offerings.noneOfKind', {
-              kind: t(`offerings.kinds.${selected}`).toLowerCase(),
+              kind: selected
+                .map((kind) => t(`offerings.kinds.${kind}`).toLowerCase())
+                .join(t('offerings.or')),
             })}
           </Notice>
         )}

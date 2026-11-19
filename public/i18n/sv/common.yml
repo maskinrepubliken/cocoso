@@ -933,11 +933,12 @@ offerings:
     shop: Försäljning
   pageTitle: Äta, handla och bo
   chooseKind: Välj vad du letar efter
+  or: " eller "
   noneOfKind: "Inget med {{kind}} här än."
   kindTexts:
     eat: Kaféer, restauranger och gårdskaféer.
     stay: Hotell, vandrarhem och stugor att bo i.
-    service: Hantverk, reparationer och annat man kan få hjälp med.
+    service: Massage, frisör, hantverk och annat man kan få hjälp med.
     shop: Butiker, gårdsbutiker och second hand.
   visitWebsite: Besök hemsidan
   form:
