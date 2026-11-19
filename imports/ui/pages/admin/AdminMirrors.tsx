@@ -296,7 +296,11 @@ function MirrorForm({
         {t('mirrors.form.source')}
       </Heading>
       <FormField
-        helper={t('mirrors.form.sourceName.helper')}
+        helper={t(
+          isCinema
+            ? 'mirrors.form.sourceName.helperCinema'
+            : 'mirrors.form.sourceName.helper'
+        )}
         label={t('mirrors.form.sourceName.label')}
         required
       >
@@ -437,7 +441,7 @@ function MirrorForm({
         />
       </FormField>
 
-      <FormField helper={t('mirrors.form.enabled.helper')}>
+      <FormField>
         <Controller
           control={control}
           name="isEnabled"

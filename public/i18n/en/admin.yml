@@ -288,14 +288,15 @@ mirrors:
       label: The cinema's own site
       helper: Linked from every event. Filled in from bio.se when you choose the cinema; change it if there is a better address, or leave it empty for no link.
     posters:
-      label: We have permission to show the film posters
-      helper: The posters belong to the film distributors. Without this, the events show the picture of the place instead.
+      label: Show the film posters
+      helper: The posters belong to the film distributors, so only tick this if you have their permission. Without it, the events show the picture of the place instead.
     name:
       label: Name
     source: From
     sourceName:
       label: Name of the source
       helper: Shown to visitors, as in "Read more and sign up at Knallebiblioteken"
+      helperCinema: Shown to visitors, as in "Read more and buy tickets at bio.se"
     customerId:
       label: Axiell customer id
       helper: The library group's id in Axiell's event calendar
@@ -318,8 +319,7 @@ mirrors:
       helper: Most events get their kind from the source's tags
       helperCinema: Every screening gets these kinds
     enabled:
-      label: Sync every hour
-      helper: Switched off, the mirror only runs when you press "Sync now"
+      label: Update the events automatically every hour
     choose: Choose…
   message:
     saved: The mirror is saved

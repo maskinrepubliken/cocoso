@@ -288,14 +288,15 @@ mirrors:
       label: Biografens egen sida
       helper: Länkas från varje evenemang. Fylls i från bio.se när du väljer biograf; ändra om det finns en bättre adress, eller lämna tomt för ingen länk.
     posters:
-      label: Vi har tillstånd att visa filmaffischerna
-      helper: Affischerna tillhör filmdistributörerna. Utan kryss visar evenemangen platsens bild i stället.
+      label: Visa filmaffischerna
+      helper: Affischerna tillhör filmdistributörerna, så kryssa bara i om ni har tillstånd. Utan kryss visar evenemangen platsens bild i stället.
     name:
       label: Namn
     source: Från
     sourceName:
       label: Källans namn
       helper: Visas för besökare, som i "Läs mer och anmäl dig hos Knallebiblioteken"
+      helperCinema: Visas för besökare, som i "Läs mer och köp biljett hos bio.se"
     customerId:
       label: Axiell-kund-id
       helper: Biblioteksgruppens id i Axiells evenemangskalender
@@ -318,8 +319,7 @@ mirrors:
       helper: De flesta evenemang får sin kategori från källans taggar
       helperCinema: Alla föreställningar får de här kategorierna
     enabled:
-      label: Synka varje timme
-      helper: Avslagen körs speglingen bara när du trycker "Synka nu"
+      label: Uppdatera evenemangen automatiskt varje timme
     choose: Välj…
   message:
     saved: Speglingen är sparad
