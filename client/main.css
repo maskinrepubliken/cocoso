@@ -6729,21 +6729,37 @@ body {
 
 /* --- the settings dialog: deleting the account --- */
 
-/* small and out of the way on purpose */
+/* Last, under a line: plain to see and read, still no big button */
+.settings-delete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 12px 2px 0;
+  border-top: 1px solid var(--cocoso-linje);
+}
+
+.settings-delete > .settings-note {
+  margin: 0;
+}
+
 .profile-delete-link {
-  display: block;
-  margin: 6px 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 0;
   border: 0;
   background: none;
-  color: var(--cocoso-mylla-soft);
-  font-size: 11px;
+  color: var(--cocoso-colors-red-600, #b3261e);
+  font-size: 13px;
+  font-weight: 600;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .profile-delete-link:hover {
-  color: var(--cocoso-colors-red-600, #b3261e);
+  color: var(--cocoso-colors-red-700, #8c1d18);
 }
 
 @container entry-sheet (min-width: 900px) {

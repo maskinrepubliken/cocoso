@@ -110,7 +110,8 @@ report:
 
 
 delete:
-  action: Radera konto
+  action: Radera mitt konto
+  note: Tar bort kontot och allt som hör till det, för gott.
   label: Bekräfta radering
   title: Är du säker?
   body: Du är på väg att permanent radera hela ditt konto och all data som är kopplad till det. Detta är en oåterkallelig handling. Är du säker?

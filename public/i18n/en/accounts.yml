@@ -110,7 +110,8 @@ report:
 
 
 delete:
-  action: Delete Account
+  action: Delete my account
+  note: Removes the account and everything that belongs to it, for good.
   label: Confirm Deletion
   title: Are you sure?
   body: You are about to permanently delete your entire account and all data associated with that. This is an irreversible action. Are you sure?

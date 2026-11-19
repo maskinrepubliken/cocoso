@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useSetAtom } from 'jotai';
+import Trash2Icon from 'lucide-react/dist/esm/icons/trash-2';
 
 import { Input, Modal, Text } from '/imports/ui/core';
 import FormField from '/imports/ui/forms/FormField';
@@ -16,8 +17,8 @@ interface DeleteAccountProps {
   username: string;
 }
 
-// Deleting one's account, last in the settings dialog: a small link, kept
-// out of the way, and a dialog that only goes through once the username
+// Deleting one's account, last in the settings dialog: a line saying
+// what it does and a small red link, kept out of the way, and a dialog that only goes through once the username
 // is written out.
 export default function DeleteAccount({ username }: DeleteAccountProps) {
   const setCurrentUser = useSetAtom(currentUserAtom);
@@ -64,13 +65,17 @@ export default function DeleteAccount({ username }: DeleteAccountProps) {
 
   return (
     <>
-      <button
-        type="button"
-        className="profile-delete-link"
-        onClick={() => setOpen(true)}
-      >
-        {t('delete.action')}
-      </button>
+      <div className="settings-delete">
+        <p className="settings-note">{t('delete.note')}</p>
+        <button
+          type="button"
+          className="profile-delete-link"
+          onClick={() => setOpen(true)}
+        >
+          <Trash2Icon aria-hidden width={14} height={14} />
+          {t('delete.action')}
+        </button>
+      </div>
 
       <Modal
         id="edit-profile-delete-account-confirm"
