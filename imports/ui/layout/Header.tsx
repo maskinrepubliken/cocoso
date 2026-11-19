@@ -465,7 +465,13 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         <button
           type="button"
           className={`site-more ${menuOpen ? 'is-open' : ''}`}
-          aria-label={tc('menu.allSections')}
+          aria-label={[
+            current?.label,
+            section === '' && tc('menu.hint'),
+            tc('menu.allSections'),
+          ]
+            .filter(Boolean)
+            .join(' – ')}
           aria-expanded={menuOpen}
           aria-controls="site-menu-panel"
           onClick={() => setMenuOpen((open) => !open)}

@@ -1822,7 +1822,6 @@ body {
 
 .rbc-calendar .rbc-off-range {
   color: var(--cocoso-mylla-soft);
-  opacity: 0.5;
 }
 
 .rbc-day-bg:not(.rbc-off-range-bg) {
@@ -2609,7 +2608,7 @@ body {
 }
 
 .site-brand-name-rest {
-  color: color-mix(in oklab, var(--cocoso-colors-theme-500) 62%, #8c8571);
+  color: color-mix(in oklab, var(--cocoso-colors-theme-500) 62%, #6f6a58);
 }
 
 /* A phone has no room for the whole name beside the menu button: the
@@ -4438,6 +4437,19 @@ body {
 }
 
 /* === Skip link === */
+
+/* Text for screen readers only */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .skip-link {
   position: absolute;

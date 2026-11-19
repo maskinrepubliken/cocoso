@@ -208,7 +208,7 @@ const OnPicture = styled('div', {
 // "Öppet nu · till 16" on the photo, the first thing the eye finds.
 const OpenBadge = styled('span', {
   alignItems: 'center',
-  backgroundColor: '#2f8a3e',
+  backgroundColor: '#2b7d38',
   borderRadius: '999px',
   boxShadow: '0 2px 6px rgba(0, 0, 0, 0.25)',
   color: '#fff',

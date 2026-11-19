@@ -7,13 +7,15 @@ const getColor = (hue: number, lightness: string, saturation: number = 80) =>
 // "Hemma i Tranemo": the materials that do not come from the admin's hue.
 // Paper for islands, mylla for text, tegel as the warm accent for what is
 // near in time, lingon only for errors and counters. See docs/design.
+// Tegel and the season accents are dark enough to be read as small text on
+// paper and on every season's floor (WCAG 2.1 AA, 4.5:1).
 const MATERIALS = `
       --cocoso-papper: #fffdf7;
       --cocoso-mylla: #22302a;
       --cocoso-mylla-soft: #5c6b60;
       --cocoso-linje: #d5dfc2;
-      --cocoso-tegel: #c8613a;
-      --cocoso-tegel-600: #a84e2d;
+      --cocoso-tegel: #ad4f2c;
+      --cocoso-tegel-600: #8f4024;
       --cocoso-tegel-100: #f6dfd2;
       --cocoso-lingon: #a8323a;
       --cocoso-lingon-100: #f5dcdc;
@@ -36,25 +38,25 @@ const SEASON_VARS: Record<Season, string> = {
       --cocoso-season-glod-a: #b9dba0;
       --cocoso-season-glod-b: #f2e6b8;
       --cocoso-season-tavla: #cfe4b4;
-      --cocoso-season-accent: #c8613a;`,
+      --cocoso-season-accent: #ad4f2c;`,
   sommar: `
       --cocoso-season-golv: #edf3df;
       --cocoso-season-glod-a: #f1dc8a;
       --cocoso-season-glod-b: #b9dba0;
       --cocoso-season-tavla: #cfe4b4;
-      --cocoso-season-accent: #c8613a;`,
+      --cocoso-season-accent: #ad4f2c;`,
   host: `
       --cocoso-season-golv: #eeeedb;
       --cocoso-season-glod-a: #d9c79a;
       --cocoso-season-glod-b: #d8bfa9;
       --cocoso-season-tavla: #d9c79a;
-      --cocoso-season-accent: #c8613a;`,
+      --cocoso-season-accent: #ad4f2c;`,
   vinter: `
       --cocoso-season-golv: #eceee7;
       --cocoso-season-glod-a: #cfe0ea;
       --cocoso-season-glod-b: #cdc3b4;
       --cocoso-season-tavla: #cfe0ea;
-      --cocoso-season-accent: #b9603f;`,
+      --cocoso-season-accent: #a04a2b;`,
 };
 
 /**
@@ -68,6 +70,7 @@ export const getGlobalStyles = (
   const hue = theme?.hue || 220;
   // The light shades (50–400) use `hue`; the dark ones (500–900), used for
   // text, buttons and details, can have a hue of their own.
+  // 500 is the lightest shade white text still reads on (WCAG 2.1 AA).
   const saturation = Number(theme?.saturation) || 80;
   const accentHue = theme?.accentHue || hue;
   const accentSaturation = Number(theme?.accentSaturation) || saturation;
@@ -96,10 +99,10 @@ export const getGlobalStyles = (
         isGray ? 'rgb(105, 100, 95)' : getColor(hue, '65', saturation)
       };
       --cocoso-colors-theme-500: ${
-        isGray ? 'rgb(88, 80, 75)' : getColor(accentHue, '40', accentSaturation)
+        isGray ? 'rgb(88, 80, 75)' : getColor(accentHue, '33', accentSaturation)
       };
       --cocoso-colors-theme-600: ${
-        isGray ? 'rgb(78, 70, 65)' : getColor(accentHue, '32', accentSaturation)
+        isGray ? 'rgb(78, 70, 65)' : getColor(accentHue, '27', accentSaturation)
       };
       --cocoso-colors-theme-700: ${
         isGray ? 'rgb(68, 60, 52)' : getColor(accentHue, '20', accentSaturation)

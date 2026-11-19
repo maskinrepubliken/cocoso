@@ -99,10 +99,12 @@ export function LightboxTrigger({
     <button
       type="button"
       className={`lightbox-trigger ${className}`}
-      aria-label={tc('lightbox.open')}
       onClick={() => lightbox.open(src)}
     >
       {children}
+      {/* Read after the picture's own text, so the button's name starts
+          with what is seen (WCAG 2.5.3) */}
+      <span className="visually-hidden">{tc('lightbox.open')}</span>
       {showCount && count > 1 && (
         <span className="lightbox-count-badge" aria-hidden>
           1 / {count}

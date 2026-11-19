@@ -9,8 +9,8 @@ export interface KindColors {
 
 const KIND_COLORS: Record<string, KindColors> = {
   kultur: { ink: '#6b3a7a', tint: '#ebdcef' }, // plum
-  idrott: { ink: '#b8441f', tint: '#f6dccf' }, // brick red
-  barn: { ink: '#a8701a', tint: '#f6e6c3' }, // honey
+  idrott: { ink: '#a13a19', tint: '#f6dccf' }, // brick red
+  barn: { ink: '#855610', tint: '#f6e6c3' }, // honey
   bio: { ink: '#8a4a2a', tint: '#f1dfd0' }, // clay
   senior: { ink: '#9a3f5c', tint: '#f3d9e1' }, // dusty rose
   natur: { ink: '#1e4f1b', tint: '#dcebc6' }, // forest

@@ -114,7 +114,7 @@ export default function PlaceMap({
       aria-label={label || tc('address.map')}
       css={{ height }}
       ref={container}
-      role="img"
+      role="group"
     >
       {failed && <Fallback>{tc('address.mapUnavailable')}</Fallback>}
     </Frame>
