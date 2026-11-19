@@ -227,9 +227,15 @@ privacy:
   saved: Your setting has been saved.
   visibility:
     title: Visibility
-    label: Show my profile to others
-    on: Visitors can see your profile page with your name, picture and description, and you are listed under Organizers.
-    off: Your profile is not shown to others and you are not listed under Organizers – only you and the site's administrators see it.
+    label:
+      mine: Show my profile to others
+      theirs: Show the profile to others
+    on:
+      mine: Visitors can see your profile page with your name, picture and description, and you are listed under Organizers.
+      theirs: Visitors can see the profile page with name, picture and description, and the person is listed under Organizers.
+    off:
+      mine: Your profile is not shown to others and you are not listed under Organizers – only you and the site's administrators see it.
+      theirs: The profile is not shown to others and the person is not listed under Organizers – only they and the site's administrators see it.
   role:
     title: Your role
     current: 'Role: <strong>{{role}}</strong>'

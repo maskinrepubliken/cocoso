@@ -36,6 +36,9 @@ interface Settings {
   name: string;
   lang: string | null;
   prefs: Prefs;
+  userId: string;
+  // An admin's settings: whether the profile shows is chosen here
+  isAdmin: boolean;
   isPublic: boolean;
 }
 
@@ -260,9 +263,10 @@ export default function SettingsModal() {
     return null;
   }
 
-  // Whether a profile shows is the admins' to decide: for others from the
-  // members list, for themselves here
-  const ownVisibility = isSelf && role === 'admin';
+  // Whether a profile shows is the admins' to decide: for an admin's
+  // profile here, their own or another admin's; for everyone else from
+  // the members list
+  const ownVisibility = role === 'admin' && Boolean(settings?.isAdmin);
 
   const save = async () => {
     if (!settings || !prefs) {
@@ -284,9 +288,9 @@ export default function SettingsModal() {
           prefs: changed,
         });
       }
-      // An admin's own profile, shown to others or not
+      // An admin's profile, shown to others or not
       if (ownVisibility && isPublic !== settings.isPublic) {
-        await call('setProfilePublicAsAdmin', currentUser?._id, isPublic);
+        await call('setProfilePublicAsAdmin', settings.userId, isPublic);
       }
       if (newLang && isSelf) {
         rememberLang(newLang);
@@ -389,11 +393,11 @@ export default function SettingsModal() {
                   id="settings-is-public"
                   onChange={(event) => setIsPublic(event.target.checked)}
                 >
-                  {t('privacy.visibility.label')}
+                  {t(`privacy.visibility.label.${who}`)}
                 </Checkbox>
               </div>
               <p className="settings-note">
-                {t(`privacy.visibility.${isPublic ? 'on' : 'off'}`)}
+                {t(`privacy.visibility.${isPublic ? 'on' : 'off'}.${who}`)}
               </p>
             </section>
           )}

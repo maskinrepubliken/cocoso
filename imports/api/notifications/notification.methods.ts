@@ -202,6 +202,7 @@ Meteor.methods({
   async getProfileSettings(username) {
     check(username, String);
     const owner = await settingsOwner(username);
+    const membership = await Memberships.findOneAsync({ userId: owner._id });
     return {
       username: owner.username,
       name:
@@ -209,10 +210,11 @@ Meteor.methods({
         owner.username,
       lang: owner.lang || null,
       prefs: prefsOf(owner),
-      // Whether the profile shows to others, for an admin's own settings
-      isPublic: Boolean(
-        (await Memberships.findOneAsync({ userId: owner._id }))?.isPublic
-      ),
+      // Whether the profile shows to others, which the settings of an
+      // admin let admins choose
+      userId: owner._id,
+      isAdmin: membership?.role === 'admin',
+      isPublic: Boolean(membership?.isPublic),
     };
   },
 
