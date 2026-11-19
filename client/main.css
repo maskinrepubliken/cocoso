@@ -6187,6 +6187,10 @@ body {
   inset: 0;
   z-index: 2000;
   display: grid;
+  /* One cell the size of the screen less the padding, so the picture's
+     max-width and max-height have something to be a share of: without it
+     a tall picture shows at its own size, past the bottom */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   place-items: center;
   padding: 64px 72px;
   background: rgba(16, 28, 14, 0.88);
