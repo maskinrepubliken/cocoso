@@ -173,21 +173,20 @@ Meteor.methods({
     ).fetchAsync();
   },
 
-  // The map point of an address as it is typed in the place form, so the
+  // The map point of an address as it is typed in an address form, so the
   // form's map can follow it: { point, precision }, or when the address
   // cannot be found { town } (its town's middle, or null) for the map to
   // show around while the pin is put by hand. The precision is 'known'
   // for an address a saved place already has, with that place's point (so
   // a pin once put right is found again), 'house', or 'street' when only
-  // the street was found. For those who may add places.
+  // the street was found. For those signed in (every address form).
   async findAddressPoint(address) {
     check(address, {
       street: Match.Maybe(String),
       postalCode: Match.Maybe(String),
       city: Match.Maybe(String),
     });
-    const user = await Meteor.userAsync();
-    if (!user || !(await isContributorOrAdmin(user._id))) {
+    if (!Meteor.userId()) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     const street = (address.street || '').trim();
@@ -224,12 +223,11 @@ Meteor.methods({
       : { town: await geocodeTown(city) };
   },
 
-  // The other way, for the place form's map: the address at a point put
-  // on it, or null. For those who may add places.
+  // The other way, for an address form's map: the address at a point put
+  // on it, or null. For those signed in (every address form).
   async findPointAddress(coordinates) {
     check(coordinates, { lat: Number, lng: Number });
-    const user = await Meteor.userAsync();
-    if (!user || !(await isContributorOrAdmin(user._id))) {
+    if (!Meteor.userId()) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
     return await geocodePoint(coordinates);

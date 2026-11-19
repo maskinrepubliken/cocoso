@@ -7,8 +7,7 @@ import GenericEntryForm from '/imports/ui/forms/GenericEntryForm';
 import ImageUploader from '/imports/ui/forms/ImageUploader';
 import FormField from '/imports/ui/forms/FormField';
 import LocationSelect from '/imports/ui/forms/LocationSelect';
-import { emptyAddress } from '/imports/ui/forms/AddressFields';
-import PlaceAddressFields from '/imports/ui/forms/PlaceAddressFields';
+import AddressFields, { emptyAddress } from '/imports/ui/forms/AddressFields';
 import ContactFields, { emptyContact } from '/imports/ui/forms/ContactFields';
 import { Address, isCompleteAddress } from '/imports/api/_utils/address';
 import { Contact, isReachable } from '/imports/api/_utils/contact';
@@ -119,7 +118,7 @@ function possibleParents(
 }
 
 // How a place is given: part of another, or where it is, as an address
-// and a point on the map kept in step (PlaceAddressFields).
+// and a point on the map kept in step (AddressFields).
 type Placement = 'address' | 'parent';
 const placementOf = (resource?: ResourceData): Placement =>
   resource?.parentId ? 'parent' : 'address';
@@ -281,45 +280,18 @@ function PlaceForm({
   const managers: OrganizerDefaults[] = (state.managerIds || [])
     .map((id: string) => managerProfiles[id])
     .filter(Boolean);
-  // Ort follows the address: once its town or point is known, the location
-  // named so or nearest is chosen, unless one was picked by hand since the
-  // address last changed. Not when the form opens: a saved place keeps its
-  // location until its address is changed.
+  // Ort follows the address (AddressFields suggests it), unless one was
+  // picked by hand since the address last changed
   const locationByHand = useRef(false);
-  const addressSeen = useRef(false);
-  const town = (state.address?.city || '').trim();
-  const point = state.address?.coordinates;
-  useEffect(() => {
-    if (!addressSeen.current) {
-      addressSeen.current = true;
-      return undefined;
+  const takeLocation = (locationId: string) => {
+    if (!locationByHand.current) {
+      setState((prevState: any) =>
+        prevState.locationId === locationId
+          ? prevState
+          : { ...prevState, locationId }
+      );
     }
-    if (state.placement === 'parent' || (!town && !point)) {
-      return undefined;
-    }
-    locationByHand.current = false;
-    let cancelled = false;
-    const timer = setTimeout(() => {
-      call<string | null>('suggestLocationFor', {
-        city: town,
-        coordinates: point ? { lat: point.lat, lng: point.lng } : null,
-      })
-        .then((locationId) => {
-          if (!cancelled && locationId && !locationByHand.current) {
-            setState((prevState: any) =>
-              prevState.locationId === locationId
-                ? prevState
-                : { ...prevState, locationId }
-            );
-          }
-        })
-        .catch(() => null);
-    }, 600);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [town, point?.lat, point?.lng, state.placement]);
+  };
 
   // A manager taken off the list falls back to the place's own details
   const isOwnContact =
@@ -504,11 +476,13 @@ function PlaceForm({
             </>
           ) : (
             <>
-              <PlaceAddressFields
+              <AddressFields
                 value={state.address}
-                onChange={(address) =>
-                  setState((prevState: any) => ({ ...prevState, address }))
-                }
+                onChange={(address) => {
+                  locationByHand.current = false;
+                  setState((prevState: any) => ({ ...prevState, address }));
+                }}
+                onLocationSuggested={takeLocation}
               />
               <FormField
                 helper={tc('locations.form.helperResource')}

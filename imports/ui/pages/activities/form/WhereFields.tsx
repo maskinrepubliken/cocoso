@@ -41,6 +41,8 @@ interface WhereFieldsProps {
   onAddressChange: (address: Partial<Address>) => void;
   onPlaceNameChange: (name: string) => void;
   onLocationChange: (choice: LocationChoice) => void;
+  // The location an address of its own is in, as AddressFields finds it
+  onLocationSuggested?: (locationId: string) => void;
 }
 
 export default function WhereFields({
@@ -58,6 +60,7 @@ export default function WhereFields({
   onAddressChange,
   onPlaceNameChange,
   onLocationChange,
+  onLocationSuggested,
 }: WhereFieldsProps) {
   const [t] = useTranslation('activities');
 
@@ -151,7 +154,11 @@ export default function WhereFields({
                     onChange={(event) => onPlaceNameChange(event.target.value)}
                   />
                 </FormField>
-                <AddressFields value={address} onChange={onAddressChange} />
+                <AddressFields
+                  value={address}
+                  onChange={onAddressChange}
+                  onLocationSuggested={onLocationSuggested}
+                />
               </>
             ),
           },

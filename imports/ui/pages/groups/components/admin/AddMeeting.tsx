@@ -91,8 +91,8 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
     mode === 'place'
       ? place && { resource: place.label, resourceId: place._id }
       : mode === 'address'
-        ? formatAddress(address) && { address: address as Address }
-        : placeText.trim() && { place: placeText.trim() };
+      ? formatAddress(address) && { address: address as Address }
+      : placeText.trim() && { place: placeText.trim() };
   const endTime =
     when.endTime ||
     dayjs(`2000-01-01 ${when.startTime}`).add(1, 'hour').format('HH:mm');
@@ -194,11 +194,7 @@ export default function AddMeeting({ onClose }: { onClose: () => void }) {
                 label: t('meeting.form.modeAddress'),
                 icon: <HouseIcon aria-hidden />,
                 content: (
-                  <AddressFields
-                    mode="street"
-                    value={address}
-                    onChange={setAddress}
-                  />
+                  <AddressFields value={address} onChange={setAddress} />
                 ),
               },
               {

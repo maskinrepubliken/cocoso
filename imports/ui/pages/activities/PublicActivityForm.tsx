@@ -354,6 +354,9 @@ function ActivityForm({
     }));
   }, [author, state.whereMode]);
 
+  // Whether the location (Ort) of an address of its own was picked by hand
+  // since the address last changed
+  const locationByHand = useRef(false);
   const whereMode: WhereMode = state.whereMode || 'place';
 
   // Editing, and the time or place is no longer what it was: worth telling
@@ -757,10 +760,22 @@ function ActivityForm({
             placeName={state.placeName}
             resources={state.resources}
             selectedResource={state.selectedResource}
-            onAddressChange={(address) =>
-              setState((prevState: any) => ({ ...prevState, address }))
-            }
-            onLocationChange={({ locationId }) =>
+            onAddressChange={(address) => {
+              locationByHand.current = false;
+              setState((prevState: any) => ({ ...prevState, address }));
+            }}
+            onLocationChange={({ locationId }) => {
+              locationByHand.current = true;
+              setState((prevState: any) => ({
+                ...prevState,
+                locationId,
+                locationPicked: true,
+              }));
+            }}
+            onLocationSuggested={(locationId) =>
+              // Ort follows the address, unless picked by hand since it
+              // last changed
+              !locationByHand.current &&
               setState((prevState: any) => ({
                 ...prevState,
                 locationId,
