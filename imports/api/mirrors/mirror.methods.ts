@@ -9,6 +9,7 @@ import { cleanKinds } from '../_utils/kinds';
 import { EVENT_KIND_KEYS } from '../../ui/pages/activities/eventKinds';
 import Mirrors, { MIRROR_KINDS, type MirrorDoc } from './mirror';
 import { fetchAxiellLocations } from './axiell';
+import { fetchBioSeCinemas } from './bioSe';
 import { runMirrorAlone, syncMirror } from './mirror.sync';
 
 // Admin → Speglingar: setting mirrors up, trying them and running them.
@@ -27,10 +28,14 @@ const valuesPattern = {
   kind: Match.Where((kind: unknown) =>
     (MIRROR_KINDS as readonly unknown[]).includes(kind)
   ),
-  customerId: String,
-  sourceLocation: String,
+  sourceLocation: Match.Maybe(String),
   sourceName: String,
-  eventUrl: String,
+  customerId: Match.Maybe(String),
+  eventUrl: Match.Maybe(String),
+  cinemaId: Match.Maybe(Match.Integer),
+  cinemaSlug: Match.Maybe(String),
+  cinemaUrl: Match.Maybe(String),
+  hasPosterPermission: Match.Maybe(Boolean),
   resourceId: String,
   organizerId: String,
   defaultKinds: Match.Maybe([String]),
@@ -41,45 +46,88 @@ type MirrorValues = Pick<
   MirrorDoc,
   | 'name'
   | 'kind'
-  | 'customerId'
   | 'sourceLocation'
   | 'sourceName'
+  | 'customerId'
   | 'eventUrl'
+  | 'cinemaId'
+  | 'cinemaSlug'
+  | 'cinemaUrl'
+  | 'hasPosterPermission'
   | 'resourceId'
   | 'organizerId'
   | 'defaultKinds'
   | 'isEnabled'
 >;
 
-// The values as stored, after checking that the place and the organizer
-// are there, and that the organizer may organize and can be reached
-async function cleanValues(values: MirrorValues): Promise<MirrorValues> {
-  check(values, valuesPattern);
-  const trimmed = {
-    ...values,
-    name: values.name.trim(),
-    customerId: values.customerId.trim(),
-    sourceLocation: values.sourceLocation.trim(),
-    sourceName: values.sourceName.trim(),
-    eventUrl: values.eventUrl.trim(),
-    defaultKinds: cleanKinds(values.defaultKinds || [], EVENT_KIND_KEYS),
+// What says where the events come from, for the mirror's kind: checked,
+// and without the other kind's values
+async function cleanSource(values: MirrorValues) {
+  if (values.kind === 'bio-se') {
+    // The cinema as bio.se lists it, not as the form names it
+    let cinemas;
+    try {
+      cinemas = await fetchBioSeCinemas();
+    } catch (error) {
+      throw new Meteor.Error(
+        'source-unreachable',
+        `The source could not be read: ${(error as Error)?.message}`
+      );
+    }
+    const cinema = cinemas.find((c) => c.id === values.cinemaId);
+    if (!cinema) {
+      throw new Meteor.Error('missing-values', 'Please choose a cinema');
+    }
+    const cinemaUrl = (values.cinemaUrl || '').trim();
+    if (cinemaUrl && !/^https?:\/\/\S+$/.test(cinemaUrl)) {
+      throw new Meteor.Error(
+        'invalid-cinema-url',
+        "The address of the cinema's own site must start with http:// or https://"
+      );
+    }
+    return {
+      sourceLocation: cinema.name,
+      cinemaId: cinema.id,
+      cinemaSlug: cinema.slug,
+      cinemaUrl,
+      hasPosterPermission: Boolean(values.hasPosterPermission),
+    };
+  }
+  const source = {
+    customerId: (values.customerId || '').trim(),
+    sourceLocation: (values.sourceLocation || '').trim(),
+    eventUrl: (values.eventUrl || '').trim(),
   };
-  if (
-    !trimmed.name ||
-    !trimmed.customerId ||
-    !trimmed.sourceLocation ||
-    !trimmed.sourceName
-  ) {
+  if (!source.customerId || !source.sourceLocation) {
     throw new Meteor.Error('missing-values', 'Please fill in every field');
   }
   if (
-    !/^https:\/\/\S+$/.test(trimmed.eventUrl) ||
-    !trimmed.eventUrl.includes('{id}')
+    !/^https:\/\/\S+$/.test(source.eventUrl) ||
+    !source.eventUrl.includes('{id}')
   ) {
     throw new Meteor.Error(
       'invalid-event-url',
       'The address of an event must start with https:// and hold {id}'
     );
+  }
+  return source;
+}
+
+// The values as stored, after checking that the place and the organizer
+// are there, and that the organizer may organize and can be reached
+async function cleanValues(values: MirrorValues): Promise<MirrorValues> {
+  check(values, valuesPattern);
+  const trimmed = {
+    name: values.name.trim(),
+    kind: values.kind,
+    sourceName: values.sourceName.trim(),
+    resourceId: values.resourceId,
+    organizerId: values.organizerId,
+    defaultKinds: cleanKinds(values.defaultKinds || [], EVENT_KIND_KEYS),
+    isEnabled: values.isEnabled,
+  };
+  if (!trimmed.name || !trimmed.sourceName) {
+    throw new Meteor.Error('missing-values', 'Please fill in every field');
   }
   if (!(await Resources.findOneAsync(trimmed.resourceId))) {
     throw new Meteor.Error('not-found', 'The place was not found');
@@ -91,7 +139,7 @@ async function cleanValues(values: MirrorValues): Promise<MirrorValues> {
     );
   }
   await requireOrganizerContact([trimmed.organizerId]);
-  return trimmed;
+  return { ...trimmed, ...(await cleanSource(values)) };
 }
 
 async function findMirror(mirrorId: string) {
@@ -123,6 +171,19 @@ Meteor.methods({
     await requireAdmin();
     try {
       return await fetchAxiellLocations(customerId.trim());
+    } catch (error) {
+      throw new Meteor.Error(
+        'source-unreachable',
+        `The source could not be read: ${(error as Error)?.message}`
+      );
+    }
+  },
+
+  // The cinemas at bio.se, for choosing one
+  async getBioSeCinemas() {
+    await requireAdmin();
+    try {
+      return await fetchBioSeCinemas();
     } catch (error) {
       throw new Meteor.Error(
         'source-unreachable',

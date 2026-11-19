@@ -16,18 +16,22 @@ import { warmShareImage } from '../share/shareImage.server';
 import escapeHtml from '../_utils/escapeHtml';
 import Mirrors, { type MirrorDoc } from './mirror';
 import { fetchAxiellEvents, type SourceEvent } from './axiell';
+import { fetchBioSeEvents } from './bioSe';
 
 /**
  * Running a mirror: the source's events still to come at its place, made
  * into events in Cocoso and kept like the source.
  *
  * - New at the source: added, public and published, with sign-up closed
- *   (people sign up at the source; the text links there).
+ *   (people sign up or buy their ticket at the source; the text links
+ *   there).
  * - Changed: title, text, time, picture and kinds rewritten. Those
  *   following are not told; the source is where the event is kept.
  * - Cancelled at the source: marked cancelled (setActivityCancelled), which
  *   does tell those following, and unmarked if the source takes it back.
- * - Gone from the source while still to come: deleted.
+ * - Gone from the source while still to come: deleted. (A cinema's
+ *   screening may leave bio.se as it begins, so one that has begun is
+ *   kept.)
  * - Detached by its organizer (mirror.isDetached): left alone.
  *
  * Runs every hour for each enabled mirror, and from Admin →
@@ -108,44 +112,58 @@ export function localDateTime(when: Date) {
 
 // The source's text as Cocoso stores it: its paragraphs, lists and links,
 // without the inline fonts and sizes of the editor it was written in, and
-// a last line linking to the event at the source
+// a last line linking to the event at the source. A cinema's screening
+// also links to the cinema's own site, when the mirror has it.
 export function describe(event: SourceEvent, mirror: MirrorDoc) {
-  const link = `<p><a href="${escapeHtml(
-    sourceUrl(event, mirror)
-  )}">Läs mer och anmäl dig hos ${escapeHtml(mirror.sourceName)} →</a></p>`;
-  return DOMPurify.sanitize(`${event.description || ''}\n${link}`, {
-    ALLOWED_TAGS: [
-      'p',
-      'br',
-      'strong',
-      'b',
-      'em',
-      'i',
-      'u',
-      'a',
-      'ul',
-      'ol',
-      'li',
-      'h2',
-      'h3',
-      'h4',
-      'blockquote',
-    ],
-    ALLOWED_ATTR: ['href'],
-  })
+  const isCinema = mirror.kind === 'bio-se';
+  const link = `<p><a href="${escapeHtml(sourceUrl(event, mirror))}">${
+    isCinema ? 'Läs mer och köp biljett hos' : 'Läs mer och anmäl dig hos'
+  } ${escapeHtml(mirror.sourceName)} →</a></p>`;
+  const cinemaLink =
+    isCinema && mirror.cinemaUrl
+      ? `<p><a href="${escapeHtml(mirror.cinemaUrl)}">${escapeHtml(
+          mirror.sourceLocation
+        )} – biografens egen sida →</a></p>`
+      : '';
+  return DOMPurify.sanitize(
+    `${event.description || ''}\n${link}\n${cinemaLink}`,
+    {
+      ALLOWED_TAGS: [
+        'p',
+        'br',
+        'strong',
+        'b',
+        'em',
+        'i',
+        'u',
+        'a',
+        'ul',
+        'ol',
+        'li',
+        'h2',
+        'h3',
+        'h4',
+        'blockquote',
+      ],
+      ALLOWED_ATTR: ['href'],
+    }
+  )
     .replace(/<p>(\s|&nbsp;|\u00a0)*<\/p>/g, '')
     .trim();
 }
 
 export const sourceUrl = (event: SourceEvent, mirror: MirrorDoc) =>
-  event.url || mirror.eventUrl.replace('{id}', encodeURIComponent(event.id));
+  event.url ||
+  (mirror.eventUrl || '').replace('{id}', encodeURIComponent(event.id));
 
 // The source's events still to come, read as the mirror's kind is read
 function fetchEvents(mirror: MirrorDoc): Promise<SourceEvent[]> {
   switch (mirror.kind) {
+    case 'bio-se':
+      return fetchBioSeEvents(mirror);
     case 'axiell-events':
     default:
-      return fetchAxiellEvents(mirror.customerId, mirror.sourceLocation);
+      return fetchAxiellEvents(mirror.customerId || '', mirror.sourceLocation);
   }
 }
 
@@ -198,14 +216,22 @@ const picturesOf = (url?: string) =>
       )
     : [];
 
-// Whether the event's last date is still to come, in Swedish time
-function isStillToCome(activity: any, now: { date: string; time: string }) {
+// Whether the event's last date is still to come, in Swedish time: not
+// yet over, or with notBegun not yet begun
+function isStillToCome(
+  activity: any,
+  now: { date: string; time: string },
+  notBegun = false
+) {
   const dates = activity.datesAndTimes || [];
   const last = dates[dates.length - 1];
   if (!last) {
     return false;
   }
-  return `${last.endDate} ${last.endTime}` > `${now.date} ${now.time}`;
+  const edge = notBegun
+    ? `${last.startDate} ${last.startTime}`
+    : `${last.endDate} ${last.endTime}`;
+  return edge > `${now.date} ${now.time}`;
 }
 
 export interface MirrorRunResult {
@@ -333,6 +359,7 @@ export async function syncMirror(
 
       const mirrorFields = {
         mirrorId: mirror._id,
+        kind: mirror.kind,
         externalId: event.id,
         sourceUrl: sourceUrl(event, mirror),
         ...(event.modifiedAt ? { sourceModifiedAt: event.modifiedAt } : {}),
@@ -422,7 +449,7 @@ export async function syncMirror(
     (activity: any) =>
       !seen.has(activity.mirror.externalId) &&
       !activity.mirror.isDetached &&
-      isStillToCome(activity, now)
+      isStillToCome(activity, now, mirror.kind === 'bio-se')
   );
   if (events.length === 0 && gone.length > 0) {
     throw new Meteor.Error(

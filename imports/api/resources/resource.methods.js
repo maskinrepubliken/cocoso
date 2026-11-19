@@ -4,7 +4,7 @@ import { check, Match } from 'meteor/check';
 import { locationSelector } from '../_utils/shared';
 import { requireAddress } from '../_utils/address';
 import {
-  geocodeAddress,
+  geocodeAddressDetail,
   geocodePoint,
   geocodeTown,
   withCoordinates,
@@ -174,9 +174,12 @@ Meteor.methods({
   },
 
   // The map point of an address as it is typed in the place form, so the
-  // form's map can follow it: { point }, or when the address cannot be
-  // found { town } (its town's middle, or null) for the map to show around
-  // while the pin is put by hand. For those who may add places.
+  // form's map can follow it: { point, precision }, or when the address
+  // cannot be found { town } (its town's middle, or null) for the map to
+  // show around while the pin is put by hand. The precision is 'known'
+  // for an address a saved place already has, with that place's point (so
+  // a pin once put right is found again), 'house', or 'street' when only
+  // the street was found. For those who may add places.
   async findAddressPoint(address) {
     check(address, {
       street: Match.Maybe(String),
@@ -187,13 +190,38 @@ Meteor.methods({
     if (!user || !(await isContributorOrAdmin(user._id))) {
       throw new Meteor.Error('not-authorized', 'You are not allowed');
     }
+    const street = (address.street || '').trim();
     const city = (address.city || '').trim();
-    const point = await geocodeAddress({
-      street: (address.street || '').trim(),
+    const exactly = (text) =>
+      new RegExp(
+        `^\\s*${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`,
+        'i'
+      );
+    const known =
+      street && city
+        ? await Resources.findOneAsync(
+            {
+              'address.street': exactly(street),
+              'address.city': exactly(city),
+              'address.coordinates': { $exists: true },
+            },
+            { fields: { 'address.coordinates': 1 } }
+          )
+        : null;
+    if (known) {
+      return { point: known.address.coordinates, precision: 'known' };
+    }
+    const hit = await geocodeAddressDetail({
+      street,
       postalCode: (address.postalCode || '').trim(),
       city,
     });
-    return point ? { point } : { town: await geocodeTown(city) };
+    return hit
+      ? {
+          point: { lat: hit.lat, lng: hit.lng },
+          precision: hit.exact ? 'house' : 'street',
+        }
+      : { town: await geocodeTown(city) };
   },
 
   // The other way, for the place form's map: the address at a point put

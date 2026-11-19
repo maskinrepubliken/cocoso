@@ -99,6 +99,7 @@ Activities.schema = new SimpleSchema({
   // picture and kinds on every run until the event is detached.
   mirror: { type: Object, optional: true },
   'mirror.mirrorId': { type: String },
+  'mirror.kind': { type: String, optional: true },
   'mirror.externalId': { type: String },
   // The event's own page at the source
   'mirror.sourceUrl': { type: String, optional: true },

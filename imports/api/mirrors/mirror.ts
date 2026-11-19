@@ -11,21 +11,33 @@ import Activities from '../activities/activity';
  * cancelled ones marked and removed ones deleted (mirror.sync.ts). Set up
  * by an admin under Admin → Speglingar.
  *
- * The one kind so far, `axiell-events`, reads the open event API behind
- * Axiell Arena library sites, such as Knallebiblioteken's calendar.
+ * The kinds:
+ * - `axiell-events` reads the open event API behind Axiell Arena library
+ *   sites, such as Knallebiblioteken's calendar (axiell.ts).
+ * - `bio-se` reads a cinema's screenings at bio.se, one event for each
+ *   (bioSe.ts).
  */
+export type MirrorKind = 'axiell-events' | 'bio-se';
+
 export interface MirrorDoc {
   _id: string;
   name: string;
-  kind: 'axiell-events';
-  // The library group's customer id at Axiell
-  customerId: string;
-  // The place at the source, as its calendar names it ("Tranemo bibliotek")
+  kind: MirrorKind;
+  // The place at the source, as the source names it ("Tranemo bibliotek",
+  // "Dalstorps Bio")
   sourceLocation: string;
-  // The source's name for visitors, and the address of an event's own page
-  // there, with {id} for the event's id
+  // The source's name for visitors ("Knallebiblioteken", "bio.se")
   sourceName: string;
-  eventUrl: string;
+  // axiell-events: the library group's customer id at Axiell, and the
+  // address of an event's own page there, with {id} for the event's id
+  customerId?: string;
+  eventUrl?: string;
+  // bio-se: the cinema at bio.se, its own site (linked from each event)
+  // and whether there is leave to show the films' posters
+  cinemaId?: number;
+  cinemaSlug?: string;
+  cinemaUrl?: string;
+  hasPosterPermission?: boolean;
   // Where the events land in Cocoso: the place (and so the address and
   // location) and the account that organizes them
   resourceId: string;
@@ -45,7 +57,7 @@ export interface MirrorDoc {
   updatedAt?: Date;
 }
 
-export const MIRROR_KINDS = ['axiell-events'] as const;
+export const MIRROR_KINDS = ['axiell-events', 'bio-se'] as const;
 
 const Mirrors = new Mongo.Collection<MirrorDoc>('mirrors');
 
@@ -53,10 +65,14 @@ const Mirrors = new Mongo.Collection<MirrorDoc>('mirrors');
   _id: Schemas.Id,
   name: { type: String },
   kind: { type: String, allowedValues: [...MIRROR_KINDS] },
-  customerId: { type: String },
   sourceLocation: { type: String },
   sourceName: { type: String },
-  eventUrl: { type: String },
+  customerId: { type: String, optional: true },
+  eventUrl: { type: String, optional: true },
+  cinemaId: { type: SimpleSchema.Integer, optional: true },
+  cinemaSlug: { type: String, optional: true },
+  cinemaUrl: { type: String, optional: true },
+  hasPosterPermission: { type: Boolean, optional: true },
   resourceId: { type: String },
   organizerId: { type: String },
   defaultKinds: { type: Array, optional: true },

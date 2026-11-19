@@ -28,7 +28,8 @@ const inTurn = (request) => {
 // Answers already had, so the same address typed again is not asked twice
 const answers = new Map();
 
-// The first hit's point for these search parameters, or null. With
+// The first hit's point for these search parameters, with whether it is
+// the house itself (`exact`) rather than only its street, or null. With
 // `town`, only a hit in that town or village: asked for "Tranemo",
 // Nominatim answers with the whole of Tranemo kommun first, and for
 // "Storgatan, Tranemo" with the Storgatan of Grimsås and Rosenlund.
@@ -55,7 +56,9 @@ async function search(params, town = '') {
       const hit = wanted ? hits.find(inTown) : hits[0];
       const lat = Number(hit?.lat);
       const lng = Number(hit?.lon);
-      return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+      return Number.isFinite(lat) && Number.isFinite(lng)
+        ? { lat, lng, exact: Boolean(hit.address?.house_number) }
+        : null;
     } catch (error) {
       console.warn('[geocode]', error.message);
       return null;
@@ -68,6 +71,9 @@ async function search(params, town = '') {
   return point;
 }
 
+// Only the point, for storing
+const pointOf = (hit) => (hit ? { lat: hit.lat, lng: hit.lng } : null);
+
 // Tranemo kommun with a margin, west, north, east, south: a place found by
 // its name must lie in it.
 const MUNICIPALITY = '12.95,57.75,13.75,57.28';
@@ -78,24 +84,27 @@ export async function geocodeTown(city) {
   if (!city) {
     return null;
   }
-  return search(
-    new URLSearchParams({
-      format: 'jsonv2',
-      limit: '5',
-      addressdetails: '1',
-      countrycodes: 'se',
-      q: city,
-      viewbox: MUNICIPALITY,
-      bounded: '1',
-    }),
-    city
+  return pointOf(
+    await search(
+      new URLSearchParams({
+        format: 'jsonv2',
+        limit: '5',
+        addressdetails: '1',
+        countrycodes: 'se',
+        q: city,
+        viewbox: MUNICIPALITY,
+        bounded: '1',
+      }),
+      city
+    )
   );
 }
 
-// A street address's point: a hit in its own town, or else the street
-// looked for close around that town. Null rather than the same street in
-// another town.
-export async function geocodeAddress(address) {
+// A street address's point, with whether it is the house itself or only
+// its street (OpenStreetMap lacks many house numbers in Tranemo kommun): a
+// hit in its own town, or else the street looked for close around that
+// town. Null rather than the same street in another town.
+export async function geocodeAddressDetail(address) {
   if (!address?.street || !address?.city) {
     return null;
   }
@@ -127,16 +136,23 @@ export async function geocodeAddress(address) {
     town.lng + 0.06,
     town.lat - 0.035,
   ].join(',');
-  return search(
+  const near = await search(
     new URLSearchParams({
       format: 'jsonv2',
       limit: '1',
+      addressdetails: '1',
       countrycodes: 'se',
       q: address.street,
       viewbox: around,
       bounded: '1',
     })
   );
+  return near;
+}
+
+// The point alone, for storing
+export async function geocodeAddress(address) {
+  return pointOf(await geocodeAddressDetail(address));
 }
 
 // The other way: the address at a point on the map, as street (with its
@@ -234,7 +250,7 @@ export async function geocodePlace(label, city) {
       })
     );
     if (point) {
-      return point;
+      return pointOf(point);
     }
   }
   return null;
