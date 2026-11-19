@@ -3,7 +3,11 @@ import dayjs from 'dayjs';
 import { check, Match } from 'meteor/check';
 import { locationSelector } from '../_utils/shared';
 import { requireAddress } from '../_utils/address';
-import { withCoordinates } from '../_utils/geocode';
+import {
+  geocodeAddress,
+  geocodeTown,
+  withCoordinates,
+} from '../_utils/geocode';
 
 import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
 import Resources from './resource';
@@ -166,6 +170,29 @@ Meteor.methods({
         sort: { createdAt: -1 },
       }
     ).fetchAsync();
+  },
+
+  // The map point of an address as it is typed in the place form, so the
+  // form's map can follow it: { point }, or when the address cannot be
+  // found { town } (its town's middle, or null) for the map to show around
+  // while the pin is put by hand. For those who may add places.
+  async findAddressPoint(address) {
+    check(address, {
+      street: Match.Maybe(String),
+      postalCode: Match.Maybe(String),
+      city: Match.Maybe(String),
+    });
+    const user = await Meteor.userAsync();
+    if (!user || !(await isContributorOrAdmin(user._id))) {
+      throw new Meteor.Error('not-authorized', 'You are not allowed');
+    }
+    const city = (address.city || '').trim();
+    const point = await geocodeAddress({
+      street: (address.street || '').trim(),
+      postalCode: (address.postalCode || '').trim(),
+      city,
+    });
+    return point ? { point } : { town: await geocodeTown(city) };
   },
 
   async getResourceById(resourceId) {

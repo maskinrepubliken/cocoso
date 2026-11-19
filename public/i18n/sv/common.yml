@@ -882,6 +882,8 @@ address:
       label: "Plats på kartan"
       helper: "Klicka på kartan eller dra nålen dit platsen är."
       helperStreet: "Klicka på kartan eller dra nålen dit platsen är. Utan nål hittas den från adressen när du sparar."
+      searching: "Letar upp adressen …"
+      notFound: "Hittade inte adressen. Klicka på kartan där platsen är."
   errors:
     required: "Fyll i gatuadress och ort, eller koordinater."
 contact:

@@ -11,10 +11,6 @@ import { geocodeAddress, geocodePlace } from '../_utils/geocode';
 // municipality. What cannot be
 // found stays without a map, and is tried again at the next start.
 
-const PAUSE_MS = 1100;
-
-const pause = () => new Promise((resolve) => setTimeout(resolve, PAUSE_MS));
-
 async function fillMissingCoordinates() {
   const places = await Resources.find(
     {
@@ -25,7 +21,6 @@ async function fillMissingCoordinates() {
   ).fetchAsync();
   let found = 0;
   for (const place of places) {
-    await pause();
     const coordinates =
       (place.address?.street && (await geocodeAddress(place.address))) ||
       (await geocodePlace(place.label, place.address?.city));

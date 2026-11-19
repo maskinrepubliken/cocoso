@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Input, Text } from '/imports/ui/core';
@@ -8,6 +8,9 @@ import {
   formatCoordinates,
   parseCoordinates,
 } from '/imports/api/_utils/address';
+import { call } from '/imports/api/_utils/shared';
+import SearchIcon from 'lucide-react/dist/esm/icons/search';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 
 import PlaceMap from '/imports/ui/generic/PlaceMap';
 import MapPicker from '/imports/ui/generic/MapPicker';
@@ -71,6 +74,67 @@ export default function AddressFields({
   };
   const withStreet = mode !== 'coordinates';
   const withCoordinates = mode !== 'street';
+
+  // Given by street with the map: once the street and town have been left
+  // alone a moment, the address is looked up and the pin put there, so the
+  // map follows what is typed. A pin already there (by hand, or found
+  // before) stays until the address changes, which takes it away.
+  const [lookup, setLookup] = useState<'idle' | 'searching' | 'notFound'>(
+    'idle'
+  );
+  // Where the map looks when the address was not found: its town
+  const [town, setTown] = useState<Address['coordinates'] | null>(null);
+  const latest = useRef(address);
+  latest.current = address;
+  const street = (address.street || '').trim();
+  const postalCode = (address.postalCode || '').trim();
+  const city = (address.city || '').trim();
+  const lookUp = withMapPicker && mode === 'street' && Boolean(street && city);
+  const hasPoint = Boolean(address.coordinates);
+  useEffect(() => {
+    if (!lookUp || hasPoint) {
+      setLookup('idle');
+      return undefined;
+    }
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      setLookup('searching');
+      call<{
+        point?: Address['coordinates'];
+        town?: Address['coordinates'] | null;
+      }>('findAddressPoint', {
+        street,
+        postalCode,
+        city,
+      })
+        .then(({ point: coordinates, town: around }) => {
+          if (cancelled) {
+            return;
+          }
+          // Only for the address still written, without a pin since
+          const now = latest.current;
+          if (
+            (now.street || '').trim() !== street ||
+            (now.city || '').trim() !== city ||
+            now.coordinates
+          ) {
+            return;
+          }
+          if (coordinates) {
+            setLookup('idle');
+            onChange({ ...now, coordinates });
+          } else {
+            setTown(around || null);
+            setLookup('notFound');
+          }
+        })
+        .catch(() => !cancelled && setLookup('idle'));
+    }, 900);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [lookUp, hasPoint, street, postalCode, city]);
 
   // Put on the map by hand: kept also when given by street, where it then
   // stands instead of the point found from the address
@@ -168,7 +232,25 @@ export default function AddressFields({
           label={tc('address.form.map.label')}
           my="2"
         >
-          <MapPicker value={address.coordinates} onChange={handlePicked} />
+          <MapPicker
+            focus={town}
+            note={
+              lookup === 'searching' ? (
+                <>
+                  <SearchIcon aria-hidden />
+                  {tc('address.form.map.searching')}
+                </>
+              ) : lookup === 'notFound' ? (
+                <>
+                  <MapPinIcon aria-hidden />
+                  {tc('address.form.map.notFound')}
+                </>
+              ) : null
+            }
+            noteTone={lookup === 'notFound' ? 'ask' : 'quiet'}
+            value={address.coordinates}
+            onChange={handlePicked}
+          />
         </FormField>
       ) : (
         address.coordinates && (
