@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Checkbox, Text } from '/imports/ui/core';
 import { useTranslation } from 'react-i18next';
 import { useAtom, useAtomValue } from 'jotai';
@@ -281,6 +281,46 @@ function PlaceForm({
   const managers: OrganizerDefaults[] = (state.managerIds || [])
     .map((id: string) => managerProfiles[id])
     .filter(Boolean);
+  // Ort follows the address: once its town or point is known, the location
+  // named so or nearest is chosen, unless one was picked by hand since the
+  // address last changed. Not when the form opens: a saved place keeps its
+  // location until its address is changed.
+  const locationByHand = useRef(false);
+  const addressSeen = useRef(false);
+  const town = (state.address?.city || '').trim();
+  const point = state.address?.coordinates;
+  useEffect(() => {
+    if (!addressSeen.current) {
+      addressSeen.current = true;
+      return undefined;
+    }
+    if (state.placement === 'parent' || (!town && !point)) {
+      return undefined;
+    }
+    locationByHand.current = false;
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      call<string | null>('suggestLocationFor', {
+        city: town,
+        coordinates: point ? { lat: point.lat, lng: point.lng } : null,
+      })
+        .then((locationId) => {
+          if (!cancelled && locationId && !locationByHand.current) {
+            setState((prevState: any) =>
+              prevState.locationId === locationId
+                ? prevState
+                : { ...prevState, locationId }
+            );
+          }
+        })
+        .catch(() => null);
+    }, 600);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [town, point?.lat, point?.lng, state.placement]);
+
   // A manager taken off the list falls back to the place's own details
   const isOwnContact =
     state.contactChoice === OWN_CONTACT ||
@@ -477,9 +517,10 @@ function PlaceForm({
               >
                 <LocationSelect
                   value={state.locationId}
-                  onChange={({ locationId }) =>
-                    setState((prevState) => ({ ...prevState, locationId }))
-                  }
+                  onChange={({ locationId }) => {
+                    locationByHand.current = true;
+                    setState((prevState) => ({ ...prevState, locationId }));
+                  }}
                 />
               </FormField>
             </>

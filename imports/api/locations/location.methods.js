@@ -12,6 +12,18 @@ import { warmShareImage } from '../share/shareImage.server';
 
 const sort = { order: 1, name: 1 };
 
+// How far away the nearest location may be to be suggested for a point
+const NEAR_KM = 15;
+
+const plain = (text) => (text || '').trim().toLowerCase();
+
+const kmBetween = (a, b) => {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLng = (b.lng - a.lng) * rad * Math.cos(((a.lat + b.lat) / 2) * rad);
+  return 6371 * Math.sqrt(dLat * dLat + dLng * dLng);
+};
+
 async function requireAdmin() {
   const user = await Meteor.userAsync();
   if (!user || !(await isAdmin(user._id))) {
@@ -48,7 +60,9 @@ function pickValues(values) {
     images: Array.isArray(values.images) ? values.images : [],
     isPublished: Boolean(values.isPublished),
     landingPageId: values.landingPageId || undefined,
-    colorKey: ["skog","lera","glas","ockra","salvia"].includes(values.colorKey)
+    colorKey: ['skog', 'lera', 'glas', 'ockra', 'salvia'].includes(
+      values.colorKey
+    )
       ? values.colorKey
       : undefined,
     coordinates:
@@ -81,6 +95,64 @@ Meteor.methods({
       {},
       { fields: { _id: 1, name: 1, slug: 1, isPublished: 1 }, sort }
     ).fetchAsync();
+  },
+
+  // The location a place at this address is in, for the place form to
+  // choose by itself: one named as its town ("Tranemo" is Tranemo tätort),
+  // or else the nearest to its point, where a location is the middle of
+  // the places already in it, at most NEAR_KM away. Null when none.
+  async suggestLocationFor(where) {
+    // (Match.Maybe alone lets no null through here)
+    check(where, {
+      city: Match.Maybe(Match.OneOf(null, String)),
+      coordinates: Match.Maybe(Match.OneOf(null, { lat: Number, lng: Number })),
+    });
+    const locations = await Locations.find(
+      { isPublished: true },
+      { fields: { name: 1 } }
+    ).fetchAsync();
+    const city = plain(where.city);
+    if (city) {
+      const named = locations.find(
+        (location) =>
+          plain(location.name) === city ||
+          plain(location.name).split(/\s+/)[0] === city
+      );
+      if (named) {
+        return named._id;
+      }
+    }
+    const point = where.coordinates;
+    if (!point) {
+      return null;
+    }
+    const places = await Resources.find(
+      {
+        locationId: { $in: locations.map((location) => location._id) },
+        'address.coordinates': { $exists: true },
+      },
+      { fields: { locationId: 1, 'address.coordinates': 1 } }
+    ).fetchAsync();
+    let nearest = null;
+    locations.forEach((location) => {
+      const own = places.filter((place) => place.locationId === location._id);
+      if (!own.length) {
+        return;
+      }
+      const middle = {
+        lat:
+          own.reduce((sum, place) => sum + place.address.coordinates.lat, 0) /
+          own.length,
+        lng:
+          own.reduce((sum, place) => sum + place.address.coordinates.lng, 0) /
+          own.length,
+      };
+      const km = kmBetween(point, middle);
+      if (km <= NEAR_KM && (!nearest || km < nearest.km)) {
+        nearest = { id: location._id, km };
+      }
+    });
+    return nearest?.id || null;
   },
 
   async getLocationsForAdmin() {

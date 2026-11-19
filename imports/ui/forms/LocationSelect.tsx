@@ -64,7 +64,10 @@ export default function LocationSelect({
   };
 
   return (
+    // Keyed by the value: Select keeps its own once shown, so one chosen
+    // from elsewhere (the place form choosing by the address) shows anew
     <Select
+      key={selected}
       disabled={disabled}
       value={selected}
       onChange={(event) => handleChange(event.target.value)}
