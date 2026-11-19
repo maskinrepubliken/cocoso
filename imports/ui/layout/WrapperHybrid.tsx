@@ -35,6 +35,7 @@ import HelmetHybrid from './HelmetHybrid';
 import DummyWrapper from './DummyWrapper';
 import Header from './Header';
 import ViewAsBanner from './ViewAsBanner';
+import SettingsModal from '/imports/ui/pages/profile/SettingsModal.loadable';
 import { Footer } from './Footers';
 import CookieNotice from './CookieNotice';
 
@@ -237,6 +238,8 @@ export default function WrapperHybrid({
 
             {!adminPage && <Footer site={site || siteDoc} />}
             {!adminPage && <CookieNotice />}
+            {/* One's settings, from the account menu on any page */}
+            {rendered && <SettingsModal />}
           </DummyWrapper>
         </Suspense>
 

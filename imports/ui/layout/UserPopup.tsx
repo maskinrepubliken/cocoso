@@ -156,6 +156,13 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
           </Link>
         </MenuItem>
 
+        {/* On the page one is on: the settings are a dialog over it */}
+        <MenuItem style={{ padding: 0 }}>
+          <Link className="site-info-menu-link" to="?settings=me">
+            <Trans i18nKey="common:entryMenu.settings.mine">My settings</Trans>
+          </Link>
+        </MenuItem>
+
         <div className="site-account-langs">
           <LanguageSwitch variant="row" />
         </div>

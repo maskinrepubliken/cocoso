@@ -188,6 +188,41 @@ welcome:
   toProfile: Fyll i din profil
   toHome: Till startsidan
 
+# The settings dialog (pages/profile/SettingsModal.tsx). "mine" speaks to
+# the person; "theirs" is what an admin reads about someone else.
+settings:
+  titleMine: Mina inställningar
+  titleOf: '{{ name }}s inställningar'
+  titleOfS: '{{ name }} inställningar'
+  save: Spara
+  saved: Inställningarna är sparade.
+  language:
+    title: Språk
+    helper:
+      mine: Språket du ser sidan på och får mejl på.
+      theirs: Språket personen ser sidan på och får mejl på.
+  events:
+    title:
+      mine: Evenemang du följer
+      theirs: Evenemang som följs
+    intro:
+      mine: När ett evenemang du följer eller är anmäld till får ny tid eller plats, ställs in, eller när arrangören har något nytt att berätta.
+      theirs: När ett evenemang personen följer eller är anmäld till får ny tid eller plats, ställs in, eller när arrangören har något nytt att berätta.
+    email: Skicka e-post
+    push: Skicka pushnotis
+    pushHelper:
+      mine: Pushnotiser kommer bara till de enheter där du har slagit på dem, se ”Den här enheten” nedan.
+      theirs: Pushnotiser kommer bara till de enheter där personen själv har slagit på dem.
+    none: Du följer inga evenemang än. Tryck på ”Följ” på ett evenemangs sida.
+    unfollow: Sluta följa
+  newsletter:
+    title: Nyhetsbrev
+    label: Skicka nyhetsbrevet via e-post
+    helper: Nyheter från {{ site }} då och då. Går att avsluta när som helst, också med länken i varje brev.
+  device:
+    title: Den här enheten
+    intro: Pushnotiser slås på för varje telefon, surfplatta eller dator för sig. Det här gäller bara den du använder just nu, och ändras direkt.
+
 privacy:
   saved: Din inställning är sparad.
   visibility:
@@ -207,14 +242,14 @@ notifications:
   push:
     title: Pushnotiser
     intro: Få en notis i telefonen eller datorn när ett evenemang du följer eller är anmäld till ändras, eller när arrangören har något nytt att berätta.
-    on: Pushnotiser är på i den här webbläsaren.
-    off: Pushnotiser är av i den här webbläsaren.
-    turnOn: Slå på i den här webbläsaren
-    turnOff: Stäng av i den här webbläsaren
+    on: Den här enheten tar emot pushnotiser.
+    off: Den här enheten tar inte emot pushnotiser.
+    turnOn: Slå på pushnotiser här
+    turnOff: Stäng av pushnotiser här
     test: Skicka en testnotis
     testSent: En testnotis är på väg.
     denied: Webbläsaren blockerar notiser från sidan. Tillåt dem i webbläsarens inställningar för webbplatsen och försök igen.
-    unsupported: Den här webbläsaren kan inte visa pushnotiser.
+    unsupported: Webbläsaren på den här enheten kan inte visa pushnotiser.
     needsInstall: På iPhone och iPad lägger du först till sidan på hemskärmen (Dela → Lägg till på hemskärmen), öppnar den därifrån och slår på notiser.
     devices_one: Du får pushnotiser på {{count}} enhet.
     devices_other: Du får pushnotiser på {{count}} enheter.

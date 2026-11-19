@@ -188,6 +188,41 @@ welcome:
   toProfile: Fill in your profile
   toHome: Go to the home page
 
+# The settings dialog (pages/profile/SettingsModal.tsx). "mine" speaks to
+# the person; "theirs" is what an admin reads about someone else.
+settings:
+  titleMine: My settings
+  titleOf: "{{ name }}'s settings"
+  titleOfS: "{{ name }}' settings"
+  save: Save
+  saved: The settings are saved.
+  language:
+    title: Language
+    helper:
+      mine: The language you see the site and get emails in.
+      theirs: The language this person sees the site and gets emails in.
+  events:
+    title:
+      mine: Events you follow
+      theirs: Events followed
+    intro:
+      mine: When an event you follow or are signed up for gets a new time or place, is cancelled, or its organizer has news.
+      theirs: When an event this person follows or is signed up for gets a new time or place, is cancelled, or its organizer has news.
+    email: Send an email
+    push: Send a push notification
+    pushHelper:
+      mine: Push notifications only reach the devices where you have turned them on, see "This device" below.
+      theirs: Push notifications only reach the devices where the person has turned them on.
+    none: You are not following any events yet. Press "Follow" on an event's page.
+    unfollow: Unfollow
+  newsletter:
+    title: Newsletter
+    label: Send the newsletter by email
+    helper: News from {{ site }} now and then. Can be ended at any time, also with the link in every letter.
+  device:
+    title: This device
+    intro: Push notifications are turned on for each phone, tablet or computer by itself. This is only about the one you are using now, and changes at once.
+
 privacy:
   saved: Your setting has been saved.
   visibility:
@@ -207,14 +242,14 @@ notifications:
   push:
     title: Push notifications
     intro: Get a notification on this phone or computer when an event you follow or are signed up for changes, or its organizer has news.
-    on: Push notifications are on in this browser.
-    off: Push notifications are off in this browser.
-    turnOn: Turn on in this browser
-    turnOff: Turn off in this browser
+    on: This device gets push notifications.
+    off: This device does not get push notifications.
+    turnOn: Turn push notifications on here
+    turnOff: Turn push notifications off here
     test: Send a test notification
     testSent: A test notification is on its way.
     denied: This browser blocks notifications from the site. Allow them in the browser's settings for the site, then try again.
-    unsupported: This browser cannot show push notifications.
+    unsupported: The browser on this device cannot show push notifications.
     needsInstall: On iPhone and iPad, first add the site to your home screen (Share → Add to Home Screen), open it from there and turn notifications on.
     devices_one: You get push notifications on {{count}} device.
     devices_other: You get push notifications on {{count}} devices.

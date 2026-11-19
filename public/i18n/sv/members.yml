@@ -62,21 +62,6 @@ profile:
   form:
     name:
       label: Namn
-    settings:
-      titleMine: Mina inställningar
-      # An admin editing someone: "Limmareds fotbollsklubbs inställningar";
-      # a name ending in s takes no other ("Anders inställningar")
-      titleOf: '{{ name }}s inställningar'
-      titleOfS: '{{ name }} inställningar'
-      language: Språk
-      languageHelper: Språket som sidan och mejlen härifrån visas på.
-      notify: Notiser
-      eventEmail: E-post om evenemang
-      eventEmailHelper: Ett mejl när ett evenemang som följs eller är anmält till får ny tid eller plats, ställs in, eller när arrangören har något nytt att berätta.
-      eventPush: Pushnotis om evenemang
-      eventPushHelper: Samma händelser som en notis direkt i telefonen eller datorn. Varje webbläsare som ska ta emot notiser slås på för sig.
-      newsletter: Nyhetsbrev via e-post
-      newsletterHelper: Nyheter från {{ site }} då och då. Går att avsluta när som helst, också med länken i varje brev.
     avatar:
       helper: Klicka på bilden, eller dra en fil till den, för att byta bild. Sparas tillsammans med resten.
     firstname:

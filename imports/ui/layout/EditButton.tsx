@@ -135,6 +135,8 @@ interface GearItem {
   label: string;
   isDanger?: boolean;
   action?: 'viewAs';
+  // What the parameter is set to, when not just "true"
+  value?: string;
 }
 
 // What the gear offers on each kind of page: the same choices as the old
@@ -153,23 +155,41 @@ function useGearItems(editable: Editable | null): GearItem[] {
   }
   const { context, item } = editable;
   const isAdmin = role === 'admin';
-  // A profile: its form, which has the settings too, and (an admin on
-  // someone else's page) the site as that person sees it. Admins cannot be viewed
+  // A profile: its form, the settings, and (an admin on someone else's
+  // page) the site as that person sees it. Admins cannot be viewed
   // as, and one borrowed session at a time.
   if (context === 'profile' || context === 'userProfile') {
     const editProfile = {
       param: 'edit',
       label: tc(`entryMenu.edit.${context}`),
     };
+    // The settings dialog (SettingsModal): one's own, or theirs
     if (context === 'profile') {
-      return [editProfile];
+      return [
+        editProfile,
+        {
+          param: 'settings',
+          value: 'me',
+          label: tc('entryMenu.settings.mine'),
+        },
+      ];
     }
+    const name = item ? displayName(item) : editable.username || '';
+    const theirSettings = {
+      param: 'settings',
+      value: editable.username,
+      // a name ending in s takes no other
+      label: tc(`entryMenu.settings.${/[sxz]$/i.test(name) ? 'ofS' : 'of'}`, {
+        name,
+      }),
+    };
     const canViewAs =
       item?._id &&
       !viewAs &&
       !(item.memberships || []).some((m: any) => m.role === 'admin');
     return [
       editProfile,
+      theirSettings,
       ...(canViewAs
         ? [
             {
@@ -274,10 +294,10 @@ export default function EditButton() {
   }
 
   const label = tc('entryMenu.label');
-  const open = (param: string) =>
+  const open = (param: string, value = 'true') =>
     setSearchParams((params) => {
       const next = new URLSearchParams(params);
-      next.set(param, 'true');
+      next.set(param, value);
       return next;
     });
 
@@ -299,7 +319,7 @@ export default function EditButton() {
     if (item.action === 'viewAs') {
       viewAs();
     } else {
-      open(item.param);
+      open(item.param, item.value);
     }
   };
 

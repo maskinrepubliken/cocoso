@@ -144,7 +144,7 @@ export default function FollowSection({
               </Link>
             )}
             {currentUser && (
-              <Link to={`/@${currentUser.username}?edit=true`}>
+              <Link to="?settings=me">
                 <Muted as="span">{tc('event.follow.settings')}</Muted>
               </Link>
             )}

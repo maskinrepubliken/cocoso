@@ -56,19 +56,27 @@ function prefsToSet(prefs: Record<string, unknown>) {
   return set;
 }
 
-// Whose settings the profile form shows and saves: one's own, or (an
+// Whose settings the settings dialog shows and saves: one's own, or (an
 // admin helping someone) anyone's
-async function settingsOwner(userId: string) {
+async function settingsOwner(username: string) {
   const user = await requireUser();
-  if (user._id === userId) {
+  if (user.username === username) {
     return user;
   }
   if (!(await isAdmin(user._id))) {
     throw new Meteor.Error('not-allowed', 'You are not allowed');
   }
   const owner = (await Meteor.users.findOneAsync(
-    { _id: userId },
-    { fields: { lang: 1, notificationPrefs: 1 } }
+    { username },
+    {
+      fields: {
+        username: 1,
+        firstName: 1,
+        lastName: 1,
+        lang: 1,
+        notificationPrefs: 1,
+      },
+    }
   )) as any;
   if (!owner) {
     throw new Meteor.Error('not-found', 'No such user');
@@ -175,7 +183,7 @@ Meteor.methods({
       body: sv
         ? 'Så här ser en notis från oss ut.'
         : 'This is what a notification from us looks like.',
-      url: `/@${user.username}?edit=true`,
+      url: '/?settings=me',
       tag: 'test',
     });
     if (reached === 0) {
@@ -187,22 +195,29 @@ Meteor.methods({
     return reached;
   },
 
-  // The "Inställningar" card of the profile form: language and what the
-  // person hears from the site. Push in a browser and the events followed
-  // are one's own to handle (getMyNotificationSettings).
-  async getProfileSettings(userId) {
-    check(userId, String);
-    const owner = await settingsOwner(userId);
-    return { lang: owner.lang || null, prefs: prefsOf(owner) };
+  // The settings dialog: language and what the person hears from the
+  // site. Push on a device and the events followed are one's own to
+  // handle (getMyNotificationSettings).
+  async getProfileSettings(username) {
+    check(username, String);
+    const owner = await settingsOwner(username);
+    return {
+      username: owner.username,
+      name:
+        [owner.firstName, owner.lastName].filter(Boolean).join(' ') ||
+        owner.username,
+      lang: owner.lang || null,
+      prefs: prefsOf(owner),
+    };
   },
 
-  async setProfileSettings(userId, settings) {
-    check(userId, String);
+  async setProfileSettings(username, settings) {
+    check(username, String);
     check(settings, {
       lang: Match.Maybe(Match.OneOf('sv', 'en')),
       prefs: Match.Maybe(PrefsPattern),
     });
-    const owner = await settingsOwner(userId);
+    const owner = await settingsOwner(username);
     const set = prefsToSet(settings.prefs || {});
     if (settings.lang) {
       set.lang = settings.lang;
@@ -213,7 +228,8 @@ Meteor.methods({
     return true;
   },
 
-  // The push and followed events of the profile form's settings
+  // One's own part of the settings dialog: the devices with push on and
+  // the events followed
   async getMyNotificationSettings() {
     const user = await requireUser();
     const follows = await ActivityFollows.find(

@@ -194,6 +194,11 @@ entryMenu:
   # An admin on someone's page: the site as that person sees it
   viewAs: 'Visa sajten som {{ name }}'
   viewAsStarted: 'Du ser nu sajten som {{ name }}'
+  # The settings dialog; a name ending in s takes no other
+  settings:
+    mine: Mina inställningar
+    of: '{{ name }}s inställningar'
+    ofS: '{{ name }} inställningar'
   offerings: Äta, handla & bo
   addDocument: Lägg till dokument
   newPage: Ny infosida

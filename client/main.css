@@ -6645,59 +6645,77 @@ body {
   font-weight: 600;
 }
 
-/* --- the profile form: its settings card, and deleting the account --- */
+/* --- the settings dialog (pages/profile/SettingsModal.tsx) --- */
 
-.profile-settings-heading {
-  margin: 14px 0 2px !important;
-  font-size: 0.95rem;
-  font-weight: 700;
+.settings-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-/* Not about what the profile shows but how the site speaks to its owner:
-   tinted, with a line of the theme's green down its side */
-.form-card.profile-settings {
-  background: color-mix(
-    in srgb,
-    var(--cocoso-colors-theme-100) 55%,
-    var(--cocoso-papper)
-  );
-  box-shadow: inset 4px 0 0 var(--cocoso-colors-theme-600),
-    var(--cocoso-skugga);
-  padding-bottom: 16px !important;
+.settings-section {
+  padding: 14px 16px 16px;
+  border-radius: var(--cocoso-radius-kort);
+  background: var(--cocoso-papper);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cocoso-linje) 70%, transparent);
 }
 
-.profile-settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 18px 32px;
-  margin-top: 10px;
+.settings-section > h3 {
+  margin: 0 0 8px;
+  font-family: var(--cocoso-font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cocoso-mylla);
 }
 
-.profile-settings-grid > div > :first-child {
-  margin-top: 0 !important;
-}
-
-.profile-setting + .profile-setting {
-  margin-top: 12px;
-}
-
-.profile-setting-note {
-  margin: 4px 0 8px;
+.settings-note {
+  margin: 6px 0 0;
   color: var(--cocoso-mylla-soft);
   font-size: 13px;
   line-height: 1.4;
 }
 
-/* under a checkbox, in line with its label */
-.profile-setting-note.is-indented {
-  margin: 2px 0 0 1.9rem;
+.settings-section > h3 + .settings-note {
+  margin-top: 0;
 }
 
-@container entry-sheet (min-width: 1360px) {
-  .entry-form-side > .form-card.profile-settings {
-    grid-column: 1 / -1;
-  }
+.settings-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
 }
+
+.settings-follows {
+  margin: 12px 0 0;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--cocoso-linje);
+  list-style: none;
+}
+
+.settings-follows > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* About the phone or computer in hand, not the account: set apart */
+.settings-section.is-device {
+  background: color-mix(
+    in srgb,
+    var(--cocoso-colors-theme-100) 55%,
+    var(--cocoso-papper)
+  );
+  box-shadow: inset 4px 0 0 var(--cocoso-colors-theme-600);
+}
+
+.settings-device-state {
+  margin: 10px 0;
+  font-weight: 700;
+}
+
+/* --- the profile form: deleting the account --- */
 
 /* small and out of the way on purpose */
 .profile-delete-link {

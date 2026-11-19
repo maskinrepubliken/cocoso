@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import { call } from '/imports/api/_utils/shared';
-import { allLangs, rememberLang } from '/imports/startup/i18n';
 import {
   resizeBeforeUpload,
   uploadImage,
@@ -22,12 +20,7 @@ import ProfileForm, {
   type EditableProfile,
   type ProfileExtras,
   type ProfileFormValues,
-  type ProfilePrefs,
 } from './ProfileForm';
-
-// One of the site's languages: "sv-SE" is sv
-const siteLang = (lang?: string) =>
-  allLangs.find((l) => l.value === (lang || '').slice(0, 2))?.value || 'sv';
 
 // The address as the server takes it, whatever the picker left in it:
 // its four parts and nothing else, the point as two numbers
@@ -47,20 +40,15 @@ const plainAddress = (address?: ProfileFormValues['address']) => {
   };
 };
 
-interface ProfileSettings {
-  lang: string | null;
-  prefs: ProfilePrefs;
-}
-
 interface ProfileSheetProps {
   // Whose profile: one's own, or (for an admin) anyone's
   username: string;
 }
 
 // Editing a profile, in the same sheet as an event or a place: opened with
-// ?edit=true from the gear on the person's page. The picture, the fields
-// and the settings (language, notifications) are all saved by the sheet's
-// Save; there is no settings page beside it.
+// ?edit=true from the gear on the person's page. The picture and the
+// fields are all saved by the sheet's Save. The settings (language,
+// notifications) have a dialog of their own, SettingsModal.
 export default function ProfileSheet({ username }: ProfileSheetProps) {
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
@@ -95,19 +83,7 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
       return;
     }
     call<EditableProfile>('getProfileToEdit', username)
-      .then(async (found) => {
-        const settings = await call<ProfileSettings>(
-          'getProfileSettings',
-          found._id
-        );
-        setProfile({
-          ...found,
-          // Without a language of their own they read the site in the one
-          // it is shown in
-          lang: settings.lang || siteLang(i18n.language),
-          prefs: settings.prefs,
-        });
-      })
+      .then(setProfile)
       .catch((error: any) => {
         message.error(error.reason || error.error);
         handleClose();
@@ -172,25 +148,6 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
       await (asAdmin
         ? call('saveUserInfoAsAdmin', profile._id, info)
         : call('saveUserInfo', info));
-      // The settings, only what was changed: a newsletter choice is
-      // consent with a date on it
-      const prefs = Object.fromEntries(
-        Object.entries(values.prefs || {}).filter(
-          ([key, value]) => value !== profile.prefs?.[key as keyof ProfilePrefs]
-        )
-      );
-      const lang =
-        values.lang && values.lang !== profile.lang ? values.lang : undefined;
-      if (lang || Object.keys(prefs).length > 0) {
-        await call('setProfileSettings', profile._id, {
-          ...(lang ? { lang } : {}),
-          prefs,
-        });
-      }
-      if (lang && isSelf) {
-        rememberLang(lang);
-        i18n.changeLanguage(lang);
-      }
       setUpdated(profile._id);
       setTimeout(() => setUpdated(null), 1000);
     } catch (error: any) {

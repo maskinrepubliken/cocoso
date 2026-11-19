@@ -196,6 +196,11 @@ entryMenu:
   # An admin on someone's page: the site as that person sees it
   viewAs: 'View the site as {{ name }}'
   viewAsStarted: 'You now see the site as {{ name }}'
+  # The settings dialog
+  settings:
+    mine: My settings
+    of: "{{ name }}'s settings"
+    ofS: "{{ name }}' settings"
   offerings: Eat, shop & stay
   addDocument: Add document
   newPage: New info page

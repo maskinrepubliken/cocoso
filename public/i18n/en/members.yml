@@ -62,20 +62,6 @@ profile:
   form:
     name:
       label: Name
-    settings:
-      titleMine: My settings
-      # An admin editing someone
-      titleOf: "{{ name }}'s settings"
-      titleOfS: "{{ name }}' settings"
-      language: Language
-      languageHelper: The language the site and its emails are shown in.
-      notify: Notifications
-      eventEmail: Email about events
-      eventEmailHelper: An email when an event followed or signed up for gets a new time or place, is cancelled, or its organizer has news.
-      eventPush: Push notification about events
-      eventPushHelper: The same, as a notification straight to the phone or computer. Each browser that is to get them is turned on by itself.
-      newsletter: Newsletter by email
-      newsletterHelper: News from {{ site }} now and then. Can be ended at any time, also with the link in every letter.
     avatar:
       helper: Click the picture, or drag a file onto it, to change it. Saved along with the rest.
     firstname:
