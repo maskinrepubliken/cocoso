@@ -247,8 +247,8 @@ locations:
 
 mirrors:
   title: Speglingar
-  description: Evenemang som hämtas från en annan kalender och hålls uppdaterade, som bibliotekets på Knallebiblioteken
-  info: "En spegling hämtar evenemangen på en plats i en annan kalender till Cocoso, varje timme: nya läggs till, ändringar följer med, inställda markeras och borttagna tas bort. Anmälan sker hos källan, som varje evenemang länkar till. Prova en spegling med \"Förhandsgranska\" innan du slår på den."
+  description: Evenemang som hämtas från en annan kalender och hålls uppdaterade, som bibliotekets på Knallebiblioteken eller en biografs program på bio.se
+  info: "En spegling hämtar evenemangen på en plats i en annan kalender till Cocoso, varje timme: nya läggs till, ändringar följer med, inställda markeras och borttagna tas bort. Anmälan eller biljettköp sker hos källan, som varje evenemang länkar till. Prova en spegling med \"Förhandsgranska\" innan du slår på den."
   new: Ny spegling
   edit: Ändra spegling
   none: Inga speglingar ännu
@@ -274,6 +274,22 @@ mirrors:
       keep: Oförändrad
       detached: Lossnad
   form:
+    kind:
+      label: Typ av källa
+      helper: Vad som hämtas, och varifrån. Går inte att ändra när speglingen är sparad.
+      axiell-events: Bibliotekets evenemang (Axiell-kalender, som Knallebiblioteken)
+      bio-se: Bioföreställningar (bio.se)
+    cinema:
+      label: Biograf
+      helper: Biografen på bio.se vars program hämtas. Varje föreställning blir ett evenemang.
+      loading: Hämtar biograferna från bio.se…
+      failed: Biograferna kunde inte hämtas från bio.se. Stäng och försök igen om en stund.
+    cinemaUrl:
+      label: Biografens egen sida
+      helper: Länkas från varje evenemang. Fylls i från bio.se när du väljer biograf; ändra om det finns en bättre adress, eller lämna tomt för ingen länk.
+    posters:
+      label: Vi har tillstånd att visa filmaffischerna
+      helper: Affischerna tillhör filmdistributörerna. Utan kryss visar evenemangen platsens bild i stället.
     name:
       label: Namn
     source: Från
@@ -300,6 +316,7 @@ mirrors:
     kinds:
       label: Kategori när källan inte anger någon
       helper: De flesta evenemang får sin kategori från källans taggar
+      helperCinema: Alla föreställningar får de här kategorierna
     enabled:
       label: Synka varje timme
       helper: Avslagen körs speglingen bara när du trycker "Synka nu"

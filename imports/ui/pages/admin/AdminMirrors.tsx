@@ -25,16 +25,25 @@ import { EVENT_KIND_KEYS } from '/imports/ui/pages/activities/eventKinds';
 import Boxling from './Boxling';
 
 // Admin → Speglingar: events copied from another calendar and kept like it
-// (imports/api/mirrors). One mirror is one place at the source.
+// (imports/api/mirrors). One mirror is one place at the source: a library
+// in an Axiell calendar, or a cinema at bio.se.
+
+type MirrorKind = 'axiell-events' | 'bio-se';
+
+const MIRROR_KINDS: MirrorKind[] = ['axiell-events', 'bio-se'];
 
 interface Mirror {
   _id: string;
   name: string;
-  kind: 'axiell-events';
-  customerId: string;
+  kind: MirrorKind;
   sourceLocation: string;
   sourceName: string;
-  eventUrl: string;
+  customerId?: string;
+  eventUrl?: string;
+  cinemaId?: number;
+  cinemaSlug?: string;
+  cinemaUrl?: string;
+  hasPosterPermission?: boolean;
   resourceId: string;
   organizerId: string;
   defaultKinds?: string[];
@@ -73,6 +82,14 @@ interface Option {
   label: string;
 }
 
+interface Cinema {
+  id: number;
+  slug: string;
+  name: string;
+  city: string;
+  websiteUrl: string;
+}
+
 // Knallebiblioteken, as the first mirror is set up
 const knalleDefaults: MirrorValues = {
   name: 'Tranemo bibliotek (Knallebiblioteken)',
@@ -84,6 +101,20 @@ const knalleDefaults: MirrorValues = {
   resourceId: '',
   organizerId: '',
   defaultKinds: ['kultur'],
+  isEnabled: false,
+};
+
+// A cinema at bio.se; which one is chosen in the form
+const bioSeDefaults: MirrorValues = {
+  name: '',
+  kind: 'bio-se',
+  sourceLocation: '',
+  sourceName: 'bio.se',
+  cinemaUrl: '',
+  hasPosterPermission: false,
+  resourceId: '',
+  organizerId: '',
+  defaultKinds: ['bio'],
   isEnabled: false,
 };
 
@@ -109,46 +140,91 @@ function MirrorForm({
     { name: string; count: number }[] | null
   >(null);
 
-  const { control, handleSubmit, register, watch } = useForm<MirrorValues>({
-    defaultValues: mirror
-      ? {
-          name: mirror.name,
-          kind: mirror.kind,
-          customerId: mirror.customerId,
-          sourceLocation: mirror.sourceLocation,
-          sourceName: mirror.sourceName,
-          eventUrl: mirror.eventUrl,
-          resourceId: mirror.resourceId,
-          organizerId: mirror.organizerId,
-          defaultKinds: mirror.defaultKinds || [],
-          isEnabled: mirror.isEnabled,
-        }
+  const [cinemas, setCinemas] = useState<Cinema[] | null>(null);
+  const [cinemasFailed, setCinemasFailed] = useState(false);
+
+  // A new mirror as its kind is first filled in
+  const defaultsFor = (kind: MirrorKind): MirrorValues =>
+    kind === 'bio-se'
+      ? bioSeDefaults
       : {
           ...knalleDefaults,
           resourceId:
             places.find((p) => p.label === knalleDefaults.sourceLocation)
               ?.value || '',
-        },
-  });
+        };
 
+  const { control, handleSubmit, register, reset, setValue, watch } =
+    useForm<MirrorValues>({
+      defaultValues: mirror
+        ? {
+            name: mirror.name,
+            kind: mirror.kind,
+            customerId: mirror.customerId,
+            sourceLocation: mirror.sourceLocation,
+            sourceName: mirror.sourceName,
+            eventUrl: mirror.eventUrl,
+            cinemaId: mirror.cinemaId,
+            cinemaUrl: mirror.cinemaUrl || '',
+            hasPosterPermission: Boolean(mirror.hasPosterPermission),
+            resourceId: mirror.resourceId,
+            organizerId: mirror.organizerId,
+            defaultKinds: mirror.defaultKinds || [],
+            isEnabled: mirror.isEnabled,
+          }
+        : defaultsFor('axiell-events'),
+    });
+
+  const kind = watch('kind');
+  const isCinema = kind === 'bio-se';
   const customerId = watch('customerId');
   const sourceLocation = watch('sourceLocation');
+  const cinemaId = watch('cinemaId');
 
   // The places with events at the source, to choose from
   useEffect(() => {
-    if (!customerId) {
+    if (isCinema || !customerId) {
       return;
     }
     call('getMirrorSourceLocations', customerId)
       .then((found) => setSourcePlaces(found as any))
       .catch(() => setSourcePlaces(null));
-  }, [customerId]);
+  }, [customerId, isCinema]);
+
+  // The cinemas at bio.se, to choose from
+  useEffect(() => {
+    if (!isCinema || cinemas) {
+      return;
+    }
+    call('getBioSeCinemas')
+      .then((found) => setCinemas(found as Cinema[]))
+      .catch(() => setCinemasFailed(true));
+  }, [isCinema]);
+
+  // Choosing a cinema fills in what bio.se knows of it: its name and the
+  // address of its own site, both free to change afterwards
+  const chooseCinema = (id: number) => {
+    const cinema = cinemas?.find((c) => c.id === id);
+    setValue('cinemaId', cinema?.id);
+    if (!cinema) {
+      return;
+    }
+    setValue('sourceLocation', cinema.name);
+    setValue('cinemaUrl', cinema.websiteUrl);
+    if (!mirror) {
+      setValue('name', `${cinema.name} (bio.se)`);
+    }
+  };
 
   const save = async (values: MirrorValues) => {
     setSaving(true);
     try {
       if (mirror) {
-        await call('updateMirror', mirror._id, values);
+        // The kind's field is disabled, and so left out of the values
+        await call('updateMirror', mirror._id, {
+          ...values,
+          kind: mirror.kind,
+        });
       } else {
         await call('createMirror', values);
       }
@@ -163,6 +239,55 @@ function MirrorForm({
 
   return (
     <form onSubmit={handleSubmit(save)}>
+      <FormField
+        helper={t('mirrors.form.kind.helper')}
+        label={t('mirrors.form.kind.label')}
+        required
+      >
+        <Select
+          {...register('kind', {
+            // A new mirror starts over as the other kind is first filled in
+            onChange: (event) => reset(defaultsFor(event.target.value)),
+          })}
+          disabled={Boolean(mirror)}
+        >
+          {MIRROR_KINDS.map((each) => (
+            <option key={each} value={each}>
+              {t(`mirrors.form.kind.${each}`)}
+            </option>
+          ))}
+        </Select>
+      </FormField>
+      {isCinema && (
+        <FormField
+          helper={t('mirrors.form.cinema.helper')}
+          label={t('mirrors.form.cinema.label')}
+          required
+        >
+          {cinemas ? (
+            <Select
+              required
+              value={cinemaId ? String(cinemaId) : ''}
+              onChange={(event) => chooseCinema(Number(event.target.value))}
+            >
+              <option value="">{t('mirrors.form.choose')}</option>
+              {cinemas.map((cinema) => (
+                <option key={cinema.id} value={String(cinema.id)}>
+                  {cinema.city && !cinema.name.includes(cinema.city)
+                    ? `${cinema.name} – ${cinema.city}`
+                    : cinema.name}
+                </option>
+              ))}
+            </Select>
+          ) : (
+            <Text color="gray.600">
+              {cinemasFailed
+                ? t('mirrors.form.cinema.failed')
+                : t('mirrors.form.cinema.loading')}
+            </Text>
+          )}
+        </FormField>
+      )}
       <FormField label={t('mirrors.form.name.label')} required>
         <Input {...register('name', { required: true })} />
       </FormField>
@@ -177,43 +302,72 @@ function MirrorForm({
       >
         <Input {...register('sourceName', { required: true })} />
       </FormField>
-      <FormField
-        helper={t('mirrors.form.customerId.helper')}
-        label={t('mirrors.form.customerId.label')}
-        required
-      >
-        <Input {...register('customerId', { required: true })} />
-      </FormField>
-      <FormField
-        helper={t('mirrors.form.sourceLocation.helper')}
-        label={t('mirrors.form.sourceLocation.label')}
-        required
-      >
-        {sourcePlaces ? (
-          <Select {...register('sourceLocation', { required: true })}>
-            {!sourcePlaces.some((p) => p.name === sourceLocation) && (
-              <option value={sourceLocation}>{sourceLocation}</option>
+      {isCinema && (
+        <>
+          <FormField
+            helper={t('mirrors.form.cinemaUrl.helper')}
+            label={t('mirrors.form.cinemaUrl.label')}
+          >
+            <Input {...register('cinemaUrl')} type="url" />
+          </FormField>
+          <FormField helper={t('mirrors.form.posters.helper')}>
+            <Controller
+              control={control}
+              name="hasPosterPermission"
+              render={({ field }) => (
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  id="mirror-posters"
+                  onChange={field.onChange}
+                >
+                  {t('mirrors.form.posters.label')}
+                </Checkbox>
+              )}
+            />
+          </FormField>
+        </>
+      )}
+      {!isCinema && (
+        <>
+          <FormField
+            helper={t('mirrors.form.customerId.helper')}
+            label={t('mirrors.form.customerId.label')}
+            required
+          >
+            <Input {...register('customerId', { required: true })} />
+          </FormField>
+          <FormField
+            helper={t('mirrors.form.sourceLocation.helper')}
+            label={t('mirrors.form.sourceLocation.label')}
+            required
+          >
+            {sourcePlaces ? (
+              <Select {...register('sourceLocation', { required: true })}>
+                {!sourcePlaces.some((p) => p.name === sourceLocation) && (
+                  <option value={sourceLocation}>{sourceLocation}</option>
+                )}
+                {sourcePlaces.map((place) => (
+                  <option key={place.name} value={place.name}>
+                    {t('mirrors.form.sourceLocation.option', {
+                      name: place.name,
+                      count: place.count,
+                    })}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <Input {...register('sourceLocation', { required: true })} />
             )}
-            {sourcePlaces.map((place) => (
-              <option key={place.name} value={place.name}>
-                {t('mirrors.form.sourceLocation.option', {
-                  name: place.name,
-                  count: place.count,
-                })}
-              </option>
-            ))}
-          </Select>
-        ) : (
-          <Input {...register('sourceLocation', { required: true })} />
-        )}
-      </FormField>
-      <FormField
-        helper={t('mirrors.form.eventUrl.helper')}
-        label={t('mirrors.form.eventUrl.label')}
-        required
-      >
-        <Input {...register('eventUrl', { required: true })} />
-      </FormField>
+          </FormField>
+          <FormField
+            helper={t('mirrors.form.eventUrl.helper')}
+            label={t('mirrors.form.eventUrl.label')}
+            required
+          >
+            <Input {...register('eventUrl', { required: true })} />
+          </FormField>
+        </>
+      )}
 
       <Heading size="sm" css={{ margin: '1.5rem 0 0.5rem' }}>
         {t('mirrors.form.target')}
@@ -247,7 +401,11 @@ function MirrorForm({
         </Select>
       </FormField>
       <FormField
-        helper={t('mirrors.form.kinds.helper')}
+        helper={t(
+          isCinema
+            ? 'mirrors.form.kinds.helperCinema'
+            : 'mirrors.form.kinds.helper'
+        )}
         label={t('mirrors.form.kinds.label')}
       >
         <Controller

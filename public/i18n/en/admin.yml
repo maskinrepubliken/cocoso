@@ -247,8 +247,8 @@ locations:
 
 mirrors:
   title: Mirrors
-  description: Events copied from another calendar and kept up to date, such as the library's at Knallebiblioteken
-  info: "A mirror copies the events of one place in another calendar into Cocoso, every hour: new ones are added, changes follow, cancelled ones are marked and removed ones deleted. Sign-up happens at the source, which each event links to. Try a mirror with \"Preview\" before you switch it on."
+  description: Events copied from another calendar and kept up to date, such as the library's at Knallebiblioteken or a cinema's programme at bio.se
+  info: "A mirror copies the events of one place in another calendar into Cocoso, every hour: new ones are added, changes follow, cancelled ones are marked and removed ones deleted. Sign-up or ticket sales happen at the source, which each event links to. Try a mirror with \"Preview\" before you switch it on."
   new: New mirror
   edit: Edit mirror
   none: No mirrors yet
@@ -274,6 +274,22 @@ mirrors:
       keep: Unchanged
       detached: Detached
   form:
+    kind:
+      label: Kind of source
+      helper: What is copied, and from where. It can't be changed once the mirror is saved.
+      axiell-events: Library events (Axiell calendar, such as Knallebiblioteken)
+      bio-se: Cinema screenings (bio.se)
+    cinema:
+      label: Cinema
+      helper: The cinema at bio.se whose programme is copied. Every screening becomes an event.
+      loading: Fetching the cinemas from bio.se…
+      failed: The cinemas could not be fetched from bio.se. Close this and try again in a while.
+    cinemaUrl:
+      label: The cinema's own site
+      helper: Linked from every event. Filled in from bio.se when you choose the cinema; change it if there is a better address, or leave it empty for no link.
+    posters:
+      label: We have permission to show the film posters
+      helper: The posters belong to the film distributors. Without this, the events show the picture of the place instead.
     name:
       label: Name
     source: From
@@ -300,6 +316,7 @@ mirrors:
     kinds:
       label: Kinds when the source gives none
       helper: Most events get their kind from the source's tags
+      helperCinema: Every screening gets these kinds
     enabled:
       label: Sync every hour
       helper: Switched off, the mirror only runs when you press "Sync now"

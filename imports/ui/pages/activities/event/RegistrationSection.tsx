@@ -149,7 +149,7 @@ interface RegistrationSectionProps {
     isRegistrationDisabled?: boolean;
     isRegistrationEnabled?: boolean;
     cancelledAt?: Date;
-    mirror?: { sourceUrl?: string; isDetached?: boolean };
+    mirror?: { kind?: string; sourceUrl?: string; isDetached?: boolean };
   };
   occurrence: Occurrence;
   occurrenceIndex: number;
@@ -296,7 +296,9 @@ export default function RegistrationSection({
   // Called off: no new sign-ups, but one made can still be undone below
   const isCancelled = Boolean(activity.cancelledAt);
   const canSignUp = !isCancelled && !registrationClosed && !isPast && !isFull;
-  // Copied from another calendar (a mirror): sign-up is there
+  // Copied from another calendar (a mirror): sign-up is there, or for a
+  // cinema's screening the tickets
+  const isScreening = activity.mirror?.kind === 'bio-se';
   const sourceUrl = registrationClosed ? activity.mirror?.sourceUrl : null;
   const sourceHost = sourceUrl
     ? new URL(sourceUrl).hostname.replace(/^www\./, '')
@@ -317,9 +319,16 @@ export default function RegistrationSection({
         <Status>{tc('event.cancelled.registration')}</Status>
       ) : sourceUrl && !isPast ? (
         <Status>
-          {tc('event.mirror.registration', { source: sourceHost })}{' '}
+          {tc(
+            isScreening ? 'event.mirror.tickets' : 'event.mirror.registration',
+            { source: sourceHost }
+          )}{' '}
           <a href={sourceUrl} rel="noopener noreferrer" target="_blank">
-            {tc('event.mirror.registrationLink')}
+            {tc(
+              isScreening
+                ? 'event.mirror.ticketsLink'
+                : 'event.mirror.registrationLink'
+            )}
           </a>
         </Status>
       ) : registrationClosed ? (
