@@ -6727,12 +6727,12 @@ body {
   font-weight: 700;
 }
 
-/* --- the profile form: deleting the account --- */
+/* --- the settings dialog: deleting the account --- */
 
 /* small and out of the way on purpose */
 .profile-delete-link {
   display: block;
-  margin: 28px 0 4px auto;
+  margin: 6px 0 0 auto;
   padding: 0;
   border: 0;
   background: none;

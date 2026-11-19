@@ -23,6 +23,8 @@ import {
   turnPushOn,
 } from '/imports/ui/utils/webPush';
 
+import DeleteAccount from './DeleteAccount';
+
 interface Prefs {
   newsletter: boolean;
   eventEmail: boolean;
@@ -199,7 +201,7 @@ function Following() {
 
 // The settings, in a dialog of their own: the language, what is sent
 // about events followed, the newsletter and, for oneself, push on this
-// device. Opened from the account menu under one's picture in the header,
+// device, and last a small link to delete the account. Opened from the account menu under one's picture in the header,
 // and from the gear on a profile page (there also by admins, for the
 // person whose page it is).
 export default function SettingsModal() {
@@ -368,6 +370,9 @@ export default function SettingsModal() {
           </section>
 
           {isSelf && <ThisDevice />}
+
+          {/* Last and small: not something to press by mistake */}
+          {isSelf && <DeleteAccount username={settings.username} />}
         </div>
       )}
     </Modal>

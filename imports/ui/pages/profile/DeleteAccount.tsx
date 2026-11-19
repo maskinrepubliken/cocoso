@@ -16,7 +16,7 @@ interface DeleteAccountProps {
   username: string;
 }
 
-// Deleting one's account, last in the profile form: a small link, kept
+// Deleting one's account, last in the settings dialog: a small link, kept
 // out of the way, and a dialog that only goes through once the username
 // is written out.
 export default function DeleteAccount({ username }: DeleteAccountProps) {

@@ -165,12 +165,7 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
     >
       <SuccessRedirector forEdit ping={updated || undefined}>
         {profile ? (
-          <ProfileForm
-            key={profile._id}
-            isSelf={isSelf}
-            profile={profile}
-            onSubmit={save}
-          />
+          <ProfileForm key={profile._id} profile={profile} onSubmit={save} />
         ) : (
           <Loader />
         )}

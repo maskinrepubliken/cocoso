@@ -26,7 +26,6 @@ import PlacePicker, {
 
 import FormField from '../../forms/FormField';
 import Quill from '../../forms/Quill';
-import DeleteAccount from './DeleteAccount';
 
 export interface ProfileFormValues {
   // One name, a person's or a group's. Kept in firstName, with lastName
@@ -64,8 +63,6 @@ export interface ProfileExtras {
 
 interface ProfileFormProps {
   profile: EditableProfile;
-  // One's own profile: deleting the account
-  isSelf?: boolean;
   onSubmit: (
     data: Partial<ProfileFormValues>,
     extras: ProfileExtras
@@ -76,7 +73,7 @@ interface ProfileFormProps {
 // are (name, picture, text) in the wide column, the details as cards
 // beside it.
 // Inside the entry sheet, Save is the sheet's.
-function ProfileForm({ profile, isSelf = false, onSubmit }: ProfileFormProps) {
+function ProfileForm({ profile, onSubmit }: ProfileFormProps) {
   // Organizers must give an email or a phone (see _utils/contact.ts), and
   // say where they usually are
   const contactRequired = Boolean(profile.isOrganizer);
@@ -331,8 +328,6 @@ function ProfileForm({ profile, isSelf = false, onSubmit }: ProfileFormProps) {
           )}
         </div>
       </div>
-
-      {isSelf && <DeleteAccount username={profile.username} />}
 
       {!sheet && (
         <Flex justify="flex-end" mt="8" mb="12">
