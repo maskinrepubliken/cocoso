@@ -88,9 +88,14 @@ export default function OwnNotifications() {
   const { devices, follows } = settings;
   const canPush = pushState === 'on' || pushState === 'off';
 
+  // Every button here is type="button": they are inside the profile form,
+  // and are not its submit button
   return (
     <>
-      <p className="form-preview-note">
+      <h4 className="profile-settings-heading">
+        {t('notifications.push.title')}
+      </h4>
+      <p className="profile-setting-note">
         {t(
           `notifications.push.${
             pushState === 'needs-install' ? 'needsInstall' : pushState
@@ -105,6 +110,7 @@ export default function OwnNotifications() {
           <Button
             disabled={busy}
             size="sm"
+            type="button"
             variant="outline"
             onClick={() => setPush(pushState !== 'on')}
           >
@@ -116,6 +122,7 @@ export default function OwnNotifications() {
             <Button
               disabled={busy}
               size="sm"
+              type="button"
               variant="ghost"
               onClick={testPush}
             >
@@ -142,6 +149,7 @@ export default function OwnNotifications() {
               </Link>
               <Button
                 size="xs"
+                type="button"
                 variant="ghost"
                 onClick={() => unfollow(follow.activityId)}
               >

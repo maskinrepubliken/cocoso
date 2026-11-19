@@ -205,6 +205,9 @@ function ProfileForm({ profile, isSelf = false, onSubmit }: ProfileFormProps) {
                     colorScheme="red"
                     mt="2"
                     size="sm"
+                    // not the form's submit button, which Enter in a
+                    // field would press
+                    type="button"
                     variant="ghost"
                     onClick={removeAvatar}
                   >

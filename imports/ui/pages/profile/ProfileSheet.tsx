@@ -5,7 +5,7 @@ import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import { call } from '/imports/api/_utils/shared';
-import { rememberLang } from '/imports/startup/i18n';
+import { allLangs, rememberLang } from '/imports/startup/i18n';
 import {
   resizeBeforeUpload,
   uploadImage,
@@ -24,6 +24,28 @@ import ProfileForm, {
   type ProfileFormValues,
   type ProfilePrefs,
 } from './ProfileForm';
+
+// One of the site's languages: "sv-SE" is sv
+const siteLang = (lang?: string) =>
+  allLangs.find((l) => l.value === (lang || '').slice(0, 2))?.value || 'sv';
+
+// The address as the server takes it, whatever the picker left in it:
+// its four parts and nothing else, the point as two numbers
+const plainAddress = (address?: ProfileFormValues['address']) => {
+  if (!address) {
+    return null;
+  }
+  const lat = Number(address.coordinates?.lat);
+  const lng = Number(address.coordinates?.lng);
+  return {
+    street: String(address.street || ''),
+    postalCode: String(address.postalCode || ''),
+    city: String(address.city || ''),
+    ...(address.coordinates && Number.isFinite(lat) && Number.isFinite(lng)
+      ? { coordinates: { lat, lng } }
+      : {}),
+  };
+};
 
 interface ProfileSettings {
   lang: string | null;
@@ -82,7 +104,7 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
           ...found,
           // Without a language of their own they read the site in the one
           // it is shown in
-          lang: settings.lang || i18n.language,
+          lang: settings.lang || siteLang(i18n.language),
           prefs: settings.prefs,
         });
       })
@@ -135,9 +157,15 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
         // Only organizers have an address and place on their profile
         ...(profile.isOrganizer
           ? {
-              homePlaceId: values.homePlaceId || null,
-              address: values.address || null,
-              locationId: values.locationId || null,
+              homePlaceId:
+                typeof values.homePlaceId === 'string'
+                  ? values.homePlaceId
+                  : null,
+              address: plainAddress(values.address),
+              locationId:
+                typeof values.locationId === 'string'
+                  ? values.locationId
+                  : null,
             }
           : {}),
       };
@@ -175,7 +203,7 @@ export default function ProfileSheet({ username }: ProfileSheetProps) {
       context="profile"
       forEdit
       open={open}
-      title={tc('labels.update.profile')}
+      title={tc(isSelf ? 'labels.update.myProfile' : 'labels.update.profile')}
       onClose={handleClose}
     >
       <SuccessRedirector forEdit ping={updated || undefined}>
