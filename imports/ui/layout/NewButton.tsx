@@ -22,7 +22,7 @@ export interface NewButtonProps {
   site: any;
 }
 
-// The plus in the header, next to the search. Shown only to those who may
+// The plus in the header, on its right side. Shown only to those who may
 // create content, and only on a listing where they can: it opens that
 // listing's form.
 export default function NewButton({ site }: NewButtonProps) {

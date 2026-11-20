@@ -2452,8 +2452,6 @@ body {
 .site-header.is-scrolled .site-brand,
 .site-header.is-scrolled .site-nav,
 .site-header.is-scrolled .site-more,
-.site-header.is-scrolled .site-search-toggle,
-.site-header.is-scrolled .site-search-field,
 .site-header.is-scrolled .site-new,
 .site-header.is-scrolled .site-edit,
 .site-header.is-scrolled .site-user-bell,
@@ -2512,11 +2510,6 @@ body {
 
   .site-header-bar.is-stacked > .site-header-right {
     grid-area: right;
-  }
-
-  .site-header-bar.is-stacked:has(.site-search.is-open) {
-    grid-template-columns: 1fr;
-    grid-template-areas: 'right';
   }
 }
 
@@ -2733,6 +2726,8 @@ body {
 /* --- menu pill (desktop) --- */
 
 .site-nav {
+  /* the open search field and its results are placed against the pill */
+  position: relative;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -3095,13 +3090,13 @@ body {
   color: #fff;
 }
 
-/* --- site search (header, left of the account) ---
-   A magnifier button that unfolds into a field to its left; below 1200px
-   the open field takes the whole bar instead. The results drop down from
-   the field, grouped by section. */
+/* --- site search (header, last in the menu pill) ---
+   A magnifier at the end of the menu pill. Opened, its field lies over
+   the pill's links, so the pill becomes the search field and nothing in
+   the bar moves; the results drop down from the pill, grouped by section.
+   On a phone it is a round button of its own (further down). */
 
 .site-search {
-  position: relative;
   display: flex;
   align-items: center;
 }
@@ -3110,18 +3105,18 @@ body {
   order: 2;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: var(--site-island);
-  box-shadow: var(--site-island-shadow);
+  background: none;
   color: var(--site-ink-soft);
   cursor: pointer;
 }
 
 .site-search-toggle:hover {
+  background: var(--cocoso-colors-theme-100);
   color: var(--site-ink);
 }
 
@@ -3129,39 +3124,35 @@ body {
   display: none;
   align-items: center;
   gap: 6px;
-  width: 280px;
-  height: 34px;
+  box-sizing: border-box;
   padding: 0 10px 0 12px;
   border-radius: 999px;
-  background: var(--site-island);
-  box-shadow: var(--site-island-shadow);
+  /* solid, so the links under it do not show through the scrolled glass */
+  background: var(--cocoso-papper);
   color: var(--site-ink-soft);
   transition: box-shadow 0.2s ease;
 }
 
-/* Unfolds to the left of the button, floating over the bar so the menu
-   does not move while someone searches. */
+/* Over the links, up to the cross that closes it */
 .site-search.is-open .site-search-field {
   position: absolute;
-  top: 50%;
-  right: 44px;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  right: 39px;
   display: flex;
-  translate: 0 -50%;
-  animation: site-search-unfold 0.2s ease-out;
+  animation: site-search-unfold 0.15s ease-out;
 }
 
 .site-search-field:focus-within {
-  box-shadow: var(--site-island-shadow),
-    0 0 0 2px var(--cocoso-colors-theme-300);
+  box-shadow: inset 0 0 0 2px var(--cocoso-colors-theme-300);
 }
 
 @keyframes site-search-unfold {
   from {
-    width: 40px;
     opacity: 0;
   }
   to {
-    width: 280px;
     opacity: 1;
   }
 }
@@ -3221,9 +3212,11 @@ body {
 .site-search-panel {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
+  left: 50%;
   z-index: 1002;
-  width: 380px;
+  box-sizing: border-box;
+  width: max(100%, 380px);
+  translate: -50% 0;
   max-height: min(70vh, 560px);
   overflow-y: auto;
 }
@@ -3619,25 +3612,16 @@ body {
   object-fit: cover;
 }
 
-/* Up to 1199px the open field takes the bar: brand and menu step aside
-   and the account stays on the right. */
-@media (max-width: 1199px) {
-  .site-header-bar:has(.site-search.is-open) {
-    grid-template-columns: 1fr;
-  }
-
+/* On a phone the open field takes the bar: brand, menu button and the
+   page's buttons step aside. */
+@media (max-width: 959px) {
   .site-header-bar:has(.site-search.is-open) > .site-header-left,
-  .site-header-bar:has(.site-search.is-open) > .site-nav,
   .site-header-bar:has(.site-search.is-open) > .site-more,
-  .site-header-bar:has(.site-search.is-open) .new-button-wrapper {
+  .site-header-bar:has(.site-search.is-open) > .site-header-right {
     display: none;
   }
 
-  .site-header-bar:has(.site-search.is-open) > .site-header-right {
-    width: 100%;
-    justify-self: stretch;
-  }
-
+  .site-header-bar:has(.site-search.is-open) > .site-nav,
   .site-search.is-open {
     flex: 1 1 auto;
     min-width: 0;
@@ -3646,11 +3630,16 @@ body {
   .site-search.is-open .site-search-field {
     position: static;
     flex: 1 1 auto;
-    width: auto;
-    height: 36px;
+    height: 32px;
     margin-right: 8px;
-    translate: none;
+    background: var(--site-island);
+    box-shadow: var(--site-island-shadow);
     animation: none;
+  }
+
+  .site-search.is-open .site-search-field:focus-within {
+    box-shadow: var(--site-island-shadow),
+      0 0 0 2px var(--cocoso-colors-theme-300);
   }
 
   .site-search-input {
@@ -3659,42 +3648,52 @@ body {
 
   .site-search-panel {
     position: fixed;
-    top: 66px;
+    top: 60px;
     right: 10px;
     left: 10px;
     width: auto;
-    max-height: calc(100vh - 80px);
-  }
-}
-
-@media (max-width: 959px) {
-  .site-search-panel {
-    top: 60px;
     max-height: calc(100vh - 72px);
+    translate: none;
   }
 }
 
 @media (max-width: 959px) {
-  /* The menu pill is gone from the bar, so two columns: brand, account.
-     Otherwise the right side would land in the empty middle column. */
+  /* One row: crane pill, the menu button with the free width, the
+     search, and the page's own buttons when it has any */
   .site-header-bar {
-    grid-template-columns: auto 1fr auto;
+    display: flex;
     gap: 8px;
     height: 52px;
     padding: 0 10px;
   }
 
-  .site-header-bar:has(.site-search.is-open) {
-    grid-template-columns: 1fr;
-  }
-
-  .site-nav {
+  .site-header-right:empty {
     display: none;
   }
 
-  /* One row: crane pill, the menu button with the free width, buttons */
+  /* The menu's links are in the menu panel: of the pill only the search
+     is left, as a round island of its own */
+  .site-nav {
+    position: static;
+    flex: 0 0 auto;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .site-nav > :not(.site-search) {
+    display: none;
+  }
+
+  .site-nav .site-search-toggle,
+  .site-nav .site-search-toggle:hover {
+    background: var(--site-island);
+    box-shadow: var(--site-island-shadow);
+  }
+
   .site-more {
     display: flex;
+    flex: 1 1 0;
   }
 
   /* Everything in the bar is 32px tall, like the round buttons */
@@ -3738,7 +3737,6 @@ body {
     padding: 0 12px;
   }
 
-  .site-search-toggle,
   .site-new,
   .site-edit {
     width: 32px;
@@ -3759,12 +3757,12 @@ body {
   }
 }
 
-/* A phone with the account on the left and three or more buttons on the
-   right (search, gear, discussion, book): the crane stands for the site
-   name, so the menu button keeps room for the page's name. */
+/* A phone with the account on the left and two or more buttons on the
+   right (gear, discussion, book) beside the search: the crane stands for
+   the site name, so the menu button keeps room for the page's name. */
 @media (max-width: 959px) {
   .site-header-bar:has(.site-header-left .site-user):has(
-      .site-header-right > :nth-child(3)
+      .site-header-right > :nth-child(2)
     )
     .site-brand-name {
     display: none;

@@ -128,10 +128,13 @@ interface NavProps {
   prefix: string;
   className: string;
   itemClassName: string;
+  // What closes the pill after the links: the search
+  children?: React.ReactNode;
 }
 
-// One list of links, styled as a white pill on desktop and as a scrolling
-// chip row on narrower screens (see client/main.css).
+// One list of links and, last in it, the search: a white pill on desktop.
+// On a phone the links are in the menu panel instead and only the search
+// is left of it, as a round button (see client/main.css).
 function Nav({
   items,
   section,
@@ -139,6 +142,7 @@ function Nav({
   prefix,
   className,
   itemClassName,
+  children,
 }: NavProps) {
   const activeRef = useRef<HTMLAnchorElement>(null);
   const navRef = useRef<HTMLElement>(null);
@@ -206,6 +210,7 @@ function Nav({
           </Link>
         )
       )}
+      {children}
     </nav>
   );
 }
@@ -306,11 +311,12 @@ export interface HeaderProps {
 }
 
 // The site header: one 56px row with the brand pill (and in it the
-// account) on the left, the menu as a floating pill in the middle and, on
-// the right, the search, the plus for those who may create content, the
-// pen on a page one may edit, and the page's discussion.
-// Below 960px the menu pill is gone: the brand pill stretches across the
-// row and a grid button beside the search opens the menu panel. The bar
+// account) on the left, the menu as a floating pill in the middle with
+// the search at its end and, on the right, the plus for those who may
+// create content, the pen on a page one may edit, and the page's
+// discussion.
+// Below 960px the menu's links are gone from the bar: a grid button opens
+// the menu panel, and the search is a round button beside it. The bar
 // is transparent at the top of the page and gains a blurred backdrop once
 // the page scrolls.
 // The bar's groups shrink to at most this much before the menu pill
@@ -376,9 +382,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         setShowUserName(false);
         return;
       }
-      // While the search is open it takes the bar (brand and menu step
-      // aside, the buttons stretch): nothing to fit, and measuring that
-      // would shrink the field, which resizes it, which measures again.
+      // While the search is open its field lies over the menu pill:
+      // nothing to fit.
       if (bar.querySelector('.site-search.is-open')) {
         return;
       }
@@ -524,10 +529,11 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           pageTitles={pageTitles}
           prefix={prefix}
           section={section}
-        />
+        >
+          <SiteSearch site={site} />
+        </Nav>
 
         <div className="site-header-right">
-          <SiteSearch site={site} />
           <NewButton site={site} />
           <EditButton />
           <GroupMembershipButton />
