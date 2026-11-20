@@ -15,7 +15,11 @@ import InstallApp from './InstallApp';
 import LanguageSwitch from './LanguageSwitch';
 import useLogout from './useLogout';
 import { sitePath } from '/imports/api/_utils/paths';
-import { accessibilityPath, termsPath } from '/imports/ui/pages/help/helpPages';
+import {
+  accessibilityPath,
+  isHelpPageShown,
+  termsPath,
+} from '/imports/ui/pages/help/helpPages';
 
 export interface FooterProps {
   site: any;
@@ -56,10 +60,12 @@ export function Footer({ site }: FooterProps) {
               and login last when logged out */}
           <div className="site-footer-tools">
             <LanguageSwitch />
-            <Link className="site-footer-pill" to={sitePath('about')}>
-              <InfoIcon width={16} height={16} />
-              {tc('footer.about')}
-            </Link>
+            {isHelpPageShown('about') && (
+              <Link className="site-footer-pill" to={sitePath('about')}>
+                <InfoIcon width={16} height={16} />
+                {tc('footer.about')}
+              </Link>
+            )}
             <FeedbackForm />
             <InstallApp />
             {!currentUser && (

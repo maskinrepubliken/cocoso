@@ -61,117 +61,65 @@ pages:
 
   terms:
     title: Terms of use and privacy policy
-    lead: "What applies when you use {{site}}, what data about you is stored, why, for how long and how you get a copy of it or have it erased."
-    updated: In force from 19 November 2026.
+    lead: "What applies when you use {{site}} and what data about you is stored."
+    updated: In force from 20 November 2026.
     sections:
       - title: Who is responsible?
         body:
-          - "{{site}} is run by Uddebo Makerspace, in cooperation with Tranemo municipality. Uddebo Makerspace is the data controller: it decides how your personal data is used in the service, and it is who you turn to with questions about it."
-          - "The contact person is Viktor Lyresten, [viktor@lyresten.se](mailto:viktor@lyresten.se), phone [+46 79 357 72 07](tel:+46793577207). More about Uddebo Makerspace is at [maskinrepubliken.se/uddebomakerspace](https://www.maskinrepubliken.se/uddebomakerspace/). You can also write with the **Give feedback** button at the foot of every page; give your email address if you want an answer."
-      - title: Using the service
+          - "{{site}} is run by Uddebo Makerspace, which is the data controller. Contact: Viktor Lyresten, [viktor@lyresten.se](mailto:viktor@lyresten.se), phone [+46 79 357 72 07](tel:+46793577207). You can also use the **Give feedback** button at the foot of the page."
+      - title: Terms
         body:
-          - "Reading, searching and signing up for events needs no account. With an account you can follow events and get notifications, and as an organizer you can add events and places."
-          - "The account is personal. You log in with a code sent to your email address, so there is no password to keep track of. Whoever has access to your email also has access to your account."
-          - "The service is a beta and is provided as it is. We do our best to keep it working and to lose nothing, but we cannot promise that it is always available."
-      - title: What you publish
-        body:
-          - "What you add is visible to every visitor and can be found through search engines. Write respectfully, keep to the truth and publish only what you have the right to publish, such as pictures you took yourself or have permission to use. Name the photographer and the licence when the licence requires it."
-          - "You keep the rights to what you publish. By adding it you give us the right to show it in the service, in emails and notifications about the event and when the page is shared."
-          - "Do not add details about other people without their knowing. That goes for names, pictures and contact details in particular."
-          - "We may remove content that breaks the law, is offensive or misleading or does not belong in an events calendar, and we may close accounts that are misused. If you see something that should not be here, tell us with **Give feedback**."
+          - list:
+              - "Reading, searching and signing up for events needs no account. An account is personal, and you log in with a code sent to your email address."
+              - "What you publish is visible to everyone. Publish only what is true and what you have the right to publish, and no details about others without their knowing."
+              - "We may remove content and close accounts that break the law or these terms."
+              - "The service is a beta and may change or be unavailable."
       - title: What data we store
         body:
-          - "We store only what the service needs to work. Here is what, why, on which basis in the General Data Protection Regulation (GDPR) and for how long."
-          - "**Account.** Your email address, your username, the name you give, your language and when you accepted these terms. Basis: the contract with you about using the service. Kept until you delete the account."
-          - "**Login.** The code emailed to you is stored in hashed form and erased when used, after 15 minutes at the latest. Once you are logged in, a login key is stored in your browser and in hashed form with us. It is valid for 90 days, or until you log out. Basis: contract."
-          - "**Your profile.** What you fill in yourself: name, picture, description, the contact details you choose to show and, if you are an organizer, where you are based. It is visible to every visitor. Basis: contract. Kept until you change it or delete the account."
-          - "**What you publish.** Events, places and pictures, together with your username. Basis: contract. Stays until you or an administrator removes it."
-          - "**Sign-ups.** When you sign up for an event we store first name, last name, email address, number of seats and when you signed up. No account is needed. The organizer and the administrators see all of it and can download the list. Other visitors see only your name, and not even that if you choose to hide it. You get an email if the event changes or is cancelled. Basis: the contract about your seat at the event. The sign-up is kept for as long as the event remains in the calendar, and you can change or remove it at any time on the event's page with your email address and your last name."
-          - "**Events you follow.** Which events your account follows. Basis: your consent. Removed when you stop following or delete the account."
-          - "**Push notifications.** If you turn notifications on we store an address at your browser's push service (Google, Apple or Mozilla), two encryption keys and which browser it is. Notifications pass encrypted through the push service, which cannot read them. Basis: consent. Removed when you turn notifications off, when the push service reports that the address has expired or when you delete the account."
-          - "**Newsletter and emails about events.** Whether you have chosen to get them, and when you chose. Basis: consent. Every email has a link to stop. If you use the link to opt out of emails about a certain event we store your email address with that choice, so that no more are sent."
-          - "**Feedback.** What you write with **Give feedback** is sent as an email to the administrators, together with the page you were on and your username if you are logged in. It is not stored in the service's database. The email address is optional. Basis: our legitimate interest in improving the service and answering you."
-          - "**Mirrored events.** Some events are fetched automatically once an hour from other calendars, today the library's events calendar and bio.se. We copy title, description, time, picture and a link to the source. They hold no personal data beyond what the organizer wrote in the text. If an upcoming event changes or disappears at the source, the same happens here. The log of the fetches holds no personal data and is kept for 90 days."
-          - "**Server logs.** The server notes IP address, time and which page was fetched, as every web server does. The logs are used only to keep the service running and secure and are not linked to accounts. Basis: legitimate interest."
-          - "**Backups.** The whole service is backed up every night, and the copies are kept for up to eight weeks. What you erase therefore leaves the copies only after that time."
-          - "We collect no data for statistics, advertising or tracking, and we do not sell data on."
+          - list:
+              - "**Account and profile:** email address, username, name and what you fill in yourself. Basis: contract. Kept until you delete the account."
+              - "**Login:** the code emailed to you is kept for at most 15 minutes, and the login is valid for 90 days or until you log out. Basis: contract."
+              - "**What you publish:** events, places and pictures with your username. Basis: contract. Stays until you or an administrator removes it."
+              - "**Sign-ups:** name, email address and number of seats. The organizer and the administrators see all of it, others see only your name unless you hide it. Basis: contract. Kept for as long as the event remains. You change or remove the sign-up on the event's page."
+              - "**Followed events, push notifications and newsletter:** your choices and, for push notifications, an address at your browser's push service. Basis: consent. Removed when you turn them off or delete the account."
+              - "**Feedback:** sent as an email to the administrators and not stored in the service. Basis: legitimate interest."
+              - "**Server logs and backups:** IP address and time in logs, and nightly copies of the service kept for up to eight weeks. Basis: legitimate interest in operation and security."
+          - "We use no data for statistics, advertising or tracking and do not sell it."
       - title: Who receives the data
         body:
-          - "The data is stored on servers within the EU. We hand it to no one but the suppliers the service needs to work:"
-          - list:
-              - "Maskinrepubliken, which operates and develops the service on behalf of Uddebo Makerspace. Maskinrepubliken is a data processor and may use the data only on Uddebo Makerspace's instructions."
-              - "The supplier of the server and of the backups."
-              - "The email service that sends login codes, confirmations and mailings."
-              - "Your browser's push service, if you have turned notifications on."
-              - "The map services OpenFreeMap and jsDelivr, which see your IP address when a map is shown but receive nothing else."
-              - "OpenStreetMap's address service Nominatim, to which our server sends the address of a place to be able to show it on the map. An address you give in your profile is looked up the same way."
-      - title: Cookies and storage in the browser
+          - "The data is stored within the EU. Maskinrepubliken operates the service as a data processor for Uddebo Makerspace. Beyond that we use a server supplier, an email service, your browser's push service if you have turned notifications on, and the map services OpenFreeMap and jsDelivr (which see your IP address when a map is shown) and Nominatim (to which addresses of places are sent)."
+      - title: Cookies
         body:
-          - "The service stores only what it needs to work, and none of it is used for tracking or advertising. That is why we do not ask for consent, but you should know what it is:"
-          - list:
-              - "**Cookies:** i18next and cocoso-lang remember your language (the first until you close the browser, the second for a year and only if you pick a language yourself). cocoso-cookie-notice remembers for a year that you have read the information about cookies."
-              - "**The browser's storage (localStorage):** the login is stored there when you log in and removed when you log out. If you have started filling in a form, the draft is kept there for up to 30 days, so that nothing is lost."
-          - "No cookies are set by other companies. Pictures and typefaces are fetched from the service's own server."
-      - title: Deleting your account
-        body:
-          - "You delete the account yourself: press your profile picture in the header, choose **My settings** and then **Delete my account** at the bottom. It cannot be undone."
-          - "Your account, your profile, your role as organizer, your push notifications and the list of events you follow are then removed at once."
-          - "Events, places and pictures you have published stay, since others may have signed up or linked to them. An event with a co-organizer gets that person as its organizer. The others then say that the organizer has been removed, and your username is kept with them. The same goes for sign-ups you have made to other people's events. Remove them before you delete the account if you do not want them to stay, or ask us to do it for you."
+          - "Only what the service needs to work is stored in your browser: the cookies i18next and cocoso-lang for language (the latter for a year), cocoso-cookie-notice which remembers for a year that you have read this information, and the login and form drafts (for up to 30 days) in the browser's storage. No cookies are set by other companies and nothing is used for tracking."
       - title: Your rights
         body:
-          - "Under the GDPR you have the right to:"
-          - list:
-              - "know what data we hold about you and get a copy of it,"
-              - "have incorrect data corrected,"
-              - "have data erased,"
-              - "object to or restrict how we use it,"
-              - "get data you provided yourself in a format that can be moved to another service,"
-              - "withdraw a consent at any time, for instance by turning notifications off."
-          - "Most of it you see and change yourself in your profile and under **My settings**. For a full copy, or to have something erased that you cannot reach yourself, write to us with **Give feedback** and give your email address. We answer within a month."
-          - "If you are not content with how we handle your data you can complain to the Swedish Authority for Privacy Protection, [Integritetsskyddsmyndigheten](https://www.imy.se/) (IMY)."
-      - title: If the terms change
-        body:
-          - "If the terms change in a way that affects you as an account holder we announce it on the site or by email before the change takes effect. The date below shows when this text was last changed."
+          - "You have the right to know what data we hold about you and get a copy, to have it corrected, erased or restricted, to object to the processing, to get it in a portable format and to withdraw a consent. Contact us and we answer within a month."
+          - "You delete the account yourself under **My settings** and **Delete my account**. Events, places and sign-ups you have added stay: remove them first, or ask us to."
+          - "If you are not content you can complain to the Swedish Authority for Privacy Protection, [Integritetsskyddsmyndigheten](https://www.imy.se/)."
 
   accessibility:
     title: Accessibility
-    lead: "Everyone should be able to use {{site}}, whatever their abilities and assistive technology. Here is how the service meets the requirements, which shortcomings we know of and how you report what does not work."
-    updated: The statement was updated on 19 November 2026.
+    lead: "{{site}} should be usable by everyone. Here is how the service meets the requirements and which shortcomings we know of."
+    updated: The statement was updated on 20 November 2026.
     sections:
       - title: How accessible is the service?
         body:
-          - "Uddebo Makerspace is behind {{site}}. The aim is for the service to meet the WCAG 2.1 guidelines at level AA, which is also what the Swedish act on accessibility of digital public services requires."
-          - "The service is **partially compliant** with those requirements. The shortcomings we know of are listed further down."
-      - title: What works
-        body:
-          - list:
-              - "The public pages can be used with a keyboard alone, and it shows where the focus is. First on every page is the link **Skip to content**."
-              - "Dialogs announce that they open, keep the focus inside and hand it back when they close. They close with Esc."
-              - "The pages have a main heading, and header, content and footer are marked up so that a screen reader can jump between them."
-              - "Text and buttons have a contrast of at least 4.5:1 against the background."
-              - "The pages can be enlarged to 200 per cent and read on a screen 320 points wide without scrolling sideways."
-              - "Form fields have labels, and errors are described in text."
-              - "The language is declared, so that a screen reader pronounces it correctly. The service is available in Swedish and English."
+          - "The service is **partially compliant** with WCAG 2.1 level AA, which is what the Swedish act on accessibility of digital public services requires."
       - title: Known shortcomings
         body:
           - list:
-              - "**The calendar's month view** is built as a table that screen readers do not read out properly. The same events are available as a list on the [Events](/evenemang) page."
-              - "**The maps** cannot be used fully with a screen reader. The address is always given as text next to the map, with a link that opens it in a map service."
-              - "**Pictures** added by organizers are described only by the name of the event or the place, not by what the picture shows. Posters with text in the picture therefore lack a text alternative, unless the organizer wrote the same in the description."
-              - "**Text written by organizers** may have links with unclear names or headings in the wrong order. The same goes for events fetched automatically from other calendars."
-              - "**The logged-in parts**, that is the forms for events and places and the administrators' panel, have not been reviewed as closely as the public pages."
-          - "We are working on the shortcomings. This page is updated when something changes."
+              - "**The calendar's month view** is not read out properly by screen readers. The same events are available as a list on the [Events](/evenemang) page."
+              - "**The maps** cannot be used fully with a screen reader. The address is always given as text next to the map."
+              - "**Pictures** are described only by the name of the event or the place."
+              - "**Text written by organizers** may have unclear links and headings."
+              - "**The logged-in parts** have not been reviewed as closely as the public pages."
       - title: How we tested
         body:
-          - "We made a review of our own in November 2026. The public pages (the start page, events, an event, the calendar, places, a place, organizers, an organizer's profile, eat, shop & stay, a town's page, search, login and these help pages) were checked with the automated tool axe-core against WCAG 2.1 A and AA, on a wide and a narrow screen, with menus and dialogs both closed and open."
-          - "In addition we went through the pages with a keyboard alone, at 200 per cent enlargement and at a width of 320 points. No review with a screen reader and no independent review has been made yet."
+          - "We reviewed the public pages ourselves in November 2026, with the tool axe-core and by hand with a keyboard, at 200 per cent enlargement and on a narrow screen. No review with a screen reader and no independent review has been made."
       - title: Reporting shortcomings
         body:
-          - "Have you found something that does not work for you, or do you need content in another format? Write to us with the **Give feedback** button at the foot of the page and give your email address if you want an answer. Tell us which page it is about and which assistive technology you use, so we can fix it sooner."
-          - "You can also contact Viktor Lyresten at Uddebo Makerspace: [viktor@lyresten.se](mailto:viktor@lyresten.se) or phone [+46 79 357 72 07](tel:+46793577207)."
-      - title: If you are not content
-        body:
-          - "The Agency for Digital Government (DIGG) supervises the act on accessibility of digital public services. If you think we do not deal with your remarks you can [report it to DIGG](https://www.digg.se/tdosanmalan)."
+          - "Does something not work for you, or do you need content in another format? Use the **Give feedback** button at the foot of the page, or contact Viktor Lyresten at Uddebo Makerspace: [viktor@lyresten.se](mailto:viktor@lyresten.se), phone [+46 79 357 72 07](tel:+46793577207)."
+          - "If you are not content with our answer you can [report it to DIGG](https://www.digg.se/tdosanmalan), which supervises the act."
 
   guideStart:
     title: Guidebook

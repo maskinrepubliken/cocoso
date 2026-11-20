@@ -15,6 +15,7 @@ import {
 } from '/imports/state';
 import { getFullName } from '/imports/api/_utils/shared';
 import { sitePath } from '/imports/api/_utils/paths';
+import { isHelpPageShown } from '/imports/ui/pages/help/helpPages';
 
 // Back to the site: the site's name in Fraunces with an arrow, at the top
 // of the admin sidebar.
@@ -247,10 +248,12 @@ export default function AdminMenu({ routes, onItemClick }) {
           }}
         >
           {/* The guidebook for organizers and administrators (/guide) */}
-          <Link className="admin-menu-guide" to={sitePath('guide')}>
-            <BookOpen aria-hidden width={18} height={18} />
-            {t('guide')}
-          </Link>
+          {isHelpPageShown('guideStart') && (
+            <Link className="admin-menu-guide" to={sitePath('guide')}>
+              <BookOpen aria-hidden width={18} height={18} />
+              {t('guide')}
+            </Link>
+          )}
           <Box
             css={{
               borderTop: '1px solid var(--cocoso-linje)',

@@ -61,117 +61,65 @@ pages:
 
   terms:
     title: Användarvillkor och integritetspolicy
-    lead: "Vad som gäller när du använder {{site}}, vilka uppgifter om dig som sparas, varför, hur länge och hur du får ut eller raderar dem."
-    updated: Gäller från den 19 november 2026.
+    lead: "Vad som gäller när du använder {{site}} och vilka uppgifter om dig som sparas."
+    updated: Gäller från den 20 november 2026.
     sections:
       - title: Vem ansvarar?
         body:
-          - "{{site}} drivs av Uddebo Makerspace, i samarbete med Tranemo kommun. Uddebo Makerspace är personuppgiftsansvarig, det vill säga den som bestämmer hur dina personuppgifter används i tjänsten och som du vänder dig till med frågor om dem."
-          - "Kontaktperson är Viktor Lyresten, [viktor@lyresten.se](mailto:viktor@lyresten.se), telefon [079-357 72 07](tel:+46793577207). Mer om Uddebo Makerspace finns på [maskinrepubliken.se/uddebomakerspace](https://www.maskinrepubliken.se/uddebomakerspace/). Du kan också skriva med knappen **Ge feedback** längst ner på varje sida; ange din e-postadress om du vill ha svar."
-      - title: Att använda tjänsten
+          - "{{site}} drivs av Uddebo Makerspace, som är personuppgiftsansvarig. Kontakt: Viktor Lyresten, [viktor@lyresten.se](mailto:viktor@lyresten.se), telefon [079-357 72 07](tel:+46793577207). Du kan också använda knappen **Ge feedback** längst ner på sidan."
+      - title: Villkor
         body:
-          - "Att läsa, söka och anmäla sig till evenemang kräver inget konto. Med ett konto kan du följa evenemang och få notiser, och som arrangör kan du lägga upp evenemang och platser."
-          - "Kontot är personligt. Du loggar in med en kod som skickas till din e-postadress, så det finns inget lösenord att hålla reda på. Den som kommer åt din e-post kommer också åt ditt konto."
-          - "Tjänsten är i betaversion och tillhandahålls i befintligt skick. Vi gör vårt bästa för att den ska fungera och för att inget ska gå förlorat, men vi kan inte lova att den alltid är tillgänglig."
-      - title: Det du publicerar
-        body:
-          - "Det du lägger upp syns för alla besökare och kan hittas via sökmotorer. Skriv respektfullt, håll dig till sanningen och publicera bara sådant du har rätt att publicera, till exempel bilder du själv har tagit eller har tillstånd att använda. Ange fotograf och licens när licensen kräver det."
-          - "Du behåller rätten till det du publicerar. Genom att lägga upp det ger du oss rätt att visa det i tjänsten, i mejl och notiser om evenemanget och när sidan delas."
-          - "Lägg inte upp uppgifter om andra personer utan att de vet om det. Det gäller särskilt namn, bilder och kontaktuppgifter."
-          - "Vi kan ta bort innehåll som bryter mot lag, som är kränkande eller vilseledande eller som inte hör hemma i en evenemangskalender, och vi kan stänga av konton som missbrukas. Ser du något som inte borde finnas här, hör av dig med **Ge feedback**."
+          - list:
+              - "Att läsa, söka och anmäla sig till evenemang kräver inget konto. Ett konto är personligt, och du loggar in med en kod som skickas till din e-postadress."
+              - "Det du publicerar syns för alla. Publicera bara sådant som är sant och som du har rätt att publicera, och inga uppgifter om andra utan att de vet om det."
+              - "Vi kan ta bort innehåll och stänga av konton som bryter mot lag eller mot de här villkoren."
+              - "Tjänsten är i betaversion och kan ändras eller ligga nere."
       - title: Vilka uppgifter vi sparar
         body:
-          - "Vi sparar bara det som behövs för att tjänsten ska fungera. Här står vad, varför, med vilket stöd i dataskyddsförordningen (GDPR) och hur länge."
-          - "**Konto.** Din e-postadress, ditt användarnamn, det namn du anger, ditt språk och när du godkände de här villkoren. Stöd: avtalet med dig om att använda tjänsten. Sparas tills du raderar kontot."
-          - "**Inloggning.** Koden som mejlas till dig sparas i krypterad form och raderas när den har använts, senast efter 15 minuter. När du har loggat in sparas en inloggningsnyckel i din webbläsare och i krypterad form hos oss. Den gäller i 90 dagar, eller tills du loggar ut. Stöd: avtal."
-          - "**Din profil.** Det du själv fyller i: namn, bild, beskrivning, de kontaktuppgifter du väljer att visa och, om du är arrangör, var du håller till. Det syns för alla besökare. Stöd: avtal. Sparas tills du ändrar det eller raderar kontot."
-          - "**Det du publicerar.** Evenemang, platser och bilder, tillsammans med ditt användarnamn. Stöd: avtal. Ligger kvar tills du eller en administratör tar bort det."
-          - "**Anmälningar.** När du anmäler dig till ett evenemang sparas förnamn, efternamn, e-postadress, antal platser och när du anmälde dig. Det går att göra utan konto. Arrangören och administratörerna ser alla uppgifterna och kan ladda ner listan. Andra besökare ser bara ditt namn, och inte ens det om du väljer att dölja det. Du får mejl om evenemanget ändras eller ställs in. Stöd: avtalet om din plats på evenemanget. Anmälan sparas så länge evenemanget finns kvar i kalendern, och du kan när som helst ändra eller ta bort den på evenemangets sida med din e-postadress och ditt efternamn."
-          - "**Evenemang du följer.** Vilka evenemang ditt konto följer. Stöd: ditt samtycke. Tas bort när du slutar följa eller raderar kontot."
-          - "**Pushnotiser.** Om du slår på notiser sparas en adress hos din webbläsares pushtjänst (Google, Apple eller Mozilla), två krypteringsnycklar och vilken webbläsare det gäller. Notiserna går krypterade genom pushtjänsten, som inte kan läsa dem. Stöd: samtycke. Tas bort när du stänger av notiserna, när pushtjänsten meddelar att adressen har upphört eller när du raderar kontot."
-          - "**Nyhetsbrev och mejl om evenemang.** Om du har valt att få dem, och när du valde det. Stöd: samtycke. Varje mejl har en länk för att sluta. Väljer du via länken bort mejl om ett visst evenemang sparar vi din e-postadress ihop med det valet, så att inga fler mejl skickas."
-          - "**Feedback.** Det du skriver med **Ge feedback** skickas som mejl till administratörerna, tillsammans med sidan du var på och ditt användarnamn om du är inloggad. Det sparas inte i tjänstens databas. E-postadress är frivillig. Stöd: vårt berättigade intresse av att kunna förbättra tjänsten och svara dig."
-          - "**Speglade evenemang.** En del evenemang hämtas automatiskt en gång i timmen från andra kalendrar, i dag bibliotekets evenemangskalender och bio.se. Vi kopierar rubrik, beskrivning, tid, bild och länk till källan. Där finns inga personuppgifter utöver det som arrangören själv har skrivit i texten. Ändras eller försvinner ett kommande evenemang hos källan gör det samma sak här. Loggen över hämtningarna innehåller inga personuppgifter och sparas i 90 dagar."
-          - "**Serverloggar.** Servern antecknar IP-adress, tidpunkt och vilken sida som hämtades, som alla webbservrar gör. Loggarna används bara för att hålla tjänsten igång och säker och kopplas inte ihop med konton. Stöd: berättigat intresse."
-          - "**Säkerhetskopior.** Hela tjänsten säkerhetskopieras varje natt, och kopiorna sparas i upp till åtta veckor. Det du raderar försvinner därför ur kopiorna först efter den tiden."
-          - "Vi samlar inte in några uppgifter för statistik, reklam eller spårning, och vi säljer inte uppgifter vidare."
+          - list:
+              - "**Konto och profil:** e-postadress, användarnamn, namn och det du själv fyller i. Stöd: avtal. Sparas tills du raderar kontot."
+              - "**Inloggning:** koden som mejlas till dig sparas i högst 15 minuter, och inloggningen gäller i 90 dagar eller tills du loggar ut. Stöd: avtal."
+              - "**Det du publicerar:** evenemang, platser och bilder med ditt användarnamn. Stöd: avtal. Ligger kvar tills du eller en administratör tar bort det."
+              - "**Anmälningar:** namn, e-postadress och antal platser. Arrangören och administratörerna ser allt, andra ser bara ditt namn om du inte döljer det. Stöd: avtal. Sparas så länge evenemanget finns kvar. Du ändrar eller tar bort anmälan på evenemangets sida."
+              - "**Följda evenemang, pushnotiser och nyhetsbrev:** dina val och, för pushnotiser, en adress hos din webbläsares pushtjänst. Stöd: samtycke. Tas bort när du stänger av dem eller raderar kontot."
+              - "**Feedback:** skickas som mejl till administratörerna och sparas inte i tjänsten. Stöd: berättigat intresse."
+              - "**Serverloggar och säkerhetskopior:** IP-adress och tidpunkt i loggar, och nattliga kopior av tjänsten som sparas i upp till åtta veckor. Stöd: berättigat intresse av drift och säkerhet."
+          - "Vi använder inga uppgifter för statistik, reklam eller spårning och säljer dem inte."
       - title: Vilka som tar del av uppgifterna
         body:
-          - "Uppgifterna lagras på servrar inom EU. Vi lämnar inte ut dem till någon annan än de leverantörer som behövs för att tjänsten ska fungera:"
-          - list:
-              - "Maskinrepubliken, som sköter driften och utvecklingen av tjänsten på uppdrag av Uddebo Makerspace. Maskinrepubliken är personuppgiftsbiträde och får bara använda uppgifterna enligt Uddebo Makerspaces instruktioner."
-              - "Leverantören av servern och av säkerhetskopieringen."
-              - "E-posttjänsten som skickar inloggningskoder, bekräftelser och utskick."
-              - "Din webbläsares pushtjänst, om du har slagit på notiser."
-              - "Karttjänsterna OpenFreeMap och jsDelivr, som ser din IP-adress när en karta visas men inte får några andra uppgifter."
-              - "OpenStreetMaps adresstjänst Nominatim, dit vår server skickar adressen till en plats för att kunna visa den på kartan. Anger du en adress i din profil slås den upp på samma sätt."
-      - title: Kakor och lagring i webbläsaren
+          - "Uppgifterna lagras inom EU. Maskinrepubliken sköter driften som personuppgiftsbiträde åt Uddebo Makerspace. Därutöver används en serverleverantör, en e-posttjänst, din webbläsares pushtjänst om du har slagit på notiser, och karttjänsterna OpenFreeMap och jsDelivr (som ser din IP-adress när en karta visas) samt Nominatim (dit adresser till platser skickas)."
+      - title: Kakor
         body:
-          - "Tjänsten sparar bara det som behövs för att den ska fungera, och inget av det används för spårning eller reklam. Därför frågar vi inte om samtycke, men du ska veta vad det är:"
-          - list:
-              - "**Kakor:** i18next och cocoso-lang minns ditt språk (den första tills du stänger webbläsaren, den andra i ett år och bara om du själv väljer språk). cocoso-cookie-notice minns i ett år att du har läst informationen om kakor."
-              - "**Webbläsarens lagring (localStorage):** inloggningen sparas där när du loggar in och tas bort när du loggar ut. Har du börjat fylla i ett formulär sparas utkastet där i upp till 30 dagar, så att inget går förlorat."
-          - "Inga kakor sätts av andra företag. Bilder och typsnitt hämtas från tjänstens egen server."
-      - title: Radera ditt konto
-        body:
-          - "Du raderar kontot själv: tryck på din profilbild uppe i sidhuvudet, välj **Mina inställningar** och sedan **Radera mitt konto** längst ner. Det går inte att ångra."
-          - "Då tas ditt konto, din profil, din roll som arrangör, dina pushnotiser och listan över evenemang du följer bort direkt."
-          - "Evenemang, platser och bilder som du har publicerat ligger kvar, eftersom andra kan ha anmält sig eller hänvisat dit. Har ett evenemang en medarrangör blir den arrangör. På de övriga står det sedan att arrangören är borttagen, och ditt användarnamn sparas med dem. Detsamma gäller anmälningar du har gjort till andras evenemang. Ta bort dem innan du raderar kontot om du inte vill ha dem kvar, eller be oss göra det åt dig."
+          - "Bara det som behövs för att tjänsten ska fungera sparas i din webbläsare: kakorna i18next och cocoso-lang för språk (den senare i ett år), cocoso-cookie-notice som i ett år minns att du har läst den här informationen, samt inloggningen och utkast till formulär (i upp till 30 dagar) i webbläsarens lagring. Inga kakor sätts av andra företag och inget används för spårning."
       - title: Dina rättigheter
         body:
-          - "Enligt dataskyddsförordningen har du rätt att:"
-          - list:
-              - "få veta vilka uppgifter vi har om dig och få en kopia av dem,"
-              - "få felaktiga uppgifter rättade,"
-              - "få uppgifter raderade,"
-              - "invända mot eller begränsa hur vi använder dem,"
-              - "få ut uppgifter du själv har lämnat i ett format som går att flytta till en annan tjänst,"
-              - "när som helst ta tillbaka ett samtycke, till exempel genom att stänga av notiser."
-          - "Det mesta ser och ändrar du själv i din profil och under **Mina inställningar**. För ett fullständigt utdrag, eller för att få något raderat som du inte kommer åt själv, hör av dig med **Ge feedback** och ange din e-postadress. Vi svarar inom en månad."
-          - "Är du inte nöjd med hur vi hanterar dina uppgifter kan du klaga hos [Integritetsskyddsmyndigheten](https://www.imy.se/) (IMY)."
-      - title: Om villkoren ändras
-        body:
-          - "Ändras villkoren på ett sätt som påverkar dig som har ett konto meddelar vi det på sajten eller med mejl innan ändringen börjar gälla. Datumet nedan visar när den här texten senast ändrades."
+          - "Du har rätt att få veta vilka uppgifter vi har om dig och få en kopia, få dem rättade, raderade eller begränsade, invända mot behandlingen, få ut dem i ett flyttbart format och ta tillbaka ett samtycke. Kontakta oss, så svarar vi inom en månad."
+          - "Kontot raderar du själv under **Mina inställningar** och **Radera mitt konto**. Evenemang, platser och anmälningar du har lagt upp ligger kvar: ta bort dem först, eller be oss göra det."
+          - "Är du inte nöjd kan du klaga hos [Integritetsskyddsmyndigheten](https://www.imy.se/)."
 
   accessibility:
     title: Tillgänglighet
-    lead: "Alla ska kunna använda {{site}}, oavsett funktionsförmåga och hjälpmedel. Här står hur tjänsten uppfyller kraven, vilka brister vi känner till och hur du rapporterar det som inte fungerar."
-    updated: Redogörelsen uppdaterades den 19 november 2026.
+    lead: "{{site}} ska gå att använda för alla. Här står hur tjänsten uppfyller kraven och vilka brister vi känner till."
+    updated: Redogörelsen uppdaterades den 20 november 2026.
     sections:
       - title: Hur tillgänglig är tjänsten?
         body:
-          - "Uddebo Makerspace står bakom {{site}}. Målet är att tjänsten ska uppfylla riktlinjerna WCAG 2.1 på nivå AA, som också är kravet i lagen om tillgänglighet till digital offentlig service."
-          - "Tjänsten är **delvis förenlig** med de kraven. De brister vi känner till står längre ner."
-      - title: Det här fungerar
-        body:
-          - list:
-              - "De publika sidorna går att använda med enbart tangentbord, och det syns var fokus är. Först på varje sida finns länken **Hoppa till innehållet**."
-              - "Dialogrutor meddelar att de öppnas, håller fokus inom sig och lämnar tillbaka det när de stängs. De stängs med Esc."
-              - "Sidorna har en huvudrubrik, och sidhuvud, innehåll och sidfot är uppmärkta så att en skärmläsare kan hoppa mellan dem."
-              - "Text och knappar har en kontrast på minst 4,5:1 mot bakgrunden."
-              - "Sidorna går att förstora till 200 procent och att läsa på en 320 punkter smal skärm utan att man behöver rulla i sidled."
-              - "Formulärfält har etiketter, och fel beskrivs i text."
-              - "Språket är angivet, så att en skärmläsare läser upp med rätt uttal. Tjänsten finns på svenska och engelska."
+          - "Tjänsten är **delvis förenlig** med WCAG 2.1 nivå AA, som är kravet i lagen om tillgänglighet till digital offentlig service."
       - title: Kända brister
         body:
           - list:
-              - "**Kalenderns månadsvy** är uppbyggd som en tabell som skärmläsare inte läser upp på rätt sätt. Samma evenemang finns som lista på sidan [Evenemang](/evenemang)."
-              - "**Kartorna** går inte att använda fullt ut med skärmläsare. Adressen står alltid som text bredvid kartan, med en länk som öppnar den i en karttjänst."
-              - "**Bilder** som arrangörer lägger upp beskrivs bara med evenemangets eller platsens namn, inte med vad bilden föreställer. Affischer med text i bilden saknar därför textalternativ, om arrangören inte har skrivit samma sak i beskrivningen."
-              - "**Texter som arrangörer skriver** kan ha länkar med otydliga namn eller rubriker i fel ordning. Detsamma gäller evenemang som hämtas automatiskt från andra kalendrar."
-              - "**De inloggade delarna**, det vill säga formulären för evenemang och platser och administratörernas panel, är inte granskade lika noga som de publika sidorna."
-          - "Vi arbetar med att rätta till bristerna. Den här sidan uppdateras när något ändras."
+              - "**Kalenderns månadsvy** läses inte upp rätt av skärmläsare. Samma evenemang finns som lista på sidan [Evenemang](/evenemang)."
+              - "**Kartorna** går inte att använda fullt ut med skärmläsare. Adressen står alltid som text bredvid."
+              - "**Bilder** beskrivs bara med evenemangets eller platsens namn."
+              - "**Texter som arrangörer skriver** kan ha otydliga länkar och rubriker."
+              - "**De inloggade delarna** är inte granskade lika noga som de publika sidorna."
       - title: Så har vi testat
         body:
-          - "Vi har gjort en egen granskning i november 2026. De publika sidorna (startsidan, evenemang, ett evenemang, kalendern, platser, en plats, arrangörer, en arrangörs sida, äta, handla & bo, en orts sida, sök, inloggning och de här hjälpsidorna) har kontrollerats med det automatiska verktyget axe-core mot WCAG 2.1 A och AA, på en bred och en smal skärm, med menyer och dialogrutor både stängda och öppna."
-          - "Därutöver har vi gått igenom sidorna med enbart tangentbord, i 200 procents förstoring och på 320 punkters bredd. Ingen granskning med skärmläsare och ingen oberoende granskning har gjorts ännu."
+          - "Vi har granskat de publika sidorna själva i november 2026, med verktyget axe-core och för hand med tangentbord, i 200 procents förstoring och på smal skärm. Ingen granskning med skärmläsare och ingen oberoende granskning har gjorts."
       - title: Rapportera brister
         body:
-          - "Upptäcker du något som inte fungerar för dig, eller behöver du innehåll i ett annat format? Skriv till oss med knappen **Ge feedback** längst ner på sidan och ange din e-postadress om du vill ha svar. Berätta vilken sida det gäller och vilket hjälpmedel du använder, så kan vi rätta till det snabbare."
-          - "Du kan också kontakta Viktor Lyresten på Uddebo Makerspace: [viktor@lyresten.se](mailto:viktor@lyresten.se) eller telefon [079-357 72 07](tel:+46793577207)."
-      - title: Om du inte är nöjd
-        body:
-          - "Myndigheten för digital förvaltning (DIGG) har tillsyn över lagen om tillgänglighet till digital offentlig service. Tycker du att vi inte tar hand om dina synpunkter kan du [anmäla det till DIGG](https://www.digg.se/tdosanmalan)."
+          - "Fungerar något inte för dig, eller behöver du innehåll i ett annat format? Använd knappen **Ge feedback** längst ner på sidan, eller kontakta Viktor Lyresten på Uddebo Makerspace: [viktor@lyresten.se](mailto:viktor@lyresten.se), telefon [079-357 72 07](tel:+46793577207)."
+          - "Är du inte nöjd med vårt svar kan du [anmäla det till DIGG](https://www.digg.se/tdosanmalan), som har tillsyn över lagen."
 
   guideStart:
     title: Guidebok

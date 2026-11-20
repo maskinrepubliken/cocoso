@@ -9,7 +9,7 @@ import BetaNotice from '/imports/ui/generic/BetaNotice';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
 import HelpProse, { type HelpSection } from './HelpProse';
-import { HELP_GROUPS, findHelpPage, helpPath } from './helpPages';
+import { SHOWN_HELP_GROUPS, findHelpPage, helpPath } from './helpPages';
 
 export interface HelpPageProps {
   siteDoc?: any;
@@ -48,7 +48,7 @@ export default function HelpPage({ siteDoc, group }: HelpPageProps) {
   // The links are written twice (folded for a phone, beside the page
   // otherwise), so their headings' ids take the place's name
   const links = (place: string) =>
-    HELP_GROUPS.map((g) => (
+    SHOWN_HELP_GROUPS.map((g) => (
       <div className="help-nav-group" key={g.key}>
         <p className="help-nav-heading" id={`help-${place}-${g.key}`}>
           {t(`nav.groups.${g.key}`)}
