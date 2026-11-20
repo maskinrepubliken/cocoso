@@ -99,7 +99,7 @@ the media directory inside the bundle folder.
 
 Log in as admin and open Admin → Places. Create the place with a name and
 an address slug, add a picture and a description, and publish it when it
-should appear on the home page and get its own pages under `/<slug>`.
+should appear on the home page and get its own page under `/orter/<slug>`.
 Assign resources to the place in their forms; activities held at those
 resources follow automatically.
 

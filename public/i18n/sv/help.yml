@@ -1,8 +1,8 @@
-# Hjälpsidorna under /about och /guide (imports/ui/pages/help).
+# Hjälpsidorna under /om och /guide (imports/ui/pages/help).
 # Varje sida har en titel, en ingress och avsnitt. Ett avsnitts `body` är en
 # lista där en textrad är ett stycke, `list:` en punktlista, `steps:`
 # numrerade steg och `note:` en ruta. I texten fungerar **fetstil** och
-# [länkar](/about). {{site}} är sajtens namn.
+# [länkar](/om). {{site}} är sajtens namn.
 nav:
   label: Om tjänsten och guidebok
   contents: Innehåll
@@ -38,7 +38,7 @@ pages:
         body:
           - "Alla som ordnar något i kommunen som är öppet för andra kan bli arrangörer: föreningar, studieförbund, företag, kommunens verksamheter och privatpersoner."
           - steps:
-              - "Skapa ett konto under [Logga in](/login). Du behöver bara en e-postadress."
+              - "Skapa ett konto under [Logga in](/logga-in). Du behöver bara en e-postadress."
               - "Fyll i din profil med namn och kontaktuppgifter, så att besökare ser vem som ordnar."
               - "Be om att bli arrangör med knappen **Ge feedback** längst ner på sidan. Skriv vilken förening eller verksamhet du företräder och vilken e-postadress kontot har."
               - "När en administratör har godkänt dig får du ett mejl, och sedan kan du lägga upp evenemang direkt."
@@ -55,8 +55,8 @@ pages:
       - title: Mer att läsa
         body:
           - list:
-              - "[Användarvillkor och integritetspolicy](/about/terms): vad som gäller när du använder tjänsten och vilka uppgifter vi sparar."
-              - "[Tillgänglighet](/about/accessibility): hur tjänsten fungerar för dig med funktionsnedsättning, och kända brister."
+              - "[Användarvillkor och integritetspolicy](/om/villkor): vad som gäller när du använder tjänsten och vilka uppgifter vi sparar."
+              - "[Tillgänglighet](/om/tillganglighet): hur tjänsten fungerar för dig med funktionsnedsättning, och kända brister."
               - "[Guidebok](/guide): för arrangörer och administratörer."
 
   terms:
@@ -155,7 +155,7 @@ pages:
       - title: Kända brister
         body:
           - list:
-              - "**Kalenderns månadsvy** är uppbyggd som en tabell som skärmläsare inte läser upp på rätt sätt. Samma evenemang finns som lista på sidan [Evenemang](/activities)."
+              - "**Kalenderns månadsvy** är uppbyggd som en tabell som skärmläsare inte läser upp på rätt sätt. Samma evenemang finns som lista på sidan [Evenemang](/evenemang)."
               - "**Kartorna** går inte att använda fullt ut med skärmläsare. Adressen står alltid som text bredvid kartan, med en länk som öppnar den i en karttjänst."
               - "**Bilder** som arrangörer lägger upp beskrivs bara med evenemangets eller platsens namn, inte med vad bilden föreställer. Affischer med text i bilden saknar därför textalternativ, om arrangören inte har skrivit samma sak i beskrivningen."
               - "**Texter som arrangörer skriver** kan ha länkar med otydliga namn eller rubriker i fel ordning. Detsamma gäller evenemang som hämtas automatiskt från andra kalendrar."
@@ -180,19 +180,19 @@ pages:
       - title: Kom igång på fem minuter
         body:
           - steps:
-              - "**Skapa ett konto.** Tryck på **Logga in** längst ner på sidan och skriv din e-postadress. Mer under [Konto och att bli arrangör](/guide/account)."
+              - "**Skapa ett konto.** Tryck på **Logga in** längst ner på sidan och skriv din e-postadress. Mer under [Konto och att bli arrangör](/guide/konto)."
               - "**Bli arrangör.** Be en administratör godkänna dig, med knappen **Ge feedback**. Du får ett mejl när det är klart."
-              - "**Fyll i din profil.** Namn, bild och en e-postadress eller ett telefonnummer som besökare kan nå dig på. Det krävs för att kunna publicera. Mer under [Din profil](/guide/your-page)."
-              - "**Lägg upp ditt första evenemang.** Gå till **Evenemang** och tryck på plusknappen uppe i sidhuvudet. Mer under [Skapa ett evenemang](/guide/events)."
+              - "**Fyll i din profil.** Namn, bild och en e-postadress eller ett telefonnummer som besökare kan nå dig på. Det krävs för att kunna publicera. Mer under [Din profil](/guide/din-sida)."
+              - "**Lägg upp ditt första evenemang.** Gå till **Evenemang** och tryck på plusknappen uppe i sidhuvudet. Mer under [Skapa ett evenemang](/guide/evenemang)."
       - title: Kapitlen
         body:
           - list:
-              - "[Konto och att bli arrangör](/guide/account): logga in, bli godkänd, få notiser och ha sajten som app."
-              - "[Skapa ett evenemang](/guide/events): fälten i formuläret, ett i taget."
-              - "[Sköta ett evenemang](/guide/manage-events): ändra, meddela de anmälda, se anmälningar, ställa in och ta bort."
-              - "[Platser](/guide/places): lägga upp en lokal eller ett utflyktsmål, och Äta, handla & bo."
-              - "[Din profil](/guide/your-page): det besökare ser om dig, dina inställningar och din översikt."
-              - "[För administratörer](/guide/administrators): användare, orter, speglingar, utskick och inställningar."
+              - "[Konto och att bli arrangör](/guide/konto): logga in, bli godkänd, få notiser och ha sajten som app."
+              - "[Skapa ett evenemang](/guide/evenemang): fälten i formuläret, ett i taget."
+              - "[Sköta ett evenemang](/guide/hantera-evenemang): ändra, meddela de anmälda, se anmälningar, ställa in och ta bort."
+              - "[Platser](/guide/platser): lägga upp en lokal eller ett utflyktsmål, och Äta, handla & bo."
+              - "[Din profil](/guide/din-sida): det besökare ser om dig, dina inställningar och din översikt."
+              - "[För administratörer](/guide/administratorer): användare, orter, speglingar, utskick och inställningar."
       - title: Tre saker som är bra att veta
         body:
           - list:
@@ -232,7 +232,7 @@ pages:
       - title: Logga ut och radera kontot
         body:
           - "**Logga ut** finns i menyn vid din profilbild och längst ner på sidan."
-          - "**Radera mitt konto** finns sist under **Mina inställningar**. Vad som tas bort och vad som ligger kvar står i [integritetspolicyn](/about/terms)."
+          - "**Radera mitt konto** finns sist under **Mina inställningar**. Vad som tas bort och vad som ligger kvar står i [integritetspolicyn](/om/villkor)."
 
   guideEvents:
     title: Skapa ett evenemang
@@ -267,14 +267,14 @@ pages:
               - "**Välj en plats.** Sök bland platserna som redan finns i kalendern. Det är det bästa valet: evenemanget syns då på platsens sida, och adress och karta följer med."
               - "**Arrangörens adress.** Adressen hämtas från din profil."
               - "**Annan adress.** Skriv adressen själv och välj vilken ort i kommunen det gäller."
-          - "Saknas platsen? Lägg upp den först, se [Platser](/guide/places)."
+          - "Saknas platsen? Lägg upp den först, se [Platser](/guide/platser)."
       - title: Bokning och anmälan
         body:
           - "Slå på **Anmälan är möjlig** om besökare ska anmäla sig på evenemangets sida, och ange **Kapacitet**: hur många som kan anmäla sig till varje tillfälle. När det är fullt stängs anmälan av sig själv."
           - "Besökare anmäler sig med namn och e-postadress, utan konto. Bara du, dina medarrangörer och administratörerna ser e-postadresserna."
       - title: Publicera
         body:
-          - "Tryck på **Publicera**. Evenemanget syns direkt i kalendern, på platsens sida och i din profil. Blev något fel ändrar du det efteråt, se [Sköta ett evenemang](/guide/manage-events)."
+          - "Tryck på **Publicera**. Evenemanget syns direkt i kalendern, på platsens sida och i din profil. Blev något fel ändrar du det efteråt, se [Sköta ett evenemang](/guide/hantera-evenemang)."
 
   guideManage:
     title: Sköta ett evenemang
@@ -440,4 +440,4 @@ pages:
       - title: Personuppgifter och ansvar
         body:
           - "Som administratör ser du e-postadresser och anmälningslistor. Använd dem bara för att sköta kalendern, lämna inte ut dem och ladda inte ner mer än du behöver."
-          - "Vad som sparas och hur länge står i [integritetspolicyn](/about/terms), och vad som gäller för tillgänglighet i [tillgänglighetsredogörelsen](/about/accessibility). Ändrar ni hur tjänsten fungerar behöver de texterna också ändras."
+          - "Vad som sparas och hur länge står i [integritetspolicyn](/om/villkor), och vad som gäller för tillgänglighet i [tillgänglighetsredogörelsen](/om/tillganglighet). Ändrar ni hur tjänsten fungerar behöver de texterna också ändras."

@@ -1,8 +1,8 @@
-# The help pages under /about and /guide (imports/ui/pages/help).
+# The help pages under /om and /guide (imports/ui/pages/help).
 # Each page has a title, a lead and sections. A section's `body` is a list
 # where a line of text is a paragraph, `list:` a bulleted list, `steps:`
 # numbered steps and `note:` a box. In the text **bold** and
-# [links](/about) work. {{site}} is the site's name.
+# [links](/om) work. {{site}} is the site's name.
 nav:
   label: About the service and guidebook
   contents: Contents
@@ -38,7 +38,7 @@ pages:
         body:
           - "Anyone arranging something in the municipality that is open to others can become an organizer: associations, study associations, businesses, the municipality's services and private persons."
           - steps:
-              - "Create an account under [Log in](/login). All you need is an email address."
+              - "Create an account under [Log in](/logga-in). All you need is an email address."
               - "Fill in your profile with a name and contact details, so that visitors see who is arranging."
               - "Ask to become an organizer with the **Give feedback** button at the foot of the page. Say which association or service you represent and which email address the account has."
               - "When an administrator has approved you, you get an email, and after that you can add events straight away."
@@ -55,8 +55,8 @@ pages:
       - title: More to read
         body:
           - list:
-              - "[Terms of use and privacy policy](/about/terms): what applies when you use the service and what data we store."
-              - "[Accessibility](/about/accessibility): how the service works for people with disabilities, and known shortcomings."
+              - "[Terms of use and privacy policy](/om/villkor): what applies when you use the service and what data we store."
+              - "[Accessibility](/om/tillganglighet): how the service works for people with disabilities, and known shortcomings."
               - "[Guidebook](/guide): for organizers and administrators."
 
   terms:
@@ -155,7 +155,7 @@ pages:
       - title: Known shortcomings
         body:
           - list:
-              - "**The calendar's month view** is built as a table that screen readers do not read out properly. The same events are available as a list on the [Events](/activities) page."
+              - "**The calendar's month view** is built as a table that screen readers do not read out properly. The same events are available as a list on the [Events](/evenemang) page."
               - "**The maps** cannot be used fully with a screen reader. The address is always given as text next to the map, with a link that opens it in a map service."
               - "**Pictures** added by organizers are described only by the name of the event or the place, not by what the picture shows. Posters with text in the picture therefore lack a text alternative, unless the organizer wrote the same in the description."
               - "**Text written by organizers** may have links with unclear names or headings in the wrong order. The same goes for events fetched automatically from other calendars."
@@ -180,19 +180,19 @@ pages:
       - title: Up and running in five minutes
         body:
           - steps:
-              - "**Create an account.** Press **Log in** at the foot of the page and type your email address. More under [Account and becoming an organizer](/guide/account)."
+              - "**Create an account.** Press **Log in** at the foot of the page and type your email address. More under [Account and becoming an organizer](/guide/konto)."
               - "**Become an organizer.** Ask an administrator to approve you, with the **Give feedback** button. You get an email when it is done."
-              - "**Fill in your profile.** Name, picture and an email address or a phone number where visitors can reach you. It is required to publish. More under [Your profile](/guide/your-page)."
-              - "**Add your first event.** Go to **Events** and press the plus button in the header. More under [Creating an event](/guide/events)."
+              - "**Fill in your profile.** Name, picture and an email address or a phone number where visitors can reach you. It is required to publish. More under [Your profile](/guide/din-sida)."
+              - "**Add your first event.** Go to **Events** and press the plus button in the header. More under [Creating an event](/guide/evenemang)."
       - title: The chapters
         body:
           - list:
-              - "[Account and becoming an organizer](/guide/account): log in, get approved, get notifications and have the site as an app."
-              - "[Creating an event](/guide/events): the fields of the form, one at a time."
-              - "[Looking after an event](/guide/manage-events): change it, tell those signed up, see the sign-ups, cancel and remove."
-              - "[Places](/guide/places): adding a venue or a place to go, and Eat, shop & stay."
-              - "[Your profile](/guide/your-page): what visitors see about you, your settings and your overview."
-              - "[For administrators](/guide/administrators): users, towns, mirrors, mailings and settings."
+              - "[Account and becoming an organizer](/guide/konto): log in, get approved, get notifications and have the site as an app."
+              - "[Creating an event](/guide/evenemang): the fields of the form, one at a time."
+              - "[Looking after an event](/guide/hantera-evenemang): change it, tell those signed up, see the sign-ups, cancel and remove."
+              - "[Places](/guide/platser): adding a venue or a place to go, and Eat, shop & stay."
+              - "[Your profile](/guide/din-sida): what visitors see about you, your settings and your overview."
+              - "[For administrators](/guide/administratorer): users, towns, mirrors, mailings and settings."
       - title: Three things worth knowing
         body:
           - list:
@@ -232,7 +232,7 @@ pages:
       - title: Logging out and deleting the account
         body:
           - "**Log out** is in the menu at your profile picture and at the foot of the page."
-          - "**Delete my account** is last under **My settings**. What is removed and what stays is in the [privacy policy](/about/terms)."
+          - "**Delete my account** is last under **My settings**. What is removed and what stays is in the [privacy policy](/om/villkor)."
 
   guideEvents:
     title: Creating an event
@@ -267,14 +267,14 @@ pages:
               - "**Choose a place.** Search among the places already in the calendar. This is the best choice: the event then shows on the place's page, and address and map come along."
               - "**The organizer's address.** The address is taken from your profile."
               - "**Another address.** Type the address yourself and choose which part of the municipality it is in."
-          - "Is the place missing? Add it first, see [Places](/guide/places)."
+          - "Is the place missing? Add it first, see [Places](/guide/platser)."
       - title: Booking and sign-up
         body:
           - "Turn on **Sign-up is possible** if visitors are to sign up on the event's page, and set **Capacity**: how many can sign up for each occasion. When it is full, sign-up closes by itself."
           - "Visitors sign up with name and email address, without an account. Only you, your co-organizers and the administrators see the email addresses."
       - title: Publishing
         body:
-          - "Press **Publish**. The event shows at once in the calendar, on the place's page and in your profile. If something came out wrong you change it afterwards, see [Looking after an event](/guide/manage-events)."
+          - "Press **Publish**. The event shows at once in the calendar, on the place's page and in your profile. If something came out wrong you change it afterwards, see [Looking after an event](/guide/hantera-evenemang)."
 
   guideManage:
     title: Looking after an event
@@ -440,4 +440,4 @@ pages:
       - title: Personal data and responsibility
         body:
           - "As an administrator you see email addresses and sign-up lists. Use them only to look after the calendar, do not hand them out and do not download more than you need."
-          - "What is stored and for how long is in the [privacy policy](/about/terms), and what applies to accessibility in the [accessibility statement](/about/accessibility). If you change how the service works, those texts need changing too."
+          - "What is stored and for how long is in the [privacy policy](/om/villkor), and what applies to accessibility in the [accessibility statement](/om/tillganglighet). If you change how the service works, those texts need changing too."

@@ -1,10 +1,29 @@
 // The site's addresses, in one place. The code names each section by its
 // key ('activities', 'resources', …: also the menu item's name and the
-// feature flag); the address shows the segment given here. Build every
-// in-app link with sitePath() and declare every route with segment(), so a
-// section's address is changed here and nowhere else.
+// feature flag); the address shows the Swedish segment given here, without
+// å, ä and ö. Build every in-app link with sitePath() and declare every
+// route with segment(), so a section's address is changed here and nowhere
+// else. A key that is not listed is its own segment (info, guide, admin).
 const SEGMENTS: Record<string, string> = {
+  // Content
+  activities: 'evenemang',
+  calendar: 'kalender',
+  resources: 'platser',
+  businesses: 'ata-handla-bo',
+  people: 'arrangorer',
+  groups: 'foreningar',
+  works: 'forfragningar',
+  cp: 'sida',
   locations: 'orter',
+  search: 'sok',
+  // Account
+  login: 'logga-in',
+  register: 'skapa-konto',
+  welcome: 'valkommen',
+  // Help and mailings
+  about: 'om',
+  newsletters: 'nyhetsbrev',
+  unsubscribe: 'avregistrera',
 };
 
 /** The URL segment of a section: segment('activities'). */

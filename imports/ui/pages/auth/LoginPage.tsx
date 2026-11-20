@@ -133,7 +133,11 @@ export default function LoginPage({
     panel = (
       <PasswordLogin
         links={[
-          { to: '/login', label: t('emailLogin.withEmail'), quiet: true },
+          {
+            to: sitePath('login'),
+            label: t('emailLogin.withEmail'),
+            quiet: true,
+          },
         ]}
       />
     );

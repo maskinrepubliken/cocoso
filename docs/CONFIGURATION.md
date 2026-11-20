@@ -115,7 +115,7 @@ theme, menu, language, email footer) lives in the single `site` document and
 is edited in the admin UI. The settings file only says how to create it the
 first time (`site.*` above). The municipality's
 locations are data too, managed under Admin → Places; each published
-location gets its pages under `/<slug>`.
+location gets its page under `/orter/<slug>`.
 
 The reverse proxy in front of the app must set `X-Forwarded-Proto` and proxy
 WebSocket upgrades. See [DEPLOYMENT.md](DEPLOYMENT.md).

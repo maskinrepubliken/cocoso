@@ -8,9 +8,16 @@ The short version:
   (`getSite()` on the server, `siteAtom` / the `siteDoc` route prop in the
   UI). There is no
   tenant or `host` field. The municipality is split into **locations**
-  (`imports/api/locations`); content carries an optional `locationId`, and
-  every location has pages under `/<slug>`. Build absolute links with
+  (`imports/api/locations`); content carries an optional `locationId`. A
+  location's own page is `/orter/<slug>`; a listing narrowed to it is the
+  ordinary listing with `?ort=<slug>`. Build absolute links with
   `publicUrl()`, never from a hostname.
+- The addresses are Swedish (`/evenemang`, `/platser`, `/logga-in`) while
+  the code names each section by its English key (`activities`,
+  `resources`, `login`: also the menu item's name and the feature flag).
+  The mapping is `imports/api/_utils/paths.ts`: build every in-app link
+  with `sitePath('activities', id)` and declare routes with
+  `segment('activities')`; never write a section's path as a string.
 - All data access is through Meteor methods in `imports/api/<module>/*.methods.*`.
   New methods: `check()` args, `Meteor.userAsync()`, role check from
   `imports/api/users/user.roles.js` (user id only), `{ _id }` selectors,
@@ -124,7 +131,7 @@ events below the fold. The filter, view switch and date navigation now share
 a single card below 640px, with the back/forward controls moved to 3dicons so
 they stay legible at that size.
 
-Visible on every location's /<slug>/calendar page and the site-wide calendar.
+Visible on the calendar (/kalender), also when narrowed to a place.
 No data changes.
 
 Refs: #142

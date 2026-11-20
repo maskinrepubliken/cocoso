@@ -15,6 +15,7 @@ import InstallApp from './InstallApp';
 import LanguageSwitch from './LanguageSwitch';
 import useLogout from './useLogout';
 import { sitePath } from '/imports/api/_utils/paths';
+import { accessibilityPath, termsPath } from '/imports/ui/pages/help/helpPages';
 
 export interface FooterProps {
   site: any;
@@ -103,8 +104,8 @@ export function Footer({ site }: FooterProps) {
                 {item.label}
               </Link>
             ))}
-            <Link to="/about/terms">{tc('footer.terms')}</Link>
-            <Link to="/about/accessibility">{tc('footer.accessibility')}</Link>
+            <Link to={termsPath}>{tc('footer.terms')}</Link>
+            <Link to={accessibilityPath}>{tc('footer.accessibility')}</Link>
           </nav>
         </div>
 

@@ -65,18 +65,28 @@ loaders sort the place's own items first.
 
 ### URLs
 
-The first URL segment is a dispatcher (`/:slug` in `imports/appRoutes.js`,
-rendered by `SlugHandler`): `/@name` is a profile, anything else is looked
-up among the published locations, and unknown slugs render the 404 page.
-Under a location the public listing and entry routes are mounted a second
-time, so `/limmared/activities` and `/limmared/activities/<id>` exist next
-to `/activities` and `/activities/<id>`. Entry pages keep their canonical
-link on the root URL. Nothing about the chosen place is stored in a cookie;
-the URL carries it, and `useCurrentLocation()` / `useLocationPrefix()`
-(`imports/ui/utils/useLocation.ts`) derive it from the pathname so menu,
-footer, back links and popups stay inside the place.
+The addresses are Swedish (`/evenemang`, `/platser`, `/arrangorer`,
+`/logga-in`, …) while the code names each section by its English key
+(`activities`, `resources`, `people`, `login`: also the menu item's name
+and the feature flag). `imports/api/_utils/paths.ts` holds the mapping:
+routes in `imports/appRoutes.js` are declared with `segment(key)` and every
+link is built with `sitePath(key, …)`, so a section's address is changed in
+that one file. `/admin` and the server's own paths (`/media`,
+`/share-image`, `/unsubscribe-now`) are not translated.
 
-`/<slug>` is the location's landing page (`LocationLanding`): hero image,
+Every page has one address. A listing narrowed to places is the same
+listing with `?ort=<slug>[,<slug>]`; nothing about the chosen place is
+stored in a cookie. `useCurrentLocation()`
+(`imports/ui/utils/useLocation.ts`) gives the single place a page is about:
+a place's own page, or a listing with exactly one `?ort=`.
+
+`/@name` is a profile (`/:slug`, rendered by `SlugHandler`), with its
+sections as leaf routes below it (`/@name/evenemang`); any other first
+segment that is not a route renders the 404 page. The profile route is
+declared after the routes with a fixed first segment, because of two routes
+that fit an address equally well the first one wins.
+
+`/orter/<slug>` is the location's landing page (`LocationLanding`): hero image,
 description, an optional composable page attached by the admin, and
 automatic sections for upcoming activities, venues and groups. The home
 page shows a grid of the places above the first listing.

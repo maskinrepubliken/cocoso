@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 
 import FeedbackForm from './FeedbackForm';
+import { sitePath } from '/imports/api/_utils/paths';
+import { termsPath } from '/imports/ui/pages/help/helpPages';
 
 // Remembered for a year; the notice's own cookie is one of the necessary
 // ones it tells about.
@@ -65,7 +67,7 @@ export default function CookieNotice() {
         <p className="cookie-notice-cookies">{tc('cookies.text')}</p>
 
         <nav className="cookie-notice-links">
-          <Link to="/about">{tc('footer.about')}</Link>
+          <Link to={sitePath('about')}>{tc('footer.about')}</Link>
           <FeedbackForm
             trigger={(openFeedback) => (
               <button type="button" onClick={openFeedback}>
@@ -73,7 +75,7 @@ export default function CookieNotice() {
               </button>
             )}
           />
-          <Link to="/about/terms">{tc('terms.title')}</Link>
+          <Link to={termsPath}>{tc('terms.title')}</Link>
         </nav>
       </div>
 
