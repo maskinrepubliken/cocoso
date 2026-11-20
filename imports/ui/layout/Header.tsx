@@ -423,12 +423,15 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         nav.scrollWidth + 2 * Math.max(leftWidth, right.scrollWidth);
       const room = bar.clientWidth - gaps;
       // The username takes no room while hidden (max-width 0), but its
-      // scrollWidth still tells how wide it would be.
+      // scrollWidth still tells how wide its text is; shown, it is as
+      // wide as it is (its scrollWidth then counts the padding too).
       const name = left.querySelector<HTMLElement>('.site-user-name');
+      const nameShown = name?.offsetWidth || 0;
       const nameWidth = name
-        ? Math.min(name.scrollWidth + USER_NAME_PADDING, USER_NAME_MAX)
+        ? nameShown ||
+          Math.min(name.scrollWidth + USER_NAME_PADDING, USER_NAME_MAX)
         : 0;
-      const leftBase = left.scrollWidth - (name?.offsetWidth || 0);
+      const leftBase = left.scrollWidth - nameShown;
       const nameFits =
         nameWidth > 0 &&
         naturalWith(leftBase + nameWidth) +
