@@ -561,6 +561,7 @@ event:
     open: "Open the discussion"
     onlyVerified: "For verified members"
   follow:
+    start: "Start following"
     followed: "You follow the event"
     intro: "Follow the event to hear if the time or place changes, and when the organizer has news. By email and push notification, as you choose under Notifications in your profile."
     follow: "Follow the event"

@@ -306,6 +306,17 @@ export default function RegistrationSection({
     ? new URL(sourceUrl).hostname.replace(/^www\./, '')
     : '';
 
+  // Nothing to sign up for and nobody signed up: no sign-up at all,
+  // rather than a card saying it is closed. With sign-ups there are still
+  // people who may want to change or undo theirs.
+  const hasSignUps = Boolean(occurrence.attendees?.length);
+  if (
+    isPast ||
+    (!hasSignUps && (isCancelled || (registrationClosed && !sourceUrl)))
+  ) {
+    return null;
+  }
+
   return (
     <Section
       aside={

@@ -19,14 +19,12 @@ const SectionBox = styled('section', {
     // Something inside reaches the card's edges, e.g. a map on top.
     bleed: { true: { overflow: 'hidden' } },
     look: {
-      // A part of a larger card: no card of its own, a line above it
+      // A part of a larger card: no card of its own
       plain: {
         backgroundColor: 'transparent',
         borderRadius: 0,
-        borderTop: '1px solid var(--cocoso-colors-theme-100)',
         boxShadow: 'none',
-        padding: '1.5rem 0 0',
-        '&:first-child': { borderTop: 'none', paddingTop: 0 },
+        padding: 0,
       },
       // The organizer's own tools: dark, so they are not taken for part
       // of what visitors see. What lies in it reads its colours from

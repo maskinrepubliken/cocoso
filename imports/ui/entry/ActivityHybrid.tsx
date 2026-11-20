@@ -5,7 +5,6 @@ import type { Address } from '/imports/api/_utils/address';
 import { useAtomValue } from 'jotai';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
-import CalendarIcon from 'lucide-react/dist/esm/icons/calendar-days';
 import {
   LightboxProvider,
   LightboxTrigger,
@@ -169,48 +168,6 @@ const SubTitle = styled('p', {
   margin: 0,
 });
 
-// When and where, right under the title
-const Facts = styled('ul', {
-  borderTop: '1px solid var(--cocoso-colors-theme-200)',
-  display: 'grid',
-  gap: '0.625rem',
-  listStyle: 'none',
-  margin: '1.1rem 0 0',
-  padding: '1.1rem 0 0',
-});
-
-const Fact = styled('li', {
-  alignItems: 'start',
-  display: 'grid',
-  gap: '0.75rem',
-  gridTemplateColumns: 'auto minmax(0, 1fr)',
-  '& > svg': {
-    color: 'var(--cocoso-tegel)',
-    height: '1.25rem',
-    marginTop: '0.1rem',
-    width: '1.25rem',
-  },
-});
-
-const FactText = styled('p', {
-  color: 'var(--cocoso-colors-theme-800)',
-  fontFamily: 'var(--cocoso-font-display)',
-  fontVariationSettings: '"SOFT" 60',
-  fontSize: '1.2rem',
-  fontWeight: 600,
-  lineHeight: 1.25,
-  margin: 0,
-  '&::first-letter': { textTransform: 'uppercase' },
-  '& a': { color: 'inherit', textDecoration: 'none' },
-  '& a:hover': { textDecoration: 'underline' },
-});
-
-const FactNote = styled('p', {
-  color: 'var(--cocoso-mylla-soft)',
-  fontSize: '0.9rem',
-  margin: '0.15rem 0 0',
-});
-
 // The kind of event, in the kind's own colour as in the calendar
 const KindTag = styled('span', {
   alignItems: 'center',
@@ -279,7 +236,10 @@ const ActionCard = styled('div', {
   gap: '1.5rem',
   padding: '1.5rem',
   '&:empty': { display: 'none' },
-  '& section': { borderTopColor: 'var(--cocoso-colors-theme-200)' },
+  '& section + section': {
+    borderTop: '1px solid var(--cocoso-colors-theme-200)',
+    paddingTop: '1.5rem',
+  },
 });
 
 // Where and who, as one card: each section keeps its title and contents,
@@ -314,6 +274,8 @@ interface Activity {
   longDescription?: string;
   imageUrl?: string;
   images?: string[];
+  // The first picture's shape: height / width (activity.imageShape.js)
+  imageShape?: { src: string; ratio?: number };
   isPublicActivity?: boolean;
   isArchived?: boolean;
   mirror?: { sourceUrl?: string; isDetached?: boolean };
@@ -378,22 +340,29 @@ export default function ActivityHybrid({
   }, [isOrganizer, activity?._id]);
 
   // The picture's own shape decides the layout: a tall one is a poster.
-  // Known once it has loaded, which for a server-rendered page can be
-  // before the browser's code runs, hence the check when mounting too.
+  // The server sends the shape with the event (imageShape), so the page
+  // is laid out right from the start; a picture it could not measure is
+  // measured here once it has loaded.
+  const firstImage = activity?.images?.[0] || activity?.imageUrl;
+  const storedRatio =
+    activity?.imageShape?.src === firstImage
+      ? activity?.imageShape?.ratio
+      : undefined;
   const imageRef = useRef<HTMLImageElement>(null);
-  const [isPoster, setIsPoster] = useState(false);
+  const [measuredRatio, setMeasuredRatio] = useState<number | null>(null);
   const measureImage = () => {
     const image = imageRef.current;
     if (image?.naturalWidth) {
-      setIsPoster(image.naturalHeight / image.naturalWidth > POSTER_RATIO);
+      setMeasuredRatio(image.naturalHeight / image.naturalWidth);
     }
   };
   useEffect(() => {
-    setIsPoster(false);
-    if (imageRef.current?.complete) {
+    setMeasuredRatio(null);
+    if (!storedRatio && imageRef.current?.complete) {
       measureImage();
     }
-  }, [activity?._id]);
+  }, [firstImage]);
+  const isPoster = (storedRatio || measuredRatio || 0) > POSTER_RATIO;
 
   if (!activity) {
     return null;
@@ -556,7 +525,7 @@ export default function ActivityHybrid({
                         ref={imageRef}
                         alt={activity.title}
                         src={heroImage}
-                        onLoad={measureImage}
+                        onLoad={storedRatio ? undefined : measureImage}
                       />
                     </LightboxTrigger>
                   </LightboxProvider>
@@ -581,33 +550,21 @@ export default function ActivityHybrid({
                 {activity.isArchived && (
                   <Notice>{tc('event.archived.onlyYou')}</Notice>
                 )}
-                {occurrence && (
-                  <Facts>
-                    {occurrence && (
-                      <Fact>
-                        <CalendarIcon aria-hidden />
-                        <div>
-                          <FactText>{formatOccurrence(occurrence)}</FactText>
-                          {dates.length > 1 ? (
-                            <FactNote>
-                              {tc('event.dates.occurrences', {
-                                count: dates.length,
-                              })}
-                            </FactNote>
-                          ) : (
-                            isPastOccurrence(occurrence) && (
-                              <FactNote>{tc('event.register.past')}</FactNote>
-                            )
-                          )}
-                        </div>
-                      </Fact>
-                    )}
-                  </Facts>
-                )}
-                {isPublicActivity && occurrence && (
-                  <HeroActions activity={activity} occurrence={occurrence} />
-                )}
               </HeroText>
+
+              {/* When: the chosen date and, for several, the dates to
+                  choose between */}
+              {dates.length > 0 && (
+                <WhenSection
+                  dates={dates}
+                  selectedIndex={selectedIndex}
+                  onSelect={selectDate}
+                />
+              )}
+
+              {isPublicActivity && occurrence && (
+                <HeroActions activity={activity} occurrence={occurrence} />
+              )}
 
               {activity.longDescription && (
                 <Section
@@ -626,21 +583,13 @@ export default function ActivityHybrid({
               )}
               {!activity.longDescription && tags}
 
-              {/* One date is already told at the top; several are chosen here */}
-              {dates.length > 1 && (
-                <WhenSection
-                  dates={dates}
-                  selectedIndex={selectedIndex}
-                  onSelect={selectDate}
-                />
-              )}
-
-              {/* A mirrored event's sign-ups are kept at its source */}
+              {/* Without sign-up here (switched off, or kept at a mirrored
+                  event's source) there is nobody to list */}
               {isPublicActivity &&
                 occurrence &&
                 !(
-                  activity.mirror &&
-                  activity.isRegistrationEnabled === false &&
+                  (activity.isRegistrationDisabled ||
+                    activity.isRegistrationEnabled === false) &&
                   !occurrence.attendees?.length
                 ) && <AttendeesSection attendees={occurrence.attendees} />}
             </CardBody>

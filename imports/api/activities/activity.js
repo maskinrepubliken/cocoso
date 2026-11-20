@@ -17,6 +17,10 @@ Activities.schema = new SimpleSchema({
   },
   longDescription: { type: String, optional: true },
   images: { type: Array, optional: true },
+  // The first picture's shape (activity.imageShape.js)
+  imageShape: { type: Object, optional: true },
+  'imageShape.src': { type: String },
+  'imageShape.ratio': { type: Number, optional: true },
   'images.$': { type: String },
   imagesLegacy: { type: Array, optional: true },
   'imagesLegacy.$': { type: String, optional: true },

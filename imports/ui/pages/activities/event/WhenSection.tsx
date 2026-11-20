@@ -77,16 +77,7 @@ export default function WhenSection({
   }
 
   return (
-    <Section
-      aside={
-        dates.length > 1
-          ? tc('event.dates.occurrences', { count: dates.length })
-          : null
-      }
-      look="plain"
-      order={1}
-      title={tc('event.sections.when')}
-    >
+    <Section hideTitle look="plain" order={1} title={tc('event.sections.when')}>
       {selected && (
         <>
           <Strong css={{ '&::first-letter': { textTransform: 'uppercase' } }}>

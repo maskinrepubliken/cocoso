@@ -4,7 +4,7 @@ import ExternalLinkIcon from 'lucide-react/dist/esm/icons/external-link';
 
 import { styled } from '/stitches.config';
 
-import { Muted, WIDE } from './Section';
+import { Muted, NARROW, WIDE } from './Section';
 import { Occurrence, countPeople, isPastOccurrence } from './occurrences';
 
 const Row = styled('div', {
@@ -12,7 +12,6 @@ const Row = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.625rem',
-  marginTop: '1.25rem',
 });
 
 export const Action = styled('a', {
@@ -48,8 +47,13 @@ export const Action = styled('a', {
   },
 });
 
-// On wide screens sign-up is in view beside the event, in its own card
-const onPhone = { [WIDE]: { display: 'none' } };
+// Only on phones, after the date: on wide screens sign-up is in view
+// beside the event, in its own card
+const Wrap = styled('div', {
+  [WIDE]: { display: 'none' },
+  [NARROW]: { order: 1 },
+  '&:empty': { display: 'none' },
+});
 
 interface HeroActionsProps {
   activity: {
@@ -99,12 +103,11 @@ export default function HeroActions({
   };
 
   return (
-    <>
-      <Row css={onPhone}>
+    <Wrap>
+      <Row>
         {sourceUrl ? (
           <Action
             href={sourceUrl}
-            css={onPhone}
             kind="primary"
             rel="noopener noreferrer"
             target="_blank"
@@ -119,22 +122,17 @@ export default function HeroActions({
           </Action>
         ) : (
           canSignUp && (
-            <Action
-              css={onPhone}
-              href="#anmalan"
-              kind="primary"
-              onClick={toForm}
-            >
+            <Action href="#anmalan" kind="primary" onClick={toForm}>
               {tc('event.cta.signUp')}
             </Action>
           )
         )}
       </Row>
       {canSignUp && !sourceUrl && left !== null && (
-        <Muted css={{ marginTop: '0.5rem', ...onPhone }}>
+        <Muted css={{ marginTop: '0.5rem' }}>
           {tc('event.attendees.left', { count: left, capacity })}
         </Muted>
       )}
-    </>
+    </Wrap>
   );
 }

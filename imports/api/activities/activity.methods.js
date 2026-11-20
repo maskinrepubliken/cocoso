@@ -21,6 +21,7 @@ import {
   resolveContactUserId,
 } from './activity.organizers';
 import { attachPlaceAddress, ownActivityAddress } from './activity.place';
+import { attachImageShape } from './activity.imageShape';
 import { warmShareImage } from '../share/shareImage.server';
 import { formatAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
@@ -275,8 +276,10 @@ Meteor.methods({
       if (activity?.isArchived && !(await canManage(activity, user))) {
         return null;
       }
-      return await attachPlaceAddress(
-        await attachOrganizerProfiles(await redactAttendees(activity, user))
+      return await attachImageShape(
+        await attachPlaceAddress(
+          await attachOrganizerProfiles(await redactAttendees(activity, user))
+        )
       );
     } catch (error) {
       throw methodError(error, "Couldn't fetch data");

@@ -44,6 +44,12 @@ const Stack = styled('div', {
   '&:empty': { display: 'none' },
 });
 
+const Extra = styled('div', {
+  display: 'flex',
+  marginTop: '0.875rem',
+  '&:empty': { display: 'none' },
+});
+
 interface Update {
   _id: string;
   message: string;
@@ -54,7 +60,7 @@ interface FollowSectionProps {
   activity: { _id: string; isArchived?: boolean; cancelledAt?: Date };
   // Every date is behind us: nothing left to follow
   isOver: boolean;
-  // Shown under the button, e.g. "Lägg till i kalendern"
+  // Unfolded with the rest, e.g. "Lägg till i kalendern"
   children?: React.ReactNode;
 }
 
@@ -104,21 +110,9 @@ export default function FollowSection({
     }
   };
 
-  // The first press unfolds what following means and the notification
-  // settings, and follows for the one who is logged in; folded, the
-  // section is one button.
-  const press = () => {
-    if (currentUser && !isFollowing) {
-      setOpen(true);
-      toggle();
-    } else {
-      setOpen(!open);
-    }
-  };
-
   const canFollow = !activity.isArchived && !activity.cancelledAt && !isOver;
   if (!canFollow && updates.length === 0) {
-    return <>{children}</>;
+    return null;
   }
 
   return (
@@ -148,11 +142,11 @@ export default function FollowSection({
           <>
             <Button
               aria-expanded={open}
-              css={{ alignSelf: 'flex-start' }}
+              css={{ width: '100%' }}
               disabled={busy}
               size="sm"
               variant="outline"
-              onClick={press}
+              onClick={() => setOpen(!open)}
             >
               {isFollowing
                 ? tc('event.follow.followed')
@@ -168,16 +162,16 @@ export default function FollowSection({
                 </Muted>
                 <Actions>
                   {currentUser ? (
-                    isFollowing && (
-                      <Button
-                        disabled={busy}
-                        size="sm"
-                        variant="ghost"
-                        onClick={toggle}
-                      >
-                        {tc('event.follow.unfollow')}
-                      </Button>
-                    )
+                    <Button
+                      disabled={busy}
+                      size="sm"
+                      variant={isFollowing ? 'ghost' : 'solid'}
+                      onClick={toggle}
+                    >
+                      {isFollowing
+                        ? tc('event.follow.unfollow')
+                        : tc('event.follow.start')}
+                    </Button>
                   ) : (
                     <Link to={sitePath('login')}>
                       <Button size="sm">{tc('event.follow.login')}</Button>
@@ -194,11 +188,11 @@ export default function FollowSection({
                     {tc('event.follow.attendees')}
                   </Muted>
                 )}
+                {children && <Extra>{children}</Extra>}
               </div>
             )}
           </>
         )}
-        {children}
       </Stack>
     </Section>
   );
