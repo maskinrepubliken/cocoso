@@ -218,7 +218,9 @@ export default function WrapperHybrid({
     if (navigationType === 'POP') {
       return;
     }
-    window.scrollTo(0, 0);
+    // At once: the page's own smooth scrolling would show the new page
+    // travelling up from where the last one was left
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [pageKey]);
 
   return (
