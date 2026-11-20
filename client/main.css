@@ -2590,6 +2590,11 @@ body {
   clip-path: circle(30px at 10.5px 9px);
   object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(30, 50, 25, 0.28));
+  /* above the account avatar beside it, which itself lies over the green
+     disc: the crane leans in front of the avatar. Clicks pass through to
+     the avatar and the disc. */
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* The site's name as in the start page hero: Fraunces in the dark green,
@@ -2627,13 +2632,14 @@ body {
   }
 }
 
-/* Logged in: the avatar right beside the mark, a little over its edge,
-   with a paper rim so the two read as a pair */
+/* Logged in: the avatar right beside the mark, over the edge of its
+   green disc but behind the crane, whose neck and beak pass in front of
+   it; a paper rim sets it off from the disc */
 .site-brand .site-user {
   position: relative;
   z-index: 1;
   gap: 0;
-  margin-left: -4px;
+  margin-left: -12px;
   border-radius: 999px;
   background: var(--cocoso-colors-theme-100);
   box-shadow: 0 0 0 2px var(--cocoso-papper);
