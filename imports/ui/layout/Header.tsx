@@ -328,8 +328,8 @@ export interface HeaderProps {
 }
 
 // The site header: one 56px row with the brand pill (and in it the
-// account) on the left, the menu as a floating pill in the middle with
-// the search at its end and, on the right, the plus for those who may
+// account) on the left and, on the right, the menu as a floating pill
+// with the search at its end, followed by the plus for those who may
 // create content, the pen on a page one may edit, and the page's
 // discussion.
 // Below 960px the menu's links and the search are gone from the bar: a
@@ -385,7 +385,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // On a desktop the menu pill sits between the brand and the buttons.
+  // On a desktop the menu pill sits to the right, before the buttons.
   // When the three no longer fit on one row (an admin's plus and pen,
   // a long menu) all three shrink by the same factor until
   // they do, down to MIN_BAR_ZOOM; only past that does the menu pill drop
@@ -419,14 +419,15 @@ export default function Header({ site, pageTitles }: HeaderProps) {
       }
       const style = getComputedStyle(bar);
       const gaps =
-        2 * parseFloat(style.columnGap || '0') +
+        (right.childElementCount > 0 ? 2 : 1) *
+          parseFloat(style.columnGap || '0') +
         parseFloat(style.paddingLeft) +
         parseFloat(style.paddingRight);
       // Natural widths: scrollWidth is in each group's own (unzoomed)
       // pixels and counts the content even when the grid squeezes the box.
-      // The menu stays centred, so both sides need room for the wider one.
+      // Brand on the left, then the menu pill and the buttons on the right.
       const naturalWith = (leftWidth: number) =>
-        nav.scrollWidth + 2 * Math.max(leftWidth, right.scrollWidth);
+        leftWidth + nav.scrollWidth + right.scrollWidth;
       const room = bar.clientWidth - gaps;
       // The username takes no room while hidden (max-width 0), but its
       // scrollWidth still tells how wide its text is; shown, it is as

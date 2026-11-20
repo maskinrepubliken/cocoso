@@ -2489,6 +2489,16 @@ body {
     zoom: var(--bar-zoom, 1);
   }
 
+  /* On one row the menu pill stands to the right, before the page's own
+     buttons when it has any; the brand keeps the left to itself */
+  .site-header-bar:not(.is-stacked) {
+    grid-template-columns: 1fr auto auto;
+  }
+
+  .site-header-bar:not(.is-stacked) > .site-header-right:empty {
+    display: none;
+  }
+
   .site-header-bar.is-stacked {
     grid-template-columns: 1fr auto;
     grid-template-areas:
@@ -5208,10 +5218,10 @@ body {
   flex: none;
 }
 
-/* Phone: no sideways scrolling. The kinds and the filter are pills that
-   wrap onto as many rows as they need, the icon beside its label, so
-   every choice is on the screen at once. */
-@media (max-width: 599px) {
+/* Narrower than the strip needs (about 1040px with every kind): nothing
+   scrolls sideways. The kinds and the filter flow together in the bar, and
+   the filter's panel opens under the whole bar. */
+@media (max-width: 1099px) {
   .kind-bar {
     position: relative;
     display: flex;
@@ -5220,7 +5230,6 @@ body {
     gap: 8px;
   }
 
-  /* the strip's tiles and the filter wrap together as one row of pills */
   .kind-bar > .kind-strip {
     display: contents;
   }
@@ -5230,6 +5239,28 @@ body {
     margin: 0;
   }
 
+  .kind-bar .filter-switch {
+    --switch-w: 34px;
+    --switch-h: 20px;
+    --switch-pad: 2px;
+    display: block;
+    translate: none;
+  }
+
+  .kind-bar > .view-menu {
+    position: static;
+  }
+
+  .kind-bar .view-menu-panel {
+    right: var(--cocoso-gutter);
+    left: var(--cocoso-gutter);
+    width: auto;
+  }
+}
+
+/* Tablet: pills that wrap, the icon beside its label, the chosen one
+   filled instead of underlined */
+@media (min-width: 600px) and (max-width: 1099px) {
   .kind-bar .kind-tile {
     flex-direction: row;
     gap: 6px;
@@ -5250,7 +5281,6 @@ body {
     padding-bottom: 0;
   }
 
-  /* the chosen pill is filled instead of underlined */
   .kind-bar .kind-tile > span::after {
     display: none;
   }
@@ -5260,7 +5290,6 @@ body {
     color: #fff;
   }
 
-  /* the filter's switch at the pills' size */
   .kind-bar .view-menu-icon {
     height: auto;
   }
@@ -5268,24 +5297,45 @@ body {
   .kind-bar .view-menu-button {
     padding-left: 10px;
   }
+}
 
-  .kind-bar .filter-switch {
-    --switch-w: 34px;
-    --switch-h: 20px;
-    --switch-pad: 2px;
-    display: block;
-    translate: none;
+/* Phone: two rows of small tiles in equal columns (--kind-cols, half the
+   tiles rounded up, set where the bar is rendered), the icon over a label
+   that may break onto a second line */
+@media (max-width: 599px) {
+  .kind-bar {
+    display: grid;
+    grid-template-columns: repeat(var(--kind-cols, 4), minmax(0, 1fr));
+    gap: 6px 2px;
   }
 
-  /* the panel opens under the whole bar, wherever the filter pill landed */
-  .kind-bar > .view-menu {
-    position: static;
+  .kind-bar .kind-tile {
+    gap: 2px;
+    width: 100%;
+    min-width: 0;
+    padding: 4px 1px 2px;
+    font-size: 9px;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
   }
 
-  .kind-bar .view-menu-panel {
-    right: var(--cocoso-gutter);
-    left: var(--cocoso-gutter);
-    width: auto;
+  .kind-bar .kind-tile .threed-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .kind-bar .kind-tile > span {
+    max-width: 100%;
+    padding-bottom: 5px;
+    hyphens: auto;
+    overflow-wrap: anywhere;
+  }
+
+  .kind-bar .view-menu-icon {
+    height: 30px;
+    place-items: center;
   }
 }
 
