@@ -103,8 +103,11 @@ in that order and with `APPLY` set, and records each one that finishes.
   recorded as run without being run.
 
 Adding a migration is described at the top of `scripts/migrations/ORDER`.
-`cocoso-deploy` itself lives outside the image: after a release that changes
-it, run `update-server.sh` (above) **before** deploying that release.
+`cocoso-deploy` itself lives outside the image, and `update-server.sh` (above)
+installs it from the `production` branch. So after a release that changes it:
+deploy the release, run `update-server.sh`, and if the release has migrations
+of its own, run the deploy workflow once more by hand; it runs them without
+restarting the app.
 
 ## GitHub
 

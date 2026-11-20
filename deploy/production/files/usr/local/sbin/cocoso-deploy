@@ -54,13 +54,6 @@ docker compose pull --quiet app
 next="$(docker image inspect --format '{{.Id}}' "$IMAGE")"
 echo "ny image: $next ($(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE"))"
 
-if [[ "$next" == "$previous" ]]; then
-  echo "samma image kör redan; startar inte om"
-  healthy && { echo "appen svarar"; exit 0; }
-  echo "VARNING: appen svarar inte" >&2
-  exit 1
-fi
-
 # Runs the script on stdin in the database. From a file, not piped into the
 # shell: only then does mongosh stop at the first error and exit non-zero.
 mongo_script() {
@@ -148,6 +141,16 @@ trap 'rm -rf "$migrations_dir"' EXIT
 if ! migrate "$migrations_dir"; then
   echo "den nya versionen startas inte; ${previous:+$previous kör vidare}" >&2
   [[ -n "$previous" ]] && docker tag "$previous" "$IMAGE"
+  exit 1
+fi
+
+if [[ "$next" == "$previous" ]]; then
+  # Migrations are run before this on purpose: a deploy run again (after a
+  # failed migration was fixed by hand, or after this script was updated)
+  # still brings the database up to date.
+  echo "samma image kör redan; startar inte om"
+  healthy && { echo "appen svarar"; exit 0; }
+  echo "VARNING: appen svarar inte" >&2
   exit 1
 fi
 
