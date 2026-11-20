@@ -2492,7 +2492,11 @@ body {
   /* On one row the menu pill stands to the right, before the page's own
      buttons when it has any; the brand keeps the left to itself */
   .site-header-bar:not(.is-stacked) {
-    grid-template-columns: 1fr auto auto;
+    /* the buttons get a column only when there are any: an empty third
+       column would still cost its gap at the right edge */
+    grid-template-columns: 1fr auto;
+    grid-auto-flow: column;
+    grid-auto-columns: auto;
   }
 
   .site-header-bar:not(.is-stacked) > .site-header-right:empty {
