@@ -77,7 +77,18 @@ export default function ResourcesHybrid({
       {/* The kinds as on the events page: a tap picks that one kind; the
           Filter at the right end picks several, and places. "Alla", one
           kind and the Filter are one choice: only one is underlined. */}
-      <div className="kind-bar page-wrap">
+      <div
+        className='kind-bar page-wrap'
+        style={
+          {
+            // on a phone: two rows of tiles, 'Alla' and the Filter included
+            '--kind-cols':
+              presentKinds.length > 1
+                ? Math.ceil((presentKinds.length + 2) / 2)
+                : 1,
+          } as React.CSSProperties
+        }
+      >
         <div className="kind-strip">
           {presentKinds.length > 1 && (
             <>

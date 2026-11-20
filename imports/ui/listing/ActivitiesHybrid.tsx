@@ -82,10 +82,21 @@ export default function ActivitiesHybrid({
       {/* The kinds as a strip of icons with small labels, the chosen one
           underlined in green; nothing boxed, so it is not another pill.
           A tap picks that one kind; the filter menu, at the right end and
-          (one of the wrapping pills on a phone), picks
+          (in the same rows as the kinds on a narrow screen), picks
           several, and places and days. "Alla", one kind and the Filter are
           one choice: only one of them is underlined. */}
-      <div className="kind-bar page-wrap">
+      <div
+        className='kind-bar page-wrap'
+        style={
+          {
+            // on a phone: two rows of tiles, 'Alla' and the Filter included
+            '--kind-cols':
+              presentKinds.length > 1
+                ? Math.ceil((presentKinds.length + 2) / 2)
+                : 1,
+          } as React.CSSProperties
+        }
+      >
         <div className="kind-strip">
           {presentKinds.length > 1 && (
             <>

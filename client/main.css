@@ -5299,23 +5299,29 @@ body {
   }
 }
 
-/* Phone: two rows of small tiles in equal columns (--kind-cols, half the
-   tiles rounded up, set where the bar is rendered), the icon over a label
-   that may break onto a second line */
+/* Phone: two rows of small tiles (--kind-cols columns, half the tiles
+   rounded up, set where the bar is rendered), the icon over a label that
+   may break between words. A column is as wide as its longest word. */
 @media (max-width: 599px) {
   .kind-bar {
     display: grid;
-    grid-template-columns: repeat(var(--kind-cols, 4), minmax(0, 1fr));
-    gap: 6px 2px;
+    grid-template-columns: repeat(var(--kind-cols, 4), auto);
+    justify-content: space-around;
+    gap: 6px 0;
+  }
+
+  .kind-bar > .view-menu {
+    grid-column: auto;
+    justify-self: stretch;
   }
 
   .kind-bar .kind-tile {
     gap: 2px;
     width: 100%;
-    min-width: 0;
-    padding: 4px 1px 2px;
+    min-width: min-content;
+    padding: 4px 2px 2px;
     font-size: 9px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
     line-height: 1.15;
     text-align: center;
     white-space: normal;
@@ -5327,10 +5333,7 @@ body {
   }
 
   .kind-bar .kind-tile > span {
-    max-width: 100%;
     padding-bottom: 5px;
-    hyphens: auto;
-    overflow-wrap: anywhere;
   }
 
   .kind-bar .view-menu-icon {
