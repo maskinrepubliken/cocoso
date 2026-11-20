@@ -2632,26 +2632,27 @@ body {
   }
 }
 
-/* Logged in: the avatar right beside the mark, over the edge of its
-   green disc but behind the crane, whose neck and beak pass in front of
-   it; a paper rim sets it off from the disc */
+/* Logged in: the avatar right beside the mark, a little over the edge of
+   its green disc but behind the crane, whose beak passes in front of it;
+   a paper rim sets it off from the disc */
 .site-brand .site-user {
   position: relative;
   z-index: 1;
   gap: 0;
-  margin-left: -12px;
+  margin-left: -4px;
   border-radius: 999px;
   background: var(--cocoso-colors-theme-100);
   box-shadow: 0 0 0 2px var(--cocoso-papper);
 }
 
-/* With its paper rim the avatar is as large as the crane's disc */
+/* The avatar is always as large as the crane's green disc, here and
+   below 960px */
 .site-brand .site-avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   background: none;
   box-shadow: none;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 /* The username beside the avatar, the two as one pale green chip. Only
@@ -3705,9 +3706,9 @@ body {
 
   .site-brand .site-avatar,
   .site-brand .site-user-bell {
-    width: 24px;
-    height: 24px;
-    font-size: 13px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
   }
 }
 
