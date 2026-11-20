@@ -768,7 +768,6 @@ search:
   open: Search
   past: Past
   placeholder: Search
-  clear: Clear search
   searching: Searching…
   noResults: Nothing found for “{{query}}”
   showAll: Show all results

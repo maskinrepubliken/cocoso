@@ -3190,25 +3190,6 @@ body {
   appearance: none;
 }
 
-.site-search-clear {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: var(--cocoso-colors-theme-100);
-  color: var(--site-ink-soft);
-  cursor: pointer;
-}
-
-.site-search-clear:hover {
-  background: var(--cocoso-colors-theme-200);
-  color: var(--site-ink);
-}
-
 .site-search-panel {
   position: absolute;
   top: calc(100% + 8px);
@@ -3534,8 +3515,7 @@ body {
   font-size: 15px;
 }
 
-.site-search-toggle:focus-visible,
-.site-search-clear:focus-visible {
+.site-search-toggle:focus-visible {
   outline: 2px solid var(--cocoso-colors-theme-500);
   outline-offset: 2px;
 }

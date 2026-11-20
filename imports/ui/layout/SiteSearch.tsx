@@ -349,19 +349,6 @@ export default function SiteSearch({ site }: SiteSearchProps) {
           onFocus={() => setIsOpen(true)}
           onKeyDown={onKeyDown}
         />
-        {query && (
-          <button
-            type="button"
-            className="site-search-clear"
-            aria-label={tc('search.clear')}
-            onClick={() => {
-              setQuery('');
-              inputRef.current?.focus();
-            }}
-          >
-            <XIcon width={14} height={14} />
-          </button>
-        )}
       </div>
 
       {showPanel && (

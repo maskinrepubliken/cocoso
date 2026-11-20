@@ -765,7 +765,6 @@ search:
   open: Sök
   past: Avslutat
   placeholder: Sök
-  clear: Rensa sökningen
   searching: Söker…
   noResults: Inget hittades för ”{{query}}”
   showAll: Visa alla resultat
