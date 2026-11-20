@@ -66,9 +66,13 @@ const u = db.users.updateMany(
       verifiedBy: 1,
       unVerifiedBy: 1,
       memberships: 1,
-      'notifications.$[].host': 1,
     },
   }
+);
+// Apart, and only where there is a list: `$[]` fails on a user without one.
+db.users.updateMany(
+  { notifications: { $type: 'array' } },
+  { $unset: { 'notifications.$[].host': 1 } }
 );
 print(`users: cleaned ${u.modifiedCount} document(s)`);
 
