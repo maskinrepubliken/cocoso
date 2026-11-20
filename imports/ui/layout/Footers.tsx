@@ -75,7 +75,9 @@ export function Footer({ site }: FooterProps) {
               <Trans
                 i18nKey="common:footer.signedInAs"
                 values={{ name: currentUser.username }}
-                components={{ me: <Link to="/admin/home" /> }}
+                components={{
+                  me: <Link to={`/@${currentUser.username}`} />,
+                }}
               />{' '}
               <button
                 type="button"
