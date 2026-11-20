@@ -22,6 +22,7 @@ import { currentUserAtom, roleAtom } from '/imports/state';
 import { call } from '/imports/api/_utils/shared';
 
 import Boxling from './Boxling';
+import { sitePath } from '/imports/api/_utils/paths';
 
 interface Occasion {
   activityId: string;
@@ -416,7 +417,7 @@ function Upcoming({ overview, dateLocale }: ListProps) {
             <Link
               key={`${occasion.activityId}${occasion.startTime}`}
               style={{ display: 'block' }}
-              to={`/activities/${occasion.activityId}`}
+              to={sitePath('activities', occasion.activityId)}
             >
               <Flex
                 align="center"
@@ -441,7 +442,7 @@ function Upcoming({ overview, dateLocale }: ListProps) {
         </Box>
       ))}
       {upcomingCount > upcoming.length && (
-        <Link to="/calendar">
+        <Link to={sitePath('calendar')}>
           <Text css={underlineCss} fontSize="sm">
             {t('overview.upcoming.more', {
               count: upcomingCount - upcoming.length,
@@ -467,7 +468,7 @@ function Registrations({ overview, dateLocale }: ListProps) {
         <Link
           key={`${r.activityId}${r.startDate}${r.name}${r.registerDate}`}
           style={{ display: 'block' }}
-          to={`/activities/${r.activityId}`}
+          to={sitePath('activities', r.activityId)}
         >
           <Box css={rowCss}>
             <Text css={{ display: 'block' }}>
@@ -539,7 +540,7 @@ function NewActivities({ overview, dateLocale }: ListProps) {
         <Link
           key={activity._id}
           style={{ display: 'block' }}
-          to={`/activities/${activity._id}`}
+          to={sitePath('activities', activity._id)}
         >
           <Flex
             align="center"
@@ -589,7 +590,7 @@ function NewActivities({ overview, dateLocale }: ListProps) {
           {t('overview.activities.more', { count: count - activities.length })}
         </Text>
       )}
-      <Link to="/activities">
+      <Link to={sitePath('activities')}>
         <Text css={underlineCss} fontSize="sm">
           {t('overview.activities.all')}
         </Text>
@@ -610,7 +611,7 @@ function NewPlaces({ overview, dateLocale }: ListProps) {
         <Link
           key={place._id}
           style={{ display: 'block' }}
-          to={`/resources/${place._id}`}
+          to={sitePath('resources', place._id)}
         >
           <Flex align="center" css={rowCss} justify="space-between" wrap="wrap">
             <Text>
@@ -637,7 +638,7 @@ function NewPlaces({ overview, dateLocale }: ListProps) {
           </Flex>
         </Link>
       ))}
-      <Link to="/resources">
+      <Link to={sitePath('resources')}>
         <Text css={underlineCss} fontSize="sm">
           {t('overview.places.all')}
         </Text>
@@ -795,14 +796,14 @@ export default function AdminHome() {
       <Flex gap="2" mb="6" wrap="wrap">
         <Button
           leftIcon={<Plus />}
-          onClick={() => navigate('/activities?new=true')}
+          onClick={() => navigate(`${sitePath('activities')}?new=true`)}
         >
           {t('overview.actions.newActivity')}
         </Button>
         <Button
           leftIcon={<CalendarDays />}
           variant="outline"
-          onClick={() => navigate('/calendar')}
+          onClick={() => navigate(sitePath('calendar'))}
         >
           {t('overview.actions.calendar')}
         </Button>

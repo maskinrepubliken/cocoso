@@ -14,6 +14,7 @@ import { loginWithEmail } from './functions';
 import AuthPanel, { AuthError, AuthPanelProps } from './AuthPanel';
 import CodeInput from './CodeInput';
 import ConfirmSignup from './ConfirmSignup';
+import { termsPath } from '/imports/ui/pages/help/helpPages';
 
 // Matches RESEND_AFTER_MS in imports/api/users/emailLogin.js
 const RESEND_AFTER_S = 30;
@@ -218,10 +219,7 @@ export default function EmailLogin({
       footer={
         <p>
           {t('emailLogin.terms')}{' '}
-          <Link to="/about/terms">
-            {t('signup.form.terms.terms')}
-          </Link>
-          .
+          <Link to={termsPath}>{t('signup.form.terms.terms')}</Link>.
         </p>
       }
     >

@@ -17,7 +17,7 @@ import BookableChip from '/imports/ui/generic/BookableChip';
 import { ContactDetails } from '/imports/ui/generic/ContactDetails';
 import BookingInfo from '/imports/ui/pages/resources/components/BookingInfo';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
 
 import { RichText } from './EntryHero';
 
@@ -55,7 +55,6 @@ export default function PartModal() {
   const [part, setPart] = useState<any>(null);
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
-  const prefix = useLocationPrefix();
   const [tc] = useTranslation('common');
 
   useEffect(() => {
@@ -103,7 +102,7 @@ export default function PartModal() {
           <EditLink
             aria-label={tc('labels.update.resources', tc('actions.update'))}
             title={tc('labels.update.resources', tc('actions.update'))}
-            to={`${prefix}/resources/${part._id}?edit=true`}
+            to={`${sitePath('resources', part._id)}?edit=true`}
           >
             <PenIcon aria-hidden />
           </EditLink>

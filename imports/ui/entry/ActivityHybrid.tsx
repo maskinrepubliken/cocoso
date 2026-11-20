@@ -46,6 +46,7 @@ import {
   isPastOccurrence,
   pickOccurrenceIndex,
 } from '../pages/activities/event/occurrences';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const Page = styled('div', {
   margin: '0 auto',
@@ -296,11 +297,11 @@ export default function ActivityHybrid({
   const menu = siteDoc?.settings?.menu;
   const backLink = isPublicActivity
     ? {
-        value: '/activities',
+        value: sitePath('activities'),
         label: menu?.find((item) => item.name === 'activities')?.label,
       }
     : {
-        value: '/calendar',
+        value: sitePath('calendar'),
         label: menu?.find((item) => item.name === 'calendar')?.label,
       };
 
@@ -310,9 +311,10 @@ export default function ActivityHybrid({
   // A shared link shows the generated picture with the title, place and
   // date while the event has dates left, then its own photo.
   const shareImage = activityShareImageUrl(activity);
-  const path = `/${isPublicActivity ? 'activities' : 'calendar'}/${
+  const path = sitePath(
+    isPublicActivity ? 'activities' : 'calendar',
     activity._id
-  }`;
+  );
   const kindLabels = kindsOf(activity).map((key) => tc(`eventKinds.${key}`));
   const author =
     activity.organizerProfiles?.find((p) => p.userId === activity.authorId) ||

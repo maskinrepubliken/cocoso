@@ -6,6 +6,7 @@ import { Box, Center, Modal, Text } from '/imports/ui/core';
 import { siteAtom } from '/imports/state';
 
 import EmailPreview from './EmailPreview';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export default function NewsletterEmail() {
   const site = useAtomValue(siteAtom);
@@ -26,7 +27,7 @@ export default function NewsletterEmail() {
         open={Boolean(email)}
         size="2xl"
         title={email.subject}
-        onClose={() => navigate('/newsletters')}
+        onClose={() => navigate(sitePath('newsletters'))}
       >
         <Center p="8">
           <Box>

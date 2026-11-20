@@ -12,6 +12,7 @@ import { useAtomValue } from 'jotai';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 
 import { locationsAtom } from '/imports/state';
+import { sitePath } from '/imports/api/_utils/paths';
 
 // The municipality as a small 3D map (public/3dicons/tranemo-kommun.webp)
 // that zooms up large when pressed, without a frame: just the map on the
@@ -204,7 +205,7 @@ export default function KommunMap({
                     key={town.slug}
                     className="kommun-map-town is-link"
                     style={style}
-                    to={`/${location.slug}`}
+                    to={sitePath('locations', location.slug)}
                     onClick={() => setOpen(false)}
                   >
                     {label}

@@ -20,6 +20,7 @@ import {
   isStandalone,
   turnPushOn,
 } from '/imports/ui/utils/webPush';
+import { sitePath } from '/imports/api/_utils/paths';
 
 // Chrome, Edge and Samsung Internet on Android offer their own install
 // dialog through this event, once, early in the page's life: keep it
@@ -193,7 +194,7 @@ export default function InstallApp() {
           <p>{t('push.login')}</p>
           <Link
             className="install-app-login"
-            to="/login"
+            to={sitePath('login')}
             onClick={() => setOpen(false)}
           >
             {tc('menu.guest.login')}

@@ -17,6 +17,7 @@ import {
 } from './notification';
 import { sendWebPush, type PushPayload } from './webPush';
 import { listUnsubscribeHeaders, unsubscribeUrl } from './unsubscribeLinks';
+import { sitePath } from '/imports/api/_utils/paths';
 
 /**
  * Sends notifications: push to a person's browsers, and updates about an
@@ -239,7 +240,7 @@ export async function notifyActivity({
           pushes += await pushToUser(recipient.user._id, {
             title: push[0],
             body: message || push[1],
-            url: `/activities/${activityId}`,
+            url: sitePath('activities', activityId),
             tag: `activity-${activityId}`,
           });
         }

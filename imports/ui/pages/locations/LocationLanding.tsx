@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { Link, useLoaderData, useRouteLoaderData } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
@@ -17,11 +17,11 @@ import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { isMenuItemShown } from '/imports/api/_utils/features';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { sitePath } from '/imports/api/_utils/paths';
+import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 import { locationShareImageUrl } from '/imports/api/share/shareImage';
 import ShareMeta, { shareText } from '/imports/ui/layout/ShareMeta';
 import { placeStructuredData } from '/imports/ui/utils/structuredData';
-
-import type { SlugData } from './SlugHandler';
 
 // A section of the place page: its name with the place as a quieter
 // suffix (headings have no icons), and the way to the full listing kept on the
@@ -55,21 +55,22 @@ function Section({
 }
 
 export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
-  const slugData = useRouteLoaderData('slug') as SlugData | undefined;
-  const { activities, composablePage, groups, resources } =
+  const { activities, composablePage, groups, location, resources } =
     (useLoaderData() as any) || {};
   const [tc] = useTranslation('common');
   const locations = useAtomValue(locationsAtom);
 
-  const location = slugData?.location;
   if (!location) {
-    return null;
+    return <NotFoundPage />;
   }
 
   const menu = siteDoc?.settings?.menu || [];
   const isVisible = (name: string) =>
     isMenuItemShown(menu.find((item: any) => item.name === name));
-  const prefix = `/${location.slug}`;
+  const path = sitePath('locations', location.slug);
+  // A section's listing, narrowed to this place
+  const listingOf = (section: string) =>
+    `${sitePath(section)}?ort=${location.slug}`;
   const heroImage = getImageUrl(location.images?.[0], 'full');
   const world = worldForLocation(locations, location._id);
   const shareImage = locationShareImageUrl(location);
@@ -160,7 +161,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
         <Section
           title={tc('locations.landing.activities')}
           place={tc('locations.landing.inPlace', { name: location.name })}
-          seeAllTo={`${prefix}/activities`}
+          seeAllTo={listingOf('activities')}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           {activities?.length ? (
@@ -168,7 +169,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
               {activities.map((activity: any, index: number) => (
                 <Link
                   key={activity._id}
-                  to={`${prefix}/activities/${activity._id}`}
+                  to={sitePath('activities', activity._id)}
                 >
                   <SexyThumb activity={activity} index={index} />
                 </Link>
@@ -186,7 +187,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
         <Section
           title={tc('locations.landing.resources')}
           place={tc('locations.landing.inPlace', { name: location.name })}
-          seeAllTo={`${prefix}/resources`}
+          seeAllTo={listingOf('resources')}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           {resources?.length ? (
@@ -194,7 +195,7 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
               {resources.map((resource: any, index: number) => (
                 <Link
                   key={resource._id}
-                  to={`${prefix}/resources/${resource._id}`}
+                  to={sitePath('resources', resource._id)}
                 >
                   <NewGridThumb
                     fixedImageHeight
@@ -221,12 +222,12 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
         <Section
           title={tc('locations.landing.groups')}
           place={tc('locations.landing.inPlace', { name: location.name })}
-          seeAllTo={`${prefix}/groups`}
+          seeAllTo={listingOf('groups')}
           seeAllLabel={tc('locations.landing.seeAll')}
         >
           <div className="card-grid">
             {groups.map((group: any, index: number) => (
-              <Link key={group._id} to={`${prefix}/groups/${group._id}`}>
+              <Link key={group._id} to={sitePath('groups', group._id)}>
                 <GroupCard group={group} index={index} />
               </Link>
             ))}
@@ -237,14 +238,14 @@ export default function LocationLanding({ siteDoc }: { siteDoc: any }) {
       <ShareMeta
         title={location.name}
         description={location.description}
-        path={prefix}
+        path={path}
         image={shareImage}
         generatedImage
         coordinates={location.coordinates}
         structuredData={placeStructuredData({
           name: location.name,
           description: shareText(location.description, 300),
-          url: publicUrl(prefix),
+          url: publicUrl(path),
           image: heroImage || shareImage,
           coordinates: location.coordinates,
         })}

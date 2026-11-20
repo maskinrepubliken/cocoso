@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
+import { sitePath } from '/imports/api/_utils/paths';
 const ReactPlayer = loadable(() => import('react-player'));
 
 import { Box, Button, Center, Flex, Grid } from '/imports/ui/core';
@@ -194,7 +195,7 @@ export default function ComposablePageHybrid({
         <ShareMeta
           title={composablePage.title}
           description={composablePage.description}
-          path={`/cp/${composablePage._id}`}
+          path={sitePath('cp', composablePage._id)}
         />
       )}
 

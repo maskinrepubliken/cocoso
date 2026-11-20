@@ -5,6 +5,7 @@ import { useAtomValue } from 'jotai';
 
 import { Box, Center, Flex, Heading } from '/imports/ui/core';
 import { locationsAtom } from '/imports/state';
+import { sitePath } from '/imports/api/_utils/paths';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { worldForPlace } from '/imports/ui/utils/locationPalette';
@@ -14,8 +15,8 @@ interface LocationCardsProps {
   // A first card for the whole municipality, leading to everything at once
   all?: { name: string; to: string };
   // Used as a place picker for one section: each card leads to that
-  // section in its place ("businesses" → /<slug>/businesses) instead of
-  // the place's own page.
+  // section narrowed to its place ("businesses" → that listing with
+  // ?ort=<slug>) instead of the place's own page.
   section?: string;
   // The chosen place's id, or null for the whole municipality; the chosen
   // card gets a ring. Leave out where nothing is chosen.
@@ -67,7 +68,11 @@ export function LocationCards({
             key={location._id}
             className={`location-card world-${world.key} ${state(location._id)}`}
             preventScrollReset={Boolean(section)}
-            to={section ? `/${location.slug}/${section}` : `/${location.slug}`}
+            to={
+              section
+                ? `${sitePath(section)}?ort=${location.slug}`
+                : sitePath('locations', location.slug)
+            }
             style={
               imageUrl
                 ? { backgroundImage: `url('${imageUrl}')` }

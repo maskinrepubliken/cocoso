@@ -4,6 +4,7 @@ import { useNavigate, useRevalidator, useSearchParams } from 'react-router';
 
 import { initialLoader, loaderAtom } from '/imports/ui/utils/loaderHandler';
 import { dismissFormError } from '/imports/ui/generic/message';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export interface SuccessRedirectorProps {
   context?: string;
@@ -38,7 +39,7 @@ export default function SuccessRedirector({
     } else {
       resetLoaders();
       setTimeout(() => {
-        navigate(`/${context}/${ping}`);
+        navigate(sitePath(context || '', ping));
       }, 1400);
     }
   };

@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 
 import { currentUserAtom } from '/imports/state';
 import { Loader } from '/imports/ui/core';
+import { sitePath } from '/imports/api/_utils/paths';
 
 // Where the profile settings used to be (/admin/my-profile and the pages
 // under it, still linked from older emails and notifications): on to
@@ -27,5 +28,5 @@ export default function MyProfileRedirect() {
       : 'edit=true';
     return <Navigate replace to={`/@${currentUser.username}?${dialog}`} />;
   }
-  return waited ? <Navigate replace to="/login" /> : <Loader />;
+  return waited ? <Navigate replace to={sitePath('login')} /> : <Loader />;
 }

@@ -31,6 +31,7 @@ import { locationsAtom } from '/imports/state';
 import type { Location } from '/imports/ui/types';
 
 import Boxling from './Boxling';
+import { sitePath } from '/imports/api/_utils/paths';
 
 interface LocationFormValues {
   name: string;
@@ -132,7 +133,10 @@ function LocationForm({
       >
         <Input {...register('slug', { required: true })} />
         <Text color="gray.600" fontSize="xs">
-          {`${window.location.origin}/${slugify(slugTyped || nameTyped)}`}
+          {`${window.location.origin}${sitePath(
+            'locations',
+            slugify(slugTyped || nameTyped)
+          )}`}
         </Text>
       </FormField>
 
@@ -344,7 +348,7 @@ export default function Locations() {
                     <Box>
                       <Heading size="sm">{location.name}</Heading>
                       <Text color="gray.600" fontSize="xs">
-                        /{location.slug}
+                        {sitePath('locations', location.slug)}
                       </Text>
                     </Box>
                     <Badge

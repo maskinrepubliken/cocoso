@@ -26,6 +26,7 @@ import {
 import EmailPreview from './EmailPreview';
 import EmailForm from './EmailForm';
 import Boxling from '../Boxling';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const emailModel = {
   appeal: '',
@@ -169,7 +170,7 @@ export default function EmailNewsletter() {
     <>
       <Box>
         <Center p="4" mb="4">
-          <Link target="_blank" to="/newsletters">
+          <Link target="_blank" to={sitePath('newsletters')}>
             <Button
               colorScheme="blue"
               rightIcon={<ExternalLinkIcon />}

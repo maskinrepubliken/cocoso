@@ -12,6 +12,7 @@ import {
   Text,
 } from '/imports/ui/core';
 import NiceList from '/imports/ui/generic/NiceList';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export default function PreviousNewsletters() {
   const { newsletters } = useLoaderData();
@@ -49,7 +50,7 @@ export default function PreviousNewsletters() {
                 <Box>
                   <Flex alignItems="flex-start" mb="4">
                     <Box>
-                      <Link to={`/newsletters/${email._id}`}>
+                      <Link to={sitePath('newsletters', email._id)}>
                         <CLink>
                           <Heading size="md">{email.subject}</Heading>
                         </CLink>

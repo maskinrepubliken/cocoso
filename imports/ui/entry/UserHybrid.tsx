@@ -15,7 +15,7 @@ import { displayName } from '/imports/ui/listing/UsersHybrid';
 import Notice from '/imports/ui/generic/Notice';
 import { currentUserAtom, locationsAtom, roleAtom } from '/imports/state';
 import type { Site } from '/imports/ui/types';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sectionsOf, sitePath } from '/imports/api/_utils/paths';
 
 import { styled } from '/stitches.config';
 
@@ -276,7 +276,6 @@ export default function UserHybrid({
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
   const revalidator = useRevalidator();
-  const prefix = useLocationPrefix();
 
   // The server renders the page for an anonymous visitor, without the
   // archived events; fetch again once we know this is the person or an admin.
@@ -338,8 +337,8 @@ export default function UserHybrid({
   const upcomingCount = events?.upcoming?.length || 0;
 
   // Groups and works still have their own pages under the profile.
-  const showsSubPage = ['groups', 'works'].some((segment) =>
-    pathname.split('/').includes(segment)
+  const showsSubPage = sectionsOf(pathname).some((section) =>
+    ['groups', 'works'].includes(section)
   );
 
   return (
@@ -360,7 +359,7 @@ export default function UserHybrid({
       <EntryTopBar
         backLink={
           people?.isVisible
-            ? { label: people.label, value: '/people' }
+            ? { label: people.label, value: sitePath('people') }
             : undefined
         }
       />
@@ -411,7 +410,7 @@ export default function UserHybrid({
                   <PlaceCard
                     key={place._id}
                     place={place}
-                    to={`${prefix}/resources/${place._id}`}
+                    to={sitePath('resources', place._id)}
                   />
                 ))}
               </PartCards>

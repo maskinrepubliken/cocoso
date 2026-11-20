@@ -1,9 +1,9 @@
-import { useNavigate, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { useAtomValue } from 'jotai';
 
 import { locationsAtom } from '/imports/state';
 import { kindsOf } from '/imports/api/_utils/kinds';
-import { useCurrentLocation } from '/imports/ui/utils/useLocation';
+
 import { isBookablePlace } from '/imports/ui/generic/BookableChip';
 
 import type { EventView, EventWhen } from './EventViewMenu';
@@ -15,10 +15,8 @@ import type { EventView, EventWhen } from './EventViewMenu';
 export default function useEventFilters(
   listing: 'activities' | 'calendar' | 'resources'
 ) {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const locations = useAtomValue(locationsAtom);
-  const currentLocation = useCurrentLocation();
 
   const listParam = (name: string) =>
     (searchParams.get(name) || '').split(',').filter(Boolean);
@@ -49,26 +47,15 @@ export default function useEventFilters(
       true
     );
 
-  // The chosen places (orter). Inside a place it is that one, and the page
-  // only holds its events; choosing more goes to the whole municipality
-  // with all of them chosen.
-  const placeSlugs = currentLocation
-    ? [currentLocation.slug]
-    : listParam('ort');
-  const togglePlace = (slug: string) => {
-    const next = placeSlugs.includes(slug)
-      ? placeSlugs.filter((s) => s !== slug)
-      : [...placeSlugs, slug];
-    if (!currentLocation) {
-      setParams({ ort: next.join(',') });
-      return;
-    }
-    const params = new URLSearchParams(searchParams);
-    if (next.length) params.set('ort', next.join(','));
-    else params.delete('ort');
-    const query = params.toString();
-    navigate(`/${listing}${query ? `?${query}` : ''}`);
-  };
+  // The chosen places (orter)
+  const placeSlugs = listParam('ort');
+  const togglePlace = (slug: string) =>
+    setParams({
+      ort: (placeSlugs.includes(slug)
+        ? placeSlugs.filter((s) => s !== slug)
+        : [...placeSlugs, slug]
+      ).join(','),
+    });
   const placeIds = new Set(
     locations
       .filter((location: any) => placeSlugs.includes(location.slug))
@@ -92,8 +79,7 @@ export default function useEventFilters(
   }) =>
     (!onlyBookable || isBookablePlace(item)) &&
     (!kinds.length || kindsOf(item).some((key) => kinds.includes(key))) &&
-    (Boolean(currentLocation) ||
-      !placeIds.size ||
+    (!placeIds.size ||
       placeIds.has(item.locationId || '') ||
       (!item.locationId && !item.isMunicipalityOnly));
 
@@ -113,7 +99,7 @@ export default function useEventFilters(
   const isNarrowed =
     Boolean(view.when) ||
     (kinds.length > 0 && (kindsFromMenu || listing === 'calendar')) ||
-    (!currentLocation && placeSlugs.length > 0) ||
+    placeSlugs.length > 0 ||
     onlyBookable;
 
   const menuOnly = { bookable: null };
@@ -133,7 +119,6 @@ export default function useEventFilters(
 
   return {
     locations,
-    currentLocation,
     kinds,
     oneKind,
     setKinds,

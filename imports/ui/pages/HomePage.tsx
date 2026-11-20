@@ -11,7 +11,7 @@ import KommunMap from '/imports/ui/generic/KommunMap';
 import { LocationCards } from '/imports/ui/pages/locations/LocationsGrid';
 import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
 import {
   DayAgenda,
   WeeklySchedule,
@@ -24,7 +24,6 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
   const { activities = [] } = (useLoaderData() as { activities?: any[] }) || {};
   const locations = useAtomValue(locationsAtom);
   const [tc] = useTranslation('common');
-  const prefix = useLocationPrefix();
 
   // The site's sections, in the menu's order, each with the menu's label,
   // a line about what it is for (home.sections.<name>) and a link. Those
@@ -59,7 +58,7 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
               locations={locations}
               all={{
                 name: tc('locations.municipalityOnlyShort'),
-                to: '/activities',
+                to: sitePath('activities'),
               }}
             />
           </section>
@@ -81,7 +80,7 @@ export default function HomePage({ siteDoc }: { siteDoc: any }) {
                 <Link
                   key={item.name}
                   className="home-section"
-                  to={`${prefix}/${item.name}`}
+                  to={sitePath(item.name)}
                 >
                   <ThreeDIcon name={sectionIcons[item.name]} size={56} />
                   <span className="home-section-text">

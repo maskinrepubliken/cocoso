@@ -33,7 +33,7 @@ export interface PlaceNoticeProps {
   subject?: string;
 }
 
-// Inside a place, say so: the listing shows that place only. The whole
+// Narrowed to one place, say so: the listing shows that place only. The whole
 // line is the button to the same listing for the whole municipality.
 export function PlaceNotice({ listing, subject }: PlaceNoticeProps) {
   const currentLocation = useCurrentLocation();
@@ -42,10 +42,12 @@ export function PlaceNotice({ listing, subject }: PlaceNoticeProps) {
   if (!currentLocation) {
     return null;
   }
-  // Drop the place prefix, keep the kind and the past/upcoming choice.
+  // Drop the place, keep the kind and the past/upcoming choice.
+  const params = new URLSearchParams(routerLocation.search);
+  params.delete('ort');
+  const query = params.toString();
   const wholeMunicipalityPath =
-    routerLocation.pathname.replace(`/${currentLocation.slug}`, '') +
-    routerLocation.search;
+    routerLocation.pathname + (query ? `?${query}` : '');
   return (
     <Center>
       <Link

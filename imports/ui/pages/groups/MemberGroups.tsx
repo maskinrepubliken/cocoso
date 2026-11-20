@@ -4,6 +4,7 @@ import React from 'react';
 import { Box } from '/imports/ui/core';
 import Paginate from '/imports/ui/listing/Paginate';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
+import { sitePath } from '/imports/api/_utils/paths';
 
 function MemberGroups() {
   const { groups } = useLoaderData();
@@ -17,7 +18,7 @@ function MemberGroups() {
       {(group) => {
         return (
           <Box key={group._id}>
-            <Link to={`/groups/${group._id}`}>
+            <Link to={sitePath('groups', group._id)}>
               <NewGridThumb
                 imageUrl={group.imageUrl}
                 placeholderSeed={group._id}

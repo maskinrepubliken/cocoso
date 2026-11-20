@@ -11,6 +11,7 @@ import { message } from '/imports/ui/generic/message';
 import Menu, { MenuItem } from '/imports/ui/generic/Menu';
 import { currentUserAtom } from '/imports/state';
 import { groupAtom } from '/imports/ui/pages/groups/groupAtom';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const BLOOM_MS = 900;
 
@@ -81,7 +82,7 @@ export default function GroupMembershipButton() {
       <div className={wrapper}>
         <Link
           className="site-new-button"
-          to="/login"
+          to={sitePath('login')}
           aria-label={label}
           title={label}
         >

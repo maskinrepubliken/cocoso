@@ -8,6 +8,7 @@ import NoticeCard from '/imports/ui/generic/NoticeCard';
 import ActivityHybrid from '/imports/ui/entry/ActivityHybrid';
 import { canCreateContentAtom, renderedAtom } from '/imports/state';
 import EditEntryHandler from '/imports/ui/forms/EditEntryHandler.loadable';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const EditPublicActivity = loadable(() => import('./EditPublicActivity'));
 
@@ -23,7 +24,7 @@ export default function ActivityItemHandler({ siteDoc }) {
 
   useEffect(() => {
     if (activity?.isGroupMeeting) {
-      navigate(`/groups/${activity.groupId}`);
+      navigate(sitePath('groups', activity.groupId));
       return;
     }
     setActivity(activity);
@@ -37,7 +38,10 @@ export default function ActivityItemHandler({ siteDoc }) {
         title={tc('event.archived.notFound')}
         actions={
           <>
-            <Link className="new-entry-helper-button" to="/activities">
+            <Link
+              className="new-entry-helper-button"
+              to={sitePath('activities')}
+            >
               {tc('event.archived.seeAll')}
             </Link>
             <Link className="new-entry-helper-button is-quiet" to="/">

@@ -28,6 +28,7 @@ import EntryHero, {
   SectionHead,
   plainText,
 } from './EntryHero';
+import { sitePath } from '/imports/api/_utils/paths';
 
 interface Work {
   _id: string;
@@ -125,12 +126,12 @@ export default function WorkHybrid({
             work.shortDescription || plainText(work.longDescription)
           }
           image={images[0]}
-          path={`/@${work.authorUsername}/works/${work._id}`}
+          path={sitePath(`@${work.authorUsername}/works`, work._id)}
           title={work.title}
         />
 
         <EntryTopBar
-          backLink={{ value: '/works', label: worksInMenu?.label }}
+          backLink={{ value: sitePath('works'), label: worksInMenu?.label }}
         />
 
         <EntryHero

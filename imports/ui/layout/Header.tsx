@@ -14,7 +14,7 @@ import ThreeDIcon, { sectionIcons } from '/imports/ui/generic/ThreeDIcon';
 import { parseTitle } from '/imports/api/_utils/shared';
 import sectionDescription from '/imports/ui/utils/sectionDescription';
 import { currentUserAtom } from '/imports/state';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sectionsOf, sitePath } from '/imports/api/_utils/paths';
 import Brand from './Brand';
 import DiscussionButton from './DiscussionButton';
 import GroupMembershipButton from './GroupMembershipButton';
@@ -40,14 +40,10 @@ export interface HeaderMenuItem {
   route: string;
 }
 
-export function getMenuItems(
-  site: any,
-  prefix: string,
-  homeLabel?: string
-): HeaderMenuItem[] {
+export function getMenuItems(site: any, homeLabel?: string): HeaderMenuItem[] {
   const menu = site?.settings?.menu || [];
   const home: HeaderMenuItem[] = homeLabel
-    ? [{ name: 'home', label: homeLabel, route: prefix || '/' }]
+    ? [{ name: 'home', label: homeLabel, route: '/' }]
     : [];
   return home.concat(
     menu.filter(isMenuItemShown).map((item: any) => ({
@@ -56,25 +52,23 @@ export function getMenuItems(
       description: item.description,
       isComposablePage: item.isComposablePage,
       route: item.isComposablePage
-        ? `${prefix}/cp/${item.name}`
-        : `${prefix}/${item.name}`,
+        ? sitePath('cp', item.name)
+        : sitePath(item.name),
     }))
   );
 }
 
-// The first path segment after the location prefix: 'activities',
-// 'calendar', 'info', … or '' at a home page.
-export function getCurrentSection(pathname: string, prefix: string): string {
-  const rest = prefix ? pathname.slice(prefix.length) : pathname;
-  const first = rest.split('/')[1] || '';
-  return first === 'cp' ? rest.split('/')[2] || '' : first;
+// The section a page is in, by its key: 'activities', 'calendar', 'info',
+// … or '' at a home page. A composable page is its own section.
+export function getCurrentSection(pathname: string): string {
+  const [first = '', second = ''] = sectionsOf(pathname);
+  return first === 'cp' ? second : first;
 }
 
 export interface InfoPagesMenuProps {
   label: string;
   pageTitles: any[];
   isActive: boolean;
-  prefix?: string;
   className?: string;
   onSelect?: () => void;
 }
@@ -83,7 +77,6 @@ export function InfoPagesMenu({
   label,
   pageTitles,
   isActive,
-  prefix = '',
   className = '',
   onSelect,
 }: InfoPagesMenuProps) {
@@ -109,7 +102,7 @@ export function InfoPagesMenu({
           <MenuItem key={item._id} style={{ padding: 0 }}>
             <Link
               className="site-info-menu-link"
-              to={`${prefix}/info/${parseTitle(item.title)}`}
+              to={sitePath('info', parseTitle(item.title))}
               onClick={onSelect}
             >
               {item.title}
@@ -125,7 +118,6 @@ interface NavProps {
   items: HeaderMenuItem[];
   section: string;
   pageTitles: any[];
-  prefix: string;
   className: string;
   itemClassName: string;
   // What closes the pill after the links: the search
@@ -139,7 +131,6 @@ function Nav({
   items,
   section,
   pageTitles,
-  prefix,
   className,
   itemClassName,
   children,
@@ -195,7 +186,6 @@ function Nav({
             isActive={isActive(item, index)}
             label={item.label}
             pageTitles={pageTitles}
-            prefix={prefix}
           />
         ) : (
           <Link
@@ -219,7 +209,6 @@ interface MenuPanelProps {
   items: HeaderMenuItem[];
   section: string;
   pageTitles: any[];
-  prefix: string;
   pathname: string;
   loginLabel: string;
 }
@@ -233,7 +222,6 @@ function MenuPanel({
   items,
   section,
   pageTitles,
-  prefix,
   pathname,
   loginLabel,
 }: MenuPanelProps) {
@@ -250,7 +238,7 @@ function MenuPanel({
       {items.map((item, index) =>
         item.name === 'home' ? null : item.name === 'info' ? (
           pageTitles?.map((page) => {
-            const to = `${prefix}/info/${parseTitle(page.title)}`;
+            const to = sitePath('info', parseTitle(page.title));
             return (
               <Link
                 key={page._id}
@@ -290,7 +278,7 @@ function MenuPanel({
       {/* Last among the rows: the search, on its own page */}
       <Link
         className={`site-menu-row ${section === 'search' ? 'is-active' : ''}`}
-        to={`${prefix}/search`}
+        to={sitePath('search')}
       >
         <ThreeDIcon name="zoom-front" size={32} />
         <span className="site-menu-row-text">
@@ -301,7 +289,7 @@ function MenuPanel({
         </span>
       </Link>
       {!currentUser && (
-        <Link className="site-info-menu-link" to="/login">
+        <Link className="site-info-menu-link" to={sitePath('login')}>
           {loginLabel}
         </Link>
       )}
@@ -351,7 +339,6 @@ const FIT_SLACK = 32;
 
 export default function Header({ site, pageTitles }: HeaderProps) {
   const location = useLocation();
-  const prefix = useLocationPrefix();
   const [tc] = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -501,8 +488,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
     return null;
   }
 
-  const items = getMenuItems(site, prefix, tc('menu.home'));
-  const section = getCurrentSection(location.pathname, prefix);
+  const items = getMenuItems(site, tc('menu.home'));
+  const section = getCurrentSection(location.pathname);
   // The page the phone's menu button names; the search page is not in
   // the menu, so it is named here
   const current =
@@ -567,7 +554,6 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           itemClassName="site-nav-item"
           items={items}
           pageTitles={pageTitles}
-          prefix={prefix}
           section={section}
         >
           <SiteSearch site={site} />
@@ -595,7 +581,6 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           items={items}
           section={section}
           pageTitles={pageTitles}
-          prefix={prefix}
           pathname={location.pathname}
           loginLabel={tc('menu.guest.login')}
         />

@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { useSubscribe, useTracker } from 'meteor/react-meteor-data';
 import React, { Suspense, useEffect } from 'react';
 import { Outlet, useLocation, useNavigationType } from 'react-router';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useAtom, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
@@ -90,7 +90,6 @@ export default function WrapperHybrid({
   const setIsDesktop = useSetAtom(isDesktopAtom);
   const setIsMobile = useSetAtom(isMobileAtom);
   const location = useLocation();
-  const locationPrefix = useLocationPrefix();
 
   useSubscribe('currentUser');
   useSubscribe('myMemberships');
@@ -204,18 +203,14 @@ export default function WrapperHybrid({
   const adminPage = pathnameSplitted[1] === 'admin';
 
   // A new page starts at its top: whenever the section or the entry in it
-  // changes (the first two segments after a place's prefix). Deeper
+  // changes (the first two segments of the address). Deeper
   // changes, such as a part of a place opened over its page, and changes
   // to the query only (dialogs, filters) leave the scroll alone, and so
   // does going back or forward, where the browser puts one back where one
   // was.
   // A profile (/@name) is one page whatever follows the name.
   const navigationType = useNavigationType();
-  const pageSegments = (
-    locationPrefix ? pathname.slice(locationPrefix.length) : pathname
-  )
-    .split('/')
-    .slice(1, 3);
+  const pageSegments = pathname.split('/').slice(1, 3);
   const pageKey = pageSegments[0]?.startsWith('@')
     ? pageSegments[0]
     : pageSegments.join('/');

@@ -4,6 +4,7 @@ import React from 'react';
 import { Box } from '/imports/ui/core';
 import Paginate from '/imports/ui/listing/Paginate';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export default function MemberActivities() {
   const { activities } = useLoaderData();
@@ -19,7 +20,7 @@ export default function MemberActivities() {
       {(activity) => {
         return (
           <Box key={activity._id}>
-            <Link to={`/activities/${activity._id}`}>
+            <Link to={sitePath('activities', activity._id)}>
               <NewGridThumb
                 imageUrl={activity.imageUrl}
                 placeholderSeed={activity._id}

@@ -11,7 +11,6 @@ import {
   WeeklyPattern,
 } from '/imports/api/activities/recurrence';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 import { getEntryPath } from './useOpenEntry';
 import { describeDays, timeSpan } from './recurringText';
@@ -356,9 +355,8 @@ const withPatterns = (activities: Activity[]) =>
     );
 
 function useEntryLink() {
-  const prefix = useLocationPrefix();
   return (activity: Activity, occurrence?: Occurrence) => {
-    const path = `${prefix}${getEntryPath(activity, 'activities')}`;
+    const path = getEntryPath(activity, 'activities');
     if (!occurrence) {
       return path;
     }

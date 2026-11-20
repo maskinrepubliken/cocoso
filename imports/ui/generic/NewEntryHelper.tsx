@@ -6,6 +6,7 @@ import { useAtomValue } from 'jotai';
 
 import { siteAtom } from '../../state';
 import ThreeDIcon from './ThreeDIcon';
+import { sectionsOf } from '/imports/api/_utils/paths';
 
 export interface NewEntryHelperProps {
   buttonLabel?: string;
@@ -30,7 +31,7 @@ function NewEntryHelper({
   const [tc] = useTranslation('common');
 
   const activeMenuItem = site?.settings?.menu?.find((item: any) =>
-    location?.pathname?.split('/').includes(item.name)
+    sectionsOf(location?.pathname || '').includes(item.name)
   );
 
   const titleGeneric = isEmptyListing

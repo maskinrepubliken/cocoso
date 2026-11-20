@@ -25,6 +25,7 @@ import EntryHero, {
   SectionHead,
   plainText,
 } from './EntryHero';
+import { sitePath } from '/imports/api/_utils/paths';
 
 interface Group {
   _id: string;
@@ -71,12 +72,12 @@ export default function GroupHybrid({
         <EntryMeta
           description={group.readingMaterial || plainText(group.description)}
           image={group.imageUrl}
-          path={`/groups/${group._id}`}
+          path={sitePath('groups', group._id)}
           title={group.title}
         />
 
         <EntryTopBar
-          backLink={{ value: '/groups', label: groupsInMenu?.label }}
+          backLink={{ value: sitePath('groups'), label: groupsInMenu?.label }}
         />
 
         <EntryHero

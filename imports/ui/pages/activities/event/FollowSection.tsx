@@ -11,6 +11,7 @@ import { currentUserAtom } from '/imports/state';
 import { message } from '/imports/ui/generic/message';
 
 import Section, { Muted } from './Section';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const News = styled('ul', {
   listStyle: 'none',
@@ -137,7 +138,7 @@ export default function FollowSection({
                   : tc('event.follow.follow')}
               </Button>
             ) : (
-              <Link to="/login">
+              <Link to={sitePath('login')}>
                 <Button size="sm" variant="outline">
                   {tc('event.follow.login')}
                 </Button>

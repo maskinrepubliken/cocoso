@@ -21,10 +21,7 @@ import {
   kindLabel,
   visibleHits,
 } from '/imports/ui/layout/SiteSearch';
-import {
-  useCurrentLocation,
-  useLocationPrefix,
-} from '/imports/ui/utils/useLocation';
+import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 
 const MIN_LENGTH = 2;
 const PER_KIND = 30;
@@ -38,7 +35,6 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
   const [tc] = useTranslation('common');
   const site = useAtomValue(siteAtom) || siteDoc;
   const locations = useAtomValue(locationsAtom);
-  const prefix = useLocationPrefix();
   const currentLocation = useCurrentLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = (searchParams.get('q') || '').trim();
@@ -121,11 +117,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
       return (
         <div className="card-grid card-grid-wide">
           {list.map((hit, index) => (
-            <Link
-              key={hit._id}
-              className="search-card"
-              to={hitPath(hit, prefix)}
-            >
+            <Link key={hit._id} className="search-card" to={hitPath(hit)}>
               <SexyThumb
                 activity={hit as any}
                 index={index}
@@ -140,11 +132,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
       return (
         <div className="card-grid">
           {list.map((hit: any, index) => (
-            <Link
-              key={hit._id}
-              className="search-card"
-              to={hitPath(hit, prefix)}
-            >
+            <Link key={hit._id} className="search-card" to={hitPath(hit)}>
               <NewGridThumb
                 fixedImageHeight
                 imageUrl={getImageUrl(hit.images?.[0], 'small')}
@@ -165,11 +153,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
       return (
         <div className="card-grid">
           {list.map((hit: any, index) => (
-            <Link
-              key={hit._id}
-              className="search-card"
-              to={hitPath(hit, prefix)}
-            >
+            <Link key={hit._id} className="search-card" to={hitPath(hit)}>
               <GroupCard group={hit} index={index} />
             </Link>
           ))}
@@ -191,7 +175,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
           <Link
             key={`${hit.kind}-${hit._id}`}
             className="site-search-hit search-page-hit"
-            to={hitPath(hit, prefix)}
+            to={hitPath(hit)}
           >
             <HitContent hit={hit} />
           </Link>

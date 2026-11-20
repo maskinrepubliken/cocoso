@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai';
 
 import { isMenuItemShown } from '/imports/api/_utils/features';
 import { canCreateContentAtom, roleAtom } from '/imports/state';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sectionsOf } from '/imports/api/_utils/paths';
 
 import { getCurrentSection } from './Header';
 
@@ -30,11 +30,10 @@ export default function NewButton({ site }: NewButtonProps) {
   const canCreateContent = useAtomValue(canCreateContentAtom);
   const role = useAtomValue(roleAtom);
   const location = useLocation();
-  const prefix = useLocationPrefix();
   const [, setSearchParams] = useSearchParams();
 
   const isAdmin = role === 'admin';
-  const section = getCurrentSection(location.pathname, prefix);
+  const section = getCurrentSection(location.pathname);
 
   // The sections one can create in, as the menu lists them. Info pages are
   // the admins' to add; organizers add events and places too.
@@ -44,11 +43,7 @@ export default function NewButton({ site }: NewButtonProps) {
     .filter((item: any) => isAdmin || item.name !== 'info');
   const current = creatable.find((item: any) => item.name === section);
   // On the listing itself, not on a page inside it (an event, a place)
-  const rest = (
-    prefix ? location.pathname.slice(prefix.length) : location.pathname
-  )
-    .split('/')
-    .filter(Boolean);
+  const rest = sectionsOf(location.pathname);
   const isListing =
     rest.length === 1 || (rest[0] === 'cp' && rest.length === 2);
   // A place's page too: a new place there is part of it

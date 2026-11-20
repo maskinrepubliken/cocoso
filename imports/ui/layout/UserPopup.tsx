@@ -16,6 +16,7 @@ import { getFullName } from '/imports/api/_utils/shared';
 import { isFeatureEnabled } from '/imports/api/_utils/features';
 import LanguageSwitch from './LanguageSwitch';
 import useLogout from './useLogout';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export interface UserThumbProps {
   notificationsCounter?: number;
@@ -126,7 +127,7 @@ export default function UserPopup({ site: siteProp }: UserPopupProps) {
             <MenuItem key={item.contextId + item.count} style={{ padding: 0 }}>
               <Link
                 className="site-info-menu-link site-account-notice"
-                to={`/${item.context}/${item.contextId}`}
+                to={sitePath(item.context, item.contextId)}
               >
                 <span>{item.title}</span>
                 <span className="site-account-count">{item.count}</span>

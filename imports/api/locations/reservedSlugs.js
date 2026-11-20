@@ -1,33 +1,3 @@
-// Slugs a location may not use, because the same URL segment already means
-// something else at the site root (see imports/appRoutes.js). Usernames are
-// safe because profile URLs always start with '@'.
-export const RESERVED_SLUGS = [
-  'about',
-  'activities',
-  'businesses',
-  'admin',
-  'calendar',
-  'cp',
-  'forgot-password',
-  'groups',
-  'guide',
-  'info',
-  'login',
-  'media',
-  'newsletters',
-  'not-found',
-  '404',
-  'people',
-  'register',
-  'reset-password',
-  'resources',
-  'terms-&-privacy-policy',
-  'unsubscribe',
-  'unsubscribe-now',
-  'welcome',
-  'works',
-];
-
 const TRANSLITERATIONS = {
   å: 'a',
   ä: 'a',
@@ -51,6 +21,8 @@ export function slugify(input) {
     .slice(0, 60);
 }
 
+// A place's page is /orter/<slug>, so its slug cannot clash with another
+// address; it only has to be there, and not look like a profile.
 export function isReservedSlug(slug) {
-  return !slug || slug.startsWith('@') || RESERVED_SLUGS.includes(slug);
+  return !slug || slug.startsWith('@');
 }

@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { styled } from '/stitches.config';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
 import AddressBlock from '/imports/ui/generic/AddressBlock';
 import { hasAddress, type Address } from '/imports/api/_utils/address';
 
@@ -40,7 +40,6 @@ export default function PlaceSection({
   locationName,
 }: PlaceSectionProps) {
   const [tc] = useTranslation('common');
-  const prefix = useLocationPrefix();
   const { resource, resourceId, place, placeAddress } = activity;
   const withAddress = hasAddress(placeAddress);
 
@@ -59,7 +58,7 @@ export default function PlaceSection({
       </SectionTitle>
       {resource && resourceId ? (
         <Strong>
-          <PlaceLink to={`${prefix}/resources/${resourceId}`}>
+          <PlaceLink to={sitePath('resources', resourceId)}>
             {resource}
           </PlaceLink>
         </Strong>

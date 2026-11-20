@@ -10,6 +10,7 @@ import Modal from '/imports/ui/core/Modal';
 import { canCreateContentAtom, currentUserAtom, roleAtom } from '../../state';
 import { call } from '../../api/_utils/shared';
 import { message } from '../generic/message';
+import { sitePath } from '/imports/api/_utils/paths';
 
 type Context = 'activities' | 'groups' | 'resources' | 'works' | 'info';
 
@@ -91,7 +92,7 @@ export default function DeleteEntryHandler({
     try {
       await call(deleteMethod, item._id);
       message.success(tc('message.success.remove'));
-      navigate(`/${context}`);
+      navigate(sitePath(context));
       if (context === 'info') {
         window.location.reload();
       }

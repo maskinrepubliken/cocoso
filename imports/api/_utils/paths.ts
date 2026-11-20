@@ -3,7 +3,9 @@
 // feature flag); the address shows the segment given here. Build every
 // in-app link with sitePath() and declare every route with segment(), so a
 // section's address is changed here and nowhere else.
-const SEGMENTS: Record<string, string> = {};
+const SEGMENTS: Record<string, string> = {
+  locations: 'orter',
+};
 
 /** The URL segment of a section: segment('activities'). */
 export const segment = (key: string): string => SEGMENTS[key] || key;

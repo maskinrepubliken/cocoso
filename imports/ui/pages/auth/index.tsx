@@ -32,6 +32,7 @@ import {
   loginIdentifierSchema,
   loginPasswordSchema,
 } from './account.helpers';
+import { termsPath } from '/imports/ui/pages/help/helpPages';
 
 interface LoginProps {
   isSubmitted?: boolean;
@@ -268,7 +269,7 @@ const Signup = ({
         onClose={() => setModalOpen(false)}
       >
         {/* The text has its own page (imports/ui/pages/help) */}
-        <a href="/about/terms" rel="noopener noreferrer" target="_blank">
+        <a href={termsPath} rel="noopener noreferrer" target="_blank">
           {tc('terms.title')}
         </a>
       </Modal>

@@ -7,6 +7,7 @@ import { Button } from '/imports/ui/core';
 
 import AuthPanel, { AuthError } from './AuthPanel';
 import { loginWithEmail, markNewAccount } from './functions';
+import { termsPath } from '/imports/ui/pages/help/helpPages';
 
 interface ConfirmSignupProps {
   email: string;
@@ -106,11 +107,7 @@ export default function ConfirmSignup({
           />
           <span>
             {t('emailLogin.confirm.terms')}{' '}
-            <Link
-              rel="noopener noreferrer"
-              target="_blank"
-              to="/about/terms"
-            >
+            <Link rel="noopener noreferrer" target="_blank" to={termsPath}>
               {t('signup.form.terms.terms')}
             </Link>
           </span>

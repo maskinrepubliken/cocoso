@@ -7,6 +7,7 @@ import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
 import { Button } from '/imports/ui/core';
 import ThreeDIcon from '/imports/ui/generic/ThreeDIcon';
 import { currentUserAtom, siteAtom } from '/imports/state';
+import { sitePath } from '/imports/api/_utils/paths';
 
 // /welcome: where a confirmed sign-up lands (LoginPage sends them). Says
 // the account exists, which address it is on, and what a participant can
@@ -23,7 +24,7 @@ export default function WelcomePage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!currentUser) {
-        navigate('/login', { replace: true });
+        navigate(sitePath('login'), { replace: true });
       }
     }, 1500);
     return () => clearTimeout(timer);

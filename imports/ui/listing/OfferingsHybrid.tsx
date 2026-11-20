@@ -19,6 +19,7 @@ import PlaceTag from '/imports/ui/generic/PlaceTag';
 import PlaceholderImage from '/imports/ui/generic/PlaceholderImage';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { useCurrentLocation } from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 import {
   OFFERING_KINDS,
@@ -362,7 +363,7 @@ function PlaceCard({
   const offering = business.offerings?.find((o: any) => o.kind === kind);
   const image = business.images?.[0];
   const place = locations.find((l: any) => l._id === business.locationId);
-  const prefix = place ? `/${place.slug}` : '';
+
   const excerpt = excerptOf(offering, business);
   const address = formatAddress(business.address);
   const phone =
@@ -374,7 +375,7 @@ function PlaceCard({
   const open = useOpenState(hours);
 
   return (
-    <Card style={kindVars(kind)} to={`${prefix}/resources/${business._id}`}>
+    <Card style={kindVars(kind)} to={sitePath('resources', business._id)}>
       <Picture>
         {image ? (
           <img

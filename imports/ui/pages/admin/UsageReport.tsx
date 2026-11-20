@@ -18,6 +18,7 @@ import {
 } from '/imports/ui/core';
 import { call } from '../../../api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
+import { sitePath } from '/imports/api/_utils/paths';
 
 function compareDatesForSort(a, b) {
   const dateA = new Date(`${a.startDate}T${a.startTime}:00Z`);
@@ -137,7 +138,7 @@ export default function UsageReport({ user, onClose }) {
         allParsedActivities.push({
           ...d,
           title: (
-            <Link target="_blank" to={`/activities/${a._id}`}>
+            <Link target="_blank" to={sitePath('activities', a._id)}>
               <Button colorScheme="blue" variant="ghost" as="span">
                 {a.title}
               </Button>

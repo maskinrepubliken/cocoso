@@ -7,6 +7,7 @@ import { Box, Center, Heading } from '/imports/ui/core';
 import NiceSlider from '../generic/NiceSlider';
 import { parseTitle } from '/imports/api/_utils/shared';
 import ShareMeta from '/imports/ui/layout/ShareMeta';
+import { sitePath } from '/imports/api/_utils/paths';
 
 interface SimplePageProps {
   description?: string;
@@ -95,7 +96,7 @@ export default function PageHybrid({ currentPage }: PageHybridProps) {
       description={currentPage.longDescription}
       images={currentPage.images}
       title={currentPage.title}
-      path={`/info/${parseTitle(currentPage.title)}`}
+      path={sitePath('info', parseTitle(currentPage.title))}
       imageUrl={currentPage.imageUrl}
     />
   );

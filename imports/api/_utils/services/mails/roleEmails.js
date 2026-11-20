@@ -10,6 +10,7 @@ import {
   emailSmallPrint,
   themeColors,
 } from './emailDesign';
+import { sitePath } from '/imports/api/_utils/paths';
 
 /**
  * The emails sent when an admin changes someone's role — verified as an
@@ -23,7 +24,7 @@ const ROLES = {
   contributor: {
     picture: { src: '/email/medal.png', width: 41, height: 56 },
     button: 'Lägg upp ett evenemang',
-    path: '/activities?new=true',
+    path: `${sitePath('activities')}?new=true`,
   },
   admin: {
     picture: { src: '/email/crown.png', width: 56, height: 56 },

@@ -11,7 +11,7 @@ import BookingInfo, {
   type BookingWithPerson,
 } from '/imports/ui/pages/resources/components/BookingInfo';
 import type { Document, Site } from '/imports/ui/types';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
 
 import AddressBlock from '/imports/ui/generic/AddressBlock';
 import { useAtomValue } from 'jotai';
@@ -354,7 +354,6 @@ export default function ResourceHybrid({
   embedded = false,
 }: ResourceHybridProps) {
   const [tc] = useTranslation('common');
-  const prefix = useLocationPrefix();
   if (!resource) {
     return null;
   }
@@ -371,7 +370,7 @@ export default function ResourceHybrid({
 
   // A shared link shows the generated picture with the name, kind,
   // description and address
-  const path = `/resources/${resource._id}`;
+  const path = sitePath('resources', resource._id);
   const shareImage = resourceShareImageUrl(resource) || undefined;
 
   const withContact = hasContact(resource.contact);
@@ -395,7 +394,7 @@ export default function ResourceHybrid({
 
   const partOfPanel = partOf ? (
     <Panel css={{ overflow: 'hidden', marginBottom: '1.25rem' }}>
-      <ParentLink to={`${prefix}/resources/${partOf._id}`}>
+      <ParentLink to={sitePath('resources', partOf._id)}>
         <ParentPicture>
           {partOf.images?.[0] ? (
             <img alt="" src={getImageUrl(partOf.images[0], 'medium') || ''} />
@@ -476,7 +475,7 @@ export default function ResourceHybrid({
             </Actions>
           )}
           {embedded && (
-            <ReadMore to={`${prefix}/resources/${resource._id}`}>
+            <ReadMore to={sitePath('resources', resource._id)}>
               {tc('entry.readMore')}
             </ReadMore>
           )}
@@ -601,7 +600,7 @@ export default function ResourceHybrid({
                     // Not in the list: it opens over this page
                     part.isUnlisted
                       ? { search: `?part=${part._id}` }
-                      : `${prefix}/resources/${part._id}`
+                      : sitePath('resources', part._id)
                   }
                 />
               ))}
@@ -670,7 +669,7 @@ export default function ResourceHybrid({
         />
 
         <EntryTopBar
-          backLink={{ value: `/${listing}`, label: listingInMenu?.label }}
+          backLink={{ value: sitePath(listing), label: listingInMenu?.label }}
         />
 
         {body}

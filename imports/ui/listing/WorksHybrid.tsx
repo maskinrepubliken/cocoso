@@ -8,10 +8,7 @@ import { styled } from '/stitches.config';
 import { locationsAtom, siteAtom } from '/imports/state';
 import PlaceTag from '/imports/ui/generic/PlaceTag';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
-import {
-  useLocationPrefix,
-  useLocationTag,
-} from '/imports/ui/utils/useLocation';
+import { useLocationTag } from '/imports/ui/utils/useLocation';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import {
   findRequestKind,
@@ -29,7 +26,7 @@ import {
   KindTile,
   Kinds,
 } from './KindTiles';
-import { entryPathWithin } from './useOpenEntry';
+import { getEntryPath } from './useOpenEntry';
 
 // The works listing, shown as förfrågningar: neighbours sharing rides,
 // lending, borrowing, giving away and helping each other. The kinds at the top are
@@ -177,7 +174,6 @@ const Empty = styled('div', {
 
 function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
   const { t } = useTranslation('common');
-  const prefix = useLocationPrefix();
   const place = useLocationTag(work);
   const locations = useAtomValue(locationsAtom);
   const world = worldForLocation(locations, work.locationId);
@@ -195,7 +191,7 @@ function RequestCard({ work, kind }: { work: any; kind?: RequestKind }) {
   const posted = dayjs(work.creationDate);
 
   return (
-    <Card to={entryPathWithin(prefix, work, 'works')}>
+    <Card to={getEntryPath(work, 'works')}>
       <CardTop>
         <Badge css={{ background: kind?.color || '#e9dcc4' }}>
           {Icon && <Icon />}

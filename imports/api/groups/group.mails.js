@@ -1,6 +1,7 @@
 import mailtranslations from './mailtranslations';
 import escapeHtml from '../_utils/escapeHtml';
 import { publicUrl } from '../_utils/shared';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const getGroupRegistrationEmailBody = (
   Group,
@@ -369,7 +370,7 @@ const getGroupRegistrationEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="${publicUrl(`/groups/${GroupId}`)}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl(sitePath('groups', GroupId))}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${visitPage}
                 </a>
@@ -509,7 +510,7 @@ const getGroupRegistrationEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="${publicUrl(`/groups/${GroupId}`)}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl(sitePath('groups', GroupId))}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${visitPage}
                 </a>
@@ -967,7 +968,7 @@ const getInviteToPrivateGroupEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="${publicUrl(`/groups/${GroupId}`)}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl(sitePath('groups', GroupId))}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${visitPage}
                 </a>
@@ -1107,7 +1108,7 @@ const getInviteToPrivateGroupEmailBody = (
                  align="center" bgcolor="#414141" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#414141;" valign="middle"
               >
                 <a
-                   href="${publicUrl(`/groups/${GroupId}`)}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
+                   href="${publicUrl(sitePath('groups', GroupId))}" style="display:inline-block;background:#414141;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"
                 >
                   ${visitPage}
                 </a>

@@ -14,7 +14,7 @@ import FeedbackForm from './FeedbackForm';
 import InstallApp from './InstallApp';
 import LanguageSwitch from './LanguageSwitch';
 import useLogout from './useLogout';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export interface FooterProps {
   site: any;
@@ -26,7 +26,6 @@ export interface FooterProps {
 // woven season floor. The only place the logos appear, so the kinship is
 // said once, plainly.
 export function Footer({ site }: FooterProps) {
-  const prefix = useLocationPrefix();
   const currentUser = useAtomValue(currentUserAtom);
   const [tc] = useTranslation('common');
   const logout = useLogout();
@@ -40,10 +39,10 @@ export function Footer({ site }: FooterProps) {
 
   const routeFor = (item: any) =>
     item.name === 'info'
-      ? `${prefix}/info/about`
+      ? sitePath('info', 'about')
       : item.isComposablePage
-      ? `${prefix}/cp/${item.name}`
-      : `${prefix}/${item.name}`;
+      ? sitePath('cp', item.name)
+      : sitePath(item.name);
 
   return (
     <footer className="site-footer vav">
@@ -56,14 +55,14 @@ export function Footer({ site }: FooterProps) {
               and login last when logged out */}
           <div className="site-footer-tools">
             <LanguageSwitch />
-            <Link className="site-footer-pill" to="/about">
+            <Link className="site-footer-pill" to={sitePath('about')}>
               <InfoIcon width={16} height={16} />
               {tc('footer.about')}
             </Link>
             <FeedbackForm />
             <InstallApp />
             {!currentUser && (
-              <Link className="site-footer-pill" to="/login">
+              <Link className="site-footer-pill" to={sitePath('login')}>
                 <LogInIcon width={16} height={16} />
                 {tc('menu.guest.login')}
               </Link>

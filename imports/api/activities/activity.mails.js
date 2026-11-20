@@ -9,6 +9,7 @@ import {
   emailEventPage,
   themeColors,
 } from '../_utils/services/mails/emailDesign';
+import { sitePath } from '/imports/api/_utils/paths';
 
 /**
  * The emails about one event: signing up, changing or cancelling a
@@ -250,7 +251,7 @@ export function registrationEmail({
 }) {
   const s = stringsFor(site, currentUser?.lang);
   const kind = isUpdate ? s.update : s.register;
-  const url = publicUrl(`/activities/${activity._id}`);
+  const url = publicUrl(sitePath('activities', activity._id));
   const c = themeColors(site?.theme);
   const when = formatOccurrence(occurrence, s.locale);
   const rows = registrationFacts(activity, values, occurrence, s, true);
@@ -289,7 +290,7 @@ export function unregistrationEmail({
   currentUser,
 }) {
   const s = stringsFor(site, currentUser?.lang);
-  const url = publicUrl(`/activities/${activity._id}`);
+  const url = publicUrl(sitePath('activities', activity._id));
   const when = formatOccurrence(occurrence, s.locale);
   const rows = registrationFacts(activity, values, occurrence, s, false);
 
@@ -342,7 +343,7 @@ export function activityUpdateEmail({
 }) {
   const s = stringsFor(site, lang);
   const u = s.updates;
-  const url = publicUrl(`/activities/${activity._id}`);
+  const url = publicUrl(sitePath('activities', activity._id));
   const c = themeColors(site?.theme);
   const dates = comingDates(activity, s);
   const place = placeOf(activity);

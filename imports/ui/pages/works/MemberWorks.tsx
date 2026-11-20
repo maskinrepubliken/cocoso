@@ -5,6 +5,7 @@ import { Box } from '/imports/ui/core';
 import Paginate from '/imports/ui/listing/Paginate';
 import NewGridThumb from '/imports/ui/listing/NewGridThumb';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export default function MemberWorks() {
   const { works } = useLoaderData();
@@ -18,7 +19,7 @@ export default function MemberWorks() {
       {(work) => {
         return (
           <Box key={work._id}>
-            <Link to={`/@${work.authorUsername}/works/${work._id}`}>
+            <Link to={sitePath(`@${work.authorUsername}/works`, work._id)}>
               <NewGridThumb
                 avatar={{
                   name: work.authorUsername,

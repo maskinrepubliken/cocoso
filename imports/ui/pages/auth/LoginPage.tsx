@@ -15,6 +15,7 @@ import ConfirmSignup from './ConfirmSignup';
 import EmailLogin from './EmailLogin';
 import PasswordLogin from './PasswordLogin';
 import AuthPanel from './AuthPanel';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export default function LoginPage({
   mode = 'login',
@@ -69,7 +70,7 @@ export default function LoginPage({
     }
     // A confirmed sign-up goes to the welcome screen, not the profile
     if (takeNewAccount()) {
-      navigate('/welcome');
+      navigate(sitePath('welcome'));
       return;
     }
     // Everyone with an account belongs to the site (the server sees to the
@@ -80,11 +81,11 @@ export default function LoginPage({
 
   const links =
     mode === 'signup'
-      ? [{ to: '/login', label: t('emailLogin.signup.toLogin') }]
+      ? [{ to: sitePath('login'), label: t('emailLogin.signup.toLogin') }]
       : [
-          { to: '/register', label: t('emailLogin.toSignup') },
+          { to: sitePath('register'), label: t('emailLogin.toSignup') },
           {
-            to: '/login?losenord',
+            to: `${sitePath('login')}?losenord`,
             label: t('emailLogin.withPassword'),
             quiet: true,
           },

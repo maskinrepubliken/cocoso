@@ -24,6 +24,7 @@ import {
 } from '/imports/ui/utils/webPush';
 
 import DeleteAccount from './DeleteAccount';
+import { sitePath } from '/imports/api/_utils/paths';
 
 interface Prefs {
   newsletter: boolean;
@@ -189,7 +190,9 @@ function Following() {
     <ul className="settings-follows">
       {follows.map((follow) => (
         <li key={follow.activityId}>
-          <Link to={`/activities/${follow.activityId}`}>{follow.title}</Link>
+          <Link to={sitePath('activities', follow.activityId)}>
+            {follow.title}
+          </Link>
           <Button
             size="xs"
             variant="ghost"

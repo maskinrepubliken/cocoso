@@ -7,7 +7,7 @@ import { Loader, Skeleton } from '/imports/ui/core';
 import { parseAllBookingsWithResources } from '/imports/api/_utils/shared';
 import { getWeeklyPattern } from '/imports/api/activities/recurrence';
 import PageHeading from '/imports/ui/listing/PageHeading';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
 import { colorsForKind } from '/imports/ui/utils/kindPalette';
 import EventViewMenu from '/imports/ui/listing/EventViewMenu';
 import useEventFilters from '/imports/ui/listing/useEventFilters';
@@ -64,7 +64,6 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   };
 
   const navigate = useNavigate();
-  const prefix = useLocationPrefix();
 
   const activitiesParsed = useMemo(
     () => parseAllBookingsWithResources(activities, resources),
@@ -75,7 +74,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
   const handleSelectActivity = (activity: Activity, e: React.MouseEvent) => {
     e.preventDefault();
     if (activity.isGroupMeeting) {
-      navigate(`${prefix}/groups/${activity.groupId}`);
+      navigate(sitePath('groups', activity.groupId));
       return;
     }
     const listing = activity.isPublicActivity ? 'activities' : 'calendar';
@@ -83,7 +82,7 @@ export default function CalendarHandler({ siteDoc }: CalendarHandlerProps) {
       date: activity.startDate,
       time: activity.startTime,
     });
-    navigate(`${prefix}/${listing}/${activity.activityId}?${query}`);
+    navigate(`${sitePath(listing, activity.activityId)}?${query}`);
   };
 
   // The same Filter as on the events page: kinds and places; one moves

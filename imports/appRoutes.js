@@ -5,6 +5,8 @@ import { redirect, useNavigation } from 'react-router';
 
 import { isFeatureEnabled } from '/imports/api/_utils/features';
 import { parseTitle } from '/imports/api/_utils/shared';
+import { segment, sitePath } from '/imports/api/_utils/paths';
+import { termsPath } from '/imports/ui/pages/help/helpPages';
 import loadable from '@loadable/component';
 
 import WrapperHybrid from '/imports/ui/layout/WrapperHybrid';
@@ -441,59 +443,39 @@ export default function appRoutes(props) {
   const findLocation = (slug) =>
     locations.find((location) => location.slug === slug) || null;
 
-  // /:slug is a profile (/@name) or a location (/limmared); the loader
-  // decides, and every child route below it branches on that decision.
+  // /:slug is a profile (/@name); anything else there does not exist.
   const slugLoader = async ({ params }) => {
     if (isUserSlug(params.slug)) {
       const data = await getUser({ params });
       return { kind: 'user', ...data };
     }
-    const location = findLocation(params.slug);
-    if (!location) {
-      return { kind: 'notFound' };
-    }
-    return { kind: 'location', location };
+    return { kind: 'notFound' };
   };
 
-  // Under a location every loader receives the location id; under a profile
-  // the profile's own loaders run instead (or nothing, for URLs profiles do
-  // not have).
-  const forLocation = (loader, userLoader) => async (args) => {
-    if (isUserSlug(args.params?.slug)) {
-      return userLoader ? await userLoader(args) : {};
-    }
-    const location = findLocation(args.params?.slug);
-    if (args.params?.slug && !location) {
-      return {};
-    }
-    return await loader({ ...args, locationId: location?._id });
-  };
+  // Under a profile its own loaders run instead (or nothing, for URLs
+  // profiles do not have).
+  const forProfile = (userLoader) => async (args) =>
+    userLoader && isUserSlug(args.params?.slug) ? await userLoader(args) : {};
 
   // The public listing and entry routes, mounted once at the root and once
-  // under /:slug. Under the slug each element switches between the profile
-  // component (if any) and the location component.
+  // under /:slug, where only the sections a profile has show anything.
   const publicRoutes = ({ forSlug }) => {
-    const el = (LocationComponent, UserComponent = null) =>
+    const el = (Component, UserComponent = null) =>
       forSlug
-        ? createRouteElement(SlugChild, {
-            ...props,
-            location: LocationComponent,
-            user: UserComponent,
-          })
-        : createRouteElement(LocationComponent, props);
+        ? createRouteElement(SlugChild, { ...props, user: UserComponent })
+        : createRouteElement(Component, props);
     const ld = (loader, userLoader = null) =>
-      forSlug ? forLocation(loader, userLoader) : loader;
+      forSlug ? forProfile(userLoader) : loader;
 
     return [
       {
-        path: 'activities',
+        path: segment('activities'),
         children: [
           {
             index: true,
             element: el(ActivityListHandler, MemberActivities),
             loader: ld(
-              ({ request, locationId }) =>
-                getActivities({ request, locationId }),
+              ({ request }) => getActivities({ request }),
               ({ params }) => getActivitiesByUser({ params })
             ),
             shouldRevalidate: revalidateOn(['showPast']),
@@ -508,13 +490,13 @@ export default function appRoutes(props) {
       },
       ...ifFeature('groups', [
         {
-          path: 'groups',
+          path: segment('groups'),
           children: [
             {
               index: true,
               element: el(GroupListHandler, MemberGroups),
               loader: ld(
-                ({ locationId }) => getGroups({ locationId }),
+                () => getGroups(),
                 ({ params }) => getGroupsByUser({ params })
               ),
               shouldRevalidate: revalidateOn(),
@@ -529,12 +511,12 @@ export default function appRoutes(props) {
         },
       ]),
       {
-        path: 'calendar',
+        path: segment('calendar'),
         children: [
           {
             index: true,
             element: el(CalendarHandler),
-            loader: ld(({ locationId }) => getCalendarEntries({ locationId })),
+            loader: ld(() => getCalendarEntries()),
             shouldRevalidate: revalidateOn(['edit']),
           },
           {
@@ -547,37 +529,36 @@ export default function appRoutes(props) {
       },
       {
         // /info on its own opens the first page instead of a 404.
-        path: 'info',
+        path: segment('info'),
         element: el(NotFoundPage),
-        loader: async ({ request }) => {
+        loader: async () => {
           const { pages } = await getPages();
           const first = pages?.[0];
           if (!first) {
             return null;
           }
-          const base = new URL(request.url).pathname.replace(/\/$/, '');
-          return redirect(encodeURI(`${base}/${parseTitle(first.title)}`));
+          return redirect(encodeURI(sitePath('info', parseTitle(first.title))));
         },
       },
       {
-        path: 'info/:pageTitle',
+        path: `${segment('info')}/:pageTitle`,
         element: el(PageItemHandler),
         loader: ld(() => getPages()),
         shouldRevalidate: revalidateOn(['edit']),
       },
       {
-        path: 'people',
+        path: segment('people'),
         element: el(UserListHandler),
         loader: ld(() => getPeople()),
         shouldRevalidate: revalidateOn(),
       },
       {
-        path: 'resources',
+        path: segment('resources'),
         children: [
           {
             index: true,
             element: el(ResourceListHandler),
-            loader: ld(({ locationId }) => getResources({ locationId })),
+            loader: ld(() => getResources()),
             shouldRevalidate: revalidateOn(),
           },
           {
@@ -594,9 +575,9 @@ export default function appRoutes(props) {
                 (key) => url.searchParams.get(key) === 'true'
               );
               if (part?.isUnlisted && part.parentId && !managing) {
-                const at = url.pathname.indexOf('/resources/');
-                const base = url.pathname.slice(0, at + '/resources/'.length);
-                return redirect(`${base}${part.parentId}?part=${part._id}`);
+                return redirect(
+                  `${sitePath('resources', part.parentId)}?part=${part._id}`
+                );
               }
               return data;
             }),
@@ -607,7 +588,7 @@ export default function appRoutes(props) {
       // Äta, handla & bo
       ...ifFeature('businesses', [
         {
-          path: 'businesses',
+          path: segment('businesses'),
           children: [
             {
               index: true,
@@ -619,17 +600,12 @@ export default function appRoutes(props) {
             {
               // An old link to an item: to the place it became
               path: ':businessId',
-              loader: ld(async ({ params, request }) => {
+              loader: ld(async ({ params }) => {
                 const resourceId = await getPlaceOfLegacyBusiness({ params });
-                const url = new URL(request.url);
-                const base = url.pathname.slice(
-                  0,
-                  url.pathname.indexOf('/businesses/')
-                );
                 return redirect(
                   resourceId
-                    ? `${base}/resources/${resourceId}`
-                    : `${base}/businesses`
+                    ? sitePath('resources', resourceId)
+                    : sitePath('businesses')
                 );
               }),
             },
@@ -638,19 +614,19 @@ export default function appRoutes(props) {
       ]),
       ...ifFeature('works', [
         {
-          path: 'works',
+          path: segment('works'),
           children: [
             {
               index: true,
               element: el(WorkListHandler, MemberWorks),
               loader: ld(
-                ({ locationId }) => getWorks({ locationId }),
+                () => getWorks(),
                 ({ params }) => getWorksByUser({ params })
               ),
               shouldRevalidate: revalidateOn(),
             },
-            // A request's page lives under its author (/@user/works/:id). A
-            // shared or guessed /works/:id goes there instead of a 404. Not
+            // A request's page lives under its author. A shared or guessed
+            // address without the author goes there instead of a 404. Not
             // under a slug: there the author's own route handles it.
             ...(forSlug
               ? []
@@ -665,7 +641,7 @@ export default function appRoutes(props) {
                         return null;
                       }
                       return redirect(
-                        `/@${work.authorUsername}/works/${work._id}`
+                        sitePath(`@${work.authorUsername}/works`, work._id)
                       );
                     },
                   },
@@ -675,11 +651,11 @@ export default function appRoutes(props) {
       ]),
       {
         // All the results for ?q=, from the header's search
-        path: 'search',
+        path: segment('search'),
         element: el(SearchPage),
       },
       {
-        path: 'cp/:composablePageId',
+        path: `${segment('cp')}/:composablePageId`,
         element: el(ComposablePageHandler),
         loader: ld(({ params }) => getComposablePage({ params, siteDoc })),
       },
@@ -708,19 +684,13 @@ export default function appRoutes(props) {
               index: true,
               element: createRouteElement(SlugChild, {
                 ...props,
-                location: LocationLanding,
                 emptyForUser: true,
               }),
-              loader: async ({ params }) => {
-                const location = findLocation(params.slug);
-                return location ? await getLocationLanding({ location }) : {};
-              },
-              shouldRevalidate: revalidateOn(),
             },
             ...publicRoutes({ props, forSlug: true }),
             ...ifFeature('works', [
               {
-                path: 'works/:workId/*',
+                path: `${segment('works')}/:workId/*`,
                 element: createRouteElement(SlugChild, {
                   ...props,
                   user: WorkItemHandler,
@@ -732,16 +702,35 @@ export default function appRoutes(props) {
             ]),
           ],
         },
+        // A place's own page. Its listings are the site's, filtered with
+        // ?ort=<slug>.
         {
-          path: 'login',
+          path: segment('locations'),
+          children: [
+            { index: true, loader: () => redirect('/') },
+            {
+              path: ':locationSlug',
+              element: createRouteElement(LocationLanding, props),
+              loader: async ({ params }) => {
+                const location = findLocation(params.locationSlug);
+                return location
+                  ? { location, ...(await getLocationLanding({ location })) }
+                  : {};
+              },
+              shouldRevalidate: revalidateOn(),
+            },
+          ],
+        },
+        {
+          path: segment('login'),
           element: createRouteElement(LoginPage, props),
         },
         {
-          path: 'register',
+          path: segment('register'),
           element: createRouteElement(SignupPage, props),
         },
         {
-          path: 'welcome',
+          path: segment('welcome'),
           element: createRouteElement(WelcomePage, props),
         },
         // There are no passwords to reset any more; links to these pages in
@@ -754,7 +743,7 @@ export default function appRoutes(props) {
         // statement, /guide with the guidebook. Its text is in the `help`
         // translations, fetched before the page is shown.
         ...['about', 'guide'].map((group) => ({
-          path: group,
+          path: segment(group),
           loader: loadHelpTexts,
           shouldRevalidate: () => false,
           children: ['', ':helpSlug'].map((path) => ({
@@ -765,15 +754,15 @@ export default function appRoutes(props) {
         // The terms' address until 5.12; old emails and bookmarks point here.
         {
           path: 'terms-&-privacy-policy',
-          loader: () => redirect('/about/terms'),
+          loader: () => redirect(termsPath),
         },
         // From the link in a newsletter or an event update
         {
-          path: 'unsubscribe/:token',
+          path: `${segment('unsubscribe')}/:token`,
           element: createRouteElement(Unsubscribe, props),
         },
         {
-          path: 'newsletters',
+          path: segment('newsletters'),
           element: createRouteElement(PreviousNewsletters, props),
           loader: async () => await getNewsletters(),
           children: [

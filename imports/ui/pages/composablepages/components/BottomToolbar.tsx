@@ -11,6 +11,7 @@ import { Button, Flex, Link, Modal, Tag, Text } from '/imports/ui/core';
 import { message } from '/imports/ui/generic/message';
 
 import { call, publicUrl } from '/imports/api/_utils/shared';
+import { sitePath } from '/imports/api/_utils/paths';
 
 export default function BottomToolbar({
   currentPage,
@@ -154,7 +155,7 @@ export default function BottomToolbar({
           ) : (
             <Link
               fontSize="sm"
-              href={publicUrl(`/cp/${currentPage._id}`)}
+              href={publicUrl(sitePath('cp', currentPage._id))}
               target="_blank"
               css={{
                 color: 'var(--cocoso-colors-blue-300)',

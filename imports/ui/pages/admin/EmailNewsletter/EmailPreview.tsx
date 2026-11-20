@@ -21,6 +21,7 @@ import truncate from 'html-truncate';
 import { DateTimeOccurrence } from '/imports/ui/types';
 import { getImageUrl } from '/imports/ui/utils/imageHelper';
 import { publicUrl } from '/imports/api/_utils/shared';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const yesterday = dayjs(new Date()).add(-1, 'days');
 
@@ -233,7 +234,7 @@ export default function EmailPreview({ site, email }) {
         }}
       >
         <Container>
-          <Link href={publicUrl('/newsletters/[newsletter-id]')}>
+          <Link href={publicUrl(sitePath('newsletters', '[newsletter-id]'))}>
             <Text
               style={{
                 color: '#044386',
@@ -285,7 +286,7 @@ export default function EmailPreview({ site, email }) {
             <Container key={activity._id}>
               <Section style={{ marginBottom: 24 }}>
                 <Link
-                  href={publicUrl(`/activities/${activity._id}`)}
+                  href={publicUrl(sitePath('activities', activity._id))}
                   style={{ color: '#0f64c0' }}
                 >
                   <Heading as="h2" style={titleStyle}>
@@ -296,7 +297,7 @@ export default function EmailPreview({ site, email }) {
 
                 {(activity.images || activity.imageUrl) && (
                   <Link
-                    href={publicUrl(`/activities/${activity._id}`)}
+                    href={publicUrl(sitePath('activities', activity._id))}
                   >
                     <Img
                       alt={activity?.title}
@@ -325,7 +326,7 @@ export default function EmailPreview({ site, email }) {
                 </Container>
                 <Text style={{ textAlign: 'center' }}>
                   <Button
-                    href={publicUrl(`/activities/${activity._id}`)}
+                    href={publicUrl(sitePath('activities', activity._id))}
                     style={buttonStyle}
                   >
                     {tc('actions.entryPage')}
@@ -341,7 +342,7 @@ export default function EmailPreview({ site, email }) {
             <Container key={work._id}>
               <Section style={{ marginBottom: 24 }}>
                 <Link
-                  href={publicUrl(`/@${work.authorUsername}/works/${work._id}`)}
+                  href={publicUrl(sitePath(`@${work.authorUsername}/works`, work._id))}
                   style={{ color: '#0f64c0' }}
                 >
                   <Heading as="h2" style={titleStyle}>
@@ -352,7 +353,7 @@ export default function EmailPreview({ site, email }) {
 
                 {work.images && (
                   <Link
-                    href={publicUrl(`/@${work.authorUsername}/works/${work._id}`)}
+                    href={publicUrl(sitePath(`@${work.authorUsername}/works`, work._id))}
                   >
                     <Img
                       alt={work?.title}
@@ -374,7 +375,7 @@ export default function EmailPreview({ site, email }) {
                 </Container>
                 <Text style={{ textAlign: 'center' }}>
                   <Button
-                    href={publicUrl(`/@${work.authorUsername}/works/${work._id}`)}
+                    href={publicUrl(sitePath(`@${work.authorUsername}/works`, work._id))}
                     style={buttonStyle}
                   >
                     {tc('actions.entryPage')}

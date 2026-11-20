@@ -2,6 +2,7 @@ import crypto from 'crypto';
 
 import { publicUrl } from '../_utils/shared';
 import { getLinkSecret } from './serverKeys';
+import { sitePath } from '/imports/api/_utils/paths';
 
 /**
  * Signed links that let someone stop a kind of email without logging in:
@@ -61,7 +62,7 @@ export async function readUnsubscribeToken(
 
 // The page that asks for a click to confirm (link scanners only fetch it)
 export async function unsubscribeUrl(target: UnsubscribeTarget) {
-  return publicUrl(`/unsubscribe/${await unsubscribeToken(target)}`);
+  return publicUrl(sitePath('unsubscribe', await unsubscribeToken(target)));
 }
 
 // RFC 8058 one-click: mail clients POST here straight from their own button

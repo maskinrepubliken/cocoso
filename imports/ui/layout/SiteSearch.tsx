@@ -7,11 +7,9 @@ import SearchIcon from 'lucide-react/dist/esm/icons/search';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 
 import { parseTitle } from '/imports/api/_utils/shared';
-import { entryPathWithin } from '/imports/ui/listing/useOpenEntry';
-import {
-  useCurrentLocation,
-  useLocationPrefix,
-} from '/imports/ui/utils/useLocation';
+import { sitePath } from '/imports/api/_utils/paths';
+import { getEntryPath } from '/imports/ui/listing/useOpenEntry';
+import { useCurrentLocation } from '/imports/ui/utils/useLocation';
 
 const isClient = Meteor?.isClient;
 const DEBOUNCE_MS = 220;
@@ -55,17 +53,17 @@ const GROUP_ORDER: GroupKey[] = [
 ];
 
 // Where a hit leads: the same places the listings' cards go.
-export const hitPath = (hit: SearchHit, prefix: string): string => {
+export const hitPath = (hit: SearchHit): string => {
   if (hit.kind === 'info') {
-    return `${prefix}/info/${parseTitle(hit.title)}`;
+    return sitePath('info', parseTitle(hit.title));
   }
   if (hit.kind === 'people') {
     return `/@${hit.username}`;
   }
   if (hit.kind === 'locations') {
-    return `/${hit.slug}`;
+    return sitePath('locations', hit.slug);
   }
-  return entryPathWithin(prefix, hit, hit.kind);
+  return getEntryPath(hit, hit.kind);
 };
 
 // The section's label as the menu has it, so the groups read "Föreningar"
@@ -97,9 +95,12 @@ export const visibleHits = (hits: SearchHit[], site: any) =>
         ?.isVisible !== false
   );
 
-// Where all the results for a query are listed
-export const searchPath = (query: string, prefix: string) =>
-  `${prefix}/search?q=${encodeURIComponent(query.trim())}`;
+// Where all the results for a query are listed; within a place when the
+// search was made in one
+export const searchPath = (query: string, placeSlug?: string) =>
+  `${sitePath('search')}?q=${encodeURIComponent(query.trim())}${
+    placeSlug ? `&ort=${placeSlug}` : ''
+  }`;
 
 export const isPastEvent = (hit: SearchHit) =>
   hit.kind === 'activities' && hit.isUpcoming === false;
@@ -168,7 +169,6 @@ export default function SiteSearch({ site }: SiteSearchProps) {
   const [tc] = useTranslation('common');
   const navigate = useNavigate();
   const location = useLocation();
-  const prefix = useLocationPrefix();
   const currentLocation = useCurrentLocation();
 
   const [query, setQuery] = useState('');
@@ -263,12 +263,12 @@ export default function SiteSearch({ site }: SiteSearchProps) {
   };
 
   const goTo = (hit: SearchHit) => {
-    navigate(hitPath(hit, prefix));
+    navigate(hitPath(hit));
     close();
   };
 
   const showAll = () => {
-    navigate(searchPath(trimmed, prefix));
+    navigate(searchPath(trimmed, currentLocation?.slug));
     close();
   };
 
@@ -392,7 +392,7 @@ export default function SiteSearch({ site }: SiteSearchProps) {
                         } ${isPast ? 'is-past' : ''}`}
                         role="option"
                         aria-selected={index === activeIndex}
-                        to={hitPath(hit, prefix)}
+                        to={hitPath(hit)}
                         onClick={() => close()}
                       >
                         <HitContent hit={hit} />
@@ -406,7 +406,7 @@ export default function SiteSearch({ site }: SiteSearchProps) {
           {hasSearched && hits.length > 0 && (
             <Link
               className="site-search-all"
-              to={searchPath(trimmed, prefix)}
+              to={searchPath(trimmed, currentLocation?.slug)}
               onClick={() => close()}
             >
               {tc('search.showAll')}

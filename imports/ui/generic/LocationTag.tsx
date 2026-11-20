@@ -8,6 +8,7 @@ import { locationsAtom } from '/imports/state';
 import { worldForLocation } from '/imports/ui/utils/locationPalette';
 
 import PlaceTag from './PlaceTag';
+import { sitePath } from '/imports/api/_utils/paths';
 
 const TagLink = styled(Link, {
   borderRadius: '999px',
@@ -51,7 +52,7 @@ export default function LocationTag({
   }
 
   return (
-    <TagLink to={`/${location.slug}`}>
+    <TagLink to={sitePath('locations', location.slug)}>
       <PlaceTag
         className={bare ? 'bare' : ''}
         name={location.name}

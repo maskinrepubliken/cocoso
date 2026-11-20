@@ -3,7 +3,6 @@ import React from 'react';
 import ChevronLeftIcon from 'lucide-react/dist/esm/icons/chevron-left';
 
 import { Button } from '/imports/ui/core';
-import { useLocationPrefix } from '/imports/ui/utils/useLocation';
 
 export interface BackLinkData {
   label?: string;
@@ -15,15 +14,12 @@ export interface BackLinkProps {
 }
 
 export default function BackLink({ backLink }: BackLinkProps) {
-  const prefix = useLocationPrefix();
   if (!backLink) {
     return null;
   }
 
-  const link = `${prefix}${backLink.value}`;
-
   return (
-    <Link to={link}>
+    <Link to={backLink.value}>
       <Button
         leftIcon={<ChevronLeftIcon fontSize={18} />}
         size="lg"
