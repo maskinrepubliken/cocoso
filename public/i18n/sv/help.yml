@@ -31,8 +31,9 @@ pages:
           - "{{site}} är i betaversion. Vi bygger fortfarande, och saker kan se annorlunda ut från en vecka till nästa. Hittar du något som inte fungerar eller saknar du något? Använd knappen **Ge feedback** längst ner på varje sida."
       - title: Vem står bakom?
         body:
-          - "{{site}} drivs av **Uddebo Makerspace**, som också ansvarar för tjänsten och för de personuppgifter som finns i den. Den utvecklas tillsammans med [Maskinrepubliken](https://maskinrepubliken.se/) och i samarbete med [Tranemo kommun](https://www.tranemo.se/)."
+          - "{{site}} drivs av [Uddebo Makerspace](https://www.maskinrepubliken.se/uddebomakerspace/), som också ansvarar för tjänsten och för de personuppgifter som finns i den. Den utvecklas tillsammans med [Maskinrepubliken](https://maskinrepubliken.se/) och i samarbete med [Tranemo kommun](https://www.tranemo.se/)."
           - "Innehållet kommer från arrangörerna själva. Den som har lagt upp ett evenemang eller en plats ansvarar för att uppgifterna stämmer."
+          - "Kontakt: Viktor Lyresten, [viktor@lyresten.se](mailto:viktor@lyresten.se), telefon [079-357 72 07](tel:+46793577207)."
       - title: Så blir du arrangör
         body:
           - "Alla som ordnar något i kommunen som är öppet för andra kan bli arrangörer: föreningar, studieförbund, företag, kommunens verksamheter och privatpersoner."
@@ -66,7 +67,7 @@ pages:
       - title: Vem ansvarar?
         body:
           - "{{site}} drivs av Uddebo Makerspace, i samarbete med Tranemo kommun. Uddebo Makerspace är personuppgiftsansvarig, det vill säga den som bestämmer hur dina personuppgifter används i tjänsten och som du vänder dig till med frågor om dem."
-          - "Du når oss med knappen **Ge feedback** längst ner på varje sida. Skriv din e-postadress i meddelandet om du vill ha svar."
+          - "Kontaktperson är Viktor Lyresten, [viktor@lyresten.se](mailto:viktor@lyresten.se), telefon [079-357 72 07](tel:+46793577207). Mer om Uddebo Makerspace finns på [maskinrepubliken.se/uddebomakerspace](https://www.maskinrepubliken.se/uddebomakerspace/). Du kan också skriva med knappen **Ge feedback** längst ner på varje sida; ange din e-postadress om du vill ha svar."
       - title: Att använda tjänsten
         body:
           - "Att läsa, söka och anmäla sig till evenemang kräver inget konto. Med ett konto kan du följa evenemang och få notiser, och som arrangör kan du lägga upp evenemang och platser."
@@ -167,6 +168,7 @@ pages:
       - title: Rapportera brister
         body:
           - "Upptäcker du något som inte fungerar för dig, eller behöver du innehåll i ett annat format? Skriv till oss med knappen **Ge feedback** längst ner på sidan och ange din e-postadress om du vill ha svar. Berätta vilken sida det gäller och vilket hjälpmedel du använder, så kan vi rätta till det snabbare."
+          - "Du kan också kontakta Viktor Lyresten på Uddebo Makerspace: [viktor@lyresten.se](mailto:viktor@lyresten.se) eller telefon [079-357 72 07](tel:+46793577207)."
       - title: Om du inte är nöjd
         body:
           - "Myndigheten för digital förvaltning (DIGG) har tillsyn över lagen om tillgänglighet till digital offentlig service. Tycker du att vi inte tar hand om dina synpunkter kan du [anmäla det till DIGG](https://www.digg.se/tdosanmalan)."

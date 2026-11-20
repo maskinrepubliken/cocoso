@@ -123,7 +123,7 @@ export function Footer({ site }: FooterProps) {
               Makerspace to its part of Maskinrepubliken's site) */}
           <div className="site-footer-mark site-footer-mark-makers">
             <a
-              href="https://maskinrepubliken.se/#uddebomakerspace"
+              href="https://www.maskinrepubliken.se/uddebomakerspace/"
               rel="noopener noreferrer"
               target="_blank"
             >
