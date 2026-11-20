@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.12.0](https://github.com/maskinrepubliken/cocoso/compare/v5.11.0...v5.12.0) (2026-11-20)
+
+
+### Features
+
+* **activities:** fold the follow section and trim the event's card ([17ccfb1](https://github.com/maskinrepubliken/cocoso/commit/17ccfb1bad3e698bf83ee8077483c2d5a0d12554))
+* **activities:** give the event page a larger picture and key facts on top ([d7a9213](https://github.com/maskinrepubliken/cocoso/commit/d7a9213ea4d463a1d2090de50c69448213c5fc1d))
+* **activities:** lay the event page out as one card and an action column ([988bd35](https://github.com/maskinrepubliken/cocoso/commit/988bd35b5acea13c7503b56623b47dee1776404a))
+* **activities:** make the event page work as a first visit to the site ([255094f](https://github.com/maskinrepubliken/cocoso/commit/255094ff851caf1f1869d21f7bc758f53678408c))
+* **activities:** move sharing to the header and run the picture edge to edge ([e9c3e1f](https://github.com/maskinrepubliken/cocoso/commit/e9c3e1fd035f045202ebbf82e459ac33edd6b8c2))
+* **activities:** remember poster-shaped pictures and simplify the event card ([52fd9e8](https://github.com/maskinrepubliken/cocoso/commit/52fd9e83b719313f711d3b5296a50acd0c015e6f))
+* **activities:** reorder the event page on phones and quiet the follow toggle ([30c9974](https://github.com/maskinrepubliken/cocoso/commit/30c997423fe86a38c1db1212ef33e324398941b1))
+* **activities:** show a tall picture as a poster on the event page ([7c3c7a4](https://github.com/maskinrepubliken/cocoso/commit/7c3c7a4627e31ce89ada51c4c3c48ffa6e260450))
+* **activities:** start the event's picture behind the header on phones ([c2c0eb3](https://github.com/maskinrepubliken/cocoso/commit/c2c0eb348c3328ee5e70e8abbb0fd1bceb4b7617))
+* **activities:** widen the event's card and tidy the column beside it ([edbfd07](https://github.com/maskinrepubliken/cocoso/commit/edbfd071c6da46e6eeb6b9d078675ff5f79886d7))
+* **admin:** ask only for a name and an email when creating an alias ([78be94d](https://github.com/maskinrepubliken/cocoso/commit/78be94ddaf786dba7e8c8e713f97cb5d9b3bdb0f))
+* **admin:** create and manage aliases in the members list ([2d7f733](https://github.com/maskinrepubliken/cocoso/commit/2d7f733e1bd8e4fdee1720806b66a5d326107c84))
+* **admin:** link the guidebook from the admin sidebar ([ad899de](https://github.com/maskinrepubliken/cocoso/commit/ad899de56fc886ce9b322987c628b8576e883958))
+* **admin:** list a member's events in the members list ([9a66b90](https://github.com/maskinrepubliken/cocoso/commit/9a66b909c46db2f15413e0dcea7448287b69d91a))
+* **admin:** set another admin's visibility from their settings ([3da7ddd](https://github.com/maskinrepubliken/cocoso/commit/3da7ddd5a9fdf985c927a33e69b68eba01a5bf2f))
+* **auth:** convert an alias to a real account ([b59b0c6](https://github.com/maskinrepubliken/cocoso/commit/b59b0c61a41d5baeb762c7255d4beaa5ee204f0f))
+* **home:** swipe the weekly schedule sideways on phones ([79990ad](https://github.com/maskinrepubliken/cocoso/commit/79990adc7a609cc769a74b60a4eecfde08b81181))
+* **info:** add Om tjänsten, new terms, accessibility statement and guidebook ([177eb38](https://github.com/maskinrepubliken/cocoso/commit/177eb38415b006ddc378151955ce3001a49447df))
+* **info:** put away Om tjänsten and the guidebook, shorten the legal pages ([ed22128](https://github.com/maskinrepubliken/cocoso/commit/ed2212855a0faaf8d6c7b7dec0929cb8dfb7e4a3))
+* **info:** show the beta notice at the top of every help page ([7c12312](https://github.com/maskinrepubliken/cocoso/commit/7c1231211dbbeb2ba1537851da028c4ebd877e3d))
+* **layout:** animate the header avatar when the page loads ([b03e848](https://github.com/maskinrepubliken/cocoso/commit/b03e84857ad36e6d6a297847aa7ce423f93385af))
+* **layout:** drop the place switcher from the header brand pill ([169f33d](https://github.com/maskinrepubliken/cocoso/commit/169f33d1462351cc9cb4e27c58f2cfc3d08ebb5f))
+* **layout:** right-align the menu pill in the desktop header ([411f8a4](https://github.com/maskinrepubliken/cocoso/commit/411f8a46795203e823bfbba8c97b8fe202b645a6))
+* **layout:** show the initials "TK" for the site name on phones ([adf3421](https://github.com/maskinrepubliken/cocoso/commit/adf34212a419fbf3ff9051f2505d7aa4c2de64d4))
+* **layout:** show the username beside the avatar when the header has room ([a390eaa](https://github.com/maskinrepubliken/cocoso/commit/a390eaa57e479422ca87e06e55b754f42a9403ca))
+* **listing:** fit the kind filters on two rows on phones ([f0c185b](https://github.com/maskinrepubliken/cocoso/commit/f0c185bc98c65fc5bc6f4ba8c47ab19008cdabcd))
+* **listing:** use the two-row kind tiles up to 1100px ([c6341c8](https://github.com/maskinrepubliken/cocoso/commit/c6341c8ba842f6e13f081f31adf95eafddaba38d))
+* **listing:** wrap the kind filters as pills on phones ([e166772](https://github.com/maskinrepubliken/cocoso/commit/e166772bf9533571ea7e67f458e27f4d6a0aeb81))
+* **locations:** move places to /orter/<slug> and filter with ?ort= ([1749ed8](https://github.com/maskinrepubliken/cocoso/commit/1749ed82ad25be1b6fea9044419da6c9fd451b22))
+* **people:** add alias organizer profiles ([87af2b2](https://github.com/maskinrepubliken/cocoso/commit/87af2b2d2160f11a38ea7ce175dc29438cb38f92))
+* **people:** hand a removed organizer's events to a co-organizer ([854f564](https://github.com/maskinrepubliken/cocoso/commit/854f56424d47d7c90cb8310bba82a164e6d8f262))
+* **people:** remove aliases and accounts alike, leaving events orphaned ([c4d82a5](https://github.com/maskinrepubliken/cocoso/commit/c4d82a598414d6d18b0f32f41efd23a9b504bded))
+* **routing:** give every page a Swedish address ([cfc7245](https://github.com/maskinrepubliken/cocoso/commit/cfc72456cf540fa511a1b745e5bb31d560026558))
+* **search:** lead to the search page from the phone's menu ([76a91e9](https://github.com/maskinrepubliken/cocoso/commit/76a91e94d6507cecd3ca0a1ad728b8c408f257b0))
+* **search:** move the header search into the menu pill ([bd8f2c0](https://github.com/maskinrepubliken/cocoso/commit/bd8f2c02ead63cda6a7f47bf8c6f65b98375d851))
+* **search:** open the search from the menu on phones ([4191528](https://github.com/maskinrepubliken/cocoso/commit/4191528d11244f1d285b9610d562eb2ff9bacf3e))
+
+
+### Bug Fixes
+
+* **a11y:** make dialogs, the search and the filter panel work by keyboard ([f59de02](https://github.com/maskinrepubliken/cocoso/commit/f59de028397d253da8a39b96e8ea5bdffbeea055))
+* **a11y:** raise text contrast to WCAG 2.1 AA and name three controls ([69ff2fa](https://github.com/maskinrepubliken/cocoso/commit/69ff2fa10913692f96188f274fbec9cf98bcecfa)), closes [#c8613](https://github.com/maskinrepubliken/cocoso/issues/c8613) [#ad4f2](https://github.com/maskinrepubliken/cocoso/issues/ad4f2)
+* **accounts:** say what deleting an account leaves behind ([15dbd59](https://github.com/maskinrepubliken/cocoso/commit/15dbd59ea5edea6e2259a9ecc3b669452b59f507))
+* **ci:** clear the four type errors that failed CI on main ([fc0a9ae](https://github.com/maskinrepubliken/cocoso/commit/fc0a9ae0033584fc96254f2de4333cbe1b678ff7))
+* **home:** swipe the weekly schedule freely, and from tablet width ([92cb277](https://github.com/maskinrepubliken/cocoso/commit/92cb277fc007cf6567845c59f1ec968e5d13ecbe))
+* **i18n:** make the cookie notice and privacy policy say what is stored ([74458f1](https://github.com/maskinrepubliken/cocoso/commit/74458f12bcf42de95cd4b4a0bba924a9df847e1e))
+* **info:** give Uddebo Makerspace's contact details in the policy pages ([e8a37f1](https://github.com/maskinrepubliken/cocoso/commit/e8a37f19067186cd4c986c1885012dfe9663eb08))
+* **info:** name Maskinrepubliken as data processor in the privacy policy ([47cfc72](https://github.com/maskinrepubliken/cocoso/commit/47cfc728458330ab02418ca963bdbede2ec7faaa))
+* **layout:** equal margins on both sides of the desktop header ([7921923](https://github.com/maskinrepubliken/cocoso/commit/7921923e157f11720032c86425bef17c67f20942))
+* **layout:** jump to the top of a new page instead of scrolling there ([8719988](https://github.com/maskinrepubliken/cocoso/commit/87199887a57ba4af0b316773683cbe170cbb761d))
+* **layout:** keep the header avatar no larger than the crane's disc ([ce20987](https://github.com/maskinrepubliken/cocoso/commit/ce209873bf0336e98e6671a12910b1e55e58a334))
+* **layout:** let the header avatar glide in instead of jumping ([12c28a4](https://github.com/maskinrepubliken/cocoso/commit/12c28a40b0aa96e79cf6a9f24446c1ade82c8fc6))
+* **layout:** link the footer's "signed in as" name to one's own profile ([99a4e8a](https://github.com/maskinrepubliken/cocoso/commit/99a4e8ab02c231f115be3fa178a6dd4de0df83d7))
+* **layout:** start every new page at its top ([a10ad04](https://github.com/maskinrepubliken/cocoso/commit/a10ad04a69f6d3f8e13d747fecdd62844058c7bc))
+* **layout:** stop the header from flickering between two sizes ([1296189](https://github.com/maskinrepubliken/cocoso/commit/12961892a8b1b3150ebd03375ac7fd29d61acd40))
+* **layout:** stop the username in the header from flickering ([087e228](https://github.com/maskinrepubliken/cocoso/commit/087e2286c94ce90b265f40871d448d8751c9495c))
+* **people:** show one's own hidden profile when opening it directly ([14b0efa](https://github.com/maskinrepubliken/cocoso/commit/14b0efa40a377e6d529341d2a12b4d91e0fcb5b8))
+* **people:** start a profile page at its top too ([6f98dee](https://github.com/maskinrepubliken/cocoso/commit/6f98deef839cb45266593736d118b8ddb73e8adf))
+* **privacy:** copy Wikimedia pictures into our own media storage ([8850111](https://github.com/maskinrepubliken/cocoso/commit/8850111e9249c8e94fdf2d1bbac40a8606b21b1a))
+* **privacy:** serve Raleway and Fraunces from the site, not Google ([a8ea3c0](https://github.com/maskinrepubliken/cocoso/commit/a8ea3c088abe6d316a8e7b54644d33c0b9b7ef11))
+* **privacy:** stop emails loading fonts from Google ([007c8ce](https://github.com/maskinrepubliken/cocoso/commit/007c8cee5ab908f6377fcdd8e814cba1cc695f42))
+* **search:** remove the second cross inside the header search field ([e6544d6](https://github.com/maskinrepubliken/cocoso/commit/e6544d6b126ff4d37e37cb88cd134e74b28df72e))
+
 ## [5.11.0](https://github.com/maskinrepubliken/cocoso/compare/v5.10.0...v5.11.0) (2026-11-19)
 
 
