@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useRevalidator, useSearchParams } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import type { Address } from '/imports/api/_utils/address';
 import { useAtomValue } from 'jotai';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import CalendarIcon from 'lucide-react/dist/esm/icons/calendar-days';
-import LinkIcon from 'lucide-react/dist/esm/icons/link';
 import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import {
   LightboxProvider,
@@ -14,7 +13,7 @@ import {
 } from '/imports/ui/generic/Lightbox';
 
 import { styled } from '/stitches.config';
-import { Button, Tag } from '/imports/ui/core';
+import { Tag } from '/imports/ui/core';
 import Notice from '/imports/ui/generic/Notice';
 import type { Site } from '/imports/ui/types';
 import { kindsOf } from '/imports/api/_utils/kinds';
@@ -28,8 +27,6 @@ import { colorsForKind } from '/imports/ui/utils/kindPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
 import { getImageUrl } from '../utils/imageHelper';
-import { shareLink } from '../utils/shareLink';
-import BackLink from './BackLink';
 
 import Section, { NARROW, WIDE } from '../pages/activities/event/Section';
 import WhenSection from '../pages/activities/event/WhenSection';
@@ -56,13 +53,6 @@ const Page = styled('div', {
   maxWidth: '1080px',
   padding: '0 1rem 3rem',
   width: '100%',
-});
-
-const TopBar = styled('div', {
-  alignItems: 'center',
-  display: 'flex',
-  justifyContent: 'space-between',
-  marginBottom: '0.25rem',
 });
 
 // The top of the page: the picture on the left and, beside it, what the
@@ -93,7 +83,14 @@ const ImageBox = styled('div', {
     objectFit: 'cover',
     width: '100%',
   },
-  [NARROW]: { aspectRatio: '16 / 9', maxHeight: '220px' },
+  // On a phone the picture runs edge to edge, past the page's own padding
+  [NARROW]: {
+    aspectRatio: '16 / 9',
+    borderRadius: 0,
+    boxShadow: 'none',
+    margin: '0 -1rem',
+    width: 'auto',
+  },
 });
 
 const HeroText = styled('div', { minWidth: 0 });
@@ -268,39 +265,10 @@ export interface ActivityHybridProps {
   siteDoc: Site;
 }
 
-function ShareButton({ title }: { title?: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    const outcome = await shareLink(window.location.href, title);
-    if (outcome === 'copied') {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-  return (
-    <Button
-      leftIcon={<LinkIcon />}
-      size="lg"
-      variant="ghost"
-      css={{ fontWeight: 'normal' }}
-      onClick={copy}
-    >
-      {copied ? (
-        <Trans i18nKey="actions.copied" ns="common" />
-      ) : (
-        <Trans i18nKey="actions.share" ns="common" />
-      )}
-    </Button>
-  );
-}
-
 // The event page: everything about one event in sections — when, where,
 // who organizes it, what it is, signing up and who is coming — plus tools
 // for the organizer.
-export default function ActivityHybrid({
-  activity,
-  siteDoc,
-}: ActivityHybridProps) {
+export default function ActivityHybrid({ activity }: ActivityHybridProps) {
   const [tc] = useTranslation('common');
   const locationName = useLocationTag(activity as any);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -351,17 +319,6 @@ export default function ActivityHybrid({
   };
 
   const { isPublicActivity } = activity;
-
-  const menu = siteDoc?.settings?.menu;
-  const backLink = isPublicActivity
-    ? {
-        value: sitePath('activities'),
-        label: menu?.find((item) => item.name === 'activities')?.label,
-      }
-    : {
-        value: sitePath('calendar'),
-        label: menu?.find((item) => item.name === 'calendar')?.label,
-      };
 
   const images = (activity.images || [activity.imageUrl]).filter(
     (img): img is string => Boolean(img)
@@ -444,11 +401,6 @@ export default function ActivityHybrid({
             : null
         }
       />
-
-      <TopBar>
-        <BackLink backLink={backLink} />
-        <ShareButton title={activity.title} />
-      </TopBar>
 
       <Hero noImage={!isPublicActivity}>
         {isPublicActivity && (

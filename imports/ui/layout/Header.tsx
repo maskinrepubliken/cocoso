@@ -21,6 +21,7 @@ import GroupMembershipButton from './GroupMembershipButton';
 import EditButton from './EditButton';
 import LanguageSwitch from './LanguageSwitch';
 import NewButton from './NewButton';
+import ShareButton from './ShareButton';
 import SiteSearch from './SiteSearch';
 
 const isClient = Meteor?.isClient;
@@ -564,6 +565,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           <EditButton />
           <GroupMembershipButton />
           <DiscussionButton />
+          <ShareButton />
         </div>
       </div>
 
