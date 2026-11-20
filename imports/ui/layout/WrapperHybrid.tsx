@@ -209,18 +209,18 @@ export default function WrapperHybrid({
   // to the query only (dialogs, filters) leave the scroll alone, and so
   // does going back or forward, where the browser puts one back where one
   // was.
+  // A profile (/@name) is one page whatever follows the name.
   const navigationType = useNavigationType();
-  const pageKey = (
+  const pageSegments = (
     locationPrefix ? pathname.slice(locationPrefix.length) : pathname
   )
     .split('/')
-    .slice(1, 3)
-    .join('/');
+    .slice(1, 3);
+  const pageKey = pageSegments[0]?.startsWith('@')
+    ? pageSegments[0]
+    : pageSegments.join('/');
   useEffect(() => {
     if (navigationType === 'POP') {
-      return;
-    }
-    if (pathnameSplitted[1][0] === '@' && !pathnameSplitted[3]) {
       return;
     }
     window.scrollTo(0, 0);
