@@ -58,7 +58,7 @@ const filterPrivateGroups = async (activities, user) => {
         group.adminId === userId ||
         group.members.some((member) => member.memberId === userId) ||
         group.peopleInvited.some(
-          (person) => person.email === user.emails[0].address
+          (person) => person.email === user.emails?.[0]?.address
         )
       );
     })
@@ -625,7 +625,8 @@ Meteor.methods({
     const locationId = await resolveActivityLocation(values);
     const organizers = await resolveOrganizers(
       values.organizers,
-      author.authorId
+      author.authorId,
+      user._id
     );
     const contact = cleanContact(values.contact);
     const contactUserId = resolveContactUserId(
@@ -727,7 +728,9 @@ Meteor.methods({
     if ('organizers' in safeValues) {
       safeValues.organizers = await resolveOrganizers(
         safeValues.organizers,
-        effectiveAuthorId
+        effectiveAuthorId,
+        user._id,
+        (theActivity.organizers || []).map((o) => o.userId)
       );
     }
     if ('contact' in safeValues) {

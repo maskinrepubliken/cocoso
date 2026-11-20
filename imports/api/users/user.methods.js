@@ -334,10 +334,23 @@ Meteor.methods({
     const ids = memberships
       .map((m) => m.userId)
       .filter((id) => includeSelf || id !== user._id);
+    // Aliases (user.alias.js) are for admins to choose
+    const userIsAdmin = await isAdmin(user._id);
     const users = await Meteor.users
       .find(
-        { _id: { $in: ids } },
-        { fields: { username: 1, firstName: 1, lastName: 1, avatar: 1 } }
+        {
+          _id: { $in: ids },
+          ...(userIsAdmin ? {} : { isAlias: { $ne: true } }),
+        },
+        {
+          fields: {
+            username: 1,
+            firstName: 1,
+            lastName: 1,
+            avatar: 1,
+            isAlias: 1,
+          },
+        }
       )
       .fetchAsync();
     return users
@@ -347,6 +360,7 @@ Meteor.methods({
         firstName: u.firstName,
         lastName: u.lastName,
         avatar: u.avatar?.src || null,
+        ...(u.isAlias ? { isAlias: true } : {}),
       }))
       .sort((a, b) => a.username.localeCompare(b.username));
   },

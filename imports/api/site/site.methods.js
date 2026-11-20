@@ -99,7 +99,17 @@ Meteor.methods({
     const users = await Meteor.users
       .find(
         { _id: { $in: userIds } },
-        { fields: { username: 1, emails: 1, avatar: 1 } }
+        {
+          fields: {
+            username: 1,
+            firstName: 1,
+            emails: 1,
+            avatar: 1,
+            isAlias: 1,
+            invitedAt: 1,
+            termsAcceptedAt: 1,
+          },
+        }
       )
       .fetchAsync();
     const userById = Object.fromEntries(users.map((u) => [u._id, u]));
@@ -115,6 +125,11 @@ Meteor.methods({
         joinDate: m.joinDate,
         isPublic: m.isPublic,
         isOrganizer: Boolean(m.isOrganizer),
+        // An organizer profile without a login (user.alias.js)
+        isAlias: Boolean(user?.isAlias),
+        name: user?.firstName,
+        // Made from an alias, and not yet logged in to
+        isInvited: Boolean(user?.invitedAt && !user?.termsAcceptedAt),
       };
     });
   },

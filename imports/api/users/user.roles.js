@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+
 import Memberships from '../memberships/membership';
 
 // Roles are per site: a user has at most one membership document.
@@ -22,4 +24,28 @@ const isMember = async (userId) => {
   return Boolean(await Memberships.findOneAsync({ userId }));
 };
 
-export { isAdmin, isContributorOrAdmin, isContributor, isParticipant, isMember };
+// Aliases (organizer profiles without a login, user.alias.js) are the
+// admins' to hand out. Of these user ids, the ones this user may name as
+// an organizer or a place's manager: an admin all of them, anyone else
+// none of the aliases, except those `already` named there.
+const withoutNewAliases = async (ids, userId, already = []) => {
+  if (ids.length === 0 || (await isAdmin(userId))) {
+    return ids;
+  }
+  const aliases = await Meteor.users
+    .find({ _id: { $in: ids }, isAlias: true }, { fields: { _id: 1 } })
+    .fetchAsync();
+  const refused = new Set(
+    aliases.map((alias) => alias._id).filter((id) => !already.includes(id))
+  );
+  return ids.filter((id) => !refused.has(id));
+};
+
+export {
+  isAdmin,
+  isContributorOrAdmin,
+  isContributor,
+  isParticipant,
+  isMember,
+  withoutNewAliases,
+};

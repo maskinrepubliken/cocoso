@@ -66,7 +66,7 @@ const groupMethods = {
           group.adminId !== currentUserId &&
           !group.members.some((member) => member.memberId === currentUserId) &&
           !group.peopleInvited.some(
-            (person) => person.email === currentUser.emails[0]?.address
+            (person) => person.email === currentUser.emails?.[0]?.address
           )
         ) {
           return null;
@@ -99,7 +99,7 @@ const groupMethods = {
         group.adminId !== currentUserId &&
         !group.members?.some((member) => member.memberId === currentUserId) &&
         !group.peopleInvited?.some(
-          (person) => person.email === currentUser.emails[0]?.address
+          (person) => person.email === currentUser.emails?.[0]?.address
         )
       ) {
         return null;
@@ -166,7 +166,7 @@ const groupMethods = {
         group.adminId === userId ||
         group.members.some((member) => member.memberId === userId) ||
         group.peopleInvited.some(
-          (person) => person.email === user.emails[0].address
+          (person) => person.email === user.emails?.[0]?.address
         )
       );
     });

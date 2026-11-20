@@ -11,6 +11,18 @@ import {
 } from '../_utils/services/mails/mail.methods';
 import methodError from '../_utils/methodError';
 
+// An alias (user.alias.js) has no login: nobody logs in as it, and it is
+// always an organizer, never an admin or a participant.
+async function refuseAlias(memberId) {
+  const member = await Meteor.users.findOneAsync(
+    { _id: memberId },
+    { fields: { isAlias: 1 } }
+  );
+  if (member?.isAlias) {
+    throw new Meteor.Error('is-alias', 'Not possible for an alias');
+  }
+}
+
 Meteor.methods({
   // Lets an admin see the site as another (non-admin) member: a fresh login
   // token for that member is issued and returned, and the client logs in
@@ -32,6 +44,7 @@ Meteor.methods({
         'Only verified or non-verified members can be viewed as'
       );
     }
+    await refuseAlias(memberId);
     const stamped = Accounts._generateStampedLoginToken();
     await Accounts._insertLoginToken(memberId, stamped);
     // eslint-disable-next-line no-console
@@ -59,6 +72,7 @@ Meteor.methods({
     ) {
       throw new Meteor.Error('User is does not have a role');
     }
+    await refuseAlias(memberId);
 
     try {
       await Memberships.updateAsync(
@@ -135,6 +149,7 @@ Meteor.methods({
     if (!(await isContributor(memberId))) {
       throw new Meteor.Error('User is not verified');
     }
+    await refuseAlias(memberId);
 
     try {
       await Memberships.updateAsync(

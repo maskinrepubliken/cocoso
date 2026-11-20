@@ -40,6 +40,14 @@ Users.schema.UserProfile = {
   // Set when the person deletes their account; the document is removed
   // right after (deleteAccount in user.methods.js)
   deletionRequestedAt: { type: Date, optional: true },
+  // An alias: an organizer profile without a login, made by an admin to
+  // publish in someone else's name (imports/api/users/user.alias.js). It
+  // has no email address, so nobody can log in as it and no email is ever
+  // sent to it.
+  isAlias: { type: Boolean, optional: true },
+  // When an alias was turned into a real account and its owner invited.
+  // Until they have logged in once there is no termsAcceptedAt.
+  invitedAt: { type: Date, optional: true },
   avatar: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   avatarLegacy: { type: new SimpleSchema(Schemas.Avatar), optional: true },
   isPublic: { type: Boolean, defaultValue: true, optional: true },
@@ -125,9 +133,12 @@ Accounts.validateNewUser((user) => {
   return true;
 });
 
+// An alias has no email address; every account made through Accounts
+// still needs one (validateNewUser above).
 Users.attachSchema(
   new SimpleSchema({
     ...Users.schema.AccountBase,
+    emails: { type: Array, optional: true },
     ...Users.schema.UserProfile,
   })
 );

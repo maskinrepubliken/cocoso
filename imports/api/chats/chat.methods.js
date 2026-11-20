@@ -65,7 +65,7 @@ async function createGroupNotification(user, values, unSeenIndex) {
             },
           });
         }
-        const memberEmail = member.emails[0]?.address;
+        const memberEmail = member.emails?.[0]?.address;
         if (!memberEmail) {
           return;
         }

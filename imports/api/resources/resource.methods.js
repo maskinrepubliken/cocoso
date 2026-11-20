@@ -10,7 +10,11 @@ import {
   withCoordinates,
 } from '../_utils/geocode';
 
-import { isAdmin, isContributorOrAdmin } from '../users/user.roles';
+import {
+  isAdmin,
+  isContributorOrAdmin,
+  withoutNewAliases,
+} from '../users/user.roles';
 import Resources from './resource';
 import canManagePlace from './resource.access';
 import Offerings from '../offerings/offering';
@@ -87,10 +91,16 @@ async function findParent(parentId, resourceId) {
   return parent;
 }
 
-// The managers as given: organizers or admins, each once.
-async function cleanManagers(managerIds) {
+// The managers as given: organizers or admins, each once. `userId` is who
+// is saving the place: only an admin adds an alias, others keep those
+// `already` looking after it.
+async function cleanManagers(managerIds, userId, already = []) {
   check(managerIds, Match.Maybe([String]));
-  const ids = [...new Set(managerIds || [])];
+  const ids = await withoutNewAliases(
+    [...new Set(managerIds || [])],
+    userId,
+    already
+  );
   const kept = [];
   for (const id of ids) {
     if (await isContributorOrAdmin(id)) {
@@ -406,7 +416,8 @@ Meteor.methods({
     // places nobody answers for; admins need not be named
     const userIsAdmin = await isAdmin(user._id);
     const managerIds = await cleanManagers(
-      values.managerIds || (userIsAdmin ? [] : [user._id])
+      values.managerIds || (userIsAdmin ? [] : [user._id]),
+      user._id
     );
     if (!userIsAdmin && !managerIds.includes(user._id)) {
       throw new Meteor.Error(
@@ -484,7 +495,11 @@ Meteor.methods({
     const managerIds =
       values.managerIds === undefined
         ? undefined
-        : await cleanManagers(values.managerIds);
+        : await cleanManagers(
+            values.managerIds,
+            user._id,
+            resource.managerIds || []
+          );
     // One of its managers (as they will be), details of its own, or none
     const contactFields = await cleanPlaceContact(
       values,

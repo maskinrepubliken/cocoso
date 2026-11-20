@@ -1,7 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Match, check } from 'meteor/check';
 
-import { isContributor, isContributorOrAdmin } from '../users/user.roles';
+import {
+  isContributor,
+  isContributorOrAdmin,
+  withoutNewAliases,
+} from '../users/user.roles';
 import { isReachable } from '../_utils/contact';
 import Activities from './activity';
 
@@ -57,14 +61,24 @@ export const isOrganizerOf = (activity, userId) =>
 
 // Turn the chosen co-organizer ids into {userId, username} pairs, keeping
 // only existing users who may publish content. The author is never listed
-// twice.
-export const resolveOrganizers = async (organizers, authorId) => {
+// twice. `userId` is who is saving the event: only an admin adds an alias,
+// others keep those `already` on the event.
+export const resolveOrganizers = async (
+  organizers,
+  authorId,
+  userId,
+  already = []
+) => {
   if (!organizers) {
     return [];
   }
   check(organizers, [Match.ObjectIncluding({ userId: String })]);
-  const ids = [...new Set(organizers.map((o) => o.userId))].filter(
-    (id) => id !== authorId
+  const ids = await withoutNewAliases(
+    [...new Set(organizers.map((o) => o.userId))].filter(
+      (id) => id !== authorId
+    ),
+    userId,
+    already
   );
   if (ids.length === 0) {
     return [];
