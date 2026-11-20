@@ -5262,51 +5262,10 @@ body {
   }
 }
 
-/* Tablet: pills that wrap, the icon beside its label, the chosen one
-   filled instead of underlined */
-@media (min-width: 600px) and (max-width: 1099px) {
-  .kind-bar .kind-tile {
-    flex-direction: row;
-    gap: 6px;
-    min-width: 0;
-    min-height: 40px;
-    padding: 4px 14px 4px 8px;
-    border-radius: 999px;
-    background: var(--cocoso-papper);
-    box-shadow: var(--cocoso-skugga-kort);
-  }
-
-  .kind-bar .kind-tile .threed-icon {
-    width: 26px;
-    height: 26px;
-  }
-
-  .kind-bar .kind-tile > span {
-    padding-bottom: 0;
-  }
-
-  .kind-bar .kind-tile > span::after {
-    display: none;
-  }
-
-  .kind-bar .kind-tile.is-active {
-    background: var(--cocoso-colors-theme-700);
-    color: #fff;
-  }
-
-  .kind-bar .view-menu-icon {
-    height: auto;
-  }
-
-  .kind-bar .view-menu-button {
-    padding-left: 10px;
-  }
-}
-
-/* Phone: two rows of small tiles (--kind-cols columns, half the tiles
-   rounded up, set where the bar is rendered), the icon over a label that
-   may break between words. A column is as wide as its longest word. */
-@media (max-width: 599px) {
+/* Two rows of small tiles (--kind-cols columns, half the tiles rounded
+   up, set where the bar is rendered), the icon over a label that may
+   break between words. A column is as wide as its longest word. */
+@media (max-width: 1099px) {
   .kind-bar {
     display: grid;
     grid-template-columns: repeat(var(--kind-cols, 4), auto);
@@ -5343,6 +5302,24 @@ body {
   .kind-bar .view-menu-icon {
     height: 30px;
     place-items: center;
+  }
+}
+
+/* with a tablet's room, the labels at their desktop size */
+@media (min-width: 600px) and (max-width: 1099px) {
+  .kind-bar {
+    row-gap: 10px;
+  }
+
+  .kind-bar .kind-tile {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+
+  .kind-bar .kind-tile .threed-icon,
+  .kind-bar .view-menu-icon {
+    width: 36px;
+    height: 36px;
   }
 }
 
