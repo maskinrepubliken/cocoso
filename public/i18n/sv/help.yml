@@ -402,6 +402,15 @@ pages:
               - "**Dölj profilen för andra** tar bort personen från Arrangörer och gör profilen osynlig för besökare."
               - "**Visa sajten som den här användaren** låter dig se det personen ser, till exempel för att hjälpa någon som har kört fast. Du går tillbaka med **Tillbaka till mitt konto**."
           - note: "Kontrollera att du vet vem personen är och vilken förening eller verksamhet det gäller innan du verifierar. Allt en arrangör publicerar syns direkt, utan granskning."
+      - title: Alias
+        body:
+          - "Ett alias är en arrangörsprofil utan inloggning. Använd det för att publicera åt en förening eller verksamhet som inte har något eget konto. Det har en egen sida bland arrangörerna, och ingen kan logga in som det."
+          - list:
+              - "**Skapa alias**, ovanför listan under Användare, frågar efter ett namn och en e-postadress eller ett telefonnummer för besökare. Sedan öppnas profilen, så att du kan lägga till bild och beskrivning."
+              - "**Välj aliaset** som arrangör när du lägger upp ett evenemang, med **Byt** under arrangören. Du kan också lägga till det som medarrangör, som ansvarig för en plats och som arrangör för en speglad kalender. Alla administratörer kan använda alla alias, andra arrangörer kan det inte."
+              - "**Omvandla till konto** lämnar över profilen till arrangören. Ange arrangörens e-postadress, så får hen en inbjudan, loggar in med kod och godkänner villkoren. Sidan och evenemangen ligger kvar. Sedan är det ett vanligt arrangörskonto och inte längre ett alias."
+              - "**Ta bort aliaset** går när det inte längre arrangerar något evenemang eller någon speglad kalender."
+          - note: "Skapa bara ett alias åt någon som känner till det, och publicera bara det de har bett om. Kontaktuppgifterna du anger visas för alla besökare."
       - title: Hålla ordning på innehållet
         body:
           - "Som administratör kan du ändra och ta bort alla evenemang och platser, med kugghjulet på respektive sida. Du kan också byta arrangör på ett evenemang."

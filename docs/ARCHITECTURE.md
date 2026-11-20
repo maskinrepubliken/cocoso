@@ -164,6 +164,31 @@ username, `termsAcceptedAt`, participant membership) and lands on
 different wording; `/forgot-password` and `/reset-password/:token` show the
 login form.
 
+### Aliases
+
+An alias is an organizer profile without a login, which admins publish as
+(`imports/api/users/user.alias.js`): an ordinary user document with
+`isAlias: true` and no `emails`, plus a contributor membership with
+`isOrganizer`. Because it is a user, its page, the organizer listing and
+every "who organizes this" check work unchanged; because it has no address,
+nobody can log in as it and no email reaches it. `emails` is therefore
+optional in the user schema, and code that reads `emails[0]` must allow for
+it being absent.
+
+Every admin may choose any alias wherever an organizer is chosen (event
+author and co-organizers, place managers, a mirror's organizer). Other
+organizers are not offered aliases and cannot add one
+(`withoutNewAliases` in `user.roles.js`), though saving keeps one already
+there. An alias cannot be viewed as or given another role.
+
+`convertAliasToAccount` turns an alias into a real account by giving the
+same document an email address and `invitedAt`, and mails an invitation
+(`inviteEmail.js`). Until its owner has logged in once there is no
+`termsAcceptedAt`, and the login handler treats it like an address
+without an account: `account-not-found` with `details.invited`, then
+`ConfirmSignup` in its "take over" wording, then
+`createAccount: { acceptedTerms: true }`.
+
 Passwords are kept only for administrators, as a way in if mail stops
 working: `/login?losenord` shows a username/password
 form (behind a small grey link under the login panel), and `imports/api/users/passwordLogin.js` refuses password logins and
