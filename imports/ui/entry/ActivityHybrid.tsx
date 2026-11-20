@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import { Link, useRevalidator, useSearchParams } from 'react-router';
+import { useRevalidator, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Address } from '/imports/api/_utils/address';
 import { useAtomValue } from 'jotai';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
 import CalendarIcon from 'lucide-react/dist/esm/icons/calendar-days';
-import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import {
   LightboxProvider,
   LightboxTrigger,
@@ -41,6 +40,7 @@ import RegistrationSection from '../pages/activities/event/RegistrationSection';
 import OrganizerToolsSection from '../pages/activities/event/OrganizerToolsSection';
 import FollowSection from '../pages/activities/event/FollowSection';
 import HeroActions from '../pages/activities/event/HeroActions';
+import CalendarLink from '../pages/activities/event/CalendarLink';
 import MoreEvents from '../pages/activities/event/MoreEvents';
 import {
   Occurrence,
@@ -391,6 +391,36 @@ export default function ActivityHybrid({
     ...images.map((image) => getImageUrl(image, 'full')),
   ].filter((image): image is string => Boolean(image));
 
+  // The kind of event and the ort, under the description
+  const tags = (kinds.length > 0 ||
+    locationName ||
+    activity.isArchived ||
+    activity.cancelledAt) && (
+    <Tags>
+      {kinds.map((kind) => (
+        <KindTag
+          key={kind}
+          css={{
+            backgroundColor: colorsForKind(kind).tint,
+            color: colorsForKind(kind).ink,
+          }}
+        >
+          {tc(`eventKinds.${kind}`)}
+        </KindTag>
+      ))}
+      <LocationTag
+        isMunicipalityOnly={activity.isMunicipalityOnly}
+        locationId={activity.locationId}
+      />
+      {activity.cancelledAt && (
+        <Tag colorScheme="red">{tc('event.cancelled.tag')}</Tag>
+      )}
+      {activity.isArchived && (
+        <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
+      )}
+    </Tags>
+  );
+
   return (
     <Page>
       <ShareMeta
@@ -466,7 +496,7 @@ export default function ActivityHybrid({
                 {activity.isArchived && (
                   <Notice>{tc('event.archived.onlyYou')}</Notice>
                 )}
-                {(occurrence || venue) && (
+                {occurrence && (
                   <Facts>
                     {occurrence && (
                       <Fact>
@@ -487,70 +517,16 @@ export default function ActivityHybrid({
                         </div>
                       </Fact>
                     )}
-                    {venue && (
-                      <Fact>
-                        <MapPinIcon aria-hidden />
-                        <div>
-                          <FactText>
-                            {activity.resource && activity.resourceId ? (
-                              <Link
-                                to={sitePath('resources', activity.resourceId)}
-                              >
-                                {venue}
-                              </Link>
-                            ) : (
-                              venue
-                            )}
-                          </FactText>
-                          {activity.resource &&
-                            activity.place &&
-                            activity.place !== activity.resource && (
-                              <FactNote>{activity.place}</FactNote>
-                            )}
-                        </div>
-                      </Fact>
-                    )}
                   </Facts>
                 )}
                 {isPublicActivity && occurrence && (
-                  <HeroActions
-                    activity={activity}
-                    occurrence={occurrence}
-                    url={publicUrl(path)}
-                  />
-                )}
-                {(kinds.length > 0 ||
-                  locationName ||
-                  activity.isArchived ||
-                  activity.cancelledAt) && (
-                  <Tags>
-                    {kinds.map((kind) => (
-                      <KindTag
-                        key={kind}
-                        css={{
-                          backgroundColor: colorsForKind(kind).tint,
-                          color: colorsForKind(kind).ink,
-                        }}
-                      >
-                        {tc(`eventKinds.${kind}`)}
-                      </KindTag>
-                    ))}
-                    <LocationTag
-                      isMunicipalityOnly={activity.isMunicipalityOnly}
-                      locationId={activity.locationId}
-                    />
-                    {activity.cancelledAt && (
-                      <Tag colorScheme="red">{tc('event.cancelled.tag')}</Tag>
-                    )}
-                    {activity.isArchived && (
-                      <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
-                    )}
-                  </Tags>
+                  <HeroActions activity={activity} occurrence={occurrence} />
                 )}
               </HeroText>
 
               {activity.longDescription && (
                 <Section
+                  hideTitle
                   look="plain"
                   order={2}
                   title={tc('event.sections.about')}
@@ -560,8 +536,10 @@ export default function ActivityHybrid({
                       DOMPurify.sanitize(activity.longDescription)
                     )}
                   </Description>
+                  {tags}
                 </Section>
               )}
+              {!activity.longDescription && tags}
 
               {/* One date is already told at the top; several are chosen here */}
               {dates.length > 1 && (
@@ -605,7 +583,13 @@ export default function ActivityHybrid({
               <FollowSection
                 activity={activity}
                 isOver={dates.every((date) => isPastOccurrence(date))}
-              />
+              >
+                <CalendarLink
+                  activity={activity}
+                  occurrence={occurrence}
+                  url={publicUrl(path)}
+                />
+              </FollowSection>
             </ActionCard>
           )}
           <FactsCard>

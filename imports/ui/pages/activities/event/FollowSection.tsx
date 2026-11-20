@@ -37,6 +37,13 @@ const Actions = styled('div', {
   marginTop: '0.75rem',
 });
 
+const Stack = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.625rem',
+  '&:empty': { display: 'none' },
+});
+
 interface Update {
   _id: string;
   message: string;
@@ -47,6 +54,8 @@ interface FollowSectionProps {
   activity: { _id: string; isArchived?: boolean; cancelledAt?: Date };
   // Every date is behind us: nothing left to follow
   isOver: boolean;
+  // Shown under the button, e.g. "Lägg till i kalendern"
+  children?: React.ReactNode;
 }
 
 // Updates about the event: the organizer's messages so far, and a button
@@ -55,12 +64,14 @@ interface FollowSectionProps {
 export default function FollowSection({
   activity,
   isOver,
+  children,
 }: FollowSectionProps) {
   const [tc] = useTranslation('common');
   const currentUser = useAtomValue(currentUserAtom);
   const [updates, setUpdates] = useState<Update[]>([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     call('getActivityUpdates', activity._id)
@@ -93,9 +104,21 @@ export default function FollowSection({
     }
   };
 
+  // The first press unfolds what following means and the notification
+  // settings, and follows for the one who is logged in; folded, the
+  // section is one button.
+  const press = () => {
+    if (currentUser && !isFollowing) {
+      setOpen(true);
+      toggle();
+    } else {
+      setOpen(!open);
+    }
+  };
+
   const canFollow = !activity.isArchived && !activity.cancelledAt && !isOver;
   if (!canFollow && updates.length === 0) {
-    return null;
+    return <>{children}</>;
   }
 
   return (
@@ -120,45 +143,63 @@ export default function FollowSection({
         </News>
       )}
 
-      {canFollow && (
-        <>
-          <Muted>
-            {isFollowing
-              ? tc('event.follow.following')
-              : tc('event.follow.intro')}
-          </Muted>
-          <Actions>
-            {currentUser ? (
-              <Button
-                disabled={busy}
-                size="sm"
-                variant={isFollowing ? 'outline' : 'solid'}
-                onClick={toggle}
-              >
-                {isFollowing
-                  ? tc('event.follow.unfollow')
-                  : tc('event.follow.follow')}
-              </Button>
-            ) : (
-              <Link to={sitePath('login')}>
-                <Button size="sm" variant="outline">
-                  {tc('event.follow.login')}
-                </Button>
-              </Link>
+      <Stack>
+        {canFollow && (
+          <>
+            <Button
+              aria-expanded={open}
+              css={{ alignSelf: 'flex-start' }}
+              disabled={busy}
+              size="sm"
+              variant="outline"
+              onClick={press}
+            >
+              {isFollowing
+                ? tc('event.follow.followed')
+                : tc('event.follow.follow')}
+            </Button>
+
+            {open && (
+              <div>
+                <Muted>
+                  {isFollowing
+                    ? tc('event.follow.following')
+                    : tc('event.follow.intro')}
+                </Muted>
+                <Actions>
+                  {currentUser ? (
+                    isFollowing && (
+                      <Button
+                        disabled={busy}
+                        size="sm"
+                        variant="ghost"
+                        onClick={toggle}
+                      >
+                        {tc('event.follow.unfollow')}
+                      </Button>
+                    )
+                  ) : (
+                    <Link to={sitePath('login')}>
+                      <Button size="sm">{tc('event.follow.login')}</Button>
+                    </Link>
+                  )}
+                  {currentUser && (
+                    <Link to="?settings=me">
+                      <Muted as="span">{tc('event.follow.settings')}</Muted>
+                    </Link>
+                  )}
+                </Actions>
+                {!isFollowing && (
+                  <Muted css={{ marginTop: '0.5rem' }}>
+                    {tc('event.follow.attendees')}
+                  </Muted>
+                )}
+              </div>
             )}
-            {currentUser && (
-              <Link to="?settings=me">
-                <Muted as="span">{tc('event.follow.settings')}</Muted>
-              </Link>
-            )}
-          </Actions>
-          {!isFollowing && (
-            <Muted css={{ marginTop: '0.5rem' }}>
-              {tc('event.follow.attendees')}
-            </Muted>
-          )}
-        </>
-      )}
+          </>
+        )}
+        {children}
+      </Stack>
     </Section>
   );
 }

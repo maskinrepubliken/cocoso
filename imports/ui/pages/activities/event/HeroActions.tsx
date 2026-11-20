@@ -1,13 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CalendarPlusIcon from 'lucide-react/dist/esm/icons/calendar-plus';
 import ExternalLinkIcon from 'lucide-react/dist/esm/icons/external-link';
 
 import { styled } from '/stitches.config';
-import type { Address } from '/imports/api/_utils/address';
 
 import { Muted, WIDE } from './Section';
-import { calendarFileHref } from './calendarFile';
 import { Occurrence, countPeople, isPastOccurrence } from './occurrences';
 
 const Row = styled('div', {
@@ -63,22 +60,16 @@ interface HeroActionsProps {
     isRegistrationDisabled?: boolean;
     isRegistrationEnabled?: boolean;
     mirror?: { kind?: string; sourceUrl?: string };
-    resource?: string;
-    place?: string;
-    placeAddress?: Partial<Address> | null;
   };
   occurrence: Occurrence;
-  // The page's own address, for the calendar entry
-  url: string;
 }
 
-// What to do about the event, right under when and where: sign up (here,
-// or where a mirrored event is signed up for) and keep the date in one's
-// own calendar. The same rules as RegistrationSection, which has the form.
+// On a phone, right under when the event is: the way to sign up (to the
+// form further down, or to where a mirrored event is signed up for). The
+// same rules as RegistrationSection, which has the form.
 export default function HeroActions({
   activity,
   occurrence,
-  url,
 }: HeroActionsProps) {
   const [tc] = useTranslation('common');
 
@@ -107,15 +98,9 @@ export default function HeroActions({
     form.querySelector('input')?.focus({ preventScroll: true });
   };
 
-  const venue = activity.resource || activity.place;
-  const { street, postalCode, city } = activity.placeAddress || {};
-  const address = [street, [postalCode, city].filter(Boolean).join(' ')]
-    .filter(Boolean)
-    .join(', ');
-
   return (
     <>
-      <Row>
+      <Row css={onPhone}>
         {sourceUrl ? (
           <Action
             href={sourceUrl}
@@ -144,22 +129,6 @@ export default function HeroActions({
             </Action>
           )
         )}
-        <Action
-          download={`${(activity.title || 'event')
-            .replace(/[^\p{L}\p{N}]+/gu, '-')
-            .replace(/^-|-$/g, '')}.ics`}
-          href={calendarFileHref({
-            id: activity._id,
-            title: activity.title,
-            occurrence,
-            location: [venue, address].filter(Boolean).join(', '),
-            url,
-          })}
-          kind="quiet"
-        >
-          <CalendarPlusIcon aria-hidden />
-          {tc('event.cta.addToCalendar')}
-        </Action>
       </Row>
       {canSignUp && !sourceUrl && left !== null && (
         <Muted css={{ marginTop: '0.5rem', ...onPhone }}>

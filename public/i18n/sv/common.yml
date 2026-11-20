@@ -558,6 +558,7 @@ event:
     open: "Öppna diskussionen"
     onlyVerified: "För verifierade medlemmar"
   follow:
+    followed: "Du följer evenemanget"
     intro: "Följ evenemanget så får du veta om tid eller plats ändras och när arrangören har något nytt att berätta. Via e-post och pushnotis, som du väljer under Notiser i din profil."
     follow: "Följ evenemanget"
     unfollow: "Sluta följa"
