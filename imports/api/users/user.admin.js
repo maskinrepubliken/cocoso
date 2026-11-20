@@ -220,6 +220,51 @@ Meteor.methods({
     await Meteor.users.updateAsync({ _id: memberId }, { $set: { isPublic } });
   },
 
+  // Every event a member or an alias organizes or co-organizes, for the
+  // members list: newest first, with what an admin needs to tell them
+  // apart.
+  async getEventsOfUser(userId) {
+    check(userId, String);
+    const user = await Meteor.userAsync();
+    if (!(await isAdmin(user?._id))) {
+      throw new Meteor.Error('not-allowed', 'You are not allowed');
+    }
+    const events = await Activities.find(
+      { $or: [{ authorId: userId }, { 'organizers.userId': userId }] },
+      {
+        fields: {
+          title: 1,
+          authorId: 1,
+          'datesAndTimes.startDate': 1,
+          isPublicActivity: 1,
+          isPublished: 1,
+          isArchived: 1,
+          cancelledAt: 1,
+        },
+      }
+    ).fetchAsync();
+    return events
+      .map((event) => {
+        const dates = (event.datesAndTimes || [])
+          .map((occasion) => occasion.startDate)
+          .filter(Boolean)
+          .sort();
+        return {
+          _id: event._id,
+          title: event.title,
+          firstDate: dates[0],
+          lastDate: dates[dates.length - 1],
+          occasions: dates.length,
+          isCoOrganizer: event.authorId !== userId,
+          isPublicActivity: Boolean(event.isPublicActivity),
+          isPublished: Boolean(event.isPublished),
+          isArchived: Boolean(event.isArchived),
+          isCancelled: Boolean(event.cancelledAt),
+        };
+      })
+      .sort((a, b) => (b.lastDate || '').localeCompare(a.lastDate || ''));
+  },
+
   async getActivitiesbyUserId(userId) {
     const currentUser = await Meteor.userAsync();
 

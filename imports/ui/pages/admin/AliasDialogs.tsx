@@ -5,6 +5,13 @@ import { Box, Input, Modal, Text } from '/imports/ui/core';
 import { call } from '/imports/api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 
+interface RemovalInfo {
+  // Its events that go to a co-organizer, and those left without one
+  handedOver: number;
+  orphaned: number;
+  mirrors: number;
+}
+
 export interface AliasMember {
   id: string;
   username: string;
@@ -193,7 +200,8 @@ export function ConvertAliasModal({
 }
 
 // Asked before an alias is removed, saying what it leaves behind: its
-// events stay, without an organizer (getAliasRemovalInfo, deleteAlias).
+// events stay, with a co-organizer as the new organizer or else without
+// one (getAliasRemovalInfo, deleteAlias).
 export function DeleteAliasModal({
   alias,
   onClose,
@@ -205,16 +213,14 @@ export function DeleteAliasModal({
 }) {
   const [t] = useTranslation('members');
   const [busy, setBusy] = useState(false);
-  const [left, setLeft] = useState<{ events: number; mirrors: number } | null>(
-    null
-  );
+  const [left, setLeft] = useState<RemovalInfo | null>(null);
   const name = alias?.name || alias?.username || '';
   const aliasId = alias?.id;
 
   useEffect(() => {
     let current = true;
     if (aliasId) {
-      call<{ events: number; mirrors: number }>('getAliasRemovalInfo', aliasId)
+      call<RemovalInfo>('getAliasRemovalInfo', aliasId)
         .then((info) => current && setLeft(info))
         .catch(() => current && setLeft(null));
     }
@@ -253,9 +259,16 @@ export function DeleteAliasModal({
       onConfirm={remove}
     >
       <Text>{t('alias.delete.text')}</Text>
-      {left && left.events > 0 && (
+      {left && left.handedOver > 0 && (
         <Box mt="3">
-          <Text>{t('alias.delete.events', { count: left.events })}</Text>
+          <Text>
+            {t('alias.delete.handedOver', { count: left.handedOver })}
+          </Text>
+        </Box>
+      )}
+      {left && left.orphaned > 0 && (
+        <Box mt="3">
+          <Text>{t('alias.delete.events', { count: left.orphaned })}</Text>
         </Box>
       )}
       {left && left.mirrors > 0 && (

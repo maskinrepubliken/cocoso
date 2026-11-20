@@ -527,6 +527,15 @@ event:
     cancelAudience_other: "{{count}} personer som är anmälda eller följer får ett mejl om några minuter."
     cancelled: "Evenemanget är inställt."
     uncancelled: "Evenemanget är inte längre inställt."
+  cta:
+    signUp: "Anmäl dig"
+    signUpAt: "Anmäl dig hos {{source}}"
+    ticketsAt: "Köp biljett hos {{source}}"
+    addToCalendar: "Lägg till i kalendern"
+  more:
+    title: "Mer som händer"
+    intro: "{{site}} samlar det som händer i kommunen på ett ställe."
+    all: "Alla evenemang"
   mirror:
     registration: "Anmälan sker hos {{source}}:"
     registrationLink: "till evenemanget där"

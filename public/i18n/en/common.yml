@@ -530,6 +530,15 @@ event:
     cancelAudience_other: "{{count}} people signed up or following get an email in a few minutes."
     cancelled: "The event is cancelled."
     uncancelled: "The event is no longer cancelled."
+  cta:
+    signUp: "Sign up"
+    signUpAt: "Sign up at {{source}}"
+    ticketsAt: "Buy tickets at {{source}}"
+    addToCalendar: "Add to calendar"
+  more:
+    title: "More going on"
+    intro: "{{site}} gathers what is happening in the municipality in one place."
+    all: "All events"
   mirror:
     registration: "Sign up at {{source}}:"
     registrationLink: "to the event there"

@@ -12,6 +12,8 @@ const SectionBox = styled('section', {
   borderRadius: 'var(--cocoso-radius-kort)',
   boxShadow: 'var(--cocoso-skugga)',
   padding: '1.25rem 1.5rem',
+  // Scrolled to (the sign-up button at the top): clear of the header
+  scrollMarginTop: '5rem',
   wordBreak: 'break-word',
   variants: {
     // Something inside reaches the card's edges, e.g. a map on top.

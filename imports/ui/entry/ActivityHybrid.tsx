@@ -40,6 +40,8 @@ import AttendeesSection from '../pages/activities/event/AttendeesSection';
 import RegistrationSection from '../pages/activities/event/RegistrationSection';
 import OrganizerToolsSection from '../pages/activities/event/OrganizerToolsSection';
 import FollowSection from '../pages/activities/event/FollowSection';
+import HeroActions from '../pages/activities/event/HeroActions';
+import MoreEvents from '../pages/activities/event/MoreEvents';
 import {
   Occurrence,
   formatOccurrence,
@@ -187,7 +189,7 @@ const Tags = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.375rem',
-  marginBottom: '0.75rem',
+  marginTop: '1.25rem',
 });
 
 // On wide screens: the text and sign-up on the left, the facts on the right.
@@ -269,7 +271,10 @@ export interface ActivityHybridProps {
 // The event page: everything about one event in sections — when, where,
 // who organizes it, what it is, signing up and who is coming — plus tools
 // for the organizer.
-export default function ActivityHybrid({ activity }: ActivityHybridProps) {
+export default function ActivityHybrid({
+  activity,
+  siteDoc,
+}: ActivityHybridProps) {
   const [tc] = useTranslation('common');
   const locationName = useLocationTag(activity as any);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -320,6 +325,16 @@ export default function ActivityHybrid({ activity }: ActivityHybridProps) {
   };
 
   const { isPublicActivity } = activity;
+  // A mirrored event that is yet to come and has no sign-ups here
+  const signsUpElsewhere = Boolean(
+    occurrence &&
+      activity.mirror?.sourceUrl &&
+      (activity.isRegistrationDisabled ||
+        activity.isRegistrationEnabled === false) &&
+      !activity.cancelledAt &&
+      !isPastOccurrence(occurrence) &&
+      !occurrence.attendees?.length
+  );
 
   const images = (activity.images || [activity.imageUrl]).filter(
     (img): img is string => Boolean(img)
@@ -424,34 +439,6 @@ export default function ActivityHybrid({ activity }: ActivityHybridProps) {
           </ImageBox>
         )}
         <HeroText>
-          {(kinds.length > 0 ||
-            locationName ||
-            activity.isArchived ||
-            activity.cancelledAt) && (
-            <Tags>
-              {kinds.map((kind) => (
-                <KindTag
-                  key={kind}
-                  css={{
-                    backgroundColor: colorsForKind(kind).tint,
-                    color: colorsForKind(kind).ink,
-                  }}
-                >
-                  {tc(`eventKinds.${kind}`)}
-                </KindTag>
-              ))}
-              <LocationTag
-                isMunicipalityOnly={activity.isMunicipalityOnly}
-                locationId={activity.locationId}
-              />
-              {activity.cancelledAt && (
-                <Tag colorScheme="red">{tc('event.cancelled.tag')}</Tag>
-              )}
-              {activity.isArchived && (
-                <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
-              )}
-            </Tags>
-          )}
           <Title>{activity.title}</Title>
           {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
           {activity.cancelledAt && (
@@ -507,6 +494,41 @@ export default function ActivityHybrid({ activity }: ActivityHybridProps) {
               )}
             </Facts>
           )}
+          {isPublicActivity && occurrence && (
+            <HeroActions
+              activity={activity}
+              occurrence={occurrence}
+              url={publicUrl(path)}
+            />
+          )}
+          {(kinds.length > 0 ||
+            locationName ||
+            activity.isArchived ||
+            activity.cancelledAt) && (
+            <Tags>
+              {kinds.map((kind) => (
+                <KindTag
+                  key={kind}
+                  css={{
+                    backgroundColor: colorsForKind(kind).tint,
+                    color: colorsForKind(kind).ink,
+                  }}
+                >
+                  {tc(`eventKinds.${kind}`)}
+                </KindTag>
+              ))}
+              <LocationTag
+                isMunicipalityOnly={activity.isMunicipalityOnly}
+                locationId={activity.locationId}
+              />
+              {activity.cancelledAt && (
+                <Tag colorScheme="red">{tc('event.cancelled.tag')}</Tag>
+              )}
+              {activity.isArchived && (
+                <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
+              )}
+            </Tags>
+          )}
         </HeroText>
       </Hero>
 
@@ -520,7 +542,8 @@ export default function ActivityHybrid({ activity }: ActivityHybridProps) {
             </Section>
           )}
 
-          {isPublicActivity && occurrence && (
+          {/* Signed up for elsewhere: the button at the top leads there */}
+          {isPublicActivity && occurrence && !signsUpElsewhere && (
             <RegistrationSection
               activity={activity}
               occurrence={occurrence}
@@ -566,6 +589,10 @@ export default function ActivityHybrid({ activity }: ActivityHybridProps) {
           <OrganizerSection activity={activity} />
         </Column>
       </Layout>
+
+      {isPublicActivity && (
+        <MoreEvents activity={activity} siteName={siteDoc?.settings?.name} />
+      )}
     </Page>
   );
 }

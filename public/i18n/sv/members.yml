@@ -47,10 +47,25 @@ alias:
     text: Profilen och dess sida tas bort. Det går inte att ångra.
     submit: Ta bort
     deleted: '{{ name }} har tagits bort'
+    handedOver_one: 'Ett evenemang som det arrangerar har en medarrangör, som blir dess arrangör.'
+    handedOver_other: '{{ count }} evenemang som det arrangerar har en medarrangör, som blir deras arrangör.'
     events_one: 'Ett evenemang som det arrangerar ligger kvar i kalendern, och där kommer det att stå att arrangören är borttagen. Bara administratörer kan ändra det sedan.'
     events_other: '{{ count }} evenemang som det arrangerar ligger kvar i kalendern, och där kommer det att stå att arrangören är borttagen. Bara administratörer kan ändra dem sedan.'
     mirrors_one: 'En speglad kalender har det som arrangör och slutar hämta evenemang tills du ger den en annan.'
     mirrors_other: '{{ count }} speglade kalendrar har det som arrangör och slutar hämta evenemang tills du ger dem en annan.'
+
+# A member's or an alias's events, from the members list (UserEvents.tsx)
+events:
+  action: Visa evenemang
+  title: Evenemang av {{ name }}
+  empty: Arrangerar inga evenemang.
+  count_one: 'Ett evenemang, varav {{ upcoming }} inte är över än. Nyast först.'
+  count_other: '{{ count }} evenemang, varav {{ upcoming }} inte är över än. Nyast först.'
+  dates: '{{ first }} – {{ last }} · {{ count }} tillfällen'
+  coOrganizer: Medarrangör
+  cancelled: Inställt
+  archived: Arkiverat
+  draft: Inte publicerat
 
 joinedAt: Gick med {{ date }}
 

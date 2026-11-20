@@ -32,6 +32,7 @@ import { startViewAs } from '/imports/utils/viewAs';
 import { sitePath } from '/imports/api/_utils/paths';
 
 import UsageReport from './UsageReport';
+import UserEvents from './UserEvents';
 import {
   ConvertAliasModal,
   CreateAliasModal,
@@ -134,6 +135,7 @@ export default function Members() {
   const [sortBy, setSortBy] = useState('join-date');
   const [filterWord, setFilterWord] = useState('');
   const [userForUsageReport, setUserForUsageReport] = useState(null);
+  const [userForEvents, setUserForEvents] = useState(null);
   const [creatingAlias, setCreatingAlias] = useState(false);
   const [aliasToDelete, setAliasToDelete] = useState(null);
   const [aliasToConvert, setAliasToConvert] = useState(null);
@@ -267,6 +269,10 @@ export default function Members() {
       handleClick: () => setPublic(member, !member.isPublic),
     },
     {
+      content: t('events.action'),
+      handleClick: () => setUserForEvents(member),
+    },
+    {
       content: t('actions.usageReport'),
       handleClick: () => setUserForUsageReport(member),
     },
@@ -336,6 +342,10 @@ export default function Members() {
         content: t('actions.viewAs'),
         handleClick: () => viewAs(member),
         isDisabled: role !== 'admin' || member.role === 'admin',
+      },
+      {
+        content: t('events.action'),
+        handleClick: () => setUserForEvents(member),
       },
       {
         content: t('actions.usageReport'),
@@ -478,6 +488,8 @@ export default function Members() {
         user={userForUsageReport}
         onClose={() => setUserForUsageReport(null)}
       />
+
+      <UserEvents user={userForEvents} onClose={() => setUserForEvents(null)} />
 
       <CreateAliasModal
         open={creatingAlias}

@@ -3,7 +3,6 @@ import { Accounts } from 'meteor/accounts-base';
 import { check, Match } from 'meteor/check';
 import { Random } from 'meteor/random';
 
-import Activities from '../activities/activity';
 import Memberships from '../memberships/membership';
 import Mirrors from '../mirrors/mirror';
 import { getSite } from '../site/site';
@@ -14,7 +13,7 @@ import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import { deliverEmail, getSmtpSettings } from '../_utils/services/mails/smtp';
 import { inviteEmail } from './inviteEmail';
 import { isAdmin } from './user.roles';
-import { detachUser } from './user.removal';
+import { detachUser, eventsLeftBy } from './user.removal';
 import { generateUniqueUsername } from './username.helpers';
 
 /**
@@ -132,20 +131,21 @@ Meteor.methods({
   },
 
   // What removing an alias leaves behind, for the question asked first:
-  // its events, which stay without an organizer, and the mirrored
-  // calendars that stop until they are given another one.
+  // its events, which go to a co-organizer or stay without an organizer,
+  // and the mirrored calendars that stop until they are given another one.
   async getAliasRemovalInfo(aliasId) {
     check(aliasId, String);
     await requireAdmin();
     await requireAlias(aliasId);
     return {
-      events: await Activities.find({ authorId: aliasId }).countAsync(),
+      ...(await eventsLeftBy(aliasId)),
       mirrors: await Mirrors.find({ organizerId: aliasId }).countAsync(),
     };
   },
 
   // Removed like an account its owner deletes (detachUser): the events it
-  // organizes stay, and say that the organizer has been removed.
+  // organizes stay, with a co-organizer as the new organizer or else
+  // saying that the organizer has been removed.
   async deleteAlias(aliasId) {
     check(aliasId, String);
     await requireAdmin();

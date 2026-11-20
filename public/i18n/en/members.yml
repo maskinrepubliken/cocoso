@@ -47,10 +47,25 @@ alias:
     text: The profile and its page are removed. This cannot be undone.
     submit: Remove
     deleted: '{{ name }} has been removed'
+    handedOver_one: 'One event that it organizes has a co-organizer, who becomes its organizer.'
+    handedOver_other: '{{ count }} events that it organizes have a co-organizer, who becomes their organizer.'
     events_one: 'One event that it organizes stays in the calendar, and will say that the organizer has been removed. Only administrators can change it after that.'
     events_other: '{{ count }} events that it organizes stay in the calendar, and will say that the organizer has been removed. Only administrators can change them after that.'
     mirrors_one: 'One mirrored calendar has it as organizer and stops fetching events until you give it another one.'
     mirrors_other: '{{ count }} mirrored calendars have it as organizer and stop fetching events until you give them another one.'
+
+# A member's or an alias's events, from the members list (UserEvents.tsx)
+events:
+  action: Show events
+  title: Events by {{ name }}
+  empty: Organizes no events.
+  count_one: 'One event, {{ upcoming }} of them not yet over. Newest first.'
+  count_other: '{{ count }} events, {{ upcoming }} of them not yet over. Newest first.'
+  dates: '{{ first }} – {{ last }} · {{ count }} occasions'
+  coOrganizer: Co-organizer
+  cancelled: Cancelled
+  archived: Archived
+  draft: Not published
 
 joinedAt: joined {{ date }}
 
