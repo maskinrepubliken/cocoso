@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useRevalidator, useSearchParams } from 'react-router';
+import { Link, useRevalidator, useSearchParams } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import type { Address } from '/imports/api/_utils/address';
 import { useAtomValue } from 'jotai';
 import HTMLReactParser from 'html-react-parser';
 import DOMPurify from 'isomorphic-dompurify';
+import CalendarIcon from 'lucide-react/dist/esm/icons/calendar-days';
 import LinkIcon from 'lucide-react/dist/esm/icons/link';
+import MapPinIcon from 'lucide-react/dist/esm/icons/map-pin';
 import {
   LightboxProvider,
   LightboxTrigger,
@@ -22,13 +24,14 @@ import { eventStructuredData } from '/imports/ui/utils/structuredData';
 import ShareMeta, { shareText } from '/imports/ui/layout/ShareMeta';
 import { currentUserAtom, roleAtom } from '/imports/state';
 import { useLocationTag } from '/imports/ui/utils/useLocation';
+import { colorsForKind } from '/imports/ui/utils/kindPalette';
 
 import PlaceholderImage from '../generic/PlaceholderImage';
 import { getImageUrl } from '../utils/imageHelper';
 import { shareLink } from '../utils/shareLink';
 import BackLink from './BackLink';
 
-import { NARROW, WIDE } from '../pages/activities/event/Section';
+import Section, { NARROW, WIDE } from '../pages/activities/event/Section';
 import WhenSection from '../pages/activities/event/WhenSection';
 import PlaceSection from '../pages/activities/event/PlaceSection';
 import LocationTag from '/imports/ui/generic/LocationTag';
@@ -62,16 +65,16 @@ const TopBar = styled('div', {
   marginBottom: '0.25rem',
 });
 
-// The top of the page: a small picture on the left and the title and
-// description beside it, so sign-up is in view without scrolling.
+// The top of the page: the picture on the left and, beside it, what the
+// event is, when and where. The description follows in its own section.
 const Hero = styled('header', {
   display: 'grid',
   gap: '1rem',
-  marginBottom: '1.25rem',
+  marginBottom: '1.5rem',
   [WIDE]: {
-    alignItems: 'start',
-    gap: '1.5rem',
-    gridTemplateColumns: '260px minmax(0, 1fr)',
+    alignItems: 'center',
+    gap: '2.25rem',
+    gridTemplateColumns: 'minmax(0, 5fr) minmax(0, 6fr)',
   },
   variants: {
     noImage: { true: { [WIDE]: { gridTemplateColumns: 'minmax(0, 1fr)' } } },
@@ -103,16 +106,71 @@ const Title = styled('h1', {
   fontWeight: 600,
   letterSpacing: '-0.01em',
   lineHeight: 1.08,
-  margin: '0 0 0.45rem',
+  margin: '0 0 0.5rem',
   textWrap: 'balance',
-  [WIDE]: { fontSize: '2.5rem' },
+  [WIDE]: { fontSize: '2.75rem' },
 });
 
 const SubTitle = styled('p', {
   color: 'var(--cocoso-mylla-soft)',
-  fontSize: '1.1rem',
+  fontSize: '1.15rem',
   lineHeight: 1.4,
-  margin: '0 0 0.6rem',
+  margin: 0,
+});
+
+// When and where, right under the title
+const Facts = styled('ul', {
+  borderTop: '1px solid var(--cocoso-colors-theme-200)',
+  display: 'grid',
+  gap: '0.625rem',
+  listStyle: 'none',
+  margin: '1.1rem 0 0',
+  padding: '1.1rem 0 0',
+});
+
+const Fact = styled('li', {
+  alignItems: 'start',
+  display: 'grid',
+  gap: '0.75rem',
+  gridTemplateColumns: 'auto minmax(0, 1fr)',
+  '& > svg': {
+    color: 'var(--cocoso-tegel)',
+    height: '1.25rem',
+    marginTop: '0.1rem',
+    width: '1.25rem',
+  },
+});
+
+const FactText = styled('p', {
+  color: 'var(--cocoso-colors-theme-800)',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontVariationSettings: '"SOFT" 60',
+  fontSize: '1.2rem',
+  fontWeight: 600,
+  lineHeight: 1.25,
+  margin: 0,
+  '&::first-letter': { textTransform: 'uppercase' },
+  '& a': { color: 'inherit', textDecoration: 'none' },
+  '& a:hover': { textDecoration: 'underline' },
+});
+
+const FactNote = styled('p', {
+  color: 'var(--cocoso-mylla-soft)',
+  fontSize: '0.9rem',
+  margin: '0.15rem 0 0',
+});
+
+// The kind of event, in the kind's own colour as in the calendar
+const KindTag = styled('span', {
+  alignItems: 'center',
+  borderRadius: '999px',
+  display: 'inline-flex',
+  fontFamily: 'var(--cocoso-font-ui)',
+  fontSize: '12px',
+  fontWeight: 600,
+  height: '26px',
+  lineHeight: 1,
+  padding: '0 10px',
 });
 
 // Called off: lingon, above the description, with the organizer's words
@@ -131,7 +189,7 @@ const Tags = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.375rem',
-  marginBottom: '0.6rem',
+  marginBottom: '0.75rem',
 });
 
 // On wide screens: the text and sign-up on the left, the facts on the right.
@@ -315,7 +373,8 @@ export default function ActivityHybrid({
     isPublicActivity ? 'activities' : 'calendar',
     activity._id
   );
-  const kindLabels = kindsOf(activity).map((key) => tc(`eventKinds.${key}`));
+  const kinds = kindsOf(activity);
+  const kindLabels = kinds.map((key) => tc(`eventKinds.${key}`));
   const author =
     activity.organizerProfiles?.find((p) => p.userId === activity.authorId) ||
     activity.organizerProfiles?.[0];
@@ -412,10 +471,22 @@ export default function ActivityHybrid({
           </ImageBox>
         )}
         <HeroText>
-          <Title>{activity.title}</Title>
-          {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
-          {(locationName || activity.isArchived || activity.cancelledAt) && (
+          {(kinds.length > 0 ||
+            locationName ||
+            activity.isArchived ||
+            activity.cancelledAt) && (
             <Tags>
+              {kinds.map((kind) => (
+                <KindTag
+                  key={kind}
+                  css={{
+                    backgroundColor: colorsForKind(kind).tint,
+                    color: colorsForKind(kind).ink,
+                  }}
+                >
+                  {tc(`eventKinds.${kind}`)}
+                </KindTag>
+              ))}
               <LocationTag
                 isMunicipalityOnly={activity.isMunicipalityOnly}
                 locationId={activity.locationId}
@@ -428,6 +499,8 @@ export default function ActivityHybrid({
               )}
             </Tags>
           )}
+          <Title>{activity.title}</Title>
+          {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
           {activity.cancelledAt && (
             <Cancelled role="status">
               <strong>{tc('event.cancelled.notice')}</strong>
@@ -437,16 +510,63 @@ export default function ActivityHybrid({
           {activity.isArchived && (
             <Notice>{tc('event.archived.onlyYou')}</Notice>
           )}
-          {activity.longDescription && (
-            <Description className="text-content">
-              {HTMLReactParser(DOMPurify.sanitize(activity.longDescription))}
-            </Description>
+          {(occurrence || venue) && (
+            <Facts>
+              {occurrence && (
+                <Fact>
+                  <CalendarIcon aria-hidden />
+                  <div>
+                    <FactText>{formatOccurrence(occurrence)}</FactText>
+                    {dates.length > 1 ? (
+                      <FactNote>
+                        {tc('event.dates.occurrences', {
+                          count: dates.length,
+                        })}
+                      </FactNote>
+                    ) : (
+                      isPastOccurrence(occurrence) && (
+                        <FactNote>{tc('event.register.past')}</FactNote>
+                      )
+                    )}
+                  </div>
+                </Fact>
+              )}
+              {venue && (
+                <Fact>
+                  <MapPinIcon aria-hidden />
+                  <div>
+                    <FactText>
+                      {activity.resource && activity.resourceId ? (
+                        <Link to={sitePath('resources', activity.resourceId)}>
+                          {venue}
+                        </Link>
+                      ) : (
+                        venue
+                      )}
+                    </FactText>
+                    {activity.resource &&
+                      activity.place &&
+                      activity.place !== activity.resource && (
+                        <FactNote>{activity.place}</FactNote>
+                      )}
+                  </div>
+                </Fact>
+              )}
+            </Facts>
           )}
         </HeroText>
       </Hero>
 
       <Layout>
         <Column>
+          {activity.longDescription && (
+            <Section order={2} title={tc('event.sections.about')}>
+              <Description className="text-content">
+                {HTMLReactParser(DOMPurify.sanitize(activity.longDescription))}
+              </Description>
+            </Section>
+          )}
+
           {isPublicActivity && occurrence && (
             <RegistrationSection
               activity={activity}
@@ -481,7 +601,8 @@ export default function ActivityHybrid({
         </Column>
 
         <Column side>
-          {dates.length > 0 && (
+          {/* One date is already told at the top; several are chosen here */}
+          {dates.length > 1 && (
             <WhenSection
               dates={dates}
               selectedIndex={selectedIndex}
