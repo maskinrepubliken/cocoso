@@ -13,6 +13,7 @@ import {
   Alert,
   Badge,
   Box,
+  Button,
   Center,
   Code,
   Flex,
@@ -30,6 +31,7 @@ import { message } from '/imports/ui/generic/message';
 import { startViewAs } from '/imports/utils/viewAs';
 
 import UsageReport from './UsageReport';
+import { CreateAliasModal, DeleteAliasModal } from './AliasDialogs';
 import Boxling from './Boxling';
 
 const compareUsersByDate = (a, b) => {
@@ -47,9 +49,20 @@ function MemberItem({ member }) {
     <Box p="6">
       <Heading size="md" fontWeight="bold" mb="1">
         {member.username}
-        <Badge size="sm" css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}>
-          {t(`roles.${member.role}`).toLowerCase()}
-        </Badge>
+        {/* An alias is always an organizer: its role says nothing */}
+        {member.isAlias ? (
+          <Badge
+            colorScheme="blue"
+            size="sm"
+            css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}
+          >
+            {t('alias.label').toLowerCase()}
+          </Badge>
+        ) : (
+          <Badge size="sm" css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}>
+            {t(`roles.${member.role}`).toLowerCase()}
+          </Badge>
+        )}
         {member.isOrganizer && (
           <Badge
             colorScheme="green"
@@ -65,7 +78,14 @@ function MemberItem({ member }) {
           </Badge>
         )}
       </Heading>
-      <Code size="sm">{member && member.email}</Code>
+      {member.isAlias ? (
+        <Text size="sm">
+          {member.name ? `${member.name} · ` : ''}
+          {t('alias.noLogin')}
+        </Text>
+      ) : (
+        <Code size="sm">{member && member.email}</Code>
+      )}
       <br />
       <br />
       <Text size="xs" color="gray.500" fontStyle="italic">
@@ -82,7 +102,7 @@ function MemberList({ members }) {
     <NiceList
       actionsDisabled={false}
       itemBg="white"
-      keySelector="email"
+      keySelector="id"
       list={members}
       virtual
     >
@@ -100,6 +120,8 @@ export default function Members() {
   const [sortBy, setSortBy] = useState('join-date');
   const [filterWord, setFilterWord] = useState('');
   const [userForUsageReport, setUserForUsageReport] = useState(null);
+  const [creatingAlias, setCreatingAlias] = useState(false);
+  const [aliasToDelete, setAliasToDelete] = useState(null);
   const [t] = useTranslation('members');
   const [tc] = useTranslation('common');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -111,6 +133,7 @@ export default function Members() {
       { label: t('roles.contributor'), value: 'contributor' },
       { label: t('roles.admin'), value: 'admin' },
       { label: t('organizer'), value: 'organizer' },
+      { label: t('alias.label'), value: 'alias' },
     ],
     [t]
   );
@@ -201,69 +224,92 @@ export default function Members() {
 
   const safeMembers = members || [];
 
+  // An alias has no login and no role to change: its profile is edited
+  // like any organizer's, and it can be hidden or removed.
+  const aliasActions = (member: any) => [
+    {
+      content: t('alias.actions.edit'),
+      handleClick: () => navigate(`/@${member.username}?edit=true`),
+    },
+    {
+      content: t(
+        member.isPublic ? 'actions.hideProfile' : 'actions.showProfile'
+      ),
+      handleClick: () => setPublic(member, !member.isPublic),
+    },
+    {
+      content: t('actions.usageReport'),
+      handleClick: () => setUserForUsageReport(member),
+    },
+    {
+      content: t('alias.actions.delete'),
+      handleClick: () => setAliasToDelete(member),
+    },
+  ];
+
   const membersList = useMemo(
     () =>
       safeMembers.map((member) => ({
         ...member,
-        actions: [
-          {
-            content: t('actions.contributor'),
-            handleClick: () => setAsContributor(member),
-            isDisabled:
-              ['admin', 'contributor'].includes(member.role) ||
-              !['admin', 'contributor'].includes(role),
-          },
-          {
-            content: t('actions.admin'),
-            handleClick: () => setAsAdmin(member),
-            isDisabled: member.role === 'admin',
-          },
-          {
-            content: t('actions.participant'),
-            handleClick: () => setAsParticipant(member),
-            isDisabled:
-              !['contributor'].includes(member.role) ||
-              !['admin'].includes(role),
-          },
-          {
-            content: t(
-              member.isOrganizer ? 'actions.notOrganizer' : 'actions.organizer'
-            ),
-            handleClick: () => setOrganizer(member, !member.isOrganizer),
-            isDisabled: role !== 'admin',
-          },
-          {
-            content: t(
-              member.isPublic ? 'actions.hideProfile' : 'actions.showProfile'
-            ),
-            handleClick: () => setPublic(member, !member.isPublic),
-            isDisabled: role !== 'admin',
-          },
-          {
-            content: t('actions.viewAs'),
-            handleClick: () => viewAs(member),
-            isDisabled: role !== 'admin' || member.role === 'admin',
-          },
-          {
-            content: t('actions.usageReport'),
-            handleClick: () => setUserForUsageReport(member),
-            isDisabled: member.role === 'participant',
-          },
-        ],
+        actions: member.isAlias ? aliasActions(member) : memberActions(member),
       })),
     [safeMembers, role, t]
   );
+
+  function memberActions(member: any) {
+    return [
+      {
+        content: t('actions.contributor'),
+        handleClick: () => setAsContributor(member),
+        isDisabled:
+          ['admin', 'contributor'].includes(member.role) ||
+          !['admin', 'contributor'].includes(role),
+      },
+      {
+        content: t('actions.admin'),
+        handleClick: () => setAsAdmin(member),
+        isDisabled: member.role === 'admin',
+      },
+      {
+        content: t('actions.participant'),
+        handleClick: () => setAsParticipant(member),
+        isDisabled:
+          !['contributor'].includes(member.role) || !['admin'].includes(role),
+      },
+      {
+        content: t(
+          member.isOrganizer ? 'actions.notOrganizer' : 'actions.organizer'
+        ),
+        handleClick: () => setOrganizer(member, !member.isOrganizer),
+        isDisabled: role !== 'admin',
+      },
+      {
+        content: t(
+          member.isPublic ? 'actions.hideProfile' : 'actions.showProfile'
+        ),
+        handleClick: () => setPublic(member, !member.isPublic),
+        isDisabled: role !== 'admin',
+      },
+      {
+        content: t('actions.viewAs'),
+        handleClick: () => viewAs(member),
+        isDisabled: role !== 'admin' || member.role === 'admin',
+      },
+      {
+        content: t('actions.usageReport'),
+        handleClick: () => setUserForUsageReport(member),
+        isDisabled: member.role === 'participant',
+      },
+    ];
+  }
 
   const membersFilteredWithType = useMemo(() => {
     const lowerCaseFilterWord = filterWord ? filterWord.toLowerCase() : '';
     if (!lowerCaseFilterWord) return membersList;
     return membersList.filter((member) => {
-      if (!member.username || !member.email) {
-        return false;
-      }
-      return (
-        member.username.toLowerCase().indexOf(lowerCaseFilterWord) !== -1 ||
-        member.email.toLowerCase().indexOf(lowerCaseFilterWord) !== -1
+      // An alias has no email address, but a name
+      return [member.username, member.email, member.name].some(
+        (value) => value && value.toLowerCase().includes(lowerCaseFilterWord)
       );
     });
   }, [membersList, filterWord]);
@@ -288,7 +334,8 @@ export default function Members() {
           !show ||
           show === 'all' ||
           show === m.role ||
-          (show === 'organizer' && m.isOrganizer)
+          (show === 'organizer' && m.isOrganizer) ||
+          (show === 'alias' && m.isAlias)
       ),
     [membersSorted, show]
   );
@@ -367,6 +414,19 @@ export default function Members() {
             </Select>
           </Box>
         </Flex>
+
+        <Box mt="4">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setCreatingAlias(true)}
+          >
+            {t('alias.create.title')}
+          </Button>
+          <Box mt="2">
+            <Text fontSize="sm">{t('alias.helper')}</Text>
+          </Box>
+        </Box>
       </Boxling>
 
       <MemberList members={membersRendered} />
@@ -375,6 +435,24 @@ export default function Members() {
         isOpen={Boolean(userForUsageReport)}
         user={userForUsageReport}
         onClose={() => setUserForUsageReport(null)}
+      />
+
+      <CreateAliasModal
+        open={creatingAlias}
+        onClose={() => setCreatingAlias(false)}
+        onCreated={(alias) => {
+          setCreatingAlias(false);
+          // Straight to its profile, to add a picture and the rest
+          navigate(`/@${alias.username}?edit=true`);
+        }}
+      />
+      <DeleteAliasModal
+        alias={aliasToDelete}
+        onClose={() => setAliasToDelete(null)}
+        onDeleted={() => {
+          setAliasToDelete(null);
+          revalidator.revalidate();
+        }}
       />
     </>
   );

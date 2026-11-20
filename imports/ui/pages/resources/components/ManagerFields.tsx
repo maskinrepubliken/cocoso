@@ -4,11 +4,13 @@ import PlusIcon from 'lucide-react/dist/esm/icons/plus';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 
 import PersonCard, {
-  PersonAvatar,
   personName,
 } from '/imports/ui/pages/activities/form/PersonCard';
 import PickerPopover from '/imports/ui/pages/activities/form/PickerPopover';
-import type { OrganizerOption } from '/imports/ui/pages/activities/form/OrganizerFields';
+import {
+  OrganizerRow,
+  type OrganizerOption,
+} from '/imports/ui/pages/activities/form/OrganizerFields';
 
 interface ManagerFieldsProps {
   // The user ids of those who look after the place
@@ -81,17 +83,7 @@ export default function ManagerFields({
             getSearchText={searchText}
             items={candidates}
             placeholder={t('form.managers.search')}
-            renderItem={(o) => (
-              <>
-                <PersonAvatar person={o} size={32} />
-                <span className="picker-row-text">
-                  <span className="picker-row-title">{personName(o)}</span>
-                  {(o.firstName || o.lastName) && (
-                    <span className="picker-row-detail">@{o.username}</span>
-                  )}
-                </span>
-              </>
-            )}
+            renderItem={(o) => <OrganizerRow organizer={o} />}
             onClose={() => setPicking(false)}
             onPick={(o) => {
               onChange([...value, o._id]);

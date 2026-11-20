@@ -6,6 +6,33 @@ all: Alla
 organizer: Arrangör
 hidden: Dold profil
 
+# Organizer profiles without a login (imports/api/users/user.alias.js)
+alias:
+  label: Alias
+  noLogin: Ingen inloggning
+  helper: Ett alias är en arrangörsprofil utan inloggning, för att publicera i någon annans namn – en förening eller en verksamhet. Alla administratörer kan välja det som arrangör för ett evenemang eller en plats.
+  cancel: Avbryt
+  actions:
+    edit: Redigera profilen
+    delete: Ta bort aliaset
+  create:
+    title: Skapa alias
+    intro: Aliaset får en egen sida bland arrangörerna. Bild och beskrivning lägger du till i nästa steg.
+    name: Namn
+    namePlaceholder: t.ex. Tranemo kammarkör
+    contactHelper: 'Visas på aliasets sida och vid dess evenemang, så att besökare kan nå arrangören: en e-postadress eller ett telefonnummer.'
+    submit: Skapa alias
+    nameMissing: Ge aliaset ett namn
+    contactMissing: Ange en e-postadress eller ett telefonnummer
+    emailInvalid: Det ser inte ut som en e-postadress
+    created: '{{ name }} har skapats'
+  delete:
+    title: Ta bort {{ name }}?
+    text: Profilen och dess sida tas bort. Det går inte att ångra.
+    submit: Ta bort
+    deleted: '{{ name }} har tagits bort'
+    inUse: '{{ name }} arrangerar fortfarande {{ events }} evenemang och {{ mirrors }} speglade kalendrar. Ge dem en annan arrangör först.'
+
 joinedAt: Gick med {{ date }}
 
 roles:

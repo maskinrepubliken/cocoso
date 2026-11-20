@@ -573,11 +573,13 @@ export default function AdminMirrors() {
         setOrganizers(
           (found || []).map((u: any) => ({
             value: u._id,
-            label: [u.firstName, u.lastName].filter(Boolean).join(' ')
-              ? `${[u.firstName, u.lastName].filter(Boolean).join(' ')} (${
-                  u.username
-                })`
-              : u.username,
+            label: `${
+              [u.firstName, u.lastName].filter(Boolean).join(' ')
+                ? `${[u.firstName, u.lastName].filter(Boolean).join(' ')} (${
+                    u.username
+                  })`
+                : u.username
+            }${u.isAlias ? ' · alias' : ''}`,
           }))
         )
       )

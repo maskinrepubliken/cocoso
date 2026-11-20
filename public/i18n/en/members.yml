@@ -6,6 +6,33 @@ all: All
 organizer: Organizer
 hidden: Hidden profile
 
+# Organizer profiles without a login (imports/api/users/user.alias.js)
+alias:
+  label: Alias
+  noLogin: No login
+  helper: An alias is an organizer profile without a login, for publishing in someone else's name – an association or a venue. Every administrator can choose it as the organizer of an event or a place.
+  cancel: Cancel
+  actions:
+    edit: Edit the profile
+    delete: Remove the alias
+  create:
+    title: Create alias
+    intro: The alias gets a page of its own among the organizers. You add a picture and a description in the next step.
+    name: Name
+    namePlaceholder: e.g. Tranemo Chamber Choir
+    contactHelper: 'Shown on the alias page and on its events, so visitors can reach the organizer: an email address or a phone number.'
+    submit: Create alias
+    nameMissing: Give the alias a name
+    contactMissing: Add an email address or a phone number
+    emailInvalid: That does not look like an email address
+    created: '{{ name }} has been created'
+  delete:
+    title: Remove {{ name }}?
+    text: The profile and its page are removed. This cannot be undone.
+    submit: Remove
+    deleted: '{{ name }} has been removed'
+    inUse: '{{ name }} still organizes {{ events }} events and {{ mirrors }} mirrored calendars. Give them another organizer first.'
+
 joinedAt: joined {{ date }}
 
 roles:

@@ -24,6 +24,8 @@ export interface OrganizerOption {
   firstName?: string;
   lastName?: string;
   avatar?: string | null;
+  // An organizer profile without a login, which only admins may choose
+  isAlias?: boolean;
 }
 
 export interface OrganizerDefaults extends OrganizerOption {
@@ -50,15 +52,21 @@ const searchText = (o: OrganizerOption) =>
 
 const firstName = (o: Partial<OrganizerOption>) => o.firstName || personName(o);
 
-// A row in the organizer picker: picture, name, @username
-function OrganizerRow({ organizer }: { organizer: OrganizerOption }) {
+// A row in the organizer picker: picture, name, @username, and whether it
+// is an alias
+export function OrganizerRow({ organizer }: { organizer: OrganizerOption }) {
+  const [tm] = useTranslation('members');
+  const detail = [
+    (organizer.firstName || organizer.lastName) && `@${organizer.username}`,
+    organizer.isAlias && tm('alias.label'),
+  ].filter(Boolean);
   return (
     <>
       <PersonAvatar person={organizer} size={32} />
       <span className="picker-row-text">
         <span className="picker-row-title">{personName(organizer)}</span>
-        {(organizer.firstName || organizer.lastName) && (
-          <span className="picker-row-detail">@{organizer.username}</span>
+        {detail.length > 0 && (
+          <span className="picker-row-detail">{detail.join(' · ')}</span>
         )}
       </span>
     </>
