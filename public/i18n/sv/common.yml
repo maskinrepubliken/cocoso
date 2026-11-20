@@ -531,6 +531,8 @@ event:
     signUp: "Anmäl dig"
     signUpAt: "Anmäl dig hos {{source}}"
     ticketsAt: "Köp biljett hos {{source}}"
+    toSignUp: "Till anmälan"
+    toTickets: "Till biljetterna"
     addToCalendar: "Lägg till i kalendern"
   more:
     title: "Mer som händer"

@@ -100,6 +100,7 @@ export default function FollowSection({
 
   return (
     <Section
+      hideTitle
       look="plain"
       order={3}
       title={

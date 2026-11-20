@@ -534,6 +534,8 @@ event:
     signUp: "Sign up"
     signUpAt: "Sign up at {{source}}"
     ticketsAt: "Buy tickets at {{source}}"
+    toSignUp: "To sign-up"
+    toTickets: "To the tickets"
     addToCalendar: "Add to calendar"
   more:
     title: "More going on"

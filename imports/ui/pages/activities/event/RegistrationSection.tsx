@@ -314,6 +314,7 @@ export default function RegistrationSection({
           : null
       }
       id="anmalan"
+      hideTitle
       look="plain"
       order={3}
       title={tc('event.sections.register')}
@@ -336,9 +337,7 @@ export default function RegistrationSection({
             rel="noopener noreferrer"
             target="_blank"
           >
-            {tc(isScreening ? 'event.cta.ticketsAt' : 'event.cta.signUpAt', {
-              source: sourceHost,
-            })}
+            {tc(isScreening ? 'event.cta.toTickets' : 'event.cta.toSignUp')}
             <ExternalLinkIcon aria-hidden />
           </Action>
         </>

@@ -76,6 +76,9 @@ interface SectionProps {
   // Leave out to place the title yourself, e.g. under a map.
   title?: React.ReactNode;
   aside?: React.ReactNode;
+  // The title is there for screen readers only: what the section holds
+  // says what it is
+  hideTitle?: boolean;
   bleed?: boolean;
   // Other than a card of its own: see SectionBox
   look?: 'plain' | 'dark';
@@ -88,6 +91,7 @@ interface SectionProps {
 export default function Section({
   title,
   aside,
+  hideTitle,
   order,
   id,
   bleed,
@@ -96,11 +100,22 @@ export default function Section({
 }: SectionProps) {
   return (
     <SectionBox bleed={bleed} id={id} look={look} css={{ [NARROW]: { order } }}>
-      {(title || aside) && (
-        <SectionHeader>
-          <SectionTitle>{title}</SectionTitle>
-          {aside && <SectionAside>{aside}</SectionAside>}
-        </SectionHeader>
+      {hideTitle ? (
+        <>
+          <SectionTitle className="visually-hidden">{title}</SectionTitle>
+          {aside && (
+            <SectionAside css={{ display: 'block', marginBottom: '0.875rem' }}>
+              {aside}
+            </SectionAside>
+          )}
+        </>
+      ) : (
+        (title || aside) && (
+          <SectionHeader>
+            <SectionTitle>{title}</SectionTitle>
+            {aside && <SectionAside>{aside}</SectionAside>}
+          </SectionHeader>
+        )
       )}
       {children}
     </SectionBox>

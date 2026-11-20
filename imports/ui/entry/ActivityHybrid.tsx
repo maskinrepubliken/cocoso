@@ -188,10 +188,10 @@ const Tags = styled('div', {
   marginTop: '1.25rem',
 });
 
-// On wide screens two columns: the event's card on the left and, in a
-// somewhat narrower column on the right, what one does about it (sign up,
-// follow), where it is, who organizes it and the organizer's tools. On
-// narrow screens the right column follows the card.
+// On wide screens two columns: on the left the event's card and, for the
+// organizer, the tools under it; in a narrow column on the right what one
+// does about it (sign up, follow) and where it is and who organizes it.
+// On narrow screens the right column follows the left.
 const Layout = styled('div', {
   display: 'flex',
   flexDirection: 'column',
@@ -200,7 +200,7 @@ const Layout = styled('div', {
     alignItems: 'start',
     display: 'grid',
     gap: '1.5rem',
-    gridTemplateColumns: 'minmax(0, 1.55fr) minmax(0, 1fr)',
+    gridTemplateColumns: 'minmax(0, 1fr) minmax(300px, 380px)',
   },
 });
 
@@ -208,10 +208,12 @@ const Column = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '1.25rem',
+  minWidth: 0,
 });
 
 // Signing up and following: one card in the site's green, apart from the
-// plain cards with facts under it, with titles one reads as an invitation
+// plain card with facts under it. No titles: the form and the buttons say
+// what they are.
 const ActionCard = styled('div', {
   background:
     'linear-gradient(165deg, var(--cocoso-colors-theme-50), var(--cocoso-colors-theme-100))',
@@ -222,16 +224,21 @@ const ActionCard = styled('div', {
   gap: '1.5rem',
   padding: '1.5rem',
   '&:empty': { display: 'none' },
-  '& h2': {
-    color: 'var(--cocoso-colors-theme-800)',
-    fontFamily: 'var(--cocoso-font-display)',
-    fontSize: '1.4rem',
-    fontVariationSettings: '"SOFT" 60',
-    fontWeight: 600,
-    letterSpacing: 0,
-    textTransform: 'none',
-  },
   '& section': { borderTopColor: 'var(--cocoso-colors-theme-200)' },
+});
+
+// Where and who, as one card: each section keeps its title and contents,
+// with a line between them
+const FactsCard = styled('div', {
+  backgroundColor: 'var(--cocoso-papper)',
+  borderRadius: 'var(--cocoso-radius-kort)',
+  boxShadow: 'var(--cocoso-skugga)',
+  overflow: 'hidden',
+  '&:empty': { display: 'none' },
+  '& > section': { borderRadius: 0, boxShadow: 'none' },
+  '& > section + section': {
+    borderTop: '1px solid var(--cocoso-colors-theme-100)',
+  },
 });
 
 const Description = styled('div', {
@@ -425,155 +432,164 @@ export default function ActivityHybrid({
       />
 
       <Layout>
-        <MainCard>
-          {isPublicActivity && (
-            <ImageBox>
-              {images.length > 0 ? (
-                <LightboxProvider alt={activity.title} images={images}>
-                  <LightboxTrigger showCount src={images[0]}>
-                    <img
-                      alt={activity.title}
-                      src={getImageUrl(images[0], 'medium') || images[0]}
-                    />
-                  </LightboxTrigger>
-                </LightboxProvider>
-              ) : (
-                <PlaceholderImage
-                  seed={activity._id}
-                  style={{ height: '100%', width: '100%' }}
-                />
-              )}
-            </ImageBox>
-          )}
-          <CardBody>
-            <HeroText>
-              <Title>{activity.title}</Title>
-              {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
-              {activity.cancelledAt && (
-                <Cancelled role="status">
-                  <strong>{tc('event.cancelled.notice')}</strong>
-                  {activity.cancelMessage && <p>{activity.cancelMessage}</p>}
-                </Cancelled>
-              )}
-              {activity.isArchived && (
-                <Notice>{tc('event.archived.onlyYou')}</Notice>
-              )}
-              {(occurrence || venue) && (
-                <Facts>
-                  {occurrence && (
-                    <Fact>
-                      <CalendarIcon aria-hidden />
-                      <div>
-                        <FactText>{formatOccurrence(occurrence)}</FactText>
-                        {dates.length > 1 ? (
-                          <FactNote>
-                            {tc('event.dates.occurrences', {
-                              count: dates.length,
-                            })}
-                          </FactNote>
-                        ) : (
-                          isPastOccurrence(occurrence) && (
-                            <FactNote>{tc('event.register.past')}</FactNote>
-                          )
-                        )}
-                      </div>
-                    </Fact>
-                  )}
-                  {venue && (
-                    <Fact>
-                      <MapPinIcon aria-hidden />
-                      <div>
-                        <FactText>
-                          {activity.resource && activity.resourceId ? (
-                            <Link
-                              to={sitePath('resources', activity.resourceId)}
-                            >
-                              {venue}
-                            </Link>
-                          ) : (
-                            venue
-                          )}
-                        </FactText>
-                        {activity.resource &&
-                          activity.place &&
-                          activity.place !== activity.resource && (
-                            <FactNote>{activity.place}</FactNote>
-                          )}
-                      </div>
-                    </Fact>
-                  )}
-                </Facts>
-              )}
-              {isPublicActivity && occurrence && (
-                <HeroActions
-                  activity={activity}
-                  occurrence={occurrence}
-                  url={publicUrl(path)}
-                />
-              )}
-              {(kinds.length > 0 ||
-                locationName ||
-                activity.isArchived ||
-                activity.cancelledAt) && (
-                <Tags>
-                  {kinds.map((kind) => (
-                    <KindTag
-                      key={kind}
-                      css={{
-                        backgroundColor: colorsForKind(kind).tint,
-                        color: colorsForKind(kind).ink,
-                      }}
-                    >
-                      {tc(`eventKinds.${kind}`)}
-                    </KindTag>
-                  ))}
-                  <LocationTag
-                    isMunicipalityOnly={activity.isMunicipalityOnly}
-                    locationId={activity.locationId}
+        <Column>
+          <MainCard>
+            {isPublicActivity && (
+              <ImageBox>
+                {images.length > 0 ? (
+                  <LightboxProvider alt={activity.title} images={images}>
+                    <LightboxTrigger showCount src={images[0]}>
+                      <img
+                        alt={activity.title}
+                        src={getImageUrl(images[0], 'medium') || images[0]}
+                      />
+                    </LightboxTrigger>
+                  </LightboxProvider>
+                ) : (
+                  <PlaceholderImage
+                    seed={activity._id}
+                    style={{ height: '100%', width: '100%' }}
                   />
-                  {activity.cancelledAt && (
-                    <Tag colorScheme="red">{tc('event.cancelled.tag')}</Tag>
-                  )}
-                  {activity.isArchived && (
-                    <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
-                  )}
-                </Tags>
+                )}
+              </ImageBox>
+            )}
+            <CardBody>
+              <HeroText>
+                <Title>{activity.title}</Title>
+                {activity.subTitle && <SubTitle>{activity.subTitle}</SubTitle>}
+                {activity.cancelledAt && (
+                  <Cancelled role="status">
+                    <strong>{tc('event.cancelled.notice')}</strong>
+                    {activity.cancelMessage && <p>{activity.cancelMessage}</p>}
+                  </Cancelled>
+                )}
+                {activity.isArchived && (
+                  <Notice>{tc('event.archived.onlyYou')}</Notice>
+                )}
+                {(occurrence || venue) && (
+                  <Facts>
+                    {occurrence && (
+                      <Fact>
+                        <CalendarIcon aria-hidden />
+                        <div>
+                          <FactText>{formatOccurrence(occurrence)}</FactText>
+                          {dates.length > 1 ? (
+                            <FactNote>
+                              {tc('event.dates.occurrences', {
+                                count: dates.length,
+                              })}
+                            </FactNote>
+                          ) : (
+                            isPastOccurrence(occurrence) && (
+                              <FactNote>{tc('event.register.past')}</FactNote>
+                            )
+                          )}
+                        </div>
+                      </Fact>
+                    )}
+                    {venue && (
+                      <Fact>
+                        <MapPinIcon aria-hidden />
+                        <div>
+                          <FactText>
+                            {activity.resource && activity.resourceId ? (
+                              <Link
+                                to={sitePath('resources', activity.resourceId)}
+                              >
+                                {venue}
+                              </Link>
+                            ) : (
+                              venue
+                            )}
+                          </FactText>
+                          {activity.resource &&
+                            activity.place &&
+                            activity.place !== activity.resource && (
+                              <FactNote>{activity.place}</FactNote>
+                            )}
+                        </div>
+                      </Fact>
+                    )}
+                  </Facts>
+                )}
+                {isPublicActivity && occurrence && (
+                  <HeroActions
+                    activity={activity}
+                    occurrence={occurrence}
+                    url={publicUrl(path)}
+                  />
+                )}
+                {(kinds.length > 0 ||
+                  locationName ||
+                  activity.isArchived ||
+                  activity.cancelledAt) && (
+                  <Tags>
+                    {kinds.map((kind) => (
+                      <KindTag
+                        key={kind}
+                        css={{
+                          backgroundColor: colorsForKind(kind).tint,
+                          color: colorsForKind(kind).ink,
+                        }}
+                      >
+                        {tc(`eventKinds.${kind}`)}
+                      </KindTag>
+                    ))}
+                    <LocationTag
+                      isMunicipalityOnly={activity.isMunicipalityOnly}
+                      locationId={activity.locationId}
+                    />
+                    {activity.cancelledAt && (
+                      <Tag colorScheme="red">{tc('event.cancelled.tag')}</Tag>
+                    )}
+                    {activity.isArchived && (
+                      <Tag colorScheme="red">{tc('event.archived.tag')}</Tag>
+                    )}
+                  </Tags>
+                )}
+              </HeroText>
+
+              {activity.longDescription && (
+                <Section
+                  look="plain"
+                  order={2}
+                  title={tc('event.sections.about')}
+                >
+                  <Description className="text-content">
+                    {HTMLReactParser(
+                      DOMPurify.sanitize(activity.longDescription)
+                    )}
+                  </Description>
+                </Section>
               )}
-            </HeroText>
 
-            {activity.longDescription && (
-              <Section
-                look="plain"
-                order={2}
-                title={tc('event.sections.about')}
-              >
-                <Description className="text-content">
-                  {HTMLReactParser(
-                    DOMPurify.sanitize(activity.longDescription)
-                  )}
-                </Description>
-              </Section>
-            )}
+              {/* One date is already told at the top; several are chosen here */}
+              {dates.length > 1 && (
+                <WhenSection
+                  dates={dates}
+                  selectedIndex={selectedIndex}
+                  onSelect={selectDate}
+                />
+              )}
 
-            {/* One date is already told at the top; several are chosen here */}
-            {dates.length > 1 && (
-              <WhenSection
-                dates={dates}
-                selectedIndex={selectedIndex}
-                onSelect={selectDate}
-              />
-            )}
+              {/* A mirrored event's sign-ups are kept at its source */}
+              {isPublicActivity &&
+                occurrence &&
+                !(
+                  activity.mirror &&
+                  activity.isRegistrationEnabled === false &&
+                  !occurrence.attendees?.length
+                ) && <AttendeesSection attendees={occurrence.attendees} />}
+            </CardBody>
+          </MainCard>
 
-            {/* A mirrored event's sign-ups are kept at its source */}
-            {isPublicActivity &&
-              occurrence &&
-              !(
-                activity.mirror &&
-                activity.isRegistrationEnabled === false &&
-                !occurrence.attendees?.length
-              ) && <AttendeesSection attendees={occurrence.attendees} />}
-          </CardBody>
-        </MainCard>
+          {isOrganizer && (
+            <OrganizerToolsSection
+              activity={activity}
+              occurrence={occurrence}
+            />
+          )}
+        </Column>
 
         <Column>
           {isPublicActivity && (
@@ -592,14 +608,10 @@ export default function ActivityHybrid({
               />
             </ActionCard>
           )}
-          <PlaceSection activity={activity} locationName={locationName} />
-          <OrganizerSection activity={activity} />
-          {isOrganizer && (
-            <OrganizerToolsSection
-              activity={activity}
-              occurrence={occurrence}
-            />
-          )}
+          <FactsCard>
+            <PlaceSection activity={activity} locationName={locationName} />
+            <OrganizerSection activity={activity} />
+          </FactsCard>
         </Column>
       </Layout>
 
