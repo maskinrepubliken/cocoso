@@ -77,8 +77,7 @@ export type ThreeDIconName =
   | 'umbrella'
   | 'video-camera'
   | 'wallet'
-  | 'zoom'
-  | 'zoom-front';
+  | 'zoom';
 
 // One icon per section of the site, keyed by the menu item's name.
 export const sectionIcons: Record<string, ThreeDIconName> = {

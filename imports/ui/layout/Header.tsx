@@ -225,7 +225,8 @@ interface MenuPanelProps {
 }
 
 // The phone's menu, opened from the grid button in the bar: one row per
-// section with the section's own 3D icon, the info pages as rows of their
+// section with the section's own 3D icon (seen straight on here, the
+// "-front" files in public/3dicons), the info pages as rows of their
 // own, the search page last, and below that language and login, in the same panel style as the
 // account menu and the search results.
 function MenuPanel({
@@ -258,7 +259,7 @@ function MenuPanel({
                 }`}
                 to={to}
               >
-                <ThreeDIcon name={sectionIcons.info} size={32} />
+                <ThreeDIcon name={`${sectionIcons.info}-front`} size={32} />
                 <span>{page.title}</span>
               </Link>
             );
@@ -271,7 +272,10 @@ function MenuPanel({
             }`}
             to={item.route}
           >
-            <ThreeDIcon name={sectionIcons[item.name] || 'star'} size={32} />
+            <ThreeDIcon
+              name={`${sectionIcons[item.name] || 'star'}-front`}
+              size={32}
+            />
             <span className="site-menu-row-text">
               <span className="site-menu-row-title">{item.label}</span>
               {sectionDescription(item, tc) && (
