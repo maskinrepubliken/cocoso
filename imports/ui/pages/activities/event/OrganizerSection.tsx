@@ -95,6 +95,8 @@ interface OrganizerSectionProps {
     contact?: PublicContact | null;
     contactUserId?: string | null;
     organizerProfiles?: OrganizerProfile[];
+    // The account or alias that organized the event has been removed
+    organizerRemoved?: boolean;
   };
 }
 
@@ -150,10 +152,13 @@ function ContactRows({
 export default function OrganizerSection({ activity }: OrganizerSectionProps) {
   const [tc] = useTranslation('common');
 
-  const organizers: OrganizerProfile[] =
-    activity.organizerProfiles && activity.organizerProfiles.length > 0
-      ? activity.organizerProfiles
-      : [{ userId: '', username: activity.authorName }];
+  // Without its organizer's account the event has only its co-organizers,
+  // if any, and says so
+  const removed = Boolean(activity.organizerRemoved);
+  let organizers: OrganizerProfile[] = activity.organizerProfiles || [];
+  if (organizers.length === 0 && !removed) {
+    organizers = [{ userId: '', username: activity.authorName }];
+  }
   const several = organizers.length > 1;
   // The organizer chose contact details for this event: they replace the
   // ones from the profiles.
@@ -180,6 +185,11 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
         several ? 'event.sections.organizers' : 'event.sections.organizer'
       )}
     >
+      {removed && (
+        <Muted css={{ marginBottom: organizers.length ? '0.75rem' : 0 }}>
+          {tc('event.organizer.removed')}
+        </Muted>
+      )}
       <List>
         {organizers.map((organizer) => {
           const fullName = [organizer.firstName, organizer.lastName]
@@ -219,7 +229,7 @@ export default function OrganizerSection({ activity }: OrganizerSectionProps) {
         </EventContact>
       )}
 
-      {!mailTo && !hasAny(activity.contact) && (
+      {!mailTo && !hasAny(activity.contact) && !removed && (
         <Muted css={{ marginTop: '0.75rem' }}>
           {tc('event.organizer.noContact')}
         </Muted>

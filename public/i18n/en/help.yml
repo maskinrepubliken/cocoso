@@ -116,7 +116,7 @@ pages:
         body:
           - "You delete the account yourself: press your profile picture in the header, choose **My settings** and then **Delete my account** at the bottom. It cannot be undone."
           - "Your account, your profile, your role as organizer, your push notifications and the list of events you follow are then removed at once."
-          - "Events, places and pictures you have published stay with your username, since others may have signed up or linked to them. The same goes for sign-ups you have made to other people's events. Remove them before you delete the account if you do not want them to stay, or ask us to do it for you."
+          - "Events, places and pictures you have published stay, since others may have signed up or linked to them. The events then say that the organizer has been removed, and your username is kept with them. The same goes for sign-ups you have made to other people's events. Remove them before you delete the account if you do not want them to stay, or ask us to do it for you."
       - title: Your rights
         body:
           - "Under the GDPR you have the right to:"
@@ -409,7 +409,7 @@ pages:
               - "**Create alias**, above the list under Users, asks for a name and an email address for visitors. The profile then opens, so you can add a phone number, a picture and a description."
               - "**Choose the alias** as organizer when you add an event, with **Change** under the organizer. You can also add it as co-organizer, as the one who looks after a place and as organizer of a mirrored calendar. Every administrator can use every alias; other organizers cannot."
               - "**Turn into an account** hands the profile over to the organizer. Enter their email address and they get an invitation, log in with a code and accept the terms. The page and the events stay. After that it is an ordinary organizer account and no longer an alias."
-              - "**Remove the alias** works once it no longer organizes any event or mirrored calendar."
+              - "**Remove the alias** takes away the profile and its page. Its events stay in the calendar and say that the organizer has been removed, just as when someone deletes their account. Change the organizer on them first if they should have one."
           - note: "Only make an alias for someone who knows about it, and only publish what they have asked for. The contact details you enter are shown to all visitors."
       - title: Keeping the content in order
         body:

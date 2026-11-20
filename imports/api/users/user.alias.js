@@ -6,7 +6,6 @@ import { Random } from 'meteor/random';
 import Activities from '../activities/activity';
 import Memberships from '../memberships/membership';
 import Mirrors from '../mirrors/mirror';
-import Resources from '../resources/resource';
 import { getSite } from '../site/site';
 import { ContactPattern, requireContact } from '../_utils/contact';
 import { sitePath } from '../_utils/paths';
@@ -15,6 +14,7 @@ import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
 import { deliverEmail, getSmtpSettings } from '../_utils/services/mails/smtp';
 import { inviteEmail } from './inviteEmail';
 import { isAdmin } from './user.roles';
+import { detachUser } from './user.removal';
 import { generateUniqueUsername } from './username.helpers';
 
 /**
@@ -131,32 +131,27 @@ Meteor.methods({
     return { _id: userId, username };
   },
 
-  // Only an alias nothing is published as: its events and mirrored
-  // calendars have to be given another organizer, or removed, first.
+  // What removing an alias leaves behind, for the question asked first:
+  // its events, which stay without an organizer, and the mirrored
+  // calendars that stop until they are given another one.
+  async getAliasRemovalInfo(aliasId) {
+    check(aliasId, String);
+    await requireAdmin();
+    await requireAlias(aliasId);
+    return {
+      events: await Activities.find({ authorId: aliasId }).countAsync(),
+      mirrors: await Mirrors.find({ organizerId: aliasId }).countAsync(),
+    };
+  },
+
+  // Removed like an account its owner deletes (detachUser): the events it
+  // organizes stay, and say that the organizer has been removed.
   async deleteAlias(aliasId) {
     check(aliasId, String);
     await requireAdmin();
     await requireAlias(aliasId);
 
-    const events = await Activities.find({
-      $or: [{ authorId: aliasId }, { 'organizers.userId': aliasId }],
-    }).countAsync();
-    const mirrors = await Mirrors.find({ organizerId: aliasId }).countAsync();
-    if (events > 0 || mirrors > 0) {
-      throw new Meteor.Error(
-        'alias-in-use',
-        `The alias still organizes ${events} event(s) and ${mirrors} mirrored calendar(s)`,
-        { events, mirrors }
-      );
-    }
-
-    // No longer among those who look after a place
-    await Resources.updateAsync(
-      { managerIds: aliasId },
-      { $pull: { managerIds: aliasId } },
-      { multi: true }
-    );
-    await Memberships.removeAsync({ userId: aliasId });
+    await detachUser(aliasId);
     await Meteor.users.removeAsync({ _id: aliasId });
     return true;
   },

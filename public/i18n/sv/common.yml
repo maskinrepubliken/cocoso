@@ -479,6 +479,7 @@ event:
     profile: "Se alla evenemang av {{name}}"
     eventContact: "Kontakt för evenemanget"
     noContact: "Arrangören har inte angett några kontaktuppgifter."
+    removed: "Arrangören är borttagen ur systemet."
     write: "Skriv till arrangören"
   attendees:
     none: "Ingen har anmält sig än."

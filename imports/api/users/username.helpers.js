@@ -1,5 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 
+import Activities from '../activities/activity';
+
 // Matches regexUsername in imports/ui/pages/auth/account.helpers.js — keep
 // these in sync, since a username generated here must also pass that
 // client-side schema if it's ever edited/re-submitted through a form there.
@@ -34,7 +36,19 @@ async function generateUniqueUsername(candidateBase) {
 
   let candidate = base;
   for (let attempt = 0; attempt < MAX_COLLISION_ATTEMPTS; attempt += 1) {
-    const taken = await Accounts.findUserByUsername(candidate);
+    // Also the name of a removed organizer, which their events still
+    // carry: a new account must not be taken for theirs
+    const taken =
+      (await Accounts.findUserByUsername(candidate)) ||
+      (await Activities.findOneAsync(
+        {
+          $or: [
+            { authorName: candidate },
+            { 'organizers.username': candidate },
+          ],
+        },
+        { fields: { _id: 1 } }
+      ));
     if (!taken) {
       return candidate;
     }

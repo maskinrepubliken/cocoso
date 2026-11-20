@@ -47,7 +47,10 @@ alias:
     text: The profile and its page are removed. This cannot be undone.
     submit: Remove
     deleted: '{{ name }} has been removed'
-    inUse: '{{ name }} still organizes {{ events }} events and {{ mirrors }} mirrored calendars. Give them another organizer first.'
+    events_one: 'One event that it organizes stays in the calendar, and will say that the organizer has been removed. Only administrators can change it after that.'
+    events_other: '{{ count }} events that it organizes stay in the calendar, and will say that the organizer has been removed. Only administrators can change them after that.'
+    mirrors_one: 'One mirrored calendar has it as organizer and stops fetching events until you give it another one.'
+    mirrors_other: '{{ count }} mirrored calendars have it as organizer and stop fetching events until you give them another one.'
 
 joinedAt: joined {{ date }}
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box, Input, Modal, Text } from '/imports/ui/core';
@@ -192,8 +192,8 @@ export function ConvertAliasModal({
   );
 }
 
-// Asked before an alias is removed. One that still organizes something is
-// refused by the server (deleteAlias), and the answer says what.
+// Asked before an alias is removed, saying what it leaves behind: its
+// events stay, without an organizer (getAliasRemovalInfo, deleteAlias).
 export function DeleteAliasModal({
   alias,
   onClose,
@@ -205,7 +205,24 @@ export function DeleteAliasModal({
 }) {
   const [t] = useTranslation('members');
   const [busy, setBusy] = useState(false);
+  const [left, setLeft] = useState<{ events: number; mirrors: number } | null>(
+    null
+  );
   const name = alias?.name || alias?.username || '';
+  const aliasId = alias?.id;
+
+  useEffect(() => {
+    let current = true;
+    if (aliasId) {
+      call<{ events: number; mirrors: number }>('getAliasRemovalInfo', aliasId)
+        .then((info) => current && setLeft(info))
+        .catch(() => current && setLeft(null));
+    }
+    return () => {
+      current = false;
+      setLeft(null);
+    };
+  }, [aliasId]);
 
   const remove = async () => {
     if (!alias || busy) {
@@ -217,15 +234,7 @@ export function DeleteAliasModal({
       message.success(t('alias.delete.deleted', { name }));
       onDeleted();
     } catch (error: any) {
-      message.error(
-        error?.error === 'alias-in-use'
-          ? t('alias.delete.inUse', {
-              name,
-              events: error.details?.events || 0,
-              mirrors: error.details?.mirrors || 0,
-            })
-          : error?.reason || error?.error
-      );
+      message.error(error?.reason || error?.error);
     } finally {
       setBusy(false);
     }
@@ -244,6 +253,16 @@ export function DeleteAliasModal({
       onConfirm={remove}
     >
       <Text>{t('alias.delete.text')}</Text>
+      {left && left.events > 0 && (
+        <Box mt="3">
+          <Text>{t('alias.delete.events', { count: left.events })}</Text>
+        </Box>
+      )}
+      {left && left.mirrors > 0 && (
+        <Box mt="3">
+          <Text>{t('alias.delete.mirrors', { count: left.mirrors })}</Text>
+        </Box>
+      )}
     </Modal>
   );
 }

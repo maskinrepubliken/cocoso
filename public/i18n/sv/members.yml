@@ -47,7 +47,10 @@ alias:
     text: Profilen och dess sida tas bort. Det går inte att ångra.
     submit: Ta bort
     deleted: '{{ name }} har tagits bort'
-    inUse: '{{ name }} arrangerar fortfarande {{ events }} evenemang och {{ mirrors }} speglade kalendrar. Ge dem en annan arrangör först.'
+    events_one: 'Ett evenemang som det arrangerar ligger kvar i kalendern, och där kommer det att stå att arrangören är borttagen. Bara administratörer kan ändra det sedan.'
+    events_other: '{{ count }} evenemang som det arrangerar ligger kvar i kalendern, och där kommer det att stå att arrangören är borttagen. Bara administratörer kan ändra dem sedan.'
+    mirrors_one: 'En speglad kalender har det som arrangör och slutar hämta evenemang tills du ger den en annan.'
+    mirrors_other: '{{ count }} speglade kalendrar har det som arrangör och slutar hämta evenemang tills du ger dem en annan.'
 
 joinedAt: Gick med {{ date }}
 

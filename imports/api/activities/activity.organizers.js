@@ -113,7 +113,9 @@ export const resolveContactUserId = (
 };
 
 // What the event page shows about each organizer: name, picture and the
-// contact details they chose to make public. The author comes first.
+// contact details they chose to make public. The author comes first. An
+// author whose account or alias has been removed (user.removal.js) leaves
+// the event without an organizer: `organizerRemoved`.
 export const attachOrganizerProfiles = async (activity) => {
   if (!activity) {
     return activity;
@@ -148,5 +150,12 @@ export const attachOrganizerProfiles = async (activity) => {
       avatar: u.avatar,
       publicContact: u.publicContact || null,
     }));
-  return { ...activity, organizerProfiles };
+  const organizerRemoved = Boolean(
+    activity.authorId && !byId[activity.authorId]
+  );
+  return {
+    ...activity,
+    organizerProfiles,
+    ...(organizerRemoved ? { organizerRemoved } : {}),
+  };
 };

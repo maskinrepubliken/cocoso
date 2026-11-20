@@ -116,7 +116,7 @@ pages:
         body:
           - "Du raderar kontot själv: tryck på din profilbild uppe i sidhuvudet, välj **Mina inställningar** och sedan **Radera mitt konto** längst ner. Det går inte att ångra."
           - "Då tas ditt konto, din profil, din roll som arrangör, dina pushnotiser och listan över evenemang du följer bort direkt."
-          - "Evenemang, platser och bilder som du har publicerat ligger kvar med ditt användarnamn, eftersom andra kan ha anmält sig eller hänvisat dit. Detsamma gäller anmälningar du har gjort till andras evenemang. Ta bort dem innan du raderar kontot om du inte vill ha dem kvar, eller be oss göra det åt dig."
+          - "Evenemang, platser och bilder som du har publicerat ligger kvar, eftersom andra kan ha anmält sig eller hänvisat dit. På evenemangen står det sedan att arrangören är borttagen, och ditt användarnamn sparas med dem. Detsamma gäller anmälningar du har gjort till andras evenemang. Ta bort dem innan du raderar kontot om du inte vill ha dem kvar, eller be oss göra det åt dig."
       - title: Dina rättigheter
         body:
           - "Enligt dataskyddsförordningen har du rätt att:"
@@ -409,7 +409,7 @@ pages:
               - "**Skapa alias**, ovanför listan under Användare, frågar efter ett namn och en e-postadress för besökare. Sedan öppnas profilen, så att du kan lägga till telefon, bild och beskrivning."
               - "**Välj aliaset** som arrangör när du lägger upp ett evenemang, med **Byt** under arrangören. Du kan också lägga till det som medarrangör, som ansvarig för en plats och som arrangör för en speglad kalender. Alla administratörer kan använda alla alias, andra arrangörer kan det inte."
               - "**Omvandla till konto** lämnar över profilen till arrangören. Ange arrangörens e-postadress, så får hen en inbjudan, loggar in med kod och godkänner villkoren. Sidan och evenemangen ligger kvar. Sedan är det ett vanligt arrangörskonto och inte längre ett alias."
-              - "**Ta bort aliaset** går när det inte längre arrangerar något evenemang eller någon speglad kalender."
+              - "**Ta bort aliaset** tar bort profilen och dess sida. Dess evenemang ligger kvar i kalendern och där står att arrangören är borttagen, precis som när någon raderar sitt konto. Byt arrangör på dem först om de ska ha någon."
           - note: "Skapa bara ett alias åt någon som känner till det, och publicera bara det de har bett om. Kontaktuppgifterna du anger visas för alla besökare."
       - title: Hålla ordning på innehållet
         body:

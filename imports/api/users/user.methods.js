@@ -20,10 +20,7 @@ import { requireContact } from '../_utils/contact';
 import { AddressPattern, cleanAddress } from '../_utils/address';
 import { withCoordinates } from '../_utils/geocode';
 import { isAdmin, isContributorOrAdmin } from './user.roles';
-import {
-  ActivityFollows,
-  PushSubscriptions,
-} from '../notifications/notification';
+import { detachUser } from './user.removal';
 import methodError from '../_utils/methodError';
 
 // How long a deleted account's user document is kept after the answer
@@ -498,16 +495,9 @@ Meteor.methods({
       await Meteor.users.updateAsync(userId, {
         $set: { deletionRequestedAt: new Date() },
       });
-      await Memberships.removeAsync({ userId });
-      // No more push to their browsers, no events followed
-      await PushSubscriptions.removeAsync({ userId });
-      await ActivityFollows.removeAsync({ userId });
-      // No longer among those who look after a place
-      await Resources.updateAsync(
-        { managerIds: userId },
-        { $pull: { managerIds: userId } },
-        { multi: true }
-      );
+      // The role, what they follow and where they are named; their
+      // events stay, without an organizer (user.removal.js)
+      await detachUser(userId);
       Meteor.setTimeout(() => {
         Meteor.users.removeAsync(userId).catch((error) => {
           console.error('[deleteAccount] could not remove user', error);

@@ -482,6 +482,7 @@ event:
     profile: "See all events by {{name}}"
     eventContact: "Contact for this event"
     noContact: "The organizer has not given any contact details."
+    removed: "The organizer has been removed from the system."
     write: "Write to the organizer"
   attendees:
     none: "No one has signed up yet."
