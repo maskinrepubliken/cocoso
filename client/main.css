@@ -8998,6 +8998,11 @@ button.commerce-item,
   margin: 0 0 0.8em;
 }
 
+/* The start page's beta pill, first on every help page */
+.help-page .help-beta {
+  margin: 0 0 22px;
+}
+
 .help-lead {
   color: var(--cocoso-mylla-soft);
   font-size: 1.08rem;

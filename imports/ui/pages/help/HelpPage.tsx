@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
 
 import { siteAtom } from '/imports/state';
+import BetaNotice from '/imports/ui/generic/BetaNotice';
 import NotFoundPage from '/imports/ui/pages/NotFoundPage';
 
 import HelpProse, { type HelpSection } from './HelpProse';
@@ -83,6 +84,7 @@ export default function HelpPage({ siteDoc, group }: HelpPageProps) {
       </nav>
 
       <article className="help-page">
+        <BetaNotice className="help-beta" />
         <h1>{text?.title}</h1>
         {text?.lead && <p className="help-lead">{text.lead}</p>}
         <HelpProse sections={text?.sections} />

@@ -5,6 +5,7 @@ import { useAtomValue } from 'jotai';
 
 import { seasonAtom, siteAtom } from '/imports/state';
 import type { Season } from '/imports/api/_utils/season';
+import BetaNotice from '/imports/ui/generic/BetaNotice';
 import splitSiteName from '/imports/ui/utils/siteName';
 import ThreeDIcon, {
   type ThreeDIconName,
@@ -108,15 +109,7 @@ export default function HomeHero({ siteDoc }: HomeHeroProps) {
             {rest && <span className="home-hero-title-rest">{rest}</span>}
           </h1>
           {tagline}
-          <p className="home-hero-beta">
-            <span className="home-hero-beta-icon" aria-hidden="true">
-              <ThreeDIcon name="lab" size={46} />
-            </span>
-            <span>
-              <strong>{tc('home.hero.beta')}</strong>
-              {tc('home.hero.betaNote')}
-            </span>
-          </p>
+          <BetaNotice />
         </div>
       </div>
     </section>
