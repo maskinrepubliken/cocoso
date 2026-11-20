@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
@@ -133,8 +133,8 @@ interface NavProps {
 }
 
 // One list of links and, last in it, the search: a white pill on desktop.
-// On a phone the links are in the menu panel instead and only the search
-// is left of it, as a round button (see client/main.css).
+// On a phone the links and the search are rows of the menu panel instead,
+// and of this only the open search field shows (see client/main.css).
 function Nav({
   items,
   section,
@@ -222,10 +222,11 @@ interface MenuPanelProps {
   prefix: string;
   pathname: string;
   loginLabel: string;
+  onSearch: () => void;
 }
 
-// The phone's menu, opened from the grid button in the bar: one row per
-// section with the section's own 3D icon, the info pages as rows of their
+// The phone's menu, opened from the grid button in the bar: the search
+// first, then one row per section with the section's own 3D icon, the info pages as rows of their
 // own, and below that language and login, in the same panel style as the
 // account menu and the search results.
 function MenuPanel({
@@ -235,6 +236,7 @@ function MenuPanel({
   prefix,
   pathname,
   loginLabel,
+  onSearch,
 }: MenuPanelProps) {
   const currentUser = useAtomValue(currentUserAtom);
   const [tc] = useTranslation('common');
@@ -246,6 +248,10 @@ function MenuPanel({
 
   return (
     <div className="site-menu-panel" id="site-menu-panel">
+      <button type="button" className="site-menu-row" onClick={onSearch}>
+        <ThreeDIcon name="zoom" size={32} />
+        <span>{tc('search.open')}</span>
+      </button>
       {items.map((item, index) =>
         item.name === 'home' ? null : item.name === 'info' ? (
           pageTitles?.map((page) => {
@@ -315,8 +321,8 @@ export interface HeaderProps {
 // the search at its end and, on the right, the plus for those who may
 // create content, the pen on a page one may edit, and the page's
 // discussion.
-// Below 960px the menu's links are gone from the bar: a grid button opens
-// the menu panel, and the search is a round button beside it. The bar
+// Below 960px the menu's links and the search are gone from the bar: a
+// grid button opens the menu panel, which has them as rows. The bar
 // is transparent at the top of the page and gains a blurred backdrop once
 // the page scrolls.
 // The bar's groups shrink to at most this much before the menu pill
@@ -345,6 +351,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   // Whether the logged-in user's name fits beside the avatar without
   // anything else in the bar having to shrink for it.
   const [showUserName, setShowUserName] = useState(false);
+  // Opens the search (SiteSearch sets it), for the row in the menu panel
+  const openSearchRef = useRef<(() => void) | null>(null);
   const zoomRef = useRef(1);
   const userNameShownRef = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -545,7 +553,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           prefix={prefix}
           section={section}
         >
-          <SiteSearch site={site} />
+          <SiteSearch site={site} openRef={openSearchRef} />
         </Nav>
 
         <div className="site-header-right">
@@ -573,6 +581,11 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           prefix={prefix}
           pathname={location.pathname}
           loginLabel={tc('menu.guest.login')}
+          onSearch={() => {
+            // The panel away first, so the field has the bar to itself
+            flushSync(() => setMenuOpen(false));
+            openSearchRef.current?.();
+          }}
         />
       )}
     </header>

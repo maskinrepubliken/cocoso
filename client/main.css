@@ -3002,6 +3002,16 @@ body {
   text-decoration: none;
 }
 
+/* the search row is a button */
+button.site-menu-row {
+  width: 100%;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .site-menu-row .threed-icon {
   flex: none;
   width: 32px;
@@ -3094,7 +3104,8 @@ body {
    A magnifier at the end of the menu pill. Opened, its field lies over
    the pill's links, so the pill becomes the search field and nothing in
    the bar moves; the results drop down from the pill, grouped by section.
-   On a phone it is a round button of its own (further down). */
+   On a phone it has no button: it is opened from the menu panel and its
+   field takes the bar (further down). */
 
 .site-search {
   display: flex;
@@ -3638,8 +3649,8 @@ body {
 }
 
 @media (max-width: 959px) {
-  /* One row: crane pill, the menu button with the free width, the
-     search, and the page's own buttons when it has any */
+  /* One row: crane pill, the menu button with the free width, and the
+     page's own buttons when it has any */
   .site-header-bar {
     display: flex;
     gap: 8px;
@@ -3651,8 +3662,13 @@ body {
     display: none;
   }
 
-  /* The menu's links are in the menu panel: of the pill only the search
-     is left, as a round island of its own */
+  /* The menu's links and the search are rows of the menu panel: of the
+     pill only the open search field shows, with its cross as a round
+     island */
+  .site-nav:not(:has(.site-search.is-open)) {
+    display: none;
+  }
+
   .site-nav {
     position: static;
     flex: 0 0 auto;

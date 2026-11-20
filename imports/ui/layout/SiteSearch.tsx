@@ -156,14 +156,18 @@ export function HitContent({ hit }: { hit: SearchHit }) {
 
 export interface SiteSearchProps {
   site: any;
+  // Set to the function that opens the search, for the phone's menu
+  // panel, where "Sök" is a row of its own.
+  openRef?: React.MutableRefObject<(() => void) | null>;
 }
 
-// The search box in the header, left of the account: a pill on desktop, a
-// magnifier that opens a full-width field on a phone. Results arrive as
+// The search box in the header: a magnifier at the end of the menu pill
+// on desktop; on a phone it has no button and is opened from the menu
+// panel, as a field across the bar. Results arrive as
 // you type and are grouped by section; arrow keys move to one and Enter
 // opens it, Enter alone shows all the results on a page of their own,
 // Escape closes.
-export default function SiteSearch({ site }: SiteSearchProps) {
+export default function SiteSearch({ site, openRef }: SiteSearchProps) {
   const [tc] = useTranslation('common');
   const navigate = useNavigate();
   const location = useLocation();
@@ -254,6 +258,16 @@ export default function SiteSearch({ site }: SiteSearchProps) {
     flushSync(() => setIsOpen(true));
     inputRef.current?.focus();
   };
+
+  useEffect(() => {
+    if (!openRef) {
+      return undefined;
+    }
+    openRef.current = open;
+    return () => {
+      openRef.current = null;
+    };
+  });
 
   const close = () => {
     setIsOpen(false);
