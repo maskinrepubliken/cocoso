@@ -23,10 +23,10 @@ alias:
     intro: Aliaset får en egen sida bland arrangörerna. Bild och beskrivning lägger du till i nästa steg.
     name: Namn
     namePlaceholder: t.ex. Tranemo kammarkör
-    contactHelper: 'Visas på aliasets sida och vid dess evenemang, så att besökare kan nå arrangören: en e-postadress eller ett telefonnummer.'
+    contactHelper: Visas på aliasets sida och vid dess evenemang, så att besökare kan nå arrangören. Telefon och webbplats lägger du till i profilen.
     submit: Skapa alias
     nameMissing: Ge aliaset ett namn
-    contactMissing: Ange en e-postadress eller ett telefonnummer
+    emailMissing: Ange en e-postadress
     emailInvalid: Det ser inte ut som en e-postadress
     created: '{{ name }} har skapats'
   convert:

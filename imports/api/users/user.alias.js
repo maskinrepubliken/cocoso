@@ -81,9 +81,9 @@ async function sendInvite(user, lang) {
 const usernameBase = (name) => name.normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 Meteor.methods({
-  // The name and a way to reach the organizer are all an alias needs; the
-  // picture and the rest of the profile are filled in afterwards, like any
-  // profile an admin edits (saveUserInfoAsAdmin).
+  // A name and an email address for visitors are all an alias needs; the
+  // phone, the picture and the rest of the profile are filled in
+  // afterwards, like any profile an admin edits (saveUserInfoAsAdmin).
   async createAlias({ name, publicContact }) {
     check(name, String);
     check(publicContact, ContactPattern);
@@ -93,8 +93,14 @@ Meteor.methods({
     if (!firstName || firstName.length > NAME_MAX) {
       throw new Meteor.Error('invalid-name', 'The alias needs a name');
     }
-    // Organizers always have an email or a phone visitors can use
+    // Organizers can always be reached; a new alias by email
     const contact = requireContact(publicContact);
+    if (!contact.email) {
+      throw new Meteor.Error(
+        'email-required',
+        'The alias needs an email address'
+      );
+    }
 
     const now = new Date();
     const userId = Random.id();

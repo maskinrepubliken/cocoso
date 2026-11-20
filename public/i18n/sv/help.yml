@@ -406,7 +406,7 @@ pages:
         body:
           - "Ett alias är en arrangörsprofil utan inloggning. Använd det för att publicera åt en förening eller verksamhet som inte har något eget konto. Det har en egen sida bland arrangörerna, och ingen kan logga in som det."
           - list:
-              - "**Skapa alias**, ovanför listan under Användare, frågar efter ett namn och en e-postadress eller ett telefonnummer för besökare. Sedan öppnas profilen, så att du kan lägga till bild och beskrivning."
+              - "**Skapa alias**, ovanför listan under Användare, frågar efter ett namn och en e-postadress för besökare. Sedan öppnas profilen, så att du kan lägga till telefon, bild och beskrivning."
               - "**Välj aliaset** som arrangör när du lägger upp ett evenemang, med **Byt** under arrangören. Du kan också lägga till det som medarrangör, som ansvarig för en plats och som arrangör för en speglad kalender. Alla administratörer kan använda alla alias, andra arrangörer kan det inte."
               - "**Omvandla till konto** lämnar över profilen till arrangören. Ange arrangörens e-postadress, så får hen en inbjudan, loggar in med kod och godkänner villkoren. Sidan och evenemangen ligger kvar. Sedan är det ett vanligt arrangörskonto och inte längre ett alias."
               - "**Ta bort aliaset** går när det inte längre arrangerar något evenemang eller någon speglad kalender."

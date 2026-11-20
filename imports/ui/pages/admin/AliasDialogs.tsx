@@ -29,9 +29,9 @@ function Field({
 }
 
 // An alias is an organizer profile without a login (createAlias in
-// imports/api/users/user.alias.js). Only a name and a way to reach the
-// organizer are asked here; the picture and the rest are filled in on the
-// profile, which opens once the alias is made.
+// imports/api/users/user.alias.js). Only a name and an email address for
+// visitors are asked here; the phone, the picture and the rest are filled
+// in on the profile, which opens once the alias is made.
 export function CreateAliasModal({
   open,
   onClose,
@@ -44,7 +44,6 @@ export function CreateAliasModal({
   const [t] = useTranslation('members');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [busy, setBusy] = useState(false);
 
   const create = async () => {
@@ -55,8 +54,8 @@ export function CreateAliasModal({
       message.error(t('alias.create.nameMissing'));
       return;
     }
-    if (!email.trim() && !phone.trim()) {
-      message.error(t('alias.create.contactMissing'));
+    if (!email.trim()) {
+      message.error(t('alias.create.emailMissing'));
       return;
     }
     setBusy(true);
@@ -65,14 +64,13 @@ export function CreateAliasModal({
         'createAlias',
         {
           name,
-          publicContact: { email, phone },
+          publicContact: { email },
         }
       );
       message.success(t('alias.create.created', { name: name.trim() }));
       // An empty form the next time
       setName('');
       setEmail('');
-      setPhone('');
       onCreated(alias);
     } catch (error: any) {
       message.error(
@@ -116,13 +114,6 @@ export function CreateAliasModal({
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-        />
-      </Field>
-      <Field label={t('profile.form.publicContact.phone')}>
-        <Input
-          type="tel"
-          value={phone}
-          onChange={(event) => setPhone(event.target.value)}
         />
       </Field>
     </Modal>

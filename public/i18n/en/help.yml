@@ -406,7 +406,7 @@ pages:
         body:
           - "An alias is an organizer profile without a login. Use it to publish for an association or a service that has no account of its own. It has its own page among the organizers, and nobody can log in as it."
           - list:
-              - "**Create alias**, above the list under Users, asks for a name and an email address or a phone number for visitors. The profile then opens, so you can add a picture and a description."
+              - "**Create alias**, above the list under Users, asks for a name and an email address for visitors. The profile then opens, so you can add a phone number, a picture and a description."
               - "**Choose the alias** as organizer when you add an event, with **Change** under the organizer. You can also add it as co-organizer, as the one who looks after a place and as organizer of a mirrored calendar. Every administrator can use every alias; other organizers cannot."
               - "**Turn into an account** hands the profile over to the organizer. Enter their email address and they get an invitation, log in with a code and accept the terms. The page and the events stay. After that it is an ordinary organizer account and no longer an alias."
               - "**Remove the alias** works once it no longer organizes any event or mirrored calendar."

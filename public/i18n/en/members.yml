@@ -23,10 +23,10 @@ alias:
     intro: The alias gets a page of its own among the organizers. You add a picture and a description in the next step.
     name: Name
     namePlaceholder: e.g. Tranemo Chamber Choir
-    contactHelper: 'Shown on the alias page and on its events, so visitors can reach the organizer: an email address or a phone number.'
+    contactHelper: Shown on the alias page and on its events, so visitors can reach the organizer. You add a phone number and a website on the profile.
     submit: Create alias
     nameMissing: Give the alias a name
-    contactMissing: Add an email address or a phone number
+    emailMissing: Add an email address
     emailInvalid: That does not look like an email address
     created: '{{ name }} has been created'
   convert:
