@@ -2648,28 +2648,16 @@ body {
   font-size: 16px;
 }
 
-/* When the page loads the avatar asks for a glance, quietly: it eases
-   in from a little smaller, and one thin green ring drifts out from it
-   and fades. Once per page load; moving between pages leaves it still. */
+/* When the page loads the avatar zooms in to its place, once: a plain
+   entrance, enough to be noticed. Moving between pages leaves it still. */
 .site-brand .site-avatar {
-  animation: site-avatar-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-}
-
-.site-brand .site-avatar::after {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  box-shadow: 0 0 0 1.5px var(--cocoso-colors-theme-500);
-  content: '';
-  opacity: 0;
-  pointer-events: none;
-  animation: site-avatar-ring 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
+  animation: site-avatar-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
 }
 
 @keyframes site-avatar-in {
   from {
     opacity: 0;
-    scale: 0.85;
+    scale: 0.5;
   }
   to {
     opacity: 1;
@@ -2677,20 +2665,8 @@ body {
   }
 }
 
-@keyframes site-avatar-ring {
-  from {
-    opacity: 0.5;
-    scale: 1;
-  }
-  to {
-    opacity: 0;
-    scale: 1.45;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .site-brand .site-avatar,
-  .site-brand .site-avatar::after {
+  .site-brand .site-avatar {
     animation: none;
   }
 }
