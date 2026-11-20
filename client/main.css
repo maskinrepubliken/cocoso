@@ -3565,20 +3565,6 @@ body {
   object-fit: cover;
 }
 
-.site-avatar-role {
-  position: absolute;
-  right: -3px;
-  bottom: -3px;
-  display: grid;
-  place-items: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  background: #fff;
-  color: var(--cocoso-colors-theme-800);
-  box-shadow: 0 0 0 1px var(--cocoso-colors-theme-200);
-}
-
 /* Up to 1199px the open field takes the bar: brand and menu step aside
    and the account stays on the right. */
 @media (max-width: 1199px) {
@@ -3716,18 +3702,6 @@ body {
     width: 24px;
     height: 24px;
     font-size: 13px;
-  }
-
-  .site-brand .site-avatar-role {
-    right: -4px;
-    bottom: -4px;
-    width: 13px;
-    height: 13px;
-  }
-
-  .site-brand .site-avatar-role svg {
-    width: 8px;
-    height: 8px;
   }
 }
 

@@ -2,8 +2,6 @@ import React from 'react';
 import { Link } from 'react-router';
 import { Trans } from 'react-i18next';
 import BellIcon from 'lucide-react/dist/esm/icons/bell';
-import BoltIcon from 'lucide-react/dist/esm/icons/bolt';
-import CheckCircleIcon from 'lucide-react/dist/esm/icons/check-circle';
 import LayoutDashboardIcon from 'lucide-react/dist/esm/icons/layout-dashboard';
 import LogOutIcon from 'lucide-react/dist/esm/icons/log-out';
 import PenLineIcon from 'lucide-react/dist/esm/icons/pen-line';
@@ -23,12 +21,11 @@ export interface UserThumbProps {
   notificationsCounter?: number;
 }
 
-// The account trigger: a round avatar with the role mark, a bell with the
+// The account trigger: a round avatar, a bell with the
 // unread count when there is something new, and the username, which the
 // header shows only while its bar has room for it (see Header.tsx).
 export function UserThumb({ notificationsCounter = 0 }: UserThumbProps) {
   const currentUser = useAtomValue(currentUserAtom);
-  const role = useAtomValue(roleAtom);
 
   if (!currentUser) {
     return null;
@@ -50,15 +47,6 @@ export function UserThumb({ notificationsCounter = 0 }: UserThumbProps) {
         ) : (
           currentUser.username?.charAt(0)
         )}
-        {role === 'admin' ? (
-          <span className="site-avatar-role">
-            <BoltIcon width={10} height={10} />
-          </span>
-        ) : role === 'contributor' ? (
-          <span className="site-avatar-role">
-            <CheckCircleIcon width={10} height={10} />
-          </span>
-        ) : null}
       </span>
       <span className="site-user-name">{currentUser.username}</span>
     </span>
