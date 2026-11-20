@@ -217,7 +217,7 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
         hideDescription
         listing="search"
         site={site}
-        title={tc('search.page.title')}
+        title={query ? tc('search.page.title') : tc('search.open')}
       />
 
       <form
@@ -231,6 +231,8 @@ export default function SearchPage({ siteDoc }: { siteDoc?: any }) {
         <SearchIcon aria-hidden width={18} height={18} />
         <input
           aria-label={tc('search.placeholder')}
+          // Arriving without a search (the phone's menu): ready to type
+          autoFocus={!query}
           enterKeyHint="search"
           placeholder={tc('search.placeholder')}
           type="search"

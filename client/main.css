@@ -3002,14 +3002,17 @@ body {
   text-decoration: none;
 }
 
-/* the search row is a button */
-button.site-menu-row {
-  width: 100%;
-  border: 0;
-  background: none;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
+/* The search row, last among the rows: its magnifier on a pale green
+   disc where the sections have their 3D icons */
+.site-menu-row-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-100);
+  color: var(--cocoso-colors-theme-700);
 }
 
 .site-menu-row .threed-icon {
@@ -3104,8 +3107,7 @@ button.site-menu-row {
    A magnifier at the end of the menu pill. Opened, its field lies over
    the pill's links, so the pill becomes the search field and nothing in
    the bar moves; the results drop down from the pill, grouped by section.
-   On a phone it has no button: it is opened from the menu panel and its
-   field takes the bar (further down). */
+   Desktop only: on a phone the menu panel leads to the search page. */
 
 .site-search {
   display: flex;
@@ -3603,51 +3605,6 @@ button.site-menu-row {
   object-fit: cover;
 }
 
-/* On a phone the open field takes the bar: brand, menu button and the
-   page's buttons step aside. */
-@media (max-width: 959px) {
-  .site-header-bar:has(.site-search.is-open) > .site-header-left,
-  .site-header-bar:has(.site-search.is-open) > .site-more,
-  .site-header-bar:has(.site-search.is-open) > .site-header-right {
-    display: none;
-  }
-
-  .site-header-bar:has(.site-search.is-open) > .site-nav,
-  .site-search.is-open {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .site-search.is-open .site-search-field {
-    position: static;
-    flex: 1 1 auto;
-    height: 32px;
-    margin-right: 8px;
-    background: var(--site-island);
-    box-shadow: var(--site-island-shadow);
-    animation: none;
-  }
-
-  .site-search.is-open .site-search-field:focus-within {
-    box-shadow: var(--site-island-shadow),
-      0 0 0 2px var(--cocoso-colors-theme-300);
-  }
-
-  .site-search-input {
-    font-size: 16px; /* keeps iOS from zooming into the field */
-  }
-
-  .site-search-panel {
-    position: fixed;
-    top: 60px;
-    right: 10px;
-    left: 10px;
-    width: auto;
-    max-height: calc(100vh - 72px);
-    translate: none;
-  }
-}
-
 @media (max-width: 959px) {
   /* One row: crane pill, the menu button with the free width, and the
      page's own buttons when it has any */
@@ -3662,29 +3619,10 @@ button.site-menu-row {
     display: none;
   }
 
-  /* The menu's links and the search are rows of the menu panel: of the
-     pill only the open search field shows, with its cross as a round
-     island */
-  .site-nav:not(:has(.site-search.is-open)) {
-    display: none;
-  }
-
+  /* The menu's links are rows of the menu panel, which also leads to the
+     search page */
   .site-nav {
-    position: static;
-    flex: 0 0 auto;
-    padding: 0;
-    background: none;
-    box-shadow: none;
-  }
-
-  .site-nav > :not(.site-search) {
     display: none;
-  }
-
-  .site-nav .site-search-toggle,
-  .site-nav .site-search-toggle:hover {
-    background: var(--site-island);
-    box-shadow: var(--site-island-shadow);
   }
 
   .site-more {

@@ -1,10 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef, useState } from 'react';
-import { createPortal, flushSync } from 'react-dom';
+import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import LayoutGridIcon from 'lucide-react/dist/esm/icons/layout-grid';
+import SearchIcon from 'lucide-react/dist/esm/icons/search';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
@@ -133,8 +134,8 @@ interface NavProps {
 }
 
 // One list of links and, last in it, the search: a white pill on desktop.
-// On a phone the links and the search are rows of the menu panel instead,
-// and of this only the open search field shows (see client/main.css).
+// On a phone the links are rows of the menu panel instead, with a row to
+// the search page, and none of this shows (see client/main.css).
 function Nav({
   items,
   section,
@@ -222,12 +223,11 @@ interface MenuPanelProps {
   prefix: string;
   pathname: string;
   loginLabel: string;
-  onSearch: () => void;
 }
 
-// The phone's menu, opened from the grid button in the bar: the search
-// first, then one row per section with the section's own 3D icon, the info pages as rows of their
-// own, and below that language and login, in the same panel style as the
+// The phone's menu, opened from the grid button in the bar: one row per
+// section with the section's own 3D icon, the info pages as rows of their
+// own, the search page last, and below that language and login, in the same panel style as the
 // account menu and the search results.
 function MenuPanel({
   items,
@@ -236,7 +236,6 @@ function MenuPanel({
   prefix,
   pathname,
   loginLabel,
-  onSearch,
 }: MenuPanelProps) {
   const currentUser = useAtomValue(currentUserAtom);
   const [tc] = useTranslation('common');
@@ -248,10 +247,6 @@ function MenuPanel({
 
   return (
     <div className="site-menu-panel" id="site-menu-panel">
-      <button type="button" className="site-menu-row" onClick={onSearch}>
-        <ThreeDIcon name="zoom" size={32} />
-        <span>{tc('search.open')}</span>
-      </button>
       {items.map((item, index) =>
         item.name === 'home' ? null : item.name === 'info' ? (
           pageTitles?.map((page) => {
@@ -289,6 +284,16 @@ function MenuPanel({
           </Link>
         )
       )}
+      {/* Last among the rows: the search, on its own page */}
+      <Link
+        className={`site-menu-row ${section === 'search' ? 'is-active' : ''}`}
+        to={`${prefix}/search`}
+      >
+        <span className="site-menu-row-icon">
+          <SearchIcon width={17} height={17} aria-hidden />
+        </span>
+        <span>{tc('search.open')}</span>
+      </Link>
       {!currentUser && (
         <Link className="site-info-menu-link" to="/login">
           {loginLabel}
@@ -351,8 +356,6 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   // Whether the logged-in user's name fits beside the avatar without
   // anything else in the bar having to shrink for it.
   const [showUserName, setShowUserName] = useState(false);
-  // Opens the search (SiteSearch sets it), for the row in the menu panel
-  const openSearchRef = useRef<(() => void) | null>(null);
   const zoomRef = useRef(1);
   const userNameShownRef = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -491,7 +494,12 @@ export default function Header({ site, pageTitles }: HeaderProps) {
 
   const items = getMenuItems(site, prefix, tc('menu.home'));
   const section = getCurrentSection(location.pathname, prefix);
-  const current = items.find((item) => item.name === section) || items[0];
+  // The page the phone's menu button names; the search page is not in
+  // the menu, so it is named here
+  const current =
+    section === 'search'
+      ? { label: tc('search.open') }
+      : items.find((item) => item.name === section) || items[0];
 
   return (
     <header
@@ -553,7 +561,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           prefix={prefix}
           section={section}
         >
-          <SiteSearch site={site} openRef={openSearchRef} />
+          <SiteSearch site={site} />
         </Nav>
 
         <div className="site-header-right">
@@ -581,11 +589,6 @@ export default function Header({ site, pageTitles }: HeaderProps) {
           prefix={prefix}
           pathname={location.pathname}
           loginLabel={tc('menu.guest.login')}
-          onSearch={() => {
-            // The panel away first, so the field has the bar to itself
-            flushSync(() => setMenuOpen(false));
-            openSearchRef.current?.();
-          }}
         />
       )}
     </header>
