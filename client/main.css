@@ -5208,12 +5208,84 @@ body {
   flex: none;
 }
 
-/* Phone: the strip scrolls and the filter stays put at its right */
+/* Phone: no sideways scrolling. The kinds and the filter are pills that
+   wrap onto as many rows as they need, the icon beside its label, so
+   every choice is on the screen at once. */
 @media (max-width: 599px) {
   .kind-bar {
+    position: relative;
     display: flex;
-    justify-content: flex-end;
-    column-gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* the strip's tiles and the filter wrap together as one row of pills */
+  .kind-bar > .kind-strip {
+    display: contents;
+  }
+
+  .kind-bar > .kind-strip > :first-child,
+  .kind-bar > .kind-strip > :last-child {
+    margin: 0;
+  }
+
+  .kind-bar .kind-tile {
+    flex-direction: row;
+    gap: 6px;
+    min-width: 0;
+    min-height: 40px;
+    padding: 4px 14px 4px 8px;
+    border-radius: 999px;
+    background: var(--cocoso-papper);
+    box-shadow: var(--cocoso-skugga-kort);
+  }
+
+  .kind-bar .kind-tile .threed-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .kind-bar .kind-tile > span {
+    padding-bottom: 0;
+  }
+
+  /* the chosen pill is filled instead of underlined */
+  .kind-bar .kind-tile > span::after {
+    display: none;
+  }
+
+  .kind-bar .kind-tile.is-active {
+    background: var(--cocoso-colors-theme-700);
+    color: #fff;
+  }
+
+  /* the filter's switch at the pills' size */
+  .kind-bar .view-menu-icon {
+    height: auto;
+  }
+
+  .kind-bar .view-menu-button {
+    padding-left: 10px;
+  }
+
+  .kind-bar .filter-switch {
+    --switch-w: 34px;
+    --switch-h: 20px;
+    --switch-pad: 2px;
+    display: block;
+    translate: none;
+  }
+
+  /* the panel opens under the whole bar, wherever the filter pill landed */
+  .kind-bar > .view-menu {
+    position: static;
+  }
+
+  .kind-bar .view-menu-panel {
+    right: var(--cocoso-gutter);
+    left: var(--cocoso-gutter);
+    width: auto;
   }
 }
 
@@ -5457,22 +5529,6 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-  }
-}
-
-@media (max-width: 599px) {
-  /* Phone: the strip scrolls sideways, starting at the gutter */
-  .kind-strip {
-    flex: 1 1 auto;
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scroll-padding: 0 var(--cocoso-gutter);
-    scrollbar-width: none;
-  }
-
-  .kind-strip::-webkit-scrollbar {
-    display: none;
   }
 }
 

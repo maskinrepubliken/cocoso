@@ -82,7 +82,7 @@ export default function ActivitiesHybrid({
       {/* The kinds as a strip of icons with small labels, the chosen one
           underlined in green; nothing boxed, so it is not another pill.
           A tap picks that one kind; the filter menu, at the right end and
-          outside the strip (which scrolls sideways on a phone), picks
+          (one of the wrapping pills on a phone), picks
           several, and places and days. "Alla", one kind and the Filter are
           one choice: only one of them is underlined. */}
       <div className="kind-bar page-wrap">
