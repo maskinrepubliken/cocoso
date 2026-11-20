@@ -5,7 +5,6 @@ import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 import LayoutGridIcon from 'lucide-react/dist/esm/icons/layout-grid';
-import SearchIcon from 'lucide-react/dist/esm/icons/search';
 import XIcon from 'lucide-react/dist/esm/icons/x';
 import { useAtomValue } from 'jotai';
 
@@ -289,9 +288,7 @@ function MenuPanel({
         className={`site-menu-row ${section === 'search' ? 'is-active' : ''}`}
         to={`${prefix}/search`}
       >
-        <span className="site-menu-row-icon">
-          <SearchIcon width={17} height={17} aria-hidden />
-        </span>
+        <ThreeDIcon name="zoom-front" size={32} />
         <span>{tc('search.open')}</span>
       </Link>
       {!currentUser && (

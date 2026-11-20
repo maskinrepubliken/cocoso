@@ -2978,19 +2978,6 @@ body {
   text-decoration: none;
 }
 
-/* The search row, last among the rows: its magnifier on a pale green
-   disc where the sections have their 3D icons */
-.site-menu-row-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: var(--cocoso-colors-theme-100);
-  color: var(--cocoso-colors-theme-700);
-}
-
 .site-menu-row .threed-icon {
   flex: none;
   width: 32px;
