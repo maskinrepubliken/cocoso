@@ -293,7 +293,12 @@ function MenuPanel({
         to={`${prefix}/search`}
       >
         <ThreeDIcon name="zoom-front" size={32} />
-        <span>{tc('search.open')}</span>
+        <span className="site-menu-row-text">
+          <span className="site-menu-row-title">{tc('search.open')}</span>
+          <span className="site-menu-row-detail">
+            {tc('search.description')}
+          </span>
+        </span>
       </Link>
       {!currentUser && (
         <Link className="site-info-menu-link" to="/login">

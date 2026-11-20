@@ -763,6 +763,7 @@ eventView:
 
 search:
   open: Sök
+  description: Sök bland evenemang, arrangörer och platser.
   past: Avslutat
   placeholder: Sök
   searching: Söker…

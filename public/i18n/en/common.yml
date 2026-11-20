@@ -766,6 +766,7 @@ eventView:
 
 search:
   open: Search
+  description: Search among events, organizers and places.
   past: Past
   placeholder: Search
   searching: Searching…
