@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
+import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 
 import { styled } from '/stitches.config';
 import { Button } from '/imports/ui/core';
@@ -44,8 +45,42 @@ const Stack = styled('div', {
   '&:empty': { display: 'none' },
 });
 
+// The section folded: its name as text straight on the card, across its
+// width, with an arrow that turns when it is unfolded
+const Unfold = styled('button', {
+  alignItems: 'center',
+  background: 'none',
+  border: 'none',
+  color: 'var(--cocoso-colors-theme-800)',
+  cursor: 'pointer',
+  display: 'flex',
+  fontFamily: 'var(--cocoso-font-display)',
+  fontSize: '1.2rem',
+  fontVariationSettings: '"SOFT" 60',
+  fontWeight: 600,
+  justifyContent: 'space-between',
+  padding: 0,
+  textAlign: 'left',
+  width: '100%',
+  '& svg': {
+    flexShrink: 0,
+    height: '1.25rem',
+    transition: 'rotate 0.2s ease',
+    width: '1.25rem',
+  },
+  '&[aria-expanded="true"] svg': { rotate: '180deg' },
+  '&:hover': { color: 'var(--cocoso-colors-theme-600)' },
+  '&:focus-visible': {
+    borderRadius: '4px',
+    outline: '2px solid var(--cocoso-colors-theme-500)',
+    outlineOffset: '4px',
+  },
+});
+
 const Extra = styled('div', {
   display: 'flex',
+  flexDirection: 'column',
+  gap: '0.4rem',
   marginTop: '0.875rem',
   '&:empty': { display: 'none' },
 });
@@ -140,18 +175,16 @@ export default function FollowSection({
       <Stack>
         {canFollow && (
           <>
-            <Button
+            <Unfold
               aria-expanded={open}
-              css={{ width: '100%' }}
-              disabled={busy}
-              size="sm"
-              variant="outline"
+              type="button"
               onClick={() => setOpen(!open)}
             >
               {isFollowing
                 ? tc('event.follow.followed')
                 : tc('event.follow.follow')}
-            </Button>
+              <ChevronDownIcon aria-hidden />
+            </Unfold>
 
             {open && (
               <div>

@@ -203,7 +203,6 @@ const Tags = styled('div', {
 // On wide screens two columns: on the left the event's card and, for the
 // organizer, the tools under it; in a narrow column on the right what one
 // does about it (sign up, follow) and where it is and who organizes it.
-// On narrow screens the right column follows the left.
 const Layout = styled('div', {
   display: 'flex',
   flexDirection: 'column',
@@ -216,11 +215,15 @@ const Layout = styled('div', {
   },
 });
 
+// On narrow screens the columns dissolve and their cards come in an order
+// of their own: the event, where and who, signing up, the organizer's
+// tools (`order` on each card).
 const Column = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '1.25rem',
   minWidth: 0,
+  [NARROW]: { display: 'contents' },
 });
 
 // Signing up and following: one card in the site's green, apart from the
@@ -236,6 +239,7 @@ const ActionCard = styled('div', {
   gap: '1.5rem',
   padding: '1.5rem',
   '&:empty': { display: 'none' },
+  [NARROW]: { order: 2 },
   '& section + section': {
     borderTop: '1px solid var(--cocoso-colors-theme-200)',
     paddingTop: '1.5rem',
@@ -250,6 +254,7 @@ const FactsCard = styled('div', {
   boxShadow: 'var(--cocoso-skugga)',
   overflow: 'hidden',
   '&:empty': { display: 'none' },
+  [NARROW]: { order: 1 },
   '& > section': { borderRadius: 0, boxShadow: 'none' },
   '& > section + section': {
     borderTop: '1px solid var(--cocoso-colors-theme-100)',

@@ -534,6 +534,7 @@ event:
     toSignUp: "Till anmälan"
     toTickets: "Till biljetterna"
     addToCalendar: "Lägg till i kalendern"
+    addToCalendarHelp: "Laddar ner en fil med datum, tid och plats som du öppnar i din egen kalender."
   more:
     title: "Mer som händer"
     intro: "{{site}} samlar det som händer i kommunen på ett ställe."

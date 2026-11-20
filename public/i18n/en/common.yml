@@ -537,6 +537,7 @@ event:
     toSignUp: "To sign-up"
     toTickets: "To the tickets"
     addToCalendar: "Add to calendar"
+    addToCalendarHelp: "Downloads a file with the date, time and place, which you open in your own calendar."
   more:
     title: "More going on"
     intro: "{{site}} gathers what is happening in the municipality in one place."
