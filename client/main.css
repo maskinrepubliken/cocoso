@@ -2639,12 +2639,13 @@ body {
   box-shadow: 0 0 0 2px var(--cocoso-papper);
 }
 
+/* With its paper rim the avatar is as large as the crane's disc */
 .site-brand .site-avatar {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   background: none;
   box-shadow: none;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 /* The username beside the avatar, the two as one pale green chip. Only
@@ -2657,7 +2658,8 @@ body {
   color: var(--site-ink);
   font-size: 14px;
   font-weight: 600;
-  line-height: 32px;
+  /* never taller than the avatar, which gives the chip its height */
+  line-height: 20px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -3711,9 +3713,21 @@ body {
 
   .site-brand .site-avatar,
   .site-brand .site-user-bell {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
+
+  .site-brand .site-avatar-role {
+    right: -4px;
+    bottom: -4px;
+    width: 13px;
+    height: 13px;
+  }
+
+  .site-brand .site-avatar-role svg {
+    width: 8px;
+    height: 8px;
   }
 }
 
