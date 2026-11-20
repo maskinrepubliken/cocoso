@@ -245,7 +245,7 @@ const SectionTitle = styled('h2', {
 });
 
 // The seven weekdays side by side, Monday first; on a narrower screen
-// they wrap onto more rows. On a phone they are one row you swipe, out to
+// that has no room for seven columns they are one row you swipe, out to
 // the screen's edges, with the next day peeking in.
 const Week = styled('div', {
   display: 'grid',
@@ -253,17 +253,12 @@ const Week = styled('div', {
   gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
   margin: '0 0 1.25rem',
   '@media (max-width: 1100px)': {
-    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-  },
-  '@media (max-width: 700px)': {
     display: 'flex',
     gap: '8px',
     margin: '0 calc(-1 * var(--cocoso-gutter)) 1.25rem',
     overflowX: 'auto',
     padding: '4px var(--cocoso-gutter) 10px',
     scrollbarWidth: 'none',
-    scrollPadding: '0 var(--cocoso-gutter)',
-    scrollSnapType: 'x proximity',
     '&::-webkit-scrollbar': { display: 'none' },
   },
 });
@@ -275,9 +270,8 @@ const Day = styled('div', {
   color: ink,
   minWidth: 0,
   padding: '0.55rem',
-  '@media (max-width: 700px)': {
+  '@media (max-width: 1100px)': {
     flex: '0 0 auto',
-    scrollSnapAlign: 'start',
     width: 'min(62vw, 240px)',
   },
 });
