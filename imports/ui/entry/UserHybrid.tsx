@@ -266,7 +266,11 @@ export default function UserHybrid({
   user,
   siteDoc,
 }: UserHybridProps) {
-  const { workId } = useParams<{ workId?: string }>();
+  const { workId, slug, usernameSlug } = useParams<{
+    workId?: string;
+    slug?: string;
+    usernameSlug?: string;
+  }>();
   const { pathname } = useLocation();
   const [tc] = useTranslation('common');
   const currentUser = useAtomValue(currentUserAtom);
@@ -284,6 +288,26 @@ export default function UserHybrid({
       revalidator.revalidate();
     }
   }, [seesArchived, user?._id]);
+
+  // One's own hidden profile: the server, rendering for an anonymous
+  // visitor, found nobody. Ask again as the person, and show nothing
+  // rather than "not found" until the answer is in.
+  const isOwnHidden =
+    !user &&
+    Boolean(currentUser?.username) &&
+    currentUser?.username === (usernameSlug || slug)?.replace(/^@/, '');
+  const [askedAsSelf, setAskedAsSelf] = useState(false);
+  useEffect(() => {
+    if (isOwnHidden) {
+      Promise.resolve(revalidator.revalidate()).finally(() =>
+        setAskedAsSelf(true)
+      );
+    }
+  }, [isOwnHidden]);
+
+  if (isOwnHidden && !askedAsSelf) {
+    return null;
+  }
 
   if (!user) {
     return (
