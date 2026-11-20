@@ -38,6 +38,7 @@ export default function LoginPage({
   const [pendingLink, setPendingLink] = useState<{
     token: string;
     email: string;
+    invited?: boolean;
   } | null>(null);
 
   useEffect(() => {
@@ -50,7 +51,11 @@ export default function LoginPage({
       .then(() => message.success(t('login.messages.success')))
       .catch((err) => {
         if (err?.error === 'account-not-found') {
-          setPendingLink({ token: linkToken, email: err.details?.email || '' });
+          setPendingLink({
+            token: linkToken,
+            email: err.details?.email || '',
+            invited: Boolean(err.details?.invited),
+          });
           setLinkState('confirm');
         } else {
           setLinkState('failed');
@@ -99,6 +104,7 @@ export default function LoginPage({
       <ConfirmSignup
         credentials={{ token: pendingLink.token }}
         email={pendingLink.email}
+        invited={pendingLink.invited}
         onCancel={() => {
           setPendingLink(null);
           setLinkState(null);

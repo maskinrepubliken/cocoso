@@ -154,6 +154,14 @@ emailLogin:
     submit: Skapa mitt konto
     cancel: Avbryt, skapa inget konto
     expired: Koden har gått ut. Börja om och be om en ny kod.
+  # An account made from an alias, at its owner's first login (ConfirmSignup)
+  invited:
+    title: Ta över ditt arrangörskonto
+    lead: Ett arrangörskonto väntar på <strong>{{email}}</strong>. En administratör har lagt upp det åt dig.
+    factProfile: Profilen och de evenemang som redan ligger uppe följer med, och du kan ändra dem.
+    needTerms: Kryssa i att du godkänner villkoren för att ta över kontot.
+    submit: Ta över kontot
+    cancel: Avbryt, logga inte in
   link:
     busy: Loggar in…
     failedTitle: Länken fungerar inte längre

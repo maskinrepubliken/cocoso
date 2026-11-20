@@ -11,12 +11,14 @@ import { deliverEmail, getSmtpSettings } from '../_utils/services/mails/smtp';
 import Memberships from '../memberships/membership';
 import { generateUsernameFromEmail } from './username.helpers';
 import { loginEmail } from './loginEmail';
+import { sitePath } from '/imports/api/_utils/paths';
 
 /**
  * Email-only login: type your email, get a six-digit code and a one-click
  * link, and you're in. There is no password. An address we haven't seen
  * gets an account only once the person confirms it (see the login handler)
- * and then lands on /welcome — no welcome email.
+ * and then lands on /welcome — no welcome email. The same confirmation is
+ * asked of someone invited to an account made from an alias.
  *
  * One pending request per address lives in `loginCodes`, hashed. A new
  * request replaces the old one; a code allows a few wrong guesses, then the
@@ -46,7 +48,7 @@ const sameHash = (a, b) =>
 async function sendLoginEmail({ email, code, token, lang, isNew }) {
   const site = await getSite();
   const siteName = site?.settings?.name || Meteor.settings.public?.name || '';
-  const url = publicUrl(`/login?token=${token}`);
+  const url = publicUrl(`${sitePath('login')}?token=${token}`);
 
   const fromEmail = getSmtpSettings()?.fromEmail;
   const from =
@@ -205,15 +207,27 @@ Accounts.registerLoginHandler('emailLogin', async (options) => {
   }
 
   const existing = await Accounts.findUserByEmail(request.email);
-  if (!existing && createAccount?.acceptedTerms !== true) {
+  // An account made from an alias (user.alias.js) is waiting for its
+  // owner, who has not accepted the terms yet: confirmed like a new one.
+  const isInvited = Boolean(
+    existing && existing.invitedAt && !existing.termsAcceptedAt
+  );
+  if ((!existing || isInvited) && createAccount?.acceptedTerms !== true) {
     throw new Meteor.Error('account-not-found', 'No account for this address', {
       email: request.email,
+      ...(isInvited ? { invited: true } : {}),
     });
   }
 
   // Spent either way: a code or link logs in once.
   await LoginCodes.removeAsync({ _id: request._id });
 
+  if (isInvited) {
+    await Meteor.users.updateAsync(
+      { _id: existing._id },
+      { $set: { termsAcceptedAt: new Date() } }
+    );
+  }
   const userId = existing
     ? await verifyExisting(existing, request.email)
     : await createAccountFor(request.email);

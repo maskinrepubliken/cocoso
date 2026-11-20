@@ -42,6 +42,8 @@ export default function EmailLogin({
   const [step, setStep] = useState<'email' | 'code' | 'confirm'>('email');
   const [email, setEmail] = useState(initialEmail);
   const [code, setCode] = useState('');
+  // The account exists, made by an admin, and waits for its owner
+  const [invited, setInvited] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [wait, setWait] = useState(0);
@@ -90,6 +92,7 @@ export default function EmailLogin({
       if (err?.error === 'account-not-found') {
         // Right code, no account yet: confirm before anything is created
         setCode(value);
+        setInvited(Boolean(err.details?.invited));
         setStep('confirm');
         return;
       }
@@ -114,6 +117,7 @@ export default function EmailLogin({
       <ConfirmSignup
         credentials={{ email: email.trim(), code }}
         email={email.trim()}
+        invited={invited}
         onCancel={() => {
           setStep('email');
           setCode('');

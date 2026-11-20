@@ -1,12 +1,19 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { Accounts } from 'meteor/accounts-base';
+import { check, Match } from 'meteor/check';
 import { Random } from 'meteor/random';
 
 import Activities from '../activities/activity';
 import Memberships from '../memberships/membership';
 import Mirrors from '../mirrors/mirror';
 import Resources from '../resources/resource';
+import { getSite } from '../site/site';
 import { ContactPattern, requireContact } from '../_utils/contact';
+import { sitePath } from '../_utils/paths';
+import { emailIsValid, publicUrl } from '../_utils/shared';
+import { extractEmailAddress } from '../_utils/services/mails/mail.helpers';
+import { deliverEmail, getSmtpSettings } from '../_utils/services/mails/smtp';
+import { inviteEmail } from './inviteEmail';
 import { isAdmin } from './user.roles';
 import { generateUniqueUsername } from './username.helpers';
 
@@ -20,6 +27,11 @@ import { generateUniqueUsername } from './username.helpers';
  * `emails`, plus a contributor membership listed among the organizers. So
  * its page, its events and every "who organizes this" check work as for
  * any organizer, nobody can log in as it, and no email is ever sent to it.
+ *
+ * An alias becomes a real account by getting an email address
+ * (convertAliasToAccount): the same user document, so its username, page
+ * and events stay. Its new owner is invited by email, logs in by code like
+ * everyone else, and accepts the terms the first time (emailLogin.js).
  */
 
 const NAME_MAX = 80;
@@ -43,9 +55,30 @@ async function requireAlias(aliasId) {
   return alias;
 }
 
+// The invitation to an account made from an alias. Throws if it cannot
+// be sent.
+async function sendInvite(user, lang) {
+  const email = user.emails[0].address;
+  const site = await getSite();
+  const siteName = site?.settings?.name || Meteor.settings.public?.name || '';
+  const fromEmail = getSmtpSettings()?.fromEmail;
+  const from =
+    siteName && fromEmail
+      ? `${siteName} <${extractEmailAddress(fromEmail)}>`
+      : fromEmail;
+  const { subject, html, text } = inviteEmail({
+    lang,
+    siteName,
+    theme: site?.theme,
+    name: user.firstName || user.username,
+    email,
+    url: publicUrl(sitePath('login')),
+  });
+  await deliverEmail({ from, to: email, subject, html, text });
+}
+
 // "Tranemo kammarkör" → "tranemokammarkor": å, ä and ö keep their letter
-const usernameBase = (name) =>
-  name.normalize('NFD').replace(/[̀-ͯ]/g, '');
+const usernameBase = (name) => name.normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 Meteor.methods({
   // The name and a way to reach the organizer are all an alias needs; the
@@ -121,6 +154,74 @@ Meteor.methods({
     await Meteor.users.removeAsync({ _id: aliasId });
     return true;
   },
-});
 
-export { requireAdmin, requireAlias };
+  // Hands an alias over to the organizer themself: with an email address
+  // it is an account like any other, and no longer an alias the admins
+  // publish as. The address is not verified until its owner logs in.
+  async convertAliasToAccount(aliasId, rawEmail, lang) {
+    check(aliasId, String);
+    check(rawEmail, String);
+    check(lang, Match.Maybe(String));
+    await requireAdmin();
+    const alias = await requireAlias(aliasId);
+
+    const email = rawEmail.trim().toLowerCase();
+    if (!emailIsValid(email)) {
+      throw new Meteor.Error('invalid-email', 'Not a valid email address');
+    }
+    if (await Accounts.findUserByEmail(email)) {
+      throw new Meteor.Error(
+        'email-in-use',
+        'There is already an account with this email address'
+      );
+    }
+
+    const emails = [{ address: email, verified: false }];
+    await Meteor.users.updateAsync(
+      { _id: aliasId },
+      { $set: { emails, invitedAt: new Date() }, $unset: { isAlias: '' } }
+    );
+    try {
+      await sendInvite({ ...alias, emails }, lang);
+    } catch (error) {
+      // No invitation, no account: back to the alias it was
+      console.error('[alias] could not send the invitation', error);
+      await Meteor.users.updateAsync(
+        { _id: aliasId },
+        { $set: { isAlias: true }, $unset: { emails: '', invitedAt: '' } }
+      );
+      throw new Meteor.Error('email-failed', 'Could not send the email');
+    }
+    return true;
+  },
+
+  // The invitation once more, as long as the account has not been logged
+  // in to.
+  async resendAccountInvite(userId, lang) {
+    check(userId, String);
+    check(lang, Match.Maybe(String));
+    await requireAdmin();
+    const user = await Meteor.users.findOneAsync(
+      { _id: userId },
+      {
+        fields: {
+          username: 1,
+          firstName: 1,
+          emails: 1,
+          invitedAt: 1,
+          termsAcceptedAt: 1,
+        },
+      }
+    );
+    if (!user?.invitedAt || user.termsAcceptedAt || !user.emails?.[0]) {
+      throw new Meteor.Error('not-invited', 'No invitation is waiting');
+    }
+    try {
+      await sendInvite(user, lang);
+    } catch (error) {
+      console.error('[alias] could not send the invitation', error);
+      throw new Meteor.Error('email-failed', 'Could not send the email');
+    }
+    return true;
+  },
+});

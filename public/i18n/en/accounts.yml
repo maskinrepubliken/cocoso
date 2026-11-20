@@ -154,6 +154,14 @@ emailLogin:
     submit: Create my account
     cancel: Cancel, don't create an account
     expired: The code has expired. Start again and ask for a new code.
+  # An account made from an alias, at its owner's first login (ConfirmSignup)
+  invited:
+    title: Take over your organizer account
+    lead: An organizer account is waiting for <strong>{{email}}</strong>. An administrator has set it up for you.
+    factProfile: The profile and the events already published come along, and you can change them.
+    needTerms: Tick the box to accept the terms and take over the account.
+    submit: Take over the account
+    cancel: Cancel, do not log in
   link:
     busy: Logging in…
     failedTitle: That link no longer works

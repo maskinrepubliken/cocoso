@@ -10,10 +10,13 @@ hidden: Dold profil
 alias:
   label: Alias
   noLogin: Ingen inloggning
+  invited: Inbjuden
   helper: Ett alias är en arrangörsprofil utan inloggning, för att publicera i någon annans namn – en förening eller en verksamhet. Alla administratörer kan välja det som arrangör för ett evenemang eller en plats.
   cancel: Avbryt
   actions:
     edit: Redigera profilen
+    convert: Omvandla till konto
+    resend: Skicka inbjudan igen
     delete: Ta bort aliaset
   create:
     title: Skapa alias
@@ -26,6 +29,19 @@ alias:
     contactMissing: Ange en e-postadress eller ett telefonnummer
     emailInvalid: Det ser inte ut som en e-postadress
     created: '{{ name }} har skapats'
+  convert:
+    title: Omvandla {{ name }} till konto
+    intro: Lämna över profilen till arrangören. Med en e-postadress blir den ett vanligt arrangörskonto, med samma sida och samma evenemang.
+    email: Arrangörens e-postadress
+    after: Vi skickar en inbjudan till adressen. Arrangören loggar in med kod och godkänner villkoren första gången. Sedan är det inte längre ett alias, och administratörer kan inte göra om det till ett.
+    submit: Omvandla och bjud in
+    emailMissing: Ange arrangörens e-postadress
+    converted: '{{ name }} är nu ett konto, och en inbjudan har skickats till {{ email }}'
+    resent: Inbjudan har skickats till {{ email }} igen
+    errors:
+      invalid-email: Det ser inte ut som en e-postadress
+      email-in-use: Det finns redan ett konto med den e-postadressen
+      email-failed: Inbjudan kunde inte skickas, så inget ändrades. Försök igen om en stund.
   delete:
     title: Ta bort {{ name }}?
     text: Profilen och dess sida tas bort. Det går inte att ångra.

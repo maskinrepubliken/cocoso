@@ -129,6 +129,78 @@ export function CreateAliasModal({
   );
 }
 
+// Hands an alias over to the organizer themself: with an email address it
+// becomes an ordinary account, and its owner is invited by email
+// (convertAliasToAccount).
+export function ConvertAliasModal({
+  alias,
+  onClose,
+  onConverted,
+}: {
+  alias: AliasMember | null;
+  onClose: () => void;
+  onConverted: () => void;
+}) {
+  const [t, i18n] = useTranslation('members');
+  const [email, setEmail] = useState('');
+  const [busy, setBusy] = useState(false);
+  const name = alias?.name || alias?.username || '';
+
+  const convert = async () => {
+    if (!alias || busy) {
+      return;
+    }
+    if (!email.trim()) {
+      message.error(t('alias.convert.emailMissing'));
+      return;
+    }
+    setBusy(true);
+    try {
+      await call('convertAliasToAccount', alias.id, email, i18n.language);
+      message.success(
+        t('alias.convert.converted', { name, email: email.trim() })
+      );
+      setEmail('');
+      onConverted();
+    } catch (error: any) {
+      const known = ['invalid-email', 'email-in-use', 'email-failed'];
+      message.error(
+        known.includes(error?.error)
+          ? t(`alias.convert.errors.${error.error}`)
+          : error?.reason || error?.error
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal
+      cancelText={t('alias.cancel')}
+      confirmButtonProps={{ loading: busy }}
+      confirmText={t('alias.convert.submit')}
+      id="convert-alias"
+      open={Boolean(alias)}
+      title={t('alias.convert.title', { name })}
+      onCancel={onClose}
+      onClose={onClose}
+      onConfirm={convert}
+    >
+      <Box mb="4">
+        <Text>{t('alias.convert.intro')}</Text>
+      </Box>
+      <Field label={t('alias.convert.email')}>
+        <Input
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+      </Field>
+      <Text fontSize="sm">{t('alias.convert.after')}</Text>
+    </Modal>
+  );
+}
+
 // Asked before an alias is removed. One that still organizes something is
 // refused by the server (deleteAlias), and the answer says what.
 export function DeleteAliasModal({

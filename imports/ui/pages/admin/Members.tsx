@@ -29,9 +29,14 @@ import { currentUserAtom, isDesktopAtom, roleAtom } from '/imports/state';
 import { call } from '../../../api/_utils/shared';
 import { message } from '/imports/ui/generic/message';
 import { startViewAs } from '/imports/utils/viewAs';
+import { sitePath } from '/imports/api/_utils/paths';
 
 import UsageReport from './UsageReport';
-import { CreateAliasModal, DeleteAliasModal } from './AliasDialogs';
+import {
+  ConvertAliasModal,
+  CreateAliasModal,
+  DeleteAliasModal,
+} from './AliasDialogs';
 import Boxling from './Boxling';
 
 const compareUsersByDate = (a, b) => {
@@ -70,6 +75,15 @@ function MemberItem({ member }) {
             css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}
           >
             {t('organizer').toLowerCase()}
+          </Badge>
+        )}
+        {member.isInvited && (
+          <Badge
+            colorScheme="tegel"
+            size="sm"
+            css={{ marginTop: '-1rem', marginLeft: '0.5rem' }}
+          >
+            {t('alias.invited').toLowerCase()}
           </Badge>
         )}
         {!member.isPublic && (
@@ -122,7 +136,8 @@ export default function Members() {
   const [userForUsageReport, setUserForUsageReport] = useState(null);
   const [creatingAlias, setCreatingAlias] = useState(false);
   const [aliasToDelete, setAliasToDelete] = useState(null);
-  const [t] = useTranslation('members');
+  const [aliasToConvert, setAliasToConvert] = useState(null);
+  const [t, i18n] = useTranslation('members');
   const [tc] = useTranslation('common');
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -222,6 +237,19 @@ export default function Members() {
     }
   };
 
+  const resendInvite = async (member: any) => {
+    try {
+      await call('resendAccountInvite', member.id, i18n.language);
+      message.success(t('alias.convert.resent', { email: member.email }));
+    } catch (error: any) {
+      message.error(
+        error?.error === 'email-failed'
+          ? t('alias.convert.errors.email-failed')
+          : error.reason || error.error
+      );
+    }
+  };
+
   const safeMembers = members || [];
 
   // An alias has no login and no role to change: its profile is edited
@@ -229,7 +257,8 @@ export default function Members() {
   const aliasActions = (member: any) => [
     {
       content: t('alias.actions.edit'),
-      handleClick: () => navigate(`/@${member.username}?edit=true`),
+      handleClick: () =>
+        navigate(`${sitePath(`@${member.username}`)}?edit=true`),
     },
     {
       content: t(
@@ -240,6 +269,10 @@ export default function Members() {
     {
       content: t('actions.usageReport'),
       handleClick: () => setUserForUsageReport(member),
+    },
+    {
+      content: t('alias.actions.convert'),
+      handleClick: () => setAliasToConvert(member),
     },
     {
       content: t('alias.actions.delete'),
@@ -258,6 +291,15 @@ export default function Members() {
 
   function memberActions(member: any) {
     return [
+      // Made from an alias and not yet logged in to
+      ...(member.isInvited
+        ? [
+            {
+              content: t('alias.actions.resend'),
+              handleClick: () => resendInvite(member),
+            },
+          ]
+        : []),
       {
         content: t('actions.contributor'),
         handleClick: () => setAsContributor(member),
@@ -443,7 +485,15 @@ export default function Members() {
         onCreated={(alias) => {
           setCreatingAlias(false);
           // Straight to its profile, to add a picture and the rest
-          navigate(`/@${alias.username}?edit=true`);
+          navigate(`${sitePath(`@${alias.username}`)}?edit=true`);
+        }}
+      />
+      <ConvertAliasModal
+        alias={aliasToConvert}
+        onClose={() => setAliasToConvert(null)}
+        onConverted={() => {
+          setAliasToConvert(null);
+          revalidator.revalidate();
         }}
       />
       <DeleteAliasModal

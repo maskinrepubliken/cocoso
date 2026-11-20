@@ -13,30 +13,38 @@ interface ConfirmSignupProps {
   // The code or link token the person already proved, sent again with
   // createAccount once they confirm
   credentials: { email?: string; code?: string; token?: string };
+  // An account an admin made from an alias, waiting for this person: it
+  // is taken over, not created
+  invited?: boolean;
   onCancel: () => void;
 }
 
 // Shown when a valid code or link belongs to an address with no account:
 // nothing is created until the person says so here and accepts the terms
-// (the server refuses otherwise — imports/api/users/emailLogin.js).
+// (the server refuses otherwise — imports/api/users/emailLogin.js). The
+// same goes for an account made from an alias and handed to this address:
+// its new owner accepts the terms here before the first login.
 export default function ConfirmSignup({
   email,
   credentials,
+  invited = false,
   onCancel,
 }: ConfirmSignupProps) {
   const [t] = useTranslation('accounts');
+  const key = invited ? 'emailLogin.invited' : 'emailLogin.confirm';
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const confirm = async () => {
     if (!accepted) {
-      setError(t('emailLogin.confirm.needTerms'));
+      setError(t(`${key}.needTerms`));
       return;
     }
     setBusy(true);
     setError(null);
-    markNewAccount();
+    // The welcome screen is for brand new accounts
+    markNewAccount(!invited);
     try {
       await loginWithEmail({
         ...credentials,
@@ -56,11 +64,11 @@ export default function ConfirmSignup({
   return (
     <AuthPanel
       icon={<UserPlus />}
-      title={t('emailLogin.confirm.title')}
+      title={t(`${key}.title`)}
       lead={
         <Trans
           t={t}
-          i18nKey="emailLogin.confirm.lead"
+          i18nKey={`${key}.lead`}
           values={{ email }}
           components={{ strong: <strong /> }}
         />
@@ -76,8 +84,14 @@ export default function ConfirmSignup({
       >
         <ul className="auth-facts">
           <li>{t('emailLogin.confirm.factEmail')}</li>
-          <li>{t('emailLogin.confirm.factProfile')}</li>
-          <li>{t('emailLogin.confirm.factOrganizer')}</li>
+          {invited ? (
+            <li>{t('emailLogin.invited.factProfile')}</li>
+          ) : (
+            <>
+              <li>{t('emailLogin.confirm.factProfile')}</li>
+              <li>{t('emailLogin.confirm.factOrganizer')}</li>
+            </>
+          )}
           <li>{t('emailLogin.confirm.factDelete')}</li>
         </ul>
 
@@ -111,10 +125,10 @@ export default function ConfirmSignup({
           type="submit"
           css={{ width: '100%', minHeight: '3rem' }}
         >
-          {t('emailLogin.confirm.submit')}
+          {t(`${key}.submit`)}
         </Button>
         <button className="auth-text-button" type="button" onClick={onCancel}>
-          {t('emailLogin.confirm.cancel')}
+          {t(`${key}.cancel`)}
         </button>
       </form>
     </AuthPanel>

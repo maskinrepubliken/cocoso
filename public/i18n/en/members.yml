@@ -10,10 +10,13 @@ hidden: Hidden profile
 alias:
   label: Alias
   noLogin: No login
+  invited: Invited
   helper: An alias is an organizer profile without a login, for publishing in someone else's name – an association or a venue. Every administrator can choose it as the organizer of an event or a place.
   cancel: Cancel
   actions:
     edit: Edit the profile
+    convert: Turn into an account
+    resend: Send the invitation again
     delete: Remove the alias
   create:
     title: Create alias
@@ -26,6 +29,19 @@ alias:
     contactMissing: Add an email address or a phone number
     emailInvalid: That does not look like an email address
     created: '{{ name }} has been created'
+  convert:
+    title: Turn {{ name }} into an account
+    intro: Hand the profile over to the organizer. With an email address it becomes an ordinary organizer account, with the same page and the same events.
+    email: The organizer's email address
+    after: We send an invitation to the address. The organizer logs in with a code and accepts the terms the first time. After that it is no longer an alias, and administrators cannot turn it back into one.
+    submit: Turn into an account and invite
+    emailMissing: Enter the organizer's email address
+    converted: '{{ name }} is now an account, and an invitation has been sent to {{ email }}'
+    resent: The invitation has been sent to {{ email }} again
+    errors:
+      invalid-email: That does not look like an email address
+      email-in-use: There is already an account with that email address
+      email-failed: The invitation could not be sent, so nothing was changed. Try again in a moment.
   delete:
     title: Remove {{ name }}?
     text: The profile and its page are removed. This cannot be undone.
