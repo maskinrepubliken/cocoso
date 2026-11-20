@@ -316,6 +316,10 @@ export interface HeaderProps {
 // The bar's groups shrink to at most this much before the menu pill
 // gives up its place on the row.
 const MIN_BAR_ZOOM = 0.72;
+// The username beside the avatar: its side padding and widest size, as
+// in client/main.css (.site-user-name).
+const USER_NAME_PADDING = 18;
+const USER_NAME_MAX = 180;
 
 export default function Header({ site, pageTitles }: HeaderProps) {
   const location = useLocation();
@@ -327,6 +331,9 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   // at all), and whether even the smallest size would not do.
   const [barZoom, setBarZoom] = useState(1);
   const [stacked, setStacked] = useState(false);
+  // Whether the logged-in user's name fits beside the avatar without
+  // anything else in the bar having to shrink for it.
+  const [showUserName, setShowUserName] = useState(false);
   const zoomRef = useRef(1);
   const headerRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -354,6 +361,8 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   // a long menu) all three shrink by the same factor until
   // they do, down to MIN_BAR_ZOOM; only past that does the menu pill drop
   // to a row of its own. Measured, so nothing changes while it fits.
+  // The username beside the avatar is an extra: shown only when the row
+  // fits at full size with it, and left out of the fitting otherwise.
   useEffect(() => {
     const bar = barRef.current;
     if (!isClient || !bar || typeof ResizeObserver === 'undefined') {
@@ -364,6 +373,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         zoomRef.current = 1;
         setBarZoom(1);
         setStacked(false);
+        setShowUserName(false);
         return;
       }
       // While the search is open it takes the bar (brand and menu step
@@ -386,9 +396,20 @@ export default function Header({ site, pageTitles }: HeaderProps) {
       // Natural widths: scrollWidth is in each group's own (unzoomed)
       // pixels and counts the content even when the grid squeezes the box.
       // The menu stays centred, so both sides need room for the wider one.
-      const natural =
-        nav.scrollWidth + 2 * Math.max(left.scrollWidth, right.scrollWidth);
+      const naturalWith = (leftWidth: number) =>
+        nav.scrollWidth + 2 * Math.max(leftWidth, right.scrollWidth);
       const room = bar.clientWidth - gaps;
+      // The username takes no room while hidden (max-width 0), but its
+      // scrollWidth still tells how wide it would be.
+      const name = left.querySelector<HTMLElement>('.site-user-name');
+      const nameWidth = name
+        ? Math.min(name.scrollWidth + USER_NAME_PADDING, USER_NAME_MAX)
+        : 0;
+      const leftBase = left.scrollWidth - (name?.offsetWidth || 0);
+      const nameFits =
+        nameWidth > 0 && naturalWith(leftBase + nameWidth) <= room;
+      setShowUserName(nameFits);
+      const natural = naturalWith(leftBase + (nameFits ? nameWidth : 0));
       const zoom = Math.min(1, room / natural);
       const next = zoom < MIN_BAR_ZOOM ? 1 : Math.round(zoom * 100) / 100;
       if (Math.abs(next - zoomRef.current) >= 0.01) {
@@ -453,7 +474,9 @@ export default function Header({ site, pageTitles }: HeaderProps) {
       }`}
     >
       <div
-        className={`site-header-bar ${stacked ? 'is-stacked' : ''}`}
+        className={`site-header-bar ${stacked ? 'is-stacked' : ''} ${
+          showUserName ? 'has-user-name' : ''
+        }`}
         ref={barRef}
         style={{ '--bar-zoom': barZoom } as React.CSSProperties}
       >

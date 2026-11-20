@@ -23,8 +23,9 @@ export interface UserThumbProps {
   notificationsCounter?: number;
 }
 
-// The account trigger: a round avatar with the role mark, and a bell with
-// the unread count when there is something new.
+// The account trigger: a round avatar with the role mark, a bell with the
+// unread count when there is something new, and the username, which the
+// header shows only while its bar has room for it (see Header.tsx).
 export function UserThumb({ notificationsCounter = 0 }: UserThumbProps) {
   const currentUser = useAtomValue(currentUserAtom);
   const role = useAtomValue(roleAtom);
@@ -59,6 +60,7 @@ export function UserThumb({ notificationsCounter = 0 }: UserThumbProps) {
           </span>
         ) : null}
       </span>
+      <span className="site-user-name">{currentUser.username}</span>
     </span>
   );
 }

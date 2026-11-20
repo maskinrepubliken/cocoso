@@ -2632,15 +2632,39 @@ body {
 .site-brand .site-user {
   position: relative;
   z-index: 1;
+  gap: 0;
   margin-left: -4px;
+  border-radius: 999px;
+  background: var(--cocoso-colors-theme-100);
+  box-shadow: 0 0 0 2px var(--cocoso-papper);
 }
 
 .site-brand .site-avatar {
   width: 32px;
   height: 32px;
-  background: var(--cocoso-colors-theme-100);
-  box-shadow: 0 0 0 2px var(--cocoso-papper);
+  background: none;
+  box-shadow: none;
   font-size: 16px;
+}
+
+/* The username beside the avatar, the two as one pale green chip. Only
+   while the bar has room for it (Header.tsx measures and sets
+   .has-user-name); otherwise it takes no width at all. */
+.site-user-name {
+  box-sizing: border-box;
+  max-width: 0;
+  overflow: hidden;
+  color: var(--site-ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 32px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-header-bar.has-user-name .site-user-name {
+  max-width: 180px;
+  padding: 0 11px 0 7px;
 }
 
 .site-brand .site-user-bell {
