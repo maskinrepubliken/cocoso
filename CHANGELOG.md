@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.13.0](https://github.com/maskinrepubliken/cocoso/compare/v5.12.0...v5.13.0) (2026-11-20)
+
+
+### Features
+
+* **deploy:** run data migrations as part of a deploy ([2501ce0](https://github.com/maskinrepubliken/cocoso/commit/2501ce057c27f03516ec8eb0921f20cb1d6f5b49))
+
+
+### Bug Fixes
+
+* **deploy:** run migrations also when the image is already running ([fd76a4d](https://github.com/maskinrepubliken/cocoso/commit/fd76a4d38d56c11d43ec18e201af0ad1ee856c68))
+* **migrations:** let single-site run on users without notifications ([3828f9c](https://github.com/maskinrepubliken/cocoso/commit/3828f9c5b95bc32865cc730ec23fcd70914e913c))
+
 ## [5.12.0](https://github.com/maskinrepubliken/cocoso/compare/v5.11.0...v5.12.0) (2026-11-20)
 
 
