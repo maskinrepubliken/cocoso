@@ -100,6 +100,7 @@ export default function FollowSection({
 
   return (
     <Section
+      look="plain"
       order={3}
       title={
         updates.length > 0

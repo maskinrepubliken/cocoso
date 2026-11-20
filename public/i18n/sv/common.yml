@@ -537,10 +537,8 @@ event:
     intro: "{{site}} samlar det som händer i kommunen på ett ställe."
     all: "Alla evenemang"
   mirror:
-    registration: "Anmälan sker hos {{source}}:"
-    registrationLink: "till evenemanget där"
-    tickets: "Biljetter köps hos {{source}}:"
-    ticketsLink: "till filmen där"
+    registrationInfo: "Anmälan till det här evenemanget sker hos {{source}}."
+    ticketsInfo: "Biljetter till den här visningen köps hos {{source}}."
     tools: "Evenemanget hämtas från {{source}} och hålls lika varje timme: ändringar i titel, text, tid och bild här skrivs över. Koppla loss det för att göra det till ditt eget."
     detach: "Koppla loss"
     detached: "Evenemanget är ditt nu och hämtas inte längre."

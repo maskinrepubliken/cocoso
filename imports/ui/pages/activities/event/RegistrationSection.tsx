@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useAtomValue } from 'jotai';
+import ExternalLinkIcon from 'lucide-react/dist/esm/icons/external-link';
 
 import { styled } from '/stitches.config';
 import { Button, Checkbox, Input } from '/imports/ui/core';
@@ -10,6 +11,7 @@ import { currentUserAtom } from '/imports/state';
 import { message } from '/imports/ui/generic/message';
 
 import Section, { Muted } from './Section';
+import { Action } from './HeroActions';
 import { Occurrence, countPeople, isPastOccurrence } from './occurrences';
 
 const Fields = styled('div', {
@@ -54,7 +56,7 @@ const LinkButton = styled('button', {
 });
 
 const Status = styled('p', {
-  backgroundColor: 'var(--cocoso-colors-theme-50)',
+  backgroundColor: 'var(--cocoso-papper)',
   borderRadius: 'var(--cocoso-border-radius)',
   fontWeight: 600,
   margin: 0,
@@ -312,25 +314,34 @@ export default function RegistrationSection({
           : null
       }
       id="anmalan"
+      look="plain"
       order={3}
       title={tc('event.sections.register')}
     >
       {isCancelled ? (
         <Status>{tc('event.cancelled.registration')}</Status>
       ) : sourceUrl && !isPast ? (
-        <Status>
-          {tc(
-            isScreening ? 'event.mirror.tickets' : 'event.mirror.registration',
-            { source: sourceHost }
-          )}{' '}
-          <a href={sourceUrl} rel="noopener noreferrer" target="_blank">
+        <>
+          <Muted css={{ fontSize: '1rem', marginBottom: '0.875rem' }}>
             {tc(
               isScreening
-                ? 'event.mirror.ticketsLink'
-                : 'event.mirror.registrationLink'
+                ? 'event.mirror.ticketsInfo'
+                : 'event.mirror.registrationInfo',
+              { source: sourceHost }
             )}
-          </a>
-        </Status>
+          </Muted>
+          <Action
+            href={sourceUrl}
+            kind="primary"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {tc(isScreening ? 'event.cta.ticketsAt' : 'event.cta.signUpAt', {
+              source: sourceHost,
+            })}
+            <ExternalLinkIcon aria-hidden />
+          </Action>
+        </>
       ) : registrationClosed ? (
         <Status>{tc('event.register.closed')}</Status>
       ) : isPast ? (

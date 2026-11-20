@@ -540,10 +540,8 @@ event:
     intro: "{{site}} gathers what is happening in the municipality in one place."
     all: "All events"
   mirror:
-    registration: "Sign up at {{source}}:"
-    registrationLink: "to the event there"
-    tickets: "Tickets are sold at {{source}}:"
-    ticketsLink: "to the film there"
+    registrationInfo: "Sign-up for this event is at {{source}}."
+    ticketsInfo: "Tickets for this screening are sold at {{source}}."
     tools: "This event is copied from {{source}} and kept like it every hour: changes to its title, text, time and picture here are overwritten. Detach it to make it your own."
     detach: "Detach"
     detached: "The event is yours now and no longer copied."

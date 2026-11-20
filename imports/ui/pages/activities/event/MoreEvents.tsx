@@ -6,13 +6,19 @@ import { styled } from '/stitches.config';
 import { call } from '/imports/api/_utils/shared';
 import { kindsOf } from '/imports/api/_utils/kinds';
 import { sitePath } from '/imports/api/_utils/paths';
-import EventCards from '/imports/ui/entry/EventCards';
 import SexyThumb from '/imports/ui/listing/SexyThumb';
 import useOpenEntry from '/imports/ui/listing/useOpenEntry';
 
 import { Muted } from './Section';
 
 const shown = 3;
+
+// The listing's cards, here always filling the row
+const EventCards = styled('div', {
+  display: 'grid',
+  gap: '1rem',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
+});
 
 const Box = styled('section', {
   borderTop: '1px solid var(--cocoso-colors-theme-200)',

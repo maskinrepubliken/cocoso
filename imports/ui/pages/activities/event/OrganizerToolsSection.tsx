@@ -138,6 +138,7 @@ export default function OrganizerToolsSection({
           ? tc('event.attendees.count', { count: countPeople(attendees) })
           : null
       }
+      look="dark"
       order={7}
       title={tc('event.sections.organizerTools')}
     >

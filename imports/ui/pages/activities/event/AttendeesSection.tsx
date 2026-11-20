@@ -42,6 +42,7 @@ export default function AttendeesSection({
   return (
     <Section
       aside={total > 0 ? tc('event.attendees.count', { count: total }) : null}
+      look="plain"
       order={4}
       title={tc('event.sections.attendees')}
     >

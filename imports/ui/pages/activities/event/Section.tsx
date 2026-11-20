@@ -18,6 +18,34 @@ const SectionBox = styled('section', {
   variants: {
     // Something inside reaches the card's edges, e.g. a map on top.
     bleed: { true: { overflow: 'hidden' } },
+    look: {
+      // A part of a larger card: no card of its own, a line above it
+      plain: {
+        backgroundColor: 'transparent',
+        borderRadius: 0,
+        borderTop: '1px solid var(--cocoso-colors-theme-100)',
+        boxShadow: 'none',
+        padding: '1.5rem 0 0',
+        '&:first-child': { borderTop: 'none', paddingTop: 0 },
+      },
+      // The organizer's own tools: dark, so they are not taken for part
+      // of what visitors see. What lies in it reads its colours from
+      // these variables.
+      dark: {
+        '--cocoso-mylla': '#fffdf7',
+        '--cocoso-mylla-soft': 'rgba(255, 253, 247, 0.72)',
+        '--cocoso-papper': 'transparent',
+        '--cocoso-linje': 'rgba(255, 253, 247, 0.4)',
+        '--cocoso-tegel': '#f0b89a',
+        '--cocoso-lingon': '#ffaaa5',
+        '--cocoso-lingon-100': 'rgba(255, 140, 130, 0.16)',
+        '--cocoso-colors-theme-100': 'rgba(255, 253, 247, 0.14)',
+        '--cocoso-colors-theme-700': '#fffdf7',
+        backgroundColor: '#1d2a1b',
+        boxShadow: '0 10px 30px -12px rgba(20, 30, 15, 0.55)',
+        color: '#fffdf7',
+      },
+    },
   },
 });
 
@@ -49,6 +77,8 @@ interface SectionProps {
   title?: React.ReactNode;
   aside?: React.ReactNode;
   bleed?: boolean;
+  // Other than a card of its own: see SectionBox
+  look?: 'plain' | 'dark';
   // Position in the single-column layout on narrow screens.
   order: number;
   id?: string;
@@ -61,10 +91,11 @@ export default function Section({
   order,
   id,
   bleed,
+  look,
   children,
 }: SectionProps) {
   return (
-    <SectionBox bleed={bleed} id={id} css={{ [NARROW]: { order } }}>
+    <SectionBox bleed={bleed} id={id} look={look} css={{ [NARROW]: { order } }}>
       {(title || aside) && (
         <SectionHeader>
           <SectionTitle>{title}</SectionTitle>

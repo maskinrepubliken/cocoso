@@ -6,7 +6,7 @@ import ExternalLinkIcon from 'lucide-react/dist/esm/icons/external-link';
 import { styled } from '/stitches.config';
 import type { Address } from '/imports/api/_utils/address';
 
-import { Muted } from './Section';
+import { Muted, WIDE } from './Section';
 import { calendarFileHref } from './calendarFile';
 import { Occurrence, countPeople, isPastOccurrence } from './occurrences';
 
@@ -18,7 +18,7 @@ const Row = styled('div', {
   marginTop: '1.25rem',
 });
 
-const Action = styled('a', {
+export const Action = styled('a', {
   alignItems: 'center',
   borderRadius: '999px',
   cursor: 'pointer',
@@ -49,6 +49,9 @@ const Action = styled('a', {
     },
   },
 });
+
+// On wide screens sign-up is in view beside the event, in its own card
+const onPhone = { [WIDE]: { display: 'none' } };
 
 interface HeroActionsProps {
   activity: {
@@ -115,6 +118,7 @@ export default function HeroActions({
         {sourceUrl ? (
           <Action
             href={sourceUrl}
+            css={onPhone}
             kind="primary"
             rel="noopener noreferrer"
             target="_blank"
@@ -129,7 +133,12 @@ export default function HeroActions({
           </Action>
         ) : (
           canSignUp && (
-            <Action href="#anmalan" kind="primary" onClick={toForm}>
+            <Action
+              css={onPhone}
+              href="#anmalan"
+              kind="primary"
+              onClick={toForm}
+            >
               {tc('event.cta.signUp')}
             </Action>
           )
@@ -152,7 +161,7 @@ export default function HeroActions({
         </Action>
       </Row>
       {canSignUp && !sourceUrl && left !== null && (
-        <Muted css={{ marginTop: '0.5rem' }}>
+        <Muted css={{ marginTop: '0.5rem', ...onPhone }}>
           {tc('event.attendees.left', { count: left, capacity })}
         </Muted>
       )}

@@ -83,6 +83,7 @@ export default function WhenSection({
           ? tc('event.dates.occurrences', { count: dates.length })
           : null
       }
+      look="plain"
       order={1}
       title={tc('event.sections.when')}
     >
