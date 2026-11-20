@@ -83,12 +83,13 @@ const ImageBox = styled('div', {
     objectFit: 'cover',
     width: '100%',
   },
-  // On a phone the picture runs edge to edge, past the page's own padding
+  // On a phone the picture runs edge to edge, past the page's own padding,
+  // and starts at the very top, behind the header (52px tall there)
   [NARROW]: {
-    aspectRatio: '16 / 9',
+    aspectRatio: '3 / 2',
     borderRadius: 0,
     boxShadow: 'none',
-    margin: '0 -1rem',
+    margin: '-52px -1rem 0',
     width: 'auto',
   },
 });
