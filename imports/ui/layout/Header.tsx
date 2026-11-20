@@ -326,6 +326,11 @@ const MIN_BAR_ZOOM = 0.72;
 // in client/main.css (.site-user-name).
 const USER_NAME_PADDING = 18;
 const USER_NAME_MAX = 180;
+// Text is a few pixels wider or narrower at each zoom, so the measured
+// widths wander: the bar grows back, and the username comes back, only
+// when there is this much room to spare. Without it the bar can flicker
+// between two sizes at a width right on the edge.
+const FIT_SLACK = 32;
 
 export default function Header({ site, pageTitles }: HeaderProps) {
   const location = useLocation();
@@ -341,6 +346,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
   // anything else in the bar having to shrink for it.
   const [showUserName, setShowUserName] = useState(false);
   const zoomRef = useRef(1);
+  const userNameShownRef = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
@@ -379,6 +385,7 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         zoomRef.current = 1;
         setBarZoom(1);
         setStacked(false);
+        userNameShownRef.current = false;
         setShowUserName(false);
         return;
       }
@@ -412,11 +419,19 @@ export default function Header({ site, pageTitles }: HeaderProps) {
         : 0;
       const leftBase = left.scrollWidth - (name?.offsetWidth || 0);
       const nameFits =
-        nameWidth > 0 && naturalWith(leftBase + nameWidth) <= room;
+        nameWidth > 0 &&
+        naturalWith(leftBase + nameWidth) +
+          (userNameShownRef.current ? 0 : FIT_SLACK) <=
+          room;
+      userNameShownRef.current = nameFits;
       setShowUserName(nameFits);
       const natural = naturalWith(leftBase + (nameFits ? nameWidth : 0));
       const zoom = Math.min(1, room / natural);
-      const next = zoom < MIN_BAR_ZOOM ? 1 : Math.round(zoom * 100) / 100;
+      let next = zoom < MIN_BAR_ZOOM ? 1 : Math.round(zoom * 100) / 100;
+      if (zoom >= MIN_BAR_ZOOM && next > zoomRef.current) {
+        const relaxed = Math.min(1, room / (natural + FIT_SLACK));
+        next = Math.max(zoomRef.current, Math.floor(relaxed * 100) / 100);
+      }
       if (Math.abs(next - zoomRef.current) >= 0.01) {
         zoomRef.current = next;
         setBarZoom(next);
