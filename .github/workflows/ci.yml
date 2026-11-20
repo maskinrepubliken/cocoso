@@ -35,5 +35,41 @@ jobs:
       - name: Translation key parity
         run: npm run check:i18n
 
+      - name: Data migrations are all listed in ORDER
+        run: npm run check:migrations
+
       - name: Unused code and dependencies (informational)
         run: npm run check:deps || true
+
+  # A deploy runs the data migrations by itself (scripts/migrations/ORDER), so
+  # one that cannot even start must not reach a release. Runs them all, in
+  # order and with APPLY set, against an empty MongoDB, twice: the second pass
+  # catches a script that fails on a database it has already been through.
+  # An empty database only exercises the code outside the per-document loops;
+  # this is a smoke test, not a proof that a migration is right.
+  migrations:
+    name: Data migrations run
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      mongo:
+        image: mongo:7
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run every migration twice
+        env:
+          MONGO: ${{ job.services.mongo.id }}
+        run: |
+          for i in $(seq 1 30); do
+            docker exec "$MONGO" mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' >/dev/null 2>&1 && break
+            sleep 2
+          done
+          for pass in 1 2; do
+            for name in $(node scripts/check-migrations.mjs --list); do
+              echo "::group::pass $pass: $name"
+              { echo 'var APPLY = true;'; cat "scripts/migrations/$name"; } \
+                | docker exec -i "$MONGO" sh -c 'cat > /tmp/m.js && mongosh --quiet cocoso --file /tmp/m.js'
+              echo "::endgroup::"
+            done
+          done

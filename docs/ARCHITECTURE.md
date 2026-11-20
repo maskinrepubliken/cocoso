@@ -272,8 +272,12 @@ all languages have the same keys.
 
 ## Data migrations
 
-One-off scripts live in `scripts/migrations/` and are run by hand with
-`mongosh`. `2026-09-single-site.mongosh.js` moved an existing multi-tenant
+One-off mongosh scripts live in `scripts/migrations/`. The file `ORDER` there
+lists them in the order they run; a production deploy runs the ones the
+database has not recorded in its `dataMigrations` collection (see
+`deploy/production/README.md`), except those marked `manual`, which are run by
+hand. CI checks that every script is listed (`npm run check:migrations`) and
+runs them all twice against an empty MongoDB. `2026-09-single-site.mongosh.js` moved an existing multi-tenant
 database to this model: it renamed `hosts` to `site`, removed the `host`
 fields, dropped the platform and SSO collections and rebuilt the
 memberships indexes.

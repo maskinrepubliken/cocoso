@@ -30,6 +30,12 @@ The short version:
   are switched off. New code touching a section checks `isFeatureEnabled`
   (or `isMenuItemShown` for menu items), not just the menu's `isVisible`.
 - Escape user input with `imports/api/_utils/escapeHtml.js` inside email HTML.
+- Data migrations are mongosh scripts in `scripts/migrations/`, and a
+  production deploy runs them by itself, unattended. A new one must be
+  idempotent, throw when it cannot do its job, and be added at the END of
+  `scripts/migrations/ORDER` (never reorder or rename released lines). Mark
+  it `manual` there, and give it a dry run (no changes unless `APPLY` is set),
+  when it deletes data or needs a person's decision.
 - Headings have no icons: no 3D icon (or other icon) beside a page title or
   a section heading. Icons belong on buttons, chips and link tiles.
 

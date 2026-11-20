@@ -1,0 +1,34 @@
+# The data migrations, in the order they are run. One file name per line.
+#
+# A deploy runs every script listed here that the database has not recorded
+# in the `dataMigrations` collection, top to bottom, with `APPLY = true`,
+# before the new version starts (deploy/production/files/usr/local/sbin/
+# cocoso-deploy). A script that throws stops the deploy.
+#
+# Adding a migration: put the script in this folder and add its name at the
+# END of this list. Never reorder or rename a line that has been released;
+# the name is how the database remembers it. `npm run check:migrations`
+# fails when a script is missing here or listed twice.
+#
+# A script must be idempotent, and must throw when it cannot do its job.
+#
+# `manual` after a name: the deploy does not run it, only says that it is
+# waiting. Use it for scripts that delete data or need a decision. Give such
+# a script a dry run (change nothing unless APPLY is set) and run it with
+#
+#   deploy/production/run-mongosh.sh <admin>@<server> scripts/migrations/<name>            # dry run
+#   deploy/production/run-mongosh.sh <admin>@<server> scripts/migrations/<name> --apply
+#
+# which records it as run.
+
+2026-09-single-site.mongosh.js
+2026-10-addresses-and-contacts.mongosh.js
+2026-10-kinds.mongosh.js
+2026-11-places-real-photos.mongosh.js manual
+2026-11-place-managers.mongosh.js
+2026-11-drop-calendar-bookings.mongosh.js
+2026-11-businesses-to-offerings.mongosh.js
+2026-11-commercial-places.mongosh.js
+2026-11-commerce-website.mongosh.js
+2026-11-commerce-reach.mongosh.js
+2026-11-alias-organizers.mongosh.js

@@ -89,6 +89,11 @@ RUN chmod +x /usr/local/bin/cocoso-entrypoint
 WORKDIR /app
 COPY --from=builder --chown=node:node /build/bundle /app
 
+# The data migrations of this release. Nothing in the image runs them: the
+# deploy reads them out of it and runs the ones the database has not seen
+# (scripts/migrations/ORDER, deploy/production/files/usr/local/sbin/cocoso-deploy).
+COPY scripts/migrations /usr/local/share/cocoso/migrations
+
 # Uploads must outlive the container; mount a volume here.
 RUN mkdir -p "$MEDIA_STORAGE_PATH" && chown -R node:node /var/lib/cocoso
 

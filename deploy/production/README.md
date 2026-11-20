@@ -72,15 +72,39 @@ After a release that changes them, from a checkout of this repository:
 
 It installs them as they are on the `production` branch and lists what changed.
 
-## Changing production data
+## Data migrations
 
-One-off data scripts (`scripts/migrations/*.mongosh.js`) are run against the
-production database with
+A deploy runs them. The image carries `scripts/migrations/` with its `ORDER`
+file; before the new version starts, `cocoso-deploy` runs every script listed
+there that is not yet recorded in the database's `dataMigrations` collection,
+in that order and with `APPLY` set, and records each one that finishes.
 
-    deploy/production/run-mongosh.sh <admin>@<server> <script.js>            # dry run
-    deploy/production/run-mongosh.sh <admin>@<server> <script.js> --apply    # changes data
+- When there is something to run, the database is first dumped to
+  `/var/backups/cocoso/pre-migration/` (the last 5 are kept). Restore one with
+  `docker compose exec -T mongo mongorestore --archive --gzip --drop < <dump>`
+  in `/opt/cocoso`.
+- A script that fails stops the deploy before the app is touched: the run on
+  GitHub turns red, the old version keeps running, and the database may be
+  partly changed. Fix the script (they are idempotent) and release again, or
+  restore the dump.
+- The automatic rollback of a version that does not answer does **not** undo
+  its migrations.
+- A script marked `manual` in `ORDER` is never run by a deploy, only reported
+  as waiting in the deploy log. Run it by hand, dry run first:
 
-Take a fresh backup first (`sudo cocoso-backup` on the server).
+      deploy/production/run-mongosh.sh <admin>@<server> scripts/migrations/<script>            # dry run
+      deploy/production/run-mongosh.sh <admin>@<server> scripts/migrations/<script> --apply    # changes data
+
+  `--apply` also records it as run. Take a fresh backup first
+  (`sudo cocoso-backup` on the server). The same command runs any other
+  one-off mongosh script; one that never reads `APPLY` has no dry run and is
+  refused without `--apply`.
+- A database with no users yet has nothing to migrate: every script is
+  recorded as run without being run.
+
+Adding a migration is described at the top of `scripts/migrations/ORDER`.
+`cocoso-deploy` itself lives outside the image: after a release that changes
+it, run `update-server.sh` (above) **before** deploying that release.
 
 ## GitHub
 

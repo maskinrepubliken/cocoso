@@ -5,6 +5,7 @@ name: Deploy to production
 # this workflow waits for that image, tags it :production, joins the tailnet
 # and runs the deploy on the server. The server's `deploy` user may run only
 # /usr/local/sbin/cocoso-deploy (deploy/production/), which pulls :production,
+# runs the data migrations the database has not seen (scripts/migrations/ORDER),
 # checks that the site answers and rolls back if it doesn't.
 #
 # Roll back by running this workflow by hand with an older release's commit;
