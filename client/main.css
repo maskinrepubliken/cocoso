@@ -2648,25 +2648,25 @@ body {
   font-size: 16px;
 }
 
-/* When the page loads the avatar zooms in to its place, once: a plain
-   entrance, enough to be noticed. Moving between pages leaves it still. */
+/* The page arrives from the server without the account, so the avatar
+   comes in a moment later, between the crane and the name. It grows in
+   from no width while it fades and zooms up, so the name glides aside
+   for it instead of jumping. Once, when it appears. */
 .site-brand .site-avatar {
-  animation: site-avatar-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+  animation: site-avatar-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes site-avatar-in {
   from {
+    width: 0;
     opacity: 0;
     scale: 0.5;
-  }
-  to {
-    opacity: 1;
-    scale: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-brand .site-avatar {
+  .site-brand .site-avatar,
+  .site-header-bar.has-user-name .site-user-name {
     animation: none;
   }
 }
@@ -2690,6 +2690,17 @@ body {
 .site-header-bar.has-user-name .site-user-name {
   max-width: 180px;
   padding: 0 11px 0 7px;
+  /* unfolds, like the avatar, so the site's name glides aside for it;
+     it is hidden again at once (Header.tsx measures it while it shows) */
+  animation: site-user-name-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes site-user-name-in {
+  from {
+    max-width: 0;
+    padding: 0;
+    opacity: 0;
+  }
 }
 
 .site-brand .site-user-bell {

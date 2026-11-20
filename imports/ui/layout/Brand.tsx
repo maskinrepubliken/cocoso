@@ -22,7 +22,8 @@ export default function Brand({ site }: BrandProps) {
     <img alt="" className="site-brand-mark" src={site.logo} />
   ) : (
     <span className="site-brand-mark site-brand-mark-trana">
-      <ThreeDIcon name="trana-hals" size={40} />
+      {/* Always in view: loaded at once, never blank for a frame */}
+      <ThreeDIcon name="trana-hals" size={40} decoding="sync" loading="eager" />
     </span>
   );
 
