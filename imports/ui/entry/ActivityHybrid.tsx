@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRevalidator, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Address } from '/imports/api/_utils/address';
@@ -68,7 +68,22 @@ const MainCard = styled('article', {
   boxShadow: 'var(--cocoso-skugga)',
   overflow: 'hidden',
   [NARROW]: { borderRadius: 0, margin: '-52px -1rem 0' },
+  variants: {
+    // A tall picture (a poster): beside the text instead of across the top
+    poster: {
+      true: {
+        [WIDE]: {
+          alignItems: 'start',
+          display: 'grid',
+          gridTemplateColumns: 'minmax(240px, min(38%, 440px)) minmax(0, 1fr)',
+        },
+      },
+    },
+  },
 });
+
+// A picture taller than this (height / width) is taken for a poster
+const POSTER_RATIO = 1.15;
 
 const ImageBox = styled('div', {
   aspectRatio: '16 / 9',
@@ -82,6 +97,46 @@ const ImageBox = styled('div', {
     width: '100%',
   },
   [NARROW]: { aspectRatio: '3 / 2' },
+  variants: {
+    // A poster is shown whole, never cropped. On wide screens at its own
+    // height in the card's left column; on a phone it stands on a blurred
+    // copy of itself (--poster), which is what lies behind the header.
+    poster: {
+      true: {
+        [WIDE]: {
+          aspectRatio: 'auto',
+          maxHeight: 'none',
+          '& img': { height: 'auto' },
+        },
+        [NARROW]: {
+          aspectRatio: 'auto',
+          boxSizing: 'border-box',
+          maxHeight: 'none',
+          padding: '60px 1.5rem 1.25rem',
+          position: 'relative',
+          '&::before': {
+            backgroundImage: 'var(--poster)',
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            content: '""',
+            filter: 'blur(22px) brightness(0.75)',
+            inset: '-30px',
+            position: 'absolute',
+          },
+          '& img': {
+            borderRadius: '6px',
+            boxShadow: '0 12px 30px -10px rgba(0, 0, 0, 0.55)',
+            height: 'auto',
+            margin: '0 auto',
+            maxHeight: '70vh',
+            maxWidth: '100%',
+            objectFit: 'contain',
+            width: 'auto',
+          },
+        },
+      },
+    },
+  },
 });
 
 const CardBody = styled('div', {
@@ -322,6 +377,24 @@ export default function ActivityHybrid({
     }
   }, [isOrganizer, activity?._id]);
 
+  // The picture's own shape decides the layout: a tall one is a poster.
+  // Known once it has loaded, which for a server-rendered page can be
+  // before the browser's code runs, hence the check when mounting too.
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [isPoster, setIsPoster] = useState(false);
+  const measureImage = () => {
+    const image = imageRef.current;
+    if (image?.naturalWidth) {
+      setIsPoster(image.naturalHeight / image.naturalWidth > POSTER_RATIO);
+    }
+  };
+  useEffect(() => {
+    setIsPoster(false);
+    if (imageRef.current?.complete) {
+      measureImage();
+    }
+  }, [activity?._id]);
+
   if (!activity) {
     return null;
   }
@@ -352,6 +425,7 @@ export default function ActivityHybrid({
   const images = (activity.images || [activity.imageUrl]).filter(
     (img): img is string => Boolean(img)
   );
+  const heroImage = getImageUrl(images[0], 'medium') || images[0];
   // A shared link shows the generated picture with the title, place and
   // date while the event has dates left, then its own photo.
   const shareImage = activityShareImageUrl(activity);
@@ -463,15 +537,26 @@ export default function ActivityHybrid({
 
       <Layout>
         <Column>
-          <MainCard>
+          <MainCard poster={isPoster}>
             {isPublicActivity && (
-              <ImageBox>
+              <ImageBox
+                poster={isPoster}
+                style={
+                  isPoster
+                    ? ({
+                        '--poster': `url("${heroImage}")`,
+                      } as React.CSSProperties)
+                    : undefined
+                }
+              >
                 {images.length > 0 ? (
                   <LightboxProvider alt={activity.title} images={images}>
                     <LightboxTrigger showCount src={images[0]}>
                       <img
+                        ref={imageRef}
                         alt={activity.title}
-                        src={getImageUrl(images[0], 'medium') || images[0]}
+                        src={heroImage}
+                        onLoad={measureImage}
                       />
                     </LightboxTrigger>
                   </LightboxProvider>
