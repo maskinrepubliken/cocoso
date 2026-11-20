@@ -98,6 +98,7 @@ pages:
         body:
           - "The data is stored on servers within the EU. We hand it to no one but the suppliers the service needs to work:"
           - list:
+              - "Maskinrepubliken, which operates and develops the service on behalf of Uddebo Makerspace. Maskinrepubliken is a data processor and may use the data only on Uddebo Makerspace's instructions."
               - "The supplier of the server and of the backups."
               - "The email service that sends login codes, confirmations and mailings."
               - "Your browser's push service, if you have turned notifications on."

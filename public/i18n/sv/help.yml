@@ -98,6 +98,7 @@ pages:
         body:
           - "Uppgifterna lagras på servrar inom EU. Vi lämnar inte ut dem till någon annan än de leverantörer som behövs för att tjänsten ska fungera:"
           - list:
+              - "Maskinrepubliken, som sköter driften och utvecklingen av tjänsten på uppdrag av Uddebo Makerspace. Maskinrepubliken är personuppgiftsbiträde och får bara använda uppgifterna enligt Uddebo Makerspaces instruktioner."
               - "Leverantören av servern och av säkerhetskopieringen."
               - "E-posttjänsten som skickar inloggningskoder, bekräftelser och utskick."
               - "Din webbläsares pushtjänst, om du har slagit på notiser."
